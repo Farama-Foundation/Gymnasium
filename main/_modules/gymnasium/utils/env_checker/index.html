@@ -841,6 +841,11 @@
             <span class="sa">f</span><span class="s2">&quot;The environment (</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">) is different from the unwrapped version (</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="si">}</span><span class="s2">). This could effect the environment checker as the environment most likely has a wrapper applied to it. We recommend using the raw environment for `check_env` using `env.unwrapped`.&quot;</span>
         <span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jax&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">JaxToNumpy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">JaxToTorch</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
     <span class="c1"># ============= Check the spaces (observation and action) ================</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;action_space&quot;</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>

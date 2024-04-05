@@ -478,14 +478,12 @@
 <span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">jax.random</span> <span class="k">as</span> <span class="nn">jrng</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">from</span> <span class="nn">gymnasium.envs.registration</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 <span class="kn">from</span> <span class="nn">gymnasium.functional</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">FuncEnv</span><span class="p">,</span> <span class="n">StateType</span>
 <span class="kn">from</span> <span class="nn">gymnasium.utils</span> <span class="kn">import</span> <span class="n">seeding</span>
 <span class="kn">from</span> <span class="nn">gymnasium.vector.utils</span> <span class="kn">import</span> <span class="n">batch_space</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers.jax_to_numpy</span> <span class="kn">import</span> <span class="n">jax_to_numpy</span>
 
 
 <div class="viewcode-block" id="FunctionalJaxEnv">
@@ -506,7 +504,8 @@
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the environment from a FuncEnv.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;render_mode&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="c1"># metadata.get(&quot;jax&quot;, False) can be used downstream to know that the environment returns jax arrays</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;render_mode&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;jax&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span> <span class="o">=</span> <span class="n">func_env</span>
 
@@ -518,8 +517,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">reward_range</span> <span class="o">=</span> <span class="n">reward_range</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">spec</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_box_action_space</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;rgb_array&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">render_init</span><span class="p">()</span>
@@ -545,8 +542,6 @@
         <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">state_info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
 
-        <span class="n">obs</span> <span class="o">=</span> <span class="n">jax_to_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span></div>
 
 
@@ -554,14 +549,6 @@
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.step">[docs]</a>
     <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment using the action.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_box_action_space</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>  <span class="c1"># For typing</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">high</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Discrete</span>
-            <span class="c1"># For now we assume jax envs don&#39;t use complex spaces</span>
-            <span class="n">err_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">action</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="si">}</span><span class="s2">) invalid&quot;</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">action</span><span class="p">),</span> <span class="n">err_msg</span>
-
         <span class="n">rng</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">jrng</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="p">)</span>
 
         <span class="n">next_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">rng</span><span class="p">)</span>
@@ -570,8 +557,6 @@
         <span class="n">terminated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">terminal</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
         <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">transition_info</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">next_state</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">next_state</span>
-
-        <span class="n">observation</span> <span class="o">=</span> <span class="n">jax_to_numpy</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">reward</span><span class="p">),</span> <span class="nb">bool</span><span class="p">(</span><span class="n">terminated</span><span class="p">),</span> <span class="kc">False</span><span class="p">,</span> <span class="n">info</span></div>
 
@@ -637,8 +622,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_envs</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_box_action_space</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;rgb_array&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">render_init</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -667,20 +650,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 
-        <span class="n">obs</span> <span class="o">=</span> <span class="n">jax_to_numpy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span>
 
     <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment using the action.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_box_action_space</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">)</span>  <span class="c1"># For typing</span>
-            <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">high</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Discrete</span>
-            <span class="c1"># For now we assume jax envs don&#39;t use complex spaces</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span>
-                <span class="n">action</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">action</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="si">}</span><span class="s2">) invalid&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">rng</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">jrng</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="p">)</span>
@@ -716,12 +689,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_envs</span> <span class="o">=</span> <span class="n">done</span>
 
         <span class="n">observation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
-        <span class="n">observation</span> <span class="o">=</span> <span class="n">jax_to_numpy</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
-
-        <span class="n">reward</span> <span class="o">=</span> <span class="n">jax_to_numpy</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
-
-        <span class="n">terminated</span> <span class="o">=</span> <span class="n">jax_to_numpy</span><span class="p">(</span><span class="n">terminated</span><span class="p">)</span>
-        <span class="n">truncated</span> <span class="o">=</span> <span class="n">jax_to_numpy</span><span class="p">(</span><span class="n">truncated</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">next_state</span>
 
