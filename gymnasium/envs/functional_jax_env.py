@@ -233,7 +233,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         rng = jrng.split(self.rng, self.num_envs)
 
-        observation = self.func_env.observation(next_state, rng)
+        observation = self.func_env.observation(next_state)
 
         self.state = next_state
 
