@@ -140,14 +140,17 @@ class OneOf(Space[Any]):
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [
-            [i, self.spaces[i].to_jsonable([subsample])[0]]
+            [int(i), self.spaces[i].to_jsonable([subsample])[0]]
             for (i, subsample) in sample_n
         ]
 
     def from_jsonable(self, sample_n: list[list[Any]]) -> list[tuple[Any, ...]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [
-            (space_idx, self.spaces[space_idx].from_jsonable([jsonable_sample])[0])
+            (
+                np.int64(space_idx),
+                self.spaces[space_idx].from_jsonable([jsonable_sample])[0],
+            )
             for space_idx, jsonable_sample in sample_n
         ]
 
