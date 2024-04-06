@@ -367,6 +367,11 @@ def check_env(
             f"The environment ({env}) is different from the unwrapped version ({env.unwrapped}). This could effect the environment checker as the environment most likely has a wrapper applied to it. We recommend using the raw environment for `check_env` using `env.unwrapped`."
         )
 
+    if env.metadata.get("jax", False):
+        env = gym.wrappers.JaxToNumpy(env)
+    elif env.metadata.get("torch", False):
+        env = gym.wrappers.TorchToNumpy(env)
+
     # ============= Check the spaces (observation and action) ================
     if not hasattr(env, "action_space"):
         raise AttributeError(

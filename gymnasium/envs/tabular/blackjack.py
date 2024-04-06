@@ -496,7 +496,7 @@ class BlackjackFunctional(
 class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
     """A Gymnasium Env wrapper for the functional blackjack env."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         """Initializes Gym wrapper for blackjack functional env."""
