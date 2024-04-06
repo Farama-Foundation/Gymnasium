@@ -513,7 +513,7 @@
 <span class="sd">    - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained within the space.</span>
 <span class="sd">    - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained within the space.</span>
 <span class="sd">    - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`</span>
-<span class="sd">    - :attr:`metadata` - The metadata of the environment, i.e. render modes, render fps</span>
+<span class="sd">    - :attr:`metadata` - The metadata of the environment, e.g., `{&quot;render_modes&quot;: [&quot;rgb_array&quot;, &quot;human&quot;], &quot;render_fps&quot;: 30}`. For Jax or Torch, this can be indicated to users with `&quot;jax&quot;=True` or `&quot;torch&quot;=True`.</span>
 <span class="sd">    - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during</span>
 <span class="sd">      ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.</span>
 
