@@ -93,14 +93,16 @@ def _create_text_shared_memory(space: Text, n: int = 1, ctx=mp):
 
 @create_shared_memory.register(OneOf)
 def _create_oneof_shared_memory(space: OneOf, n: int = 1, ctx=mp):
-    return (ctx.Array(np.int32, n),) + _create_tuple_shared_memory(space)
+    return (ctx.Array(np.dtype(np.int64).char, n),) + tuple(
+        create_shared_memory(subspace, n=n, ctx=ctx) for subspace in space.spaces
+    )
 
 
 @create_shared_memory.register(Graph)
 @create_shared_memory.register(Sequence)
 def _create_dynamic_shared_memory(space: Graph | Sequence, n: int = 1, ctx=mp):
     raise TypeError(
-        f"As {space} has a dynamic shape then it is not possible to make a static shared memory."
+        f"As {space} has a dynamic shape so its not possible to make a static shared memory."
     )
 
 
@@ -193,14 +195,15 @@ def _read_text_from_shared_memory(
 def _read_one_of_from_shared_memory(
     space: OneOf, shared_memory, n: int = 1
 ) -> tuple[Any, ...]:
-    sample_indexes = np.frombuffer(shared_memory[0].get_obj(), dtype=space.dtype)
+    sample_indexes = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)
+
     subspace_samples = tuple(
         read_from_shared_memory(subspace, memory, n=n)
         for (memory, subspace) in zip(shared_memory[1:], space.spaces)
     )
     return tuple(
-        (index, sample[index])
-        for index, sample in zip(sample_indexes, subspace_samples)
+        (sample_index, subspace_samples[sample_index][index])
+        for index, sample_index in enumerate(sample_indexes)
     )
 
 
@@ -279,10 +282,14 @@ def _write_text_to_shared_memory(space: Text, index: int, values: str, shared_me
 
 @write_to_shared_memory.register(OneOf)
 def _write_oneof_to_shared_memory(
-    space: OneOf, index: int, values: tuple[Any, ...], shared_memory
+    space: OneOf, index: int, values: tuple[int, Any], shared_memory
 ):
-    destination = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int32)
-    np.copyto(destination[index : index + 1], values[0])
+    subspace_idx, space_value = values
 
-    for value, memory, subspace in zip(values[1], shared_memory[1:], space.spaces):
-        write_to_shared_memory(subspace, index, value, memory)
+    destination = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)
+    np.copyto(destination[index : index + 1], subspace_idx)
+
+    # only the subspace's memory is updated with the sample value, ignoring the other memories as data might not match
+    write_to_shared_memory(
+        space.spaces[subspace_idx], index, space_value, shared_memory[1 + subspace_idx]
+    )

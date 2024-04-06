@@ -33,8 +33,12 @@ def test_shared_memory_create_read_write(space, num, ctx):
 
     try:
         shared_memory = create_shared_memory(space, n=num, ctx=ctx)
-    except TypeError:
-        return
+    except TypeError as err:
+        assert (
+            "has a dynamic shape so its not possible to make a static shared memory."
+            in str(err)
+        )
+        pytest.skip("Skipping space with dynamic shape")
 
     for i, sample in enumerate(samples):
         write_to_shared_memory(space, i, sample, shared_memory)

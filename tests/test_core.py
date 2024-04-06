@@ -118,7 +118,7 @@ def test_example_wrapper(example_env):
             "Can't access `_np_random` of a wrapper, use `.unwrapped._np_random` or `.np_random`."
         ),
     ):
-        print(wrapper_env.access_hidden_np_random())
+        _ = wrapper_env.access_hidden_np_random()
 
 
 class ExampleRewardWrapper(RewardWrapper):

@@ -71,7 +71,8 @@ def test_discrete_actions_out_of_bound(env: gym.Env):
         env (gym.Env): the gymnasium environment
     """
     if env.metadata.get("jax", False):
-        return
+        assert env.spec is not None
+        pytest.skip(f"Skipping jax-based environment ({env.spec.id})")
 
     assert isinstance(env.action_space, spaces.Discrete)
     upper_bound = env.action_space.start + env.action_space.n - 1
@@ -106,7 +107,8 @@ def test_box_actions_out_of_bound(env: gym.Env):
         env (gym.Env): the gymnasium environment
     """
     if env.metadata.get("jax", False):
-        return
+        assert env.spec is not None
+        pytest.skip(f"Skipping jax-based environment ({env.spec.id})")
 
     env.reset(seed=42)
 

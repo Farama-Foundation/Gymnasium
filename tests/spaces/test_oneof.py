@@ -62,6 +62,10 @@ def test_oneof_contains():
     assert (0, np.array([0.5], dtype=np.float32)) in space
     assert (1, np.array([-0.5, -0.5], dtype=np.float32)) in space
 
+    assert (np.int64(0), np.array([0.5], dtype=np.float32)) in space
+
+    assert (np.int32(0), np.array([0.5], dtype=np.float32)) not in space
+
 
 def test_bad_oneof_seed():
     space = OneOf([Box(0, 1), Box(0, 1)])
