@@ -498,7 +498,7 @@
     <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">dlpack</span> <span class="k">as</span> <span class="n">jax_dlpack</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-        <span class="s2">&quot;Jax is not installed therefore cannot call `torch_to_jax`, run `pip install gymnasium[jax]`&quot;</span>
+        <span class="s1">&#39;Jax is not installed therefore cannot call `torch_to_jax`, run `pip install &quot;gymnasium[jax]&quot;`&#39;</span>
     <span class="p">)</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -508,7 +508,7 @@
     <span class="n">Device</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">]</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-        <span class="s2">&quot;Torch is not installed therefore cannot call `torch_to_jax`, run `pip install torch`&quot;</span>
+        <span class="s1">&#39;Torch is not installed therefore cannot call `torch_to_jax`, run `pip install &quot;gymnasium[torch]&quot;`&#39;</span>
     <span class="p">)</span>
 
 

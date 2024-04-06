@@ -490,7 +490,7 @@
     <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-        <span class="s2">&quot;Jax is not installed therefore cannot call `numpy_to_jax`, run `pip install gymnasium[jax]`&quot;</span>
+        <span class="s1">&#39;Jax is not installed therefore cannot call `numpy_to_jax`, run `pip install &quot;gymnasium[jax]&quot;`&#39;</span>
     <span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;JaxToNumpy&quot;</span><span class="p">,</span> <span class="s2">&quot;jax_to_numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy_to_jax&quot;</span><span class="p">]</span>
@@ -619,7 +619,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">jnp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-                <span class="s2">&quot;jax is not installed, run `pip install gymnasium[jax]`&quot;</span>
+                <span class="s1">&#39;Jax is not installed, run `pip install &quot;gymnasium[jax]&quot;`&#39;</span>
             <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
