@@ -37,7 +37,7 @@ class JaxToNumpy(VectorWrapper):
         """
         if jnp is None:
             raise DependencyNotInstalled(
-                "jax is not installed, run `pip install gymnasium[jax]`"
+                'Jax is not installed, run `pip install "gymnasium[jax]"`'
             )
         super().__init__(env)
 

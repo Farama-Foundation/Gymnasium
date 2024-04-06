@@ -26,7 +26,7 @@ try:
     from jax import dlpack as jax_dlpack
 except ImportError:
     raise DependencyNotInstalled(
-        "Jax is not installed therefore cannot call `torch_to_jax`, run `pip install gymnasium[jax]`"
+        'Jax is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[jax]"`'
     )
 
 try:
@@ -36,7 +36,7 @@ try:
     Device = Union[str, torch.device]
 except ImportError:
     raise DependencyNotInstalled(
-        "Torch is not installed therefore cannot call `torch_to_jax`, run `pip install torch`"
+        'Torch is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[torch]"`'
     )
 
 
