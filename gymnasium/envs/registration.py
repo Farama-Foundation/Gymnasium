@@ -754,6 +754,21 @@ def make(
                 f"{e} was raised from the environment creator for {env_spec.id} with kwargs ({env_spec_kwargs})"
             )
 
+    if not isinstance(env, gym.Env):
+        if (
+            str(env.__class__.__base__) == "<class 'gym.core.Env'>"
+            or str(env.__class__.__base__) == "<class 'gym.core.Wrapper'>"
+        ):
+            raise TypeError(
+                "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
+                "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+            )
+        else:
+            raise TypeError(
+                f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
+                "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+            )
+
     # Set the minimal env spec for the environment.
     env.unwrapped.spec = EnvSpec(
         id=env_spec.id,
@@ -919,9 +934,13 @@ def make_vec(
             raise error.Error(
                 f"Custom vector environment can be passed arguments only through kwargs and `vector_kwargs` is not empty ({vector_kwargs})"
             )
-        if len(wrappers) > 0:
+        elif len(wrappers) > 0:
             raise error.Error(
-                "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
+                f"Cannot use `vector_entry_point` vectorization mode with the wrappers argument ({wrappers})."
+            )
+        elif len(env_spec.additional_wrappers) > 0:
+            raise error.Error(
+                f"Cannot use `vector_entry_point` vectorization mode with the additional_wrappers parameter in spec being not empty ({env_spec.additional_wrappers})."
             )
 
         entry_point = env_spec.vector_entry_point

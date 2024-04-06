@@ -13,8 +13,7 @@ try:
     import mujoco
 except ImportError as e:
     raise error.DependencyNotInstalled(
-        "Could not import mujoco"
-        "(HINT: you need to install mujoco, run `pip install gymnasium[mujoco]`.)"
+        'MuJoCo is not installed, run `pip install "gymnasium[mujoco]"`'
     ) from e
 
 
@@ -120,12 +119,6 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         """
         raise NotImplementedError
 
-    def _reset_simulation(self) -> None:
-        """
-        Reset MuJoCo simulation data structures, mjModel and mjData.
-        """
-        raise NotImplementedError
-
     def _step_mujoco_simulation(self, ctrl, n_frames) -> None:
         """
         Step over the MuJoCo simulation.
@@ -151,7 +144,7 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
     ):
         super().reset(seed=seed)
 
-        self._reset_simulation()
+        mujoco.mj_resetData(self.model, self.data)
 
         ob = self.reset_model()
         info = self._get_reset_info()
@@ -159,12 +152,6 @@ class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         if self.render_mode == "human":
             self.render()
         return ob, info
-
-    def set_state(self, qpos, qvel) -> None:
-        """
-        Set the joints position qpos and velocity qvel of the model. Override this method depending on the MuJoCo bindings used.
-        """
-        assert qpos.shape == (self.model.nq,) and qvel.shape == (self.model.nv,)
 
     @property
     def dt(self) -> float:
@@ -209,6 +196,7 @@ class MujocoEnv(BaseMujocoEnv):
         camera_name: Optional[str] = None,
         default_camera_config: Optional[Dict[str, Union[float, int]]] = None,
         max_geom: int = 1000,
+        visual_options: Dict[int, bool] = {},
     ):
         super().__init__(
             model_path,
@@ -232,6 +220,7 @@ class MujocoEnv(BaseMujocoEnv):
             max_geom,
             camera_id,
             camera_name,
+            visual_options,
         )
 
     def _initialize_simulation(
@@ -244,11 +233,12 @@ class MujocoEnv(BaseMujocoEnv):
         data = mujoco.MjData(model)
         return model, data
 
-    def _reset_simulation(self):
-        mujoco.mj_resetData(self.model, self.data)
-
     def set_state(self, qpos, qvel):
-        super().set_state(qpos, qvel)
+        """Set the joints position qpos and velocity qvel of the model.
+
+        Note: `qpos` and `qvel` is not the full physics state for all mujoco models/environments https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjtstate
+        """
+        assert qpos.shape == (self.model.nq,) and qvel.shape == (self.model.nv,)
         self.data.qpos[:] = np.copy(qpos)
         self.data.qvel[:] = np.copy(qvel)
         if self.model.na == 0:

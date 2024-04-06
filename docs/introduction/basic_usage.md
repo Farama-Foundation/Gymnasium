@@ -54,7 +54,7 @@ For gymnasium, the "agent-environment-loop" is implemented below for a single ep
 ```python
 import gymnasium as gym
 
-env = gym.make("LunarLander-v2", render_mode="human")
+env = gym.make("LunarLander-v3", render_mode="human")
 observation, info = env.reset()
 
 episode_over = False

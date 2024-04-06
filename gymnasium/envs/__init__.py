@@ -60,6 +60,7 @@ register(
     vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=200,
     reward_threshold=195.0,
+    disable_env_checker=True,
 )
 
 register(
@@ -68,6 +69,7 @@ register(
     vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=500,
     reward_threshold=475.0,
+    disable_env_checker=True,
 )
 
 register(
@@ -75,20 +77,21 @@ register(
     entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxVectorEnv",
     max_episode_steps=200,
+    disable_env_checker=True,
 )
 
 # Box2d
 # ----------------------------------------
 
 register(
-    id="LunarLander-v2",
+    id="LunarLander-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
     max_episode_steps=1000,
     reward_threshold=200,
 )
 
 register(
-    id="LunarLanderContinuous-v2",
+    id="LunarLanderContinuous-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
     kwargs={"continuous": True},
     max_episode_steps=1000,
@@ -161,11 +164,13 @@ register(
 register(
     id="tabular/Blackjack-v0",
     entry_point="gymnasium.envs.tabular.blackjack:BlackJackJaxEnv",
+    disable_env_checker=True,
 )
 
 register(
     id="tabular/CliffWalking-v0",
     entry_point="gymnasium.envs.tabular.cliffwalking:CliffWalkingJaxEnv",
+    disable_env_checker=True,
 )
 
 
@@ -197,7 +202,7 @@ register(
 
 register(
     id="Pusher-v2",
-    entry_point="gymnasium.envs.mujoco.pucher:PusherEnv",
+    entry_point="gymnasium.envs.mujoco.pusher:PusherEnv",
     max_episode_steps=100,
     reward_threshold=0.0,
 )
@@ -444,7 +449,7 @@ register(
 # --- For shimmy compatibility
 def _raise_shimmy_error(*args: Any, **kwargs: Any):
     raise ImportError(
-        "To use the gym compatibility environments, run `pip install shimmy[gym-v21]` or `pip install shimmy[gym-v26]`"
+        'To use the gym compatibility environments, run `pip install "shimmy[gym-v21]"` or `pip install "shimmy[gym-v26]"`'
     )
 
 

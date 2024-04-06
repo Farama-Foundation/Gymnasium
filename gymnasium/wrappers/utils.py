@@ -1,5 +1,4 @@
 """Utility functions for the wrappers."""
-from collections import OrderedDict
 from functools import singledispatch
 
 import numpy as np
@@ -14,6 +13,7 @@ from gymnasium.spaces import (
     GraphInstance,
     MultiBinary,
     MultiDiscrete,
+    OneOf,
     Sequence,
     Text,
     Tuple,
@@ -118,9 +118,7 @@ def _create_tuple_zero_array(space: Tuple):
 
 @create_zero_array.register(Dict)
 def _create_dict_zero_array(space: Dict):
-    return OrderedDict(
-        {key: create_zero_array(subspace) for key, subspace in space.spaces.items()}
-    )
+    return {key: create_zero_array(subspace) for key, subspace in space.spaces.items()}
 
 
 @create_zero_array.register(Sequence)
@@ -145,3 +143,8 @@ def _create_graph_zero_array(space: Graph):
         edges = np.expand_dims(create_zero_array(space.edge_space), axis=0)
         edge_links = np.zeros((1, 2), dtype=np.int64)
         return GraphInstance(nodes=nodes, edges=edges, edge_links=edge_links)
+
+
+@create_zero_array.register(OneOf)
+def _create_one_of_zero_array(space: OneOf):
+    return 0, create_zero_array(space.spaces[0])

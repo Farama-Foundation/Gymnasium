@@ -34,6 +34,7 @@ class CartPoleParams:
     theta_threshold_radians: float = 12 * 2 * np.pi / 360
     x_threshold: float = 2.4
     x_init: float = 0.05
+    sutton_barto_reward: bool = False
 
     screen_width: int = 600
     screen_height: int = 400
@@ -124,7 +125,12 @@ class CartPoleFunctional(
             | (theta > params.theta_threshold_radians)
         )
 
-        reward = jax.lax.cond(terminated, lambda: 0.0, lambda: 1.0)
+        reward = jax.lax.cond(
+            params.sutton_barto_reward,
+            lambda: jax.lax.cond(terminated, lambda: -1.0, lambda: 0.0),
+            lambda: 1.0,
+        )
+
         return reward
 
     def render_image(
@@ -139,7 +145,7 @@ class CartPoleFunctional(
             from pygame import gfxdraw
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
         screen, clock = render_state
 
@@ -211,7 +217,7 @@ class CartPoleFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
 
         pygame.init()
@@ -226,7 +232,7 @@ class CartPoleFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
         pygame.display.quit()
         pygame.quit()
@@ -239,7 +245,7 @@ class CartPoleFunctional(
 class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
     """Jax-based implementation of the CartPole environment."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
         """Constructor for the CartPole where the kwargs are applied to the functional environment."""
@@ -259,7 +265,7 @@ class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
 class CartPoleJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
     """Jax-based implementation of the vectorized CartPole environment."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(
         self,

@@ -534,6 +534,7 @@ SPACE_KWARGS = [
     {"spaces": {"a": Discrete(3), "b": Discrete(2)}},  # Dict
     {"node_space": Discrete(4), "edge_space": Discrete(3)},  # Graph
     {"space": Discrete(4)},  # Sequence
+    {"spaces": (Discrete(3), Discrete(5))},  # OneOf
 ]
 assert len(SPACE_CLS) == len(SPACE_KWARGS)
 

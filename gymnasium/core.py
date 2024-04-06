@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
 
 import numpy as np
 
+import gymnasium
 from gymnasium import spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
@@ -38,7 +39,7 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained within the space.
     - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained within the space.
     - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`
-    - :attr:`metadata` - The metadata of the environment, i.e. render modes, render fps
+    - :attr:`metadata` - The metadata of the environment, e.g., `{"render_modes": ["rgb_array", "human"], "render_fps": 30}`. For Jax or Torch, this can be indicated to users with `"jax"=True` or `"torch"=True`.
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
       ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.
 
@@ -368,8 +369,14 @@ class Wrapper(
             )
 
             # to avoid reference issues we deepcopy the prior environments spec and add the new information
-            env_spec = deepcopy(env_spec)
-            env_spec.additional_wrappers += (wrapper_spec,)
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.additional_wrappers += (wrapper_spec,)
+            except Exception as e:
+                gymnasium.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec

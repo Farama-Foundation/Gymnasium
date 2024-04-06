@@ -27,7 +27,7 @@ def _modify_space(space: spaces.Space, attribute: str, value):
     "test,space,message",
     [
         [
-            AssertionError,
+            TypeError,
             "error",
             "observation space does not inherit from `gymnasium.spaces.Space`, actual type: <class 'str'>",
         ],
@@ -98,7 +98,7 @@ def test_check_observation_space(test, space, message: str):
     "test,space,message",
     [
         [
-            AssertionError,
+            TypeError,
             "error",
             "action space does not inherit from `gymnasium.spaces.Space`, actual type: <class 'str'>",
         ],

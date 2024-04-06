@@ -246,17 +246,17 @@ def test_check_reset_options():
         [
             AssertionError,
             lambda self, action: (np.random.normal(), 0, False, False, {}),
-            "step observation is not deterministic.",
+            "Deterministic step observations are not equivalent for the same seed and action",
         ],
         [
             AssertionError,
             lambda self, action: (0, np.random.normal(), False, False, {}),
-            "step reward is not deterministic.",
+            "Deterministic step rewards are not equivalent for the same seed and action",
         ],
         [
             AssertionError,
             lambda self, action: (0, 0, False, False, {"value": np.random.normal()}),
-            "step info is not deterministic.",
+            "Deterministic step info are not equivalent for the same seed and action",
         ],
     ],
 )
@@ -267,23 +267,26 @@ def test_check_step_determinism(test, step_func, message: str):
 
 
 @pytest.mark.parametrize(
-    "env,message",
+    "env, error_type, message",
     [
         [
             "Error",
-            "The environment must inherit from the gymnasium.Env class. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.",
+            TypeError,
+            "The environment must inherit from the gymnasium.Env class, actual class: <class 'str'>. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.",
         ],
         [
             GenericTestEnv(action_space=None),
-            "The environment must specify an action space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.",
+            AttributeError,
+            "The environment must specify an action space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.",
         ],
         [
             GenericTestEnv(observation_space=None),
-            "The environment must specify an observation space. See https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/ for more info.",
+            AttributeError,
+            "The environment must specify an observation space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.",
         ],
     ],
 )
-def test_check_env(env: gym.Env, message: str):
+def test_check_env(env: gym.Env, error_type, message: str):
     """Tests the check_env function works as expected."""
-    with pytest.raises(AssertionError, match=f"^{re.escape(message)}$"):
+    with pytest.raises(error_type, match=f"^{re.escape(message)}$"):
         check_env(env)

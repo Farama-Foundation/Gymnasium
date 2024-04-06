@@ -218,7 +218,7 @@ class CliffWalkingFunctional(
             import pygame
         except ImportError:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             )
 
         cell_size = (60, 60)
@@ -302,7 +302,7 @@ class CliffWalkingFunctional(
             import pygame
         except ImportError:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[toy_text]`"
+                'pygame is not installed, run `pip install "gymnasium[toy_text]"`'
             )
         (
             window_surface,
@@ -349,7 +349,7 @@ class CliffWalkingFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[toy-text]`"
+                'pygame is not installed, run `pip install "gymnasium[toy-text]"`'
             ) from e
         pygame.display.quit()
         pygame.quit()
@@ -358,7 +358,7 @@ class CliffWalkingFunctional(
 class CliffWalkingJaxEnv(FunctionalJaxEnv, EzPickle):
     """A Gymnasium Env wrapper for the functional cliffwalking env."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(self, render_mode: str | None = None, **kwargs):
         """Initializes Gym wrapper for cliffwalking functional env."""
