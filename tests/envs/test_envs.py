@@ -63,7 +63,7 @@ def test_all_env_passive_env_checker(spec):
 
     for warning in caught_warnings:
         if not passive_check_pattern.search(str(warning.message)):
-            print(f"Unexpected warning: {warning.message}")
+            raise ValueError(f"Unexpected warning: {warning.message}")
 
 
 # Note that this precludes running this test in multiple threads.
@@ -90,7 +90,7 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
     """
     # Don't check rollout equality if it's a nondeterministic environment.
     if env_spec.nondeterministic is True:
-        return
+        pytest.skip(f"Skipping {env_spec.id} as it is non-deterministic")
 
     env_1 = env_spec.make(disable_env_checker=True)
     env_2 = env_spec.make(disable_env_checker=True)

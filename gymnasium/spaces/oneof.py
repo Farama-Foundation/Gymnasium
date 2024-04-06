@@ -43,6 +43,7 @@ class OneOf(Space[Any]):
             spaces (Iterable[Space]): The spaces that are involved in the cartesian product.
             seed: Optionally, you can use this argument to seed the RNGs of the ``spaces`` to ensure reproducible sampling.
         """
+        assert isinstance(spaces, Iterable), f"{spaces} is not an iterable"
         self.spaces = tuple(spaces)
         assert len(self.spaces) > 0, "Empty `OneOf` spaces are not supported."
         for space in self.spaces:
@@ -105,7 +106,7 @@ class OneOf(Space[Any]):
         Returns:
             Tuple of the subspace's samples
         """
-        subspace_idx = int(self.np_random.integers(0, len(self.spaces)))
+        subspace_idx = self.np_random.integers(0, len(self.spaces), dtype=np.int64)
         subspace = self.spaces[subspace_idx]
         if mask is not None:
             assert isinstance(
@@ -121,9 +122,14 @@ class OneOf(Space[Any]):
 
     def contains(self, x: tuple[int, Any]) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
-        (idx, value) = x
-
-        return isinstance(x, tuple) and self.spaces[idx].contains(value)
+        # subspace_idx, subspace_value = x
+        return (
+            isinstance(x, tuple)
+            and len(x) == 2
+            and isinstance(x[0], (np.int64, int))
+            and 0 <= x[0] < len(self.spaces)
+            and self.spaces[x[0]].contains(x[1])
+        )
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
@@ -134,7 +140,7 @@ class OneOf(Space[Any]):
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [
-            [int(i), self.spaces[i].to_jsonable([subsample])[0]]
+            [i, self.spaces[i].to_jsonable([subsample])[0]]
             for (i, subsample) in sample_n
         ]
 
