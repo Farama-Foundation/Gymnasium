@@ -377,7 +377,7 @@ class ResizeObservation(
             import cv2
         except ImportError as e:
             raise DependencyNotInstalled(
-                "opencv (cv2) is not installed, run `pip install gymnasium[other]`"
+                'opencv (cv2) is not installed, run `pip install "gymnasium[other]"`'
             ) from e
 
         self.shape: Final[tuple[int, int]] = tuple(shape)

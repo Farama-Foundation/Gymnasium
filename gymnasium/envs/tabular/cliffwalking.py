@@ -218,7 +218,7 @@ class CliffWalkingFunctional(
             import pygame
         except ImportError:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             )
 
         cell_size = (60, 60)
@@ -302,7 +302,7 @@ class CliffWalkingFunctional(
             import pygame
         except ImportError:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[toy_text]`"
+                'pygame is not installed, run `pip install "gymnasium[toy_text]"`'
             )
         (
             window_surface,
@@ -349,7 +349,7 @@ class CliffWalkingFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[toy-text]`"
+                'pygame is not installed, run `pip install "gymnasium[toy-text]"`'
             ) from e
         pygame.display.quit()
         pygame.quit()
