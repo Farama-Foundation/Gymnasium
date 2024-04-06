@@ -331,17 +331,17 @@ env_conf = collections.namedtuple("env_conf", "env_name, obs, rew, term, info")
         env_conf("HumanoidStandup", True, False, False, "superset"),
         env_conf("InvertedDoublePendulum", True, True, False, "superset"),
         env_conf("InvertedPendulum", False, True, False, "superset"),
-        env_conf("Pusher", True, True, False, "keys-superset"),
+        env_conf("Pusher", True, True, False, "keys-superset"),  # pusher-v4
         env_conf("Reacher", True, True, False, "keys-equivalence"),
         env_conf("Swimmer", False, False, False, "skip"),
         env_conf("Walker2d", True, True, True, "keys-superset"),
     ],
 )
-def test_identical_behaviour_v45(env_conf):
+def test_identical_behaviour_v45(env_conf, NUM_STEPS: int = 100):
     """Verify that v4 -> v5 transition. Does not change the behaviour of the environments in any unexpected way."""
     if env_conf.env_name == "Pusher" and mujoco.__version__ >= "3.0.0":
-        exit()
-    NUM_STEPS = 100
+        pytest.skip("Pusher-v4 is not compatible with mujoco >= 3")
+
     env_v4 = gym.make(f"{env_conf.env_name}-v4")
     env_v5 = gym.make(f"{env_conf.env_name}-v5")
 
@@ -709,5 +709,8 @@ def test_reset_noise_scale(env_id):
 @pytest.mark.parametrize("version", ["v5", "v4"])
 def test_reset_state(env_name: str, version: str):
     """Asserts that `reset()` properly resets the internal state."""
+    if env_name == "Pusher" and version == "v4" and mujoco.__version__ >= "3.0.0":
+        pytest.skip("Skipping Pusher-v4 as not compatible with mujoco >= 3.0")
+
     env = gym.make(f"{env_name}-{version}")
     check_mujoco_reset_state(env)
