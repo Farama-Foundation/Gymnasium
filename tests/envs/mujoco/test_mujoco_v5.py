@@ -436,7 +436,7 @@ def test_observation_structure(env_name: str, version: str):
     env = gym.make(f"{env_name}-{version}").unwrapped
     assert isinstance(env, MujocoEnv)
     if not hasattr(env, "observation_structure"):
-        return
+        pytest.skip("Environment doesn't have an `observation_structure` attribute")
 
     obs_struct = env.observation_structure
 
