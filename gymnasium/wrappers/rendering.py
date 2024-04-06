@@ -302,7 +302,7 @@ class RecordVideo(
             import moviepy  # noqa: F401
         except ImportError as e:
             raise error.DependencyNotInstalled(
-                "MoviePy is not installed, run `pip install moviepy`"
+                'MoviePy is not installed, run `pip install "gymnasium[other]"`'
             ) from e
 
     def _capture_frame(self):
@@ -397,7 +397,7 @@ class RecordVideo(
                 from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
             except ImportError as e:
                 raise error.DependencyNotInstalled(
-                    "MoviePy is not installed, run `pip install moviepy`"
+                    'MoviePy is not installed, run `pip install "gymnasium[other]"`'
                 ) from e
 
             clip = ImageSequenceClip(self.recorded_frames, fps=self.frames_per_sec)
@@ -510,7 +510,7 @@ class HumanRendering(
             import pygame
         except ImportError:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[box2d]`"
+                'pygame is not installed, run `pip install "gymnasium[box2d]"`'
             )
         if self.env.render_mode == "rgb_array_list":
             last_rgb_array = self.env.render()

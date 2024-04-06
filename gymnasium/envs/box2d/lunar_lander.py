@@ -24,7 +24,7 @@ try:
     )
 except ImportError as e:
     raise DependencyNotInstalled(
-        "Box2D is not installed, run `pip install gymnasium[box2d]`"
+        'Box2D is not installed, run `pip install "gymnasium[box2d]"`'
     ) from e
 
 
@@ -683,7 +683,7 @@ class LunarLander(gym.Env, EzPickle):
             from pygame import gfxdraw
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[box2d]`"
+                'pygame is not installed, run `pip install "gymnasium[box2d]"`'
             ) from e
 
         if self.screen is None and self.render_mode == "human":
