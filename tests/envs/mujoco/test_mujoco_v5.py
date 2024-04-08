@@ -1,3 +1,4 @@
+"""Tests for MuJoCo environments, added for v5 but is used for other versions when applicable"""
 import collections
 import warnings
 
@@ -6,7 +7,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.envs.mujoco.mujoco_env import BaseMujocoEnv, MujocoEnv
+from gymnasium.envs.mujoco.mujoco_env import MujocoEnv
 from gymnasium.envs.mujoco.mujoco_py_env import BaseMujocoPyEnv
 from gymnasium.envs.mujoco.utils import check_mujoco_reset_state
 from gymnasium.error import Error
@@ -90,7 +91,7 @@ def test_verify_info_y_position(env_id: str):
 def test_verify_info_x_velocity(env_name: str, version: str):
     """Asserts that the environment `info['x_velocity']` is properly assigned."""
     env = gym.make(f"{env_name}-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     env.reset()
 
     old_x = env.data.qpos[0]
@@ -107,7 +108,7 @@ def test_verify_info_x_velocity(env_name: str, version: str):
 def test_verify_info_y_velocity(env_id: str):
     """Asserts that the environment `info['y_velocity']` is properly assigned."""
     env = gym.make(env_id).unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     env.reset()
 
     old_y = env.data.qpos[1]
@@ -123,7 +124,7 @@ def test_verify_info_y_velocity(env_id: str):
 def test_verify_info_xy_velocity_xpos(env_id: str):
     """Asserts that the environment `info['x/y_velocity']` is properly assigned, for the ant environment which uses kinmatics for the velocity."""
     env = gym.make(env_id).unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     env.reset()
 
     old_xy = env.get_body_com("torso")[:2].copy()
@@ -146,7 +147,7 @@ def test_verify_info_xy_velocity_com(env_id: str):
         return (np.sum(mass * xpos, axis=0) / np.sum(mass))[0:2].copy()
 
     env = gym.make(env_id).unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     env.reset()
 
     old_xy = mass_center(env.model, env.data)
@@ -178,7 +179,7 @@ def test_verify_info_xy_velocity_com(env_id: str):
 def test_verify_reward_survive(env_name: str, version: str):
     """Assert that `reward_survive` is 0 on `terminal` states and not 0 on non-`terminal` states."""
     env = gym.make(f"{env_name}-{version}", reset_noise_scale=0).unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     env.reset(seed=0)
     env.action_space.seed(1)
 
@@ -359,7 +360,7 @@ def test_ant_com(version: str):
     """Verify the kinmatic behaviour of the ant."""
     # `env` contains `data : MjData` and `model : MjModel`
     env = gym.make(f"Ant-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     env.reset()  # randomly initlizies the `data.qpos` and `data.qvel`, calls mujoco.mj_forward(env.model, env.data)
 
     x_position_before = env.data.qpos[0]
@@ -380,7 +381,7 @@ def test_ant_com(version: str):
 def test_set_state(version: str):
     """Simple Test to verify that `mujocoEnv.set_state()` works correctly."""
     env = gym.make(f"Hopper-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     env.reset()
     new_qpos = np.array(
         [0.00136962, 1.24769787, -0.00459026, -0.00483472, 0.0031327, 0.00412756]
@@ -403,7 +404,7 @@ def test_set_state(version: str):
 def test_distance_from_origin_info(env_id: str):
     """Verify that `info"distance_from_origin"` is correct."""
     env = gym.make(env_id).unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     env.reset()
 
     _, _, _, _, info = env.step(env.action_space.sample())
@@ -485,7 +486,7 @@ def test_reset_info(env_name: str, version: str):
 def test_inverted_double_pendulum_max_height(version: str):
     """Verify the max height of Inverted Double Pendulum."""
     env = gym.make(f"InvertedDoublePendulum-{version}", reset_noise_scale=0).unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     env.reset()
 
     y = env.data.site_xpos[0][2]
@@ -496,7 +497,7 @@ def test_inverted_double_pendulum_max_height(version: str):
 def test_inverted_double_pendulum_max_height_old(version: str):
     """Verify the max height of Inverted Double Pendulum (v4 does not have `reset_noise_scale` argument)."""
     env = gym.make(f"InvertedDoublePendulum-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     env.set_state(env.init_qpos, env.init_qvel)
 
     y = env.data.site_xpos[0][2]
@@ -508,7 +509,7 @@ def test_inverted_double_pendulum_max_height_old(version: str):
 def test_model_object_count(version: str):
     """Verify that all the objects of the model are loaded, mostly useful for using non-mujoco simulator."""
     env = gym.make(f"Ant-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 15
     assert env.model.nv == 14
     assert env.model.nu == 8
@@ -519,7 +520,7 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 0
 
     env = gym.make(f"HalfCheetah-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 9
     assert env.model.nv == 9
     assert env.model.nu == 6
@@ -530,7 +531,7 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 0
 
     env = gym.make(f"Hopper-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 6
     assert env.model.nv == 6
     assert env.model.nu == 3
@@ -541,7 +542,7 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 0
 
     env = gym.make(f"Humanoid-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 24
     assert env.model.nv == 23
     assert env.model.nu == 17
@@ -552,7 +553,7 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 2
 
     env = gym.make(f"HumanoidStandup-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 24
     assert env.model.nv == 23
     assert env.model.nu == 17
@@ -563,7 +564,7 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 2
 
     env = gym.make(f"InvertedDoublePendulum-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 3
     assert env.model.nv == 3
     assert env.model.nu == 1
@@ -574,7 +575,7 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 0
 
     env = gym.make(f"InvertedPendulum-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 2
     assert env.model.nv == 2
     assert env.model.nu == 1
@@ -585,7 +586,7 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 0
 
     env = gym.make(f"Pusher-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 11
     assert env.model.nv == 11
     assert env.model.nu == 7
@@ -597,7 +598,7 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 0
 
     env = gym.make(f"Reacher-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 4
     assert env.model.nv == 4
     assert env.model.nu == 2
@@ -609,7 +610,7 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 0
 
     env = gym.make(f"Swimmer-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 5
     assert env.model.nv == 5
     assert env.model.nu == 2
@@ -621,7 +622,7 @@ def test_model_object_count(version: str):
     assert env.model.ntendon == 0
 
     env = gym.make(f"Walker2d-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+    assert isinstance(env, (MujocoEnv, BaseMujocoPyEnv))
     assert env.model.nq == 9
     assert env.model.nv == 9
     assert env.model.nu == 6
@@ -659,8 +660,8 @@ def test_dt():
     env_b = gym.make(
         "Ant-v5", include_cfrc_ext_in_observation=False, frame_skip=1
     ).unwrapped
-    assert isinstance(env_a, BaseMujocoEnv)
-    assert isinstance(env_b, BaseMujocoEnv)
+    assert isinstance(env_a, MujocoEnv)
+    assert isinstance(env_b, MujocoEnv)
     env_b.model.opt.timestep = 0.05
 
     assert env_a.dt == env_b.dt
@@ -695,7 +696,7 @@ def test_dt():
 )
 def test_reset_noise_scale(env_id):
     """Checks that when `reset_noise_scale=0` we have deterministic initialization."""
-    env: BaseMujocoEnv = gym.make(env_id, reset_noise_scale=0).unwrapped
+    env: MujocoEnv = gym.make(env_id, reset_noise_scale=0).unwrapped
     env.reset()
 
     assert np.all(env.data.qpos == env.init_qpos)
