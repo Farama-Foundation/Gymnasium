@@ -1,4 +1,4 @@
-"""Tests for MuJoCo environments, added for v5 but is used for other versions when applicable"""
+"""Tests for MuJoCo environments, added for v5 but is used for other versions when applicable."""
 import collections
 import warnings
 
