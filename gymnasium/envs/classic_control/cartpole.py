@@ -545,7 +545,7 @@ class CartPoleVectorEnv(VectorEnv):
                     for _ in range(self.num_envs)
                 ]
         if self.clocks is None:
-            self.clock = [pygame.time.Clock() for _ in range(self.num_envs)]
+            self.clocks = [pygame.time.Clock() for _ in range(self.num_envs)]
 
         world_width = self.x_threshold * 2
         scale = self.screen_width / world_width
@@ -557,15 +557,13 @@ class CartPoleVectorEnv(VectorEnv):
         if self.state is None:
             return None
 
-        for state, screen, clock in zip(self.state, self.screens, self.clocks):
-            x = self.state.T
-
+        for state, screen, clock in zip(self.state.T, self.screens, self.clocks):
             self.surf = pygame.Surface((self.screen_width, self.screen_height))
             self.surf.fill((255, 255, 255))
 
             l, r, t, b = -cartwidth / 2, cartwidth / 2, cartheight / 2, -cartheight / 2
             axleoffset = cartheight / 4.0
-            cartx = x[0] * scale + self.screen_width / 2.0  # MIDDLE OF CART
+            cartx = state[0] * scale + self.screen_width / 2.0  # MIDDLE OF CART
             carty = 100  # TOP OF CART
             cart_coords = [(l, b), (l, t), (r, t), (r, b)]
             cart_coords = [(c[0] + cartx, c[1] + carty) for c in cart_coords]
@@ -581,7 +579,7 @@ class CartPoleVectorEnv(VectorEnv):
 
             pole_coords = []
             for coord in [(l, b), (l, t), (r, t), (r, b)]:
-                coord = pygame.math.Vector2(coord).rotate_rad(-x[2])
+                coord = pygame.math.Vector2(coord).rotate_rad(-state[2])
                 coord = (coord[0] + cartx, coord[1] + carty + axleoffset)
                 pole_coords.append(coord)
             gfxdraw.aapolygon(self.surf, pole_coords, (202, 152, 101))
