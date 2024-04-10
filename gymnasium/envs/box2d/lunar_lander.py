@@ -24,7 +24,7 @@ try:
     )
 except ImportError as e:
     raise DependencyNotInstalled(
-        'Box2D is not installed, run `pip install "gymnasium[box2d]"`'
+        'Box2D is not installed, you can install it by run `pip install swig` followed by `pip install "gymnasium[box2d]"`'
     ) from e
 
 
