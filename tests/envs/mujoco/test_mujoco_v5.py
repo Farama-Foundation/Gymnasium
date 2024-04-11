@@ -593,8 +593,12 @@ def test_model_object_count(version: str):
         assert env.model.nv == 11
         assert env.model.nu == 7
         assert env.model.nbody == 13
-        if mujoco.__version__ >= "3.1.2":
+        if mujoco.__version__ >= "3.1.4":
+            assert env.model.nbvh == 7
+        elif mujoco.__version__ >= "3.1.2":
             assert env.model.nbvh == 8
+        else:
+            assert env.model.nbvh == 18
         assert env.model.njnt == 11
         assert env.model.ngeom == 21
         assert env.model.ntendon == 0
