@@ -702,6 +702,12 @@ vectorized environments.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.metadata">
+<span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'render_modes':</span> <span class="pre">[]}</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.metadata" title="Link to this definition">#</a></dt>
+<dd><p>The metadata of the environment containing rendering modes, rendering fps, etc</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.render_mode">
 <span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">render_mode</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.render_mode" title="Link to this definition">#</a></dt>
 <dd><p>The render mode of the environment which should follow similar specifications to <cite>Env.render_mode</cite>.</p>
@@ -840,6 +846,7 @@ the seed will take the value -1.</p>
 <li><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_action_space"><code class="docutils literal notranslate"><span class="pre">VectorEnv.single_action_space</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_observation_space"><code class="docutils literal notranslate"><span class="pre">VectorEnv.single_observation_space</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.vector.VectorEnv.spec"><code class="docutils literal notranslate"><span class="pre">VectorEnv.spec</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.metadata"><code class="docutils literal notranslate"><span class="pre">VectorEnv.metadata</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.vector.VectorEnv.render_mode"><code class="docutils literal notranslate"><span class="pre">VectorEnv.render_mode</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.vector.VectorEnv.closed"><code class="docutils literal notranslate"><span class="pre">VectorEnv.closed</span></code></a></li>
 </ul>
