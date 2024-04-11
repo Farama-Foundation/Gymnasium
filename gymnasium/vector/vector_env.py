@@ -92,6 +92,9 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         :func:`make_vec` is the equivalent function to :func:`make` for vector environments.
     """
 
+    # Set this in SOME subclasses
+    metadata: dict[str, Any] = {"render_modes": []}
+
     spec: EnvSpec | None = None
     render_mode: str | None = None
     closed: bool = False
@@ -445,6 +448,11 @@ class VectorWrapper(VectorEnv):
     def render_mode(self) -> tuple[RenderFrame, ...] | None:
         """Returns the `render_mode` from the base environment."""
         return self.env.render_mode
+
+    @property
+    def metadata(self) -> dict[str, Any]:
+        """Returns the `metadata` from the base environment."""
+        return self.env.metadata
 
     @property
     def np_random(self) -> np.random.Generator:

@@ -53,6 +53,10 @@ vector/utils
 
     The ``EnvSpec`` of the environment normally set during :py:meth:`gymnasium.make_vec`
 
+.. autoattribute:: gymnasium.vector.VectorEnv.metadata
+
+    The metadata of the environment containing rendering modes, rendering fps, etc
+
 .. autoattribute:: gymnasium.vector.VectorEnv.render_mode
 
     The render mode of the environment which should follow similar specifications to `Env.render_mode`.
