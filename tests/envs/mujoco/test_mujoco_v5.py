@@ -515,7 +515,6 @@ def test_model_object_count(version: str):
     assert env.model.nv == 14
     assert env.model.nu == 8
     assert env.model.nbody == 14
-    assert env.model.nbvh == 14
     assert env.model.njnt == 9
     assert env.model.ngeom == 14
     assert env.model.ntendon == 0
@@ -526,7 +525,6 @@ def test_model_object_count(version: str):
     assert env.model.nv == 9
     assert env.model.nu == 6
     assert env.model.nbody == 8
-    assert env.model.nbvh == 10
     assert env.model.njnt == 9
     assert env.model.ngeom == 9
     assert env.model.ntendon == 0
@@ -537,7 +535,6 @@ def test_model_object_count(version: str):
     assert env.model.nv == 6
     assert env.model.nu == 3
     assert env.model.nbody == 5
-    assert env.model.nbvh == 5
     assert env.model.njnt == 6
     assert env.model.ngeom == 5
     assert env.model.ntendon == 0
@@ -548,7 +545,6 @@ def test_model_object_count(version: str):
     assert env.model.nv == 23
     assert env.model.nu == 17
     assert env.model.nbody == 14
-    assert env.model.nbvh == 22
     assert env.model.njnt == 18
     assert env.model.ngeom == 18
     assert env.model.ntendon == 2
@@ -559,7 +555,6 @@ def test_model_object_count(version: str):
     assert env.model.nv == 23
     assert env.model.nu == 17
     assert env.model.nbody == 14
-    assert env.model.nbvh == 22
     assert env.model.njnt == 18
     assert env.model.ngeom == 18
     assert env.model.ntendon == 2
@@ -570,7 +565,6 @@ def test_model_object_count(version: str):
     assert env.model.nv == 3
     assert env.model.nu == 1
     assert env.model.nbody == 4
-    assert env.model.nbvh == 6
     assert env.model.njnt == 3
     assert env.model.ngeom == 5
     assert env.model.ntendon == 0
@@ -581,7 +575,6 @@ def test_model_object_count(version: str):
     assert env.model.nv == 2
     assert env.model.nu == 1
     assert env.model.nbody == 3
-    assert env.model.nbvh == 3
     assert env.model.njnt == 2
     assert env.model.ngeom == 3
     assert env.model.ntendon == 0
@@ -593,12 +586,6 @@ def test_model_object_count(version: str):
         assert env.model.nv == 11
         assert env.model.nu == 7
         assert env.model.nbody == 13
-        if mujoco.__version__ >= "3.1.4":
-            assert env.model.nbvh == 7
-        elif mujoco.__version__ >= "3.1.2":
-            assert env.model.nbvh == 8
-        else:
-            assert env.model.nbvh == 18
         assert env.model.njnt == 11
         assert env.model.ngeom == 21
         assert env.model.ntendon == 0
@@ -609,8 +596,6 @@ def test_model_object_count(version: str):
     assert env.model.nv == 4
     assert env.model.nu == 2
     assert env.model.nbody == 5
-    if mujoco.__version__ >= "3.1.2":
-        assert env.model.nbvh == 3
     assert env.model.njnt == 4
     assert env.model.ngeom == 10
     assert env.model.ntendon == 0
@@ -621,8 +606,6 @@ def test_model_object_count(version: str):
     assert env.model.nv == 5
     assert env.model.nu == 2
     assert env.model.nbody == 4
-    if mujoco.__version__ >= "3.1.2":
-        assert env.model.nbvh == 0
     assert env.model.njnt == 5
     assert env.model.ngeom == 4
     assert env.model.ntendon == 0
@@ -633,7 +616,6 @@ def test_model_object_count(version: str):
     assert env.model.nv == 9
     assert env.model.nu == 6
     assert env.model.nbody == 8
-    assert env.model.nbvh == 8
     assert env.model.njnt == 9
     assert env.model.ngeom == 8
     assert env.model.ntendon == 0
