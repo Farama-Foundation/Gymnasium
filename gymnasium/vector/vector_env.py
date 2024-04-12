@@ -347,7 +347,6 @@ class VectorWrapper(VectorEnv):
         self._action_space: gym.Space | None = None
         self._single_observation_space: gym.Space | None = None
         self._single_action_space: gym.Space | None = None
-
         self._metadata: dict[str, Any] | None = None
 
     def reset(
@@ -385,34 +384,6 @@ class VectorWrapper(VectorEnv):
     def __repr__(self):
         """Return the string representation of the vectorized environment."""
         return f"<{self.__class__.__name__}, {self.env}>"
-
-    @property
-    def metadata(self):
-        if self._metadata is None:
-            return self._metadata
-        return self.env.metadata
-
-    @metadata.setter
-    def metadata(self, value):
-        self._metadata = value
-
-    @property
-    def spec(self) -> EnvSpec | None:
-        """Gets the specification of the wrapped environment."""
-        return self.env.spec
-
-    @property
-    def render_mode(self) -> tuple[RenderFrame, ...] | None:
-        """Returns the `render_mode` from the base environment."""
-        return self.env.render_mode
-
-    @property
-    def closed(self):
-        return self.env.closed
-
-    @closed.setter
-    def closed(self, value: bool):
-        self.env.closed = value
 
     @property
     def observation_space(self) -> gym.Space:
@@ -483,6 +454,34 @@ class VectorWrapper(VectorEnv):
     @property
     def np_random_seed(self) -> int | None:
         return self.env.np_random_seed
+
+    @property
+    def metadata(self):
+        if self._metadata is None:
+            return self._metadata
+        return self.env.metadata
+
+    @metadata.setter
+    def metadata(self, value):
+        self._metadata = value
+
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Gets the specification of the wrapped environment."""
+        return self.env.spec
+
+    @property
+    def render_mode(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the `render_mode` from the base environment."""
+        return self.env.render_mode
+
+    @property
+    def closed(self):
+        return self.env.closed
+
+    @closed.setter
+    def closed(self, value: bool):
+        self.env.closed = value
 
 
 class VectorObservationWrapper(VectorWrapper):
