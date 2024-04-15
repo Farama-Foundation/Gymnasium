@@ -143,6 +143,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     ## Version History
     * v5:
         - Minimum `mujoco` version is now 2.3.3.
+        - Fixed bug: increased the density of the object to be higher than air (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
         - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
         - Added `xml_file` argument.
