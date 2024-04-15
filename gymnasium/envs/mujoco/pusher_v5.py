@@ -133,12 +133,12 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('Pusher-v5', xml_file=...)
     ```
 
-    | Parameter               | Type       | Default      |Description                                               |
-    |-------------------------|------------|--------------|----------------------------------------------------------|
-    | `xml_file`              | **str**    |`"pusher.xml"`| Path to a MuJoCo model                                   |
-    | `reward_near_weight`    | **float**  | `0.5`        | Weight for _reward_near_ term (see `Rewards` section)    |
-    | `reward_dist_weight`    | **float**  | `1`          | Weight for _reward_dist_ term (see `Rewards` section)    |
-    | `reward_control_weight` | **float**  | `0.1`        | Weight for _reward_control_ term (see `Rewards` section) |
+    | Parameter               | Type       | Default         |Description                                               |
+    |-------------------------|------------|-----------------|----------------------------------------------------------|
+    | `xml_file`              | **str**    |`"pusher_v5.xml"`| Path to a MuJoCo model                                   |
+    | `reward_near_weight`    | **float**  | `0.5`           | Weight for _reward_near_ term (see `Rewards` section)    |
+    | `reward_dist_weight`    | **float**  | `1`             | Weight for _reward_dist_ term (see `Rewards` section)    |
+    | `reward_control_weight` | **float**  | `0.1`           | Weight for _reward_control_ term (see `Rewards` section) |
 
     ## Version History
     * v5:
@@ -167,7 +167,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file: str = "pusher.xml",
+        xml_file: str = "pusher_v5.xml",
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         reward_near_weight: float = 0.5,
