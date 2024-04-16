@@ -210,7 +210,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             self.steps_beyond_terminated = 0
             if self._sutton_barto_reward:
                 reward = -1.0
-            elif not self._sutton_barto_reward:
+            else:
                 reward = 1.0
         else:
             if self.steps_beyond_terminated == 0:
@@ -223,7 +223,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             self.steps_beyond_terminated += 1
             if self._sutton_barto_reward:
                 reward = -1.0
-            elif not self._sutton_barto_reward:
+            else:
                 reward = 0.0
 
         if self.render_mode == "human":
@@ -469,10 +469,10 @@ class CartPoleVectorEnv(VectorEnv):
 
         truncated = self.steps >= self.max_episode_steps
 
-        if self._sutton_barto_reward is False:
-            reward = np.ones_like(terminated, dtype=np.float32)
-        elif self._sutton_barto_reward is True:
+        if self._sutton_barto_reward is True:
             reward = -np.array(terminated, dtype=np.float32)
+        else:
+            reward = np.ones_like(terminated, dtype=np.float32)
 
         # Reset all environments which terminated or were truncated in the last step
         self.state[:, self.prev_done] = self.np_random.uniform(
@@ -542,7 +542,9 @@ class CartPoleVectorEnv(VectorEnv):
         cartheight = 30.0
 
         if self.state is None:
-            raise ValueError(f"Cartpole's state is None, it probably hasn't be reset yet.")
+            raise ValueError(
+                "Cartpole's state is None, it probably hasn't be reset yet."
+            )
 
         for x, screen in zip(self.state.T, self.screens):
             assert isinstance(x, np.ndarray) and x.shape == (4,)
@@ -595,9 +597,7 @@ class CartPoleVectorEnv(VectorEnv):
             screen.blit(self.surf, (0, 0))
 
         return [
-            np.transpose(
-                np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
-            )
+            np.transpose(np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2))
             for screen in self.screens
         ]
 

@@ -453,11 +453,13 @@ class VectorWrapper(VectorEnv):
 
     @property
     def np_random_seed(self) -> int | None:
+        """The seeds of the vector environment's internal :attr:`_np_random`."""
         return self.env.np_random_seed
 
     @property
     def metadata(self):
-        if self._metadata is None:
+        """The metadata of the vector environment."""
+        if self._metadata is not None:
             return self._metadata
         return self.env.metadata
 
@@ -477,6 +479,7 @@ class VectorWrapper(VectorEnv):
 
     @property
     def closed(self):
+        """If the environment has closes."""
         return self.env.closed
 
     @closed.setter

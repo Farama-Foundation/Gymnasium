@@ -1,3 +1,4 @@
+"""File for rendering of vector-based environments."""
 from __future__ import annotations
 
 from copy import deepcopy
@@ -7,35 +8,44 @@ import numpy as np
 
 from gymnasium.core import ActType, ObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.vector import VectorWrapper, VectorEnv
+from gymnasium.vector import VectorEnv, VectorWrapper
 from gymnasium.vector.vector_env import ArrayType
 
 
 class HumanRendering(VectorWrapper):
+    """Adds support for Human-based Rendering for Vector-based environments."""
 
     ACCEPTED_RENDER_MODES = [
         "rgb_array",
         "rgb_array_list",
         "depth_array",
-        "depth_array_list"
+        "depth_array_list",
     ]
 
     def __init__(self, env: VectorEnv, screen_size: tuple[int, int] | None = None):
+        """Constructor for Human Rendering of Vector-based environments.
+
+        Args:
+            env: The vector environment
+            screen_size: The rendering screen size otherwise the environment sub-env render size is used
+        """
         VectorWrapper.__init__(self, env)
 
-        assert self.env.render_mode in self.ACCEPTED_RENDER_MODES, f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
         assert (
-                "render_fps" in self.env.metadata
+            self.env.render_mode in self.ACCEPTED_RENDER_MODES
+        ), f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
+        assert (
+            "render_fps" in self.env.metadata
         ), "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
 
         self.screen_size = screen_size
+        self.scaled_subenv_size, self.num_rows, self.num_cols = None, None, None
         self.window = None
         self.clock = None
 
         if "human" not in self.metadata["render_modes"]:
             self.metadata = deepcopy(self.env.metadata)
             self.metadata["render_modes"].append("human")
-
 
     @property
     def render_mode(self) -> str:
@@ -73,25 +83,83 @@ class HumanRendering(VectorWrapper):
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic-control]`"
             )
+
+        assert self.env.render_mode is not None
         if self.env.render_mode.endswith("_last"):
-            last_rgb_arrays = self.env.render()
-            assert isinstance(last_rgb_arrays, list)
-            last_rgb_arrays = last_rgb_arrays[-1]
+            subenv_renders = self.env.render()
+            assert isinstance(subenv_renders, list)
+            subenv_renders = subenv_renders[-1]
         else:
-            last_rgb_arrays = self.env.render()
+            subenv_renders = self.env.render()
 
-        assert len(last_rgb_arrays) == self.num_envs
-        assert all(isinstance(array, np.ndarray) for array in last_rgb_arrays), f'Expected `env.render()` to return a numpy array, actually returned {type(last_rgb_array)}'
+        assert subenv_renders is not None
+        assert len(subenv_renders) == self.num_envs
+        assert all(
+            isinstance(render, np.ndarray) for render in subenv_renders
+        ), f"Expected `env.render()` to return a numpy array, actually returned {[type(render) for render in subenv_renders]}"
 
-        rgb_arrays = np.array(last_rgb_arrays, dtype=np.uint8)
-        rgb_array = np.transpose(rgb_arrays, axes=(0, 2, 1, 3))
+        subenv_renders = np.array(subenv_renders, dtype=np.uint8)
+        subenv_renders = np.transpose(subenv_renders, axes=(0, 2, 1, 3))
+        # shape = (num envs, width, height, channels)
 
         if self.screen_size is None:
-            self.screen_size = rgb_array.shape[:2]
+            self.screen_size = subenv_renders.shape[1:3]
 
-        assert (
-            self.screen_size == rgb_array.shape[:2]
-        ), f"The shape of the rgb array has changed from {self.screen_size} to {rgb_array.shape[:2]}"
+        if self.scaled_subenv_size is None:
+            subenv_size = subenv_renders.shape[1:3]
+            width_ratio = subenv_size[0] / self.screen_size[0]
+            height_ratio = subenv_size[1] / self.screen_size[1]
+
+            rows, cols = 1, 1
+            while rows * cols < self.num_envs:
+                row_ratio = rows * height_ratio
+                col_ratio = cols * width_ratio
+
+                if row_ratio == col_ratio:
+                    rows, cols = rows + 1, cols + 1
+                elif row_ratio > col_ratio:
+                    cols += 1
+                else:
+                    rows += 1
+
+            assert rows * cols >= self.num_envs
+
+            scaling_factor = min(
+                self.screen_size[0] / (cols * subenv_size[0]),
+                self.screen_size[1] / (rows * subenv_size[1]),
+            )
+            assert (cols * subenv_size[0] * scaling_factor == self.screen_size[0]) or (
+                rows * subenv_size[1] * scaling_factor == self.screen_size[1]
+            )
+            return rows, cols, scaling_factor
+
+            assert self.num_rows * self.num_cols >= self.num_envs
+            assert self.scaled_subenv_size[0] * self.num_cols <= self.screen_size[0]
+            assert self.scaled_subenv_size[1] * self.num_rows <= self.screen_size[1]
+
+        try:
+            import cv2
+        except ImportError as e:
+            raise DependencyNotInstalled(
+                'opencv (cv2) is not installed, run `pip install "gymnasium[other]"`'
+            ) from e
+
+        merged_rgb_array = np.zeros(self.screen_size + (3,), dtype=np.uint8)
+        i = 0
+        for x in np.arange(
+            0, self.screen_size[0], self.scaled_subenv_size[0], dtype=np.int32
+        ):
+            for y in np.arange(
+                0, self.screen_size[1], self.scaled_subenv_size[1], dtype=np.int32
+            ):
+                scaled_render = cv2.resize(
+                    subenv_renders[i], self.scaled_subenv_size[::-1]
+                )
+                merged_rgb_array[
+                    x : x + self.scaled_subenv_size[0],
+                    y : y + self.scaled_subenv_size[1],
+                ] = scaled_render
+                i += 1
 
         if self.window is None:
             pygame.init()
@@ -101,7 +169,7 @@ class HumanRendering(VectorWrapper):
         if self.clock is None:
             self.clock = pygame.time.Clock()
 
-        surf = pygame.surfarray.make_surface(rgb_array)
+        surf = pygame.surfarray.make_surface(merged_rgb_array)
         self.window.blit(surf, (0, 0))
         pygame.event.pump()
         self.clock.tick(self.metadata["render_fps"])

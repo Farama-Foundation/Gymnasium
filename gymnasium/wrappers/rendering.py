@@ -460,7 +460,7 @@ class HumanRendering(
         "rgb_array",
         "rgb_array_list",
         "depth_array",
-        "depth_array_list"
+        "depth_array_list",
     ]
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
@@ -472,7 +472,9 @@ class HumanRendering(
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
-        assert self.env.render_mode in self.ACCEPTED_RENDER_MODES, f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
+        assert (
+            self.env.render_mode in self.ACCEPTED_RENDER_MODES
+        ), f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
         assert (
             "render_fps" in self.env.metadata
         ), "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
@@ -516,6 +518,7 @@ class HumanRendering(
             raise DependencyNotInstalled(
                 'pygame is not installed, run `pip install "gymnasium[classic-control]"`'
             )
+        assert self.env.render_mode is not None
         if self.env.render_mode.endswith("_list"):
             last_rgb_array = self.env.render()
             assert isinstance(last_rgb_array, list)
@@ -523,7 +526,9 @@ class HumanRendering(
         else:
             last_rgb_array = self.env.render()
 
-        assert isinstance(last_rgb_array, np.ndarray), f'Expected `env.render()` to return a numpy array, actually returned {type(last_rgb_array)}'
+        assert isinstance(
+            last_rgb_array, np.ndarray
+        ), f"Expected `env.render()` to return a numpy array, actually returned {type(last_rgb_array)}"
 
         rgb_array = np.transpose(last_rgb_array, axes=(1, 0, 2))
 

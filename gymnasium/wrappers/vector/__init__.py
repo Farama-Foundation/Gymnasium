@@ -4,6 +4,7 @@ import importlib
 
 from gymnasium.wrappers.vector.common import RecordEpisodeStatistics
 from gymnasium.wrappers.vector.dict_info_to_list import DictInfoToList
+from gymnasium.wrappers.vector.rendering import HumanRendering
 from gymnasium.wrappers.vector.stateful_observation import NormalizeObservation
 from gymnasium.wrappers.vector.stateful_reward import NormalizeReward
 from gymnasium.wrappers.vector.vectorize_action import (
@@ -28,7 +29,6 @@ from gymnasium.wrappers.vector.vectorize_reward import (
     TransformReward,
     VectorizeTransformReward,
 )
-from gymnasium.wrappers.vector.rendering import HumanRendering
 
 
 __all__ = [
