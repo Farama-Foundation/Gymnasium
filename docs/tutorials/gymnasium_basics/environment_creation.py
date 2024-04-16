@@ -471,7 +471,7 @@ class GridWorldEnv(gym.Env):
 # contains the registration code. For the GridWorld env, the registration
 # code is run by importing ``gymnasium_env`` so if it were not possible to
 # import gymnasium_env explicitly, you could register while making by
-# ``env = gymnasium.make('gymnasium_env:gymnasium_env/GridWorld-v0)``. This
+# ``env = gymnasium.make('gymnasium_env:gymnasium_env/GridWorld-v0')``. This
 # is especially useful when you’re allowed to pass only the environment ID
 # into a third-party codebase (eg. learning library). This lets you
 # register your environment without needing to edit the library’s source
