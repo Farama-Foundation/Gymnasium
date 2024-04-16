@@ -2,16 +2,26 @@
 :tocdepth: 2
 ```
 
-# Third-Party Environments
+## First-Party Environments
+The Farama Foundation maintains a number of other [projects](https://farama.org/projects), which use the Gymnasium API, environments include:
 
-The Farama Foundation maintains a number of other [projects](https://farama.org/projects), most of which use Gymnasium. Topics include:
-multi-agent RL ([PettingZoo](https://pettingzoo.farama.org/)),
-offline-RL ([Minari](https://minari.farama.org/)),
 gridworlds ([Minigrid](https://minigrid.farama.org/)),
 robotics ([Gymnasium-Robotics](https://robotics.farama.org/)),
+3D navigation ([Miniworld](https://miniworld.farama.org/)), 
+web interaction ([MiniWoB++](https://miniwob.farama.org/))
+arcade games ([Arcade Learning Environment](https://github.com/Farama-Foundation/Arcade-Learning-Environment))
+Doom ([ViZDoom](https://vizdoom.farama.org/))
+Meta-objective robotics ([Metaworld](https://metaworld.farama.org/))
+autonomous driving ([HighwayEnv](https://highway-env.farama.org/))
+Retro Games ([stable-retro](https://github.com/Farama-Foundation/stable-retro)), and many more.
+
+The Farama Foundation also maintains alternate APIs for RL, including:
+
+multi-agent RL ([PettingZoo](https://pettingzoo.farama.org/)),
+offline-RL ([Minari](https://minari.farama.org/)),
 multi-objective RL ([MO-Gymnasium](https://mo-gymnasium.farama.org/))
-many-agent RL ([MAgent2](https://magent2.farama.org/)),
-3D navigation ([Miniworld](https://miniworld.farama.org/)), and many more.
+goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)),
+
 
 ## Third-party environments with Gymnasium
 
@@ -82,13 +92,6 @@ An environment for guiding automated theorem provers based on saturation algorit
 
 Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
 
-### [highway-env: Autonomous driving and tactical decision-making tasks](https://github.com/eleurent/highway-env)
-
-![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
-![GitHub stars](https://img.shields.io/github/stars/eleurent/highway-env)
-
-An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control.
-
 ### [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.2-blue)
@@ -144,13 +147,6 @@ spark-sched-sim simulates Spark clusters for RL-based job scheduling algorithms.
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
 ![GitHub stars](https://img.shields.io/github/stars/ArchieGertsman/spark-sched-sim)
-
-### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/Farama-Foundation/stable-retro)
-
-![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
-![GitHub stars](https://img.shields.io/github/stars/Farama-Foundation/stable-retro)
-
-Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn classic video games into Gymnasium environments.
 
 ### [sumo-rl: Reinforcement Learning using SUMO traffic simulator](https://github.com/LucasAlegre/sumo-rl)
 
