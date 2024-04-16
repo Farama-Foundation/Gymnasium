@@ -613,7 +613,7 @@ class AsyncVectorEnv(VectorEnv):
                 f"Trying to operate on `{type(self).__name__}`, after a call to `close()`."
             )
 
-    def _raise_if_errors(self, successes: list[bool]):
+    def _raise_if_errors(self, successes: list[bool] | tuple[bool]):
         if all(successes):
             return
 
