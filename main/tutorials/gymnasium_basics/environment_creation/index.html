@@ -929,7 +929,7 @@ this - <code class="docutils literal notranslate"><span class="pre">env</span> <
 contains the registration code. For the GridWorld env, the registration
 code is run by importing <code class="docutils literal notranslate"><span class="pre">gymnasium_env</span></code> so if it were not possible to
 import gymnasium_env explicitly, you could register while making by
-<code class="docutils literal notranslate"><span class="pre">env</span> <span class="pre">=</span> <span class="pre">gymnasium.make('gymnasium_env:gymnasium_env/GridWorld-v0)</span></code>. This
+<code class="docutils literal notranslate"><span class="pre">env</span> <span class="pre">=</span> <span class="pre">gymnasium.make('gymnasium_env:gymnasium_env/GridWorld-v0')</span></code>. This
 is especially useful when you’re allowed to pass only the environment ID
 into a third-party codebase (eg. learning library). This lets you
 register your environment without needing to edit the library’s source
