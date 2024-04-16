@@ -90,7 +90,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
             import cv2  # noqa: F401
         except ImportError:
             raise gym.error.DependencyNotInstalled(
-                "opencv-python package not installed, run `pip install gymnasium[other]` to get dependencies for atari"
+                'opencv-python package not installed, run `pip install "gymnasium[other]"` to get dependencies for atari'
             )
 
         assert frame_skip > 0

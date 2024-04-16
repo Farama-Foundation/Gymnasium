@@ -54,3 +54,17 @@ def test_vector_env_wrapper_attributes():
     assert np.allclose(wrapped.env.get_attr("gravity"), env.get_attr("gravity"))
 
     env.close()
+
+
+def test_vector_env_metadata():
+    """Test if `metadata` property for VectorWrapper correctly forwards to the vector env it is wrapping."""
+    env = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+    wrapped = DummyVectorWrapper(
+        gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+    )
+
+    assert env.metadata == wrapped.metadata
+    env.metadata = {"render_modes": ["rgb_array"]}
+    assert env.metadata != wrapped.metadata
+
+    env.close()

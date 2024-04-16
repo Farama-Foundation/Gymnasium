@@ -34,8 +34,7 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 # Update dependencies in `all` if any are added or removed
-atari = ["shimmy[atari] >=0.1.0,<1.0"]
-accept-rom-license = ["autorom[accept-rom-license] ~=0.4.2"]
+atari = ["ale_py >= 0.8"]
 box2d = ["box2d-py ==2.3.5", "pygame >=2.1.3", "swig ==4.*"]
 classic-control = ["pygame >=2.1.3"]
 classic_control = ["pygame >=2.1.3"]  # kept for backward compatibility
@@ -45,13 +44,8 @@ mujoco = ["mujoco >=2.1.5", "imageio >=2.14.1"]
 toy-text = ["pygame >=2.1.3"]
 toy_text = ["pygame >=2.1.3"]         # kept for backward compatibility
 jax = ["jax >=0.4.0", "jaxlib >=0.4.0", "flax >= 0.5.0"]
-other = [
-    "lz4 >=3.1.0",
-    "opencv-python >=3.0",
-    "matplotlib >=3.0",
-    "moviepy >=1.0.0",
-    "torch >=1.0.0",
-]
+torch = ["torch >=1.0.0"]
+other = ["moviepy >=1.0.0", "matplotlib >=3.0", "opencv-python >=3.0"]
 all = [
     # All dependencies above except accept-rom-license
     # NOTE: No need to manually remove the duplicates, setuptools automatically does that.
@@ -65,7 +59,7 @@ all = [
     "pygame >=2.1.3",
     # mujoco-py
     "mujoco-py >=2.1,<2.2",
-    "cython<3",
+    "cython <3",
     # mujoco
     "mujoco >=2.1.5",
     "imageio >=2.14.1",
@@ -75,17 +69,17 @@ all = [
     "jax >=0.4.0",
     "jaxlib >=0.4.0",
     "flax >= 0.5.0",
+    # torch
+    "torch >=1.0.0",
     # other
-    "lz4 >=3.1.0",
     "opencv-python >=3.0",
     "matplotlib >=3.0",
     "moviepy >=1.0.0",
-    "torch >=1.0.0",
 ]
 testing = [
     "pytest ==7.1.3",
-    "scipy >= 1.7.3",
-    "dill>=0.3.7",
+    "scipy >=1.7.3",
+    "dill >=0.3.7",
 ]
 
 [project.urls]
