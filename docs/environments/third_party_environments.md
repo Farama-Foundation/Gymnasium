@@ -167,7 +167,7 @@ tmrl is a distributed framework for training Deep Reinforcement Learning AIs in 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
 ![GitHub stars](https://img.shields.io/github/stars/StavrosOrf/EV2Gym)
 
-EV2Gym is a fully customizable and easily configurable environment for Electric Vehicle (EV) smart charging simulations on a small and large scale. Includes baseline implementations and supports [Stable Baselines3(SB3)](https://github.com/DLR-RM/stable-baselines3).
+EV2Gym is a fully customizable and easily configurable environment for Electric Vehicle (EV) smart charging simulations on a small and large scale. Also, includes non-RL baseline implementations such as mathematical programming, model predictive control, and heuristics.
 
 ## Third-Party Environments using Gym
 
