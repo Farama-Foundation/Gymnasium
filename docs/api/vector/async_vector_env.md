@@ -12,9 +12,9 @@
     .. automethod:: gymnasium.vector.AsyncVectorEnv.set_attr
 ```
 
-### Additional Methods
+## Additional Methods
 
 ```{eval-rst}
-.. autoproperty:: gymnasium.vector.VectorEnv.np_random
-.. autoproperty:: gymnasium.vector.VectorEnv.np_random_seed
+.. autoproperty:: gymnasium.vector.AsyncVectorEnv.np_random
+.. autoproperty:: gymnasium.vector.AsyncVectorEnv.np_random_seed
 ```

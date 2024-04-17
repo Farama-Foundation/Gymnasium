@@ -199,12 +199,12 @@ class AsyncVectorEnv(VectorEnv):
 
     @property
     def np_random_seed(self) -> tuple[int, ...]:
-        """Returns the seeds of the wrapped envs."""
+        """Returns a tuple of np_random seeds for all the wrapped envs."""
         return self.get_attr("np_random_seed")
 
     @property
     def np_random(self) -> tuple[np.random.Generator, ...]:
-        """Returns the numpy random number generators of the wrapped envs."""
+        """Returns the tuple of the numpy random number generators for the wrapped envs."""
         return self.get_attr("np_random")
 
     def reset(
