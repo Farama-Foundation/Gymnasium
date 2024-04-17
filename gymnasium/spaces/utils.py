@@ -421,7 +421,7 @@ def _unflatten_sequence(space: Sequence, x: tuple[Any, ...]) -> tuple[Any, ...] 
 
 @unflatten.register(OneOf)
 def _unflatten_oneof(space: OneOf, x: NDArray[Any]) -> tuple[int, Any]:
-    idx = int(x[0])
+    idx = np.int64(x[0])
     sub_space = space.spaces[idx]
 
     original_size = flatdim(sub_space)

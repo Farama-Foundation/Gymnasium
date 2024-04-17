@@ -145,7 +145,7 @@ class CartPoleFunctional(
             from pygame import gfxdraw
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
         screen, clock = render_state
 
@@ -217,7 +217,7 @@ class CartPoleFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
 
         pygame.init()
@@ -232,7 +232,7 @@ class CartPoleFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
         pygame.display.quit()
         pygame.quit()
@@ -245,7 +245,7 @@ class CartPoleFunctional(
 class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
     """Jax-based implementation of the CartPole environment."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
         """Constructor for the CartPole where the kwargs are applied to the functional environment."""
@@ -265,7 +265,7 @@ class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
 class CartPoleJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
     """Jax-based implementation of the vectorized CartPole environment."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(
         self,
