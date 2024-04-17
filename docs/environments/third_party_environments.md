@@ -162,6 +162,13 @@ Gymnasium wrapper for various environments in the SUMO traffic simulator. Suppor
 
 tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
+### [EV2Gym: A Realistic EV-V2G-Gym Simulator for EV Smart Charging](https://github.com/StavrosOrf/EV2Gym)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/StavrosOrf/EV2Gym)
+
+EV2Gym is a fully customizable and easily configurable environment for Electric Vehicle (EV) smart charging simulations on a small and large scale. Includes baseline implementations and supports [Stable Baselines3(SB3)](https://github.com/DLR-RM/stable-baselines3).
+
 ## Third-Party Environments using Gym
 
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
