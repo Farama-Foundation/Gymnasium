@@ -22,7 +22,7 @@ Let's start by importing necessary libraries:
 
 # %%
 __author__ = "Hardy Hasan"
-__date__ = "2023-04-06"
+__date__ = "2023-04-16"
 __license__ = "MIT License"
 
 import concurrent.futures
@@ -69,17 +69,26 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # that are not related to the agent/training logic.
 class ResultsBuffer:
     """
-    This class stores results from episodes of agent-environment interaction and
-    uses these results for reporting progress or overall agent performance.
+    This class stores results from episodes/steps of agent-environment interaction.
     """
 
-    __slots__ = ["seed", "params", "episode_returns", "episode_lengths"]
+    __slots__ = [
+        "index",
+        "seed",
+        "params",
+        "episode_returns",
+        "episode_lengths",
+        "losses",
+    ]
 
     def __init__(self, seed, params):
         self.seed = seed
         self.params = params
-        self.episode_returns = []
-        self.episode_lengths = []
+        self.episode_returns = np.zeros(params.training_steps)
+        self.episode_lengths = np.zeros(params.training_steps)
+        self.losses = np.zeros(params.training_steps)
+
+        self.index = 0
 
     def __repr__(self):
         return f"ResultsBuffer(seed={self.seed}, params={self.params})"
@@ -87,19 +96,23 @@ class ResultsBuffer:
     def __str__(self):
         return f"Env={self.params.env_name}\tseed={self.seed}"
 
-    def push(self, avg_episode_return: int, avg_episode_length: int):
+    def add(self, episode_return: float, episode_length: float, loss: float) -> None:
         """
-        Adding average results over a number of past episodes.
-
+        Add step stats.
         Args:
-            avg_episode_return: Average episodic return
-            avg_episode_length: Average episodic length
+            episode_return: Latest episodic return
+            episode_length: Latest episode length
+            loss: Latest training loss
 
         Returns:
 
         """
-        self.episode_returns.append(avg_episode_return)
-        self.episode_lengths.append(avg_episode_length)
+        if self.index < self.params.training_steps:
+            self.episode_returns[self.index] = episode_return
+            self.episode_lengths[self.index] = episode_length
+            self.losses[self.index] = loss
+
+        self.index += 1
 
 
 def to_tensor(array: np.ndarray, normalize: bool = False) -> torch.Tensor:
@@ -154,7 +167,9 @@ def create_atari_env(env: gymnasium.Env, params: namedtuple) -> gymnasium.Env:
     return env
 
 
-def parallel_training(seeds: list, params: namedtuple, verbose: bool = False) -> list:
+def parallel_training(
+    seeds: list, params: namedtuple, verbose: bool = False
+) -> typing.List[ResultsBuffer]:
     """
     Run multiple agents in parallel using different seeds for each, and return their collected results.
     Args:
@@ -175,37 +190,93 @@ def parallel_training(seeds: list, params: namedtuple, verbose: bool = False) ->
     return results
 
 
-def aggregate_results(results: list) -> (np.ndarray, np.ndarray):
-    arr = np.array(results)
-    average = np.mean(arr, axis=0)
-    stddev = np.std(arr, axis=0)
+def exponential_moving_average(
+    data_points: np.ndarray, alpha: float = 0.25
+) -> np.ndarray:
+    """Computing the exponential moving average of an array of data points."""
+    assert 0 <= alpha < 1, "Smoothing factor alpha is out of range"
+    exp_moving_average = np.empty(len(data_points))
+
+    # Find the first non-negative index
+    first_non_neg_index = np.argmax(data_points != -np.inf)
+
+    # Handle the case when the first element is -inf
+    if first_non_neg_index > 0:
+        exp_moving_average[:first_non_neg_index] = data_points[:first_non_neg_index]
+
+    exp_moving_average[first_non_neg_index] = data_points[first_non_neg_index]
+
+    for i in range(first_non_neg_index + 1, len(data_points)):
+        exp_moving_average[i] = (
+            alpha * data_points[i] + (1 - alpha) * exp_moving_average[i - 1]
+        )
+
+    return exp_moving_average.round(2)
+
+
+def aggregate_results(lst: typing.List[np.ndarray]) -> (np.ndarray, np.ndarray):
+    average = np.mean(lst, axis=0).round(2)
+    stddev = np.std(lst, axis=0).round(2)
 
     return average, stddev
 
 
-def plot_results(results, params):
+def preprocess_results(
+    results: typing.List[ResultsBuffer], alpha: float = 0.25
+) -> typing.List[typing.Tuple[np.ndarray, np.ndarray]]:
+    """Smooth data for various metrics and aggregate them across agents. Return the processed data."""
+    stats = [
+        [res_buffer.episode_returns for res_buffer in results],
+        [res_buffer.episode_lengths for res_buffer in results],
+        [res_buffer.losses for res_buffer in results],
+    ]
+
+    smoothed_data = [
+        [exponential_moving_average(lst, alpha) for lst in stat] for stat in stats
+    ]
+
+    return [aggregate_results(lst) for lst in smoothed_data]
+
+
+def visualize_performance(
+    processed_data: typing.List[typing.Tuple[np.ndarray, np.ndarray]],
+    baseline_return: np.ndarray,
+    params: namedtuple,
+) -> None:
     plt.style.use("seaborn-v0_8-darkgrid")
-    n_metrics = 2
-    n_agents = len(results)
-    num_datapoints = len(results[0][0])
-    y_labels = ["Average return", "Average length"]
-    training_steps = params.training_steps // 1000
-    x = np.linspace(
-        start=training_steps // num_datapoints, stop=training_steps, num=num_datapoints
-    )
-    colors = ["purple", "seagreen"]
+
+    colors = ["purple", "seagreen", "violet"]
+    y_labels = ["Return", "Episode Length", "Loss"]
+    label = "agents"
+    titles = [
+        "Aggregated agents returns vs baseline",
+        "Aggregated episode lengths",
+        "Aggregated training losses",
+    ]
+
+    n_metrics = len(processed_data)
+    x = range(1, len(processed_data[0][0]) + 1)
+    # training_steps = params.training_steps // 1000
+    # x = np.linspace(start=training_steps // num_datapoints, stop=training_steps, num=num_datapoints)
     figname = f"drl_{params.env_name.split('-')[0]}"
 
-    fig, axes = plt.subplots(nrows=1, ncols=n_metrics, figsize=(15, 6))
+    fig, axes = plt.subplots(nrows=1, ncols=n_metrics, figsize=(24, 6))
 
-    for i in range(n_metrics):
-        ax = axes[i]
-        for agent_results in range(n_agents):
-            ax.plot(x, results[agent_results][i], colors[i])
-            ax.set(xlabel="Steps (1000)", ylabel=y_labels[i])
+    for i, ax in enumerate(axes):
+        mean, std = processed_data[i]
+        ax.plot(x, mean, color=colors[i], label=label)
+        ax.fill_between(x=x, y1=mean - std, y2=mean + std, alpha=0.2, color="grey")
+        ax.set(xlabel="Steps", ylabel=y_labels[i], title=titles[i])
+        ax.legend()
+
+    axes[0].plot(
+        x, baseline_return[: params.training_steps], color="black", label="baseline"
+    )
 
     fig.savefig(f"../../_static/img/tutorials/{figname}.png")
     plt.show()
+
+    return None
 
 
 # %%
@@ -327,7 +398,9 @@ class ReplayMemory:
         dones = self._dones[indices]
 
         if self.params.image_obs:
-            assert np.equal(states[:, 1:, :], next_states[:, :3, :]), "Incorrect concatenation."
+            assert np.equal(
+                states[:, 1:, :], next_states[:, :3, :]
+            ), "Incorrect concatenation."
 
         return states, actions, next_states, rewards, dones
 
@@ -584,7 +657,7 @@ class Agent(nn.Module):
 # Describe useful statistics to plot during training to track agent progress.
 
 
-def train(seed: int, params: namedtuple, verbose: bool):
+def train(seed: int, params: namedtuple, verbose: bool) -> ResultsBuffer:
     """
     Creates agent and environment, and lets the agent interact
     with the environment until it learns a good policy.
@@ -600,22 +673,19 @@ def train(seed: int, params: namedtuple, verbose: bool):
     set_seed(seed)
 
     steps = 0  # global time steps for the whole training
-    losses = []  # replace later with results_collector losses
-
+    episode_return = float("-inf")
+    episode_length = float("-inf")
+    loss = float("-inf")
     results_buffer = ResultsBuffer(seed=seed, params=params)
 
     env = gymnasium.make(params.env_name)
     assert isinstance(
         env.action_space, gymnasium.spaces.Discrete
-    ), "Environments with discrete actions-space allowed only."
+    ), "Only envs with discrete actions-space allowed."
     if params.image_obs:
         env = create_atari_env(env=env, params=params)
-    buffer_length = (
-        100 if params.image_obs else 20
-    )  # the number of recent episodes to collect statistics on.
-    env = gymnasium.wrappers.RecordEpisodeStatistics(
-        env=env, buffer_length=buffer_length
-    )
+
+    env = gymnasium.wrappers.RecordEpisodeStatistics(env)
 
     agent = Agent(params=params).to(device)
     target_agent = copy.deepcopy(agent).to(device)
@@ -624,14 +694,15 @@ def train(seed: int, params: namedtuple, verbose: bool):
         p.requires_grad = False
 
     while steps < params.training_steps:
+        # --- Start en episode ---
         done = False
         obs, info = env.reset(seed=seed)
 
+        # --- Play an episode ---
         while not done:
             state = to_tensor(obs, params.image_obs)
             action, _ = agent.act(state=state, exploit=False)
             next_obs, reward, terminated, truncated, info = env.step(action)
-            done = terminated or truncated
             agent.store_experience(
                 state=obs,
                 action=action,
@@ -640,15 +711,20 @@ def train(seed: int, params: namedtuple, verbose: bool):
                 done=int(terminated),
             )
             obs = next_obs
-
-            # TODO: store results
-
+            done = terminated or truncated
             steps += 1
+
+            if done:
+                episode_return, episode_length = (
+                    info["episode"]["r"],
+                    info["episode"]["l"],
+                )
+
+            results_buffer.add(episode_return, episode_length, loss)
 
             # train agent periodically if enough experience exists
             if steps % params.update_frequency == 0 and steps >= params.learning_starts:
                 loss = agent.learn(target_agent)
-                losses.append(round(loss, 1))
 
             # Update the target network periodically.
             if (
@@ -661,11 +737,9 @@ def train(seed: int, params: namedtuple, verbose: bool):
             if verbose and steps % 10_000 == 0:
                 mean_episode_return = np.mean(env.return_queue).round()
                 mean_episode_length = np.mean(env.length_queue).round()
-                mean_loss = np.mean(losses[-buffer_length * params.update_frequency:]).round(1)
-                results_buffer.push(mean_episode_return, mean_episode_length)
                 print(
                     f"step:{steps:<10} mean_episode_return:{mean_episode_return:<7} "
-                    f"mean_episode_length:{mean_episode_length:<7} loss:{mean_loss}",
+                    f"mean_episode_length:{mean_episode_length}",
                     flush=True,
                 )
 
@@ -687,8 +761,36 @@ def train(seed: int, params: namedtuple, verbose: bool):
 # Describe how an agent should be evaluated once its training is finished.
 
 
-def evaluate():
-    pass
+def random_agent_returns(params: namedtuple) -> np.ndarray:
+    """Implement a random agent play representing baseline performance. Return episode rewards."""
+    seed = 1
+    set_seed(seed)
+    steps = 0  # global time steps for the whole training
+    env = gymnasium.wrappers.RecordEpisodeStatistics(gymnasium.make(params.env_name))
+    returns = np.zeros(params.training_steps)
+    eps_return = float("-inf")
+
+    while steps < params.training_steps:
+        # --- Start en episode ---
+        done = False
+        _, info = env.reset(seed=seed)
+
+        # --- Play an episode ---
+        while not done:
+            _, _, terminated, truncated, info = env.step(env.action_space.sample())
+            done = terminated or truncated
+
+            if done:
+                eps_return = info["episode"]["r"]
+
+            if steps < params.training_steps:
+                returns[steps] = eps_return
+
+            steps += 1
+
+    env.close()
+
+    return returns
 
 
 # %%
@@ -763,7 +865,7 @@ env1_hyperparameters = Hyperparameters(
 )
 
 results_for_env2 = None
-env2_hyperparameters = Hyperparameters(
+CartPole_hyperparameters = Hyperparameters(
     env_name="CartPole-v1",
     n_actions=2,
     training_steps=int(5e4),
@@ -798,26 +900,28 @@ env2_hyperparameters = Hyperparameters(
 
 env2 = None
 
-# train(env2_hyperparameters, 13)
 if __name__ == "__main__":
-    # --- CartPole-v0 training ---
-    num_agents = 2
-    agent_seeds = [11, 13]
-    cartpole_parallel_results = parallel_training(seeds=agent_seeds, params=env2_hyperparameters, verbose=True)
-
     # %%
-    # Plot results
-    # ---------------
-    # call plot function.
-    all_episode_returns = [i for i in range(num_agents)]
-    # episode_return_combined = aggregate_results()
-    # plot_results([[parallel_results[0].episode_returns, parallel_results[0].episode_lengths],
-    #               [parallel_results[1].episode_returns, parallel_results[1].episode_lengths]],
-    #              params=env2_hyperparameters)
+    # CartPole-v0 training
+    # --------------------
+    agent_seeds = [11, 13]
+    cartpole_parallel_results = parallel_training(
+        seeds=agent_seeds, params=CartPole_hyperparameters, verbose=True
+    )
+    random_agent_baseline = random_agent_returns(params=CartPole_hyperparameters)
+
+    smooth_factor_alpha = 0.40
+    data = preprocess_results(cartpole_parallel_results, smooth_factor_alpha)
+    random_agent_baseline_smoothed = exponential_moving_average(
+        random_agent_baseline, smooth_factor_alpha
+    )
+    visualize_performance(
+        data, random_agent_baseline_smoothed, CartPole_hyperparameters
+    )
 
 # %%
-# CartPole-v0 training
-# --------------------
+# CartPole-v0 visualization
+# -------------------------
 # .. image:: /_static/img/tutorials/drl_CartPole.png
 #
 #
