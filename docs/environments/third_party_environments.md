@@ -7,7 +7,7 @@ The Farama Foundation maintains a number of other [projects](https://farama.org/
 
 gridworlds ([Minigrid](https://minigrid.farama.org/)),
 robotics ([Gymnasium-Robotics](https://robotics.farama.org/)),
-3D navigation ([Miniworld](https://miniworld.farama.org/)), 
+3D navigation ([Miniworld](https://miniworld.farama.org/)),
 web interaction ([MiniWoB++](https://miniwob.farama.org/))
 arcade games ([Arcade Learning Environment](https://github.com/Farama-Foundation/Arcade-Learning-Environment))
 Doom ([ViZDoom](https://vizdoom.farama.org/))
