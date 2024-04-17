@@ -202,9 +202,15 @@ def test_make_vec_wrappers():
             },
         ),
         (gym.spec("CartPole-v1"), {"render_mode": "rgb_array"}),
-        (gym.spec("CartPole-v1"), {"vectorization_mode": "sync", "max_episode_steps": 5}),
+        (
+            gym.spec("CartPole-v1"),
+            {"vectorization_mode": "sync", "max_episode_steps": 5},
+        ),
         (gym.spec("CartPole-v1"), {"sutton_barto_reward": True}),
-        (gym.spec("CartPole-v1"), {"vectorization_mode": "sync", "sutton_barto_reward": True}),
+        (
+            gym.spec("CartPole-v1"),
+            {"vectorization_mode": "sync", "sutton_barto_reward": True},
+        ),
     ),
 )
 def test_make_vec_with_spec(env_id: str, kwargs: dict):
