@@ -396,13 +396,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../environments/atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/">First-Party Environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/#third-party-environments-with-gymnasium">Third-party environments with Gymnasium</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/#third-party-environments-using-gym">Third-Party Environments using Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/#video-game-environments">Video Game environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/#robotics-environments">Robotics environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/#autonomous-driving-environments">Autonomous Driving environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/#other-environments">Other environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/">External Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -670,27 +664,15 @@ environment, otherwise a single value is set for all environments.</p></li>
 <section id="additional-methods">
 <h2>Additional Methods<a class="headerlink" href="#additional-methods" title="Link to this heading">¶</a></h2>
 <dl class="py property">
-<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.np_random">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">np_random</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Generator</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.np_random" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the environment’s internal <code class="xref py py-attr docutils literal notranslate"><span class="pre">_np_random</span></code> that if not set will initialise with a random seed.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>Instances of `np.random.Generator`</strong></p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="gymnasium.vector.AsyncVectorEnv.np_random">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">np_random</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Generator</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.vector.AsyncVectorEnv.np_random" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the tuple of the numpy random number generators for the wrapped envs.</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.np_random_seed">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">np_random_seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.np_random_seed" title="Link to this definition">¶</a></dt>
-<dd><p>Returns the environment’s internal <code class="xref py py-attr docutils literal notranslate"><span class="pre">_np_random_seed</span></code> that if not set will first initialise with a random int as seed.</p>
-<p>If <a class="reference internal" href="../sync_vector_env/#gymnasium.vector.VectorEnv.np_random_seed" title="gymnasium.vector.VectorEnv.np_random_seed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random_seed</span></code></a> was set directly instead of through <a class="reference internal" href="../#gymnasium.vector.VectorEnv.reset" title="gymnasium.vector.VectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_np_random_through_seed()</span></code>,
-the seed will take the value -1.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>int</strong> – the seed of the current <cite>np_random</cite> or -1, if the seed of the rng is unknown</p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="gymnasium.vector.AsyncVectorEnv.np_random_seed">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">np_random_seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.vector.AsyncVectorEnv.np_random_seed" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a tuple of np_random seeds for all the wrapped envs.</p>
 </dd></dl>
 
 </section>
@@ -776,8 +758,8 @@ the seed will take the value -1.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#additional-methods">Additional Methods</a><ul>
-<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.np_random"><code class="docutils literal notranslate"><span class="pre">VectorEnv.np_random</span></code></a></li>
-<li><a class="reference internal" href="#gymnasium.vector.VectorEnv.np_random_seed"><code class="docutils literal notranslate"><span class="pre">VectorEnv.np_random_seed</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.np_random"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.np_random</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.np_random_seed"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.np_random_seed</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -395,13 +395,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../environments/third_party_environments/">First-Party Environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../environments/third_party_environments/#third-party-environments-with-gymnasium">Third-party environments with Gymnasium</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../environments/third_party_environments/#third-party-environments-using-gym">Third-Party Environments using Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../environments/third_party_environments/#video-game-environments">Video Game environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../environments/third_party_environments/#robotics-environments">Robotics environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../environments/third_party_environments/#autonomous-driving-environments">Autonomous Driving environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../environments/third_party_environments/#other-environments">Other environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments/third_party_environments/">External Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -679,12 +673,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">np_random_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the seeds of the wrapped envs.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a tuple of np_random seeds for all the wrapped envs.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;np_random_seed&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">np_random</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the numpy random number generators of the wrapped envs.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the tuple of the numpy random number generators for the wrapped envs.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;np_random&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="AsyncVectorEnv.reset">
