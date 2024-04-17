@@ -133,16 +133,17 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     env = gym.make('Pusher-v5', xml_file=...)
     ```
 
-    | Parameter               | Type       | Default      |Description                                               |
-    |-------------------------|------------|--------------|----------------------------------------------------------|
-    | `xml_file`              | **str**    |`"pusher.xml"`| Path to a MuJoCo model                                   |
-    | `reward_near_weight`    | **float**  | `0.5`        | Weight for _reward_near_ term (see `Rewards` section)    |
-    | `reward_dist_weight`    | **float**  | `1`          | Weight for _reward_dist_ term (see `Rewards` section)    |
-    | `reward_control_weight` | **float**  | `0.1`        | Weight for _reward_control_ term (see `Rewards` section) |
+    | Parameter               | Type       | Default         |Description                                               |
+    |-------------------------|------------|-----------------|----------------------------------------------------------|
+    | `xml_file`              | **str**    |`"pusher_v5.xml"`| Path to a MuJoCo model                                   |
+    | `reward_near_weight`    | **float**  | `0.5`           | Weight for _reward_near_ term (see `Rewards` section)    |
+    | `reward_dist_weight`    | **float**  | `1`             | Weight for _reward_dist_ term (see `Rewards` section)    |
+    | `reward_control_weight` | **float**  | `0.1`           | Weight for _reward_control_ term (see `Rewards` section) |
 
     ## Version History
     * v5:
         - Minimum `mujoco` version is now 2.3.3.
+        - Fixed bug: increased the density of the object to be higher than air (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
         - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
         - Added `xml_file` argument.
@@ -151,6 +152,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         - Fixed `info["reward_ctrl"]` not being multiplied by the reward weight.
         - Added `info["reward_near"]` which is equal to the reward term `reward_near`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
+        - Warning: This version of the environment is not compatible with `mujoco>=3.0.0` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
     * v3: This environment does not have a v3 release.
     * v2: All continuous control environments now use mujoco-py >= 1.50.
     * v1: max_time_steps raised to 1000 for robot based tasks (not including pusher, which has a max_time_steps of 100). Added reward_threshold to environments.
@@ -167,7 +169,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
     def __init__(
         self,
-        xml_file: str = "pusher.xml",
+        xml_file: str = "pusher_v5.xml",
         frame_skip: int = 5,
         default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         reward_near_weight: float = 0.5,
