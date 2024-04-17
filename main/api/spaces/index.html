@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Fundamental Spaces" href="fundamental/" /><link rel="prev" title="Make and register" href="../registry/" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/spaces.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Spaces - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
@@ -480,7 +480,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="spaces">
-<h1>Spaces<a class="headerlink" href="#spaces" title="Link to this heading">#</a></h1>
+<h1>Spaces<a class="headerlink" href="#spaces" title="Link to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <p id="module-gymnasium.spaces">This module implements various spaces.</p>
@@ -495,7 +495,7 @@ are vectors in the two-dimensional unit cube, the environment code may contain t
 <p>All spaces inherit from the <a class="reference internal" href="#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></a> superclass.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Space">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">npt.DTypeLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><span class="pre">Sequence</span></a><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">npt.DTypeLike</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">np.random.Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space" title="Link to this definition">¶</a></dt>
 <dd><p>Superclass that is used to define observation and action spaces.</p>
 <p>Spaces are crucially used in Gym to define the format of valid actions and observations.
 They serve various purposes:</p>
@@ -531,28 +531,28 @@ not handle custom spaces properly. Use custom spaces with care.</p>
 </dd></dl>
 
 <section id="attributes">
-<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">#</a></h2>
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <dl class="py property">
 <dt class="sig sig-object py" id="gymnasium.spaces.Space.shape">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.spaces.Space.shape" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">shape</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.spaces.Space.shape" title="Link to this definition">¶</a></dt>
 <dd><p>Return the shape of the space as an immutable property.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="gymnasium.spaces.Space.dtype">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#gymnasium.spaces.Space.dtype" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#gymnasium.spaces.Space.dtype" title="Link to this definition">¶</a></dt>
 <dd><p>Return the data type of this space.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="gymnasium.spaces.Space.is_np_flattenable">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">is_np_flattenable</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gymnasium.spaces.Space.is_np_flattenable" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">is_np_flattenable</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#gymnasium.spaces.Space.is_np_flattenable" title="Link to this definition">¶</a></dt>
 <dd><p>Checks whether this space can be flattened to a <a class="reference internal" href="fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.spaces.Box</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="gymnasium.spaces.Space.np_random">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">np_random</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Generator</span></em><a class="headerlink" href="#gymnasium.spaces.Space.np_random" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">np_random</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Generator</span></em><a class="headerlink" href="#gymnasium.spaces.Space.np_random" title="Link to this definition">¶</a></dt>
 <dd><p>Lazily seed the PRNG since this is expensive and only needed if sampling from this space.</p>
 <p>As <a class="reference internal" href="#gymnasium.spaces.Space.seed" title="gymnasium.spaces.Space.seed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">seed()</span></code></a> is not guaranteed to set the <cite>_np_random</cite> for particular seeds. We add a
 check after <a class="reference internal" href="#gymnasium.spaces.Space.seed" title="gymnasium.spaces.Space.seed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">seed()</span></code></a> to set a new random number generator.</p>
@@ -560,11 +560,11 @@ check after <a class="reference internal" href="#gymnasium.spaces.Space.seed" ti
 
 </section>
 <section id="methods">
-<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading">#</a></h2>
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading">¶</a></h2>
 <p>Each space implements the following functions:</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Space.sample">
-<span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T_cov</span></span></span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space.sample" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T_cov</span></span></span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space.sample" title="Link to this definition">¶</a></dt>
 <dd><p>Randomly sample an element of this space.</p>
 <p>Can be uniform or non-uniform sampling based on boundedness of space.</p>
 <dl class="field-list simple">
@@ -579,31 +579,31 @@ check after <a class="reference internal" href="#gymnasium.spaces.Space.seed" ti
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Space.contains">
-<span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space.contains" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space.contains" title="Link to this definition">¶</a></dt>
 <dd><p>Return boolean specifying if x is a valid member of this space.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Space.seed">
-<span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space.seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space.seed" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space.seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space.seed" title="Link to this definition">¶</a></dt>
 <dd><p>Seed the PRNG of this space and possibly the PRNGs of subspaces.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Space.to_jsonable">
-<span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">to_jsonable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space.to_jsonable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space.to_jsonable" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">to_jsonable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space.to_jsonable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space.to_jsonable" title="Link to this definition">¶</a></dt>
 <dd><p>Convert a batch of samples from this space to a JSONable data type.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gymnasium.spaces.Space.from_jsonable">
-<span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">from_jsonable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space.from_jsonable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space.from_jsonable" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Space.</span></span><span class="sig-name descname"><span class="pre">from_jsonable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sample_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/spaces/space/#Space.from_jsonable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Space.from_jsonable" title="Link to this definition">¶</a></dt>
 <dd><p>Convert a JSONable data type to a batch of samples from this space.</p>
 </dd></dl>
 
 </section>
 <section id="fundamental-spaces">
-<h2>Fundamental Spaces<a class="headerlink" href="#fundamental-spaces" title="Link to this heading">#</a></h2>
+<h2>Fundamental Spaces<a class="headerlink" href="#fundamental-spaces" title="Link to this heading">¶</a></h2>
 <p>Gymnasium has a number of fundamental spaces that are used as building boxes for more complex spaces.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a> - Supports continuous (and discrete) vectors or matrices, used for vector observations, images, etc</p></li>
@@ -614,7 +614,7 @@ check after <a class="reference internal" href="#gymnasium.spaces.Space.seed" ti
 </ul>
 </section>
 <section id="composite-spaces">
-<h2>Composite Spaces<a class="headerlink" href="#composite-spaces" title="Link to this heading">#</a></h2>
+<h2>Composite Spaces<a class="headerlink" href="#composite-spaces" title="Link to this heading">¶</a></h2>
 <p>Often environment spaces require joining fundamental spaces together for vectorised environments, separate agents or readability of the space.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> - Supports a dictionary of keys and subspaces, used for a fixed number of unordered spaces</p></li>
@@ -625,7 +625,7 @@ check after <a class="reference internal" href="#gymnasium.spaces.Space.seed" ti
 </ul>
 </section>
 <section id="utility-functions">
-<h2>Utility functions<a class="headerlink" href="#utility-functions" title="Link to this heading">#</a></h2>
+<h2>Utility functions<a class="headerlink" href="#utility-functions" title="Link to this heading">¶</a></h2>
 <p>Gymnasium contains a number of helpful utility functions for flattening and unflattening spaces.
 This can be important for passing information to neural networks.</p>
 <ul class="simple">
@@ -636,7 +636,7 @@ This can be important for passing information to neural networks.</p>
 </ul>
 </section>
 <section id="vector-utility-functions">
-<h2>Vector Utility functions<a class="headerlink" href="#vector-utility-functions" title="Link to this heading">#</a></h2>
+<h2>Vector Utility functions<a class="headerlink" href="#vector-utility-functions" title="Link to this heading">¶</a></h2>
 <p>When vectorizing environments, it is necessary to modify the observation and action spaces for new batched spaces sizes.
 Therefore, Gymnasium provides a number of additional functions used when using a space with a Vector environment.</p>
 <ul class="simple">
@@ -828,9 +828,11 @@ Therefore, Gymnasium provides a number of additional functions used when using a
       </script>
 
     <script src="../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script>
 

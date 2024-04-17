@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Lunar Lander" href="../lunar_lander/" /><link rel="prev" title="Bipedal Walker" href="../bipedal_walker/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/box2d/car_racing.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Car Racing - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -471,7 +471,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="car-racing">
-<h1>Car Racing<a class="headerlink" href="#car-racing" title="Link to this heading">#</a></h1>
+<h1>Car Racing<a class="headerlink" href="#car-racing" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/car_racing.gif"><img alt="../../../_images/car_racing.gif" src="../../../_images/car_racing.gif" style="width: 200px;" /></a>
 </figure>
@@ -497,7 +497,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>The easiest control task to learn from pixels - a top-down
 racing environment. The generated track is random every episode.</p>
 <p>Some indicators are shown at the bottom of the window along with the
@@ -511,7 +511,7 @@ To play yourself (it’s rather fast for humans), type:</p>
 and turn at the same time.</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <p>If continuous there are 3 actions :</p>
 <ul class="simple">
 <li><p>0: steering, -1 is full left, +1 is full right</p></li>
@@ -528,25 +528,25 @@ and turn at the same time.</p>
 </ul>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
 <p>A top-down 96x96 RGB image of the car and race track.</p>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>The reward is -0.1 every frame and +1000/N for every track tile visited, where N is the total number of tiles
 visited in the track. For example, if you have finished in 732 frames, your reward is 1000 - 0.1*732 = 926.8 points.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The car starts at rest in the center of the road.</p>
 </section>
 <section id="episode-termination">
-<h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Link to this heading">#</a></h2>
+<h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Link to this heading">¶</a></h2>
 <p>The episode finishes when all the tiles are visited. The car can also go outside the playfield -
 that is, far off the track, in which case it will receive -100 reward and die.</p>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v2&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span> <span class="n">lap_complete_percent</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">domain_randomize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
@@ -564,7 +564,7 @@ The discrete action space has 5 actions: [do nothing, left, right, gas, brake].<
 </ul>
 </section>
 <section id="reset-arguments">
-<h2>Reset Arguments<a class="headerlink" href="#reset-arguments" title="Link to this heading">#</a></h2>
+<h2>Reset Arguments<a class="headerlink" href="#reset-arguments" title="Link to this heading">¶</a></h2>
 <p>Passing the option <code class="docutils literal notranslate"><span class="pre">options[&quot;randomize&quot;]</span> <span class="pre">=</span> <span class="pre">True</span></code> will change the current colour of the environment on demand.
 Correspondingly, passing the option <code class="docutils literal notranslate"><span class="pre">options[&quot;randomize&quot;]</span> <span class="pre">=</span> <span class="pre">False</span></code> will not change the current colour of the environment.
 <code class="docutils literal notranslate"><span class="pre">domain_randomize</span></code> must be <code class="docutils literal notranslate"><span class="pre">True</span></code> on init for this argument to work.</p>
@@ -584,20 +584,20 @@ Correspondingly, passing the option <code class="docutils literal notranslate"><
 </div>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>v1: Change track completion logic and add domain randomization (0.24.0)</p></li>
 <li><p>v0: Original version</p></li>
 </ul>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Chris Campbell (2014), http://www.iforce2d.net/b2dtut/top-down-car.</p></li>
 </ul>
 </section>
 <section id="credits">
-<h2>Credits<a class="headerlink" href="#credits" title="Link to this heading">#</a></h2>
+<h2>Credits<a class="headerlink" href="#credits" title="Link to this heading">¶</a></h2>
 <p>Created by Oleg Klimov</p>
 </section>
 </section>
@@ -770,7 +770,7 @@ Correspondingly, passing the option <code class="docutils literal notranslate"><
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     

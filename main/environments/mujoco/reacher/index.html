@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Swimmer" href="../swimmer/" /><link rel="prev" title="Pusher" href="../pusher/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/mujoco/reacher.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Reacher - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -471,7 +471,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="reacher">
-<h1>Reacher<a class="headerlink" href="#reacher" title="Link to this heading">#</a></h1>
+<h1>Reacher<a class="headerlink" href="#reacher" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/reacher.gif"><img alt="../../../_images/reacher.gif" src="../../../_images/reacher.gif" style="width: 200px;" /></a>
 </figure>
@@ -497,12 +497,12 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>“Reacher” is a two-jointed robot arm.
 The goal is to move the robot’s end effector (called <em>fingertip</em>) close to a target that is spawned at a random position.</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <figure class="align-default" id="id2">
 <img alt="../../../_images/reacher.png" src="../../../_images/reacher.png" />
 </figure>
@@ -541,7 +541,7 @@ The goal is to move the robot’s end effector (called <em>fingertip</em>) close
 </div>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
 <p>The observation space consists of the following parts (in order):</p>
 <ul class="simple">
 <li><p><em>cos(qpos) (2 elements):</em> The cosine of the angles of the two arms.</p></li>
@@ -708,7 +708,7 @@ The <code class="docutils literal notranslate"><span class="pre">reacher.xml</sp
 </div>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>The total reward is: <em><strong>reward</strong></em> <em>=</em> <em>reward_distance + reward_control</em>.</p>
 <ul class="simple">
 <li><p><em>reward_distance</em>:
@@ -724,7 +724,7 @@ where <span class="math notranslate nohighlight">\(w_{control}\)</span> is the <
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The initial position state of the reacher arm is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-0.1 \times I_{2}, 0.1 \times I_{2}]}\)</span>.
 The position state of the goal is (permanently) <span class="math notranslate nohighlight">\(\mathcal{S}(0.2)\)</span>.
 The initial velocity state of the Reacher arm is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-0.005 \times 1_{2}, 0.005 \times 1_{2}]}\)</span>.
@@ -733,18 +733,18 @@ The velocity state of the object is (permanently) <span class="math notranslate 
 <p>The default frame rate is <span class="math notranslate nohighlight">\(2\)</span>, with each frame lasting <span class="math notranslate nohighlight">\(0.01\)</span>, so <em>dt = 5 * 0.01 = 0.02</em>.</p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
 <section id="termination">
-<h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">#</a></h3>
+<h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">¶</a></h3>
 <p>The Reacher never terminates.</p>
 </section>
 <section id="truncation">
-<h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h3>
+<h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">¶</a></h3>
 <p>The default duration of an episode is 50 timesteps.</p>
 </section>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <p>Reacher provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
 These parameters can be applied during <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> in the following way:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -781,7 +781,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 </div>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>v5:</p>
 <ul>
@@ -973,7 +973,7 @@ These parameters can be applied during <code class="docutils literal notranslate
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

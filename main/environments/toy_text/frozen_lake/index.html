@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="MuJoCo" href="../../mujoco/" /><link rel="prev" title="Cliff Walking" href="../cliff_walking/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/toy_text/frozen_lake.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Frozen Lake - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -471,7 +471,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="frozen-lake">
-<h1>Frozen Lake<a class="headerlink" href="#frozen-lake" title="Link to this heading">#</a></h1>
+<h1>Frozen Lake<a class="headerlink" href="#frozen-lake" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/frozen_lake.gif"><img alt="../../../_images/frozen_lake.gif" src="../../../_images/frozen_lake.gif" style="width: 200px;" /></a>
 </figure>
@@ -500,7 +500,7 @@
 by walking over the frozen lake.
 The player may not always move in the intended direction due to the slippery nature of the frozen lake.</p>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>The game starts with the player at location [0,0] of the frozen lake grid world with the
 goal located at far extent of the world e.g. [3,3] for the 4x4 environment.</p>
 <p>Holes in the ice are distributed in set locations when using a pre-determined map
@@ -513,7 +513,7 @@ to the intended direction sometimes (see <a href="#is_slippy"><code class="docut
 All other assets by Mel Tillery <a class="reference external" href="http://www.cyaneus.com/">http://www.cyaneus.com/</a>.</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <p>The action shape is <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> in the range <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">3}</span></code> indicating
 which direction to move the player.</p>
 <ul class="simple">
@@ -524,7 +524,7 @@ which direction to move the player.</p>
 </ul>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
 <p>The observation is a value representing the player’s current position as
 current_row * ncols + current_col (where both the row and col start at 0).</p>
 <p>For example, the goal position in the 4x4 map can be calculated as follows: 3 * 4 + 3 = 15.
@@ -532,11 +532,11 @@ The number of possible observations is dependent on the size of the map.</p>
 <p>The observation is returned as an <code class="docutils literal notranslate"><span class="pre">int()</span></code>.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The episode starts with the player in state <code class="docutils literal notranslate"><span class="pre">[0]</span></code> (location [0, 0]).</p>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>Reward schedule:</p>
 <ul class="simple">
 <li><p>Reach goal: +1</p></li>
@@ -545,7 +545,7 @@ The number of possible observations is dependent on the size of the map.</p>
 </ul>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
 <p>The episode ends if the following happens:</p>
 <ul class="simple">
 <li><p>Termination:</p>
@@ -562,7 +562,7 @@ The number of possible observations is dependent on the size of the map.</p>
 </ul>
 </section>
 <section id="information">
-<h2>Information<a class="headerlink" href="#information" title="Link to this heading">#</a></h2>
+<h2>Information<a class="headerlink" href="#information" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">step()</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> return a dict with the following keys:</p>
 <ul class="simple">
 <li><p>p - transition probability for the state.</p></li>
@@ -570,7 +570,7 @@ The number of possible observations is dependent on the size of the map.</p>
 <p>See <a href="#is_slippy"><code class="docutils literal notranslate"><span class="pre">is_slippery</span></code></a> for transition probability information.</p>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;FrozenLake-v1&#39;</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">map_name</span><span class="o">=</span><span class="s2">&quot;4x4&quot;</span><span class="p">,</span> <span class="n">is_slippery</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -619,7 +619,7 @@ equal probability of 1/3 in both directions.</p>
 </ul>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>v1: Bug fixes to rewards</p></li>
 <li><p>v0: Initial version release</p></li>
@@ -793,7 +793,7 @@ equal probability of 1/3 in both directions.</p>
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     

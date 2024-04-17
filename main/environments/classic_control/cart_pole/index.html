@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Mountain Car Continuous" href="../mountain_car_continuous/" /><link rel="prev" title="Acrobot" href="../acrobot/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/classic_control/cart_pole.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Cart Pole - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -471,7 +471,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="cart-pole">
-<h1>Cart Pole<a class="headerlink" href="#cart-pole" title="Link to this heading">#</a></h1>
+<h1>Cart Pole<a class="headerlink" href="#cart-pole" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/cart_pole.gif"><img alt="../../../_images/cart_pole.gif" src="../../../_images/cart_pole.gif" style="width: 200px;" /></a>
 </figure>
@@ -497,7 +497,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>This environment corresponds to the version of the cart-pole problem described by Barto, Sutton, and Anderson in
 <a class="reference external" href="https://ieeexplore.ieee.org/document/6313077">“Neuronlike Adaptive Elements That Can Solve Difficult Learning Control Problem”</a>.
 A pole is attached by an un-actuated joint to a cart, which moves along a frictionless track.
@@ -505,7 +505,7 @@ The pendulum is placed upright on the cart and the goal is to balance the pole b
 in the left and right direction on the cart.</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <p>The action is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> which can take values <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1}</span></code> indicating the direction
 of the fixed force the cart is pushed with.</p>
 <ul class="simple">
@@ -516,7 +516,7 @@ of the fixed force the cart is pushed with.</p>
 the pole is pointing. The center of gravity of the pole varies the amount of energy needed to move the cart underneath it</p>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
 <p>The observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(4,)</span></code> with the values corresponding to the following positions and velocities:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -561,16 +561,16 @@ if the pole angle is not in the range <code class="docutils literal notranslate"
 </ul>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>Since the goal is to keep the pole upright for as long as possible, by default, a reward of <code class="docutils literal notranslate"><span class="pre">+1</span></code> is given for every step taken, including the termination step. The default reward threshold is 500 for v1 and 200 for v0 due to the time limit on the environment.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">sutton_barto_reward=True</span></code>, then a reward of <code class="docutils literal notranslate"><span class="pre">0</span></code> is awarded for every non-terminating step and <code class="docutils literal notranslate"><span class="pre">-1</span></code> for the terminating step. As a result, the reward threshold is 0 for v0 and v1.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>All observations are assigned a uniformly random value in <code class="docutils literal notranslate"><span class="pre">(-0.05,</span> <span class="pre">0.05)</span></code></p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
 <p>The episode ends if any one of the following occurs:</p>
 <ol class="arabic simple">
 <li><p>Termination: Pole Angle is greater than ±12°</p></li>
@@ -579,7 +579,7 @@ if the pole angle is not in the range <code class="docutils literal notranslate"
 </ol>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <p>Cartpole only has <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> as a keyword for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.
 On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine the new random state.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -611,7 +611,7 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
 </div>
 </section>
 <section id="vectorized-environment">
-<h2>Vectorized environment<a class="headerlink" href="#vectorized-environment" title="Link to this heading">#</a></h2>
+<h2>Vectorized environment<a class="headerlink" href="#vectorized-environment" title="Link to this heading">¶</a></h2>
 <p>To increase steps per seconds, users can use a custom vector environment or with an environment vectorizor.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">&quot;vector_entry_point&quot;</span><span class="p">)</span>
@@ -625,7 +625,7 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
 </div>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>v1: <code class="docutils literal notranslate"><span class="pre">max_time_steps</span></code> raised to 500.</p>
 <ul>
@@ -803,7 +803,7 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     

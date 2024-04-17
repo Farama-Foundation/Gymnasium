@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Cart Pole" href="../cart_pole/" /><link rel="prev" title="Classic Control" href="../" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/classic_control/acrobot.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Acrobot - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -471,7 +471,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="acrobot">
-<h1>Acrobot<a class="headerlink" href="#acrobot" title="Link to this heading">#</a></h1>
+<h1>Acrobot<a class="headerlink" href="#acrobot" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/acrobot.gif"><img alt="../../../_images/acrobot.gif" src="../../../_images/acrobot.gif" style="width: 200px;" /></a>
 </figure>
@@ -497,7 +497,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>The Acrobot environment is based on Sutton’s work in
 <a class="reference external" href="https://papers.nips.cc/paper/1995/hash/8f1d43620bc6bb580df6e80b0dc05c48-Abstract.html">“Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding”</a>
 and <a class="reference external" href="http://www.incompleteideas.net/book/the-book-2nd.html">Sutton and Barto’s book</a>.
@@ -511,7 +511,7 @@ to reach the target height (black horizontal line above system) by applying torq
 the actuator.</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <p>The action is discrete, deterministic, and represents the torque applied on the actuated
 joint between the two links.</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -540,7 +540,7 @@ joint between the two links.</p>
 </div>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
 <p>The observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(6,)</span></code> that provides information about the
 two rotational joint angles as well as their angular velocities:</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -597,18 +597,18 @@ An angle of 0 corresponds to having the same angle between the two links.</p></l
 A state of <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">0,</span> <span class="pre">1,</span> <span class="pre">0,</span> <span class="pre">...,</span> <span class="pre">...]</span></code> indicates that both links are pointing downwards.</p>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>The goal is to have the free end reach a designated target height in as few steps as possible,
 and as such all steps that do not reach the goal incur a reward of -1.
 Achieving the target height results in termination with a reward of 0. The reward threshold is -100.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>Each parameter in the underlying state (<code class="docutils literal notranslate"><span class="pre">theta1</span></code>, <code class="docutils literal notranslate"><span class="pre">theta2</span></code>, and the two angular velocities) is initialized
 uniformly between -0.1 and 0.1. This means both links are pointing downwards with some initial stochasticity.</p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
 <p>The episode ends if one of the following occurs:</p>
 <ol class="arabic simple">
 <li><p>Termination: The free end reaches the target height, which is constructed as:
@@ -617,7 +617,7 @@ uniformly between -0.1 and 0.1. This means both links are pointing downwards wit
 </ol>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <p>Acrobot only has <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> as a keyword for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.
 On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine the new random state.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -647,7 +647,7 @@ by setting <code class="docutils literal notranslate"><span class="pre">book_or_
 </div></blockquote>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>v1: Maximum number of steps increased from 200 to 500. The observation space for v0 provided direct readings of
 <code class="docutils literal notranslate"><span class="pre">theta1</span></code> and <code class="docutils literal notranslate"><span class="pre">theta2</span></code> in radians, having a range of <code class="docutils literal notranslate"><span class="pre">[-pi,</span> <span class="pre">pi]</span></code>. The v1 observation space as described here provides the
@@ -656,7 +656,7 @@ sine and cosine of each angle instead.</p></li>
 </ul>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Sutton, R. S. (1996). Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding.
 In D. Touretzky, M. C. Mozer, &amp; M. Hasselmo (Eds.), Advances in Neural Information Processing Systems (Vol. 8).
@@ -820,7 +820,7 @@ MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e8
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     

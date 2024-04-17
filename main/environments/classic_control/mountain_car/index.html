@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Pendulum" href="../pendulum/" /><link rel="prev" title="Mountain Car Continuous" href="../mountain_car_continuous/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/classic_control/mountain_car.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Mountain Car - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -471,7 +471,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="mountain-car">
-<h1>Mountain Car<a class="headerlink" href="#mountain-car" title="Link to this heading">#</a></h1>
+<h1>Mountain Car<a class="headerlink" href="#mountain-car" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/mountain_car.gif"><img alt="../../../_images/mountain_car.gif" src="../../../_images/mountain_car.gif" style="width: 200px;" /></a>
 </figure>
@@ -497,7 +497,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>The Mountain Car MDP is a deterministic MDP that consists of a car placed stochastically
 at the bottom of a sinusoidal valley, with the only possible actions being the accelerations
 that can be applied to the car in either direction. The goal of the MDP is to strategically
@@ -515,7 +515,7 @@ This version is the one with discrete actions.</p>
 </div>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
 <p>The observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(2,)</span></code> where the elements correspond to the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -545,7 +545,7 @@ This version is the one with discrete actions.</p>
 </div>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <p>There are 3 discrete deterministic actions:</p>
 <ul class="simple">
 <li><p>0: Accelerate to the left</p></li>
@@ -554,7 +554,7 @@ This version is the one with discrete actions.</p>
 </ul>
 </section>
 <section id="transition-dynamics">
-<h2>Transition Dynamics:<a class="headerlink" href="#transition-dynamics" title="Link to this heading">#</a></h2>
+<h2>Transition Dynamics:<a class="headerlink" href="#transition-dynamics" title="Link to this heading">¶</a></h2>
 <p>Given an action, the mountain car follows the following transition dynamics:</p>
 <p><em>velocity<sub>t+1</sub> = velocity<sub>t</sub> + (action - 1) * force - cos(3 * position<sub>t</sub>) * gravity</em></p>
 <p><em>position<sub>t+1</sub> = position<sub>t</sub> + velocity<sub>t+1</sub></em></p>
@@ -563,17 +563,17 @@ upon collision with the wall. The position is clipped to the range <code class="
 velocity is clipped to the range <code class="docutils literal notranslate"><span class="pre">[-0.07,</span> <span class="pre">0.07]</span></code>.</p>
 </section>
 <section id="reward">
-<h2>Reward:<a class="headerlink" href="#reward" title="Link to this heading">#</a></h2>
+<h2>Reward:<a class="headerlink" href="#reward" title="Link to this heading">¶</a></h2>
 <p>The goal is to reach the flag placed on top of the right hill as quickly as possible, as such the agent is
 penalised with a reward of -1 for each timestep.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The position of the car is assigned a uniform random value in <em>[-0.6 , -0.4]</em>.
 The starting velocity of the car is always assigned to 0.</p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
 <p>The episode ends if either of the following happens:</p>
 <ol class="arabic simple">
 <li><p>Termination: The position of the car is greater than or equal to 0.5 (the goal position on top of the right hill)</p></li>
@@ -581,7 +581,7 @@ The starting velocity of the car is always assigned to 0.</p>
 </ol>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <p>Mountain Car has two parameters for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> with <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> and <code class="docutils literal notranslate"><span class="pre">goal_velocity</span></code>.
 On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine the new random state.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -595,7 +595,7 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
 </div>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>v0: Initial versions release</p></li>
 </ul>
@@ -768,7 +768,7 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     

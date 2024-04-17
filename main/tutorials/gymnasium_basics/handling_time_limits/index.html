@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Implementing Custom Wrappers" href="../implementing_custom_wrappers/" /><link rel="prev" title="Load custom quadruped robot environments" href="../load_quadruped_model/" />
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/gymnasium_basics/handling_time_limits.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Handling Time Limits - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -481,10 +481,10 @@
           <article role="main">
             
             <section class="sphx-glr-example-title" id="handling-time-limits">
-<span id="sphx-glr-tutorials-gymnasium-basics-handling-time-limits-py"></span><h1>Handling Time Limits<a class="headerlink" href="#handling-time-limits" title="Link to this heading">#</a></h1>
+<span id="sphx-glr-tutorials-gymnasium-basics-handling-time-limits-py"></span><h1>Handling Time Limits<a class="headerlink" href="#handling-time-limits" title="Link to this heading">¶</a></h1>
 <p>In using Gymnasium environments with reinforcement learning code, a common problem observed is how time limits are incorrectly handled. The <code class="docutils literal notranslate"><span class="pre">done</span></code> signal received (in previous versions of OpenAI Gym &lt; 0.26) from <code class="docutils literal notranslate"><span class="pre">env.step</span></code> indicated whether an episode has ended. However, this signal did not distinguish whether the episode ended due to <code class="docutils literal notranslate"><span class="pre">termination</span></code> or <code class="docutils literal notranslate"><span class="pre">truncation</span></code>.</p>
 <section id="termination">
-<h2>Termination<a class="headerlink" href="#termination" title="Link to this heading">#</a></h2>
+<h2>Termination<a class="headerlink" href="#termination" title="Link to this heading">¶</a></h2>
 <p>Termination refers to the episode ending after reaching a terminal state that is defined as part of the environment
 definition. Examples are - task success, task failure, robot falling down etc. Notably, this also includes episodes
 ending in finite-horizon environments due to a time-limit inherent to the environment. Note that to preserve Markov
@@ -492,7 +492,7 @@ property, a representation of the remaining time must be present in the agent’
 <a class="reference external" href="https://arxiv.org/abs/1712.00378">(Reference)</a></p>
 </section>
 <section id="truncation">
-<h2>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h2>
+<h2>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">¶</a></h2>
 <p>Truncation refers to the episode ending after an externally defined condition (that is outside the scope of the Markov
 Decision Process). This could be a time-limit, a robot going out of bounds etc.</p>
 <p>An infinite-horizon environment is an obvious example of where this is needed. We cannot wait forever for the episode
@@ -502,7 +502,7 @@ Decision Process that defines the RL problem. This is also different from time-l
 as the agent in this case has no idea about this time-limit.</p>
 </section>
 <section id="importance-in-learning-code">
-<h2>Importance in learning code<a class="headerlink" href="#importance-in-learning-code" title="Link to this heading">#</a></h2>
+<h2>Importance in learning code<a class="headerlink" href="#importance-in-learning-code" title="Link to this heading">¶</a></h2>
 <p>Bootstrapping (using one or more estimated values of a variable to update estimates of the same variable) is a key
 aspect of Reinforcement Learning. A value function will tell you how much discounted reward you will get from a
 particular state if you follow a given policy. When an episode stops at any given point, by looking at the value of
@@ -532,7 +532,7 @@ bootstrap or not. However, this is incorrect since it does not differentiate bet
 <p>This is incorrect in the case of episode ending due to a truncation, where bootstrapping needs to happen but it doesn’t.</p>
 </section>
 <section id="solution">
-<h2>Solution<a class="headerlink" href="#solution" title="Link to this heading">#</a></h2>
+<h2>Solution<a class="headerlink" href="#solution" title="Link to this heading">¶</a></h2>
 <p>From v0.26 onwards, Gymnasium’s <code class="docutils literal notranslate"><span class="pre">env.step</span></code> API returns both termination and truncation information explicitly.
 In the previous version truncation information was supplied through the info key <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code>.
 The correct way to handle terminations and truncations now is,</p>
@@ -714,7 +714,7 @@ The correct way to handle terminations and truncations now is,</p>
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

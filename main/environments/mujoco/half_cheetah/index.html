@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Hopper" href="../hopper/" /><link rel="prev" title="Ant" href="../ant/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/mujoco/half_cheetah.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Half Cheetah - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -471,7 +471,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="half-cheetah">
-<h1>Half Cheetah<a class="headerlink" href="#half-cheetah" title="Link to this heading">#</a></h1>
+<h1>Half Cheetah<a class="headerlink" href="#half-cheetah" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/half_cheetah.gif"><img alt="../../../_images/half_cheetah.gif" src="../../../_images/half_cheetah.gif" style="width: 200px;" /></a>
 </figure>
@@ -497,14 +497,14 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>This environment is based on the work of P. Wawrzyński in <a class="reference external" href="http://staff.elka.pw.edu.pl/~pwawrzyn/pub-s/0812_LSCLRR.pdf">“A Cat-Like Robot Real-Time Learning to Run”</a>.
 The HalfCheetah is a 2-dimensional robot consisting of 9 body parts and 8 joints connecting them (including two paws).
 The goal is to apply torque to the joints to make the cheetah run forward (right) as fast as possible, with a positive reward based on the distance moved forward and a negative reward for moving backward.
 The cheetah’s torso and head are fixed, and torque can only be applied to the other 6 joints over the front and back thighs (which connect to the torso), the shins (which connect to the thighs), and the feet (which connect to the shins).</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <figure class="align-default" id="id2">
 <img alt="../../../_images/half_cheetah.png" src="../../../_images/half_cheetah.png" />
 </figure>
@@ -575,7 +575,7 @@ The cheetah’s torso and head are fixed, and torque can only be applied to the 
 </div>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
 <p>The observation space consists of the following parts (in order):</p>
 <ul class="simple">
 <li><p><em>qpos (8 elements by default):</em> Position values of the robot’s body parts.</p></li>
@@ -748,7 +748,7 @@ Regardless of whether <code class="docutils literal notranslate"><span class="pr
 </div>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>The total reward is: <em><strong>reward</strong></em> <em>=</em> <em>forward_reward - ctrl_cost</em>.</p>
 <ul class="simple">
 <li><p><em>forward_reward</em>:
@@ -767,24 +767,24 @@ where <span class="math notranslate nohighlight">\(w_{control}\)</span> is <code
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The initial position state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale \times I_{9}, reset\_noise\_scale \times I_{9}]}\)</span>.
 The initial velocity state is <span class="math notranslate nohighlight">\(\mathcal{N}(0_{9}, reset\_noise\_scale^2 \times I_{9})\)</span>.</p>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{N}\)</span> is the multivariate normal distribution and <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
 <section id="termination">
-<h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">#</a></h3>
+<h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">¶</a></h3>
 <p>The Half Cheetah never terminates.</p>
 </section>
 <section id="truncation">
-<h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h3>
+<h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">¶</a></h3>
 <p>The default duration of an episode is 1000 timesteps.</p>
 </section>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <p>HalfCheetah provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
 These parameters can be applied during <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> in the following way:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -831,7 +831,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 </div>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>v5:</p>
 <ul>
@@ -1023,7 +1023,7 @@ These parameters can be applied during <code class="docutils literal notranslate
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

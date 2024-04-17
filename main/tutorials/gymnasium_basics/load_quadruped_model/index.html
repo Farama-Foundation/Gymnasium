@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Handling Time Limits" href="../handling_time_limits/" /><link rel="prev" title="Gymnasium Basics" href="../" />
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/gymnasium_basics/load_quadruped_model.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Load custom quadruped robot environments - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -481,7 +481,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="load-custom-quadruped-robot-environments">
-<h1>Load custom quadruped robot environments<a class="headerlink" href="#load-custom-quadruped-robot-environments" title="Link to this heading">#</a></h1>
+<h1>Load custom quadruped robot environments<a class="headerlink" href="#load-custom-quadruped-robot-environments" title="Link to this heading">¶</a></h1>
 <p>In this tutorial we will see how to use the <code class="docutils literal notranslate"><span class="pre">MuJoCo/Ant-v5</span></code> framework to create a quadruped walking environment, using a model file (ending in <code class="docutils literal notranslate"><span class="pre">.xml</span></code>) without having to create a new class.</p>
 <p>Steps:</p>
 <ol class="arabic simple" start="0">
@@ -504,14 +504,14 @@
 </ol>
 <p>The reader is expected to be familiar with the <code class="docutils literal notranslate"><span class="pre">Gymnasium</span></code> API &amp; library, the basics of robotics, and the included <code class="docutils literal notranslate"><span class="pre">Gymnasium/MuJoCo</span></code> environments with the robot model they use. Familiarity with the <strong>MJCF</strong> file model format and the <code class="docutils literal notranslate"><span class="pre">MuJoCo</span></code> simulator is not required but is recommended.</p>
 <section id="setup">
-<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">¶</a></h2>
 <p>We will need <code class="docutils literal notranslate"><span class="pre">gymnasium&gt;=1.0.0</span></code>.</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;gymnasium&gt;=1.0.0&quot;</span>
 </pre></div>
 </div>
 </section>
 <section id="step-0-1-download-a-robot-model">
-<h2>Step 0.1 - Download a Robot Model<a class="headerlink" href="#step-0-1-download-a-robot-model" title="Link to this heading">#</a></h2>
+<h2>Step 0.1 - Download a Robot Model<a class="headerlink" href="#step-0-1-download-a-robot-model" title="Link to this heading">¶</a></h2>
 <p>In this tutorial we will load the <a class="reference external" href="https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/README.md">Unitree Go1</a> robot from the excellent <a class="reference external" href="https://github.com/google-deepmind/mujoco_menagerie">MuJoCo Menagerie</a> robot model collection.
 <img alt="Unitree Go1 robot in a flat terrain scene" src="https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/go1.png?raw=true" /></p>
 <p><code class="docutils literal notranslate"><span class="pre">Go1</span></code> is a quadruped robot, controlling it to move is a significant learning problem, much harder than the <code class="docutils literal notranslate"><span class="pre">Gymnasium/MuJoCo/Ant</span></code> environment.</p>
@@ -522,7 +522,7 @@
 <p>You can use any other quadruped robot with this tutorial, just adjust the environment parameter values for your robot.</p>
 </section>
 <section id="step-1-load-the-model">
-<h2>Step 1 - Load the model<a class="headerlink" href="#step-1-load-the-model" title="Link to this heading">#</a></h2>
+<h2>Step 1 - Load the model<a class="headerlink" href="#step-1-load-the-model" title="Link to this heading">¶</a></h2>
 <p>To load the model, all we have to do is use the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument with the <code class="docutils literal notranslate"><span class="pre">Ant-v5</span></code> framework.</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -549,12 +549,12 @@
 </div>
 </section>
 <section id="step-2-tweaking-the-environment-parameters">
-<h2>Step 2 - Tweaking the Environment Parameters<a class="headerlink" href="#step-2-tweaking-the-environment-parameters" title="Link to this heading">#</a></h2>
+<h2>Step 2 - Tweaking the Environment Parameters<a class="headerlink" href="#step-2-tweaking-the-environment-parameters" title="Link to this heading">¶</a></h2>
 <p>Tweaking the environment parameters is essential to get the desired behavior for learning.
 In the following subsections, the reader is encouraged to consult the <a class="reference external" href="https://gymnasium.farama.org/main/environments/mujoco/ant/#arguments">documentation of the arguments</a> for more detailed information.</p>
 </section>
 <section id="step-2-1-tweaking-the-environment-simulation-parameters">
-<h2>Step 2.1 - Tweaking the Environment Simulation Parameters<a class="headerlink" href="#step-2-1-tweaking-the-environment-simulation-parameters" title="Link to this heading">#</a></h2>
+<h2>Step 2.1 - Tweaking the Environment Simulation Parameters<a class="headerlink" href="#step-2-1-tweaking-the-environment-simulation-parameters" title="Link to this heading">¶</a></h2>
 <p>The arguments of interest are <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code>, <code class="docutils literal notranslate"><span class="pre">reset_noise_scale</span></code> and <code class="docutils literal notranslate"><span class="pre">max_episode_steps</span></code>.</p>
 <p>We want to tweak the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter to get <code class="docutils literal notranslate"><span class="pre">dt</span></code> to an acceptable value (typical values are <code class="docutils literal notranslate"><span class="pre">dt</span></code> <span class="math notranslate nohighlight">\(\in [0.01, 0.1]\)</span> seconds),</p>
 <p>Reminder: <span class="math notranslate nohighlight">\(dt = frame\_skip \times model.opt.timestep\)</span>, where <code class="docutils literal notranslate"><span class="pre">model.opt.timestep</span></code> is the integrator time step selected in the MJCF model file.</p>
@@ -580,7 +580,7 @@ In the following subsections, the reader is encouraged to consult the <a class="
 </div>
 </section>
 <section id="step-2-2-tweaking-the-environment-termination-parameters">
-<h2>Step 2.2 - Tweaking the Environment Termination Parameters<a class="headerlink" href="#step-2-2-tweaking-the-environment-termination-parameters" title="Link to this heading">#</a></h2>
+<h2>Step 2.2 - Tweaking the Environment Termination Parameters<a class="headerlink" href="#step-2-2-tweaking-the-environment-termination-parameters" title="Link to this heading">¶</a></h2>
 <p>Termination is important for robot environments to avoid sampling “useless” time steps.</p>
 <p>The arguments of interest are <code class="docutils literal notranslate"><span class="pre">terminate_when_unhealthy</span></code> and <code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code>.</p>
 <p>We want to set <code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code> to terminate the environment when the robot falls over, or jumps really high, here we have to choose a value that is logical for the height of the robot, for <code class="docutils literal notranslate"><span class="pre">Go1</span></code> we choose <code class="docutils literal notranslate"><span class="pre">(0.195,</span> <span class="pre">0.75)</span></code>.
@@ -606,7 +606,7 @@ Note: <code class="docutils literal notranslate"><span class="pre">healthy_z_ran
 <p>Note: If you need a different termination condition, you can write your own <code class="docutils literal notranslate"><span class="pre">TerminationWrapper</span></code> (see the  <a class="reference external" href="https://gymnasium.farama.org/main/api/wrappers/">documentation</a>).</p>
 </section>
 <section id="step-2-3-tweaking-the-environment-reward-parameters">
-<h2>Step 2.3 - Tweaking the Environment Reward Parameters<a class="headerlink" href="#step-2-3-tweaking-the-environment-reward-parameters" title="Link to this heading">#</a></h2>
+<h2>Step 2.3 - Tweaking the Environment Reward Parameters<a class="headerlink" href="#step-2-3-tweaking-the-environment-reward-parameters" title="Link to this heading">¶</a></h2>
 <p>The arguments of interest are <code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">contact_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code>, and <code class="docutils literal notranslate"><span class="pre">main_body</span></code>.</p>
 <p>For the arguments <code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code>, <code class="docutils literal notranslate"><span class="pre">contact_cost_weight</span></code> and <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> we have to pick values that make sense for our robot, you can use the default <code class="docutils literal notranslate"><span class="pre">MuJoCo/Ant</span></code> parameters for references and tweak them if a change is needed for your environment. In the case of <code class="docutils literal notranslate"><span class="pre">Go1</span></code> we only change the <code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code> since it has a higher actuator force range.</p>
 <p>For the argument <code class="docutils literal notranslate"><span class="pre">main_body</span></code> we have to choose which body part is the main body (usually called something like “torso” or “trunk” in the model file) for the calculation of the <code class="docutils literal notranslate"><span class="pre">forward_reward</span></code>, in the case of <code class="docutils literal notranslate"><span class="pre">Go1</span></code> it is the <code class="docutils literal notranslate"><span class="pre">&quot;trunk&quot;</span></code> (Note: in most cases including this one, it can be left at the default value).</p>
@@ -630,7 +630,7 @@ Note: <code class="docutils literal notranslate"><span class="pre">healthy_z_ran
 <p>Note: If you need a different reward function, you can write your own <code class="docutils literal notranslate"><span class="pre">RewardWrapper</span></code> (see the <a class="reference external" href="https://gymnasium.farama.org/main/api/wrappers/reward_wrappers/">documentation</a>).</p>
 </section>
 <section id="step-2-4-tweaking-the-environment-observation-parameters">
-<h2>Step 2.4 - Tweaking the Environment Observation Parameters<a class="headerlink" href="#step-2-4-tweaking-the-environment-observation-parameters" title="Link to this heading">#</a></h2>
+<h2>Step 2.4 - Tweaking the Environment Observation Parameters<a class="headerlink" href="#step-2-4-tweaking-the-environment-observation-parameters" title="Link to this heading">¶</a></h2>
 <p>The arguments of interest are <code class="docutils literal notranslate"><span class="pre">include_cfrc_ext_in_observation</span></code> and <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code>.</p>
 <p>Here for <code class="docutils literal notranslate"><span class="pre">Go1</span></code> we have no particular reason to change them.</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
@@ -653,7 +653,7 @@ Note: <code class="docutils literal notranslate"><span class="pre">healthy_z_ran
 <p>Note: If you need additional observation elements (such as additional sensors), you can write your own <code class="docutils literal notranslate"><span class="pre">ObservationWrapper</span></code> (see the <a class="reference external" href="https://gymnasium.farama.org/main/api/wrappers/observation_wrappers/">documentation</a>).</p>
 </section>
 <section id="step-3-train-your-agent">
-<h2>Step 3 - Train your Agent<a class="headerlink" href="#step-3-train-your-agent" title="Link to this heading">#</a></h2>
+<h2>Step 3 - Train your Agent<a class="headerlink" href="#step-3-train-your-agent" title="Link to this heading">¶</a></h2>
 <p>Finally, we are done, we can use a RL algorithm to train an agent to walk/run the <code class="docutils literal notranslate"><span class="pre">Go1</span></code> robot.
 Note: If you have followed this guide with your own robot model, you may discover during training that some environment parameters were not as desired, feel free to go back to step 2 and change anything as needed.</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span>
@@ -683,7 +683,7 @@ Which can run up to `4.7 m/s` according to the manufacturer
 -->
 </section>
 <section id="epilogue">
-<h2>Epilogue<a class="headerlink" href="#epilogue" title="Link to this heading">#</a></h2>
+<h2>Epilogue<a class="headerlink" href="#epilogue" title="Link to this heading">¶</a></h2>
 <p>You can follow this guide to create most quadruped environments.
 To create humanoid/bipedal robots, you can also follow this guide using the <code class="docutils literal notranslate"><span class="pre">Gymnasium/MuJoCo/Humnaoid-v5</span></code> framework.</p>
 <p>Author: <a class="reference external" href="https://github.com/Kallinteris-Andreas">&#64;kallinteris-andreas</a></p>
@@ -857,7 +857,7 @@ To create humanoid/bipedal robots, you can also follow this guide using the <cod
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
