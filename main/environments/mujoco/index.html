@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Ant" href="ant/" /><link rel="prev" title="Frozen Lake" href="../toy_text/frozen_lake/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/mujoco.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>MuJoCo - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
@@ -480,7 +480,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="mujoco">
-<h1>MuJoCo<a class="headerlink" href="#mujoco" title="Link to this heading">#</a></h1>
+<h1>MuJoCo<a class="headerlink" href="#mujoco" title="Link to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
 
@@ -701,7 +701,7 @@ Often some of the first positional elements are omitted from the state space sin
 <p>Among the Gymnasium environments, this set of environments can be considered as more difficult to solve by policy.</p>
 <p>Environments can be configured by changing the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument and/or by tweaking the parameters of their classes.</p>
 <section id="versions">
-<h2>Versions<a class="headerlink" href="#versions" title="Link to this heading">#</a></h2>
+<h2>Versions<a class="headerlink" href="#versions" title="Link to this heading">¶</a></h2>
 <p>Gymnasium includes the following versions of the environments:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -734,18 +734,18 @@ Often some of the first positional elements are omitted from the state space sin
 <p>For more information, see the section “Version History” for each environment.</p>
 <p><code class="docutils literal notranslate"><span class="pre">v1</span></code> and older are no longer included in Gymnasium.</p>
 <section id="comparing-training-performance-across-versions">
-<h3>Comparing training performance across versions<a class="headerlink" href="#comparing-training-performance-across-versions" title="Link to this heading">#</a></h3>
+<h3>Comparing training performance across versions<a class="headerlink" href="#comparing-training-performance-across-versions" title="Link to this heading">¶</a></h3>
 <p>The training performance of <code class="docutils literal notranslate"><span class="pre">v2</span></code> and <code class="docutils literal notranslate"><span class="pre">v3</span></code> is identical assuming the same/default arguments were used.</p>
 <p>The training performance of <code class="docutils literal notranslate"><span class="pre">v2</span></code>/<code class="docutils literal notranslate"><span class="pre">v3</span></code> and <code class="docutils literal notranslate"><span class="pre">v4</span></code> is not directly comparable because of the change to the newer simulator, but the results for not Ant and not Humanoids are comperable (for more information see <a class="reference external" href="https://github.com/openai/gym/pull/2595#issuecomment-1099152505">GitHub Comment #1</a> and <a class="reference external" href="https://github.com/openai/gym/pull/2762#issuecomment-1135362092">GitHub Comment #2</a>).</p>
 <p>The Training performance of <code class="docutils literal notranslate"><span class="pre">v4</span></code> and <code class="docutils literal notranslate"><span class="pre">v5</span></code> is different because of the many changes in the environments, but the Half Cheetah and Swimmer exchibits identical behaviour, Pusher and Swimmer are close (for more information see <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/821">GitHub Issue</a>).</p>
 </section>
 <section id="exact-reproducibility">
-<h3>Exact reproducibility<a class="headerlink" href="#exact-reproducibility" title="Link to this heading">#</a></h3>
+<h3>Exact reproducibility<a class="headerlink" href="#exact-reproducibility" title="Link to this heading">¶</a></h3>
 <p>Note: The exact behavior of the MuJoCo simulator changes slightly between <code class="docutils literal notranslate"><span class="pre">mujoco</span></code>  versions due to floating point operation ordering (more information of their <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility">Documentation</a>), if exact reproducibility is need besides using the <code class="docutils literal notranslate"><span class="pre">seed</span></code> for expirements the same simulator version should be used.</p>
 </section>
 </section>
 <section id="rendering-arguments">
-<h2>Rendering Arguments<a class="headerlink" href="#rendering-arguments" title="Link to this heading">#</a></h2>
+<h2>Rendering Arguments<a class="headerlink" href="#rendering-arguments" title="Link to this heading">¶</a></h2>
 <p>The all MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Ant-v5&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1280</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">720</span><span class="p">)</span>
 </pre></div>
@@ -946,9 +946,11 @@ For more complex locomotion robot environments you can use third party models wi
       </script>
 
     <script src="../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script>
 

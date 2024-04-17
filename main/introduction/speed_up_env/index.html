@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Compatibility with Gym" href="../gym_compatibility/" /><link rel="prev" title="Recording Agents" href="../record_agent/" />
         <link rel="canonical" href="https://gymnasium.farama.org/introduction/speed_up_env.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Speeding Up Training - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
@@ -480,21 +480,21 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="speeding-up-training">
-<h1>Speeding Up Training<a class="headerlink" href="#speeding-up-training" title="Link to this heading">#</a></h1>
+<h1>Speeding Up Training<a class="headerlink" href="#speeding-up-training" title="Link to this heading">¶</a></h1>
 <p>Reinforcement Learning can be a computationally difficult problem that is both sample inefficient and difficult to scale to more complex environments.
 In this page, we are going to talk about general strategies for speeding up training: vectorizing environments, optimizing training and algorithmic heuristics.</p>
 <section id="vectorized-environments">
-<h2>Vectorized environments<a class="headerlink" href="#vectorized-environments" title="Link to this heading">#</a></h2>
+<h2>Vectorized environments<a class="headerlink" href="#vectorized-environments" title="Link to this heading">¶</a></h2>
 <p>Normally in training, agents will sample from a single environment limiting the number of steps (samples) per second to the speed of the environment. Training can be substantially increased through acting in multiple environments at the same time, referred to as vectorized environments where multiple instances of the same environment run in parallel (on multiple CPUs). Gymnasium provide two built in classes to vectorize most generic environments: <a class="reference internal" href="../../api/vector/sync_vector_env/#gymnasium.vector.SyncVectorEnv" title="gymnasium.vector.SyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.SyncVectorEnv</span></code></a> and <a class="reference internal" href="../../api/vector/async_vector_env/#gymnasium.vector.AsyncVectorEnv" title="gymnasium.vector.AsyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.AsyncVectorEnv</span></code></a> which can be easily created with <a class="reference internal" href="../../api/registry/#gymnasium.make_vec" title="gymnasium.make_vec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make_vec()</span></code></a>.</p>
 <p>It should be noted that vectorizing environments might require changes to your training algorithm and can cause instability in training for very large numbers of sub-environments.</p>
 </section>
 <section id="optimizing-training">
-<h2>Optimizing training<a class="headerlink" href="#optimizing-training" title="Link to this heading">#</a></h2>
+<h2>Optimizing training<a class="headerlink" href="#optimizing-training" title="Link to this heading">¶</a></h2>
 <p>Speeding up training can generally be achieved through optimizing your code, in particular, for deep reinforcement learning that use GPUs in training through the need to transfer data to and from RAM and the GPU memory.</p>
 <p>For code written in PyTorch and Jax, they provide the ability to <code class="docutils literal notranslate"><span class="pre">jit</span></code> (just in time compilation) the code order for CPU, GPU and TPU (for jax) to decrease the training time taken.</p>
 </section>
 <section id="algorithmic-heuristics">
-<h2>Algorithmic heuristics<a class="headerlink" href="#algorithmic-heuristics" title="Link to this heading">#</a></h2>
+<h2>Algorithmic heuristics<a class="headerlink" href="#algorithmic-heuristics" title="Link to this heading">¶</a></h2>
 <p>Academic researchers are consistently explore new optimizations to improve agent performance and reduce the number of samples required to train an agent.
 In particular, sample efficient reinforcement learning is a specialist sub-field of reinforcement learning that explores optimizations for training algorithms and environment heuristics that reduce the number of agent observation need for an agent to maximise performance.
 As the field is consistently improving, we refer readers to find to survey papers and the latest research to know what the most efficient algorithmic improves that exist currently.</p>
@@ -649,7 +649,7 @@ As the field is consistently improving, we refer readers to find to survey paper
       </script>
 
     <script src="../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     

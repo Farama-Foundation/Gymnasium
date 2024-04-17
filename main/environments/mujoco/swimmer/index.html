@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Walker2D" href="../walker2d/" /><link rel="prev" title="Reacher" href="../reacher/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/mujoco/swimmer.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Swimmer - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -471,7 +471,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="swimmer">
-<h1>Swimmer<a class="headerlink" href="#swimmer" title="Link to this heading">#</a></h1>
+<h1>Swimmer<a class="headerlink" href="#swimmer" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/swimmer.gif"><img alt="../../../_images/swimmer.gif" src="../../../_images/swimmer.gif" style="width: 200px;" /></a>
 </figure>
@@ -497,7 +497,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>This environment corresponds to the Swimmer environment described in Rémi Coulom’s PhD thesis <a class="reference external" href="https://tel.archives-ouvertes.fr/tel-00003985/document">“Reinforcement Learning Using Neural Networks, with Applications to Motor Control”</a>.
 The environment aims to increase the number of independent state and control variables compared to classical control environments.
 The swimmers consist of three or more segments (’<em><strong>links</strong></em>’) and one less articulation joints (’<em><strong>rotors</strong></em>’) - one rotor joint connects exactly two links to form a linear chain.
@@ -505,7 +505,7 @@ The swimmer is suspended in a two-dimensional pool and always starts in the same
 and the goal is to move as fast as possible towards the right by applying torque to the rotors and using fluid friction.</p>
 </section>
 <section id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">¶</a></h2>
 <p>The problem parameters are:
 Problem parameters:</p>
 <ul class="simple">
@@ -518,7 +518,7 @@ Problem parameters:</p>
 It is possible to pass a custom MuJoCo XML file during construction to increase the number of links, or to tweak any of the parameters.</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <figure class="align-default" id="id2">
 <img alt="../../../_images/swimmer.png" src="../../../_images/swimmer.png" />
 </figure>
@@ -557,7 +557,7 @@ It is possible to pass a custom MuJoCo XML file during construction to increase 
 </div>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
 <p>The observation space consists of the following parts (in order):</p>
 <ul class="simple">
 <li><p><em>qpos (3 elements by default):</em> Position values of the robot’s body parts.</p></li>
@@ -666,7 +666,7 @@ Regardless of whether <code class="docutils literal notranslate"><span class="pr
 </div>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>The total reward is: <em><strong>reward</strong></em> <em>=</em> <em>forward_reward - ctrl_cost</em>.</p>
 <ul class="simple">
 <li><p><em>forward_reward</em>:
@@ -685,24 +685,24 @@ where <span class="math notranslate nohighlight">\(w_{control}\)</span> is <code
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The initial position state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale \times I_{5}, reset\_noise\_scale \times I_{5}]}\)</span>.
 The initial velocity state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale \times I_{5}, reset\_noise\_scale \times I_{5}]}\)</span>.</p>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
 <section id="termination">
-<h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">#</a></h3>
+<h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">¶</a></h3>
 <p>The Swimmer never terminates.</p>
 </section>
 <section id="truncation">
-<h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h3>
+<h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">¶</a></h3>
 <p>The default duration of an episode is 1000 timesteps.</p>
 </section>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <p>Swimmer provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
 These parameters can be applied during <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> in the following way:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -749,7 +749,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 </div>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>v5:</p>
 <ul>
@@ -945,7 +945,7 @@ These parameters can be applied during <code class="docutils literal notranslate
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Toy Text" href="../../toy_text/" /><link rel="prev" title="Car Racing" href="../car_racing/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/box2d/lunar_lander.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Lunar Lander - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -471,7 +471,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="lunar-lander">
-<h1>Lunar Lander<a class="headerlink" href="#lunar-lander" title="Link to this heading">#</a></h1>
+<h1>Lunar Lander<a class="headerlink" href="#lunar-lander" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/lunar_lander.gif"><img alt="../../../_images/lunar_lander.gif" src="../../../_images/lunar_lander.gif" style="width: 200px;" /></a>
 </figure>
@@ -497,7 +497,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>This environment is a classic rocket trajectory optimization problem.
 According to Pontryagin’s maximum principle, it is optimal to fire the
 engine at full throttle or turn it off. This is the reason why this
@@ -515,7 +515,7 @@ can learn to fly and then land on its first attempt.</p>
 <!-- python examples/agents/keyboard_agent.py LunarLander-v3 -->
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <p>There are four discrete actions available:</p>
 <ul class="simple">
 <li><p>0: do nothing</p></li>
@@ -525,13 +525,13 @@ can learn to fly and then land on its first attempt.</p>
 </ul>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
 <p>The state is an 8-dimensional vector: the coordinates of the lander in <code class="docutils literal notranslate"><span class="pre">x</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">y</span></code>, its linear
 velocities in <code class="docutils literal notranslate"><span class="pre">x</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">y</span></code>, its angle, its angular velocity, and two booleans
 that represent whether each leg is in contact with the ground or not.</p>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>After every step a reward is granted. The total reward of an episode is the
 sum of the rewards for all the steps within that episode.</p>
 <p>For each step, the reward:</p>
@@ -547,12 +547,12 @@ sum of the rewards for all the steps within that episode.</p>
 <p>An episode is considered a solution if it scores at least 200 points.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The lander starts at the top center of the viewport with a random initial
 force applied to its center of mass.</p>
 </section>
 <section id="episode-termination">
-<h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Link to this heading">#</a></h2>
+<h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Link to this heading">¶</a></h2>
 <p>The episode finishes if:</p>
 <ol class="arabic simple">
 <li><p>the lander crashes (the lander body gets in contact with the moon);</p></li>
@@ -570,7 +570,7 @@ them is destroyed.</p>
 </div></blockquote>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <p>Lunar Lander has a large number of arguments</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=-</span><span class="mf">10.0</span><span class="p">,</span>
@@ -600,7 +600,7 @@ The recommended value for <code class="docutils literal notranslate"><span class
 </ul>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>v3:</p>
 <ul>
@@ -615,7 +615,7 @@ The recommended value for <code class="docutils literal notranslate"><span class
 </ul>
 </section>
 <section id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">#</a></h2>
+<h2>Notes<a class="headerlink" href="#notes" title="Link to this heading">¶</a></h2>
 <p>There are several unexpected bugs with the implementation of the environment.</p>
 <ol class="arabic simple">
 <li><p>The position of the side thrusters on the body of the lander changes, depending on the orientation of the lander.
@@ -632,7 +632,7 @@ This in turn results in an orientation dependent torque being applied to the lan
 <!-- ## References -->
 </section>
 <section id="credits">
-<h2>Credits<a class="headerlink" href="#credits" title="Link to this heading">#</a></h2>
+<h2>Credits<a class="headerlink" href="#credits" title="Link to this heading">¶</a></h2>
 <p>Created by Oleg Klimov</p>
 </section>
 </section>
@@ -794,7 +794,7 @@ This in turn results in an orientation dependent torque being applied to the lan
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

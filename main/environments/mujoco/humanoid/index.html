@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Humanoid Standup" href="../humanoid_standup/" /><link rel="prev" title="Hopper" href="../hopper/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/mujoco/humanoid.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Humanoid - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -471,7 +471,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="humanoid">
-<h1>Humanoid<a class="headerlink" href="#humanoid" title="Link to this heading">#</a></h1>
+<h1>Humanoid<a class="headerlink" href="#humanoid" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
 <a class="reference internal image-reference" href="../../../_images/humanoid.gif"><img alt="../../../_images/humanoid.gif" src="../../../_images/humanoid.gif" style="width: 200px;" /></a>
 </figure>
@@ -497,7 +497,7 @@
 </table>
 </div>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>This environment is based on the environment introduced by Tassa, Erez and Todorov in <a class="reference external" href="https://ieeexplore.ieee.org/document/6386025">“Synthesis and stabilization of complex behaviors through online trajectory optimization”</a>.
 The 3D bipedal robot is designed to simulate a human.
 It has a torso (abdomen) with a pair of legs and arms, and a pair of tendons connecting the hips to the knees.
@@ -505,7 +505,7 @@ The legs each consist of three body parts (thigh, shin, foot), and the arms cons
 The goal of the environment is to walk forward as fast as possible without falling over.</p>
 </section>
 <section id="action-space">
-<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">#</a></h2>
+<h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <figure class="align-default" id="id2">
 <img alt="../../../_images/humanoid.png" src="../../../_images/humanoid.png" />
 </figure>
@@ -664,7 +664,7 @@ The goal of the environment is to walk forward as fast as possible without falli
 </div>
 </section>
 <section id="observation-space">
-<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">#</a></h2>
+<h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
 <p>The observation space consists of the following parts (in order)</p>
 <ul class="simple">
 <li><p><em>qpos (22 elements by default):</em> The position values of the robot’s body parts.</p></li>
@@ -1262,7 +1262,7 @@ When using Humanoid-v3 or earlier versions, problems have been reported when usi
 Therefore, it is recommended to use a <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> version &lt; 2.0 when using the Humanoid environment if you want to report results with contact forces (if contact forces are not used in your experiments, you can use version &gt; 2.0).</p>
 </section>
 <section id="rewards">
-<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">#</a></h2>
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>The total reward is: <em><strong>reward</strong></em> <em>=</em> <em>healthy_reward + forward_reward - ctrl_cost - contact_cost</em>.</p>
 <ul class="simple">
 <li><p><em>healthy_reward</em>:
@@ -1290,16 +1290,16 @@ A negative reward to penalize the Humanoid if the external contact forces are to
 <p><strong>Note:</strong> There is a bug in the <code class="docutils literal notranslate"><span class="pre">Humanoid-v4</span></code> environment that causes <em>contact_cost</em> to always be 0.</p>
 </section>
 <section id="starting-state">
-<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">#</a></h2>
+<h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The initial position state is <span class="math notranslate nohighlight">\([0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times I_{24}, reset\_noise\_scale \times I_{24}]}\)</span>.
 The initial velocity state is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-reset\_noise\_scale \times I_{23}, reset\_noise\_scale \times I_{23}]}\)</span>.</p>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
 <p>Note that the z- and x-coordinates are non-zero so that the humanoid can immediately stand up and face forward (x-axis).</p>
 </section>
 <section id="episode-end">
-<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">#</a></h2>
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
 <section id="termination">
-<h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">#</a></h3>
+<h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">¶</a></h3>
 <p>If <code class="docutils literal notranslate"><span class="pre">terminate_when_unhealthy</span> <span class="pre">is</span> <span class="pre">True</span></code> (the default), the environment terminates when the Humanoid is unhealthy.
 The Humanoid is said to be unhealthy if any of the following happens:</p>
 <ol class="arabic simple">
@@ -1307,12 +1307,12 @@ The Humanoid is said to be unhealthy if any of the following happens:</p>
 </ol>
 </section>
 <section id="truncation">
-<h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">#</a></h3>
+<h3>Truncation<a class="headerlink" href="#truncation" title="Link to this heading">¶</a></h3>
 <p>The default duration of an episode is 1000 timesteps.</p>
 </section>
 </section>
 <section id="arguments">
-<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">#</a></h2>
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <p>Humanoid provides a range of parameters to modify the observation space, reward function, initial state, and termination condition.
 These parameters can be applied during <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> in the following way:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -1404,7 +1404,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 </div>
 </section>
 <section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">#</a></h2>
+<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>v5:</p>
 <ul>
@@ -1613,7 +1613,7 @@ These parameters can be applied during <code class="docutils literal notranslate
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

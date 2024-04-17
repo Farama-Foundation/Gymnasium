@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Solving Blackjack with Q-Learning" href="../blackjack_tutorial/" /><link rel="prev" title="Training Agents" href="../" />
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/reinforce_invpend_gym_v26.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.5 and Furo 2023.08.19.dev1 -->
         <title>Training using REINFORCE for Mujoco - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -481,7 +481,7 @@
           <article role="main">
             
             <section class="sphx-glr-example-title" id="training-using-reinforce-for-mujoco">
-<span id="sphx-glr-tutorials-training-agents-reinforce-invpend-gym-v26-py"></span><h1>Training using REINFORCE for Mujoco<a class="headerlink" href="#training-using-reinforce-for-mujoco" title="Link to this heading">#</a></h1>
+<span id="sphx-glr-tutorials-training-agents-reinforce-invpend-gym-v26-py"></span><h1>Training using REINFORCE for Mujoco<a class="headerlink" href="#training-using-reinforce-for-mujoco" title="Link to this heading">¶</a></h1>
 <a class="reference internal image-reference" href="../../../_images/reinforce_invpend_gym_v26_fig1.gif"><img alt="agent-environment-diagram" src="../../../_images/reinforce_invpend_gym_v26_fig1.gif" style="width: 400px;" /></a>
 <dl class="simple">
 <dt>This tutorial serves 2 purposes:</dt><dd><ol class="arabic simple">
@@ -533,7 +533,7 @@ and returns five variables:</p>
 </pre></div>
 </div>
 <section id="policy-network">
-<h2>Policy Network<a class="headerlink" href="#policy-network" title="Link to this heading">#</a></h2>
+<h2>Policy Network<a class="headerlink" href="#policy-network" title="Link to this heading">¶</a></h2>
 <img alt="../../../_images/reinforce_invpend_gym_v26_fig2.png" src="../../../_images/reinforce_invpend_gym_v26_fig2.png" />
 <p>We start by building a policy that the agent will learn using REINFORCE.
 A policy is a mapping from the current environment observation to a probability distribution of the actions to be taken.
@@ -598,7 +598,7 @@ appropriate weights to output means and standard deviation based on the current 
 </div>
 </section>
 <section id="building-an-agent">
-<h2>Building an agent<a class="headerlink" href="#building-an-agent" title="Link to this heading">#</a></h2>
+<h2>Building an agent<a class="headerlink" href="#building-an-agent" title="Link to this heading">¶</a></h2>
 <img alt="../../../_images/reinforce_invpend_gym_v26_fig3.jpeg" src="../../../_images/reinforce_invpend_gym_v26_fig3.jpeg" />
 <p>Now that we are done building the policy, let us develop <strong>REINFORCE</strong> which gives life to the policy network.
 The algorithm of REINFORCE could be found above. As mentioned before, REINFORCE aims to maximize the Monte-Carlo returns.</p>
@@ -756,7 +756,7 @@ Hence it is important to test out various seeds, which we will be doing.</p>
 </div>
 </section>
 <section id="plot-learning-curve">
-<h2>Plot learning curve<a class="headerlink" href="#plot-learning-curve" title="Link to this heading">#</a></h2>
+<h2>Plot learning curve<a class="headerlink" href="#plot-learning-curve" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rewards_to_plot</span> <span class="o">=</span> <span class="p">[[</span><span class="n">reward</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">reward</span> <span class="ow">in</span> <span class="n">rewards</span><span class="p">]</span> <span class="k">for</span> <span class="n">rewards</span> <span class="ow">in</span> <span class="n">rewards_over_seeds</span><span class="p">]</span>
 <span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rewards_to_plot</span><span class="p">)</span><span class="o">.</span><span class="n">melt</span><span class="p">()</span>
 <span class="n">df1</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;episodes&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;reward&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -772,7 +772,7 @@ Hence it is important to test out various seeds, which we will be doing.</p>
 <p>License: MIT License</p>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <p>[1] Williams, Ronald J.. “Simple statistical gradient-following
 algorithms for connectionist reinforcement learning.” Machine Learning 8
 (2004): 229-256.</p>
@@ -948,7 +948,7 @@ algorithms for connectionist reinforcement learning.” Machine Learning 8
       </script>
 
     <script src="../../../_static/documentation_options.js?v=ed34540e"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     
