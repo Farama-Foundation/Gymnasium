@@ -44,11 +44,12 @@ pip install gymnasium>=1.0.0
 -- QOL: Added new fields in `info` inlcuding all reward components and non-observable state and `reset()` now returns `info` which includes non observable state elements.
 
 - 23 bugs fixed, notably:
--- In Ant, Hopper, Humanoid, InvertedDoublePendulum, InvertedPendulum, Walker2d: `healthy_reward`, was being given on every step (even if the robot is unhealthy), now it is only given when the robot is healthy,  resulting in faster learning transience (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
+-- In Ant, Hopper, Humanoid, InvertedDoublePendulum, InvertedPendulum, Walker2d: `healthy_reward`, was being given on every step (even if the robot is unhealthy), now it is only given when the robot is healthy, resulting in faster learning transience (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
 -- In Ant & Humanoid: The `contact_cost` being constantly 0 (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/504)).
 -- In Reacher & Pusher the reward function was calculated baed the previous state not the current state (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
 -- Fixed several `info` fields.
 -- Walker2D: Both feet now have `friction==1.9`, previously the right foot had `friction==0.9` and the left foot had `friction==1.9` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
+-- Pusher: fixed the object being lighter that air, (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
 
 - Generally improved documentation.
 
