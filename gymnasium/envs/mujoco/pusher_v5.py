@@ -152,6 +152,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         - Fixed `info["reward_ctrl"]` not being multiplied by the reward weight.
         - Added `info["reward_near"]` which is equal to the reward term `reward_near`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
+        - Warning: This version of the environment is not compatible with `mujoco>=3.0.0`.
     * v3: This environment does not have a v3 release.
     * v2: All continuous control environments now use mujoco-py >= 1.50.
     * v1: max_time_steps raised to 1000 for robot based tasks (not including pusher, which has a max_time_steps of 100). Added reward_threshold to environments.
