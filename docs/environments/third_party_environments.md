@@ -2,9 +2,10 @@
 :tocdepth: 2
 ```
 
+# External Environments
+
 ## First-Party Environments
 The Farama Foundation maintains a number of other [projects](https://farama.org/projects), which use the Gymnasium API, environments include:
-
 gridworlds ([Minigrid](https://minigrid.farama.org/)),
 robotics ([Gymnasium-Robotics](https://robotics.farama.org/)),
 3D navigation ([Miniworld](https://miniworld.farama.org/)),
@@ -16,12 +17,10 @@ autonomous driving ([HighwayEnv](https://highway-env.farama.org/))
 Retro Games ([stable-retro](https://github.com/Farama-Foundation/stable-retro)), and many more.
 
 The Farama Foundation also maintains alternate APIs for RL, including:
-
 multi-agent RL ([PettingZoo](https://pettingzoo.farama.org/)),
 offline-RL ([Minari](https://minari.farama.org/)),
 multi-objective RL ([MO-Gymnasium](https://mo-gymnasium.farama.org/))
 goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)),
-
 
 ## Third-party environments with Gymnasium
 
