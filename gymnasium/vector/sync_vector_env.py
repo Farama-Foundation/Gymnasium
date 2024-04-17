@@ -260,7 +260,8 @@ class SyncVectorEnv(VectorEnv):
 
     def close_extras(self, **kwargs: Any):
         """Close the environments."""
-        [env.close() for env in self.envs]
+        if hasattr(self, "envs"):
+            [env.close() for env in self.envs]
 
     def _check_spaces(self) -> bool:
         """Check that each of the environments obs and action spaces are equivalent to the single obs and action space."""
