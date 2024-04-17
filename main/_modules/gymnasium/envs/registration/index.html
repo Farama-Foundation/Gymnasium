@@ -1346,7 +1346,7 @@
 <span class="sd">    We refer to the Vector environment as the vectorizor while the environment being vectorized is the base or vectorized environment (``vectorizor(vectorized env)``).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        id: Name of the environment. Optionally, a module to import can be included, eg. &#39;module:Env-v0&#39;</span>
+<span class="sd">        id: Name of the environment. Optionally, a module to import can be included, e.g. &#39;module:Env-v0&#39;</span>
 <span class="sd">        num_envs: Number of environments to create</span>
 <span class="sd">        vectorization_mode: The vectorization method used, defaults to ``None`` such that if env id&#39; spec has a ``vector_entry_point`` (not ``None``),</span>
 <span class="sd">            this is first used otherwise defaults to ``sync`` to use the :class:`gymnasium.vector.SyncVectorEnv`.</span>
@@ -1375,6 +1375,8 @@
 
     <span class="n">env_spec</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
     <span class="n">env_spec_kwargs</span> <span class="o">=</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">kwargs</span>
+    <span class="c1"># for sync or async, these parameters should be passed in `make(..., **kwargs)` rather than in the env spec kwargs, therefore, we `reset` the kwargs</span>
+    <span class="n">env_spec</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="n">num_envs</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_envs&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="p">)</span>
     <span class="n">vectorization_mode</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;vectorization_mode&quot;</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="p">)</span>
