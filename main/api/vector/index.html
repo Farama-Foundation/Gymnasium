@@ -396,13 +396,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../environments/atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">First-Party Environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/#third-party-environments-with-gymnasium">Third-party environments with Gymnasium</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/#third-party-environments-using-gym">Third-Party Environments using Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/#video-game-environments">Video Game environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/#robotics-environments">Robotics environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/#autonomous-driving-environments">Autonomous Driving environments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/#other-environments">Other environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">External Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
@@ -749,7 +743,7 @@ vectorized environments.</p>
 <dt class="sig sig-object py" id="gymnasium.vector.VectorEnv.np_random_seed">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">VectorEnv.</span></span><span class="sig-name descname"><span class="pre">np_random_seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.vector.VectorEnv.np_random_seed" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the environment’s internal <code class="xref py py-attr docutils literal notranslate"><span class="pre">_np_random_seed</span></code> that if not set will first initialise with a random int as seed.</p>
-<p>If <a class="reference internal" href="sync_vector_env/#gymnasium.vector.VectorEnv.np_random_seed" title="gymnasium.vector.VectorEnv.np_random_seed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random_seed</span></code></a> was set directly instead of through <a class="reference internal" href="#gymnasium.vector.VectorEnv.reset" title="gymnasium.vector.VectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_np_random_through_seed()</span></code>,
+<p>If <a class="reference internal" href="#gymnasium.vector.VectorEnv.np_random_seed" title="gymnasium.vector.VectorEnv.np_random_seed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random_seed</span></code></a> was set directly instead of through <a class="reference internal" href="#gymnasium.vector.VectorEnv.reset" title="gymnasium.vector.VectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_np_random_through_seed()</span></code>,
 the seed will take the value -1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
