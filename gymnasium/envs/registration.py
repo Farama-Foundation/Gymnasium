@@ -161,7 +161,7 @@ class EnvSpec:
 
         for key, value in env_spec.items():
             if callable(value):
-                ValueError(
+                raise ValueError(
                     f"Callable found in {spec_name} for {key} attribute with value={value}. Currently, Gymnasium does not support serialising callables."
                 )
 
