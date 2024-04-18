@@ -141,7 +141,7 @@ class Graph(Space[GraphInstance]):
             if self.edge_space is None:
                 super_seed = super().seed(seed)
                 return super_seed, self.node_space.seed(
-                    self.np_random.integers(np.iinfo(np.int32).max)
+                    int(self.np_random.integers(np.iinfo(np.int32).max))
                 )
             else:
                 super_seed = super().seed(seed)
@@ -150,10 +150,10 @@ class Graph(Space[GraphInstance]):
                 )
                 return (
                     super_seed,
-                    self.node_space.seed(node_seed),
-                    self.edge_space.seed(edge_seed),
+                    self.node_space.seed(int(node_seed)),
+                    self.edge_space.seed(int(edge_seed)),
                 )
-        elif isinstance(seed, tuple):
+        elif isinstance(seed, (list, tuple)):
             if self.edge_space is None:
                 if len(seed) != 2:
                     raise ValueError(

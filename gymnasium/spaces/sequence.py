@@ -75,7 +75,7 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
             return super_seed, self.feature_space.seed(
                 int(self.np_random.integers(np.iinfo(np.int32).max))
             )
-        elif isinstance(seed, tuple):
+        elif isinstance(seed, (tuple, list)):
             if len(seed) != 2:
                 raise ValueError("todo")
             return super().seed(seed[0]), self.feature_space.seed(seed[1])

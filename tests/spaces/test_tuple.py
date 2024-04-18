@@ -37,17 +37,16 @@ def test_sequence_inheritance():
 
 
 @pytest.mark.parametrize(
-    "space, seed, expected_len",
+    "space, seed",
     [
-        (Tuple([Discrete(5), Discrete(4)]), None, 2),
-        (Tuple([Discrete(5), Discrete(4)]), 123, 3),
-        (Tuple([Discrete(5), Discrete(4)]), (123, 456), 2),
+        (Tuple([Discrete(5), Discrete(4)]), None),
+        (Tuple([Discrete(5), Discrete(4)]), 123),
+        (Tuple([Discrete(5), Discrete(4)]), (123, 456)),
         (
             Tuple(
                 (Discrete(5), Tuple((Box(low=0.0, high=1.0, shape=(3,)), Discrete(2))))
             ),
             (123, (456, 789)),
-            3,
         ),
         (
             Tuple(
@@ -57,14 +56,13 @@ def test_sequence_inheritance():
                 )
             ),
             (123, {"position": 456, "velocity": 789}),
-            3,
         ),
     ],
 )
-def test_seeds(space, seed, expected_len):
+def test_seeds(space, seed):
     seeds = space.seed(seed)
-    assert isinstance(seeds, list) and all(isinstance(elem, int) for elem in seeds)
-    assert len(seeds) == expected_len
+    assert isinstance(seeds, tuple)
+    assert len(seeds) == len(space)
 
     sample1 = space.sample()
 

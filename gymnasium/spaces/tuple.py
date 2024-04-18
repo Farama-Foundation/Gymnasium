@@ -72,7 +72,7 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
                 subspace.seed(int(subseed))
                 for subspace, subseed in zip(self.spaces, subseeds)
             )
-        elif isinstance(seed, tuple):
+        elif isinstance(seed, (tuple, list)):
             if len(seed) != len(self.spaces):
                 raise ValueError(
                     f"Expects that the subspaces of seeds equals the number of subspaces. Actual length of seeds: {len(seed)}, length of subspaces: {len(self.spaces)}"

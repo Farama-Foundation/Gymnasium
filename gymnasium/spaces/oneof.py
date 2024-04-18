@@ -83,7 +83,7 @@ class OneOf(Space[Any]):
                 space.seed(int(subseed))
                 for space, subseed in zip(self.spaces, subseeds)
             )
-        elif isinstance(seed, tuple):
+        elif isinstance(seed, (tuple, list)):
             if len(seed) != len(self.spaces) + 1:
                 raise ValueError(
                     f"Expects that the subspaces of seeds equals the number of subspaces + 1. Actual length of seeds: {len(seed)}, length of subspaces: {len(self.spaces)}"
@@ -95,7 +95,7 @@ class OneOf(Space[Any]):
             )
         else:
             raise TypeError(
-                f"Expected None, int, tuple of ints, actual type: {type(seed)}"
+                f"Expected None, int, or tuple of ints, actual type: {type(seed)}"
             )
 
     def sample(self, mask: tuple[Any | None, ...] | None = None) -> tuple[int, Any]:

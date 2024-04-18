@@ -510,13 +510,13 @@ def test_seed_reproducibility(space):
     space_2 = copy.deepcopy(space)
 
     for seed in range(5):
-        assert space_1.seed(seed) == space_2.seed(seed)
+        assert data_equivalence(space_1.seed(seed), space_2.seed(seed))
         # With the same seed, the two spaces should be identical
         assert all(
             data_equivalence(space_1.sample(), space_2.sample()) for _ in range(10)
         )
 
-    assert space_1.seed(123) != space_2.seed(456)
+    assert not data_equivalence(space_1.seed(123), space_2.seed(456))
     # Due to randomness, it is difficult to test that random seeds produce different answers
     #   Therefore, taking 10 samples and checking that they are not all the same.
     assert not all(
