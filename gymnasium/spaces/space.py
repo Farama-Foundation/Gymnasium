@@ -115,7 +115,7 @@ class Space(Generic[T_cov]):
         return np_random_seed
 
     def contains(self, x: Any) -> bool:
-        """Return boolean specifying if x is a valid member of this space. ``sample in space`` is equivalent to ``space.contains(sample)``."""
+        """Return boolean specifying if x is a valid member of this space, equivalent to ``sample in space``."""
         raise NotImplementedError
 
     def __contains__(self, x: Any) -> bool:

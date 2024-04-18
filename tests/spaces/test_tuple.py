@@ -60,16 +60,16 @@ def test_sequence_inheritance():
     ],
 )
 def test_seeds(space, seed):
-    seeds = space.seed(seed)
-    assert isinstance(seeds, tuple)
-    assert len(seeds) == len(space)
+    seeds1 = space.seed(seed)
+    assert isinstance(seeds1, tuple)
+    assert len(seeds1) == len(space)
 
     sample1 = space.sample()
 
-    seeds2 = space.seed(seed)
+    seeds2 = space.seed(seeds1)
     sample2 = space.sample()
 
-    assert data_equivalence(seeds, seeds2)
+    assert data_equivalence(seeds1, seeds2)
     assert data_equivalence(sample1, sample2)
 
 

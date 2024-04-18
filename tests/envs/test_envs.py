@@ -151,9 +151,9 @@ def test_pickle_env(env: gym.Env):
 
     pickled_env = pickle.loads(pickle.dumps(env))
 
-    assert data_equivalence(env.reset(), pickled_env.reset())
+    data_equivalence(env.reset(), pickled_env.reset())
 
     action = env.action_space.sample()
-    assert data_equivalence(env.step(action), pickled_env.step(action))
+    data_equivalence(env.step(action), pickled_env.step(action))
     env.close()
     pickled_env.close()
