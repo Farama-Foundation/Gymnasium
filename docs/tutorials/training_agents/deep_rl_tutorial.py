@@ -11,18 +11,14 @@ Let's start by importing necessary libraries:
 """
 
 # Global TODOs:
-# TODO: Finish debugging training. current step is to fix parallel training function and implement results buffer.
-# TODO: create experience namedtuple, add experience tuple directly to agent.memory
-# TODO: Create a NN pipeline.
 # TODO: Look for improvements regarding FP.
-# TODO: Finish visualization part.
 # TODO: train agent on Lunar-Lander env.
 # TODO: Final check on documentation and typing.
 
 
 # %%
 __author__ = "Hardy Hasan"
-__date__ = "2023-04-16"
+__date__ = "2023-04-18"
 __license__ = "MIT License"
 
 import concurrent.futures
@@ -37,7 +33,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 import gymnasium
 
@@ -78,7 +73,10 @@ class ResultsBuffer:
         "params",
         "episode_returns",
         "episode_lengths",
+        "episode_action_values",
         "losses",
+        "exploration",
+        "policy_entropy",
     ]
 
     def __init__(self, seed, params):
@@ -86,7 +84,10 @@ class ResultsBuffer:
         self.params = params
         self.episode_returns = np.zeros(params.training_steps)
         self.episode_lengths = np.zeros(params.training_steps)
+        self.episode_action_values = np.zeros(params.training_steps)
         self.losses = np.zeros(params.training_steps)
+        self.exploration = np.zeros(params.training_steps)
+        self.policy_entropy = np.zeros(params.training_steps)
 
         self.index = 0
 
@@ -96,13 +97,24 @@ class ResultsBuffer:
     def __str__(self):
         return f"Env={self.params.env_name}\tseed={self.seed}"
 
-    def add(self, episode_return: float, episode_length: float, loss: float) -> None:
+    def add(
+        self,
+        episode_return: float,
+        episode_length: float,
+        episode_action_value: float,
+        loss: float,
+        epsilon: float,
+        entropy: float,
+    ) -> None:
         """
         Add step stats.
         Args:
             episode_return: Latest episodic return
             episode_length: Latest episode length
+            episode_action_value: Predicted average action-value of the last episode.
             loss: Latest training loss
+            epsilon: Current exploration value.
+            entropy: Current policy entropy.
 
         Returns:
 
@@ -110,9 +122,18 @@ class ResultsBuffer:
         if self.index < self.params.training_steps:
             self.episode_returns[self.index] = episode_return
             self.episode_lengths[self.index] = episode_length
+            self.episode_action_values[self.index] = episode_action_value
             self.losses[self.index] = loss
+            self.exploration[self.index] = epsilon
+            self.policy_entropy[self.index] = entropy
 
         self.index += 1
+
+
+# a namedtuple for the experience of the agent at each training step
+Experience = namedtuple(
+    "Experience", field_names=["state", "action", "next_state", "reward", "done"]
+)
 
 
 def to_tensor(array: np.ndarray, normalize: bool = False) -> torch.Tensor:
@@ -228,7 +249,10 @@ def preprocess_results(
     stats = [
         [res_buffer.episode_returns for res_buffer in results],
         [res_buffer.episode_lengths for res_buffer in results],
+        [res_buffer.episode_action_values for res_buffer in results],
         [res_buffer.losses for res_buffer in results],
+        [res_buffer.exploration for res_buffer in results],
+        [res_buffer.policy_entropy for res_buffer in results],
     ]
 
     smoothed_data = [
@@ -245,22 +269,31 @@ def visualize_performance(
 ) -> None:
     plt.style.use("seaborn-v0_8-darkgrid")
 
-    colors = ["purple", "seagreen", "violet"]
-    y_labels = ["Return", "Episode Length", "Loss"]
+    colors = ["purple", "seagreen", "violet", "cyan", "navy", "olive"]
+    y_labels = [
+        "Return",
+        "Episode Length",
+        "Predicted action-value",
+        "Loss",
+        "Epsilon",
+        "Entropy",
+    ]
     label = "agents"
     titles = [
         "Aggregated agents returns vs baseline",
         "Aggregated episode lengths",
+        "Aggregated action-value per episode",
         "Aggregated training losses",
+        "Aggregated epsilon decay",
+        "Aggregated policy entropy",
     ]
 
-    n_metrics = len(processed_data)
     x = range(1, len(processed_data[0][0]) + 1)
-    # training_steps = params.training_steps // 1000
-    # x = np.linspace(start=training_steps // num_datapoints, stop=training_steps, num=num_datapoints)
     figname = f"drl_{params.env_name.split('-')[0]}"
 
-    fig, axes = plt.subplots(nrows=1, ncols=n_metrics, figsize=(24, 6))
+    fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(14, 21))
+
+    axes = axes.flatten()
 
     for i, ax in enumerate(axes):
         mean, std = processed_data[i]
@@ -269,14 +302,18 @@ def visualize_performance(
         ax.set(xlabel="Steps", ylabel=y_labels[i], title=titles[i])
         ax.legend()
 
-    axes[0].plot(
-        x, baseline_return[: params.training_steps], color="black", label="baseline"
-    )
+    axes[0].plot(x, baseline_return, color="black", label="baseline")
+    axes[0].legend()
 
     fig.savefig(f"../../_static/img/tutorials/{figname}.png")
     plt.show()
 
     return None
+
+
+def compute_entropy(probs: torch.Tensor) -> float:
+    """Compute the entropy of a policy given the action probabilities."""
+    return -(probs * torch.log(probs)).sum().item()
 
 
 # %%
@@ -346,32 +383,21 @@ class ReplayMemory:
         """Returns the length of the memory."""
         return self.length
 
-    def push(
-        self,
-        state: np.ndarray,
-        action: int,
-        next_state: np.ndarray,
-        reward: float,
-        done: bool,
-    ) -> None:
+    def push(self, experience: Experience) -> None:
         """
         Adds a new experience into the buffer
 
         Args:
-            state: Current agent state.
-            action: The taken action at `state`.
-            next_state: The resulting state from taking action.
-            reward: Reward signal.
-            done: Whether episode ended after taking action.
+            experience: step experience of agent.
 
         Returns:
 
         """
-        self._states[self.index] = state
-        self._actions[self.index] = action
-        self._next_states[self.index] = next_state
-        self._rewards[self.index] = reward
-        self._dones[self.index] = done
+        self._states[self.index] = experience.state
+        self._actions[self.index] = experience.action
+        self._next_states[self.index] = experience.next_state
+        self._rewards[self.index] = experience.reward
+        self._dones[self.index] = experience.done
 
         self.length = min(self.length + 1, self.params.capacity)
         self.index = (self.index + 1) % self.params.capacity
@@ -431,6 +457,8 @@ class Agent(nn.Module):
 
         self.replay_memory = ReplayMemory(self.params)
 
+        self.policy_entropy = 0
+
         # The support is the set of values over which a probability
         # distribution is defined and has non-zero probability there.
         self.support = torch.linspace(
@@ -442,35 +470,24 @@ class Agent(nn.Module):
         out_features = self.params.n_actions * self.params.n_atoms
         n_hidden_units = self.params.n_hidden_units
 
-        # the convolutional part is created depending on whether the input is image observation.
-        # These convolutional layers is in accordance to the DQN network parameters.
         if self.params.image_obs:
-            self.conv1 = nn.Conv2d(
-                in_channels=4,
-                out_channels=32,
-                kernel_size=(8, 8),
-                stride=(4, 4),
-                padding=0,
-            )
-            self.conv2 = nn.Conv2d(
-                in_channels=32,
-                out_channels=64,
-                kernel_size=(4, 4),
-                stride=(2, 2),
-                padding=(0, 0),
-            )
-            self.conv3 = nn.Conv2d(
-                in_channels=64,
-                out_channels=64,
-                kernel_size=(3, 3),
-                stride=(1, 1),
-                padding=(0, 0),
+            self.convolutional = nn.Sequential(
+                nn.Conv2d(4, 32, (8, 8), (4, 4), 0),
+                nn.ReLU(),
+                nn.Conv2d(32, 64, (4, 4), (2, 2), 0),
+                nn.ReLU(),
+                nn.Conv2d(64, 64, (3, 3), (1, 1), 0),
+                nn.ReLU(),
+                nn.Flatten(),
             )
         else:
-            self.conv1, self.conv2, self.conv3 = None, None, None
+            self.convolutional = nn.Sequential()
 
-        self.fc1 = nn.Linear(in_features=in_features, out_features=n_hidden_units)
-        self.fc2 = nn.Linear(in_features=n_hidden_units, out_features=out_features)
+        self.head = torch.nn.Sequential(
+            nn.Linear(in_features=in_features, out_features=n_hidden_units),
+            nn.ReLU(),
+            nn.Linear(in_features=n_hidden_units, out_features=out_features),
+        )
 
         self.optimizer = torch.optim.Adam(
             params=self.parameters(), lr=self.params.learning_rate
@@ -488,25 +505,17 @@ class Agent(nn.Module):
                     shape=(n_states, n_actions, n_atoms)
 
         """
+        value_dist = self.convolutional(self.head(state))
 
-        if self.params.image_obs:
-            conv1_out = F.relu(self.conv1(state))
-            conv2_out = F.relu(self.conv2(conv1_out))
-            conv3_out = torch.flatten(F.relu(self.conv3(conv2_out)))
-            fc1_out = F.relu(self.fc1(conv3_out))
-            value_dist = self.fc2(fc1_out)
-        else:
-            fc1_out = F.relu(self.fc1(state))
-            value_dist = self.fc2(fc1_out)
-
-        value_dist = value_dist.view(
-            state.shape[0], self.params.n_actions, self.params.n_atoms
-        ).softmax(dim=2)
-        return value_dist
+        return value_dist.view(state.shape[0], self.params.n_actions, -1).softmax(2)
 
     def act(
         self, state: torch.Tensor, exploit: bool
-    ) -> typing.Tuple[int, torch.Tensor]:
+    ) -> typing.Tuple[
+        typing.Union[int, torch.Tensor],
+        typing.Union[np.ndarray, torch.Tensor],
+        typing.Union[float, torch.Tensor],
+    ]:
         """
         Sampling action for a given state. Actions are sampled randomly during exploration.
         The action-value is the expected value of the action value-distribution.
@@ -517,51 +526,41 @@ class Agent(nn.Module):
 
         Returns:
             action: The sampled action.
-            probs: The probabilities tensor corresponding to the selected action.
+            probs: The probabilities tensor/array corresponding to the selected action(s).
+            action_value: The action-value corresponding to the selected action.
         """
         random_value = random.random()
+        action_value = 0
 
         if self.epsilon > self.params.epsilon_end:
             self.epsilon -= self.eps_reduction
 
-        if exploit or random_value > self.epsilon:
-            with torch.no_grad():
-                value_dist = self.forward(state)
+        with torch.no_grad():
+            value_dist = self.forward(state)
             expected_returns = torch.sum(self.support * value_dist, dim=2)
+
+        if exploit or random_value > self.epsilon:
             action = torch.argmax(expected_returns, dim=1)
-            probs = value_dist[torch.arange(state.shape[0]), action, :]
         else:
             action = torch.randint(high=self.params.n_actions, size=(1,), device=device)
-            probs = torch.zeros(self.params.n_atoms)
+
+        probs = value_dist[torch.arange(state.shape[0]), action, :]
+        action_probs = (
+            expected_returns.softmax(0)
+            if (exploit or random_value > self.epsilon)
+            else torch.ones(self.params.n_actions) / self.params.n_actions
+        )
+        self.policy_entropy = compute_entropy(action_probs)
 
         if len(action) == 1:
             action = action.item()
+            action_value = (self.support * probs).sum().item()
 
-        return action, probs
+        return action, probs, action_value
 
-    def store_experience(
-        self,
-        state: np.ndarray,
-        action: int,
-        next_state: np.ndarray,
-        reward: float,
-        done: bool,
-    ):
-        """
-
-        Args:
-            state: Latest agent state.
-            action: Action taken at latest state
-            next_state: Resulting state after taking action.
-            reward: Received reward signal.
-            done: Whether the action terminated the episode.
-
-        Returns:
-
-        """
-        self.replay_memory.push(
-            state=state, action=action, next_state=next_state, reward=reward, done=done
-        )
+    def get_metrics(self):
+        """Provide metrics such as policy entropy, exploration rate epsilon at each step."""
+        return self.policy_entropy, self.epsilon
 
     def learn(self, target_agent: "Agent") -> float:
         """
@@ -590,7 +589,7 @@ class Agent(nn.Module):
         probs = value_dists[torch.arange(self.params.batch_size), actions.view(-1), :]
 
         # target agent predictions
-        _, target_probs = target_agent.act(next_states, exploit=True)
+        _, target_probs, _ = target_agent.act(next_states, exploit=True)
 
         # ------------------------------ Categorical algorithm ------------------------------
         #
@@ -675,6 +674,7 @@ def train(seed: int, params: namedtuple, verbose: bool) -> ResultsBuffer:
     steps = 0  # global time steps for the whole training
     episode_return = float("-inf")
     episode_length = float("-inf")
+    episode_action_value = float("-inf")
     loss = float("-inf")
     results_buffer = ResultsBuffer(seed=seed, params=params)
 
@@ -697,30 +697,38 @@ def train(seed: int, params: namedtuple, verbose: bool) -> ResultsBuffer:
         # --- Start en episode ---
         done = False
         obs, info = env.reset(seed=seed)
+        action_value_sum = 0
 
         # --- Play an episode ---
         while not done:
             state = to_tensor(obs, params.image_obs)
-            action, _ = agent.act(state=state, exploit=False)
+            action, _, action_value = agent.act(state=state, exploit=False)
             next_obs, reward, terminated, truncated, info = env.step(action)
-            agent.store_experience(
-                state=obs,
-                action=action,
-                next_state=next_obs,
-                reward=reward,
-                done=int(terminated),
-            )
+
+            step_experience = Experience(obs, action, next_obs, reward, terminated)
+            agent.replay_memory.push(step_experience)
+
             obs = next_obs
             done = terminated or truncated
             steps += 1
+            action_value_sum += action_value
 
             if done:
                 episode_return, episode_length = (
                     info["episode"]["r"],
                     info["episode"]["l"],
                 )
+                episode_action_value = action_value_sum / info["episode"]["l"]
 
-            results_buffer.add(episode_return, episode_length, loss)
+            entropy, epsilon = agent.get_metrics()
+            results_buffer.add(
+                episode_return,
+                episode_length,
+                episode_action_value,
+                loss,
+                epsilon,
+                entropy,
+            )
 
             # train agent periodically if enough experience exists
             if steps % params.update_frequency == 0 and steps >= params.learning_starts:
