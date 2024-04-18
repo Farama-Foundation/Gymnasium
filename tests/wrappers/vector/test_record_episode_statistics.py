@@ -35,7 +35,7 @@ def test_record_episode_statistics(num_envs, env_id="CartPole-v1", num_steps=100
     assert data_equivalence(wrapper_vector_obs, vector_wrapper_obs)
     assert data_equivalence(wrapper_vector_info, vector_wrapper_info)
 
-    for _ in range(num_steps):
+    for t in range(1, num_steps + 1):
         action = wrapper_vector_env.action_space.sample()
         (
             wrapper_vector_obs,
@@ -52,20 +52,22 @@ def test_record_episode_statistics(num_envs, env_id="CartPole-v1", num_steps=100
             vector_wrapper_info,
         ) = vector_wrapper_env.step(action)
 
-        data_equivalence(wrapper_vector_obs, vector_wrapper_obs)
-        data_equivalence(wrapper_vector_reward, vector_wrapper_reward)
-        data_equivalence(wrapper_vector_terminated, vector_wrapper_terminated)
-        data_equivalence(wrapper_vector_truncated, vector_wrapper_truncated)
+        assert data_equivalence(wrapper_vector_obs, vector_wrapper_obs)
+        assert data_equivalence(wrapper_vector_reward, vector_wrapper_reward)
+        assert data_equivalence(wrapper_vector_terminated, vector_wrapper_terminated)
+        assert data_equivalence(wrapper_vector_truncated, vector_wrapper_truncated)
 
         if "episode" in wrapper_vector_info:
-            assert "episode" in vector_wrapper_info
-
             wrapper_vector_time = wrapper_vector_info["episode"].pop("t")
             vector_wrapper_time = vector_wrapper_info["episode"].pop("t")
             assert wrapper_vector_time.shape == vector_wrapper_time.shape
             assert wrapper_vector_time.dtype == vector_wrapper_time.dtype
 
-        data_equivalence(wrapper_vector_info, vector_wrapper_info)
+            vector_wrapper_info["episode"].pop("_l")
+            vector_wrapper_info["episode"].pop("_r")
+            vector_wrapper_info["episode"].pop("_t")
+
+        assert data_equivalence(wrapper_vector_info, vector_wrapper_info)
 
     wrapper_vector_env.close()
     vector_wrapper_env.close()

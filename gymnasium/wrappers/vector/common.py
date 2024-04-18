@@ -82,7 +82,8 @@ class RecordEpisodeStatistics(VectorWrapper):
 
         self.episode_start_times: np.ndarray = np.zeros(())
         self.episode_returns: np.ndarray = np.zeros(())
-        self.episode_lengths: np.ndarray = np.zeros(())
+        self.episode_lengths: np.ndarray = np.zeros((), dtype=int)
+        self.prev_dones: np.ndarray = np.zeros((), dtype=bool)
 
         self.time_queue = deque(maxlen=buffer_length)
         self.return_queue = deque(maxlen=buffer_length)
@@ -98,7 +99,8 @@ class RecordEpisodeStatistics(VectorWrapper):
 
         self.episode_start_times = np.full(self.num_envs, time.perf_counter())
         self.episode_returns = np.zeros(self.num_envs)
-        self.episode_lengths = np.zeros(self.num_envs)
+        self.episode_lengths = np.zeros(self.num_envs, dtype=int)
+        self.prev_dones = np.zeros(self.num_envs, dtype=bool)
 
         return obs, info
 
@@ -118,10 +120,13 @@ class RecordEpisodeStatistics(VectorWrapper):
             infos, dict
         ), f"`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is {type(infos)}. This may be due to usage of other wrappers in the wrong order."
 
-        self.episode_returns += rewards
-        self.episode_lengths += 1
+        self.episode_returns[self.prev_dones] = 0
+        self.episode_lengths[self.prev_dones] = 0
+        self.episode_start_times[self.prev_dones] = time.perf_counter()
+        self.episode_returns[~self.prev_dones] += rewards[~self.prev_dones]
+        self.episode_lengths[~self.prev_dones] += 1
 
-        dones = np.logical_or(terminations, truncations)
+        self.prev_dones = dones = np.logical_or(terminations, truncations)
         num_dones = np.sum(dones)
 
         if num_dones:
@@ -146,10 +151,6 @@ class RecordEpisodeStatistics(VectorWrapper):
                 self.time_queue.extend(episode_time_length[i])
                 self.return_queue.extend(self.episode_returns[i])
                 self.length_queue.extend(self.episode_lengths[i])
-
-            self.episode_lengths[dones] = 0
-            self.episode_returns[dones] = 0
-            self.episode_start_times[dones] = time.perf_counter()
 
         return (
             observations,
