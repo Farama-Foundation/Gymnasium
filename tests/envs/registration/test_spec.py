@@ -93,3 +93,18 @@ def test_spec_default_lookups():
 
     assert gym.spec("test/TestEnv") is not None
     del gym.registry["test/TestEnv"]
+
+
+def test_check_can_jsonify():
+    def no_entry_point():
+        pass
+
+    gym.register(id="test/TestEnv-v0", entry_point=no_entry_point)
+    with pytest.raises(
+        ValueError,
+        match="^Callable found in test/TestEnv-v0 for entry_point attribute "
+        "with value=<.*>. Currently, Gymnasium does not support "
+        "serialising callables.$",
+    ):
+        gym.spec("test/TestEnv-v0").to_json()
+    del gym.registry["test/TestEnv-v0"]
