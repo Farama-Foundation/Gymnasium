@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 import scipy.stats
 
+from gymnasium.error import Error
 from gymnasium.spaces import Box, Discrete, MultiBinary, MultiDiscrete, Space, Text
 from gymnasium.utils import seeding
 from gymnasium.utils.env_checker import data_equivalence
@@ -604,3 +605,22 @@ def test_space_pickling(space):
     file_unpickled_sample = file_unpickled_space.sample()
     assert data_equivalence(space_sample, unpickled_sample)
     assert data_equivalence(space_sample, file_unpickled_sample)
+
+
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+@pytest.mark.parametrize("initial_seed", [None, 123])
+def test_space_seeding_output(space, initial_seed, num_samples=5):
+    seeding_values = space.seed(None)
+    samples = [space.sample() for _ in range(num_samples)]
+
+    reseeded_values = space.seed(seeding_values)
+    resamples = [space.sample() for _ in range(num_samples)]
+
+    assert data_equivalence(seeding_values, reseeded_values)
+    assert data_equivalence(samples, resamples)
+
+
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+def test_invalid_space_seed(space):
+    with pytest.raises((ValueError, TypeError, Error)):
+        space.seed("abc")

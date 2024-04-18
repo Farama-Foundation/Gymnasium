@@ -71,8 +71,8 @@ def test_seeds(space, seed, expected_len):
     seeds2 = space.seed(seed)
     sample2 = space.sample()
 
-    data_equivalence(seeds, seeds2)
-    data_equivalence(sample1, sample2)
+    assert data_equivalence(seeds, seeds2)
+    assert data_equivalence(sample1, sample2)
 
 
 @pytest.mark.parametrize(

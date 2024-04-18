@@ -110,6 +110,71 @@ class Graph(Space[GraphInstance]):
                 f"Expects base space to be Box and Discrete, actual space: {type(base_space)}."
             )
 
+    def seed(
+        self, seed: int | tuple[int, int] | tuple[int, int, int] | None = None
+    ) -> tuple[int, int] | tuple[int, int, int]:
+        """Seeds the PRNG of this space and node / edge subspace.
+
+        Depending on the type of seed, the subspaces will be seeded differently
+
+        * ``None`` - The root, node and edge spaces PRNG are randomly initialized
+        * ``Int`` - The integer is used to seed the :class:`Graph` space that is used to generate seed values for the node and edge subspaces.
+        * ``Tuple[int, int]`` - Seeds the :class:`Graph` and node subspace with a particular value. Only if edge subspace isn't specified
+        * ``Tuple[int, int, int]`` - Seeds the :class:`Graph`, node and edge subspaces with a particular value.
+
+        Args:
+            seed: An optional int or tuple of ints for this space and the node / edge subspaces. See above for more details.
+
+        Returns:
+            A tuple of two or three ints depending on if the edge subspace is specified.
+        """
+        if seed is None:
+            if self.edge_space is None:
+                return super().seed(None), self.node_space.seed(None)
+            else:
+                return (
+                    super().seed(None),
+                    self.node_space.seed(None),
+                    self.edge_space.seed(None),
+                )
+        elif isinstance(seed, int):
+            if self.edge_space is None:
+                super_seed = super().seed(seed)
+                return super_seed, self.node_space.seed(
+                    self.np_random.integers(np.iinfo(np.int32).max)
+                )
+            else:
+                super_seed = super().seed(seed)
+                node_seed, edge_seed = self.np_random.integers(
+                    np.iinfo(np.int32).max, size=(2,)
+                )
+                return (
+                    super_seed,
+                    self.node_space.seed(node_seed),
+                    self.edge_space.seed(edge_seed),
+                )
+        elif isinstance(seed, tuple):
+            if self.edge_space is None:
+                if len(seed) != 2:
+                    raise ValueError(
+                        f"Expects a tuple of two values for Graph and node space, actual length: {len(seed)}"
+                    )
+                return super().seed(seed[0]), self.node_space.seed(seed[1])
+            else:
+                if len(seed) != 3:
+                    raise ValueError(
+                        f"Expects a tuple of three values for Graph, node and edge space, actual length: {len(seed)}"
+                    )
+                return (
+                    super().seed(seed[0]),
+                    self.node_space.seed(seed[1]),
+                    self.edge_space.seed(seed[2]),
+                )
+        else:
+            raise TypeError(
+                f"Expects `None`, int or tuple of ints, actual type: {type(seed)}"
+            )
+
     def sample(
         self,
         mask: None

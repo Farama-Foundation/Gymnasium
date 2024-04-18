@@ -53,11 +53,36 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
         # None for shape and dtype, since it'll require special handling
         super().__init__(None, None, seed)
 
-    def seed(self, seed: int | None = None) -> list[int]:
-        """Seed the PRNG of this space and the feature space."""
-        seeds = super().seed(seed)
-        seeds += self.feature_space.seed(seed)
-        return seeds
+    def seed(self, seed: int | tuple[int, int] | None = None) -> tuple[int, int]:
+        """Seed the PRNG of the Sequence space and the feature space.
+
+        Depending on the type of seed, the subspaces will be seeded differently
+
+        * ``None`` - All the subspaces will use a random initial seed
+        * ``Int`` - The integer is used to seed the :class:`Sequence` space that is used to generate a seed value for the feature space.
+        * ``Tuple of ints`` - A tuple for the :class:`Sequence` and feature space.
+
+        Args:
+            seed: An optional int or tuple of ints to seed the PRNG. See above for more details
+
+        Returns:
+            A tuple of the seeding values for the Sequence and feature space
+        """
+        if seed is None:
+            return super().seed(seed), self.feature_space.seed(seed)
+        elif isinstance(seed, int):
+            super_seed = super().seed(seed)
+            return super_seed, self.feature_space.seed(
+                int(self.np_random.integers(np.iinfo(np.int32).max))
+            )
+        elif isinstance(seed, tuple):
+            if len(seed) != 2:
+                raise ValueError("todo")
+            return super().seed(seed[0]), self.feature_space.seed(seed[1])
+        else:
+            raise TypeError(
+                f"Expected None, int, tuple of ints, actual type: {type(seed)}"
+            )
 
     @property
     def is_np_flattenable(self):
