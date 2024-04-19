@@ -26,7 +26,7 @@ TESTING_FUNDAMENTAL_SPACES = [
     Box(low=-np.inf, high=0.0, shape=(2, 1)),
     Box(low=0.0, high=np.inf, shape=(2, 1)),
     Box(low=0, high=255, shape=(2, 2, 3), dtype=np.uint8),
-    Box(low=np.array([0]), high=np.array([1]), dtype=np.bool_),
+    Box(low=np.array([0, 0, 1]), high=np.array([1, 0, 1]), dtype=np.bool_),
     Box(
         low=np.array([-np.inf, -np.inf, 0, -10]),
         high=np.array([np.inf, 0, np.inf, 10]),
@@ -118,7 +118,6 @@ TESTING_COMPOSITE_SPACES_IDS = [f"{space}" for space in TESTING_COMPOSITE_SPACES
 
 TESTING_SPACES: List[Space] = TESTING_FUNDAMENTAL_SPACES + TESTING_COMPOSITE_SPACES
 TESTING_SPACES_IDS = TESTING_FUNDAMENTAL_SPACES_IDS + TESTING_COMPOSITE_SPACES_IDS
-assert len(TESTING_SPACES) == len(TESTING_SPACES_IDS)
 
 
 class CustomSpace(Space):

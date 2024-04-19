@@ -156,10 +156,10 @@ class Box(Space[NDArray[Any]]):
                 f"Box high.shape doesn't match provided shape, high.shape={self.high.shape}, shape={self.shape}"
             )
 
-        # check that low < high
-        if np.any(self.low >= self.high):
+        # check that low <= high
+        if np.any(self.low > self.high):
             raise ValueError(
-                f"Box all low values must be less than high (some values break this), low={self.low}, high={self.high}"
+                f"Box all low values must be less than or equal to high (some values break this), low={self.low}, high={self.high}"
             )
 
         self.low_repr = array_short_repr(self.low)

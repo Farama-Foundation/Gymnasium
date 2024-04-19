@@ -21,7 +21,7 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     2,
     2,
     12,
-    1,
+    3,
     4,
     # Multi-discrete
     4,
