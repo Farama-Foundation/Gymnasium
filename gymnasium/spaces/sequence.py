@@ -21,17 +21,16 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
         >>> from gymnasium.spaces import Sequence, Box
         >>> observation_space = Sequence(Box(0, 1), seed=0)
         >>> observation_space.sample()
-        (array([0.6822636], dtype=float32), array([0.18933342], dtype=float32), array([0.19049619], dtype=float32), array([0.83506], dtype=float32))
+        (array([0.6822636], dtype=float32), array([0.18933342], dtype=float32), array([0.19049619], dtype=float32))
         >>> observation_space.sample()
-        (array([0.9053838], dtype=float32),)
+        (array([0.83506], dtype=float32), array([0.9053838], dtype=float32), array([0.5836242], dtype=float32), array([0.63214064], dtype=float32))
 
     Example with stacked observations
         >>> observation_space = Sequence(Box(0, 1), stack=True, seed=0)
         >>> observation_space.sample()
         array([[0.6822636 ],
                [0.18933342],
-               [0.19049619],
-               [0.83506   ]], dtype=float32)
+               [0.19049619]], dtype=float32)
     """
 
     def __init__(

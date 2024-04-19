@@ -16,11 +16,11 @@ class OneOf(Space[Any]):
 
     Example:
         >>> from gymnasium.spaces import OneOf, Box, Discrete
-        >>> observation_space = OneOf((Discrete(2), Box(-1, 1, shape=(2,))), seed=42)
+        >>> observation_space = OneOf((Discrete(2), Box(-1, 1, shape=(2,))), seed=123)
         >>> observation_space.sample()  # the first element is the space index (Box in this case) and the second element is the sample from Box
-        (1, array([-0.3991573 ,  0.21649833], dtype=float32))
-        >>> observation_space.sample()  # this time the Discrete space was sampled as index=0
         (0, 0)
+        >>> observation_space.sample()  # this time the Discrete space was sampled as index=0
+        (1, array([-0.00711833, -0.7257502 ], dtype=float32))
         >>> observation_space[0]
         Discrete(2)
         >>> observation_space[1]
