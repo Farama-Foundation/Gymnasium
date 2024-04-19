@@ -43,7 +43,7 @@ pip install gymnasium>=1.0.0
 -- Customizability: Added new arguments for all the environments & restored removed arguments in the `v3 → v4` transition.
 -- QOL: Added new fields in `info` inlcuding all reward components and non-observable state and `reset()` now returns `info` which includes non observable state elements.
 
-- 23 bugs fixed, notably:
+- 24 bugs fixed, notably:
 -- In Ant, Hopper, Humanoid, InvertedDoublePendulum, InvertedPendulum, Walker2d: `healthy_reward`, was being given on every step (even if the robot is unhealthy), now it is only given when the robot is healthy, resulting in faster learning transience (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
 -- In Ant & Humanoid: The `contact_cost` being constantly 0 (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/504)).
 -- In Reacher & Pusher the reward function was calculated baed the previous state not the current state (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
