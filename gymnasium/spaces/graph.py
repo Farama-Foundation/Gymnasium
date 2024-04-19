@@ -134,14 +134,17 @@ class Graph(Space[GraphInstance]):
         elif isinstance(seed, int):
             if self.edge_space is None:
                 super_seed = super().seed(seed)
-                return super_seed, self.node_space.seed(
-                    int(self.np_random.integers(np.iinfo(np.int32).max))
-                )
+                node_seed = int(self.np_random.integers(np.iinfo(np.int32).max))
+                # this is necessary such that after int or list/tuple seeding, the Graph PRNG are equivalent
+                super().seed(seed)
+                return super_seed, self.node_space.seed(node_seed)
             else:
                 super_seed = super().seed(seed)
                 node_seed, edge_seed = self.np_random.integers(
                     np.iinfo(np.int32).max, size=(2,)
                 )
+                # this is necessary such that after int or list/tuple seeding, the Graph PRNG are equivalent
+                super().seed(seed)
                 return (
                     super_seed,
                     self.node_space.seed(int(node_seed)),
@@ -153,12 +156,14 @@ class Graph(Space[GraphInstance]):
                     raise ValueError(
                         f"Expects a tuple of two values for Graph and node space, actual length: {len(seed)}"
                     )
+
                 return super().seed(seed[0]), self.node_space.seed(seed[1])
             else:
                 if len(seed) != 3:
                     raise ValueError(
                         f"Expects a tuple of three values for Graph, node and edge space, actual length: {len(seed)}"
                     )
+
                 return (
                     super().seed(seed[0]),
                     self.node_space.seed(seed[1]),

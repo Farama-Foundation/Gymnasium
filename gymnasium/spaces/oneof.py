@@ -79,6 +79,8 @@ class OneOf(Space[Any]):
             subseeds = self.np_random.integers(
                 np.iinfo(np.int32).max, size=len(self.spaces)
             )
+            # this is necessary such that after int or list/tuple seeding, the OneOf PRNG are equivalent
+            super().seed(seed)
             return (super_seed,) + tuple(
                 space.seed(int(subseed))
                 for space, subseed in zip(self.spaces, subseeds)
@@ -89,8 +91,7 @@ class OneOf(Space[Any]):
                     f"Expects that the subspaces of seeds equals the number of subspaces + 1. Actual length of seeds: {len(seed)}, length of subspaces: {len(self.spaces)}"
                 )
 
-            super_seed = super().seed(seed[0])
-            return (super_seed,) + tuple(
+            return (super().seed(seed[0]),) + tuple(
                 space.seed(subseed) for space, subseed in zip(self.spaces, seed[1:])
             )
         else:

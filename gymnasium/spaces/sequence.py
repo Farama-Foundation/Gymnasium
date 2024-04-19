@@ -76,15 +76,18 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
             A tuple of the seeding values for the Sequence and feature space
         """
         if seed is None:
-            return super().seed(seed), self.feature_space.seed(seed)
+            return super().seed(None), self.feature_space.seed(None)
         elif isinstance(seed, int):
             super_seed = super().seed(seed)
-            return super_seed, self.feature_space.seed(
-                int(self.np_random.integers(np.iinfo(np.int32).max))
-            )
+            feature_seed = int(self.np_random.integers(np.iinfo(np.int32).max))
+            # this is necessary such that after int or list/tuple seeding, the Sequence PRNG are equivalent
+            super().seed(seed)
+            return super_seed, self.feature_space.seed(feature_seed)
         elif isinstance(seed, (tuple, list)):
             if len(seed) != 2:
-                raise ValueError("todo")
+                raise ValueError(
+                    f"Expects the seed to have two elements for the Sequence and feature space, actual length: {len(seed)}"
+                )
             return super().seed(seed[0]), self.feature_space.seed(seed[1])
         else:
             raise TypeError(

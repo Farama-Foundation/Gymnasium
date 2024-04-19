@@ -610,7 +610,7 @@ def test_space_pickling(space):
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
 @pytest.mark.parametrize("initial_seed", [None, 123])
 def test_space_seeding_output(space, initial_seed, num_samples=5):
-    seeding_values = space.seed(None)
+    seeding_values = space.seed(initial_seed)
     samples = [space.sample() for _ in range(num_samples)]
 
     reseeded_values = space.seed(seeding_values)
