@@ -21,7 +21,7 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     2,
     2,
     12,
-    3,
+    1,
     4,
     # Multi-discrete
     4,
@@ -61,6 +61,7 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     4,
     5,
 ]
+assert len(TESTING_SPACES) == len(TESTING_SPACES_EXPECTED_FLATDIMS)
 
 
 @pytest.mark.parametrize(
