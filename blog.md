@@ -19,9 +19,9 @@ The version 0 of `Gymnasium/MuJoCo` was introduced in `gym==0.0.1` 2016,
 followed shortly after by version 1 (`gym==0.1.0` in 2016) which addressed several configuration errors.
 Version 2 (`Gym==0.9.5` in 2018), which brought major backend improvements using the `mujoco-py=>1.5` simulator. 
 Version 3 (`gym==0.12.0` in 2019) offers increased customization options, enabling the user to modify parts of the environment, such as the reward function, and make slight adjustments to the robot model.
-Version 4 (`gym==0.24.0` in 2020)  ported the environments to the new `mujoco>=2.2.0` simulator. However it removed the capability of slightly modifying the environment.
+Version 4 (`gym==0.24.0` in 2020)  ported the environments to the new `mujoco>=2.2.0` simulator. However, it removed the capability of slightly modifying the environment.
 
-`Gymnasium/MuJoCo` environments such as Hopper, Ant, and Humanoid have been utilized in thousands of RL research papers. They have been a cornerstone in the development and evaluation RL methods, as they have been a standard set of "hard to solve" robotic environments.
+`Gymnasium/MuJoCo` environments such as Hopper, Ant, and Humanoid have been utilized in thousands of RL research papers. They have been a cornerstone in the development and evaluation of RL methods, as they have been a standard set of "hard to solve" robotic environments.
 
 However, as RL methods continue the need for more complex robotic environments to evaluate them becomes apparent, for example state-of-the-art training algorithms like `TD3` and `SAC` can "solve" Ant and Humanoid.  
 
@@ -41,12 +41,12 @@ pip install gymnasium>=1.0.0
 - 80 total enhancements, notably:
 -- Performance: Improves training performance by removing a considerable amount of constant 0 observations from the observation spaces of the `Ant`, `Humanoid`, `HumanoidStandup` (5-7% faster training with `SB3/PPO`-`pytorch`) (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
 -- Customizability: Added new arguments for all the environments & restored removed arguments in the `v3 → v4` transition.
--- QOL: Added new fields in `info` inlcuding all reward components and non-observable state and `reset()` now returns `info` which includes non observable state elements.
+-- QOL: Added new fields in `info` including all reward components and non-observable state and `reset()` now returns `info` which includes non-observable state elements.
 
 - 24 bugs fixed, notably:
 -- In Ant, Hopper, Humanoid, InvertedDoublePendulum, InvertedPendulum, Walker2d: `healthy_reward`, was being given on every step (even if the robot is unhealthy), now it is only given when the robot is healthy, resulting in faster learning transience (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
 -- In Ant & Humanoid: The `contact_cost` being constantly 0 (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/504)).
--- In Reacher & Pusher the reward function was calculated baed the previous state not the current state (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
+-- In Reacher & Pusher the reward function was calculated based the previous state not the current state (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
 -- Fixed several `info` fields.
 -- Walker2D: Both feet now have `friction==1.9`, previously the right foot had `friction==0.9` and the left foot had `friction==1.9` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
 -- Pusher: fixed the object being lighter that air, (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
@@ -105,7 +105,7 @@ env = gym.make('Humanoid-v5', xml_file='~/mujoco_menagerie/robotis_op3/scene.xml
 
 <iframe id="odysee-iframe" width="560" height="315" src="https://odysee.com/$/embed/@Kallinteris-Andreas:7/Robotis_OP3_trained_using_PPO_on_gymnasium_mujoco-v5_framework:d?r=6fn5jA9uZQUZXGKVpwtqjz1eyJcS3hj3" allowfullscreen></iframe>
 
-For more detailed tutorial check the tutorial for [loading quadruped models](https://gymnasium.farama.org/main/tutorials/gymnasium_basics/load_quadruped_model/).
+For more detailed tutorial, check the tutorial for [loading quadruped models](https://gymnasium.farama.org/main/tutorials/gymnasium_basics/load_quadruped_model/).
 
 
 
