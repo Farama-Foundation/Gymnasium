@@ -46,10 +46,10 @@ pip install gymnasium>=1.0.0
 - 24 bugs fixed, notably:
 -- In Ant, Hopper, Humanoid, InvertedDoublePendulum, InvertedPendulum, Walker2d: `healthy_reward`, was being given on every step (even if the robot is unhealthy), now it is only given when the robot is healthy, resulting in faster learning transience (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
 -- In Ant & Humanoid: The `contact_cost` being constantly 0 (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/504)).
--- In Reacher & Pusher the reward function was calculated based the previous state not the current state (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
+-- In Reacher & Pusher the reward function was calculated based on the previous state not the current state (for more information on the performance impact of this change, check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
 -- Fixed several `info` fields.
 -- Walker2D: Both feet now have `friction==1.9`, previously the right foot had `friction==0.9` and the left foot had `friction==1.9` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
--- Pusher: fixed the object being lighter that air, (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
+-- Pusher: fixed the object being lighter than air, (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
 
 - Generally improved documentation.
 
@@ -105,7 +105,7 @@ env = gym.make('Humanoid-v5', xml_file='~/mujoco_menagerie/robotis_op3/scene.xml
 
 <iframe id="odysee-iframe" width="560" height="315" src="https://odysee.com/$/embed/@Kallinteris-Andreas:7/Robotis_OP3_trained_using_PPO_on_gymnasium_mujoco-v5_framework:d?r=6fn5jA9uZQUZXGKVpwtqjz1eyJcS3hj3" allowfullscreen></iframe>
 
-For more detailed tutorial, check the tutorial for [loading quadruped models](https://gymnasium.farama.org/main/tutorials/gymnasium_basics/load_quadruped_model/).
+For a more detailed tutorial, check the tutorial for [loading quadruped models](https://gymnasium.farama.org/main/tutorials/gymnasium_basics/load_quadruped_model/).
 
 
 
