@@ -85,13 +85,17 @@ For more information on all the arguments, see the documentation pages of `Human
 ```py
 env = gymnasium.make('Ant-v5', xml_file='./mujoco_menagerie/anybotics_anymal_b/scene.xml', ctrl_cost_weight=0.001, healthy_z_range=(0.48, 0.68), render_mode='human')
 ```
+
 Here all we have to do is change the `xml_file` argument, and set the `healthy_z_range`, because the robot has a different height than the default `Ant` robot.  In general we will have to change the `healthy_z_range` to fit the robot.
 
+<iframe id="odysee-iframe" width="560" height="315" src="https://odysee.com/$/embed/@Kallinteris-Andreas:7/ANYmal_B_trained_using_SAC_on_gymnasium_mujoco-v5_framework:1?r=6fn5jA9uZQUZXGKVpwtqjz1eyJcS3hj3" allowfullscreen></iframe>
  
  ### Example [Unitree Go1](https://github.com/deepmind/mujoco_menagerie/blob/main/unitree_go1/README.md)
 ```py
 env = gym.make('Ant-v5', xml_file='./mujoco_menagerie/unitree_go1/scene.xml', healthy_z_range=(0.195, 0.75), ctrl_cost_weight=0.05)
 ```
+
+<iframe id="odysee-iframe" width="560" height="315" src="https://odysee.com/$/embed/@Kallinteris-Andreas:7/Unitree_Go1_trained_using_SAC_on_gymnasium_mujoco-v5_framework:5?r=6fn5jA9uZQUZXGKVpwtqjz1eyJcS3hj3" allowfullscreen></iframe>
 
 ## Using the `Humanoid` framework to create an RL environment for a Bipeds robot
 
@@ -100,8 +104,10 @@ env = gym.make('Ant-v5', xml_file='./mujoco_menagerie/unitree_go1/scene.xml', he
 ```py
 env = gym.make('Humanoid-v5', xml_file='~/mujoco_menagerie/robotis_op3/scene.xml', healthy_z_range=(0.275, 0.5), include_cinert_in_observation=False, include_cvel_in_observation=False, include_qfrc_actuator_in_observation=False, include_cfrc_ext_in_observation=False, ctrl_cost_weight=0, contact_cost_weight=0)
 ```
+<iframe id="odysee-iframe" width="560" height="315" src="https://odysee.com/$/embed/@Kallinteris-Andreas:7/Robotis_OP3_trained_using_PPO_on_gymnasium_mujoco-v5_framework:d?r=6fn5jA9uZQUZXGKVpwtqjz1eyJcS3hj3" allowfullscreen></iframe>
 
 For a more detailed tutorial, check the tutorial for [loading quadruped models](https://gymnasium.farama.org/main/tutorials/gymnasium_basics/load_quadruped_model/).
+
 
 
 # Full Changelog
