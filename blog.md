@@ -49,7 +49,7 @@ pip install gymnasium>=1.0.0
 -- In Reacher and  Pusher, the reward function was calculated based on the previous state not the current state. For further information on the performance impact of this change,  please check the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
 -- Fixed several `info` fields.
 -- Walker2D: Both feet now have `friction==1.9`, previously the right foot had `friction==0.9` and the left foot had `friction==1.9` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
--- Pusher: Fixed theissue of the object being lighter than air, (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
+-- Pusher: Fixed the issue of the object being lighter than air, (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
 
 - Generally improved documentation.
 
