@@ -60,7 +60,7 @@ For those looking for more complex real-world robot MuJoCo models, `v5` now supp
 Depending on the robot type, we recommend using different environment models: for quadruped → `Ant-v5`, bipedal → `Humanoid-v5` and swimmer / crawler robots → `Swimmer-v5`. 
 
 However, it will be necessary to modify certain arguments in order to specify the desired behavior. The most commonly changed arguments are:
-- `xml_file`: Path to the MuJoCo robot.
+- `xml_file`: Path to the MuJoCo robot (MJCF or URDF file).
 - `frame_skip`: to set the duration of a time step (`dt`) (recommended range of `dt` is $\[0.01, 0.1\]$). 
 - `ctrl_cost_weight`: set it according to the needs of the robot, we can set it to `0` at first for prototyping and increase it as needed.
 - `healthy_z_range`: set it according to the height of the robot.
