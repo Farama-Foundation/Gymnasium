@@ -71,10 +71,6 @@ class HumanRendering(VectorWrapper):
         self._render_frame()
         return result
 
-    def render(self) -> None:
-        """This method doesn't do much, actual rendering is performed in :meth:`step` and :meth:`reset`."""
-        return None
-
     def _render_frame(self):
         """Fetch the last frame from the base environment and render it to the screen."""
         try:
@@ -122,16 +118,21 @@ class HumanRendering(VectorWrapper):
                 else:
                     rows += 1
 
-            assert rows * cols >= self.num_envs
+            self.rows = rows
+            self.cols = cols
 
             scaling_factor = min(
                 self.screen_size[0] / (cols * subenv_size[0]),
                 self.screen_size[1] / (rows * subenv_size[1]),
             )
+            self.scaled_subenv_size = (
+                int(subenv_size[0] * scaling_factor),
+                int(subenv_size[1] * scaling_factor),
+            )
+
             assert (cols * subenv_size[0] * scaling_factor == self.screen_size[0]) or (
                 rows * subenv_size[1] * scaling_factor == self.screen_size[1]
             )
-            return rows, cols, scaling_factor
 
             assert self.num_rows * self.num_cols >= self.num_envs
             assert self.scaled_subenv_size[0] * self.num_cols <= self.screen_size[0]
