@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Training an Agent" href="../train_agent/" /><link rel="prev" title="&lt;no title&gt;" href="../../" />
         <link rel="canonical" href="https://gymnasium.farama.org/introduction/basic_usage.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2023.08.19.dev1 -->
         <title>Basic Usage - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
@@ -495,8 +495,10 @@
 <section id="interacting-with-the-environment">
 <h2>Interacting with the Environment<a class="headerlink" href="#interacting-with-the-environment" title="Link to this heading">¶</a></h2>
 <p>Within reinforcement learning, the classic “agent-environment loop” pictured below is simplified representation of how an agent and environment interact with each other. The agent receives an observation about the environment, the agent then selects an action that the environment uses to determine the reward and the next observation. The cycle then repeating itself until the environment ends (terminates).</p>
-<a class="only-light reference internal image-reference" href="../../_images/AE_loop.png"><img alt="../../_images/AE_loop.png" class="only-light align-center" src="../../_images/AE_loop.png" style="width: 50%;" /></a>
-<a class="only-dark reference internal image-reference" href="../../_images/AE_loop_dark.png"><img alt="../../_images/AE_loop_dark.png" class="only-dark align-center" src="../../_images/AE_loop_dark.png" style="width: 50%;" /></a>
+<a class="only-light reference internal image-reference" href="../../_images/AE_loop.png"><img alt="../../_images/AE_loop.png" class="only-light align-center" src="../../_images/AE_loop.png" style="width: 50%;" />
+</a>
+<a class="only-dark reference internal image-reference" href="../../_images/AE_loop_dark.png"><img alt="../../_images/AE_loop_dark.png" class="only-dark align-center" src="../../_images/AE_loop_dark.png" style="width: 50%;" />
+</a>
 <p>For gymnasium, the “agent-environment-loop” is implemented below for a single episode (until the environment ends). See the next section for a line-by-line explanation. Note that running this code requires install swig (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">swig</span></code> or <a class="reference external" href="https://www.swig.org/download.html">download</a>) along with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[box2d]</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 
@@ -515,7 +517,8 @@
 </div>
 <p>The output should look something like this:</p>
 <figure class="align-center">
-<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif"><img alt="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif" src="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif" style="width: 50%;" /></a>
+<a class="reference internal image-reference" href="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif"><img alt="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif" src="https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif" style="width: 50%;" />
+</a>
 </figure>
 <section id="explaining-the-code">
 <h3>Explaining the code<a class="headerlink" href="#explaining-the-code" title="Link to this heading">¶</a></h3>
