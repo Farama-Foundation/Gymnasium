@@ -18,7 +18,10 @@ read_time: 4 minutes
 Originally introduced as version 0 in `gym==0.0.1` way back in 2016, this was shortly followed by version 1 (`gym=0.1.0`) to address several configuration errors. 
 In 2018, version 2 in `gym=0.9.5` was released, which brought major backend improvements using `mujoco-py=>1.5` simulator. 
 Version 3 (`gym=0.12.0` in 2018) offered increased customization options, enabling users to modify parts of the environment such as the reward function and slight adjustments to the robot model. 
-With Google-DeepMind buying MuJoCo, open sourcing the code and releasing a dedicated python module (`mujoco`), version 4 ports the environments to the new `mujoco>=2.2.0` simulator however removed the capability to slightly modify the environment. 
+With Google-DeepMind buying MuJoCo, open sourcing the code and releasing a dedicated python module (`mujoco`), version 4 ports the environments to the new `mujoco>=2.2.0` simulator however removed the capability to slightly modify the environment.
+
+The models in Gymnasium/MuJoCo were made around 2012 and they pre-date the "modern" robotics revolution and are not realistic relative to actual robot systems.
+All the version releases from the version 1 provide useful additional customization options, back-end improvements and bug fixes, but use the same unrealistic robot models.
 
 ## MuJoCo v5
 Over time, the MuJoCo environments have become standard testing environments in RL, used in hundreds if not thousands of academic papers at this point. They have provided a standard set of difficult-to-solve robotic environments, and a cornerstone in the development and evaluation of RL methods.
