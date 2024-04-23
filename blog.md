@@ -51,6 +51,9 @@ env = gym.make("Humanoid-v5")
   - In Ant and Humanoid, the `contact_cost` reward component was constantly 0. For more information on the performance impact of this change, please check the related [GitHub issue #1](https://github.com/Farama-Foundation/Gymnasium/issues/504), [GitHub issue #2](https://github.com/Farama-Foundation/Gymnasium/issues/214).
   - In Reacher and  Pusher, the reward function was calculated based on the previous state not the current state. For further information on the performance impact of this change, see the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821).
   - Fixed several `info` fields.
+    - Ant: Fixed `info["reward_ctrl"]` sometimes containing `contact_cost` instead of `ctrl_cost`.
+    - Ant: Fixed `info["x_position"]` & `info["y_position"]` & `info["distance_from_origin"]` giving `xpos` instead of `qpos` observations (`xpos` observations are behind 1 `mj_step()` more [here](https://github.com/deepmind/mujoco/issues/889#issuecomment-1568896388)) (related [GitHub issue #1](https://github.com/Farama-Foundation/Gymnasium/issues/521) & [GitHub issue #2](https://github.com/Farama-Foundation/Gymnasium/issues/539)).
+    - Pusher and Reacher: Fixed `info["reward_ctrl"]` not being multiplied by the reward weight.
 
 - Generally improved documentation to explain the observation, action and reward functions in more detail. 
 
