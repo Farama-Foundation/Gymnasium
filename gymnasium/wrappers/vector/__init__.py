@@ -4,6 +4,7 @@ import importlib
 
 from gymnasium.wrappers.vector.common import RecordEpisodeStatistics
 from gymnasium.wrappers.vector.dict_info_to_list import DictInfoToList
+from gymnasium.wrappers.vector.rendering import HumanRendering
 from gymnasium.wrappers.vector.stateful_observation import NormalizeObservation
 from gymnasium.wrappers.vector.stateful_reward import NormalizeReward
 from gymnasium.wrappers.vector.vectorize_action import (
@@ -63,7 +64,7 @@ __all__ = [
     # --- Rendering ---
     # "RenderCollection",
     # "RecordVideo",
-    # "HumanRendering",
+    "HumanRendering",
     # --- Conversion ---
     "JaxToNumpy",
     "JaxToTorch",

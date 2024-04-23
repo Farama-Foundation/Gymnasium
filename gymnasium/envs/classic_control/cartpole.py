@@ -210,7 +210,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             self.steps_beyond_terminated = 0
             if self._sutton_barto_reward:
                 reward = -1.0
-            elif not self._sutton_barto_reward:
+            else:
                 reward = 1.0
         else:
             if self.steps_beyond_terminated == 0:
@@ -223,7 +223,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             self.steps_beyond_terminated += 1
             if self._sutton_barto_reward:
                 reward = -1.0
-            elif not self._sutton_barto_reward:
+            else:
                 reward = 0.0
 
         if self.render_mode == "human":
@@ -359,16 +359,16 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
 class CartPoleVectorEnv(VectorEnv):
     metadata = {
-        "render_modes": ["human", "rgb_array"],
+        "render_modes": ["rgb_array"],
         "render_fps": 50,
     }
 
     def __init__(
         self,
-        sutton_barto_reward: bool = False,
-        num_envs: int = 2,
+        num_envs: int = 1,
         max_episode_steps: int = 500,
         render_mode: Optional[str] = None,
+        sutton_barto_reward: bool = False,
     ):
         self._sutton_barto_reward = sutton_barto_reward
 
@@ -385,6 +385,8 @@ class CartPoleVectorEnv(VectorEnv):
         self.force_mag = 10.0
         self.tau = 0.02  # seconds between state updates
         self.kinematics_integrator = "euler"
+
+        self.state = None
 
         self.steps = np.zeros(num_envs, dtype=np.int32)
         self.prev_done = np.zeros(num_envs, dtype=np.bool_)
@@ -416,9 +418,7 @@ class CartPoleVectorEnv(VectorEnv):
         self.screen_width = 600
         self.screen_height = 400
         self.screens = None
-        self.clocks = None
-        self.isopen = True
-        self.state = None
+        self.surf = None
 
         self.steps_beyond_terminated = None
 
@@ -469,10 +469,10 @@ class CartPoleVectorEnv(VectorEnv):
 
         truncated = self.steps >= self.max_episode_steps
 
-        if self._sutton_barto_reward is False:
-            reward = np.ones_like(terminated, dtype=np.float32)
-        elif self._sutton_barto_reward is True:
+        if self._sutton_barto_reward is True:
             reward = -np.array(terminated, dtype=np.float32)
+        else:
+            reward = np.ones_like(terminated, dtype=np.float32)
 
         # Reset all environments which terminated or were truncated in the last step
         self.state[:, self.prev_done] = self.np_random.uniform(
@@ -484,9 +484,6 @@ class CartPoleVectorEnv(VectorEnv):
         truncated[self.prev_done] = False
 
         self.prev_done = terminated | truncated
-
-        if self.render_mode == "human":
-            self.render()
 
         return self.state.T.astype(np.float32), reward, terminated, truncated, {}
 
@@ -509,8 +506,6 @@ class CartPoleVectorEnv(VectorEnv):
         self.steps = np.zeros(self.num_envs, dtype=np.int32)
         self.prev_done = np.zeros(self.num_envs, dtype=np.bool_)
 
-        if self.render_mode == "human":
-            self.render()
         return self.state.T.astype(np.float32), {}
 
     def render(self):
@@ -519,7 +514,7 @@ class CartPoleVectorEnv(VectorEnv):
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "
-                f'e.g. gym("{self.spec.id}", render_mode="rgb_array")'
+                f'e.g. gym.make_vec("{self.spec.id}", render_mode="rgb_array")'
             )
             return
 
@@ -533,19 +528,11 @@ class CartPoleVectorEnv(VectorEnv):
 
         if self.screens is None:
             pygame.init()
-            if self.render_mode == "human":
-                pygame.display.init()
-                self.screens = [
-                    pygame.display.set_mode((self.screen_width, self.screen_height))
-                    for _ in range(self.num_envs)
-                ]
-            else:  # mode == "rgb_array"
-                self.screens = [
-                    pygame.Surface((self.screen_width, self.screen_height))
-                    for _ in range(self.num_envs)
-                ]
-        if self.clocks is None:
-            self.clock = [pygame.time.Clock() for _ in range(self.num_envs)]
+
+            self.screens = [
+                pygame.Surface((self.screen_width, self.screen_height))
+                for _ in range(self.num_envs)
+            ]
 
         world_width = self.x_threshold * 2
         scale = self.screen_width / world_width
@@ -555,10 +542,12 @@ class CartPoleVectorEnv(VectorEnv):
         cartheight = 30.0
 
         if self.state is None:
-            return None
+            raise ValueError(
+                "Cartpole's state is None, it probably hasn't be reset yet."
+            )
 
-        for state, screen, clock in zip(self.state, self.screens, self.clocks):
-            x = self.state.T
+        for x, screen in zip(self.state.T, self.screens):
+            assert isinstance(x, np.ndarray) and x.shape == (4,)
 
             self.surf = pygame.Surface((self.screen_width, self.screen_height))
             self.surf.fill((255, 255, 255))
@@ -607,23 +596,13 @@ class CartPoleVectorEnv(VectorEnv):
             self.surf = pygame.transform.flip(self.surf, False, True)
             screen.blit(self.surf, (0, 0))
 
-        if self.render_mode == "human":
-            pygame.event.pump()
-            [clock.tick(self.metadata["render_fps"]) for clock in self.clocks]
-            pygame.display.flip()
-
-        elif self.render_mode == "rgb_array":
-            return [
-                np.transpose(
-                    np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
-                )
-                for screen in self.screens
-            ]
+        return [
+            np.transpose(np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2))
+            for screen in self.screens
+        ]
 
     def close(self):
         if self.screens is not None:
             import pygame
 
-            pygame.display.quit()
             pygame.quit()
-            self.isopen = False
