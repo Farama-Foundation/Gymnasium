@@ -1,4 +1,4 @@
-Jfrom os import path
+from os import path
 from typing import Any, Dict, Optional, Tuple, Union
 
 import numpy as np
@@ -34,57 +34,13 @@ def expand_model_path(model_path: str) -> str:
     return fullpath
 
 
-class BaseMujocoEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
-    """Superclass for all MuJoCo environments."""
-
-    def __init__(
-        self,
-        model_path,
-        frame_skip,
-        observation_space: Optional[Space],
-        render_mode: Optional[str] = None,
-        width: int = DEFAULT_SIZE,
-        height: int = DEFAULT_SIZE,
-        camera_id: Optional[int] = None,
-        camera_name: Optional[str] = None,
-    ):
-        self.fullpath = expand_model_path(model_path)
-
-        self.width = width
-        self.height = height
-        # may use width and height
-        self.model, self.data = self._initialize_simulation()
-
-        self.init_qpos = self.data.qpos.ravel().copy()
-        self.init_qvel = self.data.qvel.ravel().copy()
-
-        self.frame_skip = frame_skip
-
-        assert self.metadata["render_modes"] == [
-            "human",
-            "rgb_array",
-            "depth_array",
-        ], self.metadata["render_modes"]
-        if "render_fps" in self.metadata:
-            assert (
-                int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
-            ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
-        if observation_space is not None:
-            self.observation_space = observation_space
-        self._set_action_space()
-
-        self.render_mode = render_mode
-        self.camera_name = camera_name
-        self.camera_id = camera_id
-
-
 class MujocoEnv(BaseMujocoEnv):
     """Superclass for MuJoCo based environments."""
 
     def __init__(
         self,
-        model_path,
-        frame_skip,
+        model_path: str,
+        frame_skip: int,
         observation_space: Optional[Space],
         render_mode: Optional[str] = None,
         width: int = DEFAULT_SIZE,
@@ -114,16 +70,34 @@ class MujocoEnv(BaseMujocoEnv):
             OSError: when the `model_path` does not exist.
             error.DependencyNotInstalled: When `mujoco` is not installed.
         """
-        super().__init__(
-            model_path,
-            frame_skip,
-            observation_space,
-            render_mode,
-            width,
-            height,
-            camera_id,
-            camera_name,
-        )
+        self.fullpath = expand_model_path(model_path)
+
+        self.width = width
+        self.height = height
+        # may use width and height
+        self.model, self.data = self._initialize_simulation()
+
+        self.init_qpos = self.data.qpos.ravel().copy()
+        self.init_qvel = self.data.qvel.ravel().copy()
+
+        self.frame_skip = frame_skip
+
+        assert self.metadata["render_modes"] == [
+            "human",
+            "rgb_array",
+            "depth_array",
+        ], self.metadata["render_modes"]
+        if "render_fps" in self.metadata:
+            assert (
+                int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
+            ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
+        if observation_space is not None:
+            self.observation_space = observation_space
+        self._set_action_space()
+
+        self.render_mode = render_mode
+        self.camera_name = camera_name
+        self.camera_id = camera_id
 
         from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer
 
