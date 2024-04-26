@@ -11,8 +11,8 @@ Let's start by importing necessary libraries:
 """
 
 # Global TODOs:
-# TODO: Look for improvements regarding FP.
 # TODO: train agent on Lunar-Lander env.
+# TODO: savefig
 # TODO: Final check on documentation and typing.
 
 
@@ -25,9 +25,8 @@ import concurrent.futures
 import copy
 import functools
 import random
-import typing
 from collections import namedtuple
-from typing import Tuple
+from typing import List, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -64,7 +63,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # that are not related to the agent/training logic.
 class ResultsBuffer:
     """
-    This class stores results from episodes/steps of agent-environment interaction.
+    This class stores various metrics from episodes/steps of agent-environment interaction.
     """
 
     __slots__ = [
@@ -73,17 +72,23 @@ class ResultsBuffer:
         "params",
         "episode_returns",
         "episode_lengths",
+        "training_eval_returns",
+        "evaluation_returns",
         "episode_action_values",
         "losses",
         "exploration",
         "policy_entropy",
     ]
 
-    def __init__(self, seed, params):
+    def __init__(self, seed: int, params: namedtuple):
         self.seed = seed
         self.params = params
         self.episode_returns = np.zeros(params.training_steps)
         self.episode_lengths = np.zeros(params.training_steps)
+        self.training_eval_returns = np.zeros(
+            int(1 / params.evaluation_frequency_percentage)
+        )
+        self.evaluation_returns = None
         self.episode_action_values = np.zeros(params.training_steps)
         self.losses = np.zeros(params.training_steps)
         self.exploration = np.zeros(params.training_steps)
@@ -95,7 +100,7 @@ class ResultsBuffer:
         return f"ResultsBuffer(seed={self.seed}, params={self.params})"
 
     def __str__(self):
-        return f"Env={self.params.env_name}\tseed={self.seed}"
+        return f"Env={self.params.env_name}\tSeed={self.seed}"
 
     def add(
         self,
@@ -129,10 +134,22 @@ class ResultsBuffer:
 
         self.index += 1
 
+    def add_training_eval(self, eval_return: float):
+        """Add evaluation return obtained during training."""
+        eval_freq = (
+            self.params.training_steps * self.params.evaluation_frequency_percentage
+        )
+        ind = int(self.index // eval_freq - 1)
+        self.training_eval_returns[ind] = eval_return
 
-# a namedtuple for the experience of the agent at each training step
+    def add_evaluation_returns(self, eval_returns: list):
+        """Add evaluation returns obtained after training."""
+        self.evaluation_returns = np.array(eval_returns)
+
+
+# a namedtuple for the experience of an agent at each training step
 Experience = namedtuple(
-    "Experience", field_names=["state", "action", "next_state", "reward", "done"]
+    "Experience", field_names=["obs", "action", "next_obs", "reward", "done"]
 )
 
 
@@ -156,6 +173,7 @@ def to_tensor(array: np.ndarray, normalize: bool = False) -> torch.Tensor:
 
     if normalize:
         return tensor / 255.0
+
     return tensor
 
 
@@ -166,7 +184,7 @@ def set_seed(seed: int):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
 
-    return None
+    return
 
 
 def create_atari_env(env: gymnasium.Env, params: namedtuple) -> gymnasium.Env:
@@ -190,9 +208,11 @@ def create_atari_env(env: gymnasium.Env, params: namedtuple) -> gymnasium.Env:
 
 def parallel_training(
     seeds: list, params: namedtuple, verbose: bool = False
-) -> typing.List[ResultsBuffer]:
+) -> List[ResultsBuffer]:
     """
-    Run multiple agents in parallel using different seeds for each, and return their collected results.
+    Train multiple agents in parallel using different seeds for each,
+    and return their respective collected results.
+
     Args:
         seeds: A list of seeds for each agent.
         params: The hyperparameters tuple.
@@ -218,7 +238,7 @@ def exponential_moving_average(
     assert 0 <= alpha < 1, "Smoothing factor alpha is out of range"
     exp_moving_average = np.empty(len(data_points))
 
-    # Find the first non-negative index
+    # Find the first non -inf index
     first_non_neg_index = np.argmax(data_points != -np.inf)
 
     # Handle the case when the first element is -inf
@@ -235,7 +255,8 @@ def exponential_moving_average(
     return exp_moving_average.round(2)
 
 
-def aggregate_results(lst: typing.List[np.ndarray]) -> (np.ndarray, np.ndarray):
+def aggregate_results(lst: List[np.ndarray]) -> (np.ndarray, np.ndarray):
+    """Aggregate a list of arrays to provide their mean and stddev."""
     average = np.mean(lst, axis=0).round(2)
     stddev = np.std(lst, axis=0).round(2)
 
@@ -243,8 +264,8 @@ def aggregate_results(lst: typing.List[np.ndarray]) -> (np.ndarray, np.ndarray):
 
 
 def preprocess_results(
-    results: typing.List[ResultsBuffer], alpha: float = 0.25
-) -> typing.List[typing.Tuple[np.ndarray, np.ndarray]]:
+    results: List[ResultsBuffer], alpha: float = 0.25
+) -> List[Tuple[np.ndarray, np.ndarray]]:
     """Smooth data for various metrics and aggregate them across agents. Return the processed data."""
     stats = [
         [res_buffer.episode_returns for res_buffer in results],
@@ -259,17 +280,33 @@ def preprocess_results(
         [exponential_moving_average(lst, alpha) for lst in stat] for stat in stats
     ]
 
-    return [aggregate_results(lst) for lst in smoothed_data]
+    eval_data = [
+        [res_buffer.training_eval_returns for res_buffer in results],
+        [res_buffer.evaluation_returns for res_buffer in results],
+    ]
+
+    return [aggregate_results(lst) for lst in smoothed_data + eval_data]
 
 
 def visualize_performance(
-    processed_data: typing.List[typing.Tuple[np.ndarray, np.ndarray]],
+    processed_data: List[Tuple[np.ndarray, np.ndarray]],
     baseline_return: np.ndarray,
     params: namedtuple,
-) -> None:
+):
+    """
+    Visualize the aggregated metrics collected by the agents.
+
+    Args:
+        processed_data: A list containing tuples of (mean, stddev) for each metric.
+        baseline_return: Array of the baseline return.
+        params: Hyperparameters namedtuple.
+
+    Returns:
+
+    """
     plt.style.use("seaborn-v0_8-darkgrid")
 
-    colors = ["purple", "seagreen", "violet", "cyan", "navy", "olive"]
+    color = "purple"
     y_labels = [
         "Return",
         "Episode Length",
@@ -277,8 +314,9 @@ def visualize_performance(
         "Loss",
         "Epsilon",
         "Entropy",
+        "Return",
+        "Return",
     ]
-    label = "agents"
     titles = [
         "Aggregated agents returns vs baseline",
         "Aggregated episode lengths",
@@ -286,34 +324,37 @@ def visualize_performance(
         "Aggregated training losses",
         "Aggregated epsilon decay",
         "Aggregated policy entropy",
+        "Aggregated training evaluation returns",
+        "Aggregated evaluation returns",
     ]
 
-    x = range(1, len(processed_data[0][0]) + 1)
-    figname = f"drl_{params.env_name.split('-')[0]}"
-
-    fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(14, 21))
+    fig, axes = plt.subplots(nrows=4, ncols=2, figsize=(14, 28))
 
     axes = axes.flatten()
 
     for i, ax in enumerate(axes):
         mean, std = processed_data[i]
-        ax.plot(x, mean, color=colors[i], label=label)
-        ax.fill_between(x=x, y1=mean - std, y2=mean + std, alpha=0.2, color="grey")
+        x = range(1, len(mean) + 1)
+        ax.plot(x, mean, color=color, label="mean")
+        ax.fill_between(
+            x=x, y1=mean - std, y2=mean + std, label="stddev", alpha=0.2, color="grey"
+        )
         ax.set(xlabel="Steps", ylabel=y_labels[i], title=titles[i])
         ax.legend()
 
-    axes[0].plot(x, baseline_return, color="black", label="baseline")
+    axes[0].plot(
+        range(1, len(baseline_return) + 1),
+        baseline_return,
+        color="black",
+        label="baseline",
+    )
     axes[0].legend()
 
-    fig.savefig(f"../../_static/img/tutorials/{figname}.png")
+    # figname = f"drl_{params.env_name.split('-')[0]}"
+    # fig.savefig(f"../../_static/img/tutorials/{figname}.png")
     plt.show()
 
     return None
-
-
-def compute_entropy(probs: torch.Tensor) -> float:
-    """Compute the entropy of a policy given the action probabilities."""
-    return -(probs * torch.log(probs)).sum().item()
 
 
 # %%
@@ -354,33 +395,30 @@ class ReplayMemory:
         self.length: int = 0  # number of experiences stored so far
         self.index: int = 0  # current index to store data to
 
-        # shape of state buffers differ depending on whether an obs is image data.
+        # shape of obs buffers differ depending on whether an obs is image data.
         if self.params.image_obs:
-            self._state_shape = (
+            self._obs_shape = (
                 self.params.capacity,
                 self.params.num_frame_stacking,
                 *self.params.obs_shape,
             )
-            self._next_state_shape = (
+            self._next_obs_shape = (
                 self.params.capacity,
                 1,
                 *self.params.obs_shape,
             )
         else:
-            self._state_shape = (self.params.capacity, *self.params.obs_shape)
-            self._next_state_shape = (self.params.capacity, *self.params.obs_shape)
+            self._obs_shape = (self.params.capacity, *self.params.obs_shape)
+            self._next_obs_shape = (self.params.capacity, *self.params.obs_shape)
 
-        # creating the buffers
-        self._states: np.ndarray = np.zeros(shape=self._state_shape, dtype=np.float16)
-        self._actions: np.ndarray = np.zeros(self.params.capacity, dtype=np.uint8)
-        self._next_states: np.ndarray = np.zeros(
-            shape=self._next_state_shape, dtype=np.float16
-        )
-        self._rewards: np.ndarray = np.zeros(self.params.capacity, dtype=np.float16)
-        self._dones: np.ndarray = np.zeros(self.params.capacity, dtype=np.uint8)
+        self._obs: np.ndarray = np.zeros(self._obs_shape, np.float16)
+        self._actions: np.ndarray = np.zeros(self.params.capacity, np.uint8)
+        self._next_obs: np.ndarray = np.zeros(self._next_obs_shape, np.float16)
+        self._rewards: np.ndarray = np.zeros(self.params.capacity, np.float16)
+        self._dones: np.ndarray = np.zeros(self.params.capacity, np.uint8)
 
     def __len__(self):
-        """Returns the length of the memory."""
+        """Returns the number of experiences stored in the memory."""
         return self.length
 
     def push(self, experience: Experience) -> None:
@@ -393,9 +431,9 @@ class ReplayMemory:
         Returns:
 
         """
-        self._states[self.index] = experience.state
+        self._obs[self.index] = experience.obs
         self._actions[self.index] = experience.action
-        self._next_states[self.index] = experience.next_state
+        self._next_obs[self.index] = experience.next_obs
         self._rewards[self.index] = experience.reward
         self._dones[self.index] = experience.done
 
@@ -414,10 +452,10 @@ class ReplayMemory:
             a=np.arange(self.length), size=self.params.batch_size, replace=False
         )
 
-        states = self._states[indices]
-        next_states = self._next_states[indices]
+        obs = self._obs[indices]
+        next_obs = self._next_obs[indices]
         if self.params.image_obs:
-            next_states = np.concatenate((states[:, 1:, :, :], next_states), axis=1)
+            next_obs = np.concatenate((obs[:, 1:, :, :], next_obs), axis=1)
 
         actions = self._actions[indices]
         rewards = self._rewards[indices]
@@ -425,10 +463,10 @@ class ReplayMemory:
 
         if self.params.image_obs:
             assert np.equal(
-                states[:, 1:, :], next_states[:, :3, :]
+                obs[:, 1:, :], next_obs[:, :3, :]
             ), "Incorrect concatenation."
 
-        return states, actions, next_states, rewards, dones
+        return obs, actions, next_obs, rewards, dones
 
 
 class Agent(nn.Module):
@@ -457,7 +495,11 @@ class Agent(nn.Module):
 
         self.replay_memory = ReplayMemory(self.params)
 
-        self.policy_entropy = 0
+        # metrics
+        self.loss = float("-inf")
+        self.predicted_action_value = float("-inf")
+        self.selected_action_probs = float("-inf")
+        self.policy_entropy = float("-inf")
 
         # The support is the set of values over which a probability
         # distribution is defined and has non-zero probability there.
@@ -509,16 +551,10 @@ class Agent(nn.Module):
 
         return value_dist.view(state.shape[0], self.params.n_actions, -1).softmax(2)
 
-    def act(
-        self, state: torch.Tensor, exploit: bool
-    ) -> typing.Tuple[
-        typing.Union[int, torch.Tensor],
-        typing.Union[np.ndarray, torch.Tensor],
-        typing.Union[float, torch.Tensor],
-    ]:
+    def act(self, state: torch.Tensor, exploit: bool) -> Union[int, torch.Tensor]:
         """
         Sampling action for a given state. Actions are sampled randomly during exploration.
-        The action-value is the expected value of the action value-distribution.
+        The action-value is the max expected value of the action value-distribution.
 
         Args:
             state: Current state of agent.
@@ -526,14 +562,8 @@ class Agent(nn.Module):
 
         Returns:
             action: The sampled action.
-            probs: The probabilities tensor/array corresponding to the selected action(s).
-            action_value: The action-value corresponding to the selected action.
         """
         random_value = random.random()
-        action_value = 0
-
-        if self.epsilon > self.params.epsilon_end:
-            self.epsilon -= self.eps_reduction
 
         with torch.no_grad():
             value_dist = self.forward(state)
@@ -541,45 +571,45 @@ class Agent(nn.Module):
 
         if exploit or random_value > self.epsilon:
             action = torch.argmax(expected_returns, dim=1)
+            action_probs = expected_returns.softmax(0)
         else:
             action = torch.randint(high=self.params.n_actions, size=(1,), device=device)
+            action_probs = torch.ones(self.params.n_actions) / self.params.n_actions
 
-        probs = value_dist[torch.arange(state.shape[0]), action, :]
-        action_probs = (
-            expected_returns.softmax(0)
-            if (exploit or random_value > self.epsilon)
-            else torch.ones(self.params.n_actions) / self.params.n_actions
-        )
-        self.policy_entropy = compute_entropy(action_probs)
+        self.selected_action_probs = value_dist[torch.arange(state.shape[0]), action, :]
 
         if len(action) == 1:
             action = action.item()
-            action_value = (self.support * probs).sum().item()
+            self.predicted_action_value = (
+                (self.support * self.selected_action_probs).sum().item()
+            )
+            self.policy_entropy = -(action_probs * torch.log(action_probs)).sum().item()
 
-        return action, probs, action_value
+        return action
 
-    def get_metrics(self):
-        """Provide metrics such as policy entropy, exploration rate epsilon at each step."""
-        return self.policy_entropy, self.epsilon
+    def decrease_epsilon(self):
+        if self.epsilon > self.params.epsilon_end:
+            self.epsilon -= self.eps_reduction
 
-    def learn(self, target_agent: "Agent") -> float:
+    def get_metrics(self) -> Tuple[float, float, float, float]:
+        """
+        Return metrics such as loss, action-value,
+        policy entropy, exploration rate epsilon at each step.
+        """
+        return self.loss, self.predicted_action_value, self.epsilon, self.policy_entropy
+
+    def learn(self, target_agent: "Agent"):
         """
         Learning steps, which includes updating the network parameters through backpropagation.
         Args:
-            target_agent: The target agent used for storing previous learning step network parameters.
+            target_agent: The target agent that is used as an oracle.
 
-        Returns:
-            loss: The loss, which is defined as the expected difference between
-                  the agent itself and the `target_agent` predictions on a batch
-                  of states.
         """
-        states, actions, next_states, rewards, dones = self.replay_memory.sample()
+        obs, actions, next_obs, rewards, dones = self.replay_memory.sample()
 
-        states = to_tensor(array=states, normalize=self.params.image_obs).float()
+        states = to_tensor(array=obs, normalize=self.params.image_obs).float()
         actions = to_tensor(array=actions).view(-1, 1).long()
-        next_states = to_tensor(
-            array=next_states, normalize=self.params.image_obs
-        ).float()
+        next_states = to_tensor(array=next_obs, normalize=self.params.image_obs).float()
         rewards = to_tensor(array=rewards).view(-1, 1)
         dones = to_tensor(array=dones).view(-1, 1)
 
@@ -589,7 +619,8 @@ class Agent(nn.Module):
         probs = value_dists[torch.arange(self.params.batch_size), actions.view(-1), :]
 
         # target agent predictions
-        _, target_probs, _ = target_agent.act(next_states, exploit=True)
+        _ = target_agent.act(next_states, exploit=True)
+        target_probs = target_agent.selected_action_probs
 
         # ------------------------------ Categorical algorithm ------------------------------
         #
@@ -646,7 +677,9 @@ class Agent(nn.Module):
         # update weights
         self.optimizer.step()
 
-        return loss.item()
+        self.loss = round(loss.item(), 2)
+
+        return
 
 
 # %%
@@ -672,10 +705,10 @@ def train(seed: int, params: namedtuple, verbose: bool) -> ResultsBuffer:
     set_seed(seed)
 
     steps = 0  # global time steps for the whole training
+    evaluate_frequency = params.evaluation_frequency_percentage * params.training_steps
     episode_return = float("-inf")
     episode_length = float("-inf")
     episode_action_value = float("-inf")
-    loss = float("-inf")
     results_buffer = ResultsBuffer(seed=seed, params=params)
 
     env = gymnasium.make(params.env_name)
@@ -686,10 +719,11 @@ def train(seed: int, params: namedtuple, verbose: bool) -> ResultsBuffer:
         env = create_atari_env(env=env, params=params)
 
     env = gymnasium.wrappers.RecordEpisodeStatistics(env)
+    evaluate_env = env
 
     agent = Agent(params=params).to(device)
     target_agent = copy.deepcopy(agent).to(device)
-    # Q_target parameters are frozen.
+    # target parameters are frozen.
     for p in target_agent.parameters():
         p.requires_grad = False
 
@@ -702,15 +736,18 @@ def train(seed: int, params: namedtuple, verbose: bool) -> ResultsBuffer:
         # --- Play an episode ---
         while not done:
             state = to_tensor(obs, params.image_obs)
-            action, _, action_value = agent.act(state=state, exploit=False)
+            action = agent.act(state=state, exploit=False)
             next_obs, reward, terminated, truncated, info = env.step(action)
 
             step_experience = Experience(obs, action, next_obs, reward, terminated)
             agent.replay_memory.push(step_experience)
+            agent.decrease_epsilon()
 
             obs = next_obs
             done = terminated or truncated
             steps += 1
+
+            loss, action_value, epsilon, entropy = agent.get_metrics()
             action_value_sum += action_value
 
             if done:
@@ -720,7 +757,6 @@ def train(seed: int, params: namedtuple, verbose: bool) -> ResultsBuffer:
                 )
                 episode_action_value = action_value_sum / info["episode"]["l"]
 
-            entropy, epsilon = agent.get_metrics()
             results_buffer.add(
                 episode_return,
                 episode_length,
@@ -732,7 +768,7 @@ def train(seed: int, params: namedtuple, verbose: bool) -> ResultsBuffer:
 
             # train agent periodically if enough experience exists
             if steps % params.update_frequency == 0 and steps >= params.learning_starts:
-                loss = agent.learn(target_agent)
+                agent.learn(target_agent)
 
             # Update the target network periodically.
             if (
@@ -740,6 +776,11 @@ def train(seed: int, params: namedtuple, verbose: bool) -> ResultsBuffer:
                 and steps >= params.learning_starts
             ):
                 target_agent.load_state_dict(agent.state_dict())
+
+            # evaluate agent periodically
+            if steps % evaluate_frequency == 0:
+                eval_return = evaluate(agent, evaluate_env, params.image_obs, seed)
+                results_buffer.add_training_eval(eval_return)
 
             # print progress periodically
             if verbose and steps % 10_000 == 0:
@@ -757,19 +798,20 @@ def train(seed: int, params: namedtuple, verbose: bool) -> ResultsBuffer:
             #     avg_grad = [tens.mean() for tens in grads if isinstance(tens, torch.Tensor)]
             #     print(avg_grad)
 
+    # --- Evaluate agent on five different seeds than training seed once training has finished
+    evaluation_returns = [
+        evaluate(agent, evaluate_env, params.image_obs, seed + i) for i in range(1, 6)
+    ]
+    results_buffer.add_evaluation_returns(evaluation_returns)
+
     # TODO: clean up, create results summary, return stuff
     env.close()
+    evaluate_env.close()
 
     return results_buffer
 
 
-# %%
-# Evaluation
-# ----------
-# Describe how an agent should be evaluated once its training is finished.
-
-
-def random_agent_returns(params: namedtuple) -> np.ndarray:
+def random_agent_play(params: namedtuple) -> np.ndarray:
     """Implement a random agent play representing baseline performance. Return episode rewards."""
     seed = 1
     set_seed(seed)
@@ -802,6 +844,50 @@ def random_agent_returns(params: namedtuple) -> np.ndarray:
 
 
 # %%
+# Evaluation
+# ----------
+# Describe how an agent should be evaluated once its training is finished.
+
+
+def evaluate(
+    agent: Agent, env: gymnasium.Env, image_obs: bool, seed: int, n_episodes: int = 20
+) -> float:
+    """
+    Evaluate an agent on an environment for a number of
+    episodes and return the average episode reward.
+
+    Args:
+        agent: A trained agent.
+        env: Environment to evaluate on.
+        image_obs: Whether observations are image arrays.
+        seed: Integer seed for reproducibility.
+        n_episodes: Number of episodes to evaluate agent.
+
+    Returns:
+        mean_return: Average episode return.
+
+    """
+    eval_return = 0
+
+    for episode in range(n_episodes):
+        obs, info = env.reset(seed=seed)
+        done = False
+
+        while not done:
+            state = to_tensor(obs, image_obs)
+            action = agent.act(state, exploit=True)
+            next_obs, reward, terminated, truncated, info = env.step(action)
+
+            obs = next_obs
+            done = terminated or truncated
+
+            if done:
+                eval_return += info["episode"]["r"]
+
+    return round(eval_return / n_episodes, 2)
+
+
+# %%
 # Hyperparameters
 # ---------------
 # What hyperparameters are necessary, what are common good values etc.
@@ -822,13 +908,15 @@ Hyperparameters = namedtuple(
         "target_update_frequency",  # how often to replace target agent network parameters
         "gamma",  # discount factor
         "num_frame_stacking",  # number of frames to be stacked together
+        # --- training related ---
+        "evaluation_frequency_percentage",  # evaluating agent, as percentage of training steps
         # --- exploration-exploitation strategy related ---
         "epsilon_start",
         "epsilon_end",
-        "anneal_length_percentage",
+        "anneal_length_percentage",  # percentage of training steps to decrease eps during training
         # --- neural network related ---
-        "in_features",
-        "n_hidden_units",
+        "in_features",  # number of features/parameters passed to the first linear layer
+        "n_hidden_units",  # output of first linear layer
         # --- optimizer related ---
         "learning_rate",
         # --- replay memory related ---
@@ -848,31 +936,32 @@ Hyperparameters = namedtuple(
 # evaluate all agents.
 # plot the progress and evaluation.
 
-env1_hyperparameters = Hyperparameters(
-    env_name="LunarLander-v2",
+LunarLander_hyperparameters = Hyperparameters(
+    env_name="LunarLander-v3",
     n_actions=4,
-    training_steps=int(1e6),
-    learning_starts=2000,
+    training_steps=int(5e5),
+    learning_starts=1e4,
     obs_shape=(1, 8),
     image_obs=False,
     batch_size=32,
     update_frequency=4,
-    target_update_frequency=500,
+    target_update_frequency=200,
     gamma=0.99,
     num_frame_stacking=0,
+    evaluation_frequency_percentage=0.20,
     epsilon_start=1,
     epsilon_end=0.05,
-    anneal_length_percentage=0.20,
+    anneal_length_percentage=0.30,
     in_features=8,
-    n_hidden_units=512,
+    n_hidden_units=256,
     learning_rate=1e-4,
-    capacity=int(2e5),
-    v_min=-10,
-    v_max=10,
+    capacity=int(1e5),
+    v_min=-30,
+    v_max=30,
     n_atoms=51,
 )
 
-results_for_env2 = None
+
 CartPole_hyperparameters = Hyperparameters(
     env_name="CartPole-v1",
     n_actions=2,
@@ -885,10 +974,37 @@ CartPole_hyperparameters = Hyperparameters(
     target_update_frequency=200,
     gamma=0.99,
     num_frame_stacking=0,
+    evaluation_frequency_percentage=0.20,
     epsilon_start=1,
     epsilon_end=0.05,
     anneal_length_percentage=0.40,
     in_features=4,
+    n_hidden_units=256,
+    learning_rate=1e-4,
+    capacity=int(1e5),
+    v_min=-100,
+    v_max=100,
+    n_atoms=101,
+)
+
+
+Acrobot_hyperparameters = Hyperparameters(
+    env_name="Acrobot-v1",
+    n_actions=3,
+    training_steps=int(5e4),
+    learning_starts=1000,
+    obs_shape=(1, 6),
+    image_obs=False,
+    batch_size=32,
+    update_frequency=4,
+    target_update_frequency=200,
+    gamma=0.99,
+    num_frame_stacking=0,
+    evaluation_frequency_percentage=0.20,
+    epsilon_start=1,
+    epsilon_end=0.05,
+    anneal_length_percentage=0.40,
+    in_features=6,
     n_hidden_units=256,
     learning_rate=1e-4,
     capacity=int(1e5),
@@ -910,22 +1026,20 @@ env2 = None
 
 if __name__ == "__main__":
     # %%
-    # CartPole-v0 training
+    # LunarLander-v3 training
     # --------------------
-    agent_seeds = [11, 13]
-    cartpole_parallel_results = parallel_training(
-        seeds=agent_seeds, params=CartPole_hyperparameters, verbose=True
+    agent_seeds = [11, 13, 17, 19]
+    LunarLander_parallel_results = parallel_training(
+        seeds=agent_seeds, params=Acrobot_hyperparameters, verbose=True
     )
-    random_agent_baseline = random_agent_returns(params=CartPole_hyperparameters)
+    random_agent_baseline = random_agent_play(params=Acrobot_hyperparameters)
 
-    smooth_factor_alpha = 0.40
-    data = preprocess_results(cartpole_parallel_results, smooth_factor_alpha)
+    smooth_factor_alpha = 0.50
+    data = preprocess_results(LunarLander_parallel_results, smooth_factor_alpha)
     random_agent_baseline_smoothed = exponential_moving_average(
         random_agent_baseline, smooth_factor_alpha
     )
-    visualize_performance(
-        data, random_agent_baseline_smoothed, CartPole_hyperparameters
-    )
+    visualize_performance(data, random_agent_baseline_smoothed, Acrobot_hyperparameters)
 
 # %%
 # CartPole-v0 visualization
