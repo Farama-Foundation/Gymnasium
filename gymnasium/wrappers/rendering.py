@@ -456,6 +456,13 @@ class HumanRendering(
      * v0.25.0 - Initially added
     """
 
+    ACCEPTED_RENDER_MODES = [
+        "rgb_array",
+        "rgb_array_list",
+        "depth_array",
+        "depth_array_list",
+    ]
+
     def __init__(self, env: gym.Env[ObsType, ActType]):
         """Initialize a :class:`HumanRendering` instance.
 
@@ -465,12 +472,11 @@ class HumanRendering(
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
-        assert env.render_mode in [
-            "rgb_array",
-            "rgb_array_list",
-        ], f"Expected env.render_mode to be one of 'rgb_array' or 'rgb_array_list' but got '{env.render_mode}'"
         assert (
-            "render_fps" in env.metadata
+            self.env.render_mode in self.ACCEPTED_RENDER_MODES
+        ), f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
+        assert (
+            "render_fps" in self.env.metadata
         ), "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
 
         self.screen_size = None
@@ -510,19 +516,19 @@ class HumanRendering(
             import pygame
         except ImportError:
             raise DependencyNotInstalled(
-                'pygame is not installed, run `pip install "gymnasium[box2d]"`'
+                'pygame is not installed, run `pip install "gymnasium[classic-control]"`'
             )
-        if self.env.render_mode == "rgb_array_list":
+        assert self.env.render_mode is not None
+        if self.env.render_mode.endswith("_list"):
             last_rgb_array = self.env.render()
             assert isinstance(last_rgb_array, list)
             last_rgb_array = last_rgb_array[-1]
-        elif self.env.render_mode == "rgb_array":
-            last_rgb_array = self.env.render()
         else:
-            raise Exception(
-                f"Wrapped environment must have mode 'rgb_array' or 'rgb_array_list', actual render mode: {self.env.render_mode}"
-            )
-        assert isinstance(last_rgb_array, np.ndarray)
+            last_rgb_array = self.env.render()
+
+        assert isinstance(
+            last_rgb_array, np.ndarray
+        ), f"Expected `env.render()` to return a numpy array, actually returned {type(last_rgb_array)}"
 
         rgb_array = np.transpose(last_rgb_array, axes=(1, 0, 2))
 
