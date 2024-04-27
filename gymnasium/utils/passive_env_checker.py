@@ -32,12 +32,12 @@ def _check_box_observation_space(observation_space: spaces.Box):
 
     if np.any(observation_space.low == observation_space.high):
         logger.warn(
-            "A Box observation space maximum and minimum values are equal. "
+            "A Box observation space maximum and minimum values are equal."
             f"Actual equal coordinates: {[x for x in zip(*np.where(observation_space.low == observation_space.high))]}"
         )
     elif np.any(observation_space.high < observation_space.low):
         logger.warn(
-            "A Box observation space low value is greater than a high value. "
+            "A Box observation space low value is greater than a high value."
             f"Actual less than coordinates: {[x for x in zip(*np.where(observation_space.high < observation_space.low))]}"
         )
 
@@ -57,7 +57,7 @@ def _check_box_action_space(action_space: spaces.Box):
 
     if np.any(action_space.low == action_space.high):
         logger.warn(
-            "A Box action space maximum and minimum values are equal. "
+            "A Box action space maximum and minimum values are equal."
             f"Actual equal coordinates: {[x for x in zip(*np.where(action_space.low == action_space.high))]}"
         )
 
@@ -180,7 +180,7 @@ def env_reset_passive_checker(env, **kwargs):
         # Check the default value is None
         if seed_param is not None and seed_param.default is not None:
             logger.warn(
-                "The default seed argument in `Env.reset` should be `None`, otherwise the environment will by default always be deterministic. "
+                "The default seed argument in `Env.reset` should be `None`, otherwise the environment will by default always be deterministic."
                 f"Actual default: {seed_param}"
             )
 
@@ -218,8 +218,8 @@ def env_step_passive_checker(env, action):
     ), f"Expects step result to be a tuple, actual type: {type(result)}"
     if len(result) == 4:
         logger.deprecation(
-            "Core environment is written in old step API which returns one bool instead of two. "
-            "It is recommended to rewrite the environment with new step API. "
+            "Core environment is written in old step API which returns one bool instead of two."
+            "It is recommended to rewrite the environment with new step API."
         )
         obs, reward, done, info = result
 
@@ -362,7 +362,7 @@ def env_render_passive_checker(env):
             ), f"With no render_modes, expects the Env.render_mode to be None, actual value: {env.render_mode}"
         else:
             assert env.render_mode is None or env.render_mode in render_modes, (
-                "The environment was initialized successfully however with an unsupported render mode. "
+                "The environment was initialized successfully however with an unsupported render mode."
                 f"Render mode: {env.render_mode}, modes: {render_modes}"
             )
 

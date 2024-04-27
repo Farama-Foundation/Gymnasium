@@ -36,7 +36,7 @@ def data_equivalence(data_1, data_2, exact: bool = False) -> bool:
     Args:
         data_1: data structure 1
         data_2: data structure 2
-        exact: whether to compare array exactly or not if false compares with absolute and realive torrelance of 1e-5 (for more information check [np.allclose](https://numpy.org/doc/stable/reference/generated/numpy.allclose.html)).
+        exact: whether to compare array exactly or not if false compares with absolute and relative tolerance of 1e-5 (for more information check [np.allclose](https://numpy.org/doc/stable/reference/generated/numpy.allclose.html)).
 
     Returns:
         If observation 1 and 2 are equivalent
@@ -90,7 +90,7 @@ def check_reset_seed_determinism(env: gym.Env):
             ), "The observation returned by `env.reset(seed=123)` is not within the observation space."
             assert (
                 env.unwrapped._np_random is not None
-            ), "Expects the random number generator to have been generated given a seed was passed to reset. Mostly likely the environment reset function does not call `super().reset(seed=seed)`."
+            ), "Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`."
             seed_123_rng = deepcopy(env.unwrapped._np_random)
 
             obs_2, info = env.reset(seed=123)
@@ -109,7 +109,7 @@ def check_reset_seed_determinism(env: gym.Env):
             assert (
                 env.unwrapped._np_random.bit_generator.state
                 == seed_123_rng.bit_generator.state
-            ), "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`."
+            ), "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`."
 
             obs_3, info = env.reset(seed=456)
             assert (
@@ -118,11 +118,11 @@ def check_reset_seed_determinism(env: gym.Env):
             assert (
                 env.unwrapped._np_random.bit_generator.state
                 != seed_123_rng.bit_generator.state
-            ), "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`."
+            ), "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`."
 
         except TypeError as e:
             raise AssertionError(
-                "The environment cannot be reset with a random seed, even though `seed` or `kwargs` appear in the signature. "
+                "The environment cannot be reset with a random seed, even though `seed` or `kwargs` appear in the signature."
                 f"This should never happen, please report this issue. The error was: {e}"
             ) from e
 
@@ -130,7 +130,7 @@ def check_reset_seed_determinism(env: gym.Env):
         # Check the default value is None
         if seed_param is not None and seed_param.default is not None:
             logger.warn(
-                "The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic. "
+                "The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic."
                 f"Actual default: {seed_param.default}"
             )
     else:
@@ -158,7 +158,7 @@ def check_reset_options(env: gym.Env):
             env.reset(options={})
         except TypeError as e:
             raise AssertionError(
-                "The environment cannot be reset with options, even though `options` or `**kwargs` appear in the signature. "
+                "The environment cannot be reset with options, even though `options` or `**kwargs` appear in the signature."
                 f"This should never happen, please report this issue. The error was: {e}"
             ) from e
     else:
@@ -256,7 +256,7 @@ def check_seed_deprecation(env: gym.Env):
     seed_fn = getattr(env, "seed", None)
     if callable(seed_fn):
         logger.warn(
-            "Official support for the `seed` function is dropped. "
+            "Official support for the `seed` function is dropped."
             "Standard practice is to reset gymnasium environments using `env.reset(seed=<desired seed>)`"
         )
 
@@ -313,7 +313,7 @@ def check_space_limit(space, space_type: str):
                 ):
                     # todo - Add to gymlibrary.ml?
                     logger.warn(
-                        "For Box action spaces, we recommend using a symmetric and normalized space (range=[-1, 1] or [0, 1]). "
+                        "For Box action spaces, we recommend using a symmetric and normalized space (range=[-1, 1] or [0, 1])."
                         "See https://stable-baselines3.readthedocs.io/en/master/guide/rl_tips.html for more information."
                     )
     elif isinstance(space, spaces.Tuple):
@@ -337,7 +337,7 @@ def check_env(
     To ensure that an environment is implemented "correctly", ``check_env`` checks that the :attr:`observation_space` and :attr:`action_space` are correct.
     Furthermore, the function will call the :meth:`reset`, :meth:`step` and :meth:`render` functions with a variety of values.
 
-    We highly recommend users calling this function after an environment is constructed and within a projects continuous integration to keep an environment update with Gymnasium's API.
+    We highly recommend users call this function after an environment is constructed and within a project's continuous integration to keep an environment update with Gymnasium's API.
 
     Args:
         env: The Gym environment that will be checked
@@ -354,12 +354,12 @@ def check_env(
             or str(env.__class__.__base__) == "<class 'gym.core.Wrapper'>"
         ):
             raise TypeError(
-                "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
+                "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`."
                 "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
             )
         else:
             raise TypeError(
-                f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
+                f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}."
                 "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
             )
     if env.unwrapped is not env:

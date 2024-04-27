@@ -1,4 +1,4 @@
-"""A set of tests to help the desiner of gymansium environments verify that they work correctly."""
+"""A set of tests to help the designer of gymnasium environments verify that they work correctly."""
 
 import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
