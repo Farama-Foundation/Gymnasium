@@ -44,19 +44,19 @@ There are eleven MuJoCo environments (in roughly increasing complexity):
 | Robot                  | Short Description                                                    |
 | ---------------------- | -------------------------------------------------------------------- |
 | **CartPoles**          |                                                                      |
-| InvertedPendulum       | MuJuCo version of the CartPole Environment (with Continuous actions) |
+| InvertedPendulum       | MuJoCo version of the CartPole Environment (with Continuous actions) |
 | InvertedDoublePendulum | 2 Pole variation of the CartPole Environment                         |
 | **Arms**               |                                                                      |
 | Reacher                | 2d arm with the goal of reaching an object                           |
 | Pusher                 | 3d arm with the goal of pushing an object to a target location       |
 | **2D Runners**         |                                                                      |
 | HalfCheetah            | 2d quadruped with the goal of running                                |
-| Hopper                 | 2d monoped with the goal of goal of hopping                          |
-| Walker2d               | 2d bidped with the goal of walking                                   |
+| Hopper                 | 2d monoped with the goal of hopping                          |
+| Walker2d               | 2d biped with the goal of walking                                   |
 | **Swimmers**           |                                                                      |
 | Swimmer                | 3d robot with the goal of swimming                                   |
 | **Quarduped**          |                                                                      |
-| Ant                    | 3d quadurped with the goal of running                                |
+| Ant                    | 3d quadruped with the goal of running                                |
 | **Humanoid Bipeds**    |                                                                      |
 | Humanoid               | 3d humanoid with the goal of running                                 |
 | HumanoidStandup        | 3d humanoid with the goal of standing up                             |
