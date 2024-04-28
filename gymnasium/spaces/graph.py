@@ -31,25 +31,19 @@ class Graph(Space[GraphInstance]):
 
     Example:
         >>> from gymnasium.spaces import Graph, Box, Discrete
-        >>> observation_space = Graph(node_space=Box(low=-100, high=100, shape=(3,)), edge_space=Discrete(3), seed=42)
-        >>> observation_space.sample()
-        GraphInstance(nodes=array([[-12.224312 ,  71.71958  ,  39.473606 ],
-               [-81.16453  ,  95.12447  ,  52.22794  ],
-               [ 57.21286  , -74.37727  ,  -9.922812 ],
-               [-25.840395 ,  85.353    ,  28.773024 ],
-               [ 64.55232  , -11.317161 , -54.552258 ],
-               [ 10.916958 , -87.23655  ,  65.52624  ],
-               [ 26.33288  ,  51.61755  , -29.094807 ],
-               [ 94.1396   ,  78.62422  ,  55.6767   ],
-               [-61.072258 ,  -6.6557994, -91.23925  ],
-               [-69.142105 ,  36.60979  ,  48.95243  ]], dtype=float32), edges=array([2, 0, 1, 1, 0, 0, 1, 0]), edge_links=array([[7, 5],
-               [6, 9],
-               [4, 1],
-               [8, 6],
-               [7, 0],
-               [3, 7],
-               [8, 4],
-               [8, 8]], dtype=int32))
+        >>> observation_space = Graph(node_space=Box(low=-100, high=100, shape=(3,)), edge_space=Discrete(3), seed=123)
+        >>> observation_space.sample(num_nodes=4, num_edges=8)
+        GraphInstance(nodes=array([[ 36.47037 , -89.235794, -55.928024],
+               [-63.125637, -64.81882 ,  62.4189  ],
+               [ 84.669   , -44.68512 ,  63.950912],
+               [ 77.97854 ,   2.594091, -51.00708 ]], dtype=float32), edges=array([2, 0, 2, 1, 2, 0, 2, 1]), edge_links=array([[3, 0],
+               [0, 0],
+               [0, 1],
+               [0, 2],
+               [1, 0],
+               [1, 0],
+               [0, 1],
+               [0, 2]], dtype=int32))
     """
 
     def __init__(
@@ -108,6 +102,76 @@ class Graph(Space[GraphInstance]):
         else:
             raise TypeError(
                 f"Expects base space to be Box and Discrete, actual space: {type(base_space)}."
+            )
+
+    def seed(
+        self, seed: int | tuple[int, int] | tuple[int, int, int] | None = None
+    ) -> tuple[int, int] | tuple[int, int, int]:
+        """Seeds the PRNG of this space and node / edge subspace.
+
+        Depending on the type of seed, the subspaces will be seeded differently
+
+        * ``None`` - The root, node and edge spaces PRNG are randomly initialized
+        * ``Int`` - The integer is used to seed the :class:`Graph` space that is used to generate seed values for the node and edge subspaces.
+        * ``Tuple[int, int]`` - Seeds the :class:`Graph` and node subspace with a particular value. Only if edge subspace isn't specified
+        * ``Tuple[int, int, int]`` - Seeds the :class:`Graph`, node and edge subspaces with a particular value.
+
+        Args:
+            seed: An optional int or tuple of ints for this space and the node / edge subspaces. See above for more details.
+
+        Returns:
+            A tuple of two or three ints depending on if the edge subspace is specified.
+        """
+        if seed is None:
+            if self.edge_space is None:
+                return super().seed(None), self.node_space.seed(None)
+            else:
+                return (
+                    super().seed(None),
+                    self.node_space.seed(None),
+                    self.edge_space.seed(None),
+                )
+        elif isinstance(seed, int):
+            if self.edge_space is None:
+                super_seed = super().seed(seed)
+                node_seed = int(self.np_random.integers(np.iinfo(np.int32).max))
+                # this is necessary such that after int or list/tuple seeding, the Graph PRNG are equivalent
+                super().seed(seed)
+                return super_seed, self.node_space.seed(node_seed)
+            else:
+                super_seed = super().seed(seed)
+                node_seed, edge_seed = self.np_random.integers(
+                    np.iinfo(np.int32).max, size=(2,)
+                )
+                # this is necessary such that after int or list/tuple seeding, the Graph PRNG are equivalent
+                super().seed(seed)
+                return (
+                    super_seed,
+                    self.node_space.seed(int(node_seed)),
+                    self.edge_space.seed(int(edge_seed)),
+                )
+        elif isinstance(seed, (list, tuple)):
+            if self.edge_space is None:
+                if len(seed) != 2:
+                    raise ValueError(
+                        f"Expects a tuple of two values for Graph and node space, actual length: {len(seed)}"
+                    )
+
+                return super().seed(seed[0]), self.node_space.seed(seed[1])
+            else:
+                if len(seed) != 3:
+                    raise ValueError(
+                        f"Expects a tuple of three values for Graph, node and edge space, actual length: {len(seed)}"
+                    )
+
+                return (
+                    super().seed(seed[0]),
+                    self.node_space.seed(seed[1]),
+                    self.edge_space.seed(seed[2]),
+                )
+        else:
+            raise TypeError(
+                f"Expects `None`, int or tuple of ints, actual type: {type(seed)}"
             )
 
     def sample(

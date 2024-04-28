@@ -50,6 +50,7 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     None,
     None,
     None,
+    None,
     # Sequence
     None,
     None,
@@ -60,6 +61,7 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     4,
     5,
 ]
+assert len(TESTING_SPACES) == len(TESTING_SPACES_EXPECTED_FLATDIMS)
 
 
 @pytest.mark.parametrize(

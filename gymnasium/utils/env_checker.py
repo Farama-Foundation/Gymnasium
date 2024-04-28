@@ -31,19 +31,19 @@ from gymnasium.utils.passive_env_checker import (
 
 
 def data_equivalence(data_1, data_2, exact: bool = False) -> bool:
-    """Assert equality between data 1 and 2, i.e observations, actions, info.
+    """Assert equality between data 1 and 2, i.e. observations, actions, info.
 
     Args:
         data_1: data structure 1
         data_2: data structure 2
-        exact: whether to compare array exactly or not if false compares with absolute and realive torrelance of 1e-5 (for more information check [np.allclose](https://numpy.org/doc/stable/reference/generated/numpy.allclose.html)).
+        exact: whether to compare array exactly or not if false compares with absolute and relative tolerance of 1e-5 (for more information check [np.allclose](https://numpy.org/doc/stable/reference/generated/numpy.allclose.html)).
 
     Returns:
         If observation 1 and 2 are equivalent
     """
     if type(data_1) is not type(data_2):
         return False
-    if isinstance(data_1, dict):
+    elif isinstance(data_1, dict):
         return data_1.keys() == data_2.keys() and all(
             data_equivalence(data_1[k], data_2[k], exact) for k in data_1.keys()
         )

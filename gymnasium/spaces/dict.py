@@ -107,43 +107,44 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces.values())
 
-    def seed(self, seed: dict[str, Any] | int | None = None) -> list[int]:
+    def seed(self, seed: int | dict[str, Any] | None = None) -> dict[str, int]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
 
         * ``None`` - All the subspaces will use a random initial seed
-        * ``Int`` - The integer is used to seed the :class:`Dict` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.
-        * ``Dict`` - Using all the keys in the seed dictionary, the values are used to seed the subspaces. This allows the seeding of multiple composite subspaces (``Dict["space": Dict[...], ...]`` with ``{"space": {...}, ...}``).
+        * ``Int`` - The integer is used to seed the :class:`Dict` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all subspaces, though is very unlikely.
+        * ``Dict`` - A dictionary of seeds for each subspace, requires a seed key for every subspace. This supports seeding of multiple composite subspaces (``Dict["space": Dict[...], ...]`` with ``{"space": {...}, ...}``).
 
         Args:
-            seed: An optional list of ints or int to seed the (sub-)spaces.
-        """
-        seeds: list[int] = []
+            seed: An optional int or dictionary of subspace keys to int to seed each PRNG. See above for more details.
 
-        if isinstance(seed, dict):
-            assert (
-                seed.keys() == self.spaces.keys()
-            ), f"The seed keys: {seed.keys()} are not identical to space keys: {self.spaces.keys()}"
-            for key in seed.keys():
-                seeds += self.spaces[key].seed(seed[key])
+        Returns:
+            A dictionary for the seed values of the subspaces
+        """
+        if seed is None:
+            return {key: subspace.seed(None) for (key, subspace) in self.spaces.items()}
         elif isinstance(seed, int):
-            seeds = super().seed(seed)
+            super().seed(seed)
             # Using `np.int32` will mean that the same key occurring is extremely low, even for large subspaces
             subseeds = self.np_random.integers(
                 np.iinfo(np.int32).max, size=len(self.spaces)
             )
-            for subspace, subseed in zip(self.spaces.values(), subseeds):
-                seeds += subspace.seed(int(subseed))
-        elif seed is None:
-            for space in self.spaces.values():
-                seeds += space.seed(None)
+            return {
+                key: subspace.seed(int(subseed))
+                for (key, subspace), subseed in zip(self.spaces.items(), subseeds)
+            }
+        elif isinstance(seed, dict):
+            if seed.keys() != self.spaces.keys():
+                raise ValueError(
+                    f"The seed keys: {seed.keys()} are not identical to space keys: {self.spaces.keys()}"
+                )
+
+            return {key: self.spaces[key].seed(seed[key]) for key in seed.keys()}
         else:
             raise TypeError(
                 f"Expected seed type: dict, int or None, actual type: {type(seed)}"
             )
-
-        return seeds
 
     def sample(self, mask: dict[str, Any] | None = None) -> dict[str, Any]:
         """Generates a single random sample from this space.

@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 import scipy.stats
 
+from gymnasium.error import Error
 from gymnasium.spaces import Box, Discrete, MultiBinary, MultiDiscrete, Space, Text
 from gymnasium.utils import seeding
 from gymnasium.utils.env_checker import data_equivalence
@@ -509,13 +510,13 @@ def test_seed_reproducibility(space):
     space_2 = copy.deepcopy(space)
 
     for seed in range(5):
-        assert space_1.seed(seed) == space_2.seed(seed)
+        assert data_equivalence(space_1.seed(seed), space_2.seed(seed))
         # With the same seed, the two spaces should be identical
         assert all(
             data_equivalence(space_1.sample(), space_2.sample()) for _ in range(10)
         )
 
-    assert space_1.seed(123) != space_2.seed(456)
+    assert not data_equivalence(space_1.seed(123), space_2.seed(456))
     # Due to randomness, it is difficult to test that random seeds produce different answers
     #   Therefore, taking 10 samples and checking that they are not all the same.
     assert not all(
@@ -604,3 +605,22 @@ def test_space_pickling(space):
     file_unpickled_sample = file_unpickled_space.sample()
     assert data_equivalence(space_sample, unpickled_sample)
     assert data_equivalence(space_sample, file_unpickled_sample)
+
+
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+@pytest.mark.parametrize("initial_seed", [None, 123])
+def test_space_seeding_output(space, initial_seed, num_samples=5):
+    seeding_values = space.seed(initial_seed)
+    samples = [space.sample() for _ in range(num_samples)]
+
+    reseeded_values = space.seed(seeding_values)
+    resamples = [space.sample() for _ in range(num_samples)]
+
+    assert data_equivalence(seeding_values, reseeded_values)
+    assert data_equivalence(samples, resamples)
+
+
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+def test_invalid_space_seed(space):
+    with pytest.raises((ValueError, TypeError, Error)):
+        space.seed("abc")

@@ -1,7 +1,6 @@
 """Implementation of a space that represents the cartesian product of other spaces."""
 from __future__ import annotations
 
-import collections.abc
 import typing
 from typing import Any, Iterable
 
@@ -17,11 +16,11 @@ class OneOf(Space[Any]):
 
     Example:
         >>> from gymnasium.spaces import OneOf, Box, Discrete
-        >>> observation_space = OneOf((Discrete(2), Box(-1, 1, shape=(2,))), seed=42)
+        >>> observation_space = OneOf((Discrete(2), Box(-1, 1, shape=(2,))), seed=123)
         >>> observation_space.sample()  # the first element is the space index (Box in this case) and the second element is the sample from Box
-        (1, array([-0.3991573 ,  0.21649833], dtype=float32))
-        >>> observation_space.sample()  # this time the Discrete space was sampled as index=0
         (0, 0)
+        >>> observation_space.sample()  # this time the Discrete space was sampled as index=0
+        (1, array([-0.00711833, -0.7257502 ], dtype=float32))
         >>> observation_space[0]
         Discrete(2)
         >>> observation_space[1]
@@ -57,42 +56,48 @@ class OneOf(Space[Any]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces)
 
-    def seed(self, seed: int | typing.Sequence[int] | None = None) -> list[int]:
+    def seed(self, seed: int | tuple[int, ...] | None = None) -> tuple[int, ...]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
 
         * ``None`` - All the subspaces will use a random initial seed
         * ``Int`` - The integer is used to seed the :class:`Tuple` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all the subspaces.
-        * ``List`` - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces ``[42, 54, ...]``.
+        * ``Tuple[int, ...]`` - Values used to seed the subspaces, first value seeds the OneOf and subsequent seed the subspaces. This allows the seeding of multiple composite subspaces ``[42, 54, ...]``.
 
         Args:
-            seed: An optional list of ints or int to seed the (sub-)spaces.
+            seed: An optional int or tuple of ints to seed the OneOf space and subspaces. See above for more details.
+
+        Returns:
+            A tuple of ints used to seed the OneOf space and subspaces
         """
-        if isinstance(seed, collections.abc.Sequence):
-            assert (
-                len(seed) == len(self.spaces) + 1
-            ), f"Expects that the subspaces of seeds equals the number of subspaces. Actual length of seeds: {len(seed)}, length of subspaces: {len(self.spaces)}"
-            seeds = super().seed(seed[0])
-            for subseed, space in zip(seed, self.spaces):
-                seeds += space.seed(subseed)
+        if seed is None:
+            super_seed = super().seed(None)
+            return (super_seed,) + tuple(space.seed(None) for space in self.spaces)
         elif isinstance(seed, int):
-            seeds = super().seed(seed)
+            super_seed = super().seed(seed)
             subseeds = self.np_random.integers(
                 np.iinfo(np.int32).max, size=len(self.spaces)
             )
-            for subspace, subseed in zip(self.spaces, subseeds):
-                seeds += subspace.seed(int(subseed))
-        elif seed is None:
-            seeds = super().seed(None)
-            for space in self.spaces:
-                seeds += space.seed(None)
+            # this is necessary such that after int or list/tuple seeding, the OneOf PRNG are equivalent
+            super().seed(seed)
+            return (super_seed,) + tuple(
+                space.seed(int(subseed))
+                for space, subseed in zip(self.spaces, subseeds)
+            )
+        elif isinstance(seed, (tuple, list)):
+            if len(seed) != len(self.spaces) + 1:
+                raise ValueError(
+                    f"Expects that the subspaces of seeds equals the number of subspaces + 1. Actual length of seeds: {len(seed)}, length of subspaces: {len(self.spaces)}"
+                )
+
+            return (super().seed(seed[0]),) + tuple(
+                space.seed(subseed) for space, subseed in zip(self.spaces, seed[1:])
+            )
         else:
             raise TypeError(
-                f"Expected seed type: list, tuple, int or None, actual type: {type(seed)}"
+                f"Expected None, int, or tuple of ints, actual type: {type(seed)}"
             )
-
-        return seeds
 
     def sample(self, mask: tuple[Any | None, ...] | None = None) -> tuple[int, Any]:
         """Generates a single random sample inside this space.

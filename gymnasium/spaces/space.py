@@ -102,13 +102,20 @@ class Space(Generic[T_cov]):
         """
         raise NotImplementedError
 
-    def seed(self, seed: int | None = None) -> list[int]:
-        """Seed the PRNG of this space and possibly the PRNGs of subspaces."""
+    def seed(self, seed: int | None = None) -> int | list[int] | dict[str, int]:
+        """Seed the pseudorandom number generator (PRNG) of this space and, if applicable, the PRNGs of subspaces.
+
+        Args:
+            seed: The seed value for the space. This is expanded for composite spaces to accept multiple values. For further details, please refer to the space's documentation.
+
+        Returns:
+            The seed values used for all the PRNGs, for composite spaces this can be a tuple or dictionary of values.
+        """
         self._np_random, np_random_seed = seeding.np_random(seed)
-        return [np_random_seed]
+        return np_random_seed
 
     def contains(self, x: Any) -> bool:
-        """Return boolean specifying if x is a valid member of this space."""
+        """Return boolean specifying if x is a valid member of this space, equivalent to ``sample in space``."""
         raise NotImplementedError
 
     def __contains__(self, x: Any) -> bool:
