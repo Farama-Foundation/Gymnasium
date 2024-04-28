@@ -583,43 +583,44 @@
 
 <div class="viewcode-block" id="Dict.seed">
 <a class="viewcode-back" href="../../../../api/spaces/composite/#gymnasium.spaces.Dict.seed">[docs]</a>
-    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Seed the PRNG of this space and all subspaces.</span>
 
 <span class="sd">        Depending on the type of seed, the subspaces will be seeded differently</span>
 
 <span class="sd">        * ``None`` - All the subspaces will use a random initial seed</span>
-<span class="sd">        * ``Int`` - The integer is used to seed the :class:`Dict` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.</span>
-<span class="sd">        * ``Dict`` - Using all the keys in the seed dictionary, the values are used to seed the subspaces. This allows the seeding of multiple composite subspaces (``Dict[&quot;space&quot;: Dict[...], ...]`` with ``{&quot;space&quot;: {...}, ...}``).</span>
+<span class="sd">        * ``Int`` - The integer is used to seed the :class:`Dict` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all subspaces, though is very unlikely.</span>
+<span class="sd">        * ``Dict`` - A dictionary of seeds for each subspace, requires a seed key for every subspace. This supports seeding of multiple composite subspaces (``Dict[&quot;space&quot;: Dict[...], ...]`` with ``{&quot;space&quot;: {...}, ...}``).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            seed: An optional list of ints or int to seed the (sub-)spaces.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">seeds</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="sd">            seed: An optional int or dictionary of subspace keys to int to seed each PRNG. See above for more details.</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">seed</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The seed keys: </span><span class="si">{</span><span class="n">seed</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2"> are not identical to space keys: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">seed</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">seeds</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A dictionary for the seed values of the subspaces</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">subspace</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">subspace</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">seeds</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
             <span class="c1"># Using `np.int32` will mean that the same key occurring is extremely low, even for large subspaces</span>
             <span class="n">subseeds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span>
             <span class="p">)</span>
-            <span class="k">for</span> <span class="n">subspace</span><span class="p">,</span> <span class="n">subseed</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">subseeds</span><span class="p">):</span>
-                <span class="n">seeds</span> <span class="o">+=</span> <span class="n">subspace</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">subseed</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                <span class="n">seeds</span> <span class="o">+=</span> <span class="n">space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">subspace</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">subseed</span><span class="p">))</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">subspace</span><span class="p">),</span> <span class="n">subseed</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">subseeds</span><span class="p">)</span>
+            <span class="p">}</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">seed</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The seed keys: </span><span class="si">{</span><span class="n">seed</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2"> are not identical to space keys: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">seed</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Expected seed type: dict, int or None, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">seeds</span></div>
+            <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Dict.sample">

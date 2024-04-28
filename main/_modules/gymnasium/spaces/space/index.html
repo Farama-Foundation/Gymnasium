@@ -581,16 +581,23 @@
 
 <div class="viewcode-block" id="Space.seed">
 <a class="viewcode-back" href="../../../../api/spaces/#gymnasium.spaces.Space.seed">[docs]</a>
-    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Seed the PRNG of this space and possibly the PRNGs of subspaces.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Seed the pseudorandom number generator (PRNG) of this space and, if applicable, the PRNGs of subspaces.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seed: The seed value for the space. This is expanded for composite spaces to accept multiple values. For further details, please refer to the space&#39;s documentation.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The seed values used for all the PRNGs, for composite spaces this can be a tuple or dictionary of values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="n">np_random_seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">np_random_seed</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">np_random_seed</span></div>
 
 
 <div class="viewcode-block" id="Space.contains">
 <a class="viewcode-back" href="../../../../api/spaces/#gymnasium.spaces.Space.contains">[docs]</a>
     <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return boolean specifying if x is a valid member of this space.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return boolean specifying if x is a valid member of this space, equivalent to ``sample in space``.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
