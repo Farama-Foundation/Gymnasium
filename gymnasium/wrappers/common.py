@@ -263,12 +263,12 @@ class PassiveEnvChecker(
         if not isinstance(env, gym.Env):
             if str(env.__class__.__base__) == "<class 'gym.core.Env'>":
                 raise TypeError(
-                    "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`."
+                    "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
                     "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
                 )
             else:
                 raise TypeError(
-                    f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}."
+                    f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
                     "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
                 )
 

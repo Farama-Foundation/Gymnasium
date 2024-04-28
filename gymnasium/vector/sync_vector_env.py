@@ -251,7 +251,7 @@ class SyncVectorEnv(VectorEnv):
 
         if len(values) != self.num_envs:
             raise ValueError(
-                "Values must be a list or tuple with length equal to the number of environments."
+                "Values must be a list or tuple with length equal to the number of environments. "
                 f"Got `{len(values)}` values for {self.num_envs} environments."
             )
 
@@ -268,13 +268,13 @@ class SyncVectorEnv(VectorEnv):
         for env in self.envs:
             if not (env.observation_space == self.single_observation_space):
                 raise RuntimeError(
-                    f"Some environments have an observation space different from `{self.single_observation_space}`."
+                    f"Some environments have an observation space different from `{self.single_observation_space}`. "
                     "In order to batch observations, the observation spaces from all environments must be equal."
                 )
 
             if not (env.action_space == self.single_action_space):
                 raise RuntimeError(
-                    f"Some environments have an action space different from `{self.single_action_space}`."
+                    f"Some environments have an action space different from `{self.single_action_space}`. "
                     "In order to batch actions, the action spaces from all environments must be equal."
                 )
 

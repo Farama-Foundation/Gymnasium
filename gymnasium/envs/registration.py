@@ -430,7 +430,7 @@ def _check_version_exists(ns: str | None, name: str, version: int | None):
 
     if latest_spec is not None and version < latest_spec.version:
         raise error.DeprecatedEnv(
-            f"Environment version v{version} for `{get_env_id(ns, name, None)}` is deprecated."
+            f"Environment version v{version} for `{get_env_id(ns, name, None)}` is deprecated. "
             f"Please use `{latest_spec.id}` instead."
         )
 
@@ -503,7 +503,7 @@ def _find_spec(env_id: str) -> EnvSpec:
             importlib.import_module(module)
         except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
-                f"{e}. Environment registration via importing a module failed."
+                f"{e}. Environment registration via importing a module failed. "
                 f"Check whether '{module}' contains env registration and can be imported."
             ) from e
 
@@ -616,8 +616,8 @@ def register(
             and kwargs.get("namespace") != current_namespace
         ):
             logger.warn(
-                f"Custom namespace `{kwargs.get('namespace')}` is being overridden by namespace `{current_namespace}`."
-                f"If you are developing a plugin you shouldn't specify a namespace in `register` calls."
+                f"Custom namespace `{kwargs.get('namespace')}` is being overridden by namespace `{current_namespace}`. "
+                f"If you are developing a plugin you shouldn't specify a namespace in `register` calls. "
                 "The namespace is specified through the entry point package metadata."
             )
         ns_id = current_namespace
@@ -720,7 +720,7 @@ def make(
         displayable_modes = {"rgb_array", "rgb_array_list"}.intersection(render_modes)
         if render_mode == "human" and len(displayable_modes) > 0:
             logger.warn(
-                "You are trying to use 'human' rendering for an environment that doesn't natively support it."
+                "You are trying to use 'human' rendering for an environment that doesn't natively support it. "
                 "The HumanRendering wrapper is being applied to your environment."
             )
             env_spec_kwargs["render_mode"] = displayable_modes.pop()
@@ -745,7 +745,7 @@ def make(
             and apply_human_rendering
         ):
             raise error.Error(
-                f"You passed render_mode='human' although {env_spec.id} doesn't implement human-rendering natively."
+                f"You passed render_mode='human' although {env_spec.id} doesn't implement human-rendering natively. "
                 "Gym tried to apply the HumanRendering wrapper but it looks like your environment is using the old "
                 "rendering API, which is not supported by the HumanRendering wrapper."
             ) from e
@@ -760,12 +760,12 @@ def make(
             or str(env.__class__.__base__) == "<class 'gym.core.Wrapper'>"
         ):
             raise TypeError(
-                "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`."
+                "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
                 "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
             )
         else:
             raise TypeError(
-                f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}."
+                f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
                 "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
             )
 

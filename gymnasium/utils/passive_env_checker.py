@@ -180,7 +180,7 @@ def env_reset_passive_checker(env, **kwargs):
         # Check the default value is None
         if seed_param is not None and seed_param.default is not None:
             logger.warn(
-                "The default seed argument in `Env.reset` should be `None`, otherwise the environment will by default always be deterministic."
+                "The default seed argument in `Env.reset` should be `None`, otherwise the environment will by default always be deterministic. "
                 f"Actual default: {seed_param}"
             )
 
@@ -362,7 +362,7 @@ def env_render_passive_checker(env):
             ), f"With no render_modes, expects the Env.render_mode to be None, actual value: {env.render_mode}"
         else:
             assert env.render_mode is None or env.render_mode in render_modes, (
-                "The environment was initialized successfully however with an unsupported render mode."
+                "The environment was initialized successfully however with an unsupported render mode. "
                 f"Render mode: {env.render_mode}, modes: {render_modes}"
             )
 

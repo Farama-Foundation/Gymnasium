@@ -159,7 +159,7 @@ class AsyncVectorEnv(VectorEnv):
             except CustomSpaceError as e:
                 raise ValueError(
                     "Using `shared_memory=True` in `AsyncVectorEnv` is incompatible with non-standard Gymnasium observation spaces (i.e. custom spaces inheriting from `gymnasium.Space`), "
-                    "and is only compatible with default Gymnasium spaces (e.g. `Box`, `Tuple`, `Dict`) for batching."
+                    "and is only compatible with default Gymnasium spaces (e.g. `Box`, `Tuple`, `Dict`) for batching. "
                     "Set `shared_memory=False` if you use custom observation spaces."
                 ) from e
         else:
@@ -513,7 +513,7 @@ class AsyncVectorEnv(VectorEnv):
             values = [values for _ in range(self.num_envs)]
         if len(values) != self.num_envs:
             raise ValueError(
-                "Values must be a list or tuple with length equal to the number of environments."
+                "Values must be a list or tuple with length equal to the number of environments. "
                 f"Got `{len(values)}` values for {self.num_envs} environments."
             )
 
@@ -598,12 +598,12 @@ class AsyncVectorEnv(VectorEnv):
 
         if not all(same_observation_spaces):
             raise RuntimeError(
-                f"Some environments have an observation space different from `{self.single_observation_space}`."
+                f"Some environments have an observation space different from `{self.single_observation_space}`. "
                 "In order to batch observations, the observation spaces from all environments must be equal."
             )
         if not all(same_action_spaces):
             raise RuntimeError(
-                f"Some environments have an action space different from `{self.single_action_space}`."
+                f"Some environments have an action space different from `{self.single_action_space}`. "
                 "In order to batch actions, the action spaces from all environments must be equal."
             )
 

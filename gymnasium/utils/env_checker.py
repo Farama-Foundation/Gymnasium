@@ -122,7 +122,7 @@ def check_reset_seed_determinism(env: gym.Env):
 
         except TypeError as e:
             raise AssertionError(
-                "The environment cannot be reset with a random seed, even though `seed` or `kwargs` appear in the signature."
+                "The environment cannot be reset with a random seed, even though `seed` or `kwargs` appear in the signature. "
                 f"This should never happen, please report this issue. The error was: {e}"
             ) from e
 
@@ -130,7 +130,7 @@ def check_reset_seed_determinism(env: gym.Env):
         # Check the default value is None
         if seed_param is not None and seed_param.default is not None:
             logger.warn(
-                "The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic."
+                "The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic. "
                 f"Actual default: {seed_param.default}"
             )
     else:
@@ -158,7 +158,7 @@ def check_reset_options(env: gym.Env):
             env.reset(options={})
         except TypeError as e:
             raise AssertionError(
-                "The environment cannot be reset with options, even though `options` or `**kwargs` appear in the signature."
+                "The environment cannot be reset with options, even though `options` or `**kwargs` appear in the signature. "
                 f"This should never happen, please report this issue. The error was: {e}"
             ) from e
     else:
@@ -256,7 +256,7 @@ def check_seed_deprecation(env: gym.Env):
     seed_fn = getattr(env, "seed", None)
     if callable(seed_fn):
         logger.warn(
-            "Official support for the `seed` function is dropped."
+            "Official support for the `seed` function is dropped. "
             "Standard practice is to reset gymnasium environments using `env.reset(seed=<desired seed>)`"
         )
 
@@ -313,7 +313,7 @@ def check_space_limit(space, space_type: str):
                 ):
                     # todo - Add to gymlibrary.ml?
                     logger.warn(
-                        "For Box action spaces, we recommend using a symmetric and normalized space (range=[-1, 1] or [0, 1])."
+                        "For Box action spaces, we recommend using a symmetric and normalized space (range=[-1, 1] or [0, 1]). "
                         "See https://stable-baselines3.readthedocs.io/en/master/guide/rl_tips.html for more information."
                     )
     elif isinstance(space, spaces.Tuple):
@@ -354,12 +354,12 @@ def check_env(
             or str(env.__class__.__base__) == "<class 'gym.core.Wrapper'>"
         ):
             raise TypeError(
-                "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`."
+                "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
                 "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
             )
         else:
             raise TypeError(
-                f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}."
+                f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
                 "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
             )
     if env.unwrapped is not env:
