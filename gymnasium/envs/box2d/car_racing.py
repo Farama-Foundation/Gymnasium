@@ -547,7 +547,7 @@ class CarRacing(gym.Env, EzPickle):
             else:
                 if not self.action_space.contains(action):
                     raise InvalidAction(
-                        f"you passed the invalid action `{action}`."
+                        f"you passed the invalid action `{action}`. "
                         f"The supported action_space is `{self.action_space}`"
                     )
                 self.car.steer(-0.6 * (action == 1) + 0.6 * (action == 2))

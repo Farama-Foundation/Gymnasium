@@ -218,7 +218,7 @@ def env_step_passive_checker(env, action):
     ), f"Expects step result to be a tuple, actual type: {type(result)}"
     if len(result) == 4:
         logger.deprecation(
-            "Core environment is written in old step API which returns one bool instead of two."
+            "Core environment is written in old step API which returns one bool instead of two. "
             "It is recommended to rewrite the environment with new step API. "
         )
         obs, reward, done, info = result
