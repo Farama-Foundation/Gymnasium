@@ -618,12 +618,10 @@ zero with the states number as rows and the actions number as columns.</p>
         <span class="c1"># Exploitation (taking the biggest Q-value for this state)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Break ties randomly</span>
-            <span class="c1"># If all actions are the same for this state we choose a random one</span>
-            <span class="c1"># (otherwise `np.argmax()` would always take the first one)</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="p">:])</span> <span class="o">==</span> <span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="mi">0</span><span class="p">]:</span>
-                <span class="n">action</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="p">:])</span>
+            <span class="c1"># Find the indices where the Q-value equals the maximum value</span>
+            <span class="c1"># Choose a random action from the indices where the Q-value is maximum</span>
+            <span class="n">max_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="p">:]</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="p">:]))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">max_ids</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">action</span>
 </pre></div>
 </div>
