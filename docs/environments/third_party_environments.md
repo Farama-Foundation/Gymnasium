@@ -168,6 +168,12 @@ tmrl is a distributed framework for training Deep Reinforcement Learning AIs in 
 
 EV2Gym is a fully customizable and easily configurable environment for Electric Vehicle (EV) smart charging simulations on a small and large scale. Also, includes non-RL baseline implementations such as mathematical programming, model predictive control, and heuristics.
 
+### [Buffalo-Gym: Multi-Armed Bandit Gymnasium](https://github.com/foreverska/buffalo-gym)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/foreverska/buffalo-gym)
+
+Buffalo-Gym is a Multi-Armed Bandit (MAB) gymnasium built primarily to assist in debugging RL implementations. MABs are often easy to reason about what the agent is learning and whether it is correct. Buffalo-gym encompasses Bandits, Contextual bandits, and contextual bandits with aliasing.
 ## Third-Party Environments using Gym
 
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
