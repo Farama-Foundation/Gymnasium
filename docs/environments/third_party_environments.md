@@ -173,8 +173,7 @@ EV2Gym is a fully customizable and easily configurable environment for Electric 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
 ![GitHub stars](https://img.shields.io/github/stars/foreverska/buffalo-gym)
 
-Buffalo-Gym is a Multi-Armed Bandit (MAB) gymnasium built primarily to assist in debugging RL implementations.  MABs are often easy to reason about what the agent is learning and if it is learning correctly.  Buffalo-gym encompases Bandits, Contextual bandits and contextual bandits with aliasing.
-
+Buffalo-Gym is a Multi-Armed Bandit (MAB) gymnasium built primarily to assist in debugging RL implementations. MABs are often easy to reason about what the agent is learning and whether it is correct. Buffalo-gym encompasses Bandits, Contextual bandits, and contextual bandits with aliasing.
 ## Third-Party Environments using Gym
 
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
