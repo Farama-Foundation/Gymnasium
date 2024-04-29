@@ -44,19 +44,19 @@ There are eleven MuJoCo environments (in roughly increasing complexity):
 | Robot                  | Short Description                                                    |
 | ---------------------- | -------------------------------------------------------------------- |
 | **CartPoles**          |                                                                      |
-| InvertedPendulum       | MuJuCo version of the CartPole Environment (with Continuous actions) |
+| InvertedPendulum       | MuJoCo version of the CartPole Environment (with Continuous actions) |
 | InvertedDoublePendulum | 2 Pole variation of the CartPole Environment                         |
 | **Arms**               |                                                                      |
 | Reacher                | 2d arm with the goal of reaching an object                           |
 | Pusher                 | 3d arm with the goal of pushing an object to a target location       |
 | **2D Runners**         |                                                                      |
 | HalfCheetah            | 2d quadruped with the goal of running                                |
-| Hopper                 | 2d monoped with the goal of goal of hopping                          |
-| Walker2d               | 2d bidped with the goal of walking                                   |
+| Hopper                 | 2d monoped with the goal of hopping                          |
+| Walker2d               | 2d biped with the goal of walking                                   |
 | **Swimmers**           |                                                                      |
 | Swimmer                | 3d robot with the goal of swimming                                   |
 | **Quarduped**          |                                                                      |
-| Ant                    | 3d quadurped with the goal of running                                |
+| Ant                    | 3d quadruped with the goal of running                                |
 | **Humanoid Bipeds**    |                                                                      |
 | Humanoid               | 3d humanoid with the goal of running                                 |
 | HumanoidStandup        | 3d humanoid with the goal of standing up                             |
@@ -89,15 +89,15 @@ For more information, see the section "Version History" for each environment.
 ### Comparing training performance across versions
 The training performance of `v2` and `v3` is identical assuming the same/default arguments were used.
 
-The training performance of `v2`/`v3` and `v4` is not directly comparable because of the change to the newer simulator, but the results for not Ant and not Humanoids are comperable (for more information see [GitHub Comment #1](https://github.com/openai/gym/pull/2595#issuecomment-1099152505) and [GitHub Comment #2](https://github.com/openai/gym/pull/2762#issuecomment-1135362092)).
+The training performance of `v2`/`v3` and `v4` are not directly comparable because of the change to the newer simulator, but the results for not Ant and not Humanoids are comparable (for more information see [GitHub Comment #1](https://github.com/openai/gym/pull/2595#issuecomment-1099152505) and [GitHub Comment #2](https://github.com/openai/gym/pull/2762#issuecomment-1135362092)).
 
-The Training performance of `v4` and `v5` is different because of the many changes in the environments, but the Half Cheetah and Swimmer exchibits identical behaviour, Pusher and Swimmer are close (for more information see [GitHub Issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
+The Training performance of `v4` and `v5` is different because of the many changes in the environments, but the Half Cheetah and Swimmer exhibits identical behaviour, Pusher and Swimmer are close (for more information see [GitHub Issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
 
 ### Exact reproducibility
-Note: The exact behavior of the MuJoCo simulator changes slightly between `mujoco`  versions due to floating point operation ordering (more information of their [Documentation]( https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility)), if exact reproducibility is need besides using the `seed` for expirements the same simulator version should be used.
+Note: The exact behavior of the MuJoCo simulator changes slightly between `mujoco` versions due to floating point operation ordering (more information of their [Documentation]( https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility)), if exact reproducibility is need besides using the `seed` for experiments the same simulator version should be used.
 
 ## Rendering Arguments
-The all MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:
+All of the MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:
 
 ```python
 env = gymnasium.make("Ant-v5", render_mode="rgb_array", width=1280, height=720)

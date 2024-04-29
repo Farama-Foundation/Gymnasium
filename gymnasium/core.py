@@ -332,7 +332,7 @@ class Wrapper(
 
     @property
     def np_random_seed(self) -> int | None:
-        """Returns the base enviroment's :attr:`np_random_seed`."""
+        """Returns the base environment's :attr:`np_random_seed`."""
         return self.env.np_random_seed
 
     @property

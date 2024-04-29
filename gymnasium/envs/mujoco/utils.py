@@ -19,7 +19,7 @@ def get_state(
         env: Environment whose state to copy, `env.model` & `env.data` must be accessible.
         state_type: see the [documentation of mjtState](https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjtstate) most users can use the default for training purposes or `mujoco.mjtState.mjSTATE_INTEGRATION` for validation purposes.
     """
-    assert mujoco.__version__ >= "2.3.6", "Feature requires `mujuco>=2.3.6`"
+    assert mujoco.__version__ >= "2.3.6", "Feature requires `mujoco>=2.3.6`"
 
     state = np.empty(mujoco.mj_stateSize(env.unwrapped.model, state_type))
     mujoco.mj_getState(env.unwrapped.model, env.unwrapped.data, state, state_type)
@@ -38,7 +38,7 @@ def set_state(
         state: State to set (generated from get_state).
         state_type: see the [documentation of mjtState](https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjtstate) most users can use the default for training purposes or `mujoco.mjtState.mjSTATE_INTEGRATION` for validation purposes.
     """
-    assert mujoco.__version__ >= "2.3.6", "Feature requires `mujuco>=2.3.6`"
+    assert mujoco.__version__ >= "2.3.6", "Feature requires `mujoco>=2.3.6`"
 
     mujoco.mj_setState(
         env.unwrapped.model,
