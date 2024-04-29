@@ -562,7 +562,7 @@
             <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset(seed=123)` is not within the observation space.&quot;</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="p">),</span> <span class="s2">&quot;Expects the random number generator to have been generated given a seed was passed to reset. Mostly likely the environment reset function does not call `super().reset(seed=seed)`.&quot;</span>
+            <span class="p">),</span> <span class="s2">&quot;Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`.&quot;</span>
             <span class="n">seed_123_rng</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="p">)</span>
 
             <span class="n">obs_2</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
@@ -581,7 +581,7 @@
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
                 <span class="o">==</span> <span class="n">seed_123_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
-            <span class="p">),</span> <span class="s2">&quot;Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.&quot;</span>
+            <span class="p">),</span> <span class="s2">&quot;Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.&quot;</span>
 
             <span class="n">obs_3</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">456</span><span class="p">)</span>
             <span class="k">assert</span> <span class="p">(</span>
@@ -590,7 +590,7 @@
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
                 <span class="o">!=</span> <span class="n">seed_123_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
-            <span class="p">),</span> <span class="s2">&quot;Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.&quot;</span>
+            <span class="p">),</span> <span class="s2">&quot;Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.&quot;</span>
 
         <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
@@ -811,7 +811,7 @@
 <span class="sd">    To ensure that an environment is implemented &quot;correctly&quot;, ``check_env`` checks that the :attr:`observation_space` and :attr:`action_space` are correct.</span>
 <span class="sd">    Furthermore, the function will call the :meth:`reset`, :meth:`step` and :meth:`render` functions with a variety of values.</span>
 
-<span class="sd">    We highly recommend users calling this function after an environment is constructed and within a projects continuous integration to keep an environment update with Gymnasium&#39;s API.</span>
+<span class="sd">    We highly recommend users call this function after an environment is constructed and within a project&#39;s continuous integration to keep an environment update with Gymnasium&#39;s API.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        env: The Gym environment that will be checked</span>
