@@ -483,7 +483,143 @@
 <h1>MuJoCo<a class="headerlink" href="#mujoco" title="Link to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
-   :file: mujoco/list.html<p>MuJoCo stands for Multi-Joint dynamics with Contact. It is a physics engine for facilitating research and development in robotics, biomechanics, graphics and animation, and other areas where fast and accurate simulation is needed.
+
+<div class="env-grid">
+    
+            <a href="ant">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/ant.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Ant</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="half_cheetah">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/half_cheetah.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Half Cheetah</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="hopper">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/hopper.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Hopper</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="humanoid_standup">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/humanoid_standup.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Humanoid Standup</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="humanoid">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/humanoid.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Humanoid</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="inverted_double_pendulum">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/inverted_double_pendulum.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Inverted Double Pendulum</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="inverted_pendulum">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/inverted_pendulum.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Inverted Pendulum</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="pusher">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/pusher.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Pusher</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="reacher">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/reacher.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Reacher</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="swimmer">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/swimmer.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Swimmer</span>
+                    </div>
+                </div>
+            </a>
+    
+
+            <a href="walker2d">
+                <div class="env-grid__cell">
+                    <div class="cell__image-container">
+                        <img src="/_static/videos/mujoco/walker2d.gif">
+                    </div>
+                    <div class="cell__title">
+                        <span>Walker2D</span>
+                    </div>
+                </div>
+            </a>
+    
+</div>
+
+    <p>MuJoCo stands for Multi-Joint dynamics with Contact. It is a physics engine for facilitating research and development in robotics, biomechanics, graphics and animation, and other areas where fast and accurate simulation is needed.
 There is physical contact between the robots and their environment - and MuJoCo attempts at getting realistic physics simulations for the possible physical contact dynamics by aiming for physical accuracy and computational efficiency.</p>
 <p>The unique dependencies including the MuJoCo simlator for this set of environments can be installed via:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>gymnasium<span class="o">[</span>mujoco<span class="o">]</span>
@@ -506,7 +642,7 @@ Instructions for installing the MuJoCo engine can be found on their <a class="re
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>InvertedPendulum</p></td>
-<td><p>MuJuCo version of the CartPole Environment (with Continuous actions)</p></td>
+<td><p>MuJoCo version of the CartPole Environment (with Continuous actions)</p></td>
 </tr>
 <tr class="row-even"><td><p>InvertedDoublePendulum</p></td>
 <td><p>2 Pole variation of the CartPole Environment</p></td>
@@ -527,10 +663,10 @@ Instructions for installing the MuJoCo engine can be found on their <a class="re
 <td><p>2d quadruped with the goal of running</p></td>
 </tr>
 <tr class="row-even"><td><p>Hopper</p></td>
-<td><p>2d monoped with the goal of goal of hopping</p></td>
+<td><p>2d monoped with the goal of hopping</p></td>
 </tr>
 <tr class="row-odd"><td><p>Walker2d</p></td>
-<td><p>2d bidped with the goal of walking</p></td>
+<td><p>2d biped with the goal of walking</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Swimmers</strong></p></td>
 <td><p></p></td>
@@ -542,7 +678,7 @@ Instructions for installing the MuJoCo engine can be found on their <a class="re
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>Ant</p></td>
-<td><p>3d quadurped with the goal of running</p></td>
+<td><p>3d quadruped with the goal of running</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Humanoid Bipeds</strong></p></td>
 <td><p></p></td>
@@ -599,17 +735,17 @@ Often some of the first positional elements are omitted from the state space sin
 <section id="comparing-training-performance-across-versions">
 <h3>Comparing training performance across versions<a class="headerlink" href="#comparing-training-performance-across-versions" title="Link to this heading">¶</a></h3>
 <p>The training performance of <code class="docutils literal notranslate"><span class="pre">v2</span></code> and <code class="docutils literal notranslate"><span class="pre">v3</span></code> is identical assuming the same/default arguments were used.</p>
-<p>The training performance of <code class="docutils literal notranslate"><span class="pre">v2</span></code>/<code class="docutils literal notranslate"><span class="pre">v3</span></code> and <code class="docutils literal notranslate"><span class="pre">v4</span></code> is not directly comparable because of the change to the newer simulator, but the results for not Ant and not Humanoids are comperable (for more information see <a class="reference external" href="https://github.com/openai/gym/pull/2595#issuecomment-1099152505">GitHub Comment #1</a> and <a class="reference external" href="https://github.com/openai/gym/pull/2762#issuecomment-1135362092">GitHub Comment #2</a>).</p>
-<p>The Training performance of <code class="docutils literal notranslate"><span class="pre">v4</span></code> and <code class="docutils literal notranslate"><span class="pre">v5</span></code> is different because of the many changes in the environments, but the Half Cheetah and Swimmer exchibits identical behaviour, Pusher and Swimmer are close (for more information see <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/821">GitHub Issue</a>).</p>
+<p>The training performance of <code class="docutils literal notranslate"><span class="pre">v2</span></code>/<code class="docutils literal notranslate"><span class="pre">v3</span></code> and <code class="docutils literal notranslate"><span class="pre">v4</span></code> are not directly comparable because of the change to the newer simulator, but the results for not Ant and not Humanoids are comparable (for more information see <a class="reference external" href="https://github.com/openai/gym/pull/2595#issuecomment-1099152505">GitHub Comment #1</a> and <a class="reference external" href="https://github.com/openai/gym/pull/2762#issuecomment-1135362092">GitHub Comment #2</a>).</p>
+<p>The Training performance of <code class="docutils literal notranslate"><span class="pre">v4</span></code> and <code class="docutils literal notranslate"><span class="pre">v5</span></code> is different because of the many changes in the environments, but the Half Cheetah and Swimmer exhibits identical behaviour, Pusher and Swimmer are close (for more information see <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/821">GitHub Issue</a>).</p>
 </section>
 <section id="exact-reproducibility">
 <h3>Exact reproducibility<a class="headerlink" href="#exact-reproducibility" title="Link to this heading">¶</a></h3>
-<p>Note: The exact behavior of the MuJoCo simulator changes slightly between <code class="docutils literal notranslate"><span class="pre">mujoco</span></code>  versions due to floating point operation ordering (more information of their <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility">Documentation</a>), if exact reproducibility is need besides using the <code class="docutils literal notranslate"><span class="pre">seed</span></code> for expirements the same simulator version should be used.</p>
+<p>Note: The exact behavior of the MuJoCo simulator changes slightly between <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> versions due to floating point operation ordering (more information of their <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility">Documentation</a>), if exact reproducibility is need besides using the <code class="docutils literal notranslate"><span class="pre">seed</span></code> for experiments the same simulator version should be used.</p>
 </section>
 </section>
 <section id="rendering-arguments">
 <h2>Rendering Arguments<a class="headerlink" href="#rendering-arguments" title="Link to this heading">¶</a></h2>
-<p>The all MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:</p>
+<p>All of the MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Ant-v5&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1280</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">720</span><span class="p">)</span>
 </pre></div>
 </div>
