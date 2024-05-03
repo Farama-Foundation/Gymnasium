@@ -154,6 +154,7 @@ def play(
     keys_to_action: dict[tuple[str | int, ...] | str | int, ActType] | None = None,
     seed: int | None = None,
     noop: ActType = 0,
+    pause: bool = False,
 ):
     """Allows the user to play the environment using a keyboard.
 
@@ -204,6 +205,7 @@ def play(
             If ``None``, default ``key_to_action`` mapping for that environment is used, if provided.
         seed: Random seed used when resetting the environment. If None, no seed is used.
         noop: The action used when no key input has been entered, or the entered key combination is unknown.
+        pause: Play should wait for a user action
 
     Example:
         >>> import gymnasium as gym
@@ -283,7 +285,7 @@ def play(
         if done:
             done = False
             obs = env.reset(seed=seed)
-        else:
+        elif pause is False or len(game.pressed_keys) > 0:
             action = key_code_to_action.get(tuple(sorted(game.pressed_keys)), noop)
             prev_obs = obs
             obs, rew, terminated, truncated, info = env.step(action)
