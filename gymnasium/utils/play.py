@@ -156,8 +156,9 @@ def play(
     noop: ActType = 0,
     wait_on_player: bool = False,
 ):
-    """Allows the user to play the environment using a keyboard.  If playing in a turn-based environment,
-    set wait_on_player to True.
+    """Allows the user to play the environment using a keyboard.
+
+    If playing in a turn-based environment, set wait_on_player to True.
 
     Args:
         env: Environment to use for playing.
