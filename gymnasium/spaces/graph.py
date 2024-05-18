@@ -71,7 +71,7 @@ class Graph(Space[GraphInstance]):
         if edge_space is not None:
             assert isinstance(
                 edge_space, (Box, Discrete)
-            ), f"Values of the edge_space should be instances of None Box or Discrete, got {type(node_space)}"
+            ), f"Values of the edge_space should be instances of None Box or Discrete, got {type(edge_space)}"
 
         self.node_space = node_space
         self.edge_space = edge_space
