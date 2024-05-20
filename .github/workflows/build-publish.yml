@@ -16,33 +16,22 @@ on:
 
 jobs:
   build-wheels:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-        - os: ubuntu-latest
-          python: 38
-          platform: manylinux_x86_64
-        - os: ubuntu-latest
-          python: 39
-          platform: manylinux_x86_64
-        - os: ubuntu-latest
-          python: 310
-          platform: manylinux_x86_64
-        - os: ubuntu-latest
-          python: 311
-          platform: manylinux_x86_64
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.x'
+        python-version: '3.8'
+
     - name: Install dependencies
       run: python -m pip install --upgrade pip setuptools build
+
     - name: Build sdist and wheels
       run: python -m build
+
     - name: Store wheels
       uses: actions/upload-artifact@v3
       with:
@@ -59,6 +48,7 @@ jobs:
       with:
         name: artifact
         path: dist
+
     - name: Publish
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
