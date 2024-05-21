@@ -30,25 +30,22 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     """Base class for vectorized environments to run multiple independent copies of the same environment in parallel.
 
     Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple
-    sub-environments at the same time. To prevent terminated environments waiting until all sub-environments have
-    terminated or truncated, the vector environments automatically reset sub-environments after they terminate or truncated (within the same step call).
-    As a result, the step's observation and info are overwritten by the reset's observation and info.
-    To preserve this data, the observation and info for the final step of a sub-environment is stored in the info parameter,
-    using `"final_observation"` and `"final_info"` respectively. See :meth:`step` for more information.
+    sub-environments at the same time. Gymnasium contains two generalised Vector environments: :class:`AsyncVectorEnv`
+    and :class:`SyncVectorEnv` along with several custom vector environment implementations.
+    For :func:`reset` and :func:`step` batches `observations`, `rewards`,  `terminations`, `truncations` and
+    `info` for each sub-environment, see the example below. For the `rewards`, `terminations`, and `truncations`,
+    the data is packaged into a NumPy array of shape `(num_envs,)`. For `observations` (and `actions`, the batching
+    process is dependent on the type of observation (and action) space, and generally optimised for neural network
+    input/outputs. For `info`, the data is kept as a dictionary such that a key will give the data for all sub-environment.
 
-    The vector environments batches `observations`, `rewards`, `terminations`, `truncations` and `info` for each
-    sub-environment. In addition, :meth:`step` expects to receive a batch of actions for each parallel environment.
+    For creating environments, :func:`make_vec` is a vector environment equivalent to :func:`make` for easily creating
+    vector environments that contains several unique arguments for modifying environment qualities, number of environment,
+    vectorizer type, vectorizer arguments.
 
-    Gymnasium contains two generalised Vector environments: :class:`AsyncVectorEnv` and :class:`SyncVectorEnv` along with
-    several custom vector environment implementations.
-
-    The Vector Environments have the additional attributes for users to understand the implementation
-
-    - :attr:`num_envs` - The number of sub-environment in the vector environment
-    - :attr:`observation_space` - The batched observation space of the vector environment
-    - :attr:`single_observation_space` - The observation space of a single sub-environment
-    - :attr:`action_space` - The batched action space of the vector environment
-    - :attr:`single_action_space` - The action space of a single sub-environment
+    Note:
+        The info parameter of :meth:`reset` and :meth:`step` was originally implemented before v0.25 as a list
+        of dictionary for each sub-environment. However, this was modified in v0.25+ to be a dictionary with a NumPy
+        array for each key. To use the old info style, utilise the :class:`DictInfoToList` wrapper.
 
     Examples:
         >>> import gymnasium as gym
@@ -56,6 +53,22 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         >>> envs = gym.wrappers.vector.ClipReward(envs, min_reward=0.2, max_reward=0.8)
         >>> envs
         <ClipReward, SyncVectorEnv(CartPole-v1, num_envs=3)>
+        >>> envs.num_envs
+        3
+        >>> envs.action_space
+        MultiDiscrete([2 2 2])
+        >>> envs.observation_space
+        Box([[-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
+           0.00000000e+00]
+         [-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
+           0.00000000e+00]
+         [-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
+           0.00000000e+00]], [[4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+          5.00000000e+02]
+         [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+          5.00000000e+02]
+         [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+          5.00000000e+02]], (3, 5), float64)
         >>> observations, infos = envs.reset(seed=123)
         >>> observations
         array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282,  0.        ],
@@ -64,7 +77,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         >>> infos
         {}
         >>> _ = envs.action_space.seed(123)
-        >>> observations, rewards, terminations, truncations, infos = envs.step(envs.action_space.sample())
+        >>> actions = envs.action_space.sample()
+        >>> observations, rewards, terminations, truncations, infos = envs.step(actions)
         >>> observations
         array([[ 0.01734283,  0.15089367, -0.02859527, -0.33293587,  1.        ],
                [ 0.02909703, -0.16717631,  0.04740972,  0.3319138 ,  1.        ],
@@ -79,17 +93,18 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         {}
         >>> envs.close()
 
-    Note:
-        The info parameter of :meth:`reset` and :meth:`step` was originally implemented before v0.25 as a list
-        of dictionary for each sub-environment. However, this was modified in v0.25+ to be a
-        dictionary with a NumPy array for each key. To use the old info style, utilise the :class:`DictInfoToList` wrapper.
+    To avoid having to wait for all sub-environments to terminated before resetting, implementations will autoreset
+    sub-environments on episode end (`terminated or truncated is True`). As a result, when adding observations
+    to a replay buffer, this requires a knowning where the observation (and info) for each sub-environment are the first
+    observation from an autoreset. We recommend using an additional variable to store this information.
 
-    Note:
-        All parallel environments should share the identical observation and action spaces.
-        In other words, a vector of multiple different environments is not supported.
+    The Vector Environments have the additional attributes for users to understand the implementation
 
-    Note:
-        :func:`make_vec` is the equivalent function to :func:`make` for vector environments.
+    - :attr:`num_envs` - The number of sub-environment in the vector environment
+    - :attr:`observation_space` - The batched observation space of the vector environment
+    - :attr:`single_observation_space` - The observation space of a single sub-environment
+    - :attr:`action_space` - The batched action space of the vector environment
+    - :attr:`single_action_space` - The action space of a single sub-environment
     """
 
     metadata: dict[str, Any] = {}
@@ -149,9 +164,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             Batch of (observations, rewards, terminations, truncations, infos)
 
         Note:
-            As the vector environments autoreset for a terminating and truncating sub-environments,
-            the returned observation and info is not the final step's observation or info which is instead stored in
-            info as `"final_observation"` and `"final_info"`.
+            As the vector environments autoreset for a terminating and truncating sub-environments, this will occur on
+            the next step after `terminated or truncated is True`.
 
         Example:
             >>> import gymnasium as gym
