@@ -107,6 +107,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     - :attr:`single_action_space` - The action space of a single sub-environment
     """
 
+    metadata: dict[str, Any] = {}
     spec: EnvSpec | None = None
     render_mode: str | None = None
     closed: bool = False
@@ -226,20 +227,6 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         pass
 
     @property
-    def np_random_seed(self) -> int | None:
-        """Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.
-
-        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
-        the seed will take the value -1.
-
-        Returns:
-            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown
-        """
-        if self._np_random_seed is None:
-            self._np_random, self._np_random_seed = seeding.np_random()
-        return self._np_random_seed
-
-    @property
     def np_random(self) -> np.random.Generator:
         """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
 
@@ -254,6 +241,20 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     def np_random(self, value: np.random.Generator):
         self._np_random = value
         self._np_random_seed = -1
+
+    @property
+    def np_random_seed(self) -> int | None:
+        """Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.
+
+        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
+        the seed will take the value -1.
+
+        Returns:
+            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown
+        """
+        if self._np_random_seed is None:
+            self._np_random, self._np_random_seed = seeding.np_random()
+        return self._np_random_seed
 
     @property
     def unwrapped(self):
@@ -360,6 +361,7 @@ class VectorWrapper(VectorEnv):
         self._action_space: gym.Space | None = None
         self._single_observation_space: gym.Space | None = None
         self._single_action_space: gym.Space | None = None
+        self._metadata: dict[str, Any] | None = None
 
     def reset(
         self,
@@ -396,11 +398,6 @@ class VectorWrapper(VectorEnv):
     def __repr__(self):
         """Return the string representation of the vectorized environment."""
         return f"<{self.__class__.__name__}, {self.env}>"
-
-    @property
-    def spec(self) -> EnvSpec | None:
-        """Gets the specification of the wrapped environment."""
-        return self.env.spec
 
     @property
     def observation_space(self) -> gym.Space:
@@ -456,11 +453,6 @@ class VectorWrapper(VectorEnv):
         return self.env.num_envs
 
     @property
-    def render_mode(self) -> tuple[RenderFrame, ...] | None:
-        """Returns the `render_mode` from the base environment."""
-        return self.env.render_mode
-
-    @property
     def np_random(self) -> np.random.Generator:
         """Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.
 
@@ -472,6 +464,41 @@ class VectorWrapper(VectorEnv):
     @np_random.setter
     def np_random(self, value: np.random.Generator):
         self.env.np_random = value
+
+    @property
+    def np_random_seed(self) -> int | None:
+        """The seeds of the vector environment's internal :attr:`_np_random`."""
+        return self.env.np_random_seed
+
+    @property
+    def metadata(self):
+        """The metadata of the vector environment."""
+        if self._metadata is not None:
+            return self._metadata
+        return self.env.metadata
+
+    @metadata.setter
+    def metadata(self, value):
+        self._metadata = value
+
+    @property
+    def spec(self) -> EnvSpec | None:
+        """Gets the specification of the wrapped environment."""
+        return self.env.spec
+
+    @property
+    def render_mode(self) -> tuple[RenderFrame, ...] | None:
+        """Returns the `render_mode` from the base environment."""
+        return self.env.render_mode
+
+    @property
+    def closed(self):
+        """If the environment has closes."""
+        return self.env.closed
+
+    @closed.setter
+    def closed(self, value: bool):
+        self.env.closed = value
 
 
 class VectorObservationWrapper(VectorWrapper):

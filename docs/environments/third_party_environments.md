@@ -2,16 +2,25 @@
 :tocdepth: 2
 ```
 
-# Third-Party Environments
+# External Environments
 
-The Farama Foundation maintains a number of other [projects](https://farama.org/projects), most of which use Gymnasium. Topics include:
-multi-agent RL ([PettingZoo](https://pettingzoo.farama.org/)),
-offline-RL ([Minari](https://minari.farama.org/)),
+## First-Party Environments
+The Farama Foundation maintains a number of other [projects](https://farama.org/projects), which use the Gymnasium API, environments include:
 gridworlds ([Minigrid](https://minigrid.farama.org/)),
 robotics ([Gymnasium-Robotics](https://robotics.farama.org/)),
+3D navigation ([Miniworld](https://miniworld.farama.org/)),
+web interaction ([MiniWoB++](https://miniwob.farama.org/))
+arcade games ([Arcade Learning Environment](https://github.com/Farama-Foundation/Arcade-Learning-Environment))
+Doom ([ViZDoom](https://vizdoom.farama.org/))
+Meta-objective robotics ([Metaworld](https://metaworld.farama.org/))
+autonomous driving ([HighwayEnv](https://highway-env.farama.org/))
+Retro Games ([stable-retro](https://github.com/Farama-Foundation/stable-retro)), and many more.
+
+The Farama Foundation also maintains alternate APIs for RL, including:
+multi-agent RL ([PettingZoo](https://pettingzoo.farama.org/)),
+offline-RL ([Minari](https://minari.farama.org/)),
 multi-objective RL ([MO-Gymnasium](https://mo-gymnasium.farama.org/))
-many-agent RL ([MAgent2](https://magent2.farama.org/)),
-3D navigation ([Miniworld](https://miniworld.farama.org/)), and many more.
+goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)),
 
 ## Third-party environments with Gymnasium
 
@@ -82,13 +91,6 @@ An environment for guiding automated theorem provers based on saturation algorit
 
 Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
 
-### [highway-env: Autonomous driving and tactical decision-making tasks](https://github.com/eleurent/highway-env)
-
-![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
-![GitHub stars](https://img.shields.io/github/stars/eleurent/highway-env)
-
-An environment for behavioral planning in autonomous driving, with an emphasis on high-level perception and decision rather than low-level sensing and control.
-
 ### [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.2-blue)
@@ -145,13 +147,6 @@ spark-sched-sim simulates Spark clusters for RL-based job scheduling algorithms.
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
 ![GitHub stars](https://img.shields.io/github/stars/ArchieGertsman/spark-sched-sim)
 
-### [stable-retro: Classic retro games, a maintained version of OpenAI Retro](https://github.com/Farama-Foundation/stable-retro)
-
-![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
-![GitHub stars](https://img.shields.io/github/stars/Farama-Foundation/stable-retro)
-
-Supported fork of [gym-retro](https://openai.com/research/gym-retro): turn classic video games into Gymnasium environments.
-
 ### [sumo-rl: Reinforcement Learning using SUMO traffic simulator](https://github.com/LucasAlegre/sumo-rl)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)
@@ -166,6 +161,19 @@ Gymnasium wrapper for various environments in the SUMO traffic simulator. Suppor
 
 tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
+### [EV2Gym: A Realistic EV-V2G-Gym Simulator for EV Smart Charging](https://github.com/StavrosOrf/EV2Gym)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/StavrosOrf/EV2Gym)
+
+EV2Gym is a fully customizable and easily configurable environment for Electric Vehicle (EV) smart charging simulations on a small and large scale. Also, includes non-RL baseline implementations such as mathematical programming, model predictive control, and heuristics.
+
+### [Buffalo-Gym: Multi-Armed Bandit Gymnasium](https://github.com/foreverska/buffalo-gym)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/foreverska/buffalo-gym)
+
+Buffalo-Gym is a Multi-Armed Bandit (MAB) gymnasium built primarily to assist in debugging RL implementations. MABs are often easy to reason about what the agent is learning and whether it is correct. Buffalo-gym encompasses Bandits, Contextual bandits, and contextual bandits with aliasing.
 ## Third-Party Environments using Gym
 
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
