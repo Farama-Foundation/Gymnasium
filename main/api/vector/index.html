@@ -490,29 +490,44 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.vector.</span></span><span class="sig-name descname"><span class="pre">VectorEnv</span></span><a class="reference internal" href="../../_modules/gymnasium/vector/vector_env/#VectorEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorEnv" title="Link to this definition">¶</a></dt>
 <dd><p>Base class for vectorized environments to run multiple independent copies of the same environment in parallel.</p>
 <p>Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple
-sub-environments at the same time. To prevent terminated environments waiting until all sub-environments have
-terminated or truncated, the vector environments automatically reset sub-environments after they terminate or truncated (within the same step call).
-As a result, the step’s observation and info are overwritten by the reset’s observation and info.
-To preserve this data, the observation and info for the final step of a sub-environment is stored in the info parameter,
-using <cite>“final_observation”</cite> and <cite>“final_info”</cite> respectively. See <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> for more information.</p>
-<p>The vector environments batches <cite>observations</cite>, <cite>rewards</cite>, <cite>terminations</cite>, <cite>truncations</cite> and <cite>info</cite> for each
-sub-environment. In addition, <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> expects to receive a batch of actions for each parallel environment.</p>
-<p>Gymnasium contains two generalised Vector environments: <a class="reference internal" href="async_vector_env/#gymnasium.vector.AsyncVectorEnv" title="gymnasium.vector.AsyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code></a> and <a class="reference internal" href="sync_vector_env/#gymnasium.vector.SyncVectorEnv" title="gymnasium.vector.SyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code></a> along with
-several custom vector environment implementations.</p>
-<p>The Vector Environments have the additional attributes for users to understand the implementation</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.num_envs" title="gymnasium.vector.VectorEnv.num_envs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_envs</span></code></a> - The number of sub-environment in the vector environment</p></li>
-<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.observation_space" title="gymnasium.vector.VectorEnv.observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> - The batched observation space of the vector environment</p></li>
-<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_observation_space" title="gymnasium.vector.VectorEnv.single_observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">single_observation_space</span></code></a> - The observation space of a single sub-environment</p></li>
-<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.action_space" title="gymnasium.vector.VectorEnv.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> - The batched action space of the vector environment</p></li>
-<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_action_space" title="gymnasium.vector.VectorEnv.single_action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">single_action_space</span></code></a> - The action space of a single sub-environment</p></li>
-</ul>
+sub-environments at the same time. Gymnasium contains two generalised Vector environments: <a class="reference internal" href="async_vector_env/#gymnasium.vector.AsyncVectorEnv" title="gymnasium.vector.AsyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code></a>
+and <a class="reference internal" href="sync_vector_env/#gymnasium.vector.SyncVectorEnv" title="gymnasium.vector.SyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code></a> along with several custom vector environment implementations.
+For <a class="reference internal" href="#gymnasium.vector.VectorEnv.reset" title="gymnasium.vector.VectorEnv.reset"><code class="xref py py-func docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-func docutils literal notranslate"><span class="pre">step()</span></code></a> batches <cite>observations</cite>, <cite>rewards</cite>,  <cite>terminations</cite>, <cite>truncations</cite> and
+<cite>info</cite> for each sub-environment, see the example below. For the <cite>rewards</cite>, <cite>terminations</cite>, and <cite>truncations</cite>,
+the data is packaged into a NumPy array of shape <cite>(num_envs,)</cite>. For <cite>observations</cite> (and <cite>actions</cite>, the batching
+process is dependent on the type of observation (and action) space, and generally optimised for neural network
+input/outputs. For <cite>info</cite>, the data is kept as a dictionary such that a key will give the data for all sub-environment.</p>
+<p>For creating environments, <code class="xref py py-func docutils literal notranslate"><span class="pre">make_vec()</span></code> is a vector environment equivalent to <code class="xref py py-func docutils literal notranslate"><span class="pre">make()</span></code> for easily creating
+vector environments that contains several unique arguments for modifying environment qualities, number of environment,
+vectorizer type, vectorizer arguments.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The info parameter of <a class="reference internal" href="#gymnasium.vector.VectorEnv.reset" title="gymnasium.vector.VectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> was originally implemented before v0.25 as a list
+of dictionary for each sub-environment. However, this was modified in v0.25+ to be a dictionary with a NumPy
+array for each key. To use the old info style, utilise the <code class="xref py py-class docutils literal notranslate"><span class="pre">DictInfoToList</span></code> wrapper.</p>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">&quot;sync&quot;</span><span class="p">,</span> <span class="n">wrappers</span><span class="o">=</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeAwareObservation</span><span class="p">,))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">ClipReward</span><span class="p">(</span><span class="n">envs</span><span class="p">,</span> <span class="n">min_reward</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">max_reward</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span>
 <span class="go">&lt;ClipReward, SyncVectorEnv(CartPole-v1, num_envs=3)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">num_envs</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">MultiDiscrete([2 2 2])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box([[-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38</span>
+<span class="go">   0.00000000e+00]</span>
+<span class="go"> [-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38</span>
+<span class="go">   0.00000000e+00]</span>
+<span class="go"> [-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38</span>
+<span class="go">   0.00000000e+00]], [[4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38</span>
+<span class="go">  5.00000000e+02]</span>
+<span class="go"> [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38</span>
+<span class="go">  5.00000000e+02]</span>
+<span class="go"> [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38</span>
+<span class="go">  5.00000000e+02]], (3, 5), float64)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span>
 <span class="go">array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282,  0.        ],</span>
@@ -521,7 +536,8 @@ several custom vector environment implementations.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span>
 <span class="go">{}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span>
 <span class="go">array([[ 0.01734283,  0.15089367, -0.02859527, -0.33293587,  1.        ],</span>
 <span class="go">       [ 0.02909703, -0.16717631,  0.04740972,  0.3319138 ,  1.        ],</span>
@@ -537,21 +553,18 @@ several custom vector environment implementations.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The info parameter of <a class="reference internal" href="#gymnasium.vector.VectorEnv.reset" title="gymnasium.vector.VectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> was originally implemented before v0.25 as a list
-of dictionary for each sub-environment. However, this was modified in v0.25+ to be a
-dictionary with a NumPy array for each key. To use the old info style, utilise the <code class="xref py py-class docutils literal notranslate"><span class="pre">DictInfoToList</span></code> wrapper.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>All parallel environments should share the identical observation and action spaces.
-In other words, a vector of multiple different environments is not supported.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><code class="xref py py-func docutils literal notranslate"><span class="pre">make_vec()</span></code> is the equivalent function to <code class="xref py py-func docutils literal notranslate"><span class="pre">make()</span></code> for vector environments.</p>
-</div>
+<p>To avoid having to wait for all sub-environments to terminated before resetting, implementations will autoreset
+sub-environments on episode end (<cite>terminated or truncated is True</cite>). As a result, when adding observations
+to a replay buffer, this requires a knowning where the observation (and info) for each sub-environment are the first
+observation from an autoreset. We recommend using an additional variable to store this information.</p>
+<p>The Vector Environments have the additional attributes for users to understand the implementation</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.num_envs" title="gymnasium.vector.VectorEnv.num_envs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_envs</span></code></a> - The number of sub-environment in the vector environment</p></li>
+<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.observation_space" title="gymnasium.vector.VectorEnv.observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> - The batched observation space of the vector environment</p></li>
+<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_observation_space" title="gymnasium.vector.VectorEnv.single_observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">single_observation_space</span></code></a> - The observation space of a single sub-environment</p></li>
+<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.action_space" title="gymnasium.vector.VectorEnv.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> - The batched action space of the vector environment</p></li>
+<li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.single_action_space" title="gymnasium.vector.VectorEnv.single_action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">single_action_space</span></code></a> - The action space of a single sub-environment</p></li>
+</ul>
 </dd></dl>
 
 <section id="methods">
@@ -570,9 +583,8 @@ In other words, a vector of multiple different environments is not supported.</p
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>As the vector environments autoreset for a terminating and truncating sub-environments,
-the returned observation and info is not the final step’s observation or info which is instead stored in
-info as <cite>“final_observation”</cite> and <cite>“final_info”</cite>.</p>
+<p>As the vector environments autoreset for a terminating and truncating sub-environments, this will occur on
+the next step after <cite>terminated or truncated is True</cite>.</p>
 </div>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
