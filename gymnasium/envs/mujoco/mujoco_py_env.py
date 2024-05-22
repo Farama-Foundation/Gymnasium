@@ -12,11 +12,9 @@ from gymnasium.spaces import Space
 try:
     import mujoco_py
 except ImportError as e:
-    raise error.DependencyNotInstalled(
-        "Could not import mujoco_py, which is needed for MuJoCo environments older than V4",
-        "You could either use a newer version of the environments, or install the (deprecated) mujoco-py package"
-        "following the instructions on their GitHub page.",
-    ) from e
+    MUJOCO_PY_IMPORT_ERROR = e
+else:
+    MUJOCO_PY_IMPORT_ERROR = None
 
 
 # NOTE: duplication of analogous code in mujoco_env.py
@@ -214,6 +212,14 @@ class MuJocoPyEnv(BaseMujocoPyEnv):
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
     ):
+        if MUJOCO_PY_IMPORT_ERROR is not None:
+            raise error.DependencyNotInstalled(
+                f"{MUJOCO_PY_IMPORT_ERROR}. "
+                "Could not import mujoco_py, which is needed for MuJoCo environments older than V4",
+                "You could either use a newer version of the environments, or install the (deprecated) mujoco-py package"
+                "following the instructions on their GitHub page.",
+            )
+
         logger.deprecation(
             "This version of the mujoco environments depends "
             "on the mujoco-py bindings, which are no longer maintained "
