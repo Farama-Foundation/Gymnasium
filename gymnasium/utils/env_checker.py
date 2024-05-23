@@ -31,19 +31,19 @@ from gymnasium.utils.passive_env_checker import (
 
 
 def data_equivalence(data_1, data_2, exact: bool = False) -> bool:
-    """Assert equality between data 1 and 2, i.e observations, actions, info.
+    """Assert equality between data 1 and 2, i.e. observations, actions, info.
 
     Args:
         data_1: data structure 1
         data_2: data structure 2
-        exact: whether to compare array exactly or not if false compares with absolute and realive torrelance of 1e-5 (for more information check [np.allclose](https://numpy.org/doc/stable/reference/generated/numpy.allclose.html)).
+        exact: whether to compare array exactly or not if false compares with absolute and relative tolerance of 1e-5 (for more information check [np.allclose](https://numpy.org/doc/stable/reference/generated/numpy.allclose.html)).
 
     Returns:
         If observation 1 and 2 are equivalent
     """
     if type(data_1) is not type(data_2):
         return False
-    if isinstance(data_1, dict):
+    elif isinstance(data_1, dict):
         return data_1.keys() == data_2.keys() and all(
             data_equivalence(data_1[k], data_2[k], exact) for k in data_1.keys()
         )
@@ -90,7 +90,7 @@ def check_reset_seed_determinism(env: gym.Env):
             ), "The observation returned by `env.reset(seed=123)` is not within the observation space."
             assert (
                 env.unwrapped._np_random is not None
-            ), "Expects the random number generator to have been generated given a seed was passed to reset. Mostly likely the environment reset function does not call `super().reset(seed=seed)`."
+            ), "Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`."
             seed_123_rng = deepcopy(env.unwrapped._np_random)
 
             obs_2, info = env.reset(seed=123)
@@ -109,7 +109,7 @@ def check_reset_seed_determinism(env: gym.Env):
             assert (
                 env.unwrapped._np_random.bit_generator.state
                 == seed_123_rng.bit_generator.state
-            ), "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`."
+            ), "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`."
 
             obs_3, info = env.reset(seed=456)
             assert (
@@ -118,7 +118,7 @@ def check_reset_seed_determinism(env: gym.Env):
             assert (
                 env.unwrapped._np_random.bit_generator.state
                 != seed_123_rng.bit_generator.state
-            ), "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`."
+            ), "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`."
 
         except TypeError as e:
             raise AssertionError(
@@ -337,7 +337,7 @@ def check_env(
     To ensure that an environment is implemented "correctly", ``check_env`` checks that the :attr:`observation_space` and :attr:`action_space` are correct.
     Furthermore, the function will call the :meth:`reset`, :meth:`step` and :meth:`render` functions with a variety of values.
 
-    We highly recommend users calling this function after an environment is constructed and within a projects continuous integration to keep an environment update with Gymnasium's API.
+    We highly recommend users call this function after an environment is constructed and within a project's continuous integration to keep an environment update with Gymnasium's API.
 
     Args:
         env: The Gym environment that will be checked
@@ -366,6 +366,11 @@ def check_env(
         logger.warn(
             f"The environment ({env}) is different from the unwrapped version ({env.unwrapped}). This could effect the environment checker as the environment most likely has a wrapper applied to it. We recommend using the raw environment for `check_env` using `env.unwrapped`."
         )
+
+    if env.metadata.get("jax", False):
+        env = gym.wrappers.JaxToNumpy(env)
+    elif env.metadata.get("torch", False):
+        env = gym.wrappers.TorchToNumpy(env)
 
     # ============= Check the spaces (observation and action) ================
     if not hasattr(env, "action_space"):

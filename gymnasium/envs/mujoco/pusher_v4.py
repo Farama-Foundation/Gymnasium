@@ -1,3 +1,4 @@
+import mujoco
 import numpy as np
 
 from gymnasium import utils
@@ -22,7 +23,12 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     }
 
     def __init__(self, **kwargs):
+        if mujoco.__version__ >= "3.0.0":
+            raise ImportError(
+                "`Pusher-v4` is only supported on `mujoco<3`, for more information https://github.com/Farama-Foundation/Gymnasium/issues/950"
+            )
         utils.EzPickle.__init__(self, **kwargs)
+
         observation_space = Box(low=-np.inf, high=np.inf, shape=(23,), dtype=np.float64)
         MujocoEnv.__init__(
             self,

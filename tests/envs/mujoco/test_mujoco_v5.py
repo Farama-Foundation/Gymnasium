@@ -331,15 +331,17 @@ env_conf = collections.namedtuple("env_conf", "env_name, obs, rew, term, info")
         env_conf("HumanoidStandup", True, False, False, "superset"),
         env_conf("InvertedDoublePendulum", True, True, False, "superset"),
         env_conf("InvertedPendulum", False, True, False, "superset"),
-        env_conf("Pusher", False, True, False, "keys-superset"),
+        env_conf("Pusher", True, True, False, "keys-superset"),  # pusher-v4
         env_conf("Reacher", True, True, False, "keys-equivalence"),
         env_conf("Swimmer", False, False, False, "skip"),
         env_conf("Walker2d", True, True, True, "keys-superset"),
     ],
 )
-def test_identical_behaviour_v45(env_conf):
+def test_identical_behaviour_v45(env_conf, NUM_STEPS: int = 100):
     """Verify that v4 -> v5 transition. Does not change the behaviour of the environments in any unexpected way."""
-    NUM_STEPS = 100
+    if env_conf.env_name == "Pusher" and mujoco.__version__ >= "3.0.0":
+        pytest.skip("Pusher-v4 is not compatible with mujoco >= 3")
+
     env_v4 = gym.make(f"{env_conf.env_name}-v4")
     env_v5 = gym.make(f"{env_conf.env_name}-v5")
 
@@ -436,7 +438,7 @@ def test_observation_structure(env_name: str, version: str):
     env = gym.make(f"{env_name}-{version}").unwrapped
     assert isinstance(env, MujocoEnv)
     if not hasattr(env, "observation_structure"):
-        return
+        pytest.skip("Environment doesn't have an `observation_structure` attribute")
 
     obs_struct = env.observation_structure
 
@@ -584,17 +586,25 @@ def test_model_object_count(version: str):
     assert env.model.ngeom == 3
     assert env.model.ntendon == 0
 
-    env = gym.make(f"Pusher-{version}").unwrapped
-    assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
-    assert env.model.nq == 11
-    assert env.model.nv == 11
-    assert env.model.nu == 7
-    assert env.model.nbody == 13
-    if mujoco.__version__ >= "3.1.2":
-        assert env.model.nbvh == 8
-    assert env.model.njnt == 11
-    assert env.model.ngeom == 21
-    assert env.model.ntendon == 0
+    if not (version == "v4" and mujoco.__version__ >= "3.0.0"):
+        env = gym.make(f"Pusher-{version}").unwrapped
+        assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
+        assert env.model.nq == 11
+        assert env.model.nv == 11
+        assert env.model.nu == 7
+        assert env.model.nbody == 13
+        if mujoco.__version__ >= "3.1.4":
+            assert env.model.nbvh == 7
+        elif mujoco.__version__ >= "3.1.2":
+            assert env.model.nbvh == 8
+        else:
+            assert env.model.nbvh == 18
+        assert env.model.njnt == 11
+        if version == "v4":
+            assert env.model.ngeom == 21
+        else:
+            assert env.model.ngeom == 20
+        assert env.model.ntendon == 0
 
     env = gym.make(f"Reacher-{version}").unwrapped
     assert isinstance(env, (BaseMujocoEnv, BaseMujocoPyEnv))
@@ -706,5 +716,8 @@ def test_reset_noise_scale(env_id):
 @pytest.mark.parametrize("version", ["v5", "v4"])
 def test_reset_state(env_name: str, version: str):
     """Asserts that `reset()` properly resets the internal state."""
+    if env_name == "Pusher" and version == "v4" and mujoco.__version__ >= "3.0.0":
+        pytest.skip("Skipping Pusher-v4 as not compatible with mujoco >= 3.0")
+
     env = gym.make(f"{env_name}-{version}")
     check_mujoco_reset_state(env)

@@ -19,7 +19,7 @@ try:
     Device = Union[str, torch.device]
 except ImportError:
     raise DependencyNotInstalled(
-        "Torch is not installed therefore cannot call `torch_to_numpy`, run `pip install torch`"
+        'Torch is not installed therefore cannot call `torch_to_numpy`, run `pip install "gymnasium[torch]"`'
     )
 
 

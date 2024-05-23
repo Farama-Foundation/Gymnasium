@@ -102,12 +102,12 @@ class SyncVectorEnv(VectorEnv):
 
     @property
     def np_random_seed(self) -> tuple[int, ...]:
-        """Returns the seeds of the wrapped envs."""
+        """Returns a tuple of np random seeds for the wrapped envs."""
         return self.get_attr("np_random_seed")
 
     @property
     def np_random(self) -> tuple[np.random.Generator, ...]:
-        """Returns the numpy random number generators of the wrapped envs."""
+        """Returns a tuple of the numpy random number generators for the wrapped envs."""
         return self.get_attr("np_random")
 
     def reset(
@@ -260,7 +260,8 @@ class SyncVectorEnv(VectorEnv):
 
     def close_extras(self, **kwargs: Any):
         """Close the environments."""
-        [env.close() for env in self.envs]
+        if hasattr(self, "envs"):
+            [env.close() for env in self.envs]
 
     def _check_spaces(self) -> bool:
         """Check that each of the environments obs and action spaces are equivalent to the single obs and action space."""

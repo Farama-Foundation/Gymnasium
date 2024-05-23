@@ -39,7 +39,7 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained within the space.
     - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained within the space.
     - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`
-    - :attr:`metadata` - The metadata of the environment, i.e. render modes, render fps
+    - :attr:`metadata` - The metadata of the environment, e.g., `{"render_modes": ["rgb_array", "human"], "render_fps": 30}`. For Jax or Torch, this can be indicated to users with `"jax"=True` or `"torch"=True`.
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
       ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.
 
@@ -332,7 +332,7 @@ class Wrapper(
 
     @property
     def np_random_seed(self) -> int | None:
-        """Returns the base enviroment's :attr:`np_random_seed`."""
+        """Returns the base environment's :attr:`np_random_seed`."""
         return self.env.np_random_seed
 
     @property

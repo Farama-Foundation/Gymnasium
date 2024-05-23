@@ -161,7 +161,7 @@ class EnvSpec:
 
         for key, value in env_spec.items():
             if callable(value):
-                ValueError(
+                raise ValueError(
                     f"Callable found in {spec_name} for {key} attribute with value={value}. Currently, Gymnasium does not support serialising callables."
                 )
 
@@ -845,7 +845,7 @@ def make_vec(
     We refer to the Vector environment as the vectorizor while the environment being vectorized is the base or vectorized environment (``vectorizor(vectorized env)``).
 
     Args:
-        id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
+        id: Name of the environment. Optionally, a module to import can be included, e.g. 'module:Env-v0'
         num_envs: Number of environments to create
         vectorization_mode: The vectorization method used, defaults to ``None`` such that if env id' spec has a ``vector_entry_point`` (not ``None``),
             this is first used otherwise defaults to ``sync`` to use the :class:`gymnasium.vector.SyncVectorEnv`.
@@ -874,6 +874,8 @@ def make_vec(
 
     env_spec = copy.deepcopy(env_spec)
     env_spec_kwargs = env_spec.kwargs
+    # for sync or async, these parameters should be passed in `make(..., **kwargs)` rather than in the env spec kwargs, therefore, we `reset` the kwargs
+    env_spec.kwargs = dict()
 
     num_envs = env_spec_kwargs.pop("num_envs", num_envs)
     vectorization_mode = env_spec_kwargs.pop("vectorization_mode", vectorization_mode)
@@ -934,9 +936,13 @@ def make_vec(
             raise error.Error(
                 f"Custom vector environment can be passed arguments only through kwargs and `vector_kwargs` is not empty ({vector_kwargs})"
             )
-        if len(wrappers) > 0:
+        elif len(wrappers) > 0:
             raise error.Error(
-                "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
+                f"Cannot use `vector_entry_point` vectorization mode with the wrappers argument ({wrappers})."
+            )
+        elif len(env_spec.additional_wrappers) > 0:
+            raise error.Error(
+                f"Cannot use `vector_entry_point` vectorization mode with the additional_wrappers parameter in spec being not empty ({env_spec.additional_wrappers})."
             )
 
         entry_point = env_spec.vector_entry_point
