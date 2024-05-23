@@ -600,10 +600,7 @@ def test_model_object_count(version: str):
         else:
             assert env.model.nbvh == 18
         assert env.model.njnt == 11
-        if version == "v4":
-            assert env.model.ngeom == 21
-        else:
-            assert env.model.ngeom == 20
+        assert env.model.ngeom == 21
         assert env.model.ntendon == 0
 
     env = gym.make(f"Reacher-{version}").unwrapped
