@@ -88,17 +88,17 @@ def _reset_default_seed(self: GenericTestEnv, seed="Error", options=None):
         [
             AssertionError,
             lambda self, seed, *_: (self.observation_space.sample(), {}),
-            "Expects the random number generator to have been generated given a seed was passed to reset. Mostly likely the environment reset function does not call `super().reset(seed=seed)`.",
+            "Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`.",
         ],
         [
             AssertionError,
             _no_super_reset,
-            "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.",
+            "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.",
         ],
         [
             AssertionError,
             _super_reset_fixed,
-            "Mostly likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.",
+            "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.",
         ],
         [
             UserWarning,

@@ -157,6 +157,26 @@ def test_multidiscrete_start_contains():
     assert [13, 23, 34] not in space
 
 
+def test_multidiscrete_equality():
+    # Check if two spaces are equivalent.
+    space_a = MultiDiscrete(nvec=[2, 3, 4], start=[0, 0, 1])
+
+    space_b = MultiDiscrete(nvec=[2, 3, 4], start=[0, 0, 1])
+    assert space_a == space_b
+
+    space_b = MultiDiscrete(nvec=[2, 4, 3], start=[0, 0, 1])
+    assert space_a != space_b
+
+    space_b = MultiDiscrete(nvec=[2, 3, 4], start=[1, 0, 1])
+    assert space_a != space_b
+
+    space_b = MultiDiscrete(nvec=[2, 3, 4], start=[0, 1, 1])
+    assert space_a != space_b
+
+    space_b = MultiDiscrete(nvec=[2, 3, 4, 2], start=[1, 0, 0, 0])
+    assert space_a != space_b
+
+
 def test_space_legacy_pickling():
     """Test the legacy pickle of Discrete that is missing the `start` parameter."""
     # Test that start is corrected passed
