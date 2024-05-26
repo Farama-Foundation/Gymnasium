@@ -118,8 +118,8 @@ class HumanRendering(VectorWrapper):
                 else:
                     rows += 1
 
-            self.rows = rows
-            self.cols = cols
+            self.num_rows = rows
+            self.num_cols = cols
 
             scaling_factor = min(
                 self.screen_size[0] / (cols * subenv_size[0]),
@@ -153,6 +153,8 @@ class HumanRendering(VectorWrapper):
             for y in np.arange(
                 0, self.screen_size[1], self.scaled_subenv_size[1], dtype=np.int32
             ):
+                if i >= self.num_envs:
+                    break
                 scaled_render = cv2.resize(
                     subenv_renders[i], self.scaled_subenv_size[::-1]
                 )
