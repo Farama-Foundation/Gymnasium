@@ -70,15 +70,13 @@ class PlayableGame:
         self, keys_to_action: dict[tuple[int], int] | None = None
     ) -> set:
         if keys_to_action is None:
-            if hasattr(self.env, "get_keys_to_action"):
-                keys_to_action = self.env.get_keys_to_action()
-            elif hasattr(self.env.unwrapped, "get_keys_to_action"):
-                keys_to_action = self.env.unwrapped.get_keys_to_action()
+            if self.env.has_wrapper_attr("get_keys_to_action"):
+                keys_to_action = self.env.get_wrapper_attr("get_keys_to_actions")()
             else:
                 assert self.env.spec is not None
                 raise MissingKeysToAction(
                     f"{self.env.spec.id} does not have explicit key to action mapping, "
-                    "please specify one manually"
+                    "please specify one manually, `play(env, keys_to_action=...)`"
                 )
         assert isinstance(keys_to_action, dict)
         relevant_keys = set(sum((list(k) for k in keys_to_action.keys()), []))
@@ -244,10 +242,8 @@ def play(
     env.reset(seed=seed)
 
     if keys_to_action is None:
-        if hasattr(env, "get_keys_to_action"):
-            keys_to_action = env.get_keys_to_action()
-        elif hasattr(env.unwrapped, "get_keys_to_action"):
-            keys_to_action = env.unwrapped.get_keys_to_action()
+        if env.has_wrapper_attr("get_keys_to_action"):
+            keys_to_action = env.get_wrapper_attr("get_keys_to_action")()
         else:
             assert env.spec is not None
             raise MissingKeysToAction(
