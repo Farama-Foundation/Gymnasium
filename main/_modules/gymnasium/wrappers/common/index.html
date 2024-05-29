@@ -642,28 +642,9 @@
 <span class="k">class</span> <span class="nc">Autoreset</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The wrapped environment is automatically reset when an terminated or truncated state is reached.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The wrapped environment is automatically reset when a terminated or truncated state is reached.</span>
 
-<span class="sd">    When calling step causes :meth:`Env.step` to return `terminated=True` or `truncated=True`, :meth:`Env.reset` is called,</span>
-<span class="sd">    and the return format of :meth:`self.step` is as follows: ``(new_obs, final_reward, final_terminated, final_truncated, info)``</span>
-<span class="sd">    with new step API and ``(new_obs, final_reward, final_done, info)`` with the old step API.</span>
-<span class="sd">    No vector version of the wrapper exists.</span>
-
-<span class="sd">     - ``obs`` is the first observation after calling :meth:`self.env.reset`</span>
-<span class="sd">     - ``final_reward`` is the reward after calling :meth:`self.env.step`, prior to calling :meth:`self.env.reset`.</span>
-<span class="sd">     - ``final_terminated`` is the terminated value before calling :meth:`self.env.reset`.</span>
-<span class="sd">     - ``final_truncated`` is the truncated value before calling :meth:`self.env.reset`. Both `final_terminated` and `final_truncated` cannot be False.</span>
-<span class="sd">     - ``info`` is a dict containing all the keys from the info dict returned by the call to :meth:`self.env.reset`,</span>
-<span class="sd">       with an additional key &quot;final_observation&quot; containing the observation returned by the last call to :meth:`self.env.step`</span>
-<span class="sd">       and &quot;final_info&quot; containing the info dict returned by the last call to :meth:`self.env.step`.</span>
-
-<span class="sd">    Warning:</span>
-<span class="sd">        When using this wrapper to collect rollouts, note that when :meth:`Env.step` returns `terminated` or `truncated`, a</span>
-<span class="sd">        new observation from after calling :meth:`Env.reset` is returned by :meth:`Env.step` alongside the</span>
-<span class="sd">        final reward, terminated and truncated state from the previous episode.</span>
-<span class="sd">        If you need the final state from the previous episode, you need to retrieve it via the</span>
-<span class="sd">        &quot;final_observation&quot; key in the info dict.</span>
-<span class="sd">        Make sure you know what you&#39;re doing if you use this wrapper!</span>
+<span class="sd">    This follows the vector autoreset api where on the step after an episode terminates or truncated then the environment is reset.</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.24.0 - Initially added as `AutoResetWrapper`</span>
@@ -959,10 +940,6 @@
 <span class="sd">    For a vectorized environments the output will be in the form of::</span>
 
 <span class="sd">        &gt;&gt;&gt; infos = {</span>
-<span class="sd">        ...     &quot;final_observation&quot;: &quot;&lt;array of length num-envs&gt;&quot;,</span>
-<span class="sd">        ...     &quot;_final_observation&quot;: &quot;&lt;boolean array of length num-envs&gt;&quot;,</span>
-<span class="sd">        ...     &quot;final_info&quot;: &quot;&lt;array of length num-envs&gt;&quot;,</span>
-<span class="sd">        ...     &quot;_final_info&quot;: &quot;&lt;boolean array of length num-envs&gt;&quot;,</span>
 <span class="sd">        ...     &quot;episode&quot;: {</span>
 <span class="sd">        ...         &quot;r&quot;: &quot;&lt;array of cumulative reward&gt;&quot;,</span>
 <span class="sd">        ...         &quot;l&quot;: &quot;&lt;array of episode length&gt;&quot;,</span>
