@@ -655,10 +655,6 @@ A vector version of the wrapper exists, <a class="reference internal" href="../.
 </div>
 <p>For a vectorized environments the output will be in the form of:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span> <span class="o">=</span> <span class="p">{</span>
-<span class="gp">... </span>    <span class="s2">&quot;final_observation&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of length num-envs&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s2">&quot;_final_observation&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s2">&quot;final_info&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of length num-envs&gt;&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="s2">&quot;_final_info&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
 <span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of cumulative reward&gt;&quot;</span><span class="p">,</span>
 <span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of episode length&gt;&quot;</span><span class="p">,</span>
@@ -764,31 +760,8 @@ optimization benefits of FrameStack Wrapper.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.Autoreset">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">Autoreset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/common/#Autoreset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.Autoreset" title="Link to this definition">¶</a></dt>
-<dd><p>The wrapped environment is automatically reset when an terminated or truncated state is reached.</p>
-<p>When calling step causes <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code> to return <cite>terminated=True</cite> or <cite>truncated=True</cite>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code> is called,
-and the return format of <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.step()</span></code> is as follows: <code class="docutils literal notranslate"><span class="pre">(new_obs,</span> <span class="pre">final_reward,</span> <span class="pre">final_terminated,</span> <span class="pre">final_truncated,</span> <span class="pre">info)</span></code>
-with new step API and <code class="docutils literal notranslate"><span class="pre">(new_obs,</span> <span class="pre">final_reward,</span> <span class="pre">final_done,</span> <span class="pre">info)</span></code> with the old step API.
-No vector version of the wrapper exists.</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">obs</span></code> is the first observation after calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.env.reset()</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">final_reward</span></code> is the reward after calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.env.step()</span></code>, prior to calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.env.reset()</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">final_terminated</span></code> is the terminated value before calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.env.reset()</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">final_truncated</span></code> is the truncated value before calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.env.reset()</span></code>. Both <cite>final_terminated</cite> and <cite>final_truncated</cite> cannot be False.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">info</span></code> is a dict containing all the keys from the info dict returned by the call to <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.env.reset()</span></code>,
-with an additional key “final_observation” containing the observation returned by the last call to <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.env.step()</span></code>
-and “final_info” containing the info dict returned by the last call to <code class="xref py py-meth docutils literal notranslate"><span class="pre">self.env.step()</span></code>.</p></li>
-</ul>
-</div></blockquote>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>When using this wrapper to collect rollouts, note that when <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code> returns <cite>terminated</cite> or <cite>truncated</cite>, a
-new observation from after calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code> is returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code> alongside the
-final reward, terminated and truncated state from the previous episode.
-If you need the final state from the previous episode, you need to retrieve it via the
-“final_observation” key in the info dict.
-Make sure you know what you’re doing if you use this wrapper!</p>
-</div>
+<dd><p>The wrapped environment is automatically reset when a terminated or truncated state is reached.</p>
+<p>This follows the vector autoreset api where on the step after an episode terminates or truncated then the environment is reset.</p>
 <dl class="simple">
 <dt>Change logs:</dt><dd><ul class="simple">
 <li><p>v0.24.0 - Initially added as <cite>AutoResetWrapper</cite></p></li>
