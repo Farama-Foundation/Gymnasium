@@ -95,8 +95,6 @@ class LunarLander(gym.Env, EzPickle):
     ```shell
     python gymnasium/envs/box2d/lunar_lander.py
     ```
-    <!-- To play yourself, run: -->
-    <!-- python examples/agents/keyboard_agent.py LunarLander-v3 -->
 
     ## Action Space
     There are four discrete actions available:
