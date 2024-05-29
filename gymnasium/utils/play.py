@@ -71,7 +71,7 @@ class PlayableGame:
     ) -> set:
         if keys_to_action is None:
             if self.env.has_wrapper_attr("get_keys_to_action"):
-                keys_to_action = self.env.get_wrapper_attr("get_keys_to_actions")()
+                keys_to_action = self.env.get_wrapper_attr("get_keys_to_action")()
             else:
                 assert self.env.spec is not None
                 raise MissingKeysToAction(
