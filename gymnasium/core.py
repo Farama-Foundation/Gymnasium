@@ -264,6 +264,10 @@ class Env(Generic[ObsType, ActType]):
         # propagate exception
         return False
 
+    def has_wrapper_attr(self, name: str) -> bool:
+        """Checks if the attribute `name` exists in the environment."""
+        return hasattr(self, name)
+
     def get_wrapper_attr(self, name: str) -> Any:
         """Gets the attribute `name` from the environment."""
         return getattr(self, name)
@@ -391,6 +395,13 @@ class Wrapper(
             entry_point=f"{cls.__module__}:{cls.__name__}",
             kwargs=kwargs,
         )
+
+    def has_wrapper_attr(self, name: str) -> bool:
+        """Checks if the given attribute is within the wrapper or its environment."""
+        if hasattr(self, name):
+            return True
+        else:
+            return self.env.has_wrapper_attr(name)
 
     def get_wrapper_attr(self, name: str) -> Any:
         """Gets an attribute from the wrapper and lower environments if `name` doesn't exist in this object.

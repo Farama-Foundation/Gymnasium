@@ -168,22 +168,25 @@ def test_reward_observation_action_wrapper():
 
 def test_get_set_wrapper_attr():
     env = gym.make("CartPole-v1")
+    assert env is not env.unwrapped
 
     # Test get_wrapper_attr
     with pytest.raises(AttributeError):
         env.gravity
     assert env.unwrapped.gravity is not None
+    assert env.has_wrapper_attr("gravity")
     assert env.get_wrapper_attr("gravity") is not None
 
     with pytest.raises(AttributeError):
         env.unknown_attr
+    assert env.has_wrapper_attr("unknown_attr") is False
     with pytest.raises(AttributeError):
         env.get_wrapper_attr("unknown_attr")
 
     # Test set_wrapper_attr
     env.set_wrapper_attr("gravity", 10.0)
     with pytest.raises(AttributeError):
-        env.gravity
+        env.gravity  # checks the top level wrapper hasn't been updated
     assert env.unwrapped.gravity == 10.0
     assert env.get_wrapper_attr("gravity") == 10.0
 
@@ -195,10 +198,12 @@ def test_get_set_wrapper_attr():
     # Test with OrderEnforcing (intermediate wrapper)
     assert not isinstance(env, OrderEnforcing)
 
+    # show that the base and top level objects don't contain the attribute
     with pytest.raises(AttributeError):
         env._disable_render_order_enforcing
     with pytest.raises(AttributeError):
         env.unwrapped._disable_render_order_enforcing
+    assert env.has_wrapper_attr("_disable_render_order_enforcing")
     assert env.get_wrapper_attr("_disable_render_order_enforcing") is False
 
     env.set_wrapper_attr("_disable_render_order_enforcing", True)
