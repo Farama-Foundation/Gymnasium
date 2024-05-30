@@ -1,4 +1,3 @@
-
 """Test suite of HumanRendering wrapper."""
 import re
 
@@ -24,7 +23,9 @@ def test_num_envs_screen_size(env_id, num_envs, screen_size):
 
 
 def test_render_modes():
-    envs = HumanRendering(gym.make_vec("CartPole-v1", num_envs=3, render_mode="rgb_array_list"))
+    envs = HumanRendering(
+        gym.make_vec("CartPole-v1", num_envs=3, render_mode="rgb_array_list")
+    )
     assert envs.render_mode == "human"
 
     envs.reset()
@@ -34,10 +35,9 @@ def test_render_modes():
 
     # HumanRenderer on human renderer should not work
     with pytest.raises(
-            AssertionError,
-            match=re.escape(
-                "Expected env.render_mode to be one of ['rgb_array', 'rgb_array_list', 'depth_array', 'depth_array_list'] but got 'human'"
-            ),
+        AssertionError,
+        match=re.escape(
+            "Expected env.render_mode to be one of ['rgb_array', 'rgb_array_list', 'depth_array', 'depth_array_list'] but got 'human'"
+        ),
     ):
         HumanRendering(envs)
-
