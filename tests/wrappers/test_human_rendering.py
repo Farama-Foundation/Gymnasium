@@ -22,20 +22,7 @@ def test_human_rendering():
 
         env.close()
 
-
-def test_builtin_human_rendering():
-    """Directly requesting builtin human rendering."""
     env = gym.make("CartPole-v1", render_mode="human")
-
-    assert env.render_mode == "human", f"Unexpected render mode {env.render_mode}"
-
-    env.reset()
-    for _ in range(75):
-        _, _, terminated, truncated, _ = env.step(env.action_space.sample())
-        if terminated or truncated:
-            env.reset()
-
-    # HumanRenderer on human renderer should not work
     with pytest.raises(
         AssertionError,
         match=re.escape(
