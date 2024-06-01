@@ -1,5 +1,5 @@
 from os import path
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 from numpy.typing import NDArray
@@ -34,7 +34,7 @@ def expand_model_path(model_path: str) -> str:
     return fullpath
 
 
-class MujocoEnv(BaseMujocoEnv):
+class MujocoEnv(gym.Env):
     """Superclass for MuJoCo based environments."""
 
     def __init__(
@@ -172,7 +172,6 @@ class MujocoEnv(BaseMujocoEnv):
         """Return the cartesian position of a body frame."""
         return self.data.body(body_name).xpos
 
-
     def reset(
         self,
         *,
@@ -207,7 +206,7 @@ class MujocoEnv(BaseMujocoEnv):
 
     def state_vector(self) -> NDArray[np.float64]:
         """Return the position and velocity joint states of the model.
-        
+
         Note: `qpos` and `qvel` does not constitute the full physics state for all `mujoco` environments see https://mujoco.readthedocs.io/en/stable/computation/index.html#the-state.
         """
         return np.concatenate([self.data.qpos.flat, self.data.qvel.flat])
