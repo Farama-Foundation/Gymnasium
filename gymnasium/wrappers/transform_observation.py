@@ -517,9 +517,14 @@ class RescaleObservation(
         self.max_obs = max_obs
 
         # Imagine the x-axis between the old Box and the y-axis being the new Box
+        # float128 is not available everywhere
+        try:
+            high_low_diff_dtype = np.float128
+        except AttributeError:
+            high_low_diff_dtype = np.float64
         high_low_diff = np.array(
-            env.observation_space.high, dtype=np.float128
-        ) - np.array(env.observation_space.low, dtype=np.float128)
+            env.observation_space.high, dtype=high_low_diff_dtype
+        ) - np.array(env.observation_space.low, dtype=high_low_diff_dtype)
         gradient = np.array(
             (max_obs - min_obs) / high_low_diff, dtype=env.observation_space.dtype
         )

@@ -106,37 +106,38 @@ class HumanRendering(VectorWrapper):
             width_ratio = subenv_size[0] / self.screen_size[0]
             height_ratio = subenv_size[1] / self.screen_size[1]
 
-            rows, cols = 1, 1
-            while rows * cols < self.num_envs:
-                row_ratio = rows * height_ratio
-                col_ratio = cols * width_ratio
+            num_rows, num_cols = 1, 1
+            while num_rows * num_cols < self.num_envs:
+                row_ratio = num_rows * height_ratio
+                col_ratio = num_cols * width_ratio
 
                 if row_ratio == col_ratio:
-                    rows, cols = rows + 1, cols + 1
+                    num_rows, num_cols = num_rows + 1, num_cols + 1
                 elif row_ratio > col_ratio:
-                    cols += 1
+                    num_cols += 1
                 else:
-                    rows += 1
-
-            self.rows = rows
-            self.cols = cols
+                    num_rows += 1
 
             scaling_factor = min(
-                self.screen_size[0] / (cols * subenv_size[0]),
-                self.screen_size[1] / (rows * subenv_size[1]),
+                self.screen_size[0] / (num_cols * subenv_size[0]),
+                self.screen_size[1] / (num_rows * subenv_size[1]),
             )
+            assert (
+                num_cols * subenv_size[0] * scaling_factor == self.screen_size[0]
+            ) or (num_rows * subenv_size[1] * scaling_factor == self.screen_size[1])
+
+            self.num_rows = num_rows
+            self.num_cols = num_cols
             self.scaled_subenv_size = (
                 int(subenv_size[0] * scaling_factor),
                 int(subenv_size[1] * scaling_factor),
             )
 
-            assert (cols * subenv_size[0] * scaling_factor == self.screen_size[0]) or (
-                rows * subenv_size[1] * scaling_factor == self.screen_size[1]
-            )
-
             assert self.num_rows * self.num_cols >= self.num_envs
             assert self.scaled_subenv_size[0] * self.num_cols <= self.screen_size[0]
             assert self.scaled_subenv_size[1] * self.num_rows <= self.screen_size[1]
+
+        # print(f'{self.num_envs=}, {self.num_rows=}, {self.num_cols=}, {self.screen_size=}, {self.scaled_subenv_size=}')
 
         try:
             import cv2
@@ -146,21 +147,17 @@ class HumanRendering(VectorWrapper):
             ) from e
 
         merged_rgb_array = np.zeros(self.screen_size + (3,), dtype=np.uint8)
-        i = 0
-        for x in np.arange(
-            0, self.screen_size[0], self.scaled_subenv_size[0], dtype=np.int32
-        ):
-            for y in np.arange(
-                0, self.screen_size[1], self.scaled_subenv_size[1], dtype=np.int32
-            ):
-                scaled_render = cv2.resize(
-                    subenv_renders[i], self.scaled_subenv_size[::-1]
-                )
-                merged_rgb_array[
-                    x : x + self.scaled_subenv_size[0],
-                    y : y + self.scaled_subenv_size[1],
-                ] = scaled_render
-                i += 1
+        cols, rows = np.meshgrid(np.arange(self.num_cols), np.arange(self.num_rows))
+
+        for i, col, row in zip(range(self.num_envs), cols.flatten(), rows.flatten()):
+            scaled_render = cv2.resize(subenv_renders[i], self.scaled_subenv_size[::-1])
+            x = col * self.scaled_subenv_size[0]
+            y = row * self.scaled_subenv_size[1]
+
+            merged_rgb_array[
+                x : x + self.scaled_subenv_size[0],
+                y : y + self.scaled_subenv_size[1],
+            ] = scaled_render
 
         if self.window is None:
             pygame.init()
