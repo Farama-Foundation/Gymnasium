@@ -449,7 +449,7 @@ class Agent(nn.Module):
         Args:
             params: A namedtuple containing the hyperparameters.
         """
-        super().__init__()
+        super(Agent, self).__init__()
         self.params = params
         self.epsilon = self.params.epsilon_start
         self.eps_reduction = (self.params.epsilon_start - self.params.epsilon_end) / (
@@ -506,7 +506,7 @@ class Agent(nn.Module):
                     shape=(n_states, n_actions, n_atoms)
 
         """
-        value_dist = self.convolutional(self.head(state))
+        value_dist = self.head(self.convolutional(state))
 
         return value_dist.view(state.shape[0], self.params.n_actions, -1).softmax(2)
 
@@ -572,10 +572,11 @@ class Agent(nn.Module):
         probs = value_dists[torch.arange(self.params.batch_size), actions.view(-1), :]
 
         # target agent predictions
-        target_value_dist = target_agent.forward(next_states)
-        target_expected_returns = torch.sum(target_agent.support * target_value_dist, dim=2)
-        target_actions = torch.argmax(target_expected_returns, dim=1)
-        target_probs = target_value_dist[torch.arange(self.params.batch_size), target_actions, :]
+        with torch.no_grad():
+            target_value_dist = target_agent.forward(next_states)
+            target_expected_returns = torch.sum(target_agent.support * target_value_dist, dim=2)
+            target_actions = torch.argmax(target_expected_returns, dim=1)
+            target_probs = target_value_dist[torch.arange(self.params.batch_size), target_actions, :]
 
         # ------------------------------ Categorical algorithm ------------------------------
         #
@@ -1037,13 +1038,13 @@ if __name__ == "__main__":
     # %%
     # LunarLander-v3 training
     # --------------------
-    hparams = LunarLander_hyperparameters
+    hparams = Acrobot_hyperparameters
     agent_seeds = [6, 28, 496, 8128]
     verboses = [True, False, False, False]
     record_videos = [True, False, False, False]
 
     global_start_time = time.perf_counter()
-    parallel_results = parallel_training(agent_seeds, hparams, verboses, record_videos)
+    parallel_results = parallel_training(agent_seeds[:1], hparams, verboses, record_videos)
     print(f"Global runtime: {round(time.perf_counter()-global_start_time, 2)}s")
 
     agent_stats = preprocess_results(parallel_results)
