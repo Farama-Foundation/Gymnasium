@@ -603,7 +603,7 @@ def test_model_object_count(version: str):
         if version == "v4":
             assert env.model.ngeom == 21
         else:
-            assert env.model.ngeom == 20        
+            assert env.model.ngeom == 20
         assert env.model.ntendon == 0
 
     env = gym.make(f"Reacher-{version}").unwrapped
