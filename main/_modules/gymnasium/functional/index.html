@@ -543,7 +543,9 @@
 
 <div class="viewcode-block" id="FuncEnv.observation">
 <a class="viewcode-back" href="../../../api/functional/#gymnasium.functional.FuncEnv.observation">[docs]</a>
-    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates an observation for a given state of an environment.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
@@ -555,6 +557,7 @@
         <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span>
         <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">,</span>
         <span class="n">next_state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span>
+        <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RewardType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the reward for a given transition between `state`, `action` to `next_state`.&quot;&quot;&quot;</span>
@@ -563,7 +566,9 @@
 
 <div class="viewcode-block" id="FuncEnv.terminal">
 <a class="viewcode-back" href="../../../api/functional/#gymnasium.functional.FuncEnv.terminal">[docs]</a>
-    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminalType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminalType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns if the state is a final terminal state.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
@@ -615,14 +620,14 @@
 
 <div class="viewcode-block" id="FuncEnv.render_init">
 <a class="viewcode-back" href="../../../api/functional/#gymnasium.functional.FuncEnv.render_init">[docs]</a>
-    <span class="k">def</span> <span class="nf">render_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderStateType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">render_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderStateType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the render state.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="FuncEnv.render_close">
 <a class="viewcode-back" href="../../../api/functional/#gymnasium.functional.FuncEnv.render_close">[docs]</a>
-    <span class="k">def</span> <span class="nf">render_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_state</span><span class="p">:</span> <span class="n">RenderStateType</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">render_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_state</span><span class="p">:</span> <span class="n">RenderStateType</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the render state.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
