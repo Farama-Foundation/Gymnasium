@@ -1,6 +1,5 @@
 """This module provides a CliffWalking functional environment and Gymnasium environment wrapper CliffWalkingJaxEnv."""
 
-
 from __future__ import annotations
 
 from os import path

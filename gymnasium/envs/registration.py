@@ -1,4 +1,5 @@
 """Functions for registering environments within gymnasium using public functions ``make``, ``register`` and ``spec``."""
+
 from __future__ import annotations
 
 import contextlib
@@ -52,15 +53,13 @@ __all__ = [
 class EnvCreator(Protocol):
     """Function type expected for an environment."""
 
-    def __call__(self, **kwargs: Any) -> Env:
-        ...
+    def __call__(self, **kwargs: Any) -> Env: ...
 
 
 class VectorEnvCreator(Protocol):
     """Function type expected for an environment."""
 
-    def __call__(self, **kwargs: Any) -> gym.vector.VectorEnv:
-        ...
+    def __call__(self, **kwargs: Any) -> gym.vector.VectorEnv: ...
 
 
 @dataclass

@@ -1,4 +1,5 @@
 """Vectorizes observation wrappers to works for `VectorEnv`."""
+
 from __future__ import annotations
 
 from copy import deepcopy

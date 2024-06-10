@@ -1,4 +1,5 @@
 """Implementation of a Jax-accelerated cartpole environment."""
+
 from __future__ import annotations
 
 from typing import Any, Tuple

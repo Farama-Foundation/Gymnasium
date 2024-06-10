@@ -2,6 +2,7 @@
 http://incompleteideas.net/MountainCar/MountainCar1.cp
 permalink: https://perma.cc/6Z2N-PFWC
 """
+
 import math
 from typing import Optional
 

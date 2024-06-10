@@ -3,6 +3,7 @@
 These functions mostly take care of flattening and unflattening elements of spaces
  to facilitate their usage in learning code.
 """
+
 from __future__ import annotations
 
 import operator as op
@@ -538,9 +539,9 @@ def _flatten_space_dict(space: Dict) -> Box | Dict:
 def _flatten_space_graph(space: Graph) -> Graph:
     return Graph(
         node_space=flatten_space(space.node_space),
-        edge_space=flatten_space(space.edge_space)
-        if space.edge_space is not None
-        else None,
+        edge_space=(
+            flatten_space(space.edge_space) if space.edge_space is not None else None
+        ),
     )
 
 

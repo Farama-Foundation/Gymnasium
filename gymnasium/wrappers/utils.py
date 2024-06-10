@@ -1,4 +1,5 @@
 """Utility functions for the wrappers."""
+
 from functools import singledispatch
 
 import numpy as np

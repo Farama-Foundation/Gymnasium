@@ -1,6 +1,5 @@
 """Tests for Jax Blackjack functional env."""
 
-
 import pytest
 
 

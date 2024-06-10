@@ -1,4 +1,5 @@
 """Implementation of a Jax-accelerated pendulum environment."""
+
 from __future__ import annotations
 
 from os import path

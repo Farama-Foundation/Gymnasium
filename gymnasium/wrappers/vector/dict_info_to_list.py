@@ -1,4 +1,5 @@
 """Wrapper that converts the info format for vec envs into the list format."""
+
 from __future__ import annotations
 
 from typing import Any

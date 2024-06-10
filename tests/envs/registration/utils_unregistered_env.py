@@ -1,4 +1,5 @@
 """This utility file contains an environment that is registered upon loading the file."""
+
 import gymnasium as gym
 
 

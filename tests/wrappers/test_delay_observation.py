@@ -1,4 +1,5 @@
 """Test suite for DelayObservation wrapper."""
+
 import re
 
 import pytest

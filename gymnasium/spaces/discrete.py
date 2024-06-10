@@ -1,4 +1,5 @@
 """Implementation of a space consisting of finitely many elements."""
+
 from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
