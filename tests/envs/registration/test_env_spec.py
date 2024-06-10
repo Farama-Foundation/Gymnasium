@@ -1,4 +1,5 @@
 """Test for the `EnvSpec`, in particular, a full integration with `EnvSpec`."""
+
 from __future__ import annotations
 
 import re

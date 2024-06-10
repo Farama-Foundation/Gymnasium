@@ -1,4 +1,5 @@
 """Provides a generic testing environment for use in tests with custom reset, step and render functions."""
+
 from __future__ import annotations
 
 import types

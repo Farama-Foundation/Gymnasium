@@ -1,4 +1,5 @@
 """Base class for vectorized environments."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
@@ -95,8 +96,9 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     To avoid having to wait for all sub-environments to terminated before resetting, implementations will autoreset
     sub-environments on episode end (`terminated or truncated is True`). As a result, when adding observations
-    to a replay buffer, this requires a knowning where the observation (and info) for each sub-environment are the first
-    observation from an autoreset. We recommend using an additional variable to store this information.
+    to a replay buffer, this requires knowing when an observation (and info) for each sub-environment are the first
+    observation from an autoreset. We recommend using an additional variable to store this information such as
+    ``has_autoreset = np.logical_or(terminated, truncated)``.
 
     The Vector Environments have the additional attributes for users to understand the implementation
 

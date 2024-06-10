@@ -1,6 +1,5 @@
 """This module provides a Blackjack functional environment and Gymnasium environment wrapper BlackJackJaxEnv."""
 
-
 import math
 import os
 from typing import NamedTuple, Optional, Tuple, Union

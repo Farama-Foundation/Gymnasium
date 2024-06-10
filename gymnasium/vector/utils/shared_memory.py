@@ -1,4 +1,5 @@
 """Utility functions for vector environments to share memory between processes."""
+
 from __future__ import annotations
 
 import multiprocessing as mp

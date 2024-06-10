@@ -1,4 +1,5 @@
 """Test suite for RenderObservation wrapper."""
+
 import numpy as np
 import pytest
 

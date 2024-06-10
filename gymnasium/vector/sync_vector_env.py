@@ -1,4 +1,5 @@
 """Implementation of a synchronous (for loop) vectorization method of any environment."""
+
 from __future__ import annotations
 
 from copy import deepcopy

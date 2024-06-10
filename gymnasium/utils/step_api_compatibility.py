@@ -1,4 +1,5 @@
 """Contains methods for step compatibility, from old-to-new and new-to-old API."""
+
 from __future__ import annotations
 
 from typing import SupportsFloat, Tuple, Union

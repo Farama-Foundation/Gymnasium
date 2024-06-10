@@ -1,4 +1,5 @@
 """Allows attributes passed to `RecordConstructorArgs` to be saved. This is used by the `Wrapper.spec` to know the constructor arguments of implemented wrappers."""
+
 from __future__ import annotations
 
 from copy import deepcopy

@@ -6,6 +6,7 @@
 * ``NormalizeObservation`` - Normalized the observations to have unit variance with a moving mean
 * ``MaxAndSkipObservation`` - Return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.
 """
+
 from __future__ import annotations
 
 from collections import deque

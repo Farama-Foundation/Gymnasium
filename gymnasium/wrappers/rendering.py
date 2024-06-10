@@ -4,6 +4,7 @@
 * ``RecordVideo`` - Records a video of the environments
 * ``HumanRendering`` - Provides human rendering of environments with ``"rgb_array"``
 """
+
 from __future__ import annotations
 
 import os

@@ -17,5 +17,4 @@ jobs:
       - uses: actions/setup-python@v5
       - run: python -m pip install pre-commit
       - run: python -m pre_commit --version
-      - run: python -m pre_commit install
       - run: python -m pre_commit run --all-files

@@ -1,4 +1,5 @@
 """Utility functions to save rendering videos."""
+
 from __future__ import annotations
 
 import os

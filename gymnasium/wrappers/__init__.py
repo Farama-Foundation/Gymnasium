@@ -45,6 +45,7 @@ If you need a wrapper to do more complicated tasks, you can inherit from the :cl
 
 If you'd like to implement your own custom wrapper, check out `the corresponding tutorial <../../tutorials/implementing_custom_wrappers>`_.
 """
+
 # pyright: reportUnsupportedDunderAll=false
 import importlib
 

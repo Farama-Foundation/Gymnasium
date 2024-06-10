@@ -1,4 +1,5 @@
 """Tests the vector wrappers work as expected."""
+
 from __future__ import annotations
 
 from typing import Any

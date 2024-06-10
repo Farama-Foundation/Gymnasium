@@ -1,6 +1,5 @@
 """Tests for Jax cliffwalking functional env."""
 
-
 import pytest
 
 

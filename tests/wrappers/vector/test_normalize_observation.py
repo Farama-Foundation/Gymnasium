@@ -1,4 +1,5 @@
 """Test suite for vector NormalizeObservation wrapper."""
+
 import numpy as np
 
 from gymnasium import spaces, wrappers

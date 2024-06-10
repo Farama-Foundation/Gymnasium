@@ -1,4 +1,5 @@
 """Tests that `gym.make` works as expected."""
+
 from __future__ import annotations
 
 import re

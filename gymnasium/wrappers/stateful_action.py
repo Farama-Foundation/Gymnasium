@@ -1,4 +1,5 @@
 """``StickyAction`` wrapper - There is a probability that the action is taken again."""
+
 from __future__ import annotations
 
 from typing import Any

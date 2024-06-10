@@ -1,4 +1,5 @@
 """Implementation of a space that represents finite-length sequences."""
+
 from __future__ import annotations
 
 import typing
@@ -100,8 +101,7 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
 
     def sample(
         self,
-        mask: None
-        | (
+        mask: None | (
             tuple[
                 None | np.integer | NDArray[np.integer],
                 Any,

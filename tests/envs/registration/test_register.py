@@ -1,4 +1,5 @@
 """Tests that `gymnasium.register` works as expected."""
+
 import re
 from typing import Optional
 

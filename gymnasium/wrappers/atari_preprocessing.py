@@ -1,4 +1,5 @@
 """Implementation of Atari 2600 Preprocessing following the guidelines of Machado et al., 2018."""
+
 from __future__ import annotations
 
 from typing import Any, SupportsFloat

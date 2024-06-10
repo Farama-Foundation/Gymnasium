@@ -1,4 +1,5 @@
 """Test suite for FilterObservation wrapper."""
+
 import pytest
 
 from gymnasium.spaces import Box, Dict, Tuple

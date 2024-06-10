@@ -1,4 +1,5 @@
 """Test suite for StickyAction wrapper."""
+
 import numpy as np
 import pytest
 

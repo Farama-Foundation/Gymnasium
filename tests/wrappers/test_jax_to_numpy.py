@@ -1,4 +1,5 @@
 """Test suite for JaxToNumpy wrapper."""
+
 from typing import NamedTuple
 
 import numpy as np

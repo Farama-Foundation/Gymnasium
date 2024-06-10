@@ -1,4 +1,5 @@
 """Base class and definitions for an alternative, functional backend for gym envs, particularly suitable for hardware accelerated and otherwise transformed environments."""
+
 from __future__ import annotations
 
 from typing import Any, Callable, Generic, TypeVar

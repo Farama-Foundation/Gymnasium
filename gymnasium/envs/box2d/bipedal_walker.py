@@ -250,7 +250,7 @@ class BipedalWalker(gym.Env, EzPickle):
         #     0.3 * vel.y * (VIEWPORT_H / SCALE) / FPS,
         #     self.joints[
         #         0
-        #     ].angle,  # This will give 1.1 on high up, but it's still OK (and there should be spikes on hiting the ground, that's normal too)
+        #     ].angle,  # This will give 1.1 on high up, but it's still OK (and there should be spikes on hitting the ground, that's normal too)
         #     self.joints[0].speed / SPEED_HIP,
         #     self.joints[1].angle + 1.0,
         #     self.joints[1].speed / SPEED_KNEE,
@@ -569,7 +569,7 @@ class BipedalWalker(gym.Env, EzPickle):
             0.3 * vel.x * (VIEWPORT_W / SCALE) / FPS,  # Normalized to get -1..1 range
             0.3 * vel.y * (VIEWPORT_H / SCALE) / FPS,
             self.joints[0].angle,
-            # This will give 1.1 on high up, but it's still OK (and there should be spikes on hiting the ground, that's normal too)
+            # This will give 1.1 on high up, but it's still OK (and there should be spikes on hitting the ground, that's normal too)
             self.joints[0].speed / SPEED_HIP,
             self.joints[1].angle + 1.0,
             self.joints[1].speed / SPEED_KNEE,

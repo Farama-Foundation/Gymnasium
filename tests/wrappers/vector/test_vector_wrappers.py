@@ -6,6 +6,7 @@ The exception is the data converter wrappers
  * Different implementations - `LambdaObservation`, `LambdaReward` and `LambdaAction`
  * Different random sources - `StickyAction`
 """
+
 from __future__ import annotations
 
 from typing import Any

@@ -1,4 +1,5 @@
 """Test suite for DtypeObservation wrapper."""
+
 import numpy as np
 
 from gymnasium.wrappers import DtypeObservation

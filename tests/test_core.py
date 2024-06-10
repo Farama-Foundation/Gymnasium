@@ -1,4 +1,5 @@
 """Checks that the core Gymnasium API is implemented as expected."""
+
 from __future__ import annotations
 
 import re
