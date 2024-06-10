@@ -4,7 +4,6 @@ Frozenlake benchmark
 
 """
 
-
 # %%
 # In this post we'll compare a bunch of different map sizes on the
 # `FrozenLake <https://gymnasium.farama.org/environments/toy_text/frozen_lake/>`__

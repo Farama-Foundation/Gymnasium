@@ -555,8 +555,9 @@ array for each key. To use the old info style, utilise the <code class="xref py 
 </div>
 <p>To avoid having to wait for all sub-environments to terminated before resetting, implementations will autoreset
 sub-environments on episode end (<cite>terminated or truncated is True</cite>). As a result, when adding observations
-to a replay buffer, this requires a knowning where the observation (and info) for each sub-environment are the first
-observation from an autoreset. We recommend using an additional variable to store this information.</p>
+to a replay buffer, this requires knowing when an observation (and info) for each sub-environment are the first
+observation from an autoreset. We recommend using an additional variable to store this information such as
+<code class="docutils literal notranslate"><span class="pre">has_autoreset</span> <span class="pre">=</span> <span class="pre">np.logical_or(terminated,</span> <span class="pre">truncated)</span></code>.</p>
 <p>The Vector Environments have the additional attributes for users to understand the implementation</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.num_envs" title="gymnasium.vector.VectorEnv.num_envs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_envs</span></code></a> - The number of sub-environment in the vector environment</p></li>
