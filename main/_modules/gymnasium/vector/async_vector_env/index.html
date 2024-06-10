@@ -471,6 +471,7 @@
             
             <h1>Source code for gymnasium.vector.async_vector_env</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;An async vector environment.&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
@@ -564,10 +565,12 @@
         <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">daemon</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">worker</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
-            <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Env</span><span class="p">],</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Connection</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Queue</span><span class="p">],</span> <span class="kc">None</span>
-        <span class="p">]</span>
-        <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">worker</span><span class="p">:</span> <span class="p">(</span>
+            <span class="n">Callable</span><span class="p">[</span>
+                <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Env</span><span class="p">],</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">Connection</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">Queue</span><span class="p">],</span> <span class="kc">None</span>
+            <span class="p">]</span>
+            <span class="o">|</span> <span class="kc">None</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Vectorized environment that runs multiple environments in parallel.</span>
 
