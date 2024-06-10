@@ -10,6 +10,7 @@
 * ``DtypeObservation`` - Convert an observation to a dtype
 * ``RenderObservation`` - Allows the observation to the rendered frame
 """
+
 from __future__ import annotations
 
 from typing import Any, Callable, Final, Sequence

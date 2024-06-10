@@ -1,4 +1,5 @@
 """A set of functions for passively checking environment implementations."""
+
 import inspect
 from functools import partial
 from typing import Callable

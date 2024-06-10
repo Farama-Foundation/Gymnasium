@@ -1,4 +1,5 @@
 """Implementation of a space that represents the cartesian product of other spaces."""
+
 from __future__ import annotations
 
 import typing

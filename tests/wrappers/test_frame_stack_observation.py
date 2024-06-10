@@ -1,4 +1,5 @@
 """Test suite for FrameStackObservation wrapper."""
+
 import re
 
 import numpy as np

@@ -1,4 +1,5 @@
 """Implementation of a space that represents graph information where nodes and edges can be represented with euclidean space."""
+
 from __future__ import annotations
 
 from typing import Any, NamedTuple, Sequence
@@ -176,8 +177,7 @@ class Graph(Space[GraphInstance]):
 
     def sample(
         self,
-        mask: None
-        | (
+        mask: None | (
             tuple[
                 NDArray[Any] | tuple[Any, ...] | None,
                 NDArray[Any] | tuple[Any, ...] | None,

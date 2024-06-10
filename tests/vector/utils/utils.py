@@ -1,4 +1,5 @@
 """Utility functions for testing the vector utility functions."""
+
 import numpy as np
 
 

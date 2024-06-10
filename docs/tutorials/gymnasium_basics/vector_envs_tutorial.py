@@ -3,6 +3,7 @@ Training A2C with Vector Envs and Domain Randomization
 ======================================================
 
 """
+
 # %%
 # Notice
 # ------

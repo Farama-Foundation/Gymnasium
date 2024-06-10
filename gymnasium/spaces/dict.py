@@ -1,4 +1,5 @@
 """Implementation of a space that represents the cartesian product of other spaces as a dictionary."""
+
 from __future__ import annotations
 
 import collections.abc

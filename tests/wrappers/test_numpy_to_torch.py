@@ -1,4 +1,5 @@
 """Test suite for NumPyToTorch wrapper."""
+
 from typing import NamedTuple
 
 import numpy as np
