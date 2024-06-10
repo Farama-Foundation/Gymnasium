@@ -31,17 +31,17 @@ class HumanRendering(VectorWrapper):
         """
         VectorWrapper.__init__(self, env)
 
+        self.screen_size = screen_size
+        self.scaled_subenv_size, self.num_rows, self.num_cols = None, None, None
+        self.window = None  # Has to be initialized before asserts, as self.window is used in auto close
+        self.clock = None
+
         assert (
             self.env.render_mode in self.ACCEPTED_RENDER_MODES
         ), f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
         assert (
             "render_fps" in self.env.metadata
         ), "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
-
-        self.screen_size = screen_size
-        self.scaled_subenv_size, self.num_rows, self.num_cols = None, None, None
-        self.window = None
-        self.clock = None
 
         if "human" not in self.metadata["render_modes"]:
             self.metadata = deepcopy(self.env.metadata)
