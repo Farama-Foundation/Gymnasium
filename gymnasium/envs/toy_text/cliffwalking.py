@@ -10,7 +10,6 @@ from gymnasium import Env, spaces
 from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
 
-
 UP = 0
 RIGHT = 1
 DOWN = 2
@@ -164,7 +163,7 @@ class CliffWalkingEnv(Env):
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
         if self._cliff[tuple(new_position)]:
-            return [(1.0, self.start_state_index, -100, False)]
+            return [(1.0, self.start_state_index, -100, True)]
 
         terminal_state = (self.shape[0] - 1, self.shape[1] - 1)
         is_terminated = tuple(new_position) == terminal_state
