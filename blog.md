@@ -28,7 +28,7 @@ Over time, the MuJoCo environments have become standard testing environments in 
 
 However, as RL methods continue to improve, the necessity for more complex robotic environments to evaluate them has become evident with state-of-the-art training algorithms, such as [TD3](https://arxiv.org/pdf/1802.09477.pdf) and [SAC](https://arxiv.org/pdf/1801.01290.pdf), being able to solve even the more complex of the MuJoCo problems.  
 
-We are pleased to announce that with`gymnasium==1.0.0`, we introduce the new version 5 version of the Gymnasium/MuJoCo environments with significantly increased customizability, bugs fixes and is faster.
+We are pleased to announce that with `gymnasium==1.0.0` a new 5 version of the Gymnasium/MuJoCo environments with significantly increased customizability, bug fixes and overall faster step and reset speed.
 ```sh
 pip install "gymnasium[mujoco]>=1.0.0"
 ```
@@ -40,7 +40,7 @@ env = gym.make("Humanoid-v5")
 ```
 
 ## Key features:
-- Add support for loading third-party MuJoCo models, including realistic robot models including [MuJoCo Menagerie](https://github.com/deepmind/mujoco_menagerie).
+- Add support for loading third-party MuJoCo models, including realistic robot models, like those found in [MuJoCo Menagerie](https://github.com/deepmind/mujoco_menagerie).
 
 - 80 enhancements, notably:
   - Performance: Improves training performance by removing a considerable amount of constant 0 observations from the observation spaces of the `Ant`, `Humanoid` and `HumanoidStandup`. This results in 5-7% faster training with `SB3/PPO` using `pytorch` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
@@ -49,27 +49,27 @@ env = gym.make("Humanoid-v5")
 
 - 24 bugs fixes, notably:
   - Walker2D: Both feet now have `friction==1.9`, previously the right foot had `friction==0.9` and the left foot had `friction==1.9` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
-  - Pusher: Fixed the issue of the object being lighter than air cause the cylinder physics unexpected behaviour. We have increased the weight to a more realistic value (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
+  - Pusher: Fixed the issue of the object being lighter than air causing the cylinder physics to have unexpected behaviour, it weights has been increased to a more realistic value (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
   - In Ant, Hopper, Humanoid, InvertedDoublePendulum, InvertedPendulum, Walker2d: `healthy_reward`, was previously given on every step (even if the robot was unhealthy), now it is only given when the robot is healthy, resulting in faster learning. For further details about the performance impact of this change, see the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)
   - In Ant and Humanoid, the `contact_cost` reward component was constantly 0. For more information on the performance impact of this change, please check the related [GitHub issue #1](https://github.com/Farama-Foundation/Gymnasium/issues/504), [GitHub issue #2](https://github.com/Farama-Foundation/Gymnasium/issues/214).
   - In Reacher and  Pusher, the reward function was calculated based on the previous state not the current state. For further information on the performance impact of this change, see the related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821).
   - Fixed several `info` fields.
     - Ant: Fixed `info["reward_ctrl"]` sometimes containing `contact_cost` instead of `ctrl_cost`.
-    - Ant: Fixed `info["x_position"]` & `info["y_position"]` & `info["distance_from_origin"]` giving `xpos` instead of `qpos` observations (`xpos` observations are behind 1 `mj_step()` more [here](https://github.com/deepmind/mujoco/issues/889#issuecomment-1568896388)) (related [GitHub issue #1](https://github.com/Farama-Foundation/Gymnasium/issues/521) & [GitHub issue #2](https://github.com/Farama-Foundation/Gymnasium/issues/539)).
+    - Ant: Fixed `info["x_position"]`, `info["y_position"]` and `info["distance_from_origin"]` giving `xpos` instead of `qpos` observations (`xpos` observations are behind 1 `mj_step()`, for more details see [here](https://github.com/deepmind/mujoco/issues/889#issuecomment-1568896388)) (related [GitHub issue #1](https://github.com/Farama-Foundation/Gymnasium/issues/521) & [GitHub issue #2](https://github.com/Farama-Foundation/Gymnasium/issues/539)).
     - Pusher and Reacher: Fixed `info["reward_ctrl"]` not being multiplied by the reward weight.
 
 - Generally improved documentation to explain the observation, action and reward functions in more detail. 
 
 ## Example using a third-party MuJoCo robot models:
-For those looking for more complex real-world robot MuJoCo models, `v5` now supports the use of these models. Below, we show how this can be achieved using models from the [MuJoCo Menagerie](https://github.com/deepmind/mujoco_menagerie) project.
+For those looking for more complex real-world robot MuJoCo models, `v5` now supports custom robot models for each environment. Below, we show how this can be achieved using models from the [MuJoCo Menagerie](https://github.com/deepmind/mujoco_menagerie) project.
 
 Depending on the robot type, we recommend using different environment models: for quadruped → `Ant-v5`, bipedal → `Humanoid-v5` and swimmer / crawler robots → `Swimmer-v5`. 
 
 However, it will be necessary to modify certain arguments in order to specify the desired behavior. The most commonly changed arguments are:
 - `xml_file`: Path to the MuJoCo robot (MJCF or URDF file).
-- `frame_skip`: to set the duration of a time step (`dt`) (recommended range of `dt` is $\[0.01, 0.1\]$). 
-- `ctrl_cost_weight`: set it according to the needs of the robot, we can set it to `0` at first for prototyping and increase it as needed.
-- `healthy_z_range`: set it according to the height of the robot.
+- `frame_skip`: The duration between steps, `dt`, recommended range is $\[0.01, 0.1\]$ where smaller values allow more precise movements but require more actions to reach a goal.
+- `ctrl_cost_weight`: The weight of control cost in the reward function, set it according to the needs of the robot, we can set it to `0` at first for prototyping and increase it as needed.
+- `healthy_z_range`: The upper and lower limit the robot can be at without it besing "unhealthy", set it according to the height of the robot.
 For more information on all the arguments, see the documentation pages of `Humanoid`, `Ant` and respectively.
 
 ### Example [anybotics_anymal_b](https://github.com/deepmind/mujoco_menagerie/blob/main/anybotics_anymal_b/README.md)
