@@ -174,6 +174,14 @@ EV2Gym is a fully customizable and easily configurable environment for Electric 
 ![GitHub stars](https://img.shields.io/github/stars/foreverska/buffalo-gym)
 
 Buffalo-Gym is a Multi-Armed Bandit (MAB) gymnasium built primarily to assist in debugging RL implementations. MABs are often easy to reason about what the agent is learning and whether it is correct. Buffalo-gym encompasses Bandits, Contextual bandits, and contextual bandits with aliasing.
+
+### [ICU-Sepsis: A Benchmark MDP Built from Real Medical Data](https://github.com/icu-sepsis/icu-sepsis)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/icu-sepsis/icu-sepsis)
+
+ICU-Sepsis is a tabular reinforcement learning environment that simulates the treatment of sepsis in an intensive care unit (ICU). Introduced in the paper [ICU-Sepsis: A Benchmark MDP Built from Real Medical Data](https://arxiv.org/abs/2406.05646), the environment is lightweight and easy to use, yet challenging for most reinforcement learning algorithms.
+
 ## Third-Party Environments using Gym
 
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
