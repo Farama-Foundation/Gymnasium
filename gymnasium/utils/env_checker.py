@@ -92,7 +92,7 @@ def check_reset_seed_determinism(env: gym.Env):
                 env.unwrapped._np_random is not None
             ), "Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`."
             seed_123_rng_1 = deepcopy(env.unwrapped._np_random)
-            
+
             obs_2, info = env.reset()
             assert (
                 obs_2 in env.observation_space
