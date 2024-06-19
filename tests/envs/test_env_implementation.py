@@ -101,10 +101,6 @@ def test_slippery_cliffwalking():
 
 def test_cliffwalking():
     env = CliffWalkingEnv(is_slippery=False)
-    import json
-
-    with open("new_implementation.json", "w+") as f:
-        json.dump(env.P, f, default=str)
     for actions_dict in env.P.values():
         for transitions in actions_dict.values():
             assert len(transitions) == 1
