@@ -283,7 +283,6 @@ class TaxiEnv(Env):
         return mask
 
     def step(self, a):
-        # import pdb; pdb.set_trace()
         transitions = self.P[self.s][a]
         i = categorical_sample([t[0] for t in transitions], self.np_random)
         p, s, r, t = transitions[i]
