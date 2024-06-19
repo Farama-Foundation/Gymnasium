@@ -6,7 +6,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.envs.box2d import BipedalWalker, CarRacing
 from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
-from gymnasium.envs.toy_text import TaxiEnv
+from gymnasium.envs.toy_text import BlackjackEnv, TaxiEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
 
@@ -254,6 +254,26 @@ def test_invalid_customizable_resets(env_name: str, low_high: list):
         # match=re.escape(f"Lower bound ({low}) must be lower than higher bound ({high}).")
         # match=f"An option ({x}) could not be converted to a float."
         env.reset(options={"low": low, "high": high})
+
+
+def test_blackjack_edgecases():
+    # GH 1011
+    # test dealer and player have natural 21
+    env = BlackjackEnv()
+    env.player = [1, 10]
+    env.dealer = [1, 10]
+    _obs, reward, terminated, _, _info = env.step(0)
+    # no payout expected
+    assert terminated is True
+    assert reward == 0
+
+    # test dealer and player have sum 21 but after a hit
+    env.reset()
+    env.player = [2, 10, 9]
+    env.dealer = [2, 10, 4, 5]
+    _obs, reward, terminated, _, _info = env.step(0)
+    assert terminated is True
+    assert reward == 0
 
 
 def test_cartpole_vector_equiv():
