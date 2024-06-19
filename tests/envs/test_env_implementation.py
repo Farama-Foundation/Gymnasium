@@ -6,7 +6,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.envs.box2d import BipedalWalker, CarRacing
 from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
-from gymnasium.envs.toy_text import TaxiEnv
+from gymnasium.envs.toy_text import TaxiEnv, CliffWalkingEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
 
@@ -86,6 +86,29 @@ def test_carracing_domain_randomize():
         grass_color != env.grass_color
     ).all(), f"Have same grass color after reset. Before: {grass_color}, after: {env.grass_color}."
 
+
+
+def test_slippery_cliffwalking():
+    """Test that the slippery cliffwalking environment is correctly implemented.
+    We check here that there are always 3 possible transitions for each action and
+    that there is a 1/3 probability for each.
+    """
+    envs = CliffWalkingEnv(is_slippery=True)
+    for actions_dict in envs.P.values():
+        for transitions in actions_dict.values():
+            assert len(transitions) == 3
+            assert all([r[0] == 1/3 for r in transitions])
+
+
+def test_cliffwalking():
+    env = CliffWalkingEnv(is_slippery=False)
+    import json
+    with open("new_implementation.json", "w+") as f:
+        json.dump(env.P, f, default=str)
+    for actions_dict in env.P.values():
+        for transitions in actions_dict.values():
+            assert len(transitions) == 1
+            assert all([r[0] == 1. for r in transitions])
 
 @pytest.mark.parametrize("seed", range(5))
 def test_bipedal_walker_hardcore_creation(seed: int):
