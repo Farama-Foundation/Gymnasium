@@ -1,7 +1,7 @@
 from contextlib import closing
 from io import StringIO
 from os import path
-from typing import Optional, List, Tuple, Any, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
 
@@ -16,12 +16,7 @@ RIGHT = 1
 DOWN = 2
 LEFT = 3
 
-POSITION_MAPPING = {
-    UP: [-1, 0],
-    RIGHT: [0, 1],
-    DOWN: [1, 0],
-    LEFT: [0, -1]
-}
+POSITION_MAPPING = {UP: [-1, 0], RIGHT: [0, 1], DOWN: [1, 0], LEFT: [0, -1]}
 
 
 class CliffWalkingEnv(Env):
@@ -88,7 +83,7 @@ class CliffWalkingEnv(Env):
 
     ```python
     import gymnasium as gym
-    gym.make('CliffWalking-v0')
+    gym.make('CliffWalking-v1')
     ```
 
     ## References
@@ -163,7 +158,9 @@ class CliffWalkingEnv(Env):
         coord[1] = max(coord[1], 0)
         return coord
 
-    def _calculate_transition_prob(self, current: Union[List[int], np.ndarray], move: int) -> List[Tuple[float, Any, int, bool]]:
+    def _calculate_transition_prob(
+        self, current: Union[List[int], np.ndarray], move: int
+    ) -> List[Tuple[float, Any, int, bool]]:
         """Determine the outcome for an action. Transition Prob is always 1.0.
 
         Args:
@@ -178,7 +175,9 @@ class CliffWalkingEnv(Env):
         if not self.is_slippery:
             deltas = [POSITION_MAPPING[move]]
         else:
-            deltas = [POSITION_MAPPING[act] for act in [(move - 1) % 4, move, (move + 1) % 4]]
+            deltas = [
+                POSITION_MAPPING[act] for act in [(move - 1) % 4, move, (move + 1) % 4]
+            ]
         outcomes = []
         for delta in deltas:
             new_position = np.array(current) + np.array(delta)
@@ -191,7 +190,6 @@ class CliffWalkingEnv(Env):
                 is_terminated = tuple(new_position) == terminal_state
                 outcomes.append((1 / len(deltas), new_state, -1, is_terminated))
         return outcomes
-
 
     def step(self, a):
         transitions = self.P[self.s][a]
