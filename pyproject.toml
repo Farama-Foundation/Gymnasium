@@ -25,7 +25,7 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Artificial Intelligence',
 ]
 dependencies = [
-    "numpy >=1.21.0",
+    "numpy>=1.21.0,<2.0.0",
     "cloudpickle >=1.2.0",
     "importlib-metadata >=4.8.0; python_version < '3.10'",
     "typing-extensions >=4.3.0",
