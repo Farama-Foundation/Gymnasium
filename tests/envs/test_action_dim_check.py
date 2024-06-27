@@ -127,7 +127,8 @@ def test_box_actions_out_of_bound(env: gym.Env):
         if is_upper_bound:
             obs, _, _, _, _ = env.step(upper_bounds)
             oob_action = upper_bounds.copy()
-            oob_action[i] += np.cast[dtype](OOB_VALUE)
+            oob_action[i] += np.asarray(OOB_VALUE, dtype=dtype)
+
 
             assert oob_action[i] > upper_bounds[i]
             oob_obs, _, _, _, _ = oob_env.step(oob_action)
@@ -139,7 +140,7 @@ def test_box_actions_out_of_bound(env: gym.Env):
                 lower_bounds
             )  # `env` is unwrapped, and in new step API
             oob_action = lower_bounds.copy()
-            oob_action[i] -= np.cast[dtype](OOB_VALUE)
+            oob_action[i] -= np.asarray(OOB_VALUE, dtype=dtype)
 
             assert oob_action[i] < lower_bounds[i]
             oob_obs, _, _, _, _ = oob_env.step(oob_action)
