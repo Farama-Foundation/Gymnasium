@@ -20,6 +20,7 @@ from gymnasium.envs.registration import (
     VectorizeMode,
     register_envs,
 )
+from gymnasium import spaces, utils, vector, wrappers, error, logger, functional
 
 # Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
 # SDL connecting to alsa frequently create these giant lists of warnings every time you import an environment using
@@ -35,8 +36,7 @@ if sys.platform.startswith("linux"):
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
 # necessary for `envs.__init__` which registers all gymnasium environments and loads plugins
-from gymnasium import envs
-from gymnasium import spaces, utils, vector, wrappers, error, logger, functional
+from gymnasium import envs  # noqa: E402
 
 
 __all__ = [
