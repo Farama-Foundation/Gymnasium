@@ -718,8 +718,14 @@ No vector version of the wrapper exists</p>
 </ul>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;ALE/Adventure-v5&quot;</span><span class="p">)</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">AtariPreprocessing</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">noop_max</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">frame_skip</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">screen_size</span><span class="o">=</span><span class="mi">84</span><span class="p">,</span> <span class="n">terminal_on_life_loss</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">grayscale_obs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">grayscale_newaxis</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">ale_py</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gym</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">ale_py</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;ALE/Pong-v5&quot;</span><span class="p">,</span> <span class="n">frameskip</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">AtariPreprocessing</span><span class="p">(</span> 
+<span class="gp">... </span>   <span class="n">env</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">noop_max</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">frame_skip</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">terminal_on_life_loss</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">screen_size</span><span class="o">=</span><span class="mi">84</span><span class="p">,</span> <span class="n">grayscale_obs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">grayscale_newaxis</span><span class="o">=</span><span class="kc">False</span>
+<span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="simple">

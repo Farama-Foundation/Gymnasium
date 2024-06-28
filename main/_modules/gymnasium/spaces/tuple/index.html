@@ -493,7 +493,7 @@
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Tuple, Box, Discrete</span>
 <span class="sd">        &gt;&gt;&gt; observation_space = Tuple((Discrete(2), Box(-1, 1, shape=(2,))), seed=42)</span>
 <span class="sd">        &gt;&gt;&gt; observation_space.sample()</span>
-<span class="sd">        (0, array([-0.3991573 ,  0.21649833], dtype=float32))</span>
+<span class="sd">        (np.int64(0), array([-0.3991573 ,  0.21649833], dtype=float32))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

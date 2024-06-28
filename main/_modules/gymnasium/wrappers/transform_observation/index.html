@@ -1130,11 +1130,11 @@
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; image = env.render()</span>
 <span class="sd">        &gt;&gt;&gt; np.all(obs == image)</span>
-<span class="sd">        True</span>
+<span class="sd">        np.True_</span>
 <span class="sd">        &gt;&gt;&gt; obs, *_ = env.step(env.action_space.sample())</span>
 <span class="sd">        &gt;&gt;&gt; image = env.render()</span>
 <span class="sd">        &gt;&gt;&gt; np.all(obs == image)</span>
-<span class="sd">        True</span>
+<span class="sd">        np.True_</span>
 
 <span class="sd">    Example - Add the rendered image to the original observation as a dictionary item:</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;, render_mode=&quot;rgb_array&quot;)</span>
@@ -1147,11 +1147,11 @@
 <span class="sd">        &gt;&gt;&gt; obs[&quot;state&quot;]</span>
 <span class="sd">        array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)</span>
 <span class="sd">        &gt;&gt;&gt; np.all(obs[&quot;pixels&quot;] == env.render())</span>
-<span class="sd">        True</span>
+<span class="sd">        np.True_</span>
 <span class="sd">        &gt;&gt;&gt; obs, reward, terminates, truncates, info = env.step(env.action_space.sample())</span>
 <span class="sd">        &gt;&gt;&gt; image = env.render()</span>
 <span class="sd">        &gt;&gt;&gt; np.all(obs[&quot;pixels&quot;] == image)</span>
-<span class="sd">        True</span>
+<span class="sd">        np.True_</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.15.0 - Initially added as ``PixelObservationWrapper``</span>
