@@ -321,15 +321,15 @@ class RescaleObservation(VectorizeTransformObservation):
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.min()
-        -0.0446179
+        np.float32(-0.0446179)
         >>> obs.max()
-        0.0469136
+        np.float32(0.0469136)
         >>> envs = RescaleObservation(envs, min_obs=-5.0, max_obs=5.0)
         >>> obs, info = envs.reset(seed=123)
         >>> obs.min()
-        -0.33379582
+        np.float32(-0.33379582)
         >>> obs.max()
-        0.55998987
+        np.float32(0.55998987)
         >>> envs.close()
     """
 

@@ -447,9 +447,9 @@ def rk4(derivs, y0, t):
     try:
         Ny = len(y0)
     except TypeError:
-        yout = np.zeros((len(t),), np.float_)
+        yout = np.zeros((len(t),), np.float64)
     else:
-        yout = np.zeros((len(t), Ny), np.float_)
+        yout = np.zeros((len(t), Ny), np.float64)
 
     yout[0] = y0
 

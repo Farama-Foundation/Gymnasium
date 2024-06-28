@@ -241,7 +241,10 @@ class PendulumEnv(gym.Env):
         if self.last_u is not None:
             scale_img = pygame.transform.smoothscale(
                 img,
-                (scale * np.abs(self.last_u) / 2, scale * np.abs(self.last_u) / 2),
+                (
+                    float(scale * np.abs(self.last_u) / 2),
+                    float(scale * np.abs(self.last_u) / 2),
+                ),
             )
             is_flip = bool(self.last_u > 0)
             scale_img = pygame.transform.flip(scale_img, is_flip, True)
