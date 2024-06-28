@@ -50,18 +50,18 @@ class DictInfoToList(VectorWrapper):
     Another example for vector environments:
         >>> import numpy as np
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("HalfCheetah-v4", num_envs=3)
+        >>> envs = gym.make_vec("HalfCheetah-v4", num_envs=2)
         >>> _ = envs.reset(seed=123)
         >>> _ = envs.action_space.seed(123)
         >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
         >>> infos
-        {'x_position': array([0.03332211, 0.10172355, 0.08920531]), '_x_position': array([ True,  True,  True]), 'x_velocity': array([-0.06296527,  0.89345848,  0.37710836]), '_x_velocity': array([ True,  True,  True]), 'reward_run': array([-0.06296527,  0.89345848,  0.37710836]), '_reward_run': array([ True,  True,  True]), 'reward_ctrl': array([-0.24503504, -0.21944423, -0.2067221 ], dtype=float32), '_reward_ctrl': array([ True,  True,  True])}
+        {'x_position': array([0.03332211, 0.10172355]), '_x_position': array([ True,  True]), 'x_velocity': array([-0.06296527,  0.89345848]), '_x_velocity': array([ True,  True]), 'reward_run': array([-0.06296527,  0.89345848]), '_reward_run': array([ True,  True]), 'reward_ctrl': array([-0.24503504, -0.21944423], dtype=float32), '_reward_ctrl': array([ True,  True])}
         >>> envs = DictInfoToList(envs)
         >>> _ = envs.reset(seed=123)
         >>> _ = envs.action_space.seed(123)
         >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
         >>> infos
-        [{'x_position': np.float64(0.03332210900362942), 'x_velocity': np.float64(-0.06296527291998533), 'reward_run': np.float64(-0.06296527291998533), 'reward_ctrl': np.float32(-0.24503504)}, {'x_position': np.float64(0.10172354684460168), 'x_velocity': np.float64(0.8934584807363618), 'reward_run': np.float64(0.8934584807363618), 'reward_ctrl': np.float32(-0.21944423)}, {'x_position': np.float64(0.08920531470057845), 'x_velocity': np.float64(0.3771083596080768), 'reward_run': np.float64(0.3771083596080768), 'reward_ctrl': np.float32(-0.2067221)}]
+        [{'x_position': np.float64(0.03332210900362942), 'x_velocity': np.float64(-0.06296527291998533), 'reward_run': np.float64(-0.06296527291998533), 'reward_ctrl': np.float32(-0.24503504)}, {'x_position': np.float64(0.10172354684460168), 'x_velocity': np.float64(0.8934584807363618), 'reward_run': np.float64(0.8934584807363618), 'reward_ctrl': np.float32(-0.21944423)}]
 
     Change logs:
      * v0.24.0 - Initially added as ``VectorListInfo``
