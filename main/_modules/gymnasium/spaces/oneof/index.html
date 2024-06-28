@@ -493,9 +493,9 @@
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import OneOf, Box, Discrete</span>
 <span class="sd">        &gt;&gt;&gt; observation_space = OneOf((Discrete(2), Box(-1, 1, shape=(2,))), seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; observation_space.sample()  # the first element is the space index (Box in this case) and the second element is the sample from Box</span>
-<span class="sd">        (0, 0)</span>
+<span class="sd">        (np.int64(0), np.int64(0))</span>
 <span class="sd">        &gt;&gt;&gt; observation_space.sample()  # this time the Discrete space was sampled as index=0</span>
-<span class="sd">        (1, array([-0.00711833, -0.7257502 ], dtype=float32))</span>
+<span class="sd">        (np.int64(1), array([-0.00711833, -0.7257502 ], dtype=float32))</span>
 <span class="sd">        &gt;&gt;&gt; observation_space[0]</span>
 <span class="sd">        Discrete(2)</span>
 <span class="sd">        &gt;&gt;&gt; observation_space[1]</span>

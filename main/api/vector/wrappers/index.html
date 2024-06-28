@@ -641,18 +641,18 @@ need to be the outermost wrapper.</p>
 </dd>
 <dt>Another example for vector environments:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;HalfCheetah-v4&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;HalfCheetah-v4&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span>
-<span class="go">{&#39;x_position&#39;: array([0.03332211, 0.10172355, 0.08920531]), &#39;_x_position&#39;: array([ True,  True,  True]), &#39;x_velocity&#39;: array([-0.06296527,  0.89345848,  0.37710836]), &#39;_x_velocity&#39;: array([ True,  True,  True]), &#39;reward_run&#39;: array([-0.06296527,  0.89345848,  0.37710836]), &#39;_reward_run&#39;: array([ True,  True,  True]), &#39;reward_ctrl&#39;: array([-0.24503503, -0.21944423, -0.20672209]), &#39;_reward_ctrl&#39;: array([ True,  True,  True])}</span>
+<span class="go">{&#39;x_position&#39;: array([0.03332211, 0.10172355]), &#39;_x_position&#39;: array([ True,  True]), &#39;x_velocity&#39;: array([-0.06296527,  0.89345848]), &#39;_x_velocity&#39;: array([ True,  True]), &#39;reward_run&#39;: array([-0.06296527,  0.89345848]), &#39;_reward_run&#39;: array([ True,  True]), &#39;reward_ctrl&#39;: array([-0.24503504, -0.21944423], dtype=float32), &#39;_reward_ctrl&#39;: array([ True,  True])}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">DictInfoToList</span><span class="p">(</span><span class="n">envs</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span>
-<span class="go">[{&#39;x_position&#39;: 0.03332210900362942, &#39;x_velocity&#39;: -0.06296527291998533, &#39;reward_run&#39;: -0.06296527291998533, &#39;reward_ctrl&#39;: -0.2450350284576416}, {&#39;x_position&#39;: 0.10172354684460168, &#39;x_velocity&#39;: 0.8934584807363618, &#39;reward_run&#39;: 0.8934584807363618, &#39;reward_ctrl&#39;: -0.21944422721862794}, {&#39;x_position&#39;: 0.08920531470057845, &#39;x_velocity&#39;: 0.3771083596080768, &#39;reward_run&#39;: 0.3771083596080768, &#39;reward_ctrl&#39;: -0.20672209262847902}]</span>
+<span class="go">[{&#39;x_position&#39;: np.float64(0.03332210900362942), &#39;x_velocity&#39;: np.float64(-0.06296527291998533), &#39;reward_run&#39;: np.float64(-0.06296527291998533), &#39;reward_ctrl&#39;: np.float32(-0.24503504)}, {&#39;x_position&#39;: np.float64(0.10172354684460168), &#39;x_velocity&#39;: np.float64(0.8934584807363618), &#39;reward_run&#39;: np.float64(0.8934584807363618), &#39;reward_ctrl&#39;: np.float32(-0.21944423)}]</span>
 </pre></div>
 </div>
 </dd>
@@ -1069,15 +1069,15 @@ Otherwise, the <code class="docutils literal notranslate"><span class="pre">Vect
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">&quot;sync&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-<span class="go">-0.0446179</span>
+<span class="go">np.float32(-0.0446179)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-<span class="go">0.0469136</span>
+<span class="go">np.float32(0.0469136)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">RescaleObservation</span><span class="p">(</span><span class="n">envs</span><span class="p">,</span> <span class="n">min_obs</span><span class="o">=-</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">max_obs</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-<span class="go">-0.33379582</span>
+<span class="go">np.float32(-0.33379582)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-<span class="go">0.55998987</span>
+<span class="go">np.float32(0.55998987)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1140,9 +1140,9 @@ newly instantiated or the policy was changed recently.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-<span class="go">0.024251968</span>
+<span class="go">np.float32(0.024251968)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-<span class="go">0.62259156</span>
+<span class="go">np.float32(0.62259156)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1155,9 +1155,9 @@ newly instantiated or the policy was changed recently.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-<span class="go">-0.2359734</span>
+<span class="go">np.float32(-0.2359734)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-<span class="go">1.1938739</span>
+<span class="go">np.float32(1.1938739)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1195,7 +1195,7 @@ provide an <code class="xref py py-attr docutils literal notranslate"><span clas
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
 <span class="go">array([[-0.46553135, -0.00142543],</span>
 <span class="go">       [-0.498371  , -0.00715587],</span>
-<span class="go">       [-0.4651575 , -0.00624371]], dtype=float32)</span>
+<span class="go">       [-0.46515748, -0.00624371]], dtype=float32)</span>
 </pre></div>
 </div>
 </dd>
@@ -1405,9 +1405,9 @@ instantiated or the policy was changed recently.</p>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span>
-<span class="go">-0.03359492141887935</span>
+<span class="go">np.float64(-0.03359492141887935)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span>
-<span class="go">0.029028230434438706</span>
+<span class="go">np.float64(0.029028230434438706)</span>
 </pre></div>
 </div>
 </dd>
@@ -1424,9 +1424,9 @@ instantiated or the policy was changed recently.</p>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span>
-<span class="go">-0.1598639586606745</span>
+<span class="go">np.float64(-0.1598639586606745)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span>
-<span class="go">0.27800309628058434</span>
+<span class="go">np.float64(0.27800309628058434)</span>
 </pre></div>
 </div>
 </dd>

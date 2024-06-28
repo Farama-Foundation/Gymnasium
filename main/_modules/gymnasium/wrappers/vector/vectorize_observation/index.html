@@ -816,15 +816,15 @@
 <span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs.min()</span>
-<span class="sd">        -0.0446179</span>
+<span class="sd">        np.float32(-0.0446179)</span>
 <span class="sd">        &gt;&gt;&gt; obs.max()</span>
-<span class="sd">        0.0469136</span>
+<span class="sd">        np.float32(0.0469136)</span>
 <span class="sd">        &gt;&gt;&gt; envs = RescaleObservation(envs, min_obs=-5.0, max_obs=5.0)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs.min()</span>
-<span class="sd">        -0.33379582</span>
+<span class="sd">        np.float32(-0.33379582)</span>
 <span class="sd">        &gt;&gt;&gt; obs.max()</span>
-<span class="sd">        0.55998987</span>
+<span class="sd">        np.float32(0.55998987)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

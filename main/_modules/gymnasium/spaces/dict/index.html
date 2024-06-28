@@ -494,7 +494,7 @@
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Dict, Box, Discrete</span>
 <span class="sd">        &gt;&gt;&gt; observation_space = Dict({&quot;position&quot;: Box(-1, 1, shape=(2,)), &quot;color&quot;: Discrete(3)}, seed=42)</span>
 <span class="sd">        &gt;&gt;&gt; observation_space.sample()</span>
-<span class="sd">        {&#39;color&#39;: 0, &#39;position&#39;: array([-0.3991573 ,  0.21649833], dtype=float32)}</span>
+<span class="sd">        {&#39;color&#39;: np.int64(0), &#39;position&#39;: array([-0.3991573 ,  0.21649833], dtype=float32)}</span>
 
 <span class="sd">        With a nested dict:</span>
 

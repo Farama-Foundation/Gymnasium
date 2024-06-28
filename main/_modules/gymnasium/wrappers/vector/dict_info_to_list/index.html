@@ -524,18 +524,18 @@
 <span class="sd">    Another example for vector environments:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;HalfCheetah-v4&quot;, num_envs=3)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;HalfCheetah-v4&quot;, num_envs=2)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; _, _, _, _, infos = envs.step(envs.action_space.sample())</span>
 <span class="sd">        &gt;&gt;&gt; infos</span>
-<span class="sd">        {&#39;x_position&#39;: array([0.03332211, 0.10172355, 0.08920531]), &#39;_x_position&#39;: array([ True,  True,  True]), &#39;x_velocity&#39;: array([-0.06296527,  0.89345848,  0.37710836]), &#39;_x_velocity&#39;: array([ True,  True,  True]), &#39;reward_run&#39;: array([-0.06296527,  0.89345848,  0.37710836]), &#39;_reward_run&#39;: array([ True,  True,  True]), &#39;reward_ctrl&#39;: array([-0.24503503, -0.21944423, -0.20672209]), &#39;_reward_ctrl&#39;: array([ True,  True,  True])}</span>
+<span class="sd">        {&#39;x_position&#39;: array([0.03332211, 0.10172355]), &#39;_x_position&#39;: array([ True,  True]), &#39;x_velocity&#39;: array([-0.06296527,  0.89345848]), &#39;_x_velocity&#39;: array([ True,  True]), &#39;reward_run&#39;: array([-0.06296527,  0.89345848]), &#39;_reward_run&#39;: array([ True,  True]), &#39;reward_ctrl&#39;: array([-0.24503504, -0.21944423], dtype=float32), &#39;_reward_ctrl&#39;: array([ True,  True])}</span>
 <span class="sd">        &gt;&gt;&gt; envs = DictInfoToList(envs)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; _, _, _, _, infos = envs.step(envs.action_space.sample())</span>
 <span class="sd">        &gt;&gt;&gt; infos</span>
-<span class="sd">        [{&#39;x_position&#39;: 0.03332210900362942, &#39;x_velocity&#39;: -0.06296527291998533, &#39;reward_run&#39;: -0.06296527291998533, &#39;reward_ctrl&#39;: -0.2450350284576416}, {&#39;x_position&#39;: 0.10172354684460168, &#39;x_velocity&#39;: 0.8934584807363618, &#39;reward_run&#39;: 0.8934584807363618, &#39;reward_ctrl&#39;: -0.21944422721862794}, {&#39;x_position&#39;: 0.08920531470057845, &#39;x_velocity&#39;: 0.3771083596080768, &#39;reward_run&#39;: 0.3771083596080768, &#39;reward_ctrl&#39;: -0.20672209262847902}]</span>
+<span class="sd">        [{&#39;x_position&#39;: np.float64(0.03332210900362942), &#39;x_velocity&#39;: np.float64(-0.06296527291998533), &#39;reward_run&#39;: np.float64(-0.06296527291998533), &#39;reward_ctrl&#39;: np.float32(-0.24503504)}, {&#39;x_position&#39;: np.float64(0.10172354684460168), &#39;x_velocity&#39;: np.float64(0.8934584807363618), &#39;reward_run&#39;: np.float64(0.8934584807363618), &#39;reward_ctrl&#39;: np.float32(-0.21944423)}]</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.24.0 - Initially added as ``VectorListInfo``</span>
