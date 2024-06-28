@@ -18,8 +18,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           docker build -f bin/all-py.Dockerfile \
-            --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
-            --build-arg NUMPY_VERSION=${{ matrix.numpy-version }} \
+            --build-arg PYTHON_VERSION="${{ matrix.python-version }}" \
+            --build-arg NUMPY_VERSION="${{ matrix.numpy-version }}" \
             --tag gymnasium-all-docker .
       - name: Run tests
         run: docker run gymnasium-all-docker pytest tests/*
