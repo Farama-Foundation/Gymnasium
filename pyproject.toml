@@ -108,7 +108,6 @@ gymnasium = [
 # Linters and Test tools #######################################################
 
 [tool.black]
-safe = true
 
 [tool.isort]
 atomic = true
