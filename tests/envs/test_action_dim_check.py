@@ -129,7 +129,6 @@ def test_box_actions_out_of_bound(env: gym.Env):
             oob_action = upper_bounds.copy()
             oob_action[i] += np.asarray(OOB_VALUE, dtype=dtype)
 
-
             assert oob_action[i] > upper_bounds[i]
             oob_obs, _, _, _, _ = oob_env.step(oob_action)
 
