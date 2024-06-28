@@ -1,5 +1,6 @@
 # A Dockerfile that sets up a full Gymnasium install with test dependencies
 ARG PYTHON_VERSION
+ARG NUMPY_VERSION=">=1.21,<2.0"
 FROM python:$PYTHON_VERSION
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -26,6 +27,9 @@ RUN git clone https://github.com/openai/mujoco-py.git\
 
 COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
+
+# Specify the numpy version to cover both 1.x and 2.x
+RUN pip install --upgrade "numpy$NUMPY_VERSION"
 
 # Test with PyTorch CPU build, since CUDA is not available in CI anyway
 RUN pip install .[all,testing] --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu

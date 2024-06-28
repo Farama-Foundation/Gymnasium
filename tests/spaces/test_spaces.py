@@ -239,7 +239,7 @@ def chi2_test(sample, low, high, bounded_below, bounded_above):
 
     if bounded_below and bounded_above:
         # X ~ U(low, high)
-        degrees_of_freedom = high - low + 1
+        degrees_of_freedom = int(high) - int(low) + 1
         observed_frequency = np.bincount(sample - low, minlength=degrees_of_freedom)
         assert observed_frequency.shape == (degrees_of_freedom,)
         expected_frequency = np.ones(degrees_of_freedom) * n_trials / degrees_of_freedom

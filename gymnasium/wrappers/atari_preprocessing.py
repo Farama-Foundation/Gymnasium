@@ -37,8 +37,14 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
     Example:
         >>> import gymnasium as gym # doctest: +SKIP
-        >>> env = gym.make("ALE/Adventure-v5") # doctest: +SKIP
-        >>> env = AtariPreprocessing(env, noop_max=10, frame_skip=0, screen_size=84, terminal_on_life_loss=True, grayscale_obs=False, grayscale_newaxis=False) # doctest: +SKIP
+        >>> import ale_py # doctest: +SKIP
+        >>> gym.register_envs(ale_py) # doctest: +SKIP
+        >>> env = gym.make("ALE/Pong-v5", frameskip=1) # doctest: +SKIP
+        >>> env = AtariPreprocessing( # doctest: +SKIP
+        ...    env,
+        ...    noop_max=10, frame_skip=4, terminal_on_life_loss=True,
+        ...    screen_size=84, grayscale_obs=False, grayscale_newaxis=False
+        ... )
 
     Change logs:
      * Added in gym v0.12.2 (gym #1455)

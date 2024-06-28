@@ -540,6 +540,7 @@ class CarRacing(gym.Env, EzPickle):
     def step(self, action: Union[np.ndarray, int]):
         assert self.car is not None
         if action is not None:
+            action = action.astype(np.float64)
             if self.continuous:
                 self.car.steer(-action[0])
                 self.car.gas(action[1])
