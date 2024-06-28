@@ -19,6 +19,7 @@ jobs:
       - name: Run tests
         run: docker run gymnasium-all-docker pytest tests/*
       - name: Run doctests
+        if: ${{ matrix.python-version != '3.8' }}
         run: docker run gymnasium-all-docker pytest --doctest-modules gymnasium/
 
   build-necessary:
