@@ -40,7 +40,8 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         >>> import ale_py
         >>> gym.register_envs(ale_py)
         >>> env = gym.make("ALE/Pong-v5", frameskip=1)
-        >>> env = AtariPreprocessing(env,
+        >>> env = AtariPreprocessing(
+        ...     env,
         ...     noop_max=10, frame_skip=4, terminal_on_life_loss=True,
         ...     screen_size=84, grayscale_obs=False, grayscale_newaxis=False
         ... )
