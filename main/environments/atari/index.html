@@ -591,13 +591,24 @@
 </a>
 
     <p>Atari environments are simulated via the Arcade Learning Environment (ALE) <a class="reference internal" href="#1"><span class="xref myst">[1]</span></a> through the Stella emulator.</p>
-<section id="autorom-installing-the-roms">
-<h2>AutoROM (installing the ROMs)<a class="headerlink" href="#autorom-installing-the-roms" title="Link to this heading">¶</a></h2>
-<p>ALE-py doesn’t include the atari ROMs (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[atari]</span></code>) which are necessary to make any of the atari environments.
-To install the atari ROM, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[accept-rom-license]</span></code> which will install AutoROM and download the ROMs, install them in the default location.
-In doing so, you agree to own a license to these Atari 2600 ROMs and agree to not distribution these ROMS.</p>
-<p>It is possible to install the ROMs in an alternative location, <a class="reference external" href="https://github.com/Farama-Foundation/AutoROM">AutoROM</a> has more information.</p>
-</section>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">ale_py</span>
+
+<span class="n">gym</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">ale_py</span><span class="p">)</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;ALE/Pong-v5&quot;</span><span class="p">)</span>
+<span class="c1"># Optionally include the `gym.wrappers.AtariPreprocessing`</span>
+
+<span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">episode_over</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="k">while</span> <span class="ow">not</span> <span class="n">episode_over</span><span class="p">:</span>
+	<span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># replace with your policy</span>
+	<span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+	<span class="n">episode_over</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
 <p>Each environment will use a sub-set of the full action space listed below:</p>
@@ -1535,7 +1546,6 @@ URL: https://jair.org/index.php/jair/article/view/11182</p>
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Atari</a><ul>
-<li><a class="reference internal" href="#autorom-installing-the-roms">AutoROM (installing the ROMs)</a></li>
 <li><a class="reference internal" href="#action-space">Action Space</a></li>
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>

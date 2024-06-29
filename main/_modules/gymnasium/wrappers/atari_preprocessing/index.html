@@ -510,14 +510,14 @@
 <span class="sd">    - Scale observation: Whether to scale the observation between [0, 1) or [0, 255), not scaled by default.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; import gymnasium as gym # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; import ale_py # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; gym.register_envs(ale_py) # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;ALE/Pong-v5&quot;, frameskip=1) # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; env = AtariPreprocessing( # doctest: +SKIP</span>
-<span class="sd">        ...    env,</span>
-<span class="sd">        ...    noop_max=10, frame_skip=4, terminal_on_life_loss=True,</span>
-<span class="sd">        ...    screen_size=84, grayscale_obs=False, grayscale_newaxis=False</span>
+<span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
+<span class="sd">        &gt;&gt;&gt; import ale_py</span>
+<span class="sd">        &gt;&gt;&gt; gym.register_envs(ale_py)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;ALE/Pong-v5&quot;, frameskip=1)</span>
+<span class="sd">        &gt;&gt;&gt; env = AtariPreprocessing(</span>
+<span class="sd">        ...     env,</span>
+<span class="sd">        ...     noop_max=10, frame_skip=4, terminal_on_life_loss=True,</span>
+<span class="sd">        ...     screen_size=84, grayscale_obs=False, grayscale_newaxis=False</span>
 <span class="sd">        ... )</span>
 
 <span class="sd">    Change logs:</span>
