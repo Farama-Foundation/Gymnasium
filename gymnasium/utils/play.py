@@ -208,7 +208,7 @@ def play(
         noop: The action used when no key input has been entered, or the entered key combination is unknown.
         wait_on_player: Play should wait for a user action
 
-    Example:    
+    Example:
         >>> import gymnasium as gym
         >>> import numpy as np
         >>> from gymnasium.utils.play import play
