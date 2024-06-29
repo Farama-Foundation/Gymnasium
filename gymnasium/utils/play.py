@@ -208,20 +208,20 @@ def play(
         noop: The action used when no key input has been entered, or the entered key combination is unknown.
         wait_on_player: Play should wait for a user action
 
-    Example:
+    Example:    
         >>> import gymnasium as gym
         >>> import numpy as np
         >>> from gymnasium.utils.play import play
-        >>> play(gym.make("CarRacing-v2", render_mode="rgb_array"),  # doctest: +SKIP
+        >>> play(gym.make("CarRacing-v2", render_mode="rgb_array"), # doctest: +SKIP
         ...     keys_to_action={
-        ...         "w": np.array([0, 0.7, 0]),
-        ...         "a": np.array([-1, 0, 0]),
-        ...         "s": np.array([0, 0, 1]),
-        ...         "d": np.array([1, 0, 0]),
-        ...         "wa": np.array([-1, 0.7, 0]),
-        ...         "dw": np.array([1, 0.7, 0]),
-        ...         "ds": np.array([1, 0, 1]),
-        ...         "as": np.array([-1, 0, 1]),
+        ...         "w": np.array([0, 0.7, 0], dtype=np.float32),
+        ...         "a": np.array([-1, 0, 0], dtype=np.float32),
+        ...         "s": np.array([0, 0, 1], dtype=np.float32),
+        ...         "d": np.array([1, 0, 0], dtype=np.float32),
+        ...         "wa": np.array([-1, 0.7, 0], dtype=np.float32),
+        ...         "dw": np.array([1, 0.7, 0], dtype=np.float32),
+        ...         "ds": np.array([1, 0, 1], dtype=np.float32),
+        ...         "as": np.array([-1, 0, 1], dtype=np.float32),
         ...     },
         ...     noop=np.array([0, 0, 0])
         ... )
