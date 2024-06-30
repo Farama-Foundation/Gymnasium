@@ -11,13 +11,12 @@ Let's start by importing necessary libraries:
 """
 
 # Global TODOs:
-# TODO: train agent on atari games.
 # TODO: Final check on documentation and typing.
 
 
 # %%
 __author__ = "Hardy Hasan"
-__date__ = "2023-05-24"
+__date__ = "2023-06-30"
 __license__ = "MIT License"
 
 import collections
@@ -189,7 +188,7 @@ ActionInfo = namedtuple("ActionInfo", field_names=["action", "action_value", "en
 
 def to_tensor(array: Union[np.ndarray, gymnasium.wrappers.LazyFrames],
               normalize: bool = False,
-              nex_axis: bool = False) -> torch.Tensor:
+              new_axis: bool = False) -> torch.Tensor:
     """
     Takes any array-like object and turns it into a torch.Tensor on `device`.
     For atari image observations, the normalize parameter can be used to change
@@ -198,17 +197,20 @@ def to_tensor(array: Union[np.ndarray, gymnasium.wrappers.LazyFrames],
     Args:
         array: An array, which can be states, actions, rewards, etc.
         normalize: Whether to normalize image observations
-        nex_axis: Whether to add a new axis at the first dimension.
+        new_axis: Whether to add a new axis at the first dimension.
 
     Returns:
         tensor
     """
     tensor = torch.tensor(np.array(array), device=device)
 
-    if nex_axis:
+    if new_axis:
         tensor = tensor.unsqueeze(0)
 
-    return tensor / 255.0 if normalize else tensor
+    if normalize:
+        tensor = tensor / 255.0
+
+    return tensor
 
 
 def set_seed(seed: int):
