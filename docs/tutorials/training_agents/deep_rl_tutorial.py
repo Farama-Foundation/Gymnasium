@@ -258,6 +258,7 @@ def parallel_training(
     """
     Train multiple agents in parallel using different seeds for each,
     and return their respective collected results.
+    ** Note: this way of parallel training does not work on GPUs.
 
     Args:
         seeds: A list of seeds for each agent.
@@ -302,7 +303,7 @@ def preprocess_results(results: List[ResultsBuffer]) -> List[Tuple[np.ndarray, n
 
 def visualize_performance(
     processed_data: List[Tuple[np.ndarray, np.ndarray]],
-    baseline_return: np.ndarray,
+    baseline_returns: np.ndarray,
     params: Hyperparameters,
 ):
     """
@@ -310,7 +311,7 @@ def visualize_performance(
 
     Args:
         processed_data: A list containing tuples of (mean, stddev) for each metric.
-        baseline_return: Array of the baseline return.
+        baseline_returns: Array of the random baseline episodic returns.
         params: Hyperparameters namedtuple.
 
     Returns:
@@ -350,7 +351,7 @@ def visualize_performance(
         ax.set(xlabel="Steps", ylabel=y_labels[i], title=titles[i])
         ax.legend()
 
-    axes[0].plot(x, baseline_return, color="black", label="baseline",)
+    axes[0].plot(x, baseline_returns, color="black", label="baseline",)
     axes[0].legend()
 
     eval_mean, eval_std = processed_data[-1]
