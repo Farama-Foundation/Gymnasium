@@ -599,24 +599,21 @@ class Agent:
         return round(loss.item(), 2)
 
 
-
 # %%
 # Training
 # --------
 # Describe how training is performed, what is needed, mention that hyperparameters will be explained later.
 # Describe useful statistics to plot during training to track agent progress.
-
-
 def train(seed: int, params: Hyperparameters, verbose: bool, record_video: bool = False) -> ResultsBuffer:
     """
-    Create agent and environment, and let the agent interact
-    with the environment during a number of steps.
+    Create agent and environment, and let the agent interact with the environment
+    during a number of steps. Collect and return training metrics.
 
     Args:
         seed: For reproducibility.
-        params: A namedtuple containing all necessary hyperparameters.
+        params: Hyperparameters instance.
         verbose: Whether to print training progress periodically.
-        record_video: Whether to make an evaluation video.
+        record_video: Whether to make a video at each evaluation point.
 
     Returns:
         results_buffer: Collected statistics of the agent training.
@@ -639,15 +636,15 @@ def train(seed: int, params: Hyperparameters, verbose: bool, record_video: bool 
     frames_list = []  # list that may contain a list of frames to be used for video creation
 
     env = create_env(params)
+    params.n_actions = env.action_space.n
+    params.obs_shape = env.observation_space.shape
 
-    agent = Agent(params=params).to(device)
-    target_agent = Agent(params=params).to(device)
-    target_agent.load_state_dict(agent.state_dict())
+    agent = Agent(params=params)
 
     while steps < params.training_steps:
         # --- Start en episode ---
         done = False
-        obs, info = env.reset(seed=seed)
+        obs, info = env.reset(seed=seed+steps)
 
         action_value_sum = 0
         policy_entropy_sum = 0
@@ -659,7 +656,6 @@ def train(seed: int, params: Hyperparameters, verbose: bool, record_video: bool 
             action = action_info.action
             next_obs, reward, terminated, truncated, info = env.step(action)
 
-            # step_experience = Experience(obs, action, next_obs, reward, terminated)
             agent.replay_memory.push(obs, action, reward, next_obs, terminated)
             agent.decrease_epsilon()
 
@@ -677,35 +673,30 @@ def train(seed: int, params: Hyperparameters, verbose: bool, record_video: bool 
                 if loss_sum > 0:
                     episodes_losses_deque.append(loss_sum / episode_length)
 
-            # Record statistics pf past episodes.
-            if steps % record_stats_frequency == 0 and steps <= params.training_steps:
-                mean_episode_return = np.mean(env.return_queue).round(2)
-                mean_episode_length = np.mean(env.length_queue).round()
-                mean_action_value = np.mean(episodes_action_values_deque).round(2)
-                mean_entropy = np.mean(episodes_policy_entropy_deque).round(2)
-                mean_loss = np.nan if len(episodes_losses_deque) == 0 else np.mean(episodes_losses_deque).round(2)
-
-                if verbose:
-                    print(f"step:{steps: <10} "
-                          f"mean_episode_return={mean_episode_return: <7.2f}  "
-                          f"mean_episode_length={mean_episode_length}")
-
-                results_buffer.add(
-                    mean_episode_return,
-                    mean_episode_length,
-                    mean_action_value,
-                    mean_entropy,
-                    mean_loss
-                )
-
-            # train agent periodically if enough experience exists
+            # train agent periodically
             if steps % params.update_frequency == 0 and steps >= params.learning_starts:
-                loss = agent.learn(target_agent)
+                loss = agent.learn()
                 loss_sum += loss
 
             # Update the target network periodically.
             if steps % params.target_update_frequency == 0 and steps >= params.learning_starts:
-                target_agent.load_state_dict(agent.state_dict())
+                agent.update_target_network()
+
+            # Record statistics pf past episodes.
+            if steps % record_stats_frequency == 0 and steps <= params.training_steps:
+                mean_return = np.mean(env.return_queue).round(2)
+                mean_length = np.mean(env.length_queue).round()
+                mean_action_value = np.mean(episodes_action_values_deque).round(2)
+                mean_entropy = np.mean(episodes_policy_entropy_deque).round(2)
+                mean_loss = np.nan if len(episodes_losses_deque) == 0 else np.mean(episodes_losses_deque).round(2)
+                results_buffer.add(mean_return, mean_length, mean_action_value, mean_entropy, mean_loss)
+
+                # print stats if verbose=True
+                if verbose:
+                    print(f"step:{steps: <10} "
+                          f"mean_episode_return={mean_return: <7.2f}  "
+                          f"mean_episode_length={mean_length}",
+                          flush=True)
 
             # evaluate agent
             if steps in evaluation_points:
@@ -716,16 +707,14 @@ def train(seed: int, params: Hyperparameters, verbose: bool, record_video: bool 
                     frames = collect_video_frames(agent, seed, params)
                     frames_list.append(frames)
 
-    # TODO: clean up, create results summary, return stuff
-
     if record_video:
-        # create evaluation video
-        video_name = f"drl_{params.env_name.split('-')[0]}"
-        video_path = f"../../_static/videos/tutorials/{video_name}"
+        # create evaluation gif
+        video_name = f"../../_static/videos/tutorials/drl_{params.env_name.split('-')[0]}"
+        video_path = f"{video_name}"
         create_gif(frames_list, video_path)
 
     env.close()
-    print(f"Time: {round(time.perf_counter() - start_time, 2)}s")
+    print(f"seed={seed}: runtime={round(time.perf_counter() - start_time, 2)}s")
 
     return results_buffer
 
