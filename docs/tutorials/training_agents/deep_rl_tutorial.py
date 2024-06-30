@@ -783,7 +783,7 @@ def collect_video_frames(agent: Agent, seed: int, params: Hyperparameters, n_epi
             obs = next_obs
             done = terminated or truncated
 
-    print(f"Evaluation return: {np.mean(env.return_queue):.2f}")
+    print(f"Evaluation return while recording: {np.mean(env.return_queue):.2f}")
     env.close()
 
     return frames
@@ -808,9 +808,9 @@ Easy_Envs_Params = Hyperparameters(
     training_steps=int(5e5),
     learning_starts=int(2e4),
     batch_size=64,
-    exploration_fraction=0.2,
+    exploration_fraction=0.3,
     learning_rate=1e-3,
-    capacity=int(2e5),
+    capacity=int(1e5),
     v_min=-100,
     v_max=100,
     n_atoms=101,
@@ -818,14 +818,14 @@ Easy_Envs_Params = Hyperparameters(
 
 
 Atari_Params = Hyperparameters(
-    training_steps=int(4e6),
-    learning_starts=int(4e4),
+    training_steps=int(6e6),
+    learning_starts=int(8e4),
     image_obs=True,
-    target_update_frequency=2000,
+    target_update_frequency=int(1e4),
     num_frame_stacking=4,
     exploration_fraction=0.25,
     learning_rate=2.5e-4,
-    capacity=int(5e5),
+    capacity=int(1e6)
 )
 # %%
 # Env2
