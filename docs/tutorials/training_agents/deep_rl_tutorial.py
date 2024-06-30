@@ -423,87 +423,86 @@ class ReplayMemory:
         return tuple(zip(*sample))
 
 
-class Agent(nn.Module):
+class Network(nn.Module):
     """
-    Class for agent running on Categorical-DQN (C51) algorithm.
-    In essence, for each action, a value distribution is returned,
-    from which a statistic such as the mean is computed to get the
-    action-value.
+    Class implementation of the Deep-Q-Network architecture, where
+    it outputs return distributions instead of action-values.
     """
+    def __init__(self, params):
+        """Initialize the network. Expects hyperparameters object."""
+        super(Network, self).__init__()
+        self._params = params
 
-    def __init__(self, params: Hyperparameters):
-        """
-        Initializing the agent class.
-
-        Args:
-            params: A namedtuple containing the hyperparameters.
-        """
-        super(Agent, self).__init__()
-        self.params = params
-        self.epsilon = self.params.epsilon_start
-        self.eps_reduction = (self.params.epsilon_start - self.params.epsilon_end) / (
-            self.params.exploration_fraction * self.params.training_steps
-        )
-
-        self.delta = (self.params.v_max - self.params.v_min) / (self.params.n_atoms - 1)
-        # The support is the set of values over which a probability
-        # distribution is defined and has non-zero probability there.
-        self.support = torch.linspace(self.params.v_min, self.params.v_max, self.params.n_atoms).to(device)
-
-        self.replay_memory = ReplayMemory(self.params)
-
-        # -- defining the neural network --
-        if self.params.image_obs:
-            self.convolutional = nn.Sequential(
+        if self._params.image_obs:
+            self._convolutional = nn.Sequential(
                 nn.Conv2d(4, 32, (8, 8), (4, 4), 0),
                 nn.ReLU(),
                 nn.Conv2d(32, 64, (4, 4), (2, 2), 0),
                 nn.ReLU(),
                 nn.Conv2d(64, 64, (3, 3), (1, 1), 0),
                 nn.ReLU(),
-                nn.Flatten(),
-            )
+                nn.Flatten())
         else:
-            self.convolutional = nn.Sequential()
+            self._convolutional = nn.Sequential()
 
         in_features = self._output_size()
+        out_features = self._params.n_actions * self._params.n_atoms
+        n_hidden_units = self._params.n_hidden_units
 
-        self.head = torch.nn.Sequential(
-            nn.Linear(in_features=in_features, out_features=self.params.n_hidden_units),
+        self._head = torch.nn.Sequential(
+            nn.Linear(in_features=in_features, out_features=n_hidden_units),
             nn.ReLU(),
-            nn.Linear(in_features=self.params.n_hidden_units, out_features=self.params.n_actions * self.params.n_atoms),
-        )
-
-        self.optimizer = torch.optim.Adam(
-            params=self.parameters(), lr=self.params.learning_rate
+            nn.Linear(in_features=n_hidden_units, out_features=out_features),
         )
 
     def _output_size(self):
         with torch.no_grad():
-            example_obs = torch.zeros(1, *self.params.obs_shape)
-            return int(np.prod(self.convolutional(example_obs).size()))
+            example_obs = torch.zeros(1, *self._params.obs_shape)
+            return int(np.prod(self._convolutional(example_obs).size()))
 
-    def forward(self, state: torch.Tensor) -> torch.Tensor:
+    def __call__(self, *args, **kwargs) -> torch.Tensor:
+        """Forward pass."""
+        value_dists = self._head(self._convolutional(*args, **kwargs))
+        return value_dists.view(-1, self._params.n_actions, self._params.n_atoms).softmax(2)
+
+
+class Agent:
+    """
+    Class for the Categorical-DQN (C51) agent.
+    In essence, for each action, a value distribution is returned by the network,
+    from which a statistic such as the mean is computed to get the action-value.
+    """
+
+    def __init__(self, params: Hyperparameters):
         """
-        Forward pass through the agent network.
+        Initialize the agent class.
+
         Args:
-            state: Current state of the environment. Single or multiple states stacked.
-
-        Returns:
-            value_dist: Tensor of action value-distribution for each action and state.
-                    Values are softmax probabilities for each action.
-                    shape=(n_states, n_actions, n_atoms)
-
+            params: A Hyperparameters instance containing the hyperparameters.
         """
-        value_dist = self.head(self.convolutional(state))
+        self._params = params
 
-        return value_dist.view(state.shape[0], self.params.n_actions, -1).softmax(2)
+        self._epsilon = params.epsilon_start
+        self._epsilon_decay = ((params.epsilon_start - params.epsilon_end) /
+                               (params.exploration_fraction * params.training_steps))
+
+        self._delta = (params.v_max - params.v_min) / (params.n_atoms - 1)
+        self._z = torch.linspace(params.v_min, params.v_max, params.n_atoms).to(device)
+
+        self.replay_memory = ReplayMemory(params)
+
+        self._main_network = Network(params).to(device)
+        self._target_network = Network(params).to(device)
+        self.update_target_network()
+
+        self._optimizer = torch.optim.Adam(params=self._main_network.parameters(),
+                                           lr=params.learning_rate,
+                                           eps=0.01/params.batch_size)
 
     def act(self, state: torch.Tensor) -> ActionInfo:
         """
         Sampling action for a given state. Actions are sampled randomly during exploration.
         The action-value is the max expected value of the action value-distribution.
-        During evaluation, actions are exploited with small chance for exploration.
 
         Args:
             state: Current state of agent.
@@ -511,18 +510,17 @@ class Agent(nn.Module):
         Returns:
             action_info: Information namedtuple about the sampled action.
         """
-        random_value = random.random()
 
         with torch.no_grad():
-            value_dist = self.forward(state)
-            expected_returns = torch.sum(self.support * value_dist, dim=2)
+            value_dists = self._main_network(state)
+            expected_returns = (self._z * value_dists).sum(2)
 
-        if random_value > self.epsilon:
-            action = torch.argmax(expected_returns, dim=1)
+        if random.random() > self._epsilon:
+            action = expected_returns.argmax(1)
             action_probs = expected_returns.softmax(0)
         else:
-            action = torch.randint(high=self.params.n_actions, size=(1,), device=device)
-            action_probs = torch.ones(self.params.n_actions) / self.params.n_actions
+            action = torch.randint(high=self._params.n_actions, size=(1,))
+            action_probs = torch.ones(self._params.n_actions) / self._params.n_actions
 
         action_value = expected_returns[0, action].item()
         policy_entropy = -(action_probs * torch.log(action_probs + 1e-8)).sum().item()
@@ -534,38 +532,27 @@ class Agent(nn.Module):
         return action_info
 
     def decrease_epsilon(self):
-        if self.epsilon > self.params.epsilon_end:
-            self.epsilon -= self.eps_reduction
+        if self._epsilon > self._params.epsilon_end:
+            self._epsilon -= self._epsilon_decay
 
-    def learn(self, target_agent: "Agent") -> float:
-        """
-        Learning steps, which includes updating the network parameters through backpropagation.
-        Args:
-            target_agent: The target agent that is used as an oracle.
+    def update_target_network(self):
+        """Updating the parameters of the target network to equal the main network's parameters."""
+        self._target_network.load_state_dict(self._main_network.state_dict())
 
-        Returns:
-            loss: The loss value.
-
-        """
+    def learn(self) -> float:
+        """Learning step, updates the main network through backpropagation. Returns loss."""
         obs, actions, rewards, next_obs, dones = self.replay_memory.sample()
 
-        states = to_tensor(array=obs, normalize=self.params.image_obs).float()
+        states = to_tensor(array=obs, normalize=self._params.image_obs)
         actions = to_tensor(array=actions).view(-1, 1).long()
-        next_states = to_tensor(array=next_obs, normalize=self.params.image_obs).float()
         rewards = to_tensor(array=rewards).view(-1, 1)
+        next_states = to_tensor(array=next_obs, normalize=self._params.image_obs)
         dones = to_tensor(array=dones).view(-1, 1)
 
         # agent predictions
-        value_dists = self.forward(states)
+        value_dists = self._main_network(states)
         # gather probs for selected actions
-        probs = value_dists[torch.arange(self.params.batch_size), actions.view(-1), :]
-
-        # target agent predictions
-        with torch.no_grad():
-            target_value_dist = target_agent.forward(next_states)
-            target_expected_returns = torch.sum(target_agent.support * target_value_dist, dim=2)
-            target_actions = torch.argmax(target_expected_returns, dim=1)
-            target_probs = target_value_dist[torch.arange(self.params.batch_size), target_actions, :]
+        probs = value_dists[torch.arange(self._params.batch_size), actions.view(-1), :]
 
         # ------------------------------ Categorical algorithm ------------------------------
         #
@@ -575,46 +562,42 @@ class Agent(nn.Module):
         # of the agent predictions Z_i, and minimize the cross-entropy term of
         # KL-divergence `KL(projected_T_hat*Z_i-1 || Z_i)`.
         #
+        with torch.no_grad():
+            # target agent predictions
+            target_value_dists = self._target_network(next_states)
+            target_expected_returns = (self._z * target_value_dists).sum(2)
+            target_actions = target_expected_returns.argmax(1)
+            target_probs = target_value_dists[torch.arange(self._params.batch_size), target_actions, :]
 
-        m = torch.zeros(self.params.batch_size * self.params.n_atoms).to(device)
+            m = torch.zeros(self._params.batch_size * self._params.n_atoms).to(device)
 
-        Tz = (rewards + (1 - dones) * self.params.gamma * self.support).clip(
-            self.params.v_min, self.params.v_max
-        )
-        bj = (Tz - self.params.v_min) / self.delta
-        assert (bj >= 0).all() and (
-            bj < self.params.n_atoms
-        ).all(), "wrong computation for bj"
+            Tz = (rewards + (1 - dones) * self._params.gamma * self._z).clip(self._params.v_min, self._params.v_max)
+            bj = (Tz - self._params.v_min) / self._delta
 
-        l, u = torch.floor(bj).long(), torch.ceil(bj).long()
+            l, u = torch.floor(bj).long(), torch.ceil(bj).long()
 
-        # performing a double for-loop, one loop for the minibatch samples and another loop for the atoms, in one step.
-        offset = (
-            torch.linspace(0, (self.params.batch_size - 1) * self.params.n_atoms, self.params.batch_size)
-            .long()
-            .unsqueeze(1)
-            .expand(self.params.batch_size, self.params.n_atoms)
-            .to(device)
-        )
+            offset = (
+                torch.linspace(0, (self._params.batch_size - 1) * self._params.n_atoms, self._params.batch_size)
+                .long()
+                .unsqueeze(1)
+                .expand(self._params.batch_size, self._params.n_atoms)
+                .to(device)
+            )
 
-        m.index_add_(0,  (l + offset).view(-1), (target_probs * (u + (l == u).long() - bj)).view(-1).to(torch.float32))
-        m.index_add_(0, (u + offset).view(-1), (target_probs * (bj - l)).view(-1).to(torch.float32))
+            m.index_add_(0,  (l + offset).view(-1), (target_probs * (u + (l == u).long() - bj)).view(-1).float())
+            m.index_add_(0, (u + offset).view(-1), (target_probs * (bj - l)).view(-1).float())
 
-        m = m.view(self.params.batch_size, self.params.n_atoms)
+            m = m.view(self._params.batch_size, self._params.n_atoms)
         # -----------------------------------------------------------------------------------
 
         loss = (-((m * torch.log(probs + 1e-8)).sum(dim=1))).mean()
 
-        # set all gradients to zero
-        self.optimizer.zero_grad()
-
-        # backpropagate loss through the network
-        loss.backward()
-
-        # update weights
-        self.optimizer.step()
+        self._optimizer.zero_grad()  # set all gradients to zero
+        loss.backward()  # backpropagate loss through the network
+        self._optimizer.step()  # update weights
 
         return round(loss.item(), 2)
+
 
 
 # %%
