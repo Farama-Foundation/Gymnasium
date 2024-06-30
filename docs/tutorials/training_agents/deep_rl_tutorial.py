@@ -720,7 +720,11 @@ def train(seed: int, params: Hyperparameters, verbose: bool, record_video: bool 
 
 
 def random_agent_play(params: Hyperparameters) -> np.ndarray:
-    """Implement a random agent play representing baseline performance. Return episode rewards."""
+    """
+    Implement a random agent representing baseline performance.
+    Return episode rewards, where the number of episodes equals the number
+    of times statistics are recorded for the real agent.
+    """
     seed = 1
     set_seed(seed)
     steps = 0  # global time steps for the whole training
