@@ -376,16 +376,15 @@ def visualize_performance(
 
 
 class ReplayMemory:
+    """Implements a circular replay memory object based on a deque."""
     def __init__(self, params):
         """
         Initialize the replay memory.
         Args:
             params: Hyperparameters
         """
-        self._buffer = []
         self._params = params
-        self._index = 0
-        self._size = 0
+        self._buffer = collections.deque([], maxlen=params.capacity)
 
     def push(self,
              obs: gymnasium.wrappers.LazyFrames,
@@ -395,35 +394,33 @@ class ReplayMemory:
              done: bool):
         """
         Add a transition to the replay memory. When the buffer is full,
-        old transitions are discarded.
+        the oldest transitions are replaced with new ones.
+
         Args:
             obs: Agent's observation
             action: Executed action.
             reward: Reward received.
             next_obs: Resulting observation.
             done: Terminal state.
-
-        Returns:
-
         """
-        if self._size < self._params.capacity:
-            self._buffer.append(None)
-        self._buffer[self._index] = (obs, action, reward, next_obs, int(done))
-
-        self._index = (self._index + 1) % self._params.capacity
-        self._size = min(self._size + 1, self._params.capacity)
+        self._buffer.append((obs, action, reward, next_obs, int(done)))
 
     def sample(self) -> Union[None, tuple]:
         """
-        Sample a minibatch of transitions. Raises ValueError if not
-        enough transitions exist to sample.
+        Sample a minibatch of transitions.
+
+        Raises:
+             ValueError: if not enough transitions exist to sample.
+
+         Returns:
+             5-tuple of obs, actions, rewards, next_obs, dones
+
         """
-        if self._size < self._params.batch_size:
+        if len(self._buffer) < self._params.batch_size:
             raise ValueError("Not enough transitions to sample a minibatch")
 
-        if self._size >= self._params.batch_size:
-            sample = random.sample(self._buffer, self._params.batch_size)
-            return tuple(zip(*sample))
+        sample = random.sample(self._buffer, self._params.batch_size)
+        return tuple(zip(*sample))
 
 
 class Agent(nn.Module):
