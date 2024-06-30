@@ -1,4 +1,5 @@
 """Set of random number generator functions: seeding, generator, hashing seeds."""
+
 from __future__ import annotations
 
 import numpy as np

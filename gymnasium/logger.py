@@ -1,4 +1,5 @@
 """Set of functions for logging messages."""
+
 import sys
 import warnings
 from typing import Optional, Type

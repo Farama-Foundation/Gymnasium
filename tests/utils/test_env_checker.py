@@ -1,4 +1,5 @@
 """Tests that the `env_checker` runs as expects and all errors are possible."""
+
 import re
 import warnings
 from typing import Callable, Tuple, Union

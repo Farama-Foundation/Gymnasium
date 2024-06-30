@@ -10,6 +10,7 @@ are vectors in the two-dimensional unit cube, the environment code may contain t
 
 All spaces inherit from the :class:`Space` superclass.
 """
+
 from gymnasium.spaces.box import Box
 from gymnasium.spaces.dict import Dict
 from gymnasium.spaces.discrete import Discrete

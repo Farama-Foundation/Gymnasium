@@ -1,4 +1,5 @@
 """Implementation of a space that represents the cartesian product of other spaces."""
+
 from __future__ import annotations
 
 import typing
@@ -18,9 +19,9 @@ class OneOf(Space[Any]):
         >>> from gymnasium.spaces import OneOf, Box, Discrete
         >>> observation_space = OneOf((Discrete(2), Box(-1, 1, shape=(2,))), seed=123)
         >>> observation_space.sample()  # the first element is the space index (Box in this case) and the second element is the sample from Box
-        (0, 0)
+        (np.int64(0), np.int64(0))
         >>> observation_space.sample()  # this time the Discrete space was sampled as index=0
-        (1, array([-0.00711833, -0.7257502 ], dtype=float32))
+        (np.int64(1), array([-0.00711833, -0.7257502 ], dtype=float32))
         >>> observation_space[0]
         Discrete(2)
         >>> observation_space[1]

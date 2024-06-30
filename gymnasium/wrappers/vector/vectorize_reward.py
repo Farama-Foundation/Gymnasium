@@ -1,4 +1,5 @@
 """Vectorizes reward function to work with `VectorEnv`."""
+
 from __future__ import annotations
 
 from typing import Any, Callable

@@ -1,4 +1,5 @@
 """Implementation of a space that represents the cartesian product of other spaces as a dictionary."""
+
 from __future__ import annotations
 
 import collections.abc
@@ -19,7 +20,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         >>> from gymnasium.spaces import Dict, Box, Discrete
         >>> observation_space = Dict({"position": Box(-1, 1, shape=(2,)), "color": Discrete(3)}, seed=42)
         >>> observation_space.sample()
-        {'color': 0, 'position': array([-0.3991573 ,  0.21649833], dtype=float32)}
+        {'color': np.int64(0), 'position': array([-0.3991573 ,  0.21649833], dtype=float32)}
 
         With a nested dict:
 

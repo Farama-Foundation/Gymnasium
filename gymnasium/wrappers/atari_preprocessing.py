@@ -1,4 +1,5 @@
 """Implementation of Atari 2600 Preprocessing following the guidelines of Machado et al., 2018."""
+
 from __future__ import annotations
 
 from typing import Any, SupportsFloat
@@ -35,9 +36,15 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     - Scale observation: Whether to scale the observation between [0, 1) or [0, 255), not scaled by default.
 
     Example:
-        >>> import gymnasium as gym # doctest: +SKIP
-        >>> env = gym.make("ALE/Adventure-v5") # doctest: +SKIP
-        >>> env = AtariPreprocessing(env, noop_max=10, frame_skip=0, screen_size=84, terminal_on_life_loss=True, grayscale_obs=False, grayscale_newaxis=False) # doctest: +SKIP
+        >>> import gymnasium as gym
+        >>> import ale_py
+        >>> gym.register_envs(ale_py)
+        >>> env = gym.make("ALE/Pong-v5", frameskip=1)
+        >>> env = AtariPreprocessing(
+        ...     env,
+        ...     noop_max=10, frame_skip=4, terminal_on_life_loss=True,
+        ...     screen_size=84, grayscale_obs=False, grayscale_newaxis=False
+        ... )
 
     Change logs:
      * Added in gym v0.12.2 (gym #1455)

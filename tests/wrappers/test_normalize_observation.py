@@ -1,4 +1,5 @@
 """Test suite for NormalizeObservation wrapper."""
+
 import numpy as np
 
 import gymnasium as gym

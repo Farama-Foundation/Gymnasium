@@ -1,4 +1,5 @@
 """Test suite for vector NormalizeReward wrapper."""
+
 from typing import Optional
 
 import numpy as np
@@ -41,9 +42,9 @@ def test_functionality(
     accumulated_rew = 0
     for _ in range(n_steps):
         action = env.action_space.sample()
-        _, rew, ter, tru, _ = env.step(action)
-        dones = np.logical_or(ter, tru)
-        accumulated_rew = accumulated_rew * 0.9 * dones + rew
+        _, reward, terminated, truncated, _ = env.step(action)
+        dones = np.logical_or(terminated, truncated)
+        accumulated_rew = accumulated_rew * 0.9 * dones + reward
         forward_rets.append(accumulated_rew)
 
     env.close()
@@ -65,6 +66,6 @@ def test_against_wrapper(n_envs=3, n_steps=100, rtol=0.01, atol=0):
     env.reset()
     for _ in range(n_steps):
         action = env.action_space.sample()
-        _, _, ter, tru, _ = env.step(action)
+        env.step(action)
 
     assert np.allclose(env.return_rms.var, vec_env.return_rms.var, rtol=rtol, atol=atol)

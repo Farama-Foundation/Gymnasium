@@ -1,4 +1,5 @@
 """An async vector environment."""
+
 from __future__ import annotations
 
 import multiprocessing
@@ -90,10 +91,12 @@ class AsyncVectorEnv(VectorEnv):
         copy: bool = True,
         context: str | None = None,
         daemon: bool = True,
-        worker: Callable[
-            [int, Callable[[], Env], Connection, Connection, bool, Queue], None
-        ]
-        | None = None,
+        worker: (
+            Callable[
+                [int, Callable[[], Env], Connection, Connection, bool, Queue], None
+            ]
+            | None
+        ) = None,
     ):
         """Vectorized environment that runs multiple environments in parallel.
 

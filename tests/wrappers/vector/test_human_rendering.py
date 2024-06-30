@@ -1,4 +1,5 @@
 """Test suite of HumanRendering wrapper."""
+
 import re
 
 import pytest

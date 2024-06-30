@@ -1,4 +1,5 @@
 """Test suite for ClipReward wrapper."""
+
 import numpy as np
 import pytest
 

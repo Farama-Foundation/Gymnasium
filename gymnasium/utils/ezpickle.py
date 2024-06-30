@@ -1,4 +1,5 @@
 """Class for pickling and unpickling objects via their constructor arguments."""
+
 from typing import Any
 
 

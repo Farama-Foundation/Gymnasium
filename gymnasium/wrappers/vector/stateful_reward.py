@@ -2,6 +2,7 @@
 
 * ``NormalizeReward`` - Normalizes the rewards to a mean and standard deviation
 """
+
 from __future__ import annotations
 
 from typing import Any, SupportsFloat
@@ -43,9 +44,9 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         ...
         >>> envs.close()
         >>> np.mean(episode_rewards)
-        -0.03359492141887935
+        np.float64(-0.03359492141887935)
         >>> np.std(episode_rewards)
-        0.029028230434438706
+        np.float64(0.029028230434438706)
 
     Example with the normalize reward wrapper:
         >>> import gymnasium as gym
@@ -61,9 +62,9 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         ...
         >>> envs.close()
         >>> np.mean(episode_rewards)
-        -0.1598639586606745
+        np.float64(-0.1598639586606745)
         >>> np.std(episode_rewards)
-        0.27800309628058434
+        np.float64(0.27800309628058434)
     """
 
     def __init__(
