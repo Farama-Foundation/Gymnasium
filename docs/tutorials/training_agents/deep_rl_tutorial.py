@@ -227,13 +227,14 @@ def create_env(params: Hyperparameters, record_video: bool = False) -> gymnasium
     """
     Create an environment and apply AtariProcessing wrappers if it is an Atari environment.
     Only environments with discrete action spaces are supported.
+    All environments are wrapped by the `FrameStack` wrapper.
 
     Args:
         params: Hyperparameters namedtuple.
         record_video: Whether this env is used to collect frames for video creation.
 
     Returns:
-        env: A gymnasium environment with statistics recording.
+        env: A gymnasium environment.
 
     """
     render_mode = 'rgb_array' if record_video else None
@@ -243,13 +244,10 @@ def create_env(params: Hyperparameters, record_video: bool = False) -> gymnasium
     ), "Only envs with discrete actions-space allowed."
 
     if params.image_obs:
-        env = gymnasium.wrappers.AtariPreprocessing(env=env, frame_skip=1)
+        env = gymnasium.wrappers.AtariPreprocessing(env=env)
 
     env = gymnasium.wrappers.FrameStack(env, params.num_frame_stacking)
     env = gymnasium.wrappers.RecordEpisodeStatistics(env, deque_size=params.n_eval_episodes)
-
-    params.n_actions = env.action_space.n
-    params.obs_shape = env.observation_space.shape
 
     return env
 
