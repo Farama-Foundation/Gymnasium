@@ -223,7 +223,7 @@ def play(
         ...         "ds": np.array([1, 0, 1], dtype=np.float32),
         ...         "as": np.array([-1, 0, 1], dtype=np.float32),
         ...     },
-        ...     noop=np.array([0, 0, 0])
+        ...     noop=np.array([0, 0, 0], dtype=np.float32)
         ... )
 
         Above code works also if the environment is wrapped, so it's particularly useful in
