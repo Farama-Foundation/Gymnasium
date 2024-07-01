@@ -127,7 +127,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     def reset(
         self,
         *,
-        seed: int | None = None,
+        seed: int | list[int] | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:  # type: ignore
         """Reset all parallel environments and return a batch of initial observations and info.
@@ -151,7 +151,9 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             >>> infos
             {}
         """
-        if seed is not None:
+        if isinstance(seed, list):
+            self._np_random, self._np_random_seed = seeding.np_random(seed[0])
+        elif isinstance(seed, int):
             self._np_random, self._np_random_seed = seeding.np_random(seed)
 
     def step(
@@ -190,6 +192,9 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             >>> infos
             {}
         """
+        raise NotImplementedError(
+            f"{self.__str__()} step function is not implemented."
+        )
 
     def render(self) -> tuple[RenderFrame, ...] | None:
         """Returns the rendered frames from the parallel environments.
