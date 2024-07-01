@@ -37,6 +37,14 @@ def expand_model_path(model_path: str) -> str:
 class MujocoEnv(gym.Env):
     """Superclass for MuJoCo based environments."""
 
+    metadata = {
+        "render_modes": [
+            "human",
+            "rgb_array",
+            "depth_array",
+        ]
+    }
+
     def __init__(
         self,
         model_path: str,
@@ -82,15 +90,9 @@ class MujocoEnv(gym.Env):
 
         self.frame_skip = frame_skip
 
-        assert self.metadata["render_modes"] == [
-            "human",
-            "rgb_array",
-            "depth_array",
-        ], self.metadata["render_modes"]
-        if "render_fps" in self.metadata:
-            assert (
-                int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
-            ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
+        if "render_fps" not in self.metadata:
+            self.metadata["render_fps"] = int(np.round(1.0 / self.dt))
+
         if observation_space is not None:
             self.observation_space = observation_space
         self._set_action_space()
