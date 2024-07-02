@@ -52,7 +52,7 @@ class NormalizeReward(
         ...
         >>> env.close()
         >>> np.var(episode_rewards)
-        0.0008876301247721108
+        np.float64(0.0008876301247721108)
 
     Example with the normalize reward wrapper:
         >>> import numpy as np
@@ -70,7 +70,7 @@ class NormalizeReward(
         >>> env.close()
         >>> # will approach 0.99 with more episodes
         >>> np.var(episode_rewards)
-        0.010162116476634746
+        np.float64(0.010162116476634746)
 
     Change logs:
      * v0.21.0 - Initially added

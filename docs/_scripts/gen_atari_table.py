@@ -1,20 +1,26 @@
 import itertools
 import json
 
+import ale_py
 import tabulate
-from ale_py.roms import utils as rom_utils
-from shimmy.utils.envs_configs import ALL_ATARI_GAMES
+from ale_py.registration import _rom_id_to_name
 from tqdm import tqdm
 
 import gymnasium
 
 
-# Necessary for v1.0.0 without ale-py gymnasium support
-# from shimmy import registration
-# registration._register_atari_envs()
+gymnasium.register_envs(ale_py)
 
+impossible_roms = {"maze_craze", "joust", "warlords", "combat"}
+ALL_ATARI_GAMES = {
+    env_spec.kwargs["game"]
+    for env_spec in gymnasium.registry.values()
+    if isinstance(env_spec.entry_point, str)
+    and "ale_py" in env_spec.entry_point
+    and env_spec.kwargs["game"] not in impossible_roms
+}
 
-# # Generate the list of all atari games on atari.md
+# Generate the list of all atari games on atari.md
 for rom_id in sorted(ALL_ATARI_GAMES):
     print(f"atari/{rom_id}")
 
@@ -54,7 +60,7 @@ headers = [
 rows = []
 
 for rom_id in tqdm(ALL_ATARI_GAMES):
-    env_name = rom_utils.rom_id_to_name(rom_id)
+    env_name = _rom_id_to_name(rom_id)
 
     env = gymnasium.make(f"ALE/{env_name}-v5").unwrapped
 
@@ -86,7 +92,7 @@ with open("atari-docs.json") as file:
     atari_data = json.load(file)
 
 for rom_id in tqdm(ALL_ATARI_GAMES):
-    env_name = rom_utils.rom_id_to_name(rom_id)
+    env_name = _rom_id_to_name(rom_id)
 
     env = gymnasium.make(f"ALE/{env_name}-v5").unwrapped
     if rom_id in atari_data:
@@ -128,7 +134,7 @@ initialization or by passing `full_action_space=True` to `gymnasium.make`."""
         [
             env_spec
             for env_spec in gymnasium.registry.values()
-            if env_name in env_spec.name and "shimmy" in env_spec.entry_point
+            if env_name in env_spec.name and "ale_py" in env_spec.entry_point
         ],
         key=lambda env_spec: f"{env_spec.version}{env_spec.name}",
     )

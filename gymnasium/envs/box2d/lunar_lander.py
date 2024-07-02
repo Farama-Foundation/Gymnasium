@@ -509,7 +509,7 @@ class LunarLander(gym.Env, EzPickle):
             )
 
         if self.continuous:
-            action = np.clip(action, -1, +1).astype(np.float32)
+            action = np.clip(action, -1, +1).astype(np.float64)
         else:
             assert self.action_space.contains(
                 action

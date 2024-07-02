@@ -121,13 +121,24 @@ atari/zaxxon
 
 Atari environments are simulated via the Arcade Learning Environment (ALE) [[1]](#1) through the Stella emulator.
 
-## AutoROM (installing the ROMs)
+```python
+import gymnasium as gym
+import ale_py
 
-ALE-py doesn't include the atari ROMs (`pip install gymnasium[atari]`) which are necessary to make any of the atari environments.
-To install the atari ROM, use `pip install gymnasium[accept-rom-license]` which will install AutoROM and download the ROMs, install them in the default location.
-In doing so, you agree to own a license to these Atari 2600 ROMs and agree to not distribution these ROMS.
+gym.register_envs(ale_py)
 
-It is possible to install the ROMs in an alternative location, [AutoROM](https://github.com/Farama-Foundation/AutoROM) has more information.
+env = gym.make("ALE/Pong-v5")
+# Optionally include the `gym.wrappers.AtariPreprocessing`
+
+obs, info = env.reset()
+episode_over = False
+while not episode_over:
+	action = env.action_space.sample()  # replace with your policy
+	obs, reward, terminated, truncated, info = env.step(action)
+
+	episode_over = terminated or truncated
+env.close()
+```
 
 ## Action Space
 

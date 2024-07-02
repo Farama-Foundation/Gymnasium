@@ -18,10 +18,10 @@ class Discrete(Space[np.int64]):
         >>> from gymnasium.spaces import Discrete
         >>> observation_space = Discrete(2, seed=42) # {0, 1}
         >>> observation_space.sample()
-        0
+        np.int64(0)
         >>> observation_space = Discrete(3, start=-1, seed=42)  # {-1, 0, 1}
         >>> observation_space.sample()
-        -1
+        np.int64(-1)
     """
 
     def __init__(
