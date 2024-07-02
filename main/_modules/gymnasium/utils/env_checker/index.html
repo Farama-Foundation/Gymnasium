@@ -563,33 +563,51 @@
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="p">),</span> <span class="s2">&quot;Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`.&quot;</span>
-            <span class="n">seed_123_rng</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="p">)</span>
+            <span class="n">seed_123_rng_1</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="p">)</span>
 
-            <span class="n">obs_2</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+            <span class="n">obs_2</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">obs_2</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+            <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset()` is not within the observation space.&quot;</span>
+
+            <span class="n">obs_3</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">obs_3</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
             <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset(seed=123)` is not within the observation space.&quot;</span>
+            <span class="n">seed_123_rng_3</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="p">)</span>
+
+            <span class="n">obs_4</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">obs_4</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+            <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset()` is not within the observation space.&quot;</span>
+
             <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">nondeterministic</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
-                    <span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_2</span>
+                    <span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_3</span>
                 <span class="p">),</span> <span class="s2">&quot;Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent.&quot;</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_2</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
+                    <span class="n">obs_2</span><span class="p">,</span> <span class="n">obs_4</span>
+                <span class="p">),</span> <span class="s2">&quot;Using `env.reset(seed=123)` then `env.reset()` is non-deterministic as the observations are not equivalent.&quot;</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_3</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                         <span class="s2">&quot;Using `env.reset(seed=123)` observations are not equal although similar.&quot;</span>
                     <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_2</span><span class="p">,</span> <span class="n">obs_4</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                        <span class="s2">&quot;Using `env.reset(seed=123)` then `env.reset()` observations are not equal although similar.&quot;</span>
+                    <span class="p">)</span>
 
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
-                <span class="o">==</span> <span class="n">seed_123_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
+                <span class="n">seed_123_rng_1</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">seed_123_rng_3</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
             <span class="p">),</span> <span class="s2">&quot;Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.&quot;</span>
 
-            <span class="n">obs_3</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">456</span><span class="p">)</span>
+            <span class="n">obs_5</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">456</span><span class="p">)</span>
             <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">obs_3</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+                <span class="n">obs_5</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
             <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset(seed=456)` is not within the observation space.&quot;</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
-                <span class="o">!=</span> <span class="n">seed_123_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
+                <span class="o">!=</span> <span class="n">seed_123_rng_1</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
             <span class="p">),</span> <span class="s2">&quot;Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.&quot;</span>
 
         <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
