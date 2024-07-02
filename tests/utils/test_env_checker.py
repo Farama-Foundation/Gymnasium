@@ -70,7 +70,7 @@ def _super_reset_fixed(self, seed=None, options=None):
     return self.observation_space.sample(), {}
 
 
-def _reset_default_seed(self: GenericTestEnv, seed="Error", options=None):
+def _reset_default_seed(self: GenericTestEnv, seed=23, options=None):
     super(GenericTestEnv, self).reset(seed=seed)
     self.observation_space._np_random = (  # pyright: ignore [reportPrivateUsage]
         self.np_random
@@ -104,7 +104,7 @@ def _reset_default_seed(self: GenericTestEnv, seed="Error", options=None):
         [
             UserWarning,
             _reset_default_seed,
-            "The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic. Actual default: Error",
+            "The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic. Actual default: 23",
         ],
     ],
 )
