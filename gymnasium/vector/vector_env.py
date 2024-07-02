@@ -192,9 +192,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             >>> infos
             {}
         """
-        raise NotImplementedError(
-            f"{self.__str__()} step function is not implemented."
-        )
+        raise NotImplementedError(f"{self.__str__()} step function is not implemented.")
 
     def render(self) -> tuple[RenderFrame, ...] | None:
         """Returns the rendered frames from the parallel environments.
