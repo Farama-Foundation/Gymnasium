@@ -109,7 +109,7 @@ class FilterObservation(
         >>> env = gym.make("CartPole-v1")
         >>> env = gym.wrappers.TimeAwareObservation(env, flatten=False)
         >>> env.observation_space
-        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
+        Dict('obs': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), 'time': Box(0, 500, (1,), int32))
         >>> env.reset(seed=42)
         ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}, {})
         >>> env = FilterObservation(env, filter_keys=['time'])
@@ -604,7 +604,7 @@ class AddRenderObservation(
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = AddRenderObservation(env, render_only=False)
         >>> env.observation_space
-        Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32))
+        Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32))
         >>> obs, info = env.reset(seed=123)
         >>> obs.keys()
         dict_keys(['state', 'pixels'])

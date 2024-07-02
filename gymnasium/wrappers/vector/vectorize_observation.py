@@ -318,18 +318,18 @@ class RescaleObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+        >>> envs = gym.make_vec("MountainCar-v0", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.min()
-        np.float32(-0.0446179)
+        np.float32(-0.46352962)
         >>> obs.max()
-        np.float32(0.0469136)
+        np.float32(0.0)
         >>> envs = RescaleObservation(envs, min_obs=-5.0, max_obs=5.0)
         >>> obs, info = envs.reset(seed=123)
         >>> obs.min()
-        np.float32(-0.33379582)
+        np.float32(-0.90849805)
         >>> obs.max()
-        np.float32(0.55998987)
+        np.float32(0.0)
         >>> envs.close()
     """
 
