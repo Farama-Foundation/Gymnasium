@@ -1,5 +1,7 @@
 """Test suite for AtariProcessing wrapper."""
 
+import re
+
 import numpy as np
 import pytest
 
@@ -83,4 +85,25 @@ def test_atari_preprocessing_scale(grayscale, scaled, max_test_steps=10):
         assert np.all(0 <= obs) and np.all(obs <= max_obs)
 
         step_i += 1
+    env.close()
+
+
+def test_screen_size():
+    env = gym.make("ALE/Pong-v5", frameskip=1)
+
+    assert AtariPreprocessing(env).screen_size == (84, 84)
+    assert AtariPreprocessing(env, screen_size=50).screen_size == (50, 50)
+    assert AtariPreprocessing(env, screen_size=(100, 120)).screen_size == (100, 120)
+
+    with pytest.raises(
+        AssertionError, match="Expect the `screen_size` to be positive, actually: -1"
+    ):
+        AtariPreprocessing(env, screen_size=-1)
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape("Expect the `screen_size` to be positive, actually: (-1, 10)"),
+    ):
+        AtariPreprocessing(env, screen_size=(-1, 10))
+
     env.close()
