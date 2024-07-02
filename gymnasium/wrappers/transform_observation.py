@@ -462,6 +462,8 @@ class RescaleObservation(
 ):
     """Affinely (linearly) rescales a ``Box`` observation space of the environment to within the range of ``[min_obs, max_obs]``.
 
+    For unbounded components in the original observation space, the corresponding target bounds must also be infinite and vice versa.
+
     A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.RescaleObservation`.
 
     Example:
@@ -492,9 +494,6 @@ class RescaleObservation(
             max_obs: The new maximum observation bound
         """
         assert isinstance(env.observation_space, spaces.Box)
-        assert not np.any(env.observation_space.low == np.inf) and not np.any(
-            env.observation_space.high == np.inf
-        )
 
         if not isinstance(min_obs, np.ndarray):
             assert np.issubdtype(type(min_obs), np.integer) or np.issubdtype(
@@ -504,7 +503,6 @@ class RescaleObservation(
         assert (
             min_obs.shape == env.observation_space.shape
         ), f"{min_obs.shape}, {env.observation_space.shape}, {min_obs}, {env.observation_space.low}"
-        assert not np.any(min_obs == np.inf)
 
         if not isinstance(max_obs, np.ndarray):
             assert np.issubdtype(type(max_obs), np.integer) or np.issubdtype(
@@ -512,7 +510,18 @@ class RescaleObservation(
             )
             max_obs = np.full(env.observation_space.shape, max_obs)
         assert max_obs.shape == env.observation_space.shape
-        assert not np.any(max_obs == np.inf)
+        assert np.all(
+            (min_obs == env.observation_space.low)[
+                np.isinf(min_obs) | np.isinf(env.observation_space.low)
+            ]
+        )
+        assert np.all(
+            (max_obs == env.observation_space.high)[
+                np.isinf(max_obs) | np.isinf(env.observation_space.high)
+            ]
+        )
+        assert np.all(min_obs <= max_obs)
+        assert np.all(env.observation_space.low <= env.observation_space.high)
 
         self.min_obs = min_obs
         self.max_obs = max_obs
@@ -523,14 +532,29 @@ class RescaleObservation(
             high_low_diff_dtype = np.float128
         except AttributeError:
             high_low_diff_dtype = np.float64
-        high_low_diff = np.array(
-            env.observation_space.high, dtype=high_low_diff_dtype
-        ) - np.array(env.observation_space.low, dtype=high_low_diff_dtype)
-        gradient = np.array(
-            (max_obs - min_obs) / high_low_diff, dtype=env.observation_space.dtype
-        )
 
-        intercept = gradient * -env.observation_space.low + min_obs
+        min_finite = np.isfinite(min_obs)
+        max_finite = np.isfinite(max_obs)
+        both_finite = min_finite & max_finite
+
+        high_low_diff = np.array(
+            env.observation_space.high[both_finite], dtype=high_low_diff_dtype
+        ) - np.array(env.observation_space.low[both_finite], dtype=high_low_diff_dtype)
+
+        gradient = np.ones_like(min_obs, dtype=env.observation_space.dtype)
+        gradient[both_finite] = (
+            max_obs[both_finite] - min_obs[both_finite]
+        ) / high_low_diff
+
+        intercept = np.zeros_like(min_obs, dtype=env.observation_space.dtype)
+        # In cases where both are finite, the lower operation takes precedence
+        intercept[max_finite] = (
+            max_obs[max_finite] - env.observation_space.high[max_finite]
+        )
+        intercept[min_finite] = (
+            gradient[min_finite] * -env.observation_space.low[min_finite]
+            + min_obs[min_finite]
+        )
 
         gym.utils.RecordConstructorArgs.__init__(self, min_obs=min_obs, max_obs=max_obs)
         TransformObservation.__init__(
