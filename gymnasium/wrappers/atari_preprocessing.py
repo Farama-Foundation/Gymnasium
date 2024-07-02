@@ -105,7 +105,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
             isinstance(screen_size, tuple)
             and len(screen_size) == 2
             and all(isinstance(size, int) and size > 0 for size in screen_size)
-        )
+        ), f"Expect the `screen_size` to be positive, actually: {screen_size}"
         assert noop_max >= 0
         if frame_skip > 1 and getattr(env.unwrapped, "_frameskip", None) != 1:
             raise ValueError(
@@ -142,7 +142,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         self.game_over = False
 
         _low, _high, _dtype = (0, 1, np.float32) if scale_obs else (0, 255, np.uint8)
-        _shape = screen_size + (1 if grayscale_obs else 3,)
+        _shape = self.screen_size + (1 if grayscale_obs else 3,)
         if grayscale_obs and not grayscale_newaxis:
             _shape = _shape[:-1]  # Remove channel axis
         self.observation_space = Box(low=_low, high=_high, shape=_shape, dtype=_dtype)
