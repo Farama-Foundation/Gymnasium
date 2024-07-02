@@ -36,10 +36,15 @@ def torch_to_numpy(value: Any) -> Any:
 
 
 @torch_to_numpy.register(numbers.Number)
-@torch_to_numpy.register(torch.Tensor)
-def _number_torch_to_numpy(value: numbers.Number | torch.Tensor) -> Any:
-    """Convert a python number (int, float, complex) and torch.Tensor to a numpy array."""
+def _number_to_numpy(value: numbers.Number) -> Any:
+    """Convert a python number (int, float, complex) to a numpy array."""
     return np.array(value)
+
+
+@torch_to_numpy.register(torch.Tensor)
+def _torch_to_numpy(value: torch.Tensor) -> Any:
+    """Convert a torch.Tensor to a numpy array."""
+    return value.numpy(force=True)
 
 
 @torch_to_numpy.register(abc.Mapping)
