@@ -529,7 +529,7 @@
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
         <span class="n">noop_max</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
         <span class="n">frame_skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-        <span class="n">screen_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">84</span><span class="p">,</span>
+        <span class="n">screen_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">84</span><span class="p">,</span>
         <span class="n">terminal_on_life_loss</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">grayscale_obs</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">grayscale_newaxis</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -541,7 +541,7 @@
 <span class="sd">            env (Env): The environment to apply the preprocessing</span>
 <span class="sd">            noop_max (int): For No-op reset, the max number no-ops actions are taken at reset, to turn off, set to 0.</span>
 <span class="sd">            frame_skip (int): The number of frames between new observation the agents observations effecting the frequency at which the agent experiences the game.</span>
-<span class="sd">            screen_size (int): resize Atari frame.</span>
+<span class="sd">            screen_size (int | tuple[int, int]): resize Atari frame.</span>
 <span class="sd">            terminal_on_life_loss (bool): `if True`, then :meth:`step()` returns `terminated=True` whenever a</span>
 <span class="sd">                life is lost.</span>
 <span class="sd">            grayscale_obs (bool): if True, then gray scale observation is returned, otherwise, RGB observation</span>
@@ -575,7 +575,11 @@
             <span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">frame_skip</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">screen_size</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">screen_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">screen_size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">screen_size</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">screen_size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">screen_size</span><span class="p">)</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expect the `screen_size` to be positive, actually: </span><span class="si">{</span><span class="n">screen_size</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">assert</span> <span class="n">noop_max</span> <span class="o">&gt;=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">frame_skip</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="p">,</span> <span class="s2">&quot;_frameskip&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -585,7 +589,11 @@
         <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">get_action_meanings</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;NOOP&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_skip</span> <span class="o">=</span> <span class="n">frame_skip</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span> <span class="o">=</span> <span class="n">screen_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">screen_size</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">screen_size</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+            <span class="k">else</span> <span class="p">(</span><span class="n">screen_size</span><span class="p">,</span> <span class="n">screen_size</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">terminal_on_life_loss</span> <span class="o">=</span> <span class="n">terminal_on_life_loss</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grayscale_obs</span> <span class="o">=</span> <span class="n">grayscale_obs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grayscale_newaxis</span> <span class="o">=</span> <span class="n">grayscale_newaxis</span>
@@ -607,15 +615,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">lives</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">game_over</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="n">_low</span><span class="p">,</span> <span class="n">_high</span><span class="p">,</span> <span class="n">_obs_dtype</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">scale_obs</span> <span class="k">else</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">screen_size</span><span class="p">,</span> <span class="n">screen_size</span><span class="p">,</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">grayscale_obs</span> <span class="k">else</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">_low</span><span class="p">,</span> <span class="n">_high</span><span class="p">,</span> <span class="n">_dtype</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="k">if</span> <span class="n">scale_obs</span> <span class="k">else</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">grayscale_obs</span> <span class="k">else</span> <span class="mi">3</span><span class="p">,)</span>
         <span class="k">if</span> <span class="n">grayscale_obs</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">grayscale_newaxis</span><span class="p">:</span>
             <span class="n">_shape</span> <span class="o">=</span> <span class="n">_shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Remove channel axis</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span>
-            <span class="n">low</span><span class="o">=</span><span class="n">_low</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">_high</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_obs_dtype</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">_low</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">_high</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">_dtype</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">ale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -688,7 +692,7 @@
 
         <span class="n">obs</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">obs_buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span><span class="p">,</span>
             <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span><span class="p">,</span>
         <span class="p">)</span>
 
