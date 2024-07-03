@@ -35,6 +35,8 @@ __all__ = [
     "AddRenderObservation",
 ]
 
+from gymnasium.wrappers.utils import rescale_box
+
 
 class TransformObservation(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
@@ -495,78 +497,14 @@ class RescaleObservation(
         """
         assert isinstance(env.observation_space, spaces.Box)
 
-        if not isinstance(min_obs, np.ndarray):
-            assert np.issubdtype(type(min_obs), np.integer) or np.issubdtype(
-                type(max_obs), np.floating
-            )
-            min_obs = np.full(env.observation_space.shape, min_obs)
-        assert (
-            min_obs.shape == env.observation_space.shape
-        ), f"{min_obs.shape}, {env.observation_space.shape}, {min_obs}, {env.observation_space.low}"
-
-        if not isinstance(max_obs, np.ndarray):
-            assert np.issubdtype(type(max_obs), np.integer) or np.issubdtype(
-                type(max_obs), np.floating
-            )
-            max_obs = np.full(env.observation_space.shape, max_obs)
-        assert max_obs.shape == env.observation_space.shape
-        assert np.all(
-            (min_obs == env.observation_space.low)[
-                np.isinf(min_obs) | np.isinf(env.observation_space.low)
-            ]
-        )
-        assert np.all(
-            (max_obs == env.observation_space.high)[
-                np.isinf(max_obs) | np.isinf(env.observation_space.high)
-            ]
-        )
-        assert np.all(min_obs <= max_obs)
-        assert np.all(env.observation_space.low <= env.observation_space.high)
-
-        self.min_obs = min_obs
-        self.max_obs = max_obs
-
-        # Imagine the x-axis between the old Box and the y-axis being the new Box
-        # float128 is not available everywhere
-        try:
-            high_low_diff_dtype = np.float128
-        except AttributeError:
-            high_low_diff_dtype = np.float64
-
-        min_finite = np.isfinite(min_obs)
-        max_finite = np.isfinite(max_obs)
-        both_finite = min_finite & max_finite
-
-        high_low_diff = np.array(
-            env.observation_space.high[both_finite], dtype=high_low_diff_dtype
-        ) - np.array(env.observation_space.low[both_finite], dtype=high_low_diff_dtype)
-
-        gradient = np.ones_like(min_obs, dtype=env.observation_space.dtype)
-        gradient[both_finite] = (
-            max_obs[both_finite] - min_obs[both_finite]
-        ) / high_low_diff
-
-        intercept = np.zeros_like(min_obs, dtype=env.observation_space.dtype)
-        # In cases where both are finite, the lower operation takes precedence
-        intercept[max_finite] = (
-            max_obs[max_finite] - env.observation_space.high[max_finite]
-        )
-        intercept[min_finite] = (
-            gradient[min_finite] * -env.observation_space.low[min_finite]
-            + min_obs[min_finite]
-        )
-
         gym.utils.RecordConstructorArgs.__init__(self, min_obs=min_obs, max_obs=max_obs)
+
+        obs_space, func, _ = rescale_box(env.observation_space, min_obs, max_obs)
         TransformObservation.__init__(
             self,
             env=env,
-            func=lambda obs: gradient * obs + intercept,
-            observation_space=spaces.Box(
-                low=min_obs,
-                high=max_obs,
-                shape=env.observation_space.shape,
-                dtype=env.observation_space.dtype,
-            ),
+            func=func,
+            observation_space=obs_space,
         )
 
 
