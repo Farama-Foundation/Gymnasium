@@ -659,7 +659,7 @@ Calling <code class="docutils literal notranslate"><span class="pre">close</span
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
 <span class="go">Discrete(2)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-<span class="go">Box(-3.4028234663852886e+38, 3.4028234663852886e+38, (4,), float32)</span>
+<span class="go">Box(-inf, inf, (4,), float32)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -669,9 +669,9 @@ Calling <code class="docutils literal notranslate"><span class="pre">close</span
 <span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">observation_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">spaces.Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Env.observation_space" title="Link to this definition">¶</a></dt>
 <dd><p>The Space object corresponding to valid observations, all valid observations should be contained with the space. For example, if the observation space is of type <code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code> and the shape of the object is <code class="docutils literal notranslate"><span class="pre">(4,)</span></code>, this denotes a valid observation will be an array of 4 numbers. We can check the box bounds as well with attributes.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">high</span>
-<span class="go">array([4.8000002e+00, 3.4028235e+38, 4.1887903e-01, 3.4028235e+38], dtype=float32)</span>
+<span class="go">array([4.8000002e+00, inf, 4.1887903e-01, inf], dtype=float32)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">low</span>
-<span class="go">array([-4.8000002e+00, -3.4028235e+38, -4.1887903e-01, -3.4028235e+38], dtype=float32)</span>
+<span class="go">array([-4.8000002e+00, -inf, -4.1887903e-01, -inf], dtype=float32)</span>
 </pre></div>
 </div>
 </dd></dl>

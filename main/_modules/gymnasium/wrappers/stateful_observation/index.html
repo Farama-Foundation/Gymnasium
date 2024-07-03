@@ -606,8 +606,7 @@
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = TimeAwareObservation(env)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space</span>
-<span class="sd">        Box([-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38</span>
-<span class="sd">          0.00000000e+00], [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38</span>
+<span class="sd">        Box([-4.80000019        -inf -0.41887903        -inf  0.        ], [4.80000019e+00            inf 4.18879032e-01            inf</span>
 <span class="sd">         5.00000000e+02], (5,), float64)</span>
 <span class="sd">        &gt;&gt;&gt; env.reset(seed=42)[0]</span>
 <span class="sd">        array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ])</span>
@@ -619,8 +618,7 @@
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&#39;CartPole-v1&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; env = TimeAwareObservation(env, normalize_time=True)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space</span>
-<span class="sd">        Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38</span>
-<span class="sd">          0.0000000e+00], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38 1.0000000e+00], (5,), float32)</span>
+<span class="sd">        Box([-4.8               -inf -0.41887903        -inf  0.        ], [4.8               inf 0.41887903        inf 1.        ], (5,), float32)</span>
 <span class="sd">        &gt;&gt;&gt; env.reset(seed=42)[0]</span>
 <span class="sd">        array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ],</span>
 <span class="sd">              dtype=float32)</span>
@@ -633,7 +631,7 @@
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = TimeAwareObservation(env, flatten=False)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space</span>
-<span class="sd">        Dict(&#39;obs&#39;: Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), &#39;time&#39;: Box(0, 500, (1,), int32))</span>
+<span class="sd">        Dict(&#39;obs&#39;: Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), &#39;time&#39;: Box(0, 500, (1,), int32))</span>
 <span class="sd">        &gt;&gt;&gt; env.reset(seed=42)[0]</span>
 <span class="sd">        {&#39;obs&#39;: array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), &#39;time&#39;: array([0], dtype=int32)}</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.action_space.seed(42)</span>

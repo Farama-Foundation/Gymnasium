@@ -517,16 +517,13 @@ array for each key. To use the old info style, utilise the <code class="xref py 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span>
 <span class="go">MultiDiscrete([2 2 2])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">observation_space</span>
-<span class="go">Box([[-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38</span>
-<span class="go">   0.00000000e+00]</span>
-<span class="go"> [-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38</span>
-<span class="go">   0.00000000e+00]</span>
-<span class="go"> [-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38</span>
-<span class="go">   0.00000000e+00]], [[4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38</span>
+<span class="go">Box([[-4.80000019        -inf -0.41887903        -inf  0.        ]</span>
+<span class="go"> [-4.80000019        -inf -0.41887903        -inf  0.        ]</span>
+<span class="go"> [-4.80000019        -inf -0.41887903        -inf  0.        ]], [[4.80000019e+00            inf 4.18879032e-01            inf</span>
 <span class="go">  5.00000000e+02]</span>
-<span class="go"> [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38</span>
+<span class="go"> [4.80000019e+00            inf 4.18879032e-01            inf</span>
 <span class="go">  5.00000000e+02]</span>
-<span class="go"> [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38</span>
+<span class="go"> [4.80000019e+00            inf 4.18879032e-01            inf</span>
 <span class="go">  5.00000000e+02]], (3, 5), float64)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observations</span>
