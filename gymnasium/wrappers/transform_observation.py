@@ -35,6 +35,8 @@ __all__ = [
     "AddRenderObservation",
 ]
 
+from gymnasium.wrappers.utils import rescale_box
+
 
 class TransformObservation(
     gym.ObservationWrapper[WrapperObsType, ActType, ObsType],
@@ -107,7 +109,7 @@ class FilterObservation(
         >>> env = gym.make("CartPole-v1")
         >>> env = gym.wrappers.TimeAwareObservation(env, flatten=False)
         >>> env.observation_space
-        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
+        Dict('obs': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), 'time': Box(0, 500, (1,), int32))
         >>> env.reset(seed=42)
         ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}, {})
         >>> env = FilterObservation(env, filter_keys=['time'])
@@ -462,6 +464,8 @@ class RescaleObservation(
 ):
     """Affinely (linearly) rescales a ``Box`` observation space of the environment to within the range of ``[min_obs, max_obs]``.
 
+    For unbounded components in the original observation space, the corresponding target bounds must also be infinite and vice versa.
+
     A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.RescaleObservation`.
 
     Example:
@@ -492,57 +496,15 @@ class RescaleObservation(
             max_obs: The new maximum observation bound
         """
         assert isinstance(env.observation_space, spaces.Box)
-        assert not np.any(env.observation_space.low == np.inf) and not np.any(
-            env.observation_space.high == np.inf
-        )
-
-        if not isinstance(min_obs, np.ndarray):
-            assert np.issubdtype(type(min_obs), np.integer) or np.issubdtype(
-                type(max_obs), np.floating
-            )
-            min_obs = np.full(env.observation_space.shape, min_obs)
-        assert (
-            min_obs.shape == env.observation_space.shape
-        ), f"{min_obs.shape}, {env.observation_space.shape}, {min_obs}, {env.observation_space.low}"
-        assert not np.any(min_obs == np.inf)
-
-        if not isinstance(max_obs, np.ndarray):
-            assert np.issubdtype(type(max_obs), np.integer) or np.issubdtype(
-                type(max_obs), np.floating
-            )
-            max_obs = np.full(env.observation_space.shape, max_obs)
-        assert max_obs.shape == env.observation_space.shape
-        assert not np.any(max_obs == np.inf)
-
-        self.min_obs = min_obs
-        self.max_obs = max_obs
-
-        # Imagine the x-axis between the old Box and the y-axis being the new Box
-        # float128 is not available everywhere
-        try:
-            high_low_diff_dtype = np.float128
-        except AttributeError:
-            high_low_diff_dtype = np.float64
-        high_low_diff = np.array(
-            env.observation_space.high, dtype=high_low_diff_dtype
-        ) - np.array(env.observation_space.low, dtype=high_low_diff_dtype)
-        gradient = np.array(
-            (max_obs - min_obs) / high_low_diff, dtype=env.observation_space.dtype
-        )
-
-        intercept = gradient * -env.observation_space.low + min_obs
 
         gym.utils.RecordConstructorArgs.__init__(self, min_obs=min_obs, max_obs=max_obs)
+
+        obs_space, func, _ = rescale_box(env.observation_space, min_obs, max_obs)
         TransformObservation.__init__(
             self,
             env=env,
-            func=lambda obs: gradient * obs + intercept,
-            observation_space=spaces.Box(
-                low=min_obs,
-                high=max_obs,
-                shape=env.observation_space.shape,
-                dtype=env.observation_space.dtype,
-            ),
+            func=func,
+            observation_space=obs_space,
         )
 
 
@@ -642,7 +604,7 @@ class AddRenderObservation(
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = AddRenderObservation(env, render_only=False)
         >>> env.observation_space
-        Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32))
+        Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32))
         >>> obs, info = env.reset(seed=123)
         >>> obs.keys()
         dict_keys(['state', 'pixels'])
