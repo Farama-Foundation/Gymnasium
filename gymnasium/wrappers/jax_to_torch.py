@@ -119,9 +119,9 @@ def _jax_iterable_to_torch(
     if hasattr(value, "_make"):
         # namedtuple - underline used to prevent potential name conflicts
         # noinspection PyProtectedMember
-        return type(value)._make(jax_to_torch(v) for v in value)
+        return type(value)._make(jax_to_torch(v, device) for v in value)
     else:
-        return type(value)(jax_to_torch(v) for v in value)
+        return type(value)(jax_to_torch(v, device) for v in value)
 
 
 class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
