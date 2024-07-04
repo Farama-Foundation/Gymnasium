@@ -127,7 +127,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:  # type: ignore
         """Reset all parallel environments and return a batch of initial observations and info.
@@ -151,9 +151,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             >>> infos
             {}
         """
-        if isinstance(seed, list):
-            self._np_random, self._np_random_seed = seeding.np_random(seed[0])
-        elif isinstance(seed, int):
+        if seed is not None:
             self._np_random, self._np_random_seed = seeding.np_random(seed)
 
     def step(
