@@ -230,7 +230,7 @@ def check_step_determinism(env: gym.Env, seed=123):
         )
 
     assert data_equivalence(
-        term_0, term_0, exact=True
+        term_0, term_1, exact=True
     ), "Deterministic step termination are not equivalent for the same seed and action"
     assert (
         trunc_0 is False and trunc_1 is False
