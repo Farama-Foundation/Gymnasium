@@ -151,7 +151,9 @@ class SyncVectorEnv(VectorEnv):
         self._observations = concatenate(
             self.single_observation_space, observations, self._observations
         )
-
+        
+        self._autoreset_envs = np.zeros((self.num_envs,), dtype=np.bool_)
+        
         return deepcopy(self._observations) if self.copy else self._observations, infos
 
     def step(
