@@ -648,7 +648,7 @@ def _async_worker(
     env_fn: callable,
     pipe: Connection,
     parent_pipe: Connection,
-    shared_memory: bool,
+    shared_memory: multiprocessing.Array | Dict[str, Any] | Tuple[Any, ...],
     error_queue: Queue,
 ):
     env = env_fn()
