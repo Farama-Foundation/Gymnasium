@@ -140,9 +140,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         high = np.array(
             [
                 self.x_threshold * 2,
-                np.finfo(np.float32).max,
+                np.inf,
                 self.theta_threshold_radians * 2,
-                np.finfo(np.float32).max,
+                np.inf,
             ],
             dtype=np.float32,
         )
@@ -401,9 +401,9 @@ class CartPoleVectorEnv(VectorEnv):
         high = np.array(
             [
                 self.x_threshold * 2,
-                np.finfo(np.float32).max,
+                np.inf,
                 self.theta_threshold_radians * 2,
-                np.finfo(np.float32).max,
+                np.inf,
             ],
             dtype=np.float32,
         )
