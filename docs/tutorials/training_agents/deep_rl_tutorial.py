@@ -10,7 +10,8 @@ need to do multiple implementations due to the difference in observations and al
 with it. All is needed is to provide the name of an environment and choosing hyperparameters, then training can be
 started.
 
-We will be implementing the Categorical-DQN agent (C51-agent) (Bellemare et al. (2017)), which is a distributional
+We will be implementing the Categorical-DQN agent (C51-agent)
+(`Bellemare et al. (2017) <https://arxiv.org/abs/1707.06887>`__), which is a distributional
 version of the DQN agent where instead of action-values, the network outputs the entire return distribution for each
 action, and actions are chosen based on expected returns. It is worth noting that although one specific agent is
 implemented here, the other variants of the DQN agent follow this way of implementation more or less, therefore
@@ -39,7 +40,7 @@ import dataclasses
 import random
 import time
 from collections import namedtuple
-from typing import List, Tuple, Union
+from typing import Any, List, Tuple, Union
 
 import matplotlib.pyplot as plt
 import moviepy.editor
@@ -69,14 +70,18 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #
 @dataclasses.dataclass
 class Hyperparameters:
+    """Hyperparameters class for Categorical-DQN."""
+
     # --- env related ---
     env_name: str = ""
+    obs_shape: tuple = (1,)  # shape of observation, ex. (1, 4), (84, 84)
     n_actions: int = 0
+    obs_space_low: np.ndarray = np.empty(obs_shape, dtype=np.float32)
+    obs_space_high: np.ndarray = np.empty(obs_shape, dtype=np.float32)
 
     # --- training related ---
     training_steps: int = 1000  # number of steps to train agent for
     learning_starts: int = 100  # number of steps played before agent learns.
-    obs_shape: tuple = (1,)  # of observations, ex. (1, 4), (84, 84)
     image_obs: bool = False  # whether env provides image observations
     batch_size: int = 32  # number of experiences to sample for learning step
     update_frequency: int = 4  # how often to update agent network parameters
@@ -183,29 +188,34 @@ ActionInfo = namedtuple("ActionInfo", field_names=["action", "action_value", "en
 
 def to_tensor(
     array: Union[np.ndarray, gymnasium.wrappers.LazyFrames],
+    params: Hyperparameters,
     normalize: bool = False,
     new_axis: bool = False,
 ) -> torch.Tensor:
     """
     Takes any array-like object and turns it into a torch.Tensor on `device`.
-    For atari image observations, the normalize parameter can be used to change
-    the range from [0,255) to [0,1).
+    The normalize parameter can be used to change the observation's range to [0,1].
 
     Args:
         array: An array, which can be states, actions, rewards, etc.
-        normalize: Whether to normalize image observations
+        params: Hyperparameters object.
+        normalize: Whether to normalize image observations.
         new_axis: Whether to add a new axis at the first dimension.
 
     Returns:
         tensor
     """
-    tensor = torch.tensor(np.array(array), device=device)
+    array = np.array(array)
+
+    if normalize:
+        array = (array - params.obs_space_low) / (
+            params.obs_space_high - params.obs_space_low
+        )
+
+    tensor = torch.tensor(array, device=device).float()
 
     if new_axis:
         tensor = tensor.unsqueeze(0)
-
-    if normalize:
-        tensor = tensor / 255.0
 
     return tensor
 
@@ -228,13 +238,13 @@ def set_seed(seed: int):
 # an environment, and wrap it with the necessary wrappers, such `AtariPreprocessing` for atari environments. The
 # `FrameStack` wrapper is used for all environments, even though it is not necessary for environments like Cart Pole,
 # however, in these cases only one observation is used. For some atari environments, an agent can receive a
-# termination signal once a life is lost, however this is not recommended (Machado et al. (2018)), therefore here
+# termination signal once a life is lost, however this is not recommended
+# (`Machado et al. (2018) <https://arxiv.org/abs/1709.06009>`__), therefore here
 # termination signal is issued only when a game is over.
 #
 def create_env(params: Hyperparameters, record_video: bool = False) -> gymnasium.Env:
     """
     Create an environment and apply AtariProcessing wrappers if it is an Atari environment.
-    Only environments with discrete action spaces are supported.
     All environments are wrapped by the `FrameStack` wrapper.
 
     Args:
@@ -247,9 +257,6 @@ def create_env(params: Hyperparameters, record_video: bool = False) -> gymnasium
     """
     render_mode = "rgb_array" if record_video else None
     env = gymnasium.make(params.env_name, render_mode=render_mode)
-    assert isinstance(
-        env.action_space, gymnasium.spaces.Discrete
-    ), "Only envs with discrete actions-space allowed."
 
     if params.image_obs:
         env = gymnasium.wrappers.AtariPreprocessing(env=env)
@@ -281,7 +288,7 @@ def create_env(params: Hyperparameters, record_video: bool = False) -> gymnasium
 # i.e. ``updating epsilon``.
 #
 class ReplayMemory:
-    """Implements a circular replay memory object based on a deque."""
+    """Implements a circular replay memory object based on list storage and with random sampling."""
 
     def __init__(self, params):
         """
@@ -290,15 +297,16 @@ class ReplayMemory:
             params: Hyperparameters
         """
         self._params = params
-        self._buffer = collections.deque([], maxlen=params.capacity)
+        self._buffer = []
+        self._index = 0
 
     def push(
         self,
-        obs: gymnasium.wrappers.LazyFrames,
-        action: int,
-        reward: gymnasium.core.SupportsFloat,
-        next_obs: gymnasium.wrappers.LazyFrames,
-        done: bool,
+        obs: Any,
+        action: Any,
+        reward: Any,
+        next_obs: Any,
+        terminal: bool,
     ):
         """
         Add a transition to the replay memory. When the buffer is full,
@@ -309,9 +317,12 @@ class ReplayMemory:
             action: Executed action.
             reward: Reward received.
             next_obs: Resulting observation.
-            done: Terminal state.
+            terminal: Whether it is terminal transition.
         """
-        self._buffer.append((obs, action, reward, next_obs, int(done)))
+        if len(self._buffer) < self._params.capacity:
+            self._buffer.append(None)
+        self._buffer[self._index] = (obs, action, reward, next_obs, int(terminal))
+        self._index = (self._index + 1) % self._params.capacity
 
     def sample(self) -> tuple:
         """
@@ -459,13 +470,20 @@ class Agent:
 
     def learn(self) -> float:
         """Learning step, updates the main network through backpropagation. Returns loss."""
-        obs, actions, rewards, next_obs, dones = self.replay_memory.sample()
+        obs, actions, rewards, next_obs, terminals = self.replay_memory.sample()
 
-        states = to_tensor(array=obs, normalize=self._params.image_obs)
-        actions = to_tensor(array=actions).view(-1, 1).long()
-        rewards = to_tensor(array=rewards).view(-1, 1)
-        next_states = to_tensor(array=next_obs, normalize=self._params.image_obs)
-        dones = to_tensor(array=dones).view(-1, 1)
+        states = to_tensor(
+            array=obs, params=self._params, normalize=self._params.image_obs
+        )
+        actions = to_tensor(array=actions, params=self._params).view(-1, 1).long()
+        rewards = to_tensor(
+            array=rewards,
+            params=self._params,
+        ).view(-1, 1)
+        next_states = to_tensor(
+            array=next_obs, params=self._params, normalize=self._params.image_obs
+        )
+        terminals = to_tensor(array=terminals, params=self._params).view(-1, 1)
 
         # agent predictions
         value_dists = self._main_network(states)
@@ -491,7 +509,7 @@ class Agent:
 
             m = torch.zeros(self._params.batch_size * self._params.n_atoms).to(device)
 
-            Tz = (rewards + (1 - dones) * self._params.gamma * self._z).clip(
+            Tz = (rewards + (1 - terminals) * self._params.gamma * self._z).clip(
                 self._params.v_min, self._params.v_max
             )
             bj = (Tz - self._params.v_min) / self._delta
@@ -538,7 +556,8 @@ class Agent:
 # two. The ``train`` function below does that, where it creates an agent and an environment based on provided
 # hyperparameters, creates buffers for storing intermediate results, and runs the training process. It also stores
 # the results into a ``MetricsLogger`` object periodically, and once training has finished this logger is returned.
-# We also need to evaluate the agent periodically, and a standard proposed by Machado et al. (2018), an agent should
+# We also need to evaluate the agent periodically, and a method that
+# `Machado et al. (2018) <https://arxiv.org/abs/1709.06009>`__ is proposing to become a standard, an agent should
 # be evaluated at different stages during the training where the evaluation is simply the average episodic returns of
 # the past ``k`` episodes. In this case an agent is evaluated at 10%, 25%, 50% resp. 100% of the training steps, each
 # time taking the average of the past 100 episodes returns.
@@ -588,8 +607,13 @@ def train(
     )  # list that may contain a list of frames to be used for video creation
 
     env = create_env(params)
+    assert isinstance(
+        env.action_space, gymnasium.spaces.Discrete
+    ), "Only envs with discrete actions-space allowed."
     params.n_actions = env.action_space.n
     params.obs_shape = env.observation_space.shape
+    params.obs_space_low = env.observation_space.low
+    params.obs_space_high = env.observation_space.high
 
     agent = Agent(params=params)
 
@@ -604,7 +628,9 @@ def train(
 
         # --- Play an episode ---
         while not done:
-            action_info = agent.act(to_tensor(obs, params.image_obs, params.image_obs))
+            action_info = agent.act(
+                to_tensor(obs, params, params.image_obs, params.image_obs)
+            )
             action = action_info.action
             next_obs, reward, terminated, truncated, info = env.step(action)
 
@@ -751,7 +777,7 @@ def parallel_training(
 # ----------------
 # It is important to track an agent's progress while it trains in order to draw conclusions about its learning and
 # debug when it's not learning, and to decide what hyperparameters to tweak for better learning.
-# This article (https://neptune.ai/blog/reinforcement-learning-agents-training-debug) lists a number of metrics to
+# This `article <https://neptune.ai/blog/reinforcement-learning-agents-training-debug>`__ lists a number of metrics to
 # log for a good insight into the agent's learning. In this tutorial a number of them are implemented. At the end of
 # training, a plot is made with the following average episodic metrics:
 #
@@ -985,7 +1011,6 @@ if __name__ == "__main__":
     record_videos = [True, False, False, False]
 
     parallel_results = parallel_training(agent_seeds, hparams, verboses, record_videos)
-
     agent_stats = preprocess_results(parallel_results)
     random_agent_baseline = random_agent_play(params=hparams)
 
@@ -1030,7 +1055,8 @@ if __name__ == "__main__":
 # .. image:: /_static/videos/tutorials/drl_BreakoutNoFrameskip.gif
 #
 # For Breakout, judging from the plots, it seems like more training would have been beneficial.
-# However, comparing it to the reported results for DQN in Machado et al. (2018), these results
+# However, comparing it to the reported results for DQN in
+# `Machado et al. (2018) <https://arxiv.org/abs/1709.06009>`__, these results
 # are acceptable.
 #
 # CrazyClimberNoFrameskip-v4
@@ -1039,7 +1065,7 @@ if __name__ == "__main__":
 # .. image:: /_static/videos/tutorials/drl_CrazyClimberNoFrameskip.gif
 #
 # The Crazy Climber environment seems to have been solved rather good, although better than this
-# is reported in Bellemare et al. (2017).
+# is reported in `Bellemare et al. (2017) <https://arxiv.org/abs/1707.06887>`__.
 #
 # PongNoFrameskip-v4
 # ^^^^^^^^^^^^^^^^^^
