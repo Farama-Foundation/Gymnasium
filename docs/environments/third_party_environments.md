@@ -35,6 +35,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)),
 
 Contextual extensions of popular reinforcement learning environments that enable training and test distributions for generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.
 
+### [Craftium: an extensible framework for creating RL environments](https://github.com/mikelma/craftium)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/mikelma/craftium)
+
+Craftium wraps the [Minetest](https://www.minetest.net/) game engine into the Gymnasium API, providing a modern and easy-to-use platform for designing Minecraft-like RL environments. 
+
 ### [DACBench: a benchmark for Dynamic Algorithm Configuration](https://github.com/automl/DACBench)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)
