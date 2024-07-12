@@ -40,7 +40,7 @@ Contextual extensions of popular reinforcement learning environments that enable
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
 ![GitHub stars](https://img.shields.io/github/stars/mikelma/craftium)
 
-Craftium wraps the [Minetest](https://www.minetest.net/) game engine into the Gymnasium API, providing a modern and easy-to-use platform for designing Minecraft-like RL environments. 
+Craftium wraps the [Minetest](https://www.minetest.net/) game engine into the Gymnasium API, providing a modern and easy-to-use platform for designing Minecraft-like RL environments.
 
 ### [DACBench: a benchmark for Dynamic Algorithm Configuration](https://github.com/automl/DACBench)
 
