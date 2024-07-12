@@ -230,7 +230,12 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         if self.render_mode == "human":
             self.render()
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
-        return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
+        # Suggestion: the output of this method gives me hell whenever I try to learn gym. Why not name the returned parameters?
+        # This could easily be done with a namedtuple:
+        # StepReturn = namedtuple("StepReturn", ["observation", "reward", "terminated", "truncated", "whatever_this_dict_is"])
+        # return StepReturn(np.array(self.state, dtype=np.float32), reward, terminated, False, {})
+        # Or even with a dict:
+        return { "observation": np.array(self.state, dtype=np.float32), "reward": reward, "terminated": terminated, "truncated": False, "whatever_this_dict_is": {}}
 
     def reset(
         self,
