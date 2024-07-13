@@ -366,7 +366,7 @@ class Network(nn.Module):
         else:
             self._convolutional = nn.Sequential()
 
-        in_features = self._output_size()
+        in_features = self._fc_input_size()
         out_features = self._params.n_actions * self._params.n_atoms
         n_hidden_units = self._params.n_hidden_units
 
@@ -376,7 +376,7 @@ class Network(nn.Module):
             nn.Linear(in_features=n_hidden_units, out_features=out_features),
         )
 
-    def _output_size(self) -> int:
+    def _fc_input_size(self) -> int:
         """Compute size of input to first linear layer."""
         with torch.no_grad():
             example_obs = torch.zeros(1, *self._params.obs_shape)
