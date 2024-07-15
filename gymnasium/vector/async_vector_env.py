@@ -5,6 +5,7 @@ from __future__ import annotations
 import multiprocessing
 import sys
 import time
+import traceback
 from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
@@ -623,18 +624,19 @@ class AsyncVectorEnv(VectorEnv):
         num_errors = self.num_envs - sum(successes)
         assert num_errors > 0
         for i in range(num_errors):
-            index, exctype, value = self.error_queue.get()
+            index, exctype, value, trace = self.error_queue.get()
 
             logger.error(
-                f"Received the following error from Worker-{index}: {exctype.__name__}: {value}"
+                f"Received the following error from Worker-{index} - Shutting it down"
             )
-            logger.error(f"Shutting down Worker-{index}.")
+            logger.error(f"{trace}")
 
             self.parent_pipes[index].close()
             self.parent_pipes[index] = None
 
             if i == num_errors - 1:
                 logger.error("Raising the last exception back to the main process.")
+                self._state = AsyncState.DEFAULT
                 raise exctype(value)
 
     def __del__(self):
@@ -723,7 +725,10 @@ def _async_worker(
                     f"Received unknown command `{command}`. Must be one of [`reset`, `step`, `close`, `_call`, `_setattr`, `_check_spaces`]."
                 )
     except (KeyboardInterrupt, Exception):
-        error_queue.put((index,) + sys.exc_info()[:2])
+        error_type, error_message, _ = sys.exc_info()
+        trace = traceback.format_exc()
+
+        error_queue.put((index, error_type, error_message, trace))
         pipe.send((None, False))
     finally:
         env.close()
