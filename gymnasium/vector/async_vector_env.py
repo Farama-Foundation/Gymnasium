@@ -650,7 +650,7 @@ def _async_worker(
     env_fn: callable,
     pipe: Connection,
     parent_pipe: Connection,
-    shared_memory: bool,
+    shared_memory: multiprocessing.Array | dict[str, Any] | tuple[Any, ...],
     error_queue: Queue,
 ):
     env = env_fn()
@@ -699,7 +699,7 @@ def _async_worker(
                 break
             elif command == "_call":
                 name, args, kwargs = data
-                if name in ["reset", "step", "close", "set_wrapper_attr"]:
+                if name in ["reset", "step", "close", "_setattr", "_check_spaces"]:
                     raise ValueError(
                         f"Trying to call function `{name}` with `call`, use `{name}` directly instead."
                     )
