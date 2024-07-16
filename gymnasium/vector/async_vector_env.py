@@ -9,7 +9,7 @@ from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
-from typing import Any, Callable, Sequence, Dict, Tuple
+from typing import Any, Callable, Sequence
 
 import numpy as np
 
@@ -648,7 +648,7 @@ def _async_worker(
     env_fn: callable,
     pipe: Connection,
     parent_pipe: Connection,
-    shared_memory: multiprocessing.Array | Dict[str, Any] | Tuple[Any, ...],
+    shared_memory: multiprocessing.Array | dict[str, Any] | tuple[Any, ...],
     error_queue: Queue,
 ):
     env = env_fn()
