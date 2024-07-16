@@ -9,7 +9,7 @@ from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
-from typing import Any, Callable, Sequence
+from typing import Any, Callable, Sequence, Dict, Tuple
 
 import numpy as np
 
