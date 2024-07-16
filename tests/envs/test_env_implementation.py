@@ -283,10 +283,14 @@ def test_cartpole_vector_equiv():
     assert env.action_space == envs.single_action_space
     assert env.observation_space == envs.single_observation_space
 
-    # reset
+    # for seed in range(0, 10_000):
     seed = np.random.randint(0, 1000)
+
+    # reset
     obs, info = env.reset(seed=seed)
     vec_obs, vec_info = envs.reset(seed=seed)
+
+    env.action_space.seed(seed=seed)
 
     assert obs in env.observation_space
     assert vec_obs in envs.observation_space
@@ -315,24 +319,27 @@ def test_cartpole_vector_equiv():
 
         assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
 
-        if term:
+        if term or trunc:
             break
 
-    obs, info = env.reset()
-    # the vector action shouldn't matter as autoreset
-    vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
-        envs.action_space.sample()
-    )
+    # if the sub-environment episode ended
+    if term or trunc:
+        obs, info = env.reset()
+        # the vector action shouldn't matter as autoreset
+        assert envs.unwrapped.prev_done
+        vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
+            envs.action_space.sample()
+        )
 
-    assert obs in env.observation_space
-    assert vec_obs in envs.observation_space
-    assert np.all(obs == vec_obs[0])
-    assert vec_reward == np.array([0])
-    assert vec_term == np.array([False])
-    assert vec_trunc == np.array([False])
-    assert info == vec_info
+        assert obs in env.observation_space
+        assert vec_obs in envs.observation_space
+        assert np.all(obs == vec_obs[0])
+        assert vec_reward == np.array([0])
+        assert vec_term == np.array([False])
+        assert vec_trunc == np.array([False])
+        assert info == vec_info
 
-    assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+        assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
 
     env.close()
     envs.close()

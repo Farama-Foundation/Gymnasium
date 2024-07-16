@@ -157,7 +157,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         self.screen = None
         self.clock = None
         self.isopen = True
-        self.state = None
+        self.state: np.ndarray | None = None
 
         self.steps_beyond_terminated = None
 
@@ -168,16 +168,17 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         assert self.state is not None, "Call reset before using step method."
         x, x_dot, theta, theta_dot = self.state
         force = self.force_mag if action == 1 else -self.force_mag
-        costheta = math.cos(theta)
-        sintheta = math.sin(theta)
+        costheta = np.cos(theta)
+        sintheta = np.sin(theta)
 
         # For the interested reader:
         # https://coneural.org/florian/papers/05_cart_pole.pdf
         temp = (
-            force + self.polemass_length * theta_dot**2 * sintheta
+            force + self.polemass_length * np.square(theta_dot) * sintheta
         ) / self.total_mass
         thetaacc = (self.gravity * sintheta - costheta * temp) / (
-            self.length * (4.0 / 3.0 - self.masspole * costheta**2 / self.total_mass)
+            self.length
+            * (4.0 / 3.0 - self.masspole * np.square(costheta) / self.total_mass)
         )
         xacc = temp - self.polemass_length * thetaacc * costheta / self.total_mass
 
@@ -192,7 +193,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             theta_dot = theta_dot + self.tau * thetaacc
             theta = theta + self.tau * theta_dot
 
-        self.state = (x, x_dot, theta, theta_dot)
+        self.state = np.array((x, x_dot, theta, theta_dot), dtype=np.float64)
 
         terminated = bool(
             x < -self.x_threshold
@@ -202,33 +203,25 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         )
 
         if not terminated:
-            if self._sutton_barto_reward:
-                reward = 0.0
-            elif not self._sutton_barto_reward:
-                reward = 1.0
+            reward = 0.0 if self._sutton_barto_reward else 1.0
         elif self.steps_beyond_terminated is None:
             # Pole just fell!
             self.steps_beyond_terminated = 0
-            if self._sutton_barto_reward:
-                reward = -1.0
-            else:
-                reward = 1.0
+
+            reward = -1.0 if self._sutton_barto_reward else 1.0
         else:
             if self.steps_beyond_terminated == 0:
                 logger.warn(
-                    "You are calling 'step()' even though this "
-                    "environment has already returned terminated = True. You "
-                    "should always call 'reset()' once you receive 'terminated = "
-                    "True' -- any further steps are undefined behavior."
+                    "You are calling 'step()' even though this environment has already returned terminated = True. "
+                    "You should always call 'reset()' once you receive 'terminated = True' -- any further steps are undefined behavior."
                 )
             self.steps_beyond_terminated += 1
-            if self._sutton_barto_reward:
-                reward = -1.0
-            else:
-                reward = 0.0
+
+            reward = -1.0 if self._sutton_barto_reward else 0.0
 
         if self.render_mode == "human":
             self.render()
+
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
 
@@ -439,10 +432,11 @@ class CartPoleVectorEnv(VectorEnv):
         # For the interested reader:
         # https://coneural.org/florian/papers/05_cart_pole.pdf
         temp = (
-            force + self.polemass_length * theta_dot**2 * sintheta
+            force + self.polemass_length * np.square(theta_dot) * sintheta
         ) / self.total_mass
         thetaacc = (self.gravity * sintheta - costheta * temp) / (
-            self.length * (4.0 / 3.0 - self.masspole * costheta**2 / self.total_mass)
+            self.length
+            * (4.0 / 3.0 - self.masspole * np.square(costheta) / self.total_mass)
         )
         xacc = temp - self.polemass_length * thetaacc * costheta / self.total_mass
 
@@ -470,7 +464,7 @@ class CartPoleVectorEnv(VectorEnv):
 
         truncated = self.steps >= self.max_episode_steps
 
-        if self._sutton_barto_reward is True:
+        if self._sutton_barto_reward:
             reward = -np.array(terminated, dtype=np.float32)
         else:
             reward = np.ones_like(terminated, dtype=np.float32)
@@ -484,7 +478,7 @@ class CartPoleVectorEnv(VectorEnv):
         terminated[self.prev_done] = False
         truncated[self.prev_done] = False
 
-        self.prev_done = terminated | truncated
+        self.prev_done = np.logical_or(terminated, truncated)
 
         return self.state.T.astype(np.float32), reward, terminated, truncated, {}
 
@@ -497,9 +491,8 @@ class CartPoleVectorEnv(VectorEnv):
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.
-        self.low, self.high = utils.maybe_parse_reset_bounds(
-            options, -0.05, 0.05  # default low
-        )  # default high
+        # -0.05 and 0.05 is the default low and high bounds
+        self.low, self.high = utils.maybe_parse_reset_bounds(options, -0.05, 0.05)
         self.state = self.np_random.uniform(
             low=self.low, high=self.high, size=(4, self.num_envs)
         )
