@@ -90,8 +90,13 @@ class MujocoEnv(gym.Env):
 
         self.frame_skip = frame_skip
 
-        if "render_fps" not in self.metadata:
+        if "render_fps" in self.metadata:
+            assert (
+                int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
+            ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
+        else:
             self.metadata["render_fps"] = int(np.round(1.0 / self.dt))
+
 
         if observation_space is not None:
             self.observation_space = observation_space

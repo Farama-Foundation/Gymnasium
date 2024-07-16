@@ -17,7 +17,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             "rgb_array",
             "depth_array",
         ],
-        "render_fps": 30,
+        "render_fps": 20,
     }
 
     def __init__(
