@@ -223,7 +223,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             self.render()
 
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
-        return self.state.astype(np.float32), reward, terminated, False, {}
+        return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
 
     def reset(
         self,
@@ -242,7 +242,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
         if self.render_mode == "human":
             self.render()
-        return self.state.astype(dtype=np.float32), {}
+        return np.array(self.state, dtype=np.float32), {}
 
     def render(self):
         if self.render_mode is None:
