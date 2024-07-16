@@ -37,7 +37,6 @@ class DictInfoToList(VectorWrapper):
     Example for vector environments:
         >>> import numpy as np
         >>> import gymnasium as gym
-        >>> from gymnasium.spaces import Dict, Box
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> obs, info = envs.reset(seed=123)
         >>> info
