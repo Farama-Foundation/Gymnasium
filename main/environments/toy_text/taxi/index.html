@@ -568,7 +568,10 @@ This gives a total of 404 reachable discrete states.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
-<p>The episode starts with the player in a random state.</p>
+<p>The initial state is sampled uniformly from the possible states
+where the passenger is neither at their destination nor inside the taxi.
+There are 300 possible initial states: 25 taxi positions, 4 passenger locations (excluding inside the taxi)
+and 3 destinations (excluding the passenger’s current location).</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
