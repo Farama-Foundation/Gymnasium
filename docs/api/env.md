@@ -27,7 +27,7 @@ title: Env
         >>> env.action_space
         Discrete(2)
         >>> env.observation_space
-        Box(-3.4028234663852886e+38, 3.4028234663852886e+38, (4,), float32)
+        Box(-inf, inf, (4,), float32)
 
 .. autoattribute:: gymnasium.Env.observation_space
 
@@ -36,9 +36,9 @@ title: Env
     .. code::
 
         >>> env.observation_space.high
-        array([4.8000002e+00, 3.4028235e+38, 4.1887903e-01, 3.4028235e+38], dtype=float32)
+        array([4.8000002e+00, inf, 4.1887903e-01, inf], dtype=float32)
         >>> env.observation_space.low
-        array([-4.8000002e+00, -3.4028235e+38, -4.1887903e-01, -3.4028235e+38], dtype=float32)
+        array([-4.8000002e+00, -inf, -4.1887903e-01, -inf], dtype=float32)
 
 .. autoattribute:: gymnasium.Env.metadata
 

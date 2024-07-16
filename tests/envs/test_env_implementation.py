@@ -6,7 +6,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.envs.box2d import BipedalWalker, CarRacing
 from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
-from gymnasium.envs.toy_text import TaxiEnv
+from gymnasium.envs.toy_text import CliffWalkingEnv, TaxiEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
 
@@ -85,6 +85,26 @@ def test_carracing_domain_randomize():
     assert (
         grass_color != env.grass_color
     ).all(), f"Have same grass color after reset. Before: {grass_color}, after: {env.grass_color}."
+
+
+def test_slippery_cliffwalking():
+    """Test that the slippery cliffwalking environment is correctly implemented.
+    We check here that there are always 3 possible transitions for each action and
+    that there is a 1/3 probability for each.
+    """
+    envs = CliffWalkingEnv(is_slippery=True)
+    for actions_dict in envs.P.values():
+        for transitions in actions_dict.values():
+            assert len(transitions) == 3
+            assert all([r[0] == 1 / 3 for r in transitions])
+
+
+def test_cliffwalking():
+    env = CliffWalkingEnv(is_slippery=False)
+    for actions_dict in env.P.values():
+        for transitions in actions_dict.values():
+            assert len(transitions) == 1
+            assert all([r[0] == 1.0 for r in transitions])
 
 
 @pytest.mark.parametrize("seed", range(5))
@@ -263,10 +283,14 @@ def test_cartpole_vector_equiv():
     assert env.action_space == envs.single_action_space
     assert env.observation_space == envs.single_observation_space
 
-    # reset
+    # for seed in range(0, 10_000):
     seed = np.random.randint(0, 1000)
+
+    # reset
     obs, info = env.reset(seed=seed)
     vec_obs, vec_info = envs.reset(seed=seed)
+
+    env.action_space.seed(seed=seed)
 
     assert obs in env.observation_space
     assert vec_obs in envs.observation_space
@@ -295,24 +319,27 @@ def test_cartpole_vector_equiv():
 
         assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
 
-        if term:
+        if term or trunc:
             break
 
-    obs, info = env.reset()
-    # the vector action shouldn't matter as autoreset
-    vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
-        envs.action_space.sample()
-    )
+    # if the sub-environment episode ended
+    if term or trunc:
+        obs, info = env.reset()
+        # the vector action shouldn't matter as autoreset
+        assert envs.unwrapped.prev_done
+        vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
+            envs.action_space.sample()
+        )
 
-    assert obs in env.observation_space
-    assert vec_obs in envs.observation_space
-    assert np.all(obs == vec_obs[0])
-    assert vec_reward == np.array([0])
-    assert vec_term == np.array([False])
-    assert vec_trunc == np.array([False])
-    assert info == vec_info
+        assert obs in env.observation_space
+        assert vec_obs in envs.observation_space
+        assert np.all(obs == vec_obs[0])
+        assert vec_reward == np.array([0])
+        assert vec_term == np.array([False])
+        assert vec_trunc == np.array([False])
+        assert info == vec_info
 
-    assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+        assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
 
     env.close()
     envs.close()

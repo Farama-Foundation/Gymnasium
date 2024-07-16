@@ -59,16 +59,13 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         >>> envs.action_space
         MultiDiscrete([2 2 2])
         >>> envs.observation_space
-        Box([[-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
-           0.00000000e+00]
-         [-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
-           0.00000000e+00]
-         [-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
-           0.00000000e+00]], [[4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+        Box([[-4.80000019        -inf -0.41887903        -inf  0.        ]
+         [-4.80000019        -inf -0.41887903        -inf  0.        ]
+         [-4.80000019        -inf -0.41887903        -inf  0.        ]], [[4.80000019e+00            inf 4.18879032e-01            inf
           5.00000000e+02]
-         [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+         [4.80000019e+00            inf 4.18879032e-01            inf
           5.00000000e+02]
-         [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+         [4.80000019e+00            inf 4.18879032e-01            inf
           5.00000000e+02]], (3, 5), float64)
         >>> observations, infos = envs.reset(seed=123)
         >>> observations
@@ -190,6 +187,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             >>> infos
             {}
         """
+        raise NotImplementedError(f"{self.__str__()} step function is not implemented.")
 
     def render(self) -> tuple[RenderFrame, ...] | None:
         """Returns the rendered frames from the parallel environments.

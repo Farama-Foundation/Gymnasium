@@ -91,33 +91,51 @@ def check_reset_seed_determinism(env: gym.Env):
             assert (
                 env.unwrapped._np_random is not None
             ), "Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`."
-            seed_123_rng = deepcopy(env.unwrapped._np_random)
+            seed_123_rng_1 = deepcopy(env.unwrapped._np_random)
 
-            obs_2, info = env.reset(seed=123)
+            obs_2, info = env.reset()
             assert (
                 obs_2 in env.observation_space
+            ), "The observation returned by `env.reset()` is not within the observation space."
+
+            obs_3, info = env.reset(seed=123)
+            assert (
+                obs_3 in env.observation_space
             ), "The observation returned by `env.reset(seed=123)` is not within the observation space."
+            seed_123_rng_3 = deepcopy(env.unwrapped._np_random)
+
+            obs_4, info = env.reset()
+            assert (
+                obs_4 in env.observation_space
+            ), "The observation returned by `env.reset()` is not within the observation space."
+
             if env.spec is not None and env.spec.nondeterministic is False:
                 assert data_equivalence(
-                    obs_1, obs_2
+                    obs_1, obs_3
                 ), "Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent."
-                if not data_equivalence(obs_1, obs_2, exact=True):
+                assert data_equivalence(
+                    obs_2, obs_4
+                ), "Using `env.reset(seed=123)` then `env.reset()` is non-deterministic as the observations are not equivalent."
+                if not data_equivalence(obs_1, obs_3, exact=True):
                     logger.warn(
                         "Using `env.reset(seed=123)` observations are not equal although similar."
                     )
+                if not data_equivalence(obs_2, obs_4, exact=True):
+                    logger.warn(
+                        "Using `env.reset(seed=123)` then `env.reset()` observations are not equal although similar."
+                    )
 
             assert (
-                env.unwrapped._np_random.bit_generator.state
-                == seed_123_rng.bit_generator.state
+                seed_123_rng_1.bit_generator.state == seed_123_rng_3.bit_generator.state
             ), "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`."
 
-            obs_3, info = env.reset(seed=456)
+            obs_5, info = env.reset(seed=456)
             assert (
-                obs_3 in env.observation_space
+                obs_5 in env.observation_space
             ), "The observation returned by `env.reset(seed=456)` is not within the observation space."
             assert (
                 env.unwrapped._np_random.bit_generator.state
-                != seed_123_rng.bit_generator.state
+                != seed_123_rng_1.bit_generator.state
             ), "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`."
 
         except TypeError as e:
@@ -212,7 +230,7 @@ def check_step_determinism(env: gym.Env, seed=123):
         )
 
     assert data_equivalence(
-        term_0, term_0, exact=True
+        term_0, term_1, exact=True
     ), "Deterministic step termination are not equivalent for the same seed and action"
     assert (
         trunc_0 is False and trunc_1 is False

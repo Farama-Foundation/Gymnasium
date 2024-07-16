@@ -22,6 +22,16 @@ from gymnasium.utils.env_checker import (
 from tests.testing_env import GenericTestEnv
 
 
+CHECK_ENV_IGNORE_WARNINGS = [
+    f"\x1b[33mWARN: {message}\x1b[0m"
+    for message in [
+        "A Box observation space minimum value is -infinity. This is probably too low.",
+        "A Box observation space maximum value is infinity. This is probably too high.",
+        "For Box action spaces, we recommend using a symmetric and normalized space (range=[-1, 1] or [0, 1]). See https://stable-baselines3.readthedocs.io/en/master/guide/rl_tips.html for more information.",
+    ]
+]
+
+
 @pytest.mark.parametrize(
     "env",
     [
@@ -51,6 +61,11 @@ def test_no_error_warnings(env):
     """A full version of this test with all gymnasium envs is run in tests/envs/test_envs.py."""
     with warnings.catch_warnings(record=True) as caught_warnings:
         check_env(env)
+    caught_warnings = [
+        warning
+        for warning in caught_warnings
+        if str(warning.message) not in CHECK_ENV_IGNORE_WARNINGS
+    ]
 
     assert len(caught_warnings) == 0, [warning.message for warning in caught_warnings]
 
@@ -70,7 +85,7 @@ def _super_reset_fixed(self, seed=None, options=None):
     return self.observation_space.sample(), {}
 
 
-def _reset_default_seed(self: GenericTestEnv, seed="Error", options=None):
+def _reset_default_seed(self: GenericTestEnv, seed=23, options=None):
     super(GenericTestEnv, self).reset(seed=seed)
     self.observation_space._np_random = (  # pyright: ignore [reportPrivateUsage]
         self.np_random
@@ -104,7 +119,7 @@ def _reset_default_seed(self: GenericTestEnv, seed="Error", options=None):
         [
             UserWarning,
             _reset_default_seed,
-            "The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic. Actual default: Error",
+            "The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic. Actual default: 23",
         ],
     ],
 )
