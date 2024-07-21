@@ -97,7 +97,6 @@ class MujocoEnv(gym.Env):
         else:
             self.metadata["render_fps"] = int(np.round(1.0 / self.dt))
 
-
         if observation_space is not None:
             self.observation_space = observation_space
         self._set_action_space()
