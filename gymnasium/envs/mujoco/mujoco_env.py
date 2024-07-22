@@ -95,6 +95,8 @@ class MujocoEnv(gym.Env):
                 int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
             ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
         else:
+            # Make a copy of the dictionary to avoid modifying the class variable
+            self.metadata = self.metadata.copy()
             self.metadata["render_fps"] = int(np.round(1.0 / self.dt))
 
         if observation_space is not None:
