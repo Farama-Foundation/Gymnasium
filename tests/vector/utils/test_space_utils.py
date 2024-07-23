@@ -3,17 +3,16 @@
 import copy
 import re
 from typing import Iterable
-import numpy as np
 
+import numpy as np
 import pytest
 
 from gymnasium import Space
 from gymnasium.error import CustomSpaceError
-from gymnasium.spaces import Tuple, Box
+from gymnasium.spaces import Box, Tuple
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.vector.utils.batched_spaces import batch_differing_spaces
-
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS, CustomSpace
 from tests.vector.utils.utils import is_rng_equal
 
@@ -152,6 +151,7 @@ def test_custom_space():
 
     empty_array = create_empty_array(custom_space)
     assert empty_array is None
+
 
 @pytest.mark.parametrize(
     "spaces,expected_space",

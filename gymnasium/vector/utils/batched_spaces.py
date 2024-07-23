@@ -1,8 +1,9 @@
+"""Batching support for Spaces of same type but possibly varying low/high values."""
+
 from copy import deepcopy
 from functools import singledispatch
 
 import numpy as np
-import pytest
 
 from gymnasium import Space
 from gymnasium.spaces import (
@@ -17,7 +18,7 @@ from gymnasium.spaces import (
     Text,
     Tuple,
 )
-from gymnasium.vector.utils import batch_space, iterate
+
 
 @singledispatch
 def batch_differing_spaces(spaces: list[Space]):

@@ -10,6 +10,7 @@ import numpy as np
 from gymnasium import Env, Space
 from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
+from gymnasium.vector.utils.batched_spaces import batch_differing_spaces
 from gymnasium.vector.vector_env import ArrayType, VectorEnv
 
 
@@ -57,7 +58,7 @@ class SyncVectorEnv(VectorEnv):
         self,
         env_fns: Iterator[Callable[[], Env]] | Sequence[Callable[[], Env]],
         copy: bool = True,
-        observation_mode: str or Space = 'same',
+        observation_mode: str or Space = "same",
     ):
         """Vectorized environment that serially runs multiple environments.
 
@@ -91,11 +92,11 @@ class SyncVectorEnv(VectorEnv):
         if isinstance(observation_mode, Space):
             self.observation_space = observation_mode
         else:
-            if observation_mode == 'same':
+            if observation_mode == "same":
                 self.observation_space = batch_space(
                     self.single_observation_space, self.num_envs
                 )
-            elif observation_mode == 'different':
+            elif observation_mode == "different":
                 self.observation_space = batch_differing_spaces(
                     [env.observation_space for env in self.envs]
                 )
