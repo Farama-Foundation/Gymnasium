@@ -7,7 +7,7 @@ from typing import Any, Callable, Iterator, Sequence
 
 import numpy as np
 
-from gymnasium import Env
+from gymnasium import Env, Space
 from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import ArrayType, VectorEnv
@@ -57,6 +57,7 @@ class SyncVectorEnv(VectorEnv):
         self,
         env_fns: Iterator[Callable[[], Env]] | Sequence[Callable[[], Env]],
         copy: bool = True,
+        observation_mode: str or Space = 'same',
     ):
         """Vectorized environment that serially runs multiple environments.
 
@@ -85,10 +86,20 @@ class SyncVectorEnv(VectorEnv):
         self.single_action_space = self.envs[0].action_space
         self._check_spaces()
 
-        # Initialise the obs and action space based on the single versions and num of sub-environments
-        self.observation_space = batch_space(
-            self.single_observation_space, self.num_envs
-        )
+        # Initialise the obs and action space based on the desired mode
+
+        if isinstance(observation_mode, Space):
+            self.observation_space = observation_mode
+        else:
+            if observation_mode == 'same':
+                self.observation_space = batch_space(
+                    self.single_observation_space, self.num_envs
+                )
+            elif observation_mode == 'different':
+                self.observation_space = batch_differing_spaces(
+                    [env.observation_space for env in self.envs]
+                )
+
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         # Initialise attributes used in `step` and `reset`
