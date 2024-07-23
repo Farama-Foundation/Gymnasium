@@ -14,7 +14,7 @@ from typing import Any, Callable, Sequence
 
 import numpy as np
 
-from gymnasium import logger
+from gymnasium import logger, Space
 from gymnasium.core import ActType, Env, ObsType, RenderFrame
 from gymnasium.error import (
     AlreadyPendingCallError,
@@ -98,6 +98,7 @@ class AsyncVectorEnv(VectorEnv):
             ]
             | None
         ) = None,
+        observation_mode: str or Space = 'same',
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -142,9 +143,18 @@ class AsyncVectorEnv(VectorEnv):
         self.single_observation_space = dummy_env.observation_space
         self.single_action_space = dummy_env.action_space
 
-        self.observation_space = batch_space(
-            self.single_observation_space, self.num_envs
-        )
+        if isinstance(observation_mode, Space):
+            self.observation_space = observation_mode
+        else:
+            if observation_mode == 'same':
+                self.observation_space = batch_space(
+                    self.single_observation_space, self.num_envs
+                )
+            elif observation_mode == 'different':
+                self.observation_space = batch_differing_spaces(
+                    [env.observation_space for env in self.env_fns]
+                )
+
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         dummy_env.close()
