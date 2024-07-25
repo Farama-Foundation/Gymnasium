@@ -165,7 +165,7 @@ def test_custom_space():
         ),
     ],
 )
-def test_varying_spaces(spaces: list[Space], expected_space):
+def test_varying_spaces(spaces: "list[Space]", expected_space):
     """Test the batch spaces function."""
     batched_space = batch_differing_spaces(spaces)
     assert batched_space == expected_space
