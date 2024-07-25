@@ -99,7 +99,7 @@ class AsyncVectorEnv(VectorEnv):
             ]
             | None
         ) = None,
-        observation_mode: str or Space = "same",
+        observation_mode: str | Space = "same",
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -115,6 +115,9 @@ class AsyncVectorEnv(VectorEnv):
                 so for some environments you may want to have it set to ``False``.
             worker: If set, then use that worker in a subprocess instead of a default one.
                 Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled.
+            observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
+                'different' defines that there can be multiple observation spaces with the same length but different high/low values batched together. Passing a ``Space`` object
+                allows the user to set some custom observation space mode not covered by 'same' or 'different.'
 
         Warnings:
             worker is an advanced mode option. It provides a high degree of flexibility and a high chance
@@ -155,7 +158,8 @@ class AsyncVectorEnv(VectorEnv):
                 self.observation_space = batch_differing_spaces(
                     [env.observation_space for env in self.env_fns]
                 )
-
+            else:
+                raise ValueError
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         dummy_env.close()

@@ -58,14 +58,16 @@ class SyncVectorEnv(VectorEnv):
         self,
         env_fns: Iterator[Callable[[], Env]] | Sequence[Callable[[], Env]],
         copy: bool = True,
-        observation_mode: str or Space = "same",
+        observation_mode: str | Space = "same",
     ):
         """Vectorized environment that serially runs multiple environments.
 
         Args:
             env_fns: iterable of callable functions that create the environments.
             copy: If ``True``, then the :meth:`reset` and :meth:`step` methods return a copy of the observations.
-
+            observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
+                'different' defines that there can be multiple observation spaces with the same length but different high/low values batched together. Passing a ``Space`` object
+                allows the user to set some custom observation space mode not covered by 'same' or 'different.'
         Raises:
             RuntimeError: If the observation space of some sub-environment does not match observation_space
                 (or, by default, the observation space of the first sub-environment).
@@ -100,6 +102,8 @@ class SyncVectorEnv(VectorEnv):
                 self.observation_space = batch_differing_spaces(
                     [env.observation_space for env in self.envs]
                 )
+            else:
+                raise ValueError
 
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
