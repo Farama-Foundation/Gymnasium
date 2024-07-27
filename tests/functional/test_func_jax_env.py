@@ -1,5 +1,6 @@
 """Test the functional jax environment."""
 
+import numpy as np
 import pytest
 
 
@@ -7,6 +8,7 @@ jax = pytest.importorskip("jax")
 import jax.numpy as jnp  # noqa: E402
 import jax.random as jrng  # noqa: E402
 
+import gymnasium as gym  # noqa: E402
 from gymnasium.envs.phys2d.cartpole import CartPoleFunctional  # noqa: E402
 from gymnasium.envs.phys2d.pendulum import PendulumFunctional  # noqa: E402
 
@@ -109,3 +111,31 @@ def test_vmap(env_class):
         assert obs.dtype == jnp.float32
 
         state = next_state
+
+
+def test_equal_episode_length():
+    """Tests that the number of steps in an episode is the same."""
+
+    env = gym.make_vec("phys2d/Pendulum-v0", 2, "vector_entry_point")
+    # By default, the total number of steps per episode is 200
+
+    expected_dones = [199, 399, 599, 799, 999]
+
+    env.reset()
+
+    for t in range(1000):
+
+        actions = env.action_space.sample()
+
+        next_obs, reward, term, trunc, info = env.step(actions)
+
+        done = np.logical_or(term, trunc).any()
+
+        if done:
+            assert t in expected_dones
+        else:
+            assert t not in expected_dones
+
+        # This is the questionable code
+        if done:
+            obs, *_ = env.step(actions)
