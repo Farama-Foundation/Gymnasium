@@ -44,8 +44,8 @@ class TestVectorEnvObservationModes:
             Dict({"a": Discrete(2), "b": Box(low=0, high=1, shape=(2,))}),
         ]
         with pytest.raises(
-            RuntimeError,
-            match="Some environments have an observation space different from `Box(0.0, 1.0, (3,), float32)`. In order to batch observations, the observation spaces from all environments must be equal.",
+            AssertionError,
+            match="Low & High values for observation spaces can be different but shapes need to be the same",
         ):
             VectorEnv(
                 [create_env(space) for space in spaces], observation_mode="different"

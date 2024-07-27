@@ -303,7 +303,9 @@ class SyncVectorEnv(VectorEnv):
         for env in self.envs:
             if not (env.observation_space == self.single_observation_space):
                 if not (
-                    np.any(
+                    hasattr(env.observation_space, "low")
+                    and hasattr(env.observation_space, "high")
+                    and np.any(
                         np.all(
                             env.observation_space.low
                             == self.single_observation_space.low,

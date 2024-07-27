@@ -744,7 +744,9 @@ def _async_worker(
                         (
                             (data[0] == observation_space)
                             or (
-                                np.any(
+                                hasattr(observation_space, "low")
+                                and hasattr(observation_space, "high")
+                                and np.any(
                                     np.all(observation_space.low == data[0].low, axis=1)
                                 )
                                 and np.any(
