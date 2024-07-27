@@ -1,5 +1,7 @@
 """Batching support for Spaces of same type but possibly varying low/high values."""
 
+from __future__ import annotations
+
 from copy import deepcopy
 from functools import singledispatch
 
@@ -21,7 +23,7 @@ from gymnasium.spaces import (
 
 
 @singledispatch
-def batch_differing_spaces(spaces: "list[Space]"):
+def batch_differing_spaces(spaces: list[Space]):
     """Batch a Sequence of spaces that allows the subspaces to contain minor differences."""
     assert len(spaces) > 0
     assert all(isinstance(space, type(spaces[0])) for space in spaces)
@@ -31,7 +33,7 @@ def batch_differing_spaces(spaces: "list[Space]"):
 
 
 @batch_differing_spaces.register(Box)
-def _batch_differing_spaces_box(spaces: "list[Box]"):
+def _batch_differing_spaces_box(spaces: list[Box]):
     assert all(spaces[0].dtype == space for space in spaces)
 
     return Box(
@@ -43,7 +45,7 @@ def _batch_differing_spaces_box(spaces: "list[Box]"):
 
 
 @batch_differing_spaces.register(Discrete)
-def _batch_differing_spaces_discrete(spaces: "list[Discrete]"):
+def _batch_differing_spaces_discrete(spaces: list[Discrete]):
     return MultiDiscrete(
         nvec=np.array([space.n for space in spaces]),
         start=np.array([space.start for space in spaces]),
@@ -52,7 +54,7 @@ def _batch_differing_spaces_discrete(spaces: "list[Discrete]"):
 
 
 @batch_differing_spaces.register(MultiDiscrete)
-def _batch_differing_spaces_multi_discrete(spaces: "list[MultiDiscrete]"):
+def _batch_differing_spaces_multi_discrete(spaces: list[MultiDiscrete]):
     return Box(
         low=np.array([space.start for space in spaces]),
         high=np.array([space.start + space.nvec for space in spaces]) - 1,
@@ -62,7 +64,7 @@ def _batch_differing_spaces_multi_discrete(spaces: "list[MultiDiscrete]"):
 
 
 @batch_differing_spaces.register(MultiBinary)
-def _batch_differing_spaces_multi_binary(spaces: "list[MultiBinary]"):
+def _batch_differing_spaces_multi_binary(spaces: list[MultiBinary]):
     assert all(spaces[0].shape == space.shape for space in spaces)
 
     return Box(
@@ -75,7 +77,7 @@ def _batch_differing_spaces_multi_binary(spaces: "list[MultiBinary]"):
 
 
 @batch_differing_spaces.register(Tuple)
-def _batch_differing_spaces_tuple(spaces: "list[Tuple]"):
+def _batch_differing_spaces_tuple(spaces: list[Tuple]):
     return Tuple(
         tuple(
             batch_differing_spaces(subspaces)
@@ -86,7 +88,7 @@ def _batch_differing_spaces_tuple(spaces: "list[Tuple]"):
 
 
 @batch_differing_spaces.register(Dict)
-def _batch_differing_spaces_dict(spaces: "list[Dict]"):
+def _batch_differing_spaces_dict(spaces: list[Dict]):
     assert all(spaces[0].keys() == space.keys() for space in spaces)
 
     return Dict(
@@ -102,5 +104,5 @@ def _batch_differing_spaces_dict(spaces: "list[Dict]"):
 @batch_differing_spaces.register(Text)
 @batch_differing_spaces.register(Sequence)
 @batch_differing_spaces.register(OneOf)
-def _batch_spaces_undefined(spaces: "list[Graph | Text | Sequence | OneOf]"):
+def _batch_spaces_undefined(spaces: list[Graph | Text | Sequence | OneOf]):
     return Tuple(spaces, seed=deepcopy(spaces[0].np_random))

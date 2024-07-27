@@ -159,7 +159,7 @@ class AsyncVectorEnv(VectorEnv):
                     [env.observation_space for env in self.env_fns]
                 )
             else:
-                raise ValueError
+                raise ValueError("Need to pass in mode for batching observations")
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         dummy_env.close()
