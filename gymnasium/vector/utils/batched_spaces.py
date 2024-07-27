@@ -106,3 +106,36 @@ def _batch_differing_spaces_dict(spaces: list[Dict]):
 @batch_differing_spaces.register(OneOf)
 def _batch_spaces_undefined(spaces: list[Graph | Text | Sequence | OneOf]):
     return Tuple(spaces, seed=deepcopy(spaces[0].np_random))
+
+
+def all_spaces_have_same_shape(spaces):
+    """Check if all spaces have the same size."""
+    if not spaces:
+        return True  # An empty list is considered to have the same shape
+
+    def get_space_shape(space):
+        if isinstance(space, Box):
+            return space.shape
+        elif isinstance(space, Discrete):
+            return ()  # Discrete spaces are considered scalar
+        elif isinstance(space, Dict):
+            return tuple(get_space_shape(s) for s in space.spaces.values())
+        elif isinstance(space, Tuple):
+            return tuple(get_space_shape(s) for s in space.spaces)
+        else:
+            raise ValueError(f"Unsupported space type: {type(space)}")
+
+    first_shape = get_space_shape(spaces[0])
+    return all(get_space_shape(space) == first_shape for space in spaces[1:])
+
+
+def all_spaces_have_same_type(spaces):
+    """Check if all spaces have the same space type (Box, Discrete, etc)."""
+    if not spaces:
+        return True  # An empty list is considered to have the same type
+
+    # Get the type of the first space
+    first_type = type(spaces[0])
+
+    # Check if all spaces have the same type as the first one
+    return all(isinstance(space, first_type) for space in spaces)

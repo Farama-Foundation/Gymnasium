@@ -33,7 +33,10 @@ from gymnasium.vector.utils import (
     read_from_shared_memory,
     write_to_shared_memory,
 )
-from gymnasium.vector.utils.batched_spaces import batch_differing_spaces
+from gymnasium.vector.utils.batched_spaces import (
+    all_spaces_have_same_shape,
+    batch_differing_spaces,
+)
 from gymnasium.vector.vector_env import ArrayType, VectorEnv
 
 
@@ -144,20 +147,27 @@ class AsyncVectorEnv(VectorEnv):
         self.metadata = dummy_env.metadata
         self.render_mode = dummy_env.render_mode
 
-        self.single_observation_space = dummy_env.observation_space
         self.single_action_space = dummy_env.action_space
 
         if isinstance(observation_mode, Space):
             self.observation_space = observation_mode
         else:
             if observation_mode == "same":
+                self.single_observation_space = dummy_env.observation_space
                 self.observation_space = batch_space(
                     self.single_observation_space, self.num_envs
                 )
             elif observation_mode == "different":
-                self.observation_space = batch_differing_spaces(
-                    [env.observation_space for env in self.env_fns]
-                )
+                current_spaces = [env().observation_space for env in self.env_fns]
+
+                assert all_spaces_have_same_shape(
+                    current_spaces
+                ), "Low & High values for observation spaces can be different but shapes need to be the same"
+
+                self.single_observation_space = batch_differing_spaces(current_spaces)
+
+                self.observation_space = self.single_observation_space
+
             else:
                 raise ValueError("Need to pass in mode for batching observations")
         self.action_space = batch_space(self.single_action_space, self.num_envs)
@@ -731,7 +741,20 @@ def _async_worker(
             elif command == "_check_spaces":
                 pipe.send(
                     (
-                        (data[0] == observation_space, data[1] == action_space),
+                        (
+                            (data[0] == observation_space)
+                            or (
+                                np.any(
+                                    np.all(observation_space.low == data[0].low, axis=1)
+                                )
+                                and np.any(
+                                    np.all(
+                                        observation_space.high == data[0].high, axis=1
+                                    )
+                                )
+                            ),
+                            data[1] == action_space,
+                        ),
                         True,
                     )
                 )
