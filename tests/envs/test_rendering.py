@@ -42,7 +42,7 @@ def check_rendered(rendered_frame, mode: str):
 render_mode_env_specs = [
     spec
     for spec in all_testing_env_specs
-    if "mujoco" not in spec.entry_point or spec.version>=4
+    if "mujoco" not in spec.entry_point or spec.version >= 4
 ]
 
 
