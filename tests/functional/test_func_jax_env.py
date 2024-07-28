@@ -121,6 +121,8 @@ def test_equal_episode_length():
 
     expected_dones = [199, 399, 599, 799, 999]
 
+    env.action_space.seed(0)
+
     env.reset()
 
     for t in range(1000):
