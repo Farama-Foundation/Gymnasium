@@ -88,7 +88,7 @@ class MujocoEnv(gym.Env):
                 "rgb_array",
                 "depth_array",
             ],
-            "render_fps": int(np.round(1.0 / self.dt))
+            "render_fps": int(np.round(1.0 / self.dt)),
         }
 
         if observation_space is not None:
