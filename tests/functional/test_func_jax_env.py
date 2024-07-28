@@ -113,10 +113,11 @@ def test_vmap(env_class):
         state = next_state
 
 
-def test_equal_episode_length():
+@pytest.mark.parametrize("vectorization_mode", ["vector_entry_point", "sync", "async"])
+def test_equal_episode_length(vectorization_mode: str):
     """Tests that the number of steps in an episode is the same."""
 
-    env = gym.make_vec("phys2d/Pendulum-v0", 2, "vector_entry_point")
+    env = gym.make_vec("phys2d/Pendulum-v0", 2, vectorization_mode=vectorization_mode)
     # By default, the total number of steps per episode is 200
 
     expected_dones = [199, 399, 599, 799, 999]
@@ -138,6 +139,5 @@ def test_equal_episode_length():
         else:
             assert t not in expected_dones
 
-        # This is the questionable code
         if done:
             obs, *_ = env.step(actions)
