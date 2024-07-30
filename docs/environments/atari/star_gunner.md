@@ -49,10 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points for destroying enemies. You get bonus points for clearing a wave and a level.
-For a more detailed documentation, see [the Atari Mania page](http://www.atarimania.com/game-atari-2600-vcs-stargunner_16921.html).
+## Rewards
+You score points for destroying enemies. You get bonus points for clearing a wave and a level. For a more detailed documentation, see [the Atari Mania page](http://www.atarimania.com/game-atari-2600-vcs-stargunner_16921.html).
 
 ## Variants
 
@@ -90,6 +88,6 @@ along with the default values.
 
 A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.
 
-* v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the "ALE" namespace.
+* v5: Stickiness was added back and stochastic frame-skipping was removed. The environments are now in the "ALE" namespace.
 * v4: Stickiness of actions was removed
 * v0: Initial versions release

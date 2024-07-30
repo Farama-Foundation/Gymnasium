@@ -1,4 +1,5 @@
 """Implementation of a space that represents the cartesian product of `Discrete` spaces."""
+
 from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
@@ -172,7 +173,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         self, sample_n: list[Sequence[int]]
     ) -> list[NDArray[np.integer[Any]]]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        return [np.array(sample) for sample in sample_n]
+        return [np.array(sample, dtype=np.int64) for sample in sample_n]
 
     def __repr__(self):
         """Gives a string representation of this space."""
@@ -207,6 +208,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         return bool(
             isinstance(other, MultiDiscrete)
             and self.dtype == other.dtype
+            and self.shape == other.shape
             and np.all(self.nvec == other.nvec)
             and np.all(self.start == other.start)
         )

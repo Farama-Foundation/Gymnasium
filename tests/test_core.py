@@ -1,4 +1,5 @@
 """Checks that the core Gymnasium API is implemented as expected."""
+
 from __future__ import annotations
 
 import re
@@ -12,6 +13,7 @@ from gymnasium import ActionWrapper, Env, ObservationWrapper, RewardWrapper, Wra
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.spaces import Box
 from gymnasium.utils import seeding
+from gymnasium.utils.seeding import np_random
 from gymnasium.wrappers import OrderEnforcing
 from tests.testing_env import GenericTestEnv
 
@@ -37,17 +39,22 @@ class ExampleEnv(Env):
         options: dict | None = None,
     ) -> tuple[ObsType, dict]:
         """Resets the environment."""
+        super().reset(seed=seed, options=options)
         return 0, {}
 
 
-def test_example_env():
-    """Tests a gymnasium environment."""
-    env = ExampleEnv()
+@pytest.fixture
+def example_env():
+    return ExampleEnv()
 
-    assert env.metadata == {"render_modes": []}
-    assert env.render_mode is None
-    assert env.spec is None
-    assert env._np_random is None  # pyright: ignore [reportPrivateUsage]
+
+def test_example_env(example_env):
+    """Tests a gymnasium environment."""
+
+    assert example_env.metadata == {"render_modes": []}
+    assert example_env.render_mode is None
+    assert example_env.spec is None
+    assert example_env._np_random is None  # pyright: ignore [reportPrivateUsage]
 
 
 class ExampleWrapper(Wrapper):
@@ -77,9 +84,9 @@ class ExampleWrapper(Wrapper):
         return self._np_random
 
 
-def test_example_wrapper():
+def test_example_wrapper(example_env):
     """Tests the gymnasium wrapper works as expected."""
-    env = ExampleEnv()
+    env = example_env
     wrapper_env = ExampleWrapper(env)
 
     assert env.metadata == wrapper_env.metadata
@@ -112,7 +119,7 @@ def test_example_wrapper():
             "Can't access `_np_random` of a wrapper, use `.unwrapped._np_random` or `.np_random`."
         ),
     ):
-        print(wrapper_env.access_hidden_np_random())
+        _ = wrapper_env.access_hidden_np_random()
 
 
 class ExampleRewardWrapper(RewardWrapper):
@@ -162,22 +169,25 @@ def test_reward_observation_action_wrapper():
 
 def test_get_set_wrapper_attr():
     env = gym.make("CartPole-v1")
+    assert env is not env.unwrapped
 
     # Test get_wrapper_attr
     with pytest.raises(AttributeError):
         env.gravity
     assert env.unwrapped.gravity is not None
+    assert env.has_wrapper_attr("gravity")
     assert env.get_wrapper_attr("gravity") is not None
 
     with pytest.raises(AttributeError):
         env.unknown_attr
+    assert env.has_wrapper_attr("unknown_attr") is False
     with pytest.raises(AttributeError):
         env.get_wrapper_attr("unknown_attr")
 
     # Test set_wrapper_attr
     env.set_wrapper_attr("gravity", 10.0)
     with pytest.raises(AttributeError):
-        env.gravity
+        env.gravity  # checks the top level wrapper hasn't been updated
     assert env.unwrapped.gravity == 10.0
     assert env.get_wrapper_attr("gravity") == 10.0
 
@@ -189,10 +199,12 @@ def test_get_set_wrapper_attr():
     # Test with OrderEnforcing (intermediate wrapper)
     assert not isinstance(env, OrderEnforcing)
 
+    # show that the base and top level objects don't contain the attribute
     with pytest.raises(AttributeError):
         env._disable_render_order_enforcing
     with pytest.raises(AttributeError):
         env.unwrapped._disable_render_order_enforcing
+    assert env.has_wrapper_attr("_disable_render_order_enforcing")
     assert env.get_wrapper_attr("_disable_render_order_enforcing") is False
 
     env.set_wrapper_attr("_disable_render_order_enforcing", True)
@@ -202,3 +214,45 @@ def test_get_set_wrapper_attr():
     with pytest.raises(AttributeError):
         env.unwrapped._disable_render_order_enforcing
     assert env.get_wrapper_attr("_disable_render_order_enforcing") is True
+
+
+class TestRandomSeeding:
+    @staticmethod
+    def test_nonempty_seed_retrieved_when_not_set(example_env):
+        assert example_env.np_random_seed is not None
+        assert isinstance(example_env.np_random_seed, int)
+
+    @staticmethod
+    def test_seed_set_at_reset_and_retrieved(example_env):
+        seed = 42
+        example_env.reset(seed=seed)
+        assert example_env.np_random_seed == seed
+        # resetting with seed=None means seed remains the same
+        example_env.reset(seed=None)
+        assert example_env.np_random_seed == seed
+
+    @staticmethod
+    def test_seed_cannot_be_set_directly(example_env):
+        with pytest.raises(AttributeError):
+            example_env.np_random_seed = 42
+
+    @staticmethod
+    def test_negative_seed_retrieved_when_seed_unknown(example_env):
+        rng, _ = np_random()
+        example_env.np_random = rng
+        # seed is unknown
+        assert example_env.np_random_seed == -1
+
+    @staticmethod
+    def test_seeding_works_in_wrapped_envs(example_env):
+        seed = 42
+        wrapper_env = ExampleWrapper(example_env)
+        wrapper_env.reset(seed=seed)
+        assert wrapper_env.np_random_seed == seed
+        # resetting with seed=None means seed remains the same
+        wrapper_env.reset(seed=None)
+        assert wrapper_env.np_random_seed == seed
+        # setting np_random directly makes seed unknown
+        rng, _ = np_random()
+        wrapper_env.np_random = rng
+        assert wrapper_env.np_random_seed == -1

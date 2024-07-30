@@ -1,4 +1,5 @@
 """Vectorizes action wrappers to work for `VectorEnv`."""
+
 from __future__ import annotations
 
 from copy import deepcopy
@@ -32,7 +33,7 @@ class TransformAction(VectorActionWrapper):
         >>> obs
         array([[-0.46553135, -0.00142543],
                [-0.498371  , -0.00715587],
-               [-0.4651575 , -0.00624371]], dtype=float32)
+               [-0.46515748, -0.00624371]], dtype=float32)
 
     Example - With action transformation:
         >>> import gymnasium as gym

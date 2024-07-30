@@ -6,6 +6,7 @@
 * ``NormalizeObservation`` - Normalized the observations to have unit variance with a moving mean
 * ``MaxAndSkipObservation`` - Return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.
 """
+
 from __future__ import annotations
 
 from collections import deque
@@ -128,8 +129,7 @@ class TimeAwareObservation(
         >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservation(env)
         >>> env.observation_space
-        Box([-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
-          0.00000000e+00], [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+        Box([-4.80000019        -inf -0.41887903        -inf  0.        ], [4.80000019e+00            inf 4.18879032e-01            inf
          5.00000000e+02], (5,), float64)
         >>> env.reset(seed=42)[0]
         array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ])
@@ -141,8 +141,7 @@ class TimeAwareObservation(
         >>> env = gym.make('CartPole-v1')
         >>> env = TimeAwareObservation(env, normalize_time=True)
         >>> env.observation_space
-        Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38
-          0.0000000e+00], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38 1.0000000e+00], (5,), float32)
+        Box([-4.8               -inf -0.41887903        -inf  0.        ], [4.8               inf 0.41887903        inf 1.        ], (5,), float32)
         >>> env.reset(seed=42)[0]
         array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ],
               dtype=float32)
@@ -155,7 +154,7 @@ class TimeAwareObservation(
         >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservation(env, flatten=False)
         >>> env.observation_space
-        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
+        Dict('obs': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), 'time': Box(0, 500, (1,), int32))
         >>> env.reset(seed=42)[0]
         {'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}
         >>> _ = env.action_space.seed(42)
@@ -299,26 +298,55 @@ class FrameStackObservation(
     is an array with shape [3], so if we stack 4 observations, the processed observation
     has shape [4, 3].
 
-    No vector version of the wrapper exists.
+    Users have options for the padded observation used:
 
-    Note:
-        - After :meth:`reset` is called, the frame buffer will be filled with the initial observation.
-          I.e. the observation returned by :meth:`reset` will consist of `num_stack` many identical frames.
+     * "reset" (default) - The reset value is repeated
+     * "zero" - A "zero"-like instance of the observation space
+     * custom - An instance of the observation space
+
+    No vector version of the wrapper exists.
 
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import FrameStackObservation
         >>> env = gym.make("CarRacing-v3")
-        >>> env = FrameStackObservation(env, 4)
+        >>> env = FrameStackObservation(env, stack_size=4)
         >>> env.observation_space
         Box(0, 255, (4, 96, 96, 3), uint8)
         >>> obs, _ = env.reset()
         >>> obs.shape
         (4, 96, 96, 3)
 
+    Example with different padding observations:
+        >>> env = gym.make("CartPole-v1")
+        >>> env.reset(seed=123)
+        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})
+        >>> stacked_env = FrameStackObservation(env, 3)   # the default is padding_type="reset"
+        >>> stacked_env.reset(seed=123)
+        (array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],
+               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],
+              dtype=float32), {})
+
+
+        >>> stacked_env = FrameStackObservation(env, 3, padding_type="zero")
+        >>> stacked_env.reset(seed=123)
+        (array([[ 0.        ,  0.        ,  0.        ,  0.        ],
+               [ 0.        ,  0.        ,  0.        ,  0.        ],
+               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],
+              dtype=float32), {})
+        >>> stacked_env = FrameStackObservation(env, 3, padding_type=np.array([1, -1, 0, 2], dtype=np.float32))
+        >>> stacked_env.reset(seed=123)
+        (array([[ 1.        , -1.        ,  0.        ,  2.        ],
+               [ 1.        , -1.        ,  0.        ,  2.        ],
+               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],
+              dtype=float32), {})
+
     Change logs:
      * v0.15.0 - Initially add as ``FrameStack`` with support for lz4
      * v1.0.0 - Rename to ``FrameStackObservation`` and remove lz4 and ``LazyFrame`` support
+                along with adding the ``padding_type`` parameter
+
     """
 
     def __init__(
@@ -326,15 +354,20 @@ class FrameStackObservation(
         env: gym.Env[ObsType, ActType],
         stack_size: int,
         *,
-        zeros_obs: ObsType | None = None,
+        padding_type: str | ObsType = "reset",
     ):
         """Observation wrapper that stacks the observations in a rolling manner.
 
         Args:
             env: The environment to apply the wrapper
-            stack_size: The number of frames to stack with zero_obs being used originally.
-            zeros_obs: Keyword only parameter that allows a custom padding observation at :meth:`reset`
+            stack_size: The number of frames to stack.
+            padding_type: The padding type to use when stacking the observations, options: "reset", "zero", custom obs
         """
+        gym.utils.RecordConstructorArgs.__init__(
+            self, stack_size=stack_size, padding_type=padding_type
+        )
+        gym.Wrapper.__init__(self, env)
+
         if not np.issubdtype(type(stack_size), np.integer):
             raise TypeError(
                 f"The stack_size is expected to be an integer, actual type: {type(stack_size)}"
@@ -343,22 +376,31 @@ class FrameStackObservation(
             raise ValueError(
                 f"The stack_size needs to be greater than one, actual value: {stack_size}"
             )
-
-        gym.utils.RecordConstructorArgs.__init__(self, stack_size=stack_size)
-        gym.Wrapper.__init__(self, env)
+        if isinstance(padding_type, str) and (
+            padding_type == "reset" or padding_type == "zero"
+        ):
+            self.padding_value: ObsType = create_zero_array(env.observation_space)
+        elif padding_type in env.observation_space:
+            self.padding_value = padding_type
+            padding_type = "_custom"
+        else:
+            if isinstance(padding_type, str):
+                raise ValueError(  # we are guessing that the user just entered the "reset" or "zero" wrong
+                    f"Unexpected `padding_type`, expected 'reset', 'zero' or a custom observation space, actual value: {padding_type!r}"
+                )
+            else:
+                raise ValueError(
+                    f"Unexpected `padding_type`, expected 'reset', 'zero' or a custom observation space, actual value: {padding_type!r} not an instance of env observation ({env.observation_space})"
+                )
 
         self.observation_space = batch_space(env.observation_space, n=stack_size)
         self.stack_size: Final[int] = stack_size
+        self.padding_type: Final[str] = padding_type
 
-        self.zero_obs: Final[ObsType] = (
-            zeros_obs if zeros_obs else create_zero_array(env.observation_space)
+        self.obs_queue = deque(
+            [self.padding_value for _ in range(self.stack_size)], maxlen=self.stack_size
         )
-        self._stacked_obs = deque(
-            [self.zero_obs for _ in range(self.stack_size)], maxlen=self.stack_size
-        )
-        self._stacked_array = create_empty_array(
-            env.observation_space, n=self.stack_size
-        )
+        self.stacked_obs = create_empty_array(env.observation_space, n=self.stack_size)
 
     def step(
         self, action: WrapperActType
@@ -371,13 +413,11 @@ class FrameStackObservation(
         Returns:
             Stacked observations, reward, terminated, truncated, and info from the environment
         """
-        obs, reward, terminated, truncated, info = super().step(action)
-        self._stacked_obs.append(obs)
+        obs, reward, terminated, truncated, info = self.env.step(action)
+        self.obs_queue.append(obs)
 
         updated_obs = deepcopy(
-            concatenate(
-                self.env.observation_space, self._stacked_obs, self._stacked_array
-            )
+            concatenate(self.env.observation_space, self.obs_queue, self.stacked_obs)
         )
         return updated_obs, reward, terminated, truncated, info
 
@@ -393,15 +433,16 @@ class FrameStackObservation(
         Returns:
             The stacked observations and info
         """
-        obs, info = super().reset(seed=seed, options=options)
+        obs, info = self.env.reset(seed=seed, options=options)
+
+        if self.padding_type == "reset":
+            self.padding_value = obs
         for _ in range(self.stack_size - 1):
-            self._stacked_obs.append(self.zero_obs)
-        self._stacked_obs.append(obs)
+            self.obs_queue.append(self.padding_value)
+        self.obs_queue.append(obs)
 
         updated_obs = deepcopy(
-            concatenate(
-                self.env.observation_space, self._stacked_obs, self._stacked_array
-            )
+            concatenate(self.env.observation_space, self.obs_queue, self.stacked_obs)
         )
         return updated_obs, info
 
@@ -412,7 +453,7 @@ class NormalizeObservation(
 ):
     """Normalizes observations to be centered at the mean with unit variance.
 
-    The property :prop:`_update_running_mean` allows to freeze/continue the running mean calculation of the observation
+    The property :attr:`update_running_mean` allows to freeze/continue the running mean calculation of the observation
     statistics. If ``True`` (default), the ``RunningMeanStd`` will get updated every time ``step`` or ``reset`` is called.
     If ``False``, the calculated statistics are used but not updated anymore; this may be used during evaluation.
 
@@ -445,6 +486,7 @@ class NormalizeObservation(
     Change logs:
      * v0.21.0 - Initially add
      * v1.0.0 - Add `update_running_mean` attribute to allow disabling of updating the running mean / standard, particularly useful for evaluation time.
+        Casts all observations to `np.float32` and sets the observation space with low/high of `-np.inf` and `np.inf` and dtype as `np.float32`
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType], epsilon: float = 1e-8):
@@ -456,6 +498,14 @@ class NormalizeObservation(
         """
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
         gym.ObservationWrapper.__init__(self, env)
+
+        assert env.observation_space.shape is not None
+        self.observation_space = gym.spaces.Box(
+            low=-np.inf,
+            high=np.inf,
+            shape=env.observation_space.shape,
+            dtype=np.float32,
+        )
 
         self.obs_rms = RunningMeanStd(
             shape=self.observation_space.shape, dtype=self.observation_space.dtype
@@ -477,8 +527,8 @@ class NormalizeObservation(
         """Normalises the observation using the running mean and variance of the observations."""
         if self._update_running_mean:
             self.obs_rms.update(np.array([observation]))
-        return (observation - self.obs_rms.mean) / np.sqrt(
-            self.obs_rms.var + self.epsilon
+        return np.float32(
+            (observation - self.obs_rms.mean) / np.sqrt(self.obs_rms.var + self.epsilon)
         )
 
 
@@ -507,9 +557,9 @@ class MaxAndSkipObservation(
         >>> wrapped_obs0, *_ = wrapped_env.reset(seed=123)
         >>> wrapped_obs1, *_ = wrapped_env.step(1)
         >>> np.all(obs0 == wrapped_obs0)
-        True
+        np.True_
         >>> np.all(wrapped_obs1 == skip_and_max_obs)
-        True
+        np.True_
 
     Change logs:
      * v1.0.0 - Initially add

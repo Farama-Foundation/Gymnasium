@@ -21,4 +21,9 @@
 
     .. automethod:: gymnasium.spaces.Graph.sample
     .. automethod:: gymnasium.spaces.Graph.seed
+
+.. autoclass:: gymnasium.spaces.OneOf
+
+    .. automethod:: gymnasium.spaces.OneOf.sample
+    .. automethod:: gymnasium.spaces.OneOf.seed
 ```

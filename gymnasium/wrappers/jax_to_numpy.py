@@ -1,4 +1,5 @@
 """Helper functions and wrapper class for converting between numpy and Jax."""
+
 from __future__ import annotations
 
 import functools
@@ -18,7 +19,7 @@ try:
     import jax.numpy as jnp
 except ImportError:
     raise DependencyNotInstalled(
-        "Jax is not installed therefore cannot call `numpy_to_jax`, run `pip install gymnasium[jax]`"
+        'Jax is not installed therefore cannot call `numpy_to_jax`, run `pip install "gymnasium[jax]"`'
     )
 
 __all__ = ["JaxToNumpy", "jax_to_numpy", "numpy_to_jax"]
@@ -145,7 +146,7 @@ class JaxToNumpy(
         """
         if jnp is None:
             raise DependencyNotInstalled(
-                "jax is not installed, run `pip install gymnasium[jax]`"
+                'Jax is not installed, run `pip install "gymnasium[jax]"`'
             )
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)

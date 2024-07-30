@@ -43,8 +43,9 @@ Such wrappers can be easily implemented by inheriting from :class:`gymnasium.Act
 :class:`gymnasium.ObservationWrapper`, or :class:`gymnasium.RewardWrapper` and implementing the respective transformation.
 If you need a wrapper to do more complicated tasks, you can inherit from the :class:`gymnasium.Wrapper` class directly.
 
-If you'd like to implement your own custom wrapper, check out `the corresponding tutorial <../../tutorials/implementing_custom_wrappers>`_.
+If you'd like to implement your own custom wrapper, check out `the corresponding tutorial <../../tutorials/gymnasium_basics/implementing_custom_wrappers>`_.
 """
+
 # pyright: reportUnsupportedDunderAll=false
 import importlib
 
@@ -73,11 +74,11 @@ from gymnasium.wrappers.transform_action import (
     TransformAction,
 )
 from gymnasium.wrappers.transform_observation import (
+    AddRenderObservation,
     DtypeObservation,
     FilterObservation,
     FlattenObservation,
     GrayscaleObservation,
-    RenderObservation,
     RescaleObservation,
     ReshapeObservation,
     ResizeObservation,
@@ -99,7 +100,7 @@ __all__ = [
     "TransformObservation",
     "MaxAndSkipObservation",
     "NormalizeObservation",
-    "RenderObservation",
+    "AddRenderObservation",
     "ResizeObservation",
     "ReshapeObservation",
     "RescaleObservation",
@@ -142,7 +143,7 @@ _wrapper_to_class = {
 _renamed_wrapper = {
     "AutoResetWrapper": "Autoreset",
     "FrameStack": "FrameStackObservation",
-    "PixelObservationWrapper": "RenderObservation",
+    "PixelObservationWrapper": "AddRenderObservation",
     "VectorListInfo": "vector.DictInfoToList",
 }
 

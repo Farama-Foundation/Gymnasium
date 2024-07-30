@@ -70,6 +70,10 @@ def test_discrete_actions_out_of_bound(env: gym.Env):
     Args:
         env (gym.Env): the gymnasium environment
     """
+    if env.metadata.get("jax", False):
+        assert env.spec is not None
+        pytest.skip(f"Skipping jax-based environment ({env.spec.id})")
+
     assert isinstance(env.action_space, spaces.Discrete)
     upper_bound = env.action_space.start + env.action_space.n - 1
 
@@ -102,6 +106,10 @@ def test_box_actions_out_of_bound(env: gym.Env):
     Args:
         env (gym.Env): the gymnasium environment
     """
+    if env.metadata.get("jax", False):
+        assert env.spec is not None
+        pytest.skip(f"Skipping jax-based environment ({env.spec.id})")
+
     env.reset(seed=42)
 
     assert env.spec is not None
@@ -119,7 +127,7 @@ def test_box_actions_out_of_bound(env: gym.Env):
         if is_upper_bound:
             obs, _, _, _, _ = env.step(upper_bounds)
             oob_action = upper_bounds.copy()
-            oob_action[i] += np.cast[dtype](OOB_VALUE)
+            oob_action[i] += np.asarray(OOB_VALUE, dtype=dtype)
 
             assert oob_action[i] > upper_bounds[i]
             oob_obs, _, _, _, _ = oob_env.step(oob_action)
@@ -127,11 +135,9 @@ def test_box_actions_out_of_bound(env: gym.Env):
             assert np.all(obs == oob_obs)
 
         if is_lower_bound:
-            obs, _, _, _, _ = env.step(
-                lower_bounds
-            )  # `env` is unwrapped, and in new step API
+            obs, _, _, _, _ = env.step(lower_bounds)
             oob_action = lower_bounds.copy()
-            oob_action[i] -= np.cast[dtype](OOB_VALUE)
+            oob_action[i] -= np.asarray(OOB_VALUE, dtype=dtype)
 
             assert oob_action[i] < lower_bounds[i]
             oob_obs, _, _, _, _ = oob_env.step(oob_action)

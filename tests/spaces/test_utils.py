@@ -50,11 +50,18 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     None,
     None,
     None,
+    None,
     # Sequence
     None,
     None,
     None,
+    None,
+    None,
+    # OneOf
+    4,
+    5,
 ]
+assert len(TESTING_SPACES) == len(TESTING_SPACES_EXPECTED_FLATDIMS)
 
 
 @pytest.mark.parametrize(
@@ -106,7 +113,8 @@ def test_flatten_space(space):
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
 def test_flatten(space):
     """Test that a flattened sample have the `flatdim` shape."""
-    flattened_sample = utils.flatten(space, space.sample())
+    sample = space.sample()
+    flattened_sample = utils.flatten(space, sample)
 
     if space.is_np_flattenable:
         assert isinstance(flattened_sample, np.ndarray)

@@ -1,9 +1,9 @@
 """Implementation of a space that represents the cartesian product of other spaces as a dictionary."""
+
 from __future__ import annotations
 
 import collections.abc
 import typing
-from collections import OrderedDict
 from typing import Any, KeysView, Sequence
 
 import numpy as np
@@ -20,7 +20,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         >>> from gymnasium.spaces import Dict, Box, Discrete
         >>> observation_space = Dict({"position": Box(-1, 1, shape=(2,)), "color": Discrete(3)}, seed=42)
         >>> observation_space.sample()
-        OrderedDict([('color', 0), ('position', array([-0.3991573 ,  0.21649833], dtype=float32))])
+        {'color': np.int64(0), 'position': array([-0.3991573 ,  0.21649833], dtype=float32)}
 
         With a nested dict:
 
@@ -67,23 +67,23 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
             **spaces_kwargs: If ``spaces`` is ``None``, you need to pass the constituent spaces as keyword arguments, as described above.
         """
         # Convert the spaces into an OrderedDict
-        if isinstance(spaces, collections.abc.Mapping) and not isinstance(
-            spaces, OrderedDict
-        ):
+        if isinstance(spaces, collections.abc.Mapping):
+            # for legacy reasons, we need to preserve the sorted dictionary items.
+            # as this could matter for projects flatten the dictionary.
             try:
-                spaces = OrderedDict(sorted(spaces.items()))
+                spaces = dict(sorted(spaces.items()))
             except TypeError:
                 # Incomparable types (e.g. `int` vs. `str`, or user-defined types) found.
                 # The keys remain in the insertion order.
-                spaces = OrderedDict(spaces.items())
+                spaces = dict(spaces.items())
         elif isinstance(spaces, Sequence):
-            spaces = OrderedDict(spaces)
+            spaces = dict(spaces)
         elif spaces is None:
-            spaces = OrderedDict()
+            spaces = dict()
         else:
-            assert isinstance(
-                spaces, OrderedDict
-            ), f"Unexpected Dict space input, expecting dict, OrderedDict or Sequence, actual type: {type(spaces)}"
+            raise TypeError(
+                f"Unexpected Dict space input, expecting dict, OrderedDict or Sequence, actual type: {type(spaces)}"
+            )
 
         # Add kwargs to spaces to allow both dictionary and keywords to be used
         for key, space in spaces_kwargs.items():
@@ -108,43 +108,44 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces.values())
 
-    def seed(self, seed: dict[str, Any] | int | None = None) -> list[int]:
+    def seed(self, seed: int | dict[str, Any] | None = None) -> dict[str, int]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
 
         * ``None`` - All the subspaces will use a random initial seed
-        * ``Int`` - The integer is used to seed the :class:`Dict` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all of the subspaces.
-        * ``Dict`` - Using all the keys in the seed dictionary, the values are used to seed the subspaces. This allows the seeding of multiple composite subspaces (``Dict["space": Dict[...], ...]`` with ``{"space": {...}, ...}``).
+        * ``Int`` - The integer is used to seed the :class:`Dict` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all subspaces, though is very unlikely.
+        * ``Dict`` - A dictionary of seeds for each subspace, requires a seed key for every subspace. This supports seeding of multiple composite subspaces (``Dict["space": Dict[...], ...]`` with ``{"space": {...}, ...}``).
 
         Args:
-            seed: An optional list of ints or int to seed the (sub-)spaces.
-        """
-        seeds: list[int] = []
+            seed: An optional int or dictionary of subspace keys to int to seed each PRNG. See above for more details.
 
-        if isinstance(seed, dict):
-            assert (
-                seed.keys() == self.spaces.keys()
-            ), f"The seed keys: {seed.keys()} are not identical to space keys: {self.spaces.keys()}"
-            for key in seed.keys():
-                seeds += self.spaces[key].seed(seed[key])
+        Returns:
+            A dictionary for the seed values of the subspaces
+        """
+        if seed is None:
+            return {key: subspace.seed(None) for (key, subspace) in self.spaces.items()}
         elif isinstance(seed, int):
-            seeds = super().seed(seed)
+            super().seed(seed)
             # Using `np.int32` will mean that the same key occurring is extremely low, even for large subspaces
             subseeds = self.np_random.integers(
                 np.iinfo(np.int32).max, size=len(self.spaces)
             )
-            for subspace, subseed in zip(self.spaces.values(), subseeds):
-                seeds += subspace.seed(int(subseed))
-        elif seed is None:
-            for space in self.spaces.values():
-                seeds += space.seed(None)
+            return {
+                key: subspace.seed(int(subseed))
+                for (key, subspace), subseed in zip(self.spaces.items(), subseeds)
+            }
+        elif isinstance(seed, dict):
+            if seed.keys() != self.spaces.keys():
+                raise ValueError(
+                    f"The seed keys: {seed.keys()} are not identical to space keys: {self.spaces.keys()}"
+                )
+
+            return {key: self.spaces[key].seed(seed[key]) for key in seed.keys()}
         else:
             raise TypeError(
                 f"Expected seed type: dict, int or None, actual type: {type(seed)}"
             )
-
-        return seeds
 
     def sample(self, mask: dict[str, Any] | None = None) -> dict[str, Any]:
         """Generates a single random sample from this space.
@@ -164,11 +165,9 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
             assert (
                 mask.keys() == self.spaces.keys()
             ), f"Expect mask keys to be same as space keys, mask keys: {mask.keys()}, space keys: {self.spaces.keys()}"
-            return OrderedDict(
-                [(k, space.sample(mask[k])) for k, space in self.spaces.items()]
-            )
+            return {k: space.sample(mask=mask[k]) for k, space in self.spaces.items()}
 
-        return OrderedDict([(k, space.sample()) for k, space in self.spaces.items()])
+        return {k: space.sample() for k, space in self.spaces.items()}
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
@@ -221,9 +220,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
             for key, space in self.spaces.items()
         }
 
-    def from_jsonable(
-        self, sample_n: dict[str, list[Any]]
-    ) -> list[OrderedDict[str, Any]]:
+    def from_jsonable(self, sample_n: dict[str, list[Any]]) -> list[dict[str, Any]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         dict_of_list: dict[str, list[Any]] = {
             key: space.from_jsonable(sample_n[key])
@@ -232,7 +229,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
 
         n_elements = len(next(iter(dict_of_list.values())))
         result = [
-            OrderedDict({key: value[n] for key, value in dict_of_list.items()})
+            {key: value[n] for key, value in dict_of_list.items()}
             for n in range(n_elements)
         ]
         return result

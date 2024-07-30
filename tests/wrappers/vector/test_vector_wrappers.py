@@ -6,6 +6,7 @@ The exception is the data converter wrappers
  * Different implementations - `LambdaObservation`, `LambdaReward` and `LambdaAction`
  * Different random sources - `StickyAction`
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -44,8 +45,15 @@ def custom_environments():
         ("CarRacing-v3", "GrayscaleObservation", {}),
         ("CarRacing-v3", "ResizeObservation", {"shape": (35, 45)}),
         ("CarRacing-v3", "ReshapeObservation", {"shape": (96, 48, 6)}),
-        ("CartPole-v1", "RescaleObservation", {"min_obs": 0, "max_obs": 1}),
-        ("CartPole-v1", "DtypeObservation", {"dtype": np.int32}),
+        (
+            "CartPole-v1",
+            "RescaleObservation",
+            {
+                "min_obs": np.array([0, -np.inf, 0, -np.inf]),
+                "max_obs": np.array([1, np.inf, 1, np.inf]),
+            },
+        ),
+        ("CarRacing-v3", "DtypeObservation", {"dtype": np.int32}),
         # ("CartPole-v1", "RenderObservation", {}),  # not implemented
         # ("CartPole-v1", "TimeAwareObservation", {}),  # not implemented
         # ("CartPole-v1", "FrameStackObservation", {}),  # not implemented

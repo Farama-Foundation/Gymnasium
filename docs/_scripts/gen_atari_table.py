@@ -1,15 +1,26 @@
 import itertools
 import json
 
+import ale_py
 import tabulate
-from ale_py.roms import utils as rom_utils
-from shimmy.utils.envs_configs import ALL_ATARI_GAMES
+from ale_py.registration import _rom_id_to_name
 from tqdm import tqdm
 
 import gymnasium
 
 
-# # Generate the list of all atari games on atari.md
+gymnasium.register_envs(ale_py)
+
+impossible_roms = {"maze_craze", "joust", "warlords", "combat"}
+ALL_ATARI_GAMES = {
+    env_spec.kwargs["game"]
+    for env_spec in gymnasium.registry.values()
+    if isinstance(env_spec.entry_point, str)
+    and "ale_py" in env_spec.entry_point
+    and env_spec.kwargs["game"] not in impossible_roms
+}
+
+# Generate the list of all atari games on atari.md
 for rom_id in sorted(ALL_ATARI_GAMES):
     print(f"atari/{rom_id}")
 
@@ -49,9 +60,9 @@ headers = [
 rows = []
 
 for rom_id in tqdm(ALL_ATARI_GAMES):
-    env_name = rom_utils.rom_id_to_name(rom_id)
+    env_name = _rom_id_to_name(rom_id)
 
-    env = gymnasium.make(f"ALE/{env_name}-v5")
+    env = gymnasium.make(f"ALE/{env_name}-v5").unwrapped
 
     available_difficulties = env.ale.getAvailableDifficulties()
     default_difficulty = env.ale.cloneState().getDifficulty()
@@ -81,9 +92,9 @@ with open("atari-docs.json") as file:
     atari_data = json.load(file)
 
 for rom_id in tqdm(ALL_ATARI_GAMES):
-    env_name = rom_utils.rom_id_to_name(rom_id)
+    env_name = _rom_id_to_name(rom_id)
 
-    env = gymnasium.make(f"ALE/{env_name}-v5")
+    env = gymnasium.make(f"ALE/{env_name}-v5").unwrapped
     if rom_id in atari_data:
         env_data = atari_data[rom_id]
 
@@ -123,7 +134,7 @@ initialization or by passing `full_action_space=True` to `gymnasium.make`."""
         [
             env_spec
             for env_spec in gymnasium.registry.values()
-            if env_name in env_spec.name and "shimmy" in env_spec.entry_point
+            if env_name in env_spec.name and "ale_py" in env_spec.entry_point
         ],
         key=lambda env_spec: f"{env_spec.version}{env_spec.name}",
     )
@@ -211,6 +222,7 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 See variants section for the type of observation used by each environment id by default.
 
 {reward_description}
+
 ## Variants
 
 {env_name} has the following variants of the environment id which have the following differences in observation,
@@ -230,7 +242,7 @@ along with the default values.
 
 A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.
 
-* v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the "ALE" namespace.
+* v5: Stickiness was added back and stochastic frame-skipping was removed. The environments are now in the "ALE" namespace.
 * v4: Stickiness of actions was removed
 * v0: Initial versions release
 """

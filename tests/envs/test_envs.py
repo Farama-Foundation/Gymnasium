@@ -7,11 +7,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.utils.env_checker import check_env, data_equivalence
-from tests.envs.utils import (
-    all_testing_env_specs,
-    all_testing_initialised_envs,
-    assert_equals,
-)
+from tests.envs.utils import all_testing_env_specs, all_testing_initialised_envs
 
 
 # This runs a smoketest on each official registered env. We may want
@@ -42,6 +38,7 @@ def test_all_env_api(spec):
     """Check that all environments pass the environment checker with no warnings other than the expected."""
     with warnings.catch_warnings(record=True) as caught_warnings:
         env = spec.make().unwrapped
+
         check_env(env, skip_render_check=True)
 
         env.close()
@@ -66,7 +63,7 @@ def test_all_env_passive_env_checker(spec):
 
     for warning in caught_warnings:
         if not passive_check_pattern.search(str(warning.message)):
-            print(f"Unexpected warning: {warning.message}")
+            raise ValueError(f"Unexpected warning: {warning.message}")
 
 
 # Note that this precludes running this test in multiple threads.
@@ -93,14 +90,18 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
     """
     # Don't check rollout equality if it's a nondeterministic environment.
     if env_spec.nondeterministic is True:
-        return
+        pytest.skip(f"Skipping {env_spec.id} as it is non-deterministic")
 
     env_1 = env_spec.make(disable_env_checker=True)
     env_2 = env_spec.make(disable_env_checker=True)
 
+    if env_1.metadata.get("jax", False):
+        env_1 = gym.wrappers.JaxToNumpy(env_1)
+        env_2 = gym.wrappers.JaxToNumpy(env_2)
+
     initial_obs_1, initial_info_1 = env_1.reset(seed=SEED)
     initial_obs_2, initial_info_2 = env_2.reset(seed=SEED)
-    assert_equals(initial_obs_1, initial_obs_2)
+    assert data_equivalence(initial_obs_1, initial_obs_2, exact=True)
 
     env_1.action_space.seed(SEED)
 
@@ -111,7 +112,9 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
         obs_1, rew_1, terminated_1, truncated_1, info_1 = env_1.step(action)
         obs_2, rew_2, terminated_2, truncated_2, info_2 = env_2.step(action)
 
-        assert_equals(obs_1, obs_2, f"[{time_step}] ")
+        assert data_equivalence(
+            obs_1, obs_2, exact=True
+        ), f"[{time_step}] obs_1={obs_1}, obs_2={obs_2}"
         assert env_1.observation_space.contains(
             obs_1
         )  # obs_2 verified by previous assertion
@@ -123,7 +126,9 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
         assert (
             truncated_1 == truncated_2
         ), f"[{time_step}] done 1={truncated_1}, done 2={truncated_2}"
-        assert_equals(info_1, info_2, f"[{time_step}] ")
+        assert data_equivalence(
+            info_1, info_2, exact=True
+        ), f"[{time_step}] info_1={info_1}, info_2={info_2}"
 
         if (
             terminated_1 or truncated_1
@@ -141,11 +146,20 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
     ids=[env.spec.id for env in all_testing_initialised_envs if env.spec is not None],
 )
 def test_pickle_env(env: gym.Env):
-    pickled_env = pickle.loads(pickle.dumps(env))
-
-    data_equivalence(env.reset(), pickled_env.reset())
+    if env.metadata.get("jax", False):
+        env = gym.wrappers.JaxToNumpy(env)
 
     action = env.action_space.sample()
-    data_equivalence(env.step(action), pickled_env.step(action))
+
+    env_reset = env.reset(seed=123)
+    env_step = env.step(action)
+
+    pickled_env = pickle.loads(pickle.dumps(env))
+    pickle_reset = pickled_env.reset(seed=123)
+    pickle_step = pickled_env.step(action)
+
+    assert data_equivalence(env_reset, pickle_reset)
+    assert data_equivalence(env_step, pickle_step)
+
     env.close()
     pickled_env.close()

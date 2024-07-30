@@ -1,8 +1,8 @@
 """Utility functions for vector environments to share memory between processes."""
+
 from __future__ import annotations
 
 import multiprocessing as mp
-from collections import OrderedDict
 from ctypes import c_bool
 from functools import singledispatch
 from typing import Any
@@ -17,6 +17,7 @@ from gymnasium.spaces import (
     Graph,
     MultiBinary,
     MultiDiscrete,
+    OneOf,
     Sequence,
     Space,
     Text,
@@ -80,12 +81,10 @@ def _create_tuple_shared_memory(space: Tuple, n: int = 1, ctx=mp):
 
 @create_shared_memory.register(Dict)
 def _create_dict_shared_memory(space: Dict, n: int = 1, ctx=mp):
-    return OrderedDict(
-        [
-            (key, create_shared_memory(subspace, n=n, ctx=ctx))
-            for (key, subspace) in space.spaces.items()
-        ]
-    )
+    return {
+        key: create_shared_memory(subspace, n=n, ctx=ctx)
+        for (key, subspace) in space.spaces.items()
+    }
 
 
 @create_shared_memory.register(Text)
@@ -93,11 +92,18 @@ def _create_text_shared_memory(space: Text, n: int = 1, ctx=mp):
     return ctx.Array(np.dtype(np.int32).char, n * space.max_length)
 
 
+@create_shared_memory.register(OneOf)
+def _create_oneof_shared_memory(space: OneOf, n: int = 1, ctx=mp):
+    return (ctx.Array(np.dtype(np.int64).char, n),) + tuple(
+        create_shared_memory(subspace, n=n, ctx=ctx) for subspace in space.spaces
+    )
+
+
 @create_shared_memory.register(Graph)
 @create_shared_memory.register(Sequence)
 def _create_dynamic_shared_memory(space: Graph | Sequence, n: int = 1, ctx=mp):
     raise TypeError(
-        f"As {space} has a dynamic shape then it is not possible to make a static shared memory."
+        f"As {space} has a dynamic shape so its not possible to make a static shared memory."
     )
 
 
@@ -148,24 +154,28 @@ def _read_base_from_shared_memory(
 
 @read_from_shared_memory.register(Tuple)
 def _read_tuple_from_shared_memory(space: Tuple, shared_memory, n: int = 1):
-    return tuple(
+    subspace_samples = tuple(
         read_from_shared_memory(subspace, memory, n=n)
         for (memory, subspace) in zip(shared_memory, space.spaces)
     )
+    return tuple(zip(*subspace_samples))
 
 
 @read_from_shared_memory.register(Dict)
 def _read_dict_from_shared_memory(space: Dict, shared_memory, n: int = 1):
-    return OrderedDict(
-        [
-            (key, read_from_shared_memory(subspace, shared_memory[key], n=n))
-            for (key, subspace) in space.spaces.items()
-        ]
+    subspace_samples = {
+        key: read_from_shared_memory(subspace, shared_memory[key], n=n)
+        for (key, subspace) in space.spaces.items()
+    }
+    return tuple(
+        {key: subspace_samples[key][i] for key in space.keys()} for i in range(n)
     )
 
 
 @read_from_shared_memory.register(Text)
-def _read_text_from_shared_memory(space: Text, shared_memory, n: int = 1) -> tuple[str]:
+def _read_text_from_shared_memory(
+    space: Text, shared_memory, n: int = 1
+) -> tuple[str, ...]:
     data = np.frombuffer(shared_memory.get_obj(), dtype=np.int32).reshape(
         (n, space.max_length)
     )
@@ -179,6 +189,22 @@ def _read_text_from_shared_memory(space: Text, shared_memory, n: int = 1) -> tup
             ]
         )
         for values in data
+    )
+
+
+@read_from_shared_memory.register(OneOf)
+def _read_one_of_from_shared_memory(
+    space: OneOf, shared_memory, n: int = 1
+) -> tuple[Any, ...]:
+    sample_indexes = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)
+
+    subspace_samples = tuple(
+        read_from_shared_memory(subspace, memory, n=n)
+        for (memory, subspace) in zip(shared_memory[1:], space.spaces)
+    )
+    return tuple(
+        (sample_index, subspace_samples[sample_index][index])
+        for index, sample_index in enumerate(sample_indexes)
     )
 
 
@@ -252,4 +278,19 @@ def _write_text_to_shared_memory(space: Text, index: int, values: str, shared_me
     np.copyto(
         destination[index * size : (index + 1) * size],
         flatten(space, values),
+    )
+
+
+@write_to_shared_memory.register(OneOf)
+def _write_oneof_to_shared_memory(
+    space: OneOf, index: int, values: tuple[int, Any], shared_memory
+):
+    subspace_idx, space_value = values
+
+    destination = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)
+    np.copyto(destination[index : index + 1], subspace_idx)
+
+    # only the subspace's memory is updated with the sample value, ignoring the other memories as data might not match
+    write_to_shared_memory(
+        space.spaces[subspace_idx], index, space_value, shared_memory[1 + subspace_idx]
     )

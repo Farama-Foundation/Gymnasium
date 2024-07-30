@@ -26,7 +26,7 @@ try:
     from jax import dlpack as jax_dlpack
 except ImportError:
     raise DependencyNotInstalled(
-        "Jax is not installed therefore cannot call `torch_to_jax`, run `pip install gymnasium[jax]`"
+        'Jax is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[jax]"`'
     )
 
 try:
@@ -36,7 +36,7 @@ try:
     Device = Union[str, torch.device]
 except ImportError:
     raise DependencyNotInstalled(
-        "Torch is not installed therefore cannot call `torch_to_jax`, run `pip install torch`"
+        'Torch is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[torch]"`'
     )
 
 
@@ -119,9 +119,9 @@ def _jax_iterable_to_torch(
     if hasattr(value, "_make"):
         # namedtuple - underline used to prevent potential name conflicts
         # noinspection PyProtectedMember
-        return type(value)._make(jax_to_torch(v) for v in value)
+        return type(value)._make(jax_to_torch(v, device) for v in value)
     else:
-        return type(value)(jax_to_torch(v) for v in value)
+        return type(value)(jax_to_torch(v, device) for v in value)
 
 
 class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):

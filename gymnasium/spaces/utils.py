@@ -3,11 +3,11 @@
 These functions mostly take care of flattening and unflattening elements of spaces
  to facilitate their usage in learning code.
 """
+
 from __future__ import annotations
 
 import operator as op
 import typing
-from collections import OrderedDict
 from functools import reduce, singledispatch
 from typing import Any, TypeVar, Union, cast
 
@@ -23,6 +23,7 @@ from gymnasium.spaces import (
     GraphInstance,
     MultiBinary,
     MultiDiscrete,
+    OneOf,
     Sequence,
     Space,
     Text,
@@ -102,6 +103,11 @@ def _flatdim_graph(space: Graph):
 @flatdim.register(Text)
 def _flatdim_text(space: Text) -> int:
     return space.max_length
+
+
+@flatdim.register(OneOf)
+def _flatdim_oneof(space: OneOf) -> int:
+    return 1 + max(flatdim(s) for s in space.spaces)
 
 
 T = TypeVar("T")
@@ -195,7 +201,7 @@ def _flatten_dict(space: Dict, x: dict[str, Any]) -> dict[str, Any] | NDArray[An
         return np.concatenate(
             [np.array(flatten(s, x[key])) for key, s in space.spaces.items()]
         )
-    return OrderedDict((key, flatten(s, x[key])) for key, s in space.spaces.items())
+    return {key: flatten(s, x[key]) for key, s in space.spaces.items()}
 
 
 @flatten.register(Graph)
@@ -254,6 +260,22 @@ def _flatten_sequence(
         return gym.vector.utils.concatenate(flattened_space, flattened_samples, out)
     else:
         return tuple(flatten(space.feature_space, item) for item in x)
+
+
+@flatten.register(OneOf)
+def _flatten_oneof(space: OneOf, x: tuple[int, Any]) -> NDArray[Any]:
+    idx, sample = x
+    sub_space = space.spaces[idx]
+    flat_sample = flatten(sub_space, sample)
+
+    max_flatdim = flatdim(space) - 1  # Don't include the index
+    if flat_sample.size < max_flatdim:
+        padding = np.full(
+            max_flatdim - flat_sample.size, flat_sample[0], dtype=flat_sample.dtype
+        )
+        flat_sample = np.concatenate([flat_sample, padding])
+
+    return np.concatenate([[idx], flat_sample])
 
 
 @singledispatch
@@ -339,16 +361,15 @@ def _unflatten_dict(space: Dict, x: NDArray[Any] | dict[str, Any]) -> dict[str, 
     if space.is_np_flattenable:
         dims = np.asarray([flatdim(s) for s in space.spaces.values()], dtype=np.int_)
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
-        return OrderedDict(
-            [
-                (key, unflatten(s, flattened))
-                for flattened, (key, s) in zip(list_flattened, space.spaces.items())
-            ]
-        )
+        return {
+            key: unflatten(s, flattened)
+            for flattened, (key, s) in zip(list_flattened, space.spaces.items())
+        }
+
     assert isinstance(
         x, dict
     ), f"{space} is not numpy-flattenable. Thus, you should only unflatten dictionary for this space. Got a {type(x)}"
-    return OrderedDict((key, unflatten(s, x[key])) for key, s in space.spaces.items())
+    return {key: unflatten(s, x[key]) for key, s in space.spaces.items()}
 
 
 @unflatten.register(Graph)
@@ -397,6 +418,17 @@ def _unflatten_sequence(space: Sequence, x: tuple[Any, ...]) -> tuple[Any, ...] 
         )
     else:
         return tuple(unflatten(space.feature_space, item) for item in x)
+
+
+@unflatten.register(OneOf)
+def _unflatten_oneof(space: OneOf, x: NDArray[Any]) -> tuple[int, Any]:
+    idx = np.int64(x[0])
+    sub_space = space.spaces[idx]
+
+    original_size = flatdim(sub_space)
+    trimmed_sample = x[1 : 1 + original_size]
+
+    return idx, unflatten(sub_space, trimmed_sample)
 
 
 @singledispatch
@@ -499,9 +531,7 @@ def _flatten_space_dict(space: Dict) -> Box | Dict:
             dtype=np.result_type(*[s.dtype for s in space_list]),
         )
     return Dict(
-        spaces=OrderedDict(
-            (key, flatten_space(space)) for key, space in space.spaces.items()
-        )
+        spaces={key: flatten_space(space) for key, space in space.spaces.items()}
     )
 
 
@@ -509,9 +539,9 @@ def _flatten_space_dict(space: Dict) -> Box | Dict:
 def _flatten_space_graph(space: Graph) -> Graph:
     return Graph(
         node_space=flatten_space(space.node_space),
-        edge_space=flatten_space(space.edge_space)
-        if space.edge_space is not None
-        else None,
+        edge_space=(
+            flatten_space(space.edge_space) if space.edge_space is not None else None
+        ),
     )
 
 
@@ -525,3 +555,21 @@ def _flatten_space_text(space: Text) -> Box:
 @flatten_space.register(Sequence)
 def _flatten_space_sequence(space: Sequence) -> Sequence:
     return Sequence(flatten_space(space.feature_space), stack=space.stack)
+
+
+@flatten_space.register(OneOf)
+def _flatten_space_oneof(space: OneOf) -> Box:
+    num_subspaces = len(space.spaces)
+    max_flatdim = max(flatdim(s) for s in space.spaces) + 1
+
+    lows = np.array([np.min(flatten_space(s).low) for s in space.spaces])
+    highs = np.array([np.max(flatten_space(s).high) for s in space.spaces])
+
+    overall_low = np.min(lows)
+    overall_high = np.max(highs)
+
+    low = np.concatenate([[0], np.full(max_flatdim - 1, overall_low)])
+    high = np.concatenate([[num_subspaces - 1], np.full(max_flatdim - 1, overall_high)])
+
+    dtype = np.result_type(*[s.dtype for s in space.spaces if hasattr(s, "dtype")])
+    return Box(low=low, high=high, shape=(max_flatdim,), dtype=dtype)

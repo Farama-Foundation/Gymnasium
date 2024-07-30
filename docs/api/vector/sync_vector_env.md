@@ -11,3 +11,10 @@
     .. automethod:: gymnasium.vector.SyncVectorEnv.get_attr
     .. automethod:: gymnasium.vector.SyncVectorEnv.set_attr
 ```
+
+## Additional Methods
+
+```{eval-rst}
+.. autoproperty:: gymnasium.vector.SyncVectorEnv.np_random
+.. autoproperty:: gymnasium.vector.SyncVectorEnv.np_random_seed
+```

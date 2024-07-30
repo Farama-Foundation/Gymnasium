@@ -1,4 +1,5 @@
 """Functional to Environment compatibility."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -6,14 +7,12 @@ from typing import Any
 import jax
 import jax.numpy as jnp
 import jax.random as jrng
-import numpy as np
 
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import seeding
 from gymnasium.vector.utils import batch_space
-from gymnasium.wrappers.jax_to_numpy import jax_to_numpy
 
 
 class FunctionalJaxEnv(gym.Env):
@@ -32,7 +31,8 @@ class FunctionalJaxEnv(gym.Env):
     ):
         """Initialize the environment from a FuncEnv."""
         if metadata is None:
-            metadata = {"render_mode": []}
+            # metadata.get("jax", False) can be used downstream to know that the environment returns jax arrays
+            metadata = {"render_mode": [], "jax": True}
 
         self.func_env = func_env
 
@@ -44,8 +44,6 @@ class FunctionalJaxEnv(gym.Env):
         self.reward_range = reward_range
 
         self.spec = spec
-
-        self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
 
         if self.render_mode == "rgb_array":
             self.render_state = self.func_env.render_init()
@@ -66,33 +64,21 @@ class FunctionalJaxEnv(gym.Env):
         rng, self.rng = jrng.split(self.rng)
 
         self.state = self.func_env.initial(rng=rng)
-        obs = self.func_env.observation(self.state)
+        obs = self.func_env.observation(self.state, rng)
         info = self.func_env.state_info(self.state)
-
-        obs = jax_to_numpy(obs)
 
         return obs, info
 
     def step(self, action: ActType):
         """Steps through the environment using the action."""
-        if self._is_box_action_space:
-            assert isinstance(self.action_space, gym.spaces.Box)  # For typing
-            action = np.clip(action, self.action_space.low, self.action_space.high)
-        else:  # Discrete
-            # For now we assume jax envs don't use complex spaces
-            err_msg = f"{action!r} ({type(action)}) invalid"
-            assert self.action_space.contains(action), err_msg
-
         rng, self.rng = jrng.split(self.rng)
 
         next_state = self.func_env.transition(self.state, action, rng)
-        observation = self.func_env.observation(next_state)
-        reward = self.func_env.reward(self.state, action, next_state)
-        terminated = self.func_env.terminal(next_state)
+        observation = self.func_env.observation(next_state, rng)
+        reward = self.func_env.reward(self.state, action, next_state, rng)
+        terminated = self.func_env.terminal(next_state, rng)
         info = self.func_env.transition_info(self.state, action, next_state)
         self.state = next_state
-
-        observation = jax_to_numpy(observation)
 
         return observation, float(reward), bool(terminated), False, info
 
@@ -153,8 +139,6 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         self.autoreset_envs = jnp.zeros(self.num_envs, dtype=jnp.bool_)
 
-        self._is_box_action_space = isinstance(self.action_space, gym.spaces.Box)
-
         if self.render_mode == "rgb_array":
             self.render_state = self.func_env.render_init()
         else:
@@ -178,25 +162,15 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         rng = jrng.split(rng, self.num_envs)
 
         self.state = self.func_env.initial(rng=rng)
-        obs = self.func_env.observation(self.state)
+        obs = self.func_env.observation(self.state, rng)
         info = self.func_env.state_info(self.state)
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
-
-        obs = jax_to_numpy(obs)
 
         return obs, info
 
     def step(self, action: ActType):
         """Steps through the environment using the action."""
-        if self._is_box_action_space:
-            assert isinstance(self.action_space, gym.spaces.Box)  # For typing
-            action = np.clip(action, self.action_space.low, self.action_space.high)
-        else:  # Discrete
-            # For now we assume jax envs don't use complex spaces
-            assert self.action_space.contains(
-                action
-            ), f"{action!r} ({type(action)}) invalid"
         self.steps += 1
 
         rng, self.rng = jrng.split(self.rng)
@@ -204,9 +178,9 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         rng = jrng.split(rng, self.num_envs)
 
         next_state = self.func_env.transition(self.state, action, rng)
-        reward = self.func_env.reward(self.state, action, next_state)
+        reward = self.func_env.reward(self.state, action, next_state, rng)
 
-        terminated = self.func_env.terminal(next_state)
+        terminated = self.func_env.terminal(next_state, rng)
         truncated = (
             self.steps >= self.time_limit
             if self.time_limit > 0
@@ -231,13 +205,9 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         self.autoreset_envs = done
 
-        observation = self.func_env.observation(next_state)
-        observation = jax_to_numpy(observation)
+        rng = jrng.split(self.rng, self.num_envs)
 
-        reward = jax_to_numpy(reward)
-
-        terminated = jax_to_numpy(terminated)
-        truncated = jax_to_numpy(truncated)
+        observation = self.func_env.observation(next_state, rng)
 
         self.state = next_state
 

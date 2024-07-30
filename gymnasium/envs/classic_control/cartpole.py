@@ -3,6 +3,7 @@ Classic cart-pole system implemented by Rich Sutton et al.
 Copied from http://incompleteideas.net/sutton/book/code/pole.c
 permalink: https://perma.cc/C9ZM-652R
 """
+
 import math
 from typing import Optional, Tuple, Union
 
@@ -56,16 +57,14 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
        if the pole angle is not in the range `(-.2095, .2095)` (or **±12°**)
 
     ## Rewards
+    Since the goal is to keep the pole upright for as long as possible, by default, a reward of `+1` is given for every step taken, including the termination step. The default reward threshold is 500 for v1 and 200 for v0 due to the time limit on the environment.
 
-    Since the goal is to keep the pole upright for as long as possible, a reward of `+1` for every step taken,
-    including the termination step, is allotted. The threshold for rewards is 500 for v1 and 200 for v0.
+    If `sutton_barto_reward=True`, then a reward of `0` is awarded for every non-terminating step and `-1` for the terminating step. As a result, the reward threshold is 0 for v0 and v1.
 
     ## Starting State
-
     All observations are assigned a uniformly random value in `(-0.05, 0.05)`
 
     ## Episode End
-
     The episode ends if any one of the following occurs:
 
     1. Termination: Pole Angle is greater than ±12°
@@ -74,29 +73,42 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
     ## Arguments
 
-    Cartpole only has ``render_mode`` as a keyword for ``gymnasium.make``.
+    Cartpole only has `render_mode` as a keyword for `gymnasium.make`.
     On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
-    Examples:
-        >>> import gymnasium as gym
-        >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
-        >>> env
-        <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
-        >>> env.reset(seed=123, options={"low": 0, "high": 1})
-        (array([0.6823519 , 0.05382102, 0.22035988, 0.18437181], dtype=float32), {})
+    ```python
+    >>> import gymnasium as gym
+    >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
+    >>> env
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<CartPoleEnv<CartPole-v1>>>>>
+    >>> env.reset(seed=123, options={"low": -0.1, "high": 0.1})  # default low=-0.05, high=0.05
+    (array([ 0.03647037, -0.0892358 , -0.05592803, -0.06312564], dtype=float32), {})
+
+    ```
+
+    | Parameter               | Type       | Default                 | Description                                                                                   |
+    |-------------------------|------------|-------------------------|-----------------------------------------------------------------------------------------------|
+    | `sutton_barto_reward`   | **bool**   | `False`                 | If `True` the reward function matches the original sutton barto implementation                |
 
     ## Vectorized environment
 
     To increase steps per seconds, users can use a custom vector environment or with an environment vectorizor.
 
-    Examples:
-        >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="vector_entry_point")
-        >>> envs
-        CartPoleVectorEnv(CartPole-v1, num_envs=3)
-        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
-        >>> envs
-        SyncVectorEnv(CartPole-v1, num_envs=3)
+    ```python
+    >>> import gymnasium as gym
+    >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="vector_entry_point")
+    >>> envs
+    CartPoleVectorEnv(CartPole-v1, num_envs=3)
+    >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+    >>> envs
+    SyncVectorEnv(CartPole-v1, num_envs=3)
+
+    ```
+
+    ## Version History
+    * v1: `max_time_steps` raised to 500.
+        - In Gymnasium `1.0.0a2` the `sutton_barto_reward` argument was added (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/790))
+    * v0: Initial versions release.
     """
 
     metadata = {
@@ -104,7 +116,11 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         "render_fps": 50,
     }
 
-    def __init__(self, render_mode: Optional[str] = None):
+    def __init__(
+        self, sutton_barto_reward: bool = False, render_mode: Optional[str] = None
+    ):
+        self._sutton_barto_reward = sutton_barto_reward
+
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
@@ -124,9 +140,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         high = np.array(
             [
                 self.x_threshold * 2,
-                np.finfo(np.float32).max,
+                np.inf,
                 self.theta_threshold_radians * 2,
-                np.finfo(np.float32).max,
+                np.inf,
             ],
             dtype=np.float32,
         )
@@ -141,7 +157,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         self.screen = None
         self.clock = None
         self.isopen = True
-        self.state = None
+        self.state: np.ndarray | None = None
 
         self.steps_beyond_terminated = None
 
@@ -152,16 +168,17 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         assert self.state is not None, "Call reset before using step method."
         x, x_dot, theta, theta_dot = self.state
         force = self.force_mag if action == 1 else -self.force_mag
-        costheta = math.cos(theta)
-        sintheta = math.sin(theta)
+        costheta = np.cos(theta)
+        sintheta = np.sin(theta)
 
         # For the interested reader:
         # https://coneural.org/florian/papers/05_cart_pole.pdf
         temp = (
-            force + self.polemass_length * theta_dot**2 * sintheta
+            force + self.polemass_length * np.square(theta_dot) * sintheta
         ) / self.total_mass
         thetaacc = (self.gravity * sintheta - costheta * temp) / (
-            self.length * (4.0 / 3.0 - self.masspole * costheta**2 / self.total_mass)
+            self.length
+            * (4.0 / 3.0 - self.masspole * np.square(costheta) / self.total_mass)
         )
         xacc = temp - self.polemass_length * thetaacc * costheta / self.total_mass
 
@@ -176,7 +193,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             theta_dot = theta_dot + self.tau * thetaacc
             theta = theta + self.tau * theta_dot
 
-        self.state = (x, x_dot, theta, theta_dot)
+        self.state = np.array((x, x_dot, theta, theta_dot), dtype=np.float64)
 
         terminated = bool(
             x < -self.x_threshold
@@ -186,24 +203,26 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         )
 
         if not terminated:
-            reward = 1.0
+            reward = 0.0 if self._sutton_barto_reward else 1.0
         elif self.steps_beyond_terminated is None:
             # Pole just fell!
             self.steps_beyond_terminated = 0
-            reward = 1.0
+
+            reward = -1.0 if self._sutton_barto_reward else 1.0
         else:
             if self.steps_beyond_terminated == 0:
                 logger.warn(
-                    "You are calling 'step()' even though this "
-                    "environment has already returned terminated = True. You "
-                    "should always call 'reset()' once you receive 'terminated = "
-                    "True' -- any further steps are undefined behavior."
+                    "You are calling 'step()' even though this environment has already returned terminated = True. "
+                    "You should always call 'reset()' once you receive 'terminated = True' -- any further steps are undefined behavior."
                 )
             self.steps_beyond_terminated += 1
-            reward = 0.0
+
+            reward = -1.0 if self._sutton_barto_reward else 0.0
 
         if self.render_mode == "human":
             self.render()
+
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
 
     def reset(
@@ -240,7 +259,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
             from pygame import gfxdraw
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic-control]"`'
             ) from e
 
         if self.screen is None:
@@ -334,16 +353,19 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
 
 class CartPoleVectorEnv(VectorEnv):
     metadata = {
-        "render_modes": ["human", "rgb_array"],
+        "render_modes": ["rgb_array"],
         "render_fps": 50,
     }
 
     def __init__(
         self,
-        num_envs: int = 2,
+        num_envs: int = 1,
         max_episode_steps: int = 500,
         render_mode: Optional[str] = None,
+        sutton_barto_reward: bool = False,
     ):
+        self._sutton_barto_reward = sutton_barto_reward
+
         self.num_envs = num_envs
         self.max_episode_steps = max_episode_steps
         self.render_mode = render_mode
@@ -358,7 +380,10 @@ class CartPoleVectorEnv(VectorEnv):
         self.tau = 0.02  # seconds between state updates
         self.kinematics_integrator = "euler"
 
+        self.state = None
+
         self.steps = np.zeros(num_envs, dtype=np.int32)
+        self.prev_done = np.zeros(num_envs, dtype=np.bool_)
 
         # Angle at which to fail the episode
         self.theta_threshold_radians = 12 * 2 * math.pi / 360
@@ -369,9 +394,9 @@ class CartPoleVectorEnv(VectorEnv):
         high = np.array(
             [
                 self.x_threshold * 2,
-                np.finfo(np.float32).max,
+                np.inf,
                 self.theta_threshold_radians * 2,
-                np.finfo(np.float32).max,
+                np.inf,
             ],
             dtype=np.float32,
         )
@@ -387,9 +412,7 @@ class CartPoleVectorEnv(VectorEnv):
         self.screen_width = 600
         self.screen_height = 400
         self.screens = None
-        self.clocks = None
-        self.isopen = True
-        self.state = None
+        self.surf = None
 
         self.steps_beyond_terminated = None
 
@@ -409,10 +432,11 @@ class CartPoleVectorEnv(VectorEnv):
         # For the interested reader:
         # https://coneural.org/florian/papers/05_cart_pole.pdf
         temp = (
-            force + self.polemass_length * theta_dot**2 * sintheta
+            force + self.polemass_length * np.square(theta_dot) * sintheta
         ) / self.total_mass
         thetaacc = (self.gravity * sintheta - costheta * temp) / (
-            self.length * (4.0 / 3.0 - self.masspole * costheta**2 / self.total_mass)
+            self.length
+            * (4.0 / 3.0 - self.masspole * np.square(costheta) / self.total_mass)
         )
         xacc = temp - self.polemass_length * thetaacc * costheta / self.total_mass
 
@@ -440,21 +464,23 @@ class CartPoleVectorEnv(VectorEnv):
 
         truncated = self.steps >= self.max_episode_steps
 
-        done = terminated | truncated
+        if self._sutton_barto_reward:
+            reward = -np.array(terminated, dtype=np.float32)
+        else:
+            reward = np.ones_like(terminated, dtype=np.float32)
 
-        if any(done):
-            # This code was generated by copilot, need to check if it works
-            self.state[:, done] = self.np_random.uniform(
-                low=self.low, high=self.high, size=(4, done.sum())
-            ).astype(np.float32)
-            self.steps[done] = 0
+        # Reset all environments which terminated or were truncated in the last step
+        self.state[:, self.prev_done] = self.np_random.uniform(
+            low=self.low, high=self.high, size=(4, self.prev_done.sum())
+        )
+        self.steps[self.prev_done] = 0
+        reward[self.prev_done] = 0.0
+        terminated[self.prev_done] = False
+        truncated[self.prev_done] = False
 
-        reward = np.ones_like(terminated, dtype=np.float32)
+        self.prev_done = np.logical_or(terminated, truncated)
 
-        if self.render_mode == "human":
-            self.render()
-
-        return self.state.T, reward, terminated, truncated, {}
+        return self.state.T.astype(np.float32), reward, terminated, truncated, {}
 
     def reset(
         self,
@@ -465,17 +491,16 @@ class CartPoleVectorEnv(VectorEnv):
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.
-        self.low, self.high = utils.maybe_parse_reset_bounds(
-            options, -0.05, 0.05  # default low
-        )  # default high
+        # -0.05 and 0.05 is the default low and high bounds
+        self.low, self.high = utils.maybe_parse_reset_bounds(options, -0.05, 0.05)
         self.state = self.np_random.uniform(
             low=self.low, high=self.high, size=(4, self.num_envs)
-        ).astype(np.float32)
+        )
         self.steps_beyond_terminated = None
+        self.steps = np.zeros(self.num_envs, dtype=np.int32)
+        self.prev_done = np.zeros(self.num_envs, dtype=np.bool_)
 
-        if self.render_mode == "human":
-            self.render()
-        return self.state.T, {}
+        return self.state.T.astype(np.float32), {}
 
     def render(self):
         if self.render_mode is None:
@@ -483,7 +508,7 @@ class CartPoleVectorEnv(VectorEnv):
             gym.logger.warn(
                 "You are calling render method without specifying any render mode. "
                 "You can specify the render_mode at initialization, "
-                f'e.g. gym("{self.spec.id}", render_mode="rgb_array")'
+                f'e.g. gym.make_vec("{self.spec.id}", render_mode="rgb_array")'
             )
             return
 
@@ -492,24 +517,16 @@ class CartPoleVectorEnv(VectorEnv):
             from pygame import gfxdraw
         except ImportError:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             )
 
         if self.screens is None:
             pygame.init()
-            if self.render_mode == "human":
-                pygame.display.init()
-                self.screens = [
-                    pygame.display.set_mode((self.screen_width, self.screen_height))
-                    for _ in range(self.num_envs)
-                ]
-            else:  # mode == "rgb_array"
-                self.screens = [
-                    pygame.Surface((self.screen_width, self.screen_height))
-                    for _ in range(self.num_envs)
-                ]
-        if self.clocks is None:
-            self.clock = [pygame.time.Clock() for _ in range(self.num_envs)]
+
+            self.screens = [
+                pygame.Surface((self.screen_width, self.screen_height))
+                for _ in range(self.num_envs)
+            ]
 
         world_width = self.x_threshold * 2
         scale = self.screen_width / world_width
@@ -519,10 +536,12 @@ class CartPoleVectorEnv(VectorEnv):
         cartheight = 30.0
 
         if self.state is None:
-            return None
+            raise ValueError(
+                "Cartpole's state is None, it probably hasn't be reset yet."
+            )
 
-        for state, screen, clock in zip(self.state, self.screens, self.clocks):
-            x = self.state.T
+        for x, screen in zip(self.state.T, self.screens):
+            assert isinstance(x, np.ndarray) and x.shape == (4,)
 
             self.surf = pygame.Surface((self.screen_width, self.screen_height))
             self.surf.fill((255, 255, 255))
@@ -571,23 +590,13 @@ class CartPoleVectorEnv(VectorEnv):
             self.surf = pygame.transform.flip(self.surf, False, True)
             screen.blit(self.surf, (0, 0))
 
-        if self.render_mode == "human":
-            pygame.event.pump()
-            [clock.tick(self.metadata["render_fps"]) for clock in self.clocks]
-            pygame.display.flip()
-
-        elif self.render_mode == "rgb_array":
-            return [
-                np.transpose(
-                    np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
-                )
-                for screen in self.screens
-            ]
+        return [
+            np.transpose(np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2))
+            for screen in self.screens
+        ]
 
     def close(self):
         if self.screens is not None:
             import pygame
 
-            pygame.display.quit()
             pygame.quit()
-            self.isopen = False

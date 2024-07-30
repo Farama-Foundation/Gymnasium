@@ -1,4 +1,5 @@
 """Implementation of a synchronous (for loop) vectorization method of any environment."""
+
 from __future__ import annotations
 
 from copy import deepcopy
@@ -100,6 +101,16 @@ class SyncVectorEnv(VectorEnv):
 
         self._autoreset_envs = np.zeros((self.num_envs,), dtype=np.bool_)
 
+    @property
+    def np_random_seed(self) -> tuple[int, ...]:
+        """Returns a tuple of np random seeds for the wrapped envs."""
+        return self.get_attr("np_random_seed")
+
+    @property
+    def np_random(self) -> tuple[np.random.Generator, ...]:
+        """Returns a tuple of the numpy random number generators for the wrapped envs."""
+        return self.get_attr("np_random")
+
     def reset(
         self,
         *,
@@ -122,7 +133,9 @@ class SyncVectorEnv(VectorEnv):
             seed = [None for _ in range(self.num_envs)]
         elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
-        assert len(seed) == self.num_envs
+        assert (
+            len(seed) == self.num_envs
+        ), f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
 
         self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
         self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
@@ -138,6 +151,8 @@ class SyncVectorEnv(VectorEnv):
         self._observations = concatenate(
             self.single_observation_space, observations, self._observations
         )
+
+        self._autoreset_envs = np.zeros((self.num_envs,), dtype=np.bool_)
 
         return deepcopy(self._observations) if self.copy else self._observations, infos
 
@@ -211,7 +226,7 @@ class SyncVectorEnv(VectorEnv):
 
         return tuple(results)
 
-    def get_attr(self, name: str) -> Any:
+    def get_attr(self, name: str) -> tuple[Any, ...]:
         """Get a property from each parallel environment.
 
         Args:
@@ -248,7 +263,8 @@ class SyncVectorEnv(VectorEnv):
 
     def close_extras(self, **kwargs: Any):
         """Close the environments."""
-        [env.close() for env in self.envs]
+        if hasattr(self, "envs"):
+            [env.close() for env in self.envs]
 
     def _check_spaces(self) -> bool:
         """Check that each of the environments obs and action spaces are equivalent to the single obs and action space."""

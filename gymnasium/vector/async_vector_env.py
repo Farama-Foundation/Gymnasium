@@ -1,9 +1,11 @@
 """An async vector environment."""
+
 from __future__ import annotations
 
 import multiprocessing
 import sys
 import time
+import traceback
 from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
@@ -90,10 +92,12 @@ class AsyncVectorEnv(VectorEnv):
         copy: bool = True,
         context: str | None = None,
         daemon: bool = True,
-        worker: Callable[
-            [int, Callable[[], Env], Connection, Connection, bool, Queue], None
-        ]
-        | None = None,
+        worker: (
+            Callable[
+                [int, Callable[[], Env], Connection, Connection, bool, Queue], None
+            ]
+            | None
+        ) = None,
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -197,6 +201,16 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.DEFAULT
         self._check_spaces()
 
+    @property
+    def np_random_seed(self) -> tuple[int, ...]:
+        """Returns a tuple of np_random seeds for all the wrapped envs."""
+        return self.get_attr("np_random_seed")
+
+    @property
+    def np_random(self) -> tuple[np.random.Generator, ...]:
+        """Returns the tuple of the numpy random number generators for the wrapped envs."""
+        return self.get_attr("np_random")
+
     def reset(
         self,
         *,
@@ -240,7 +254,9 @@ class AsyncVectorEnv(VectorEnv):
             seed = [None for _ in range(self.num_envs)]
         elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
-        assert len(seed) == self.num_envs
+        assert (
+            len(seed) == self.num_envs
+        ), f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
 
         if self._state != AsyncState.DEFAULT:
             raise AlreadyPendingCallError(
@@ -472,7 +488,7 @@ class AsyncVectorEnv(VectorEnv):
 
         return results
 
-    def get_attr(self, name: str):
+    def get_attr(self, name: str) -> tuple[Any, ...]:
         """Get a property from each parallel environment.
 
         Args:
@@ -601,25 +617,26 @@ class AsyncVectorEnv(VectorEnv):
                 f"Trying to operate on `{type(self).__name__}`, after a call to `close()`."
             )
 
-    def _raise_if_errors(self, successes: list[bool]):
+    def _raise_if_errors(self, successes: list[bool] | tuple[bool]):
         if all(successes):
             return
 
         num_errors = self.num_envs - sum(successes)
         assert num_errors > 0
         for i in range(num_errors):
-            index, exctype, value = self.error_queue.get()
+            index, exctype, value, trace = self.error_queue.get()
 
             logger.error(
-                f"Received the following error from Worker-{index}: {exctype.__name__}: {value}"
+                f"Received the following error from Worker-{index} - Shutting it down"
             )
-            logger.error(f"Shutting down Worker-{index}.")
+            logger.error(f"{trace}")
 
             self.parent_pipes[index].close()
             self.parent_pipes[index] = None
 
             if i == num_errors - 1:
                 logger.error("Raising the last exception back to the main process.")
+                self._state = AsyncState.DEFAULT
                 raise exctype(value)
 
     def __del__(self):
@@ -633,7 +650,7 @@ def _async_worker(
     env_fn: callable,
     pipe: Connection,
     parent_pipe: Connection,
-    shared_memory: bool,
+    shared_memory: multiprocessing.Array | dict[str, Any] | tuple[Any, ...],
     error_queue: Queue,
 ):
     env = env_fn()
@@ -682,7 +699,7 @@ def _async_worker(
                 break
             elif command == "_call":
                 name, args, kwargs = data
-                if name in ["reset", "step", "close", "set_wrapper_attr"]:
+                if name in ["reset", "step", "close", "_setattr", "_check_spaces"]:
                     raise ValueError(
                         f"Trying to call function `{name}` with `call`, use `{name}` directly instead."
                     )
@@ -708,7 +725,10 @@ def _async_worker(
                     f"Received unknown command `{command}`. Must be one of [`reset`, `step`, `close`, `_call`, `_setattr`, `_check_spaces`]."
                 )
     except (KeyboardInterrupt, Exception):
-        error_queue.put((index,) + sys.exc_info()[:2])
+        error_type, error_message, _ = sys.exc_info()
+        trace = traceback.format_exc()
+
+        error_queue.put((index, error_type, error_message, trace))
         pipe.send((None, False))
     finally:
         env.close()

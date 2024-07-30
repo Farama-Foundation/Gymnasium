@@ -21,7 +21,7 @@ For more ChopperCommand variants with different observation and action spaces, s
 
 ## Description
 
-You control a helicopter and must protect truck convoys. To that end, you need to shoot down enemy aircraft.A mini-map is displayed at the bottom of the screen.
+You control a helicopter and must protect truck convoys. To that end, you need to shoot down enemy aircraft. A mini-map is displayed at the bottom of the screen.
 
 For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=921)
 
@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points by destroying planes and other helicopters. You score extra points at the end of every wave, depending on the number
-of trucks that have survived.
-Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=921).
+## Rewards
+You score points by destroying planes and other helicopters. You score extra points at the end of every wave, depending on the number of trucks that have survived. Detailed documentation can be found on the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=921).
 
 ## Variants
 
@@ -91,6 +88,6 @@ along with the default values.
 
 A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.
 
-* v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the "ALE" namespace.
+* v5: Stickiness was added back and stochastic frame-skipping was removed. The environments are now in the "ALE" namespace.
 * v4: Stickiness of actions was removed
 * v0: Initial versions release

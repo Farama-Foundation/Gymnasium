@@ -4,6 +4,7 @@
 * ``RecordVideo`` - Records a video of the environments
 * ``HumanRendering`` - Provides human rendering of environments with ``"rgb_array"``
 """
+
 from __future__ import annotations
 
 import os
@@ -35,7 +36,7 @@ class RenderCollection(
     Example:
         Return the list of frames for the number of steps ``render`` wasn't called.
         >>> import gymnasium as gym
-        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
         >>> env = RenderCollection(env)
         >>> _ = env.reset(seed=123)
         >>> for _ in range(5):
@@ -51,7 +52,7 @@ class RenderCollection(
 
         Return the list of frames for the number of steps the episode was running.
         >>> import gymnasium as gym
-        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
         >>> env = RenderCollection(env, pop_frames=False)
         >>> _ = env.reset(seed=123)
         >>> for _ in range(5):
@@ -67,7 +68,7 @@ class RenderCollection(
 
         Collect all frames for all episodes, without clearing them when render is called
         >>> import gymnasium as gym
-        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
         >>> env = RenderCollection(env, pop_frames=False, reset_clean=False)
         >>> _ = env.reset(seed=123)
         >>> for _ in range(5):
@@ -177,7 +178,7 @@ class RecordVideo(
     Examples - Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:
         >>> import os
         >>> import gymnasium as gym
-        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
         >>> trigger = lambda t: t % 10 == 0
         >>> env = RecordVideo(env, video_folder="./save_videos1", episode_trigger=trigger, disable_logger=True)
         >>> for i in range(50):
@@ -193,7 +194,7 @@ class RecordVideo(
     Examples - Run the environment for 5 episodes, start a recording every 200th step, making sure each video is 100 frames long:
         >>> import os
         >>> import gymnasium as gym
-        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
         >>> trigger = lambda t: t % 200 == 0
         >>> env = RecordVideo(env, video_folder="./save_videos2", step_trigger=trigger, video_length=100, disable_logger=True)
         >>> for i in range(5):
@@ -210,7 +211,7 @@ class RecordVideo(
     Examples - Run 3 episodes, record everything, but in chunks of 1000 frames:
         >>> import os
         >>> import gymnasium as gym
-        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
         >>> env = RecordVideo(env, video_folder="./save_videos3", video_length=1000, disable_logger=True)
         >>> for i in range(3):
         ...     termination, truncation = False, False
@@ -302,7 +303,7 @@ class RecordVideo(
             import moviepy  # noqa: F401
         except ImportError as e:
             raise error.DependencyNotInstalled(
-                "MoviePy is not installed, run `pip install moviepy`"
+                'MoviePy is not installed, run `pip install "gymnasium[other]"`'
             ) from e
 
     def _capture_frame(self):
@@ -397,7 +398,7 @@ class RecordVideo(
                 from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
             except ImportError as e:
                 raise error.DependencyNotInstalled(
-                    "MoviePy is not installed, run `pip install moviepy`"
+                    'MoviePy is not installed, run `pip install "gymnasium[other]"`'
                 ) from e
 
             clip = ImageSequenceClip(self.recorded_frames, fps=self.frames_per_sec)
@@ -432,7 +433,7 @@ class HumanRendering(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import HumanRendering
-        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array")
+        >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
         >>> wrapped = HumanRendering(env)
         >>> obs, _ = wrapped.reset()     # This will start rendering to the screen
 
@@ -446,7 +447,7 @@ class HumanRendering(
         Warning: If the base environment uses ``render_mode="rgb_array_list"``, its (i.e. the *base environment's*) render method
         will always return an empty list:
 
-        >>> env = gym.make("LunarLander-v2", render_mode="rgb_array_list")
+        >>> env = gym.make("LunarLander-v3", render_mode="rgb_array_list")
         >>> wrapped = HumanRendering(env)
         >>> obs, _ = wrapped.reset()
         >>> env.render() # env.render() will always return an empty list!
@@ -455,6 +456,13 @@ class HumanRendering(
     Change logs:
      * v0.25.0 - Initially added
     """
+
+    ACCEPTED_RENDER_MODES = [
+        "rgb_array",
+        "rgb_array_list",
+        "depth_array",
+        "depth_array_list",
+    ]
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
         """Initialize a :class:`HumanRendering` instance.
@@ -465,17 +473,16 @@ class HumanRendering(
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
-        assert env.render_mode in [
-            "rgb_array",
-            "rgb_array_list",
-        ], f"Expected env.render_mode to be one of 'rgb_array' or 'rgb_array_list' but got '{env.render_mode}'"
-        assert (
-            "render_fps" in env.metadata
-        ), "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
-
         self.screen_size = None
-        self.window = None
+        self.window = None  # Has to be initialized before asserts, as self.window is used in auto close
         self.clock = None
+
+        assert (
+            self.env.render_mode in self.ACCEPTED_RENDER_MODES
+        ), f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
+        assert (
+            "render_fps" in self.env.metadata
+        ), "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
 
         if "human" not in self.metadata["render_modes"]:
             self.metadata = deepcopy(self.env.metadata)
@@ -510,19 +517,19 @@ class HumanRendering(
             import pygame
         except ImportError:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[box2d]`"
+                'pygame is not installed, run `pip install "gymnasium[classic-control]"`'
             )
-        if self.env.render_mode == "rgb_array_list":
+        assert self.env.render_mode is not None
+        if self.env.render_mode.endswith("_list"):
             last_rgb_array = self.env.render()
             assert isinstance(last_rgb_array, list)
             last_rgb_array = last_rgb_array[-1]
-        elif self.env.render_mode == "rgb_array":
-            last_rgb_array = self.env.render()
         else:
-            raise Exception(
-                f"Wrapped environment must have mode 'rgb_array' or 'rgb_array_list', actual render mode: {self.env.render_mode}"
-            )
-        assert isinstance(last_rgb_array, np.ndarray)
+            last_rgb_array = self.env.render()
+
+        assert isinstance(
+            last_rgb_array, np.ndarray
+        ), f"Expected `env.render()` to return a numpy array, actually returned {type(last_rgb_array)}"
 
         rgb_array = np.transpose(last_rgb_array, axes=(1, 0, 2))
 

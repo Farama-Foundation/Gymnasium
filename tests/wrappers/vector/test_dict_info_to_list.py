@@ -1,4 +1,5 @@
 """Test suite for DictInfoTolist wrapper."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -60,9 +61,13 @@ def test_update_info():
         "_e": np.array([True]),
     }
     _, list_info = env.reset(options=vector_infos)
+
+    # The return dtype of np.array([0]) is platform dependent
+    np_array_int_default_dtype = np.array([0]).dtype.type
+
     expected_list_info = [
         {
-            "a": np.int64(0),
+            "a": np_array_int_default_dtype(0),
             "b": np.float64(0.0),
             "c": None,
             "d": np.zeros((2,)),
@@ -90,21 +95,21 @@ def test_update_info():
     _, list_info = env.reset(options=vector_infos)
     expected_list_info = [
         {
-            "a": np.int64(0),
+            "a": np_array_int_default_dtype(0),
             "b": np.float64(0.0),
             "c": None,
             "d": np.zeros((2,)),
             "e": Discrete(1),
         },
         {
-            "a": np.int64(1),
+            "a": np_array_int_default_dtype(1),
             "b": np.float64(1.0),
             "c": None,
             "d": np.zeros((2,)),
             "e": Discrete(2),
         },
         {
-            "a": np.int64(2),
+            "a": np_array_int_default_dtype(2),
             "b": np.float64(2.0),
             "c": None,
             "d": np.zeros((2,)),
@@ -134,7 +139,7 @@ def test_update_info():
     }
     _, list_info = env.reset(options=vector_infos)
     expected_list_info = [
-        {"a": np.int64(1), "b": np.float64(1.0)},
+        {"a": np_array_int_default_dtype(1), "b": np.float64(1.0)},
         {"c": None, "d": np.zeros((2,))},
         {"e": Discrete(3)},
     ]
@@ -156,8 +161,11 @@ def test_update_info():
     }
     _, list_info = env.reset(options=vector_infos)
     expected_list_info = [
-        {"episode": {"a": np.int64(1), "b": np.float64(1.0)}},
-        {"episode": {"a": np.int64(2), "b": np.float64(2.0)}, "a": np.int64(1)},
-        {"a": np.int64(2)},
+        {"episode": {"a": np_array_int_default_dtype(1), "b": np.float64(1.0)}},
+        {
+            "episode": {"a": np_array_int_default_dtype(2), "b": np.float64(2.0)},
+            "a": np_array_int_default_dtype(1),
+        },
+        {"a": np_array_int_default_dtype(2)},
     ]
     assert data_equivalence(list_info, expected_list_info)

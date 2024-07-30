@@ -46,12 +46,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You receive points for knocking down pins. The exact score depends on whether you manage a "strike", "spare" or "open"
-frame. Moreover, the points you score for one frame may depend on following frames.
-You can score up to 300 points in one game (if you manage to do 12 strikes).
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=879).
+## Rewards
+You receive points for knocking down pins. The exact score depends on whether you manage a "strike", "spare" or "open" frame. Moreover, the points you score for one frame may depend on following frames. You can score up to 300 points in one game (if you manage to do 12 strikes). For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=879).
 
 ## Variants
 
@@ -89,6 +85,6 @@ along with the default values.
 
 A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.
 
-* v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the "ALE" namespace.
+* v5: Stickiness was added back and stochastic frame-skipping was removed. The environments are now in the "ALE" namespace.
 * v4: Stickiness of actions was removed
 * v0: Initial versions release

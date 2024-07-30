@@ -29,7 +29,7 @@ class PendulumEnv(gym.Env):
 
     ![Pendulum Coordinate System](/_static/diagrams/pendulum.png)
 
-    -  `x-y`: cartesian coordinates of the pendulum's end in meters.
+    - `x-y`: cartesian coordinates of the pendulum's end in meters.
     - `theta` : angle in radians.
     - `tau`: torque in `N m`. Defined as positive _counter-clockwise_.
 
@@ -40,7 +40,6 @@ class PendulumEnv(gym.Env):
     | Num | Action | Min  | Max |
     |-----|--------|------|-----|
     | 0   | Torque | -2.0 | 2.0 |
-
 
     ## Observation Space
 
@@ -74,22 +73,27 @@ class PendulumEnv(gym.Env):
 
     ## Arguments
 
-    - `g`: acceleration of gravity measured in *(m s<sup>-2</sup>)* used to calculate the pendulum dynamics.
-      The default value is g = 10.0 .
+    - `g`: .
+
+    Pendulum has two parameters for `gymnasium.make` with `render_mode` and `g` representing
+    the acceleration of gravity measured in *(m s<sup>-2</sup>)* used to calculate the pendulum dynamics.
+    The default value is `g = 10.0`.
+    On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
     ```python
-    import gymnasium as gym
-    gym.make('Pendulum-v1', g=9.81)
-    ```
+    >>> import gymnasium as gym
+    >>> env = gym.make("Pendulum-v1", render_mode="rgb_array", g=9.81)  # default g=10.0
+    >>> env
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<PendulumEnv<Pendulum-v1>>>>>
+    >>> env.reset(seed=123, options={"low": -0.7, "high": 0.5})  # default low=-0.6, high=-0.5
+    (array([ 0.4123625 ,  0.91101986, -0.89235795], dtype=float32), {})
 
-    On reset, the `options` parameter allows the user to change the bounds used to determine
-    the new random state.
+    ```
 
     ## Version History
 
     * v1: Simplify the math equations, no difference in behavior.
-    * v0: Initial versions release (1.0.0)
-
+    * v0: Initial versions release
     """
 
     metadata = {
@@ -141,6 +145,7 @@ class PendulumEnv(gym.Env):
 
         if self.render_mode == "human":
             self.render()
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return self._get_obs(), -costs, False, False, {}
 
     def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
@@ -182,7 +187,7 @@ class PendulumEnv(gym.Env):
             from pygame import gfxdraw
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
 
         if self.screen is None:
@@ -236,7 +241,10 @@ class PendulumEnv(gym.Env):
         if self.last_u is not None:
             scale_img = pygame.transform.smoothscale(
                 img,
-                (scale * np.abs(self.last_u) / 2, scale * np.abs(self.last_u) / 2),
+                (
+                    float(scale * np.abs(self.last_u) / 2),
+                    float(scale * np.abs(self.last_u) / 2),
+                ),
             )
             is_flip = bool(self.last_u > 0)
             scale_img = pygame.transform.flip(scale_img, is_flip, True)

@@ -3,7 +3,7 @@ __credits__ = ["Rushiv Arora"]
 import numpy as np
 
 from gymnasium import utils
-from gymnasium.envs.mujoco import MuJocoPyEnv
+from gymnasium.envs.mujoco.mujoco_py_env import MuJocoPyEnv
 from gymnasium.spaces import Box
 
 
@@ -91,7 +91,7 @@ class SwimmerEnv(MuJocoPyEnv, utils.EzPickle):
 
         if self.render_mode == "human":
             self.render()
-
+        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return observation, reward, False, False, info
 
     def _get_obs(self):

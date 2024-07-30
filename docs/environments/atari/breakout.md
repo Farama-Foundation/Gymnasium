@@ -46,10 +46,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points by destroying bricks in the wall. The reward for destroying a brick depends on the color of the brick.
-For a more detailed documentation, see [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=889).
+## Rewards
+You score points by destroying bricks in the wall. The reward for destroying a brick depends on the color of the brick. For a more detailed documentation, see the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=889).
 
 ## Variants
 
@@ -87,6 +85,6 @@ along with the default values.
 
 A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.
 
-* v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the "ALE" namespace.
+* v5: Stickiness was added back and stochastic frame-skipping was removed. The environments are now in the "ALE" namespace.
 * v4: Stickiness of actions was removed
 * v0: Initial versions release

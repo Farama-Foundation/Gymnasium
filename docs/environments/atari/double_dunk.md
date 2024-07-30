@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-Scores follow the rules of basketball. You can get either 3 points, 2 points foul line) depending
-from where you shoot. After a defensive foul, a successful shot from the foul line gives you 1
-point.
+## Rewards
+Scores follow the rules of basketball. You can get either 3 points, 2 points foul line) depending from where you shoot. After a defensive foul, a successful shot from the foul line gives you 1 point.
 
 ## Variants
 
@@ -91,6 +88,6 @@ along with the default values.
 
 A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.
 
-* v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the "ALE" namespace.
+* v5: Stickiness was added back and stochastic frame-skipping was removed. The environments are now in the "ALE" namespace.
 * v4: Stickiness of actions was removed
 * v0: Initial versions release

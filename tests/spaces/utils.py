@@ -9,6 +9,7 @@ from gymnasium.spaces import (
     Graph,
     MultiBinary,
     MultiDiscrete,
+    OneOf,
     Sequence,
     Space,
     Text,
@@ -99,6 +100,7 @@ TESTING_COMPOSITE_SPACES = [
         b=Tuple((Box(-100, 100, shape=(2,)), Box(-100, 100, shape=(2,)))),
     ),
     # Graph spaces
+    Graph(node_space=Box(-1, 1, shape=(2,)), edge_space=None),
     Graph(node_space=Box(low=-100, high=100, shape=(3, 4)), edge_space=Discrete(5)),
     Graph(node_space=Discrete(5), edge_space=Box(low=-100, high=100, shape=(3, 4))),
     Graph(node_space=Discrete(3), edge_space=Discrete(4)),
@@ -108,6 +110,9 @@ TESTING_COMPOSITE_SPACES = [
     Sequence(Graph(node_space=Box(-100, 100, shape=(2, 2)), edge_space=Discrete(4))),
     Sequence(Box(low=0.0, high=1.0), stack=True),
     Sequence(Dict({"a": Box(0, 1, (3,)), "b": Discrete(5)}), stack=True),
+    # OneOf spaces
+    OneOf([Discrete(3), Box(low=0.0, high=1.0)]),
+    OneOf([MultiBinary(2), MultiDiscrete([2, 2])]),
 ]
 TESTING_COMPOSITE_SPACES_IDS = [f"{space}" for space in TESTING_COMPOSITE_SPACES]
 

@@ -27,7 +27,7 @@ def _modify_space(space: spaces.Space, attribute: str, value):
     "test,space,message",
     [
         [
-            AssertionError,
+            TypeError,
             "error",
             "observation space does not inherit from `gymnasium.spaces.Space`, actual type: <class 'str'>",
         ],
@@ -35,7 +35,7 @@ def _modify_space(space: spaces.Space, attribute: str, value):
         [
             UserWarning,
             spaces.Box(np.zeros(5), np.zeros(5)),
-            "A Box observation space maximum and minimum values are equal. Actual equal coordinates: [(0,), (1,), (2,), (3,), (4,)]",
+            "A Box observation space maximum and minimum values are equal.",
         ],
         [
             AssertionError,
@@ -98,7 +98,7 @@ def test_check_observation_space(test, space, message: str):
     "test,space,message",
     [
         [
-            AssertionError,
+            TypeError,
             "error",
             "action space does not inherit from `gymnasium.spaces.Space`, actual type: <class 'str'>",
         ],
@@ -106,7 +106,7 @@ def test_check_observation_space(test, space, message: str):
         [
             UserWarning,
             spaces.Box(np.zeros(5), np.zeros(5)),
-            "A Box action space maximum and minimum values are equal. Actual equal coordinates: [(0,), (1,), (2,), (3,), (4,)]",
+            "A Box action space maximum and minimum values are equal.",
         ],
         [
             AssertionError,

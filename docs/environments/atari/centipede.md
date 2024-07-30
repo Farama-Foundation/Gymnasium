@@ -49,11 +49,8 @@ Atari environments have three possible observation types: `"rgb"`, `"grayscale"`
 
 See variants section for the type of observation used by each environment id by default.
 
-### Rewards
-
-You score points by hitting centipedes, scorpions, fleas and spiders. Additional points are awarded after every round
-(i.e. after you have lost a wand) for mushrooms that were not destroyed.
-Detailed documentation can be found on [the AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=911).
+## Rewards
+You score points by hitting centipedes, scorpions, fleas and spiders. Additional points are awarded after every round (i.e. after you have lost a wand) for mushrooms that were not destroyed. Detailed documentation can be found on the [AtariAge page](https://atariage.com/manual_html_page.php?SoftwareID=911).
 
 ## Variants
 
@@ -91,6 +88,6 @@ along with the default values.
 
 A thorough discussion of the intricate differences between the versions and configurations can be found in the general article on Atari environments.
 
-* v5: Stickiness was added back and stochastic frameskipping was removed. The environments are now in the "ALE" namespace.
+* v5: Stickiness was added back and stochastic frame-skipping was removed. The environments are now in the "ALE" namespace.
 * v4: Stickiness of actions was removed
 * v0: Initial versions release

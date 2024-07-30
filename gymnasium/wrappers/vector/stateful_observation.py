@@ -2,6 +2,7 @@
 
 * ``NormalizeObservation`` - Normalize the observations
 """
+
 from __future__ import annotations
 
 import numpy as np
@@ -34,9 +35,9 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         >>> for _ in range(100):
         ...     obs, *_ = envs.step(envs.action_space.sample())
         >>> np.mean(obs)
-        0.024251968
+        np.float32(0.024251968)
         >>> np.std(obs)
-        0.62259156
+        np.float32(0.62259156)
         >>> envs.close()
 
     Example with the normalize reward wrapper:
@@ -48,9 +49,9 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         >>> for _ in range(100):
         ...     obs, *_ = envs.step(envs.action_space.sample())
         >>> np.mean(obs)
-        -0.2359734
+        np.float32(-0.2359734)
         >>> np.std(obs)
-        1.1938739
+        np.float32(1.1938739)
         >>> envs.close()
     """
 
@@ -81,7 +82,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         """Sets the property to freeze/continue the running mean calculation of the observation statistics."""
         self._update_running_mean = setting
 
-    def observation(self, observations: ObsType) -> ObsType:
+    def observations(self, observations: ObsType) -> ObsType:
         """Defines the vector observation normalization function.
 
         Args:

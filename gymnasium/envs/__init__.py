@@ -1,4 +1,5 @@
 """Registers the internal gym envs then loads the env plugins for module using the entry point."""
+
 from typing import Any
 
 from gymnasium.envs.registration import make, pprint_registry, register, registry, spec
@@ -60,6 +61,7 @@ register(
     vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=200,
     reward_threshold=195.0,
+    disable_env_checker=True,
 )
 
 register(
@@ -68,6 +70,7 @@ register(
     vector_entry_point="gymnasium.envs.phys2d.cartpole:CartPoleJaxVectorEnv",
     max_episode_steps=500,
     reward_threshold=475.0,
+    disable_env_checker=True,
 )
 
 register(
@@ -75,20 +78,21 @@ register(
     entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxEnv",
     vector_entry_point="gymnasium.envs.phys2d.pendulum:PendulumJaxVectorEnv",
     max_episode_steps=200,
+    disable_env_checker=True,
 )
 
 # Box2d
 # ----------------------------------------
 
 register(
-    id="LunarLander-v2",
+    id="LunarLander-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
     max_episode_steps=1000,
     reward_threshold=200,
 )
 
 register(
-    id="LunarLanderContinuous-v2",
+    id="LunarLanderContinuous-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
     kwargs={"continuous": True},
     max_episode_steps=1000,
@@ -161,12 +165,13 @@ register(
 register(
     id="tabular/Blackjack-v0",
     entry_point="gymnasium.envs.tabular.blackjack:BlackJackJaxEnv",
-    kwargs={"sutton_and_barto": True, "natural": False},
+    disable_env_checker=True,
 )
 
 register(
     id="tabular/CliffWalking-v0",
     entry_point="gymnasium.envs.tabular.cliffwalking:CliffWalkingJaxEnv",
+    disable_env_checker=True,
 )
 
 
@@ -177,7 +182,7 @@ register(
 
 register(
     id="Reacher-v2",
-    entry_point="gymnasium.envs.mujoco:ReacherEnv",
+    entry_point="gymnasium.envs.mujoco.reacher:ReacherEnv",
     max_episode_steps=50,
     reward_threshold=-3.75,
 )
@@ -198,7 +203,7 @@ register(
 
 register(
     id="Pusher-v2",
-    entry_point="gymnasium.envs.mujoco:PusherEnv",
+    entry_point="gymnasium.envs.mujoco.pusher:PusherEnv",
     max_episode_steps=100,
     reward_threshold=0.0,
 )
@@ -221,7 +226,7 @@ register(
 
 register(
     id="InvertedPendulum-v2",
-    entry_point="gymnasium.envs.mujoco:InvertedPendulumEnv",
+    entry_point="gymnasium.envs.mujoco.inverted_pendulum:InvertedPendulumEnv",
     max_episode_steps=1000,
     reward_threshold=950.0,
 )
@@ -242,7 +247,7 @@ register(
 
 register(
     id="InvertedDoublePendulum-v2",
-    entry_point="gymnasium.envs.mujoco:InvertedDoublePendulumEnv",
+    entry_point="gymnasium.envs.mujoco.inverted_double_pendulum:InvertedDoublePendulumEnv",
     max_episode_steps=1000,
     reward_threshold=9100.0,
 )
@@ -265,7 +270,7 @@ register(
 
 register(
     id="HalfCheetah-v2",
-    entry_point="gymnasium.envs.mujoco:HalfCheetahEnv",
+    entry_point="gymnasium.envs.mujoco.half_cheetah:HalfCheetahEnv",
     max_episode_steps=1000,
     reward_threshold=4800.0,
 )
@@ -293,7 +298,7 @@ register(
 
 register(
     id="Hopper-v2",
-    entry_point="gymnasium.envs.mujoco:HopperEnv",
+    entry_point="gymnasium.envs.mujoco.hopper:HopperEnv",
     max_episode_steps=1000,
     reward_threshold=3800.0,
 )
@@ -321,7 +326,7 @@ register(
 
 register(
     id="Swimmer-v2",
-    entry_point="gymnasium.envs.mujoco:SwimmerEnv",
+    entry_point="gymnasium.envs.mujoco.swimmer:SwimmerEnv",
     max_episode_steps=1000,
     reward_threshold=360.0,
 )
@@ -350,7 +355,7 @@ register(
 register(
     id="Walker2d-v2",
     max_episode_steps=1000,
-    entry_point="gymnasium.envs.mujoco:Walker2dEnv",
+    entry_point="gymnasium.envs.mujoco.walker2d:Walker2dEnv",
 )
 
 register(
@@ -373,7 +378,7 @@ register(
 
 register(
     id="Ant-v2",
-    entry_point="gymnasium.envs.mujoco:AntEnv",
+    entry_point="gymnasium.envs.mujoco.ant:AntEnv",
     max_episode_steps=1000,
     reward_threshold=6000.0,
 )
@@ -401,7 +406,7 @@ register(
 
 register(
     id="Humanoid-v2",
-    entry_point="gymnasium.envs.mujoco:HumanoidEnv",
+    entry_point="gymnasium.envs.mujoco.humanoid:HumanoidEnv",
     max_episode_steps=1000,
 )
 
@@ -425,7 +430,7 @@ register(
 
 register(
     id="HumanoidStandup-v2",
-    entry_point="gymnasium.envs.mujoco:HumanoidStandupEnv",
+    entry_point="gymnasium.envs.mujoco.humanoidstandup:HumanoidStandupEnv",
     max_episode_steps=1000,
 )
 
@@ -445,7 +450,7 @@ register(
 # --- For shimmy compatibility
 def _raise_shimmy_error(*args: Any, **kwargs: Any):
     raise ImportError(
-        "To use the gym compatibility environments, run `pip install shimmy[gym-v21]` or `pip install shimmy[gym-v26]`"
+        'To use the gym compatibility environments, run `pip install "shimmy[gym-v21]"` or `pip install "shimmy[gym-v26]"`'
     )
 
 
