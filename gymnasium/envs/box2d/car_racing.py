@@ -153,9 +153,9 @@ class CarRacing(gym.Env, EzPickle):
 
     ```python
     >>> import gymnasium as gym
-    >>> env = gym.make("CarRacing-v2", render_mode="rgb_array", lap_complete_percent=0.95, domain_randomize=False, continuous=False)
+    >>> env = gym.make("CarRacing-v3", render_mode="rgb_array", lap_complete_percent=0.95, domain_randomize=False, continuous=False)
     >>> env
-    <TimeLimit<OrderEnforcing<PassiveEnvChecker<CarRacing<CarRacing-v2>>>>>
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<CarRacing<CarRacing-v3>>>>>
 
     ```
 
@@ -176,7 +176,7 @@ class CarRacing(gym.Env, EzPickle):
 
     ```python
     >>> import gymnasium as gym
-    >>> env = gym.make("CarRacing-v2", domain_randomize=True)
+    >>> env = gym.make("CarRacing-v3", domain_randomize=True)
 
     # normal reset, this changes the colour scheme by default
     >>> obs, _ = env.reset()
