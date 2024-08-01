@@ -6,7 +6,13 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.spaces import Box, Graph, Sequence, utils
+from gymnasium.spaces.utils import is_space_dtype_shape_equiv
 from gymnasium.utils.env_checker import data_equivalence
+from gymnasium.vector.utils import (
+    create_shared_memory,
+    read_from_shared_memory,
+    write_to_shared_memory,
+)
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 
 
@@ -162,3 +168,42 @@ def test_unflatten_multidiscrete_error():
     value = np.array([0, 0])
     with pytest.raises(ValueError):
         utils.unflatten(gym.spaces.MultiDiscrete([1, 1]), value)
+
+
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+def test_is_space_dtype_shape_equiv(space):
+    assert is_space_dtype_shape_equiv(space, space) is True
+
+
+@pytest.mark.parametrize("space_1", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+def test_all_space_pairs_for_is_space_dtype_shape_equiv(space_1):
+    """Practically check that the `is_space_dtype_shape_equiv` works as expected for `shared_memory`."""
+    for space_2 in TESTING_SPACES:
+        compatible = is_space_dtype_shape_equiv(space_1, space_2)
+
+        if compatible:
+            try:
+                shared_memory = create_shared_memory(space_1, n=2)
+            except TypeError as err:
+                assert (
+                    "has a dynamic shape so its not possible to make a static shared memory."
+                    in str(err)
+                )
+                pytest.skip("Skipping space with dynamic shape")
+
+            space_1.seed(123)
+            space_2.seed(123)
+            sample_1 = space_1.sample()
+            sample_2 = space_2.sample()
+
+            write_to_shared_memory(space_1, 0, sample_1, shared_memory)
+            write_to_shared_memory(space_2, 1, sample_2, shared_memory)
+
+            read_sample_1, read_sample_2 = read_from_shared_memory(
+                space_1, shared_memory, n=2
+            )
+
+            assert data_equivalence(sample_1, read_sample_1)
+            assert data_equivalence(sample_2, read_sample_2)
+        else:
+            pytest.skip("Not compatible")
