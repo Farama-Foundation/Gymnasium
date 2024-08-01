@@ -137,7 +137,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
 
-        self.autoreset_envs = jnp.zeros(self.num_envs, dtype=jnp.bool_)
+        self.prev_done = jnp.zeros(self.num_envs, dtype=jnp.bool_)
 
         if self.render_mode == "rgb_array":
             self.render_state = self.func_env.render_init()
@@ -189,10 +189,8 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         info = self.func_env.transition_info(self.state, action, next_state)
 
-        done = jnp.logical_or(terminated, truncated)
-
-        if jnp.any(self.autoreset_envs):
-            to_reset = jnp.where(self.autoreset_envs)[0]
+        if jnp.any(self.prev_done):
+            to_reset = jnp.where(self.prev_done)[0]
             reset_count = to_reset.shape[0]
 
             rng, self.rng = jrng.split(self.rng)
@@ -202,8 +200,10 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
             next_state = self.state.at[to_reset].set(new_initials)
             self.steps = self.steps.at[to_reset].set(0)
+            terminated = terminated.at[to_reset].set(False)
+            truncated = truncated.at[to_reset].set(False)
 
-        self.autoreset_envs = done
+        self.prev_done = jnp.logical_or(terminated, truncated)
 
         rng = jrng.split(self.rng, self.num_envs)
 
