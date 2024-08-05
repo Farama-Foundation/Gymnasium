@@ -837,7 +837,7 @@ to generate a new set of pseudo-random parameters.</p>
 <h2>Training the A2C Agent<a class="headerlink" href="#training-the-a2c-agent" title="Link to this heading">¶</a></h2>
 <p>For our training loop, we are using the <cite>RecordEpisodeStatistics</cite> wrapper to record the episode lengths and returns and we are also saving
 the losses and entropies to plot them after the agent finished training.</p>
-<p>You may notice that the don’t reset the vectorized envs at the start of each episode like we would usually do.
+<p>You may notice that we don’t reset the vectorized envs at the start of each episode like we would usually do.
 This is because each environment resets automatically once the episode finishes (each environment takes a different number of timesteps to finish
 an episode because of the random seeds). As a result, we are also not collecting data in <cite>episodes</cite>, but rather just play a certain number of steps
 (<cite>n_steps_per_update</cite>) in each environment (as an example, this could mean that we play 20 timesteps to finish an episode and then
