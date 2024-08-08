@@ -18,13 +18,17 @@ __all__ = ["NormalizeReward"]
 
 
 class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
-    r"""This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
+    r"""This wrapper will scale immediate rewards s.t. their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
     statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.normalize()` is called.
     If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.
+
+    Important note:
+        Contrary to what the name suggests, this wrapper does not normalize the rewards to have a mean of 0 and a standard
+        deviation of 1. Instead, it scales the rewards such that their exponential moving average has a fixed variance.
 
     Note:
         The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly

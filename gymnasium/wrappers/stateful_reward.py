@@ -19,7 +19,7 @@ __all__ = ["NormalizeReward"]
 class NormalizeReward(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    r"""Normalizes immediate rewards such that their exponential moving average has a fixed variance.
+    r"""Scales immediate rewards such that their exponential moving average has a fixed variance.
 
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
 
@@ -28,6 +28,10 @@ class NormalizeReward(
     If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.
 
     A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.NormalizeReward`.
+
+    Important note:
+        Contrary to what the name suggests, this wrapper does not normalize the rewards to have a mean of 0 and a standard
+        deviation of 1. Instead, it scales the rewards such that their exponential moving average has a fixed variance.
 
     Note:
         In v0.27, NormalizeReward was updated as the forward discounted reward estimate was incorrectly computed in Gym v0.25+.
