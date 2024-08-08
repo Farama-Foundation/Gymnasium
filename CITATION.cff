@@ -1,5 +1,10 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
 cff-version: 1.2.0
-title: Gymnasium
+title: >-
+  Gymnasium: A Standard Interface for Reinforcement Learning
+  Environments
 message: >-
   If you use this software, please cite it using the
   metadata from this file.
@@ -8,22 +13,22 @@ authors:
   - given-names: Mark
     family-names: Towers
     email: mt5g17@soton.ac.uk
-    affiliation: University of Southampton
+    affiliation: University of Southampton & Farama Foundation
     orcid: 'https://orcid.org/0000-0002-2609-2041'
-  - given-names: Jordan K
-    family-names: Terry
-    email: jkterry@farama.org
-    affiliation: Farama Foundation
-    orcid: 'https://orcid.org/0009-0006-4511-3756'
   - given-names: Ariel
     family-names: Kwiatkowski
     email: akwiatkowski@farama.org
     affiliation: Farama Foundation
     orcid: 'https://orcid.org/0000-0002-9391-9993'
+  - given-names: Jordan K
+    family-names: Terry
+    email: jkterry@farama.org
+    affiliation: Farama Foundation
+    orcid: 'https://orcid.org/0009-0006-4511-3756'
   - given-names: John U.
     family-names: Balis
     email: balis@wisc.edu
-    affiliation: University of Wisconsin - Madison
+    affiliation: Independent Researcher
   - given-names: Gianluca
     name-particle: de
     family-names: Cola
@@ -36,22 +41,22 @@ authors:
   - given-names: Manuel
     family-names: Goulão
     email: manuel.silva.goulao@tecnico.ulisboa.pt
-    affiliation: Instituto Superior Tecnico
+    affiliation: NeuralShift
     orcid: 'https://orcid.org/0000-0001-6478-2038'
   - given-names: Andreas
     family-names: Kallinteris
     email: akallinteris@tuc.gr
     affiliation: Technical University of Crete (TUC)
     orcid: 'https://orcid.org/0000-0002-6223-2670'
-  - given-names: Arjun
-    email: kg.arjun@gmail.com
-    family-names: KG
-    affiliation: connectome.design
   - given-names: Markus
     family-names: Krimmel
     email: markus.krimmel@student.uni-tuebingen.de
-    affiliation: ETH
+    affiliation: Independent Researcher
     orcid: 'https://orcid.org/0009-0005-0159-1214'
+  - given-names: Arjun
+    email: kg.arjun@gmail.com
+    family-names: KG
+    affiliation: EarthBrain
   - given-names: Rodrigo
     family-names: Perez-Vicente
     email: rperezvicente@farama.org
@@ -70,25 +75,31 @@ authors:
     family-names: Tai
     email: taijunjet@hotmail.com
     affiliation: Coventry University
-  - given-names: Andrew Jin Shen
+  - given-names: Hannah Jin Shen
     family-names: Tan
     email: andrew.jinshen@gmail.com
     orcid: 'https://orcid.org/0009-0009-8772-5525'
+    affiliation: Independent Researcher
   - given-names: Omar G.
     family-names: Younis
     email: omar.younis98@gmail.com
     affiliation: University of Bologna
     orcid: 'https://orcid.org/0009-0004-2783-7932'
 identifiers:
-  - type: doi
-    value: 10.5281/zenodo.8127025
-    description: Zenodo DOI
+  - type: url
+    value: 'https://arxiv.org/abs/2407.17032'
 repository-code: 'https://github.com/Farama-Foundation/Gymnasium'
 url: 'https://gymnasium.farama.org/'
 abstract: >-
-  An API standard for single-agent reinforcement learning
-  environments, with popular reference environments and
-  related utilities (formerly Gym)
+  Gymnasium is an open-source library providing an API for
+  reinforcement learning environments. Its main contribution
+  is a central abstraction for wide interoperability between
+  benchmark environments and training algorithms. Gymnasium
+  comes with various built-in environments and utilities to
+  simplify researchers’ work along with being supported by
+  most training libraries. This paper outlines the main
+  design decisions for Gymnasium, its key features, and the
+  differences to alternative APIs.
 keywords:
   - reinforcement learning
   - machine learning
