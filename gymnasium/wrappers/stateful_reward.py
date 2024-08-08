@@ -19,7 +19,7 @@ __all__ = ["NormalizeReward"]
 class NormalizeReward(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    r"""This wrapper will scale rewards s.t. the discounted returns has a mean of 0 and std of 1.
+    r"""This wrapper will scale rewards s.t. the discounted returns have a mean of 0 and std of 1.
 
     In a nutshell, the rewards are divided through by the standard deviation of a rolling discounted sum of the reward.
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
