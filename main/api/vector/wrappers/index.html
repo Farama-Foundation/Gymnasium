@@ -1381,11 +1381,18 @@ provide an <code class="xref py py-attr docutils literal notranslate"><span clas
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.vector.NormalizeReward">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">NormalizeReward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/stateful_reward/#NormalizeReward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.NormalizeReward" title="Link to this definition">¶</a></dt>
-<dd><p>This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.</p>
-<p>The exponential moving average will have variance <span class="math notranslate nohighlight">\((1 - \gamma)^2\)</span>.</p>
+<dd><p>This wrapper will scale rewards s.t. the discounted returns have a mean of 0 and std of 1.</p>
+<p>In a nutshell, the rewards are divided through by the standard deviation of a rolling discounted sum of the reward.
+The exponential moving average will have variance <span class="math notranslate nohighlight">\((1 - \gamma)^2\)</span>.</p>
 <p>The property <cite>_update_running_mean</cite> allows to freeze/continue the running mean calculation of the reward
 statistics. If <cite>True</cite> (default), the <cite>RunningMeanStd</cite> will get updated every time <cite>self.normalize()</cite> is called.
 If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.</p>
+<dl class="simple">
+<dt>Important note:</dt><dd><p>Contrary to what the name suggests, this wrapper does not normalize the rewards to have a mean of 0 and a standard
+deviation of 1. Instead, it scales the rewards such that <strong>discounted returns</strong> have approximately unit variance.
+See [Engstrom et al.](<a class="reference external" href="https://openreview.net/forum?id=r1etN1rtPB">https://openreview.net/forum?id=r1etN1rtPB</a>) on “reward scaling” for more information.</p>
+</dd>
+</dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
