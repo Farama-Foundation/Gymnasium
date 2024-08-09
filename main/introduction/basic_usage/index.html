@@ -552,7 +552,7 @@
 <p>In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along with (possibly optional) parameters to the wrapper’s constructor:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">FlattenObservation</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v2&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v3&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(96, 96, 3)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">FlattenObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -570,7 +570,7 @@
 <p>For a full list of implemented wrappers in gymnasium, see <a class="reference internal" href="../../api/wrappers/"><span class="doc std std-doc">wrappers</span></a>.</p>
 <p>If you have a wrapped environment, and you want to get the unwrapped environment underneath all the layers of wrappers (so that you can manually call a function or change some underlying aspect of the environment), you can use the <a class="reference internal" href="../../api/env/#gymnasium.Env.unwrapped" title="gymnasium.Env.unwrapped"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unwrapped</span></code></a> attribute. If the environment is already a base environment, the <a class="reference internal" href="../../api/env/#gymnasium.Env.unwrapped" title="gymnasium.Env.unwrapped"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unwrapped</span></code></a> attribute will just return itself.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
-<span class="go">&lt;FlattenObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CarRacing&lt;CarRacing-v2&gt;&gt;&gt;&gt;&gt;&gt;</span>
+<span class="go">&lt;FlattenObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CarRacing&lt;CarRacing-v3&gt;&gt;&gt;&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">unwrapped</span>
 <span class="go">&lt;gymnasium.envs.box2d.car_racing.CarRacing object at 0x7f04efcb8850&gt;</span>
 </pre></div>
