@@ -309,7 +309,7 @@ class FrameStackObservation(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import FrameStackObservation
-        >>> env = gym.make("CarRacing-v2")
+        >>> env = gym.make("CarRacing-v3")
         >>> env = FrameStackObservation(env, stack_size=4)
         >>> env.observation_space
         Box(0, 255, (4, 96, 96, 3), uint8)

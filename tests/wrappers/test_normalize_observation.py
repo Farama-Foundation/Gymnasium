@@ -68,7 +68,7 @@ def test_update_running_mean_property():
 
 def test_normalize_obs_with_vector():
     def thunk():
-        env = gym.make("CarRacing-v2")
+        env = gym.make("CarRacing-v3")
         env = gym.wrappers.GrayscaleObservation(env)
         env = gym.wrappers.NormalizeObservation(env)
         return env
