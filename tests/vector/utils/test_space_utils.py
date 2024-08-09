@@ -4,13 +4,15 @@ import copy
 import re
 from typing import Iterable
 
+import numpy as np
 import pytest
 
 from gymnasium import Space
 from gymnasium.error import CustomSpaceError
-from gymnasium.spaces import Tuple
+from gymnasium.spaces import Box, Tuple
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
+from gymnasium.vector.utils.batched_spaces import batch_differing_spaces
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS, CustomSpace
 from tests.vector.utils.utils import is_rng_equal
 
@@ -149,3 +151,35 @@ def test_custom_space():
 
     empty_array = create_empty_array(custom_space)
     assert empty_array is None
+
+
+@pytest.mark.parametrize(
+    "spaces,expected_space",
+    [
+        (
+            (
+                Box(low=0, high=1, shape=(2,), dtype=np.float32),
+                Box(low=2, high=np.array([3, 5], dtype=np.float32)),
+            ),
+            Box(low=np.array([[0, 0], [2, 2]]), high=np.array([[1, 1], [3, 5]])),
+        ),
+    ],
+)
+def test_varying_spaces(spaces: "list[Space]", expected_space):
+    """Test the batch spaces function."""
+    batched_space = batch_differing_spaces(spaces)
+    assert batched_space == expected_space
+
+    batch_samples = batched_space.sample()
+    for sub_space, sub_sample in zip(spaces, iterate(batched_space, batch_samples)):
+        assert sub_sample in sub_space
+
+
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+@pytest.mark.parametrize("n", [1, 3])
+def test_batch_spaces_vs_batch_space(space, n):
+    """Test the batch_spaces and batch_space functions."""
+    batched_space = batch_space(space, n)
+    batched_spaces = batch_differing_spaces([copy.deepcopy(space) for _ in range(n)])
+
+    assert batched_space == batched_spaces, f"{batched_space=}, {batched_spaces=}"

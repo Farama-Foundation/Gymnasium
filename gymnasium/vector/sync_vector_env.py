@@ -7,9 +7,14 @@ from typing import Any, Callable, Iterator, Sequence
 
 import numpy as np
 
-from gymnasium import Env
+from gymnasium import Env, Space
 from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
+from gymnasium.vector.utils.batched_spaces import (
+    all_spaces_have_same_shape,
+    all_spaces_have_same_type,
+    batch_differing_spaces,
+)
 from gymnasium.vector.vector_env import ArrayType, VectorEnv
 
 
@@ -57,13 +62,16 @@ class SyncVectorEnv(VectorEnv):
         self,
         env_fns: Iterator[Callable[[], Env]] | Sequence[Callable[[], Env]],
         copy: bool = True,
+        observation_mode: str | Space = "same",
     ):
         """Vectorized environment that serially runs multiple environments.
 
         Args:
             env_fns: iterable of callable functions that create the environments.
             copy: If ``True``, then the :meth:`reset` and :meth:`step` methods return a copy of the observations.
-
+            observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
+                'different' defines that there can be multiple observation spaces with the same length but different high/low values batched together. Passing a ``Space`` object
+                allows the user to set some custom observation space mode not covered by 'same' or 'different.'
         Raises:
             RuntimeError: If the observation space of some sub-environment does not match observation_space
                 (or, by default, the observation space of the first sub-environment).
@@ -80,15 +88,39 @@ class SyncVectorEnv(VectorEnv):
         self.metadata = self.envs[0].metadata
         self.render_mode = self.envs[0].render_mode
 
-        # Initialises the single spaces from the sub-environments
-        self.single_observation_space = self.envs[0].observation_space
         self.single_action_space = self.envs[0].action_space
+
+        # Initialise the obs and action space based on the desired mode
+
+        if isinstance(observation_mode, Space):
+            self.observation_space = observation_mode
+        else:
+            if observation_mode == "same":
+                self.single_observation_space = self.envs[0].observation_space
+                self.single_action_space = self.envs[0].action_space
+
+                self.observation_space = batch_space(
+                    self.single_observation_space, self.num_envs
+                )
+            elif observation_mode == "different":
+                current_spaces = [env.observation_space for env in self.envs]
+
+                assert all_spaces_have_same_shape(
+                    current_spaces
+                ), "Low & High values for observation spaces can be different but shapes need to be the same"
+                assert all_spaces_have_same_type(
+                    current_spaces
+                ), "Observation spaces must have same Space type"
+
+                self.observation_space = batch_differing_spaces(current_spaces)
+
+                self.single_observation_space = self.observation_space
+
+            else:
+                raise ValueError("Need to pass in mode for batching observations")
+
         self._check_spaces()
 
-        # Initialise the obs and action space based on the single versions and num of sub-environments
-        self.observation_space = batch_space(
-            self.single_observation_space, self.num_envs
-        )
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         # Initialise attributes used in `step` and `reset`
@@ -270,10 +302,28 @@ class SyncVectorEnv(VectorEnv):
         """Check that each of the environments obs and action spaces are equivalent to the single obs and action space."""
         for env in self.envs:
             if not (env.observation_space == self.single_observation_space):
-                raise RuntimeError(
-                    f"Some environments have an observation space different from `{self.single_observation_space}`. "
-                    "In order to batch observations, the observation spaces from all environments must be equal."
-                )
+                if not (
+                    hasattr(env.observation_space, "low")
+                    and hasattr(env.observation_space, "high")
+                    and np.any(
+                        np.all(
+                            env.observation_space.low
+                            == self.single_observation_space.low,
+                            axis=1,
+                        )
+                    )
+                    and np.any(
+                        np.all(
+                            env.observation_space.high
+                            == self.single_observation_space.high,
+                            axis=1,
+                        )
+                    )
+                ):
+                    raise RuntimeError(
+                        f"Some environments have an observation space different from `{self.single_observation_space}`. "
+                        "In order to batch observations, the observation spaces from all environments must be equal."
+                    )
 
             if not (env.action_space == self.single_action_space):
                 raise RuntimeError(

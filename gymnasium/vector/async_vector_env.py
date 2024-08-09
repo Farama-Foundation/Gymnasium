@@ -14,7 +14,7 @@ from typing import Any, Callable, Sequence
 
 import numpy as np
 
-from gymnasium import logger
+from gymnasium import Space, logger
 from gymnasium.core import ActType, Env, ObsType, RenderFrame
 from gymnasium.error import (
     AlreadyPendingCallError,
@@ -32,6 +32,10 @@ from gymnasium.vector.utils import (
     iterate,
     read_from_shared_memory,
     write_to_shared_memory,
+)
+from gymnasium.vector.utils.batched_spaces import (
+    all_spaces_have_same_shape,
+    batch_differing_spaces,
 )
 from gymnasium.vector.vector_env import ArrayType, VectorEnv
 
@@ -98,6 +102,7 @@ class AsyncVectorEnv(VectorEnv):
             ]
             | None
         ) = None,
+        observation_mode: str | Space = "same",
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -113,6 +118,9 @@ class AsyncVectorEnv(VectorEnv):
                 so for some environments you may want to have it set to ``False``.
             worker: If set, then use that worker in a subprocess instead of a default one.
                 Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled.
+            observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
+                'different' defines that there can be multiple observation spaces with the same length but different high/low values batched together. Passing a ``Space`` object
+                allows the user to set some custom observation space mode not covered by 'same' or 'different.'
 
         Warnings:
             worker is an advanced mode option. It provides a high degree of flexibility and a high chance
@@ -139,12 +147,29 @@ class AsyncVectorEnv(VectorEnv):
         self.metadata = dummy_env.metadata
         self.render_mode = dummy_env.render_mode
 
-        self.single_observation_space = dummy_env.observation_space
         self.single_action_space = dummy_env.action_space
 
-        self.observation_space = batch_space(
-            self.single_observation_space, self.num_envs
-        )
+        if isinstance(observation_mode, Space):
+            self.observation_space = observation_mode
+        else:
+            if observation_mode == "same":
+                self.single_observation_space = dummy_env.observation_space
+                self.observation_space = batch_space(
+                    self.single_observation_space, self.num_envs
+                )
+            elif observation_mode == "different":
+                current_spaces = [env().observation_space for env in self.env_fns]
+
+                assert all_spaces_have_same_shape(
+                    current_spaces
+                ), "Low & High values for observation spaces can be different but shapes need to be the same"
+
+                self.single_observation_space = batch_differing_spaces(current_spaces)
+
+                self.observation_space = self.single_observation_space
+
+            else:
+                raise ValueError("Need to pass in mode for batching observations")
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         dummy_env.close()
@@ -716,7 +741,22 @@ def _async_worker(
             elif command == "_check_spaces":
                 pipe.send(
                     (
-                        (data[0] == observation_space, data[1] == action_space),
+                        (
+                            (data[0] == observation_space)
+                            or (
+                                hasattr(observation_space, "low")
+                                and hasattr(observation_space, "high")
+                                and np.any(
+                                    np.all(observation_space.low == data[0].low, axis=1)
+                                )
+                                and np.any(
+                                    np.all(
+                                        observation_space.high == data[0].high, axis=1
+                                    )
+                                )
+                            ),
+                            data[1] == action_space,
+                        ),
                         True,
                     )
                 )
