@@ -114,6 +114,7 @@ class SyncVectorEnv(VectorEnv):
                     f"Invalid `observation_mode`, expected: 'same' or 'different' or tuple of single and batch observation space, actual got {observation_mode}"
                 )
 
+        # check sub-environment obs and action spaces
         for env in self.envs:
             if observation_mode == "same":
                 assert (
