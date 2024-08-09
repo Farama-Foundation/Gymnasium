@@ -205,5 +205,3 @@ def test_all_space_pairs_for_is_space_dtype_shape_equiv(space_1):
 
             assert data_equivalence(sample_1, read_sample_1)
             assert data_equivalence(sample_2, read_sample_2)
-        else:
-            pytest.skip("Not compatible")
