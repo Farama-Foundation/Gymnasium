@@ -127,7 +127,7 @@ In order to wrap an environment, you must first initialize a base environment. T
 ```python
 >>> import gymnasium as gym
 >>> from gymnasium.wrappers import FlattenObservation
->>> env = gym.make("CarRacing-v2")
+>>> env = gym.make("CarRacing-v3")
 >>> env.observation_space.shape
 (96, 96, 3)
 >>> wrapped_env = FlattenObservation(env)
@@ -156,7 +156,7 @@ If you have a wrapped environment, and you want to get the unwrapped environment
 
 ```python
 >>> wrapped_env
-<FlattenObservation<TimeLimit<OrderEnforcing<PassiveEnvChecker<CarRacing<CarRacing-v2>>>>>>
+<FlattenObservation<TimeLimit<OrderEnforcing<PassiveEnvChecker<CarRacing<CarRacing-v3>>>>>>
 >>> wrapped_env.unwrapped
 <gymnasium.envs.box2d.car_racing.CarRacing object at 0x7f04efcb8850>
 ```
