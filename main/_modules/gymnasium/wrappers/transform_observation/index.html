@@ -705,7 +705,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import FlattenObservation</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v3&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space.shape</span>
 <span class="sd">        (96, 96, 3)</span>
 <span class="sd">        &gt;&gt;&gt; env = FlattenObservation(env)</span>
@@ -750,7 +750,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import GrayscaleObservation</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v3&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space.shape</span>
 <span class="sd">        (96, 96, 3)</span>
 <span class="sd">        &gt;&gt;&gt; grayscale_env = GrayscaleObservation(env)</span>
@@ -831,7 +831,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import ResizeObservation</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v3&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space.shape</span>
 <span class="sd">        (96, 96, 3)</span>
 <span class="sd">        &gt;&gt;&gt; resized_env = ResizeObservation(env, (32, 32))</span>
@@ -905,7 +905,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import ReshapeObservation</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v2&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v3&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space.shape</span>
 <span class="sd">        (96, 96, 3)</span>
 <span class="sd">        &gt;&gt;&gt; reshape_env = ReshapeObservation(env, (24, 4, 96, 1, 3))</span>
