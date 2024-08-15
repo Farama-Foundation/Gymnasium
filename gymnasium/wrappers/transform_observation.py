@@ -594,11 +594,11 @@ class AddRenderObservation(
         >>> obs, _ = env.reset(seed=123)
         >>> image = env.render()
         >>> np.all(obs == image)
-        np.True_
+        True
         >>> obs, *_ = env.step(env.action_space.sample())
         >>> image = env.render()
         >>> np.all(obs == image)
-        np.True_
+        True
 
     Example - Add the rendered image to the original observation as a dictionary item:
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
@@ -611,11 +611,11 @@ class AddRenderObservation(
         >>> obs["state"]
         array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)
         >>> np.all(obs["pixels"] == env.render())
-        np.True_
+        True
         >>> obs, reward, terminates, truncates, info = env.step(env.action_space.sample())
         >>> image = env.render()
         >>> np.all(obs["pixels"] == image)
-        np.True_
+        True
 
     Change logs:
      * v0.15.0 - Initially added as ``PixelObservationWrapper``

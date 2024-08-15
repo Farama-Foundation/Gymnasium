@@ -50,9 +50,9 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         ...
         >>> envs.close()
         >>> np.mean(episode_rewards)
-        np.float64(-0.03359492141887935)
+        -0.03359492141887935
         >>> np.std(episode_rewards)
-        np.float64(0.029028230434438706)
+        0.029028230434438706
 
     Example with the normalize reward wrapper:
         >>> import gymnasium as gym
@@ -68,9 +68,9 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         ...
         >>> envs.close()
         >>> np.mean(episode_rewards)
-        np.float64(-0.1598639586606745)
+        -0.1598639586606745
         >>> np.std(episode_rewards)
-        np.float64(0.27800309628058434)
+        0.27800309628058434
     """
 
     def __init__(
