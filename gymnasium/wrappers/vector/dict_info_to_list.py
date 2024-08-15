@@ -54,7 +54,8 @@ class DictInfoToList(VectorWrapper):
         >>> _ = envs.action_space.seed(123)
         >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
         >>> infos
-        {'x_position': array([0.03332211, 0.10172355]), '_x_position': array([ True,  True]), 'x_velocity': array([-0.06296527,  0.89345848]), '_x_velocity': array([ True,  True]), 'reward_run': array([-0.06296527,  0.89345848]), '_reward_run': array([ True,  True]), 'reward_ctrl': array([-0.24503503, -0.21944423]), '_reward_ctrl': array([ True,  True])}        >>> envs = DictInfoToList(envs)
+        {'x_position': array([0.03332211, 0.10172355]), '_x_position': array([ True,  True]), 'x_velocity': array([-0.06296527,  0.89345848]), '_x_velocity': array([ True,  True]), 'reward_run': array([-0.06296527,  0.89345848]), '_reward_run': array([ True,  True]), 'reward_ctrl': array([-0.24503503, -0.21944423]), '_reward_ctrl': array([ True,  True])}
+        >>> envs = DictInfoToList(envs)
         >>> _ = envs.reset(seed=123)
         >>> _ = envs.action_space.seed(123)
         >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
