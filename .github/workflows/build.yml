@@ -24,7 +24,7 @@ jobs:
       - name: Run tests
         run: docker run gymnasium-all-docker pytest tests/*
       - name: Run doctests
-        if: ${{ matrix.numpy-version == '>=2.0' }}
+        # if: ${{ matrix.numpy-version == '>=2.0' }}
         run: docker run gymnasium-all-docker pytest --doctest-modules gymnasium/
 
   build-necessary:
