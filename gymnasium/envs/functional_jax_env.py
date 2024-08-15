@@ -10,7 +10,7 @@ import jax.random as jrng
 
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import seeding
 from gymnasium.vector.utils import batch_space
 

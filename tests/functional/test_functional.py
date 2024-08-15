@@ -6,7 +6,7 @@ from typing import Any
 
 import numpy as np
 
-from gymnasium.functional import FuncEnv
+from gymnasium.experimental.functional import FuncEnv
 
 
 class GenericTestFuncEnv(FuncEnv):
@@ -16,25 +16,32 @@ class GenericTestFuncEnv(FuncEnv):
         """Constructor that allows generic options to be set on the environment."""
         super().__init__(options)
 
-    def initial(self, rng: Any) -> np.ndarray:
+    def initial(self, rng: Any, params=None) -> np.ndarray:
         """Testing initial function."""
         return np.array([0, 0], dtype=np.float32)
 
-    def observation(self, state: np.ndarray, rng: Any) -> np.ndarray:
+    def observation(self, state: np.ndarray, rng: Any, params=None) -> np.ndarray:
         """Testing observation function."""
         return state
 
-    def transition(self, state: np.ndarray, action: int, rng: None) -> np.ndarray:
+    def transition(
+        self, state: np.ndarray, action: int, rng: None, params=None
+    ) -> np.ndarray:
         """Testing transition function."""
         return state + np.array([0, action], dtype=np.float32)
 
     def reward(
-        self, state: np.ndarray, action: int, next_state: np.ndarray, rng: Any
+        self,
+        state: np.ndarray,
+        action: int,
+        next_state: np.ndarray,
+        rng: Any,
+        params=None,
     ) -> float:
         """Testing reward function."""
         return 1.0 if next_state[1] > 0 else 0.0
 
-    def terminal(self, state: np.ndarray, rng: Any) -> bool:
+    def terminal(self, state: np.ndarray, rng: Any, params=None) -> bool:
         """Testing terminal function."""
         return state[1] > 0
 
