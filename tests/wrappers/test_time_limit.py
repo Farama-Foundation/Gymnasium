@@ -57,3 +57,24 @@ def test_termination_on_last_step(double_wrap):
     _, _, terminated, truncated, _ = env.step(env.action_space.sample())
     assert terminated is True
     assert truncated is True
+
+
+def test_max_episode_steps():
+    env = gym.make("CartPole-v1", disable_env_checker=True)
+
+    assert env.spec.max_episode_steps == 500
+    assert TimeLimit(env, max_episode_steps=10).spec.max_episode_steps == 10
+
+    with pytest.raises(
+        AssertionError,
+        match="Expect the `max_episode_steps` to be positive, actually: -1",
+    ):
+        TimeLimit(env, max_episode_steps=-1)
+
+    with pytest.raises(
+        AssertionError,
+        match="Expect the `max_episode_steps` to be positive, actually: None",
+    ):
+        TimeLimit(env, max_episode_steps=None)
+
+    env.close()
