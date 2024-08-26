@@ -537,7 +537,7 @@ No vector wrapper exists.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> – The environment to apply the wrapper</p></li>
-<li><p><strong>max_episode_steps</strong> – An optional max episode steps (if <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">env.spec.max_episode_steps</span></code> is used)</p></li>
+<li><p><strong>max_episode_steps</strong> – the environment step after which the episode is truncated (<code class="docutils literal notranslate"><span class="pre">elapsed</span> <span class="pre">&gt;=</span> <span class="pre">max_episode_steps</span></code>)</p></li>
 </ul>
 </dd>
 </dl>
