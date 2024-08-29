@@ -1,5 +1,7 @@
 """Test the `SyncVectorEnv` implementation."""
 
+import re
+
 import numpy as np
 import pytest
 
@@ -139,7 +141,12 @@ def test_check_spaces_sync_vector_env():
     env_fns = [make_env("CartPole-v1", i) for i in range(8)]
     # FrozenLake-v1 - Discrete(16), action_space: Discrete(4)
     env_fns[1] = make_env("FrozenLake-v1", 1)
-    with pytest.raises(RuntimeError):
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "SyncVectorEnv(..., observation_mode='same') however the sub-environments observation spaces are not equivalent."
+        ),
+    ):
         env = SyncVectorEnv(env_fns)
         env.close()
 

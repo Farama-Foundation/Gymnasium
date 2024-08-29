@@ -14,7 +14,7 @@ from typing import Any, Callable, Sequence
 
 import numpy as np
 
-from gymnasium import logger
+from gymnasium import Space, logger
 from gymnasium.core import ActType, Env, ObsType, RenderFrame
 from gymnasium.error import (
     AlreadyPendingCallError,
@@ -22,8 +22,10 @@ from gymnasium.error import (
     CustomSpaceError,
     NoAsyncCallError,
 )
+from gymnasium.spaces.utils import is_space_dtype_shape_equiv
 from gymnasium.vector.utils import (
     CloudpickleWrapper,
+    batch_differing_spaces,
     batch_space,
     clear_mpi_env_vars,
     concatenate,
@@ -98,6 +100,7 @@ class AsyncVectorEnv(VectorEnv):
             ]
             | None
         ) = None,
+        observation_mode: str | Space = "same",
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -113,11 +116,15 @@ class AsyncVectorEnv(VectorEnv):
                 so for some environments you may want to have it set to ``False``.
             worker: If set, then use that worker in a subprocess instead of a default one.
                 Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled.
+            observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
+                'different' defines that there can be multiple observation spaces with different parameters though requires the same shape and dtype,
+                warning, may raise unexpected errors. Passing a ``Tuple[Space, Space]`` object allows defining a custom ``single_observation_space`` and
+                ``observation_space``, warning, may raise unexpected errors.
 
         Warnings:
             worker is an advanced mode option. It provides a high degree of flexibility and a high chance
             to shoot yourself in the foot; thus, if you are writing your own worker, it is recommended to start
-            from the code for ``_worker`` (or ``_worker_shared_memory``) method, and add changes.
+            from the code for ``_worker`` (or ``_async_worker``) method, and add changes.
 
         Raises:
             RuntimeError: If the observation space of some sub-environment does not match observation_space
@@ -128,6 +135,7 @@ class AsyncVectorEnv(VectorEnv):
         self.env_fns = env_fns
         self.shared_memory = shared_memory
         self.copy = copy
+        self.observation_mode = observation_mode
 
         self.num_envs = len(env_fns)
 
@@ -139,13 +147,30 @@ class AsyncVectorEnv(VectorEnv):
         self.metadata = dummy_env.metadata
         self.render_mode = dummy_env.render_mode
 
-        self.single_observation_space = dummy_env.observation_space
         self.single_action_space = dummy_env.action_space
-
-        self.observation_space = batch_space(
-            self.single_observation_space, self.num_envs
-        )
         self.action_space = batch_space(self.single_action_space, self.num_envs)
+
+        if isinstance(observation_mode, tuple) and len(observation_mode) == 2:
+            assert isinstance(observation_mode[0], Space)
+            assert isinstance(observation_mode[1], Space)
+            self.observation_space, self.single_observation_space = observation_mode
+        else:
+            if observation_mode == "same":
+                self.single_observation_space = dummy_env.observation_space
+                self.observation_space = batch_space(
+                    self.single_observation_space, self.num_envs
+                )
+            elif observation_mode == "different":
+                # the environment is created and instantly destroy, might cause issues for some environment
+                # but I don't believe there is anything else we can do, for users with issues, pre-compute the spaces and use the custom option.
+                env_spaces = [env().observation_space for env in self.env_fns]
+
+                self.single_observation_space = env_spaces[0]
+                self.observation_space = batch_differing_spaces(env_spaces)
+            else:
+                raise ValueError(
+                    f"Invalid `observation_mode`, expected: 'same' or 'different' or tuple of single and batch observation space, actual got {observation_mode}"
+                )
 
         dummy_env.close()
         del dummy_env
@@ -162,9 +187,7 @@ class AsyncVectorEnv(VectorEnv):
                 )
             except CustomSpaceError as e:
                 raise ValueError(
-                    "Using `shared_memory=True` in `AsyncVectorEnv` is incompatible with non-standard Gymnasium observation spaces (i.e. custom spaces inheriting from `gymnasium.Space`), "
-                    "and is only compatible with default Gymnasium spaces (e.g. `Box`, `Tuple`, `Dict`) for batching. "
-                    "Set `shared_memory=False` if you use custom observation spaces."
+                    "Using `AsyncVector(..., shared_memory=True)` caused an error, you can disable this feature with `shared_memory=False` however this is slower."
                 ) from e
         else:
             _obs_buffer = None
@@ -591,20 +614,33 @@ class AsyncVectorEnv(VectorEnv):
 
     def _check_spaces(self):
         self._assert_is_running()
-        spaces = (self.single_observation_space, self.single_action_space)
 
         for pipe in self.parent_pipes:
-            pipe.send(("_check_spaces", spaces))
+            pipe.send(
+                (
+                    "_check_spaces",
+                    (
+                        self.observation_mode,
+                        self.single_observation_space,
+                        self.single_action_space,
+                    ),
+                )
+            )
 
         results, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
         self._raise_if_errors(successes)
         same_observation_spaces, same_action_spaces = zip(*results)
 
         if not all(same_observation_spaces):
-            raise RuntimeError(
-                f"Some environments have an observation space different from `{self.single_observation_space}`. "
-                "In order to batch observations, the observation spaces from all environments must be equal."
-            )
+            if self.observation_mode == "same":
+                raise RuntimeError(
+                    "AsyncVectorEnv(..., observation_mode='same') however some of the sub-environments observation spaces are not equivalent. If this is intentional, use `observation_mode='different'` instead."
+                )
+            else:
+                raise RuntimeError(
+                    "AsyncVectorEnv(..., observation_mode='different' or custom space) however the sub-environment's observation spaces do not share a common shape and dtype."
+                )
+
         if not all(same_action_spaces):
             raise RuntimeError(
                 f"Some environments have an action space different from `{self.single_action_space}`. "
@@ -714,9 +750,20 @@ def _async_worker(
                 env.set_wrapper_attr(name, value)
                 pipe.send((None, True))
             elif command == "_check_spaces":
+                obs_mode, single_obs_space, single_action_space = data
+
                 pipe.send(
                     (
-                        (data[0] == observation_space, data[1] == action_space),
+                        (
+                            (
+                                single_obs_space == observation_space
+                                if obs_mode == "same"
+                                else is_space_dtype_shape_equiv(
+                                    single_obs_space, observation_space
+                                )
+                            ),
+                            single_action_space == action_space,
+                        ),
                         True,
                     )
                 )

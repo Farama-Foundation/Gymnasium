@@ -47,14 +47,14 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces)
 
-    def seed(self, seed: int | tuple[int] | None = None) -> tuple[int, ...]:
+    def seed(self, seed: int | typing.Sequence[int] | None = None) -> tuple[int, ...]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
 
         * ``None`` - All the subspaces will use a random initial seed
         * ``Int`` - The integer is used to seed the :class:`Tuple` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all the subspaces.
-        * ``List`` - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces ``[42, 54, ...]``.
+        * ``List`` / ``Tuple`` - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces ``[42, 54, ...]``.
 
         Args:
             seed: An optional list of ints or int to seed the (sub-)spaces.
