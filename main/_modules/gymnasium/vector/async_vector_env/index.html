@@ -486,7 +486,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">Space</span><span class="p">,</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">Env</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">RenderFrame</span>
 <span class="kn">from</span> <span class="nn">gymnasium.error</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AlreadyPendingCallError</span><span class="p">,</span>
@@ -494,8 +494,10 @@
     <span class="n">CustomSpaceError</span><span class="p">,</span>
     <span class="n">NoAsyncCallError</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">gymnasium.spaces.utils</span> <span class="kn">import</span> <span class="n">is_space_dtype_shape_equiv</span>
 <span class="kn">from</span> <span class="nn">gymnasium.vector.utils</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CloudpickleWrapper</span><span class="p">,</span>
+    <span class="n">batch_differing_spaces</span><span class="p">,</span>
     <span class="n">batch_space</span><span class="p">,</span>
     <span class="n">clear_mpi_env_vars</span><span class="p">,</span>
     <span class="n">concatenate</span><span class="p">,</span>
@@ -572,6 +574,7 @@
             <span class="p">]</span>
             <span class="o">|</span> <span class="kc">None</span>
         <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">observation_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Space</span> <span class="o">=</span> <span class="s2">&quot;same&quot;</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Vectorized environment that runs multiple environments in parallel.</span>
 
@@ -587,11 +590,15 @@
 <span class="sd">                so for some environments you may want to have it set to ``False``.</span>
 <span class="sd">            worker: If set, then use that worker in a subprocess instead of a default one.</span>
 <span class="sd">                Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled.</span>
+<span class="sd">            observation_mode: Defines how environment observation spaces should be batched. &#39;same&#39; defines that there should be ``n`` copies of identical spaces.</span>
+<span class="sd">                &#39;different&#39; defines that there can be multiple observation spaces with different parameters though requires the same shape and dtype,</span>
+<span class="sd">                warning, may raise unexpected errors. Passing a ``Tuple[Space, Space]`` object allows defining a custom ``single_observation_space`` and</span>
+<span class="sd">                ``observation_space``, warning, may raise unexpected errors.</span>
 
 <span class="sd">        Warnings:</span>
 <span class="sd">            worker is an advanced mode option. It provides a high degree of flexibility and a high chance</span>
 <span class="sd">            to shoot yourself in the foot; thus, if you are writing your own worker, it is recommended to start</span>
-<span class="sd">            from the code for ``_worker`` (or ``_worker_shared_memory``) method, and add changes.</span>
+<span class="sd">            from the code for ``_worker`` (or ``_async_worker``) method, and add changes.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            RuntimeError: If the observation space of some sub-environment does not match observation_space</span>
@@ -602,6 +609,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">env_fns</span> <span class="o">=</span> <span class="n">env_fns</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span> <span class="o">=</span> <span class="n">shared_memory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">copy</span> <span class="o">=</span> <span class="n">copy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_mode</span> <span class="o">=</span> <span class="n">observation_mode</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_fns</span><span class="p">)</span>
 
@@ -613,13 +621,30 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">metadata</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">=</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">render_mode</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span> <span class="o">=</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">observation_space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span> <span class="o">=</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">action_space</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation_mode</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">observation_mode</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation_mode</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Space</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observation_mode</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">Space</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span> <span class="o">=</span> <span class="n">observation_mode</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">observation_mode</span> <span class="o">==</span> <span class="s2">&quot;same&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span> <span class="o">=</span> <span class="n">dummy_env</span><span class="o">.</span><span class="n">observation_space</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">observation_mode</span> <span class="o">==</span> <span class="s2">&quot;different&quot;</span><span class="p">:</span>
+                <span class="c1"># the environment is created and instantly destroy, might cause issues for some environment</span>
+                <span class="c1"># but I don&#39;t believe there is anything else we can do, for users with issues, pre-compute the spaces and use the custom option.</span>
+                <span class="n">env_spaces</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span><span class="p">()</span><span class="o">.</span><span class="n">observation_space</span> <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_fns</span><span class="p">]</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span> <span class="o">=</span> <span class="n">env_spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">batch_differing_spaces</span><span class="p">(</span><span class="n">env_spaces</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Invalid `observation_mode`, expected: &#39;same&#39; or &#39;different&#39; or tuple of single and batch observation space, actual got </span><span class="si">{</span><span class="n">observation_mode</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
         <span class="n">dummy_env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">del</span> <span class="n">dummy_env</span>
@@ -636,9 +661,7 @@
                 <span class="p">)</span>
             <span class="k">except</span> <span class="n">CustomSpaceError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Using `shared_memory=True` in `AsyncVectorEnv` is incompatible with non-standard Gymnasium observation spaces (i.e. custom spaces inheriting from `gymnasium.Space`), &quot;</span>
-                    <span class="s2">&quot;and is only compatible with default Gymnasium spaces (e.g. `Box`, `Tuple`, `Dict`) for batching. &quot;</span>
-                    <span class="s2">&quot;Set `shared_memory=False` if you use custom observation spaces.&quot;</span>
+                    <span class="s2">&quot;Using `AsyncVector(..., shared_memory=True)` caused an error, you can disable this feature with `shared_memory=False` however this is slower.&quot;</span>
                 <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_obs_buffer</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1080,20 +1103,33 @@
 
     <span class="k">def</span> <span class="nf">_check_spaces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_running</span><span class="p">()</span>
-        <span class="n">spaces</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">:</span>
-            <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;_check_spaces&quot;</span><span class="p">,</span> <span class="n">spaces</span><span class="p">))</span>
+            <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="s2">&quot;_check_spaces&quot;</span><span class="p">,</span>
+                    <span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">observation_mode</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="n">results</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_errors</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span>
         <span class="n">same_observation_spaces</span><span class="p">,</span> <span class="n">same_action_spaces</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">same_observation_spaces</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Some environments have an observation space different from `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="si">}</span><span class="s2">`. &quot;</span>
-                <span class="s2">&quot;In order to batch observations, the observation spaces from all environments must be equal.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_mode</span> <span class="o">==</span> <span class="s2">&quot;same&quot;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;AsyncVectorEnv(..., observation_mode=&#39;same&#39;) however some of the sub-environments observation spaces are not equivalent. If this is intentional, use `observation_mode=&#39;different&#39;` instead.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">&quot;AsyncVectorEnv(..., observation_mode=&#39;different&#39; or custom space) however the sub-environment&#39;s observation spaces do not share a common shape and dtype.&quot;</span>
+                <span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">same_action_spaces</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Some environments have an action space different from `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="si">}</span><span class="s2">`. &quot;</span>
@@ -1204,9 +1240,20 @@
                 <span class="n">env</span><span class="o">.</span><span class="n">set_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
                 <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
             <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">&quot;_check_spaces&quot;</span><span class="p">:</span>
+                <span class="n">obs_mode</span><span class="p">,</span> <span class="n">single_obs_space</span><span class="p">,</span> <span class="n">single_action_space</span> <span class="o">=</span> <span class="n">data</span>
+
                 <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
                     <span class="p">(</span>
-                        <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">observation_space</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">action_space</span><span class="p">),</span>
+                        <span class="p">(</span>
+                            <span class="p">(</span>
+                                <span class="n">single_obs_space</span> <span class="o">==</span> <span class="n">observation_space</span>
+                                <span class="k">if</span> <span class="n">obs_mode</span> <span class="o">==</span> <span class="s2">&quot;same&quot;</span>
+                                <span class="k">else</span> <span class="n">is_space_dtype_shape_equiv</span><span class="p">(</span>
+                                    <span class="n">single_obs_space</span><span class="p">,</span> <span class="n">observation_space</span>
+                                <span class="p">)</span>
+                            <span class="p">),</span>
+                            <span class="n">single_action_space</span> <span class="o">==</span> <span class="n">action_space</span><span class="p">,</span>
+                        <span class="p">),</span>
                         <span class="kc">True</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
