@@ -54,13 +54,13 @@ class DictInfoToList(VectorWrapper):
         >>> _ = envs.action_space.seed(123)
         >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
         >>> infos
-        {'x_position': array([0.03332211, 0.10172355]), '_x_position': array([ True,  True]), 'x_velocity': array([-0.06296527,  0.89345848]), '_x_velocity': array([ True,  True]), 'reward_run': array([-0.06296527,  0.89345848]), '_reward_run': array([ True,  True]), 'reward_ctrl': array([-0.24503503, -0.21944423]), '_reward_ctrl': array([ True,  True])}
+        {'x_position': array([0.03332211, 0.10172355]), '_x_position': array([ True,  True]), 'x_velocity': array([-0.06296527,  0.89345848]), '_x_velocity': array([ True,  True]), 'reward_run': array([-0.06296527,  0.89345848]), '_reward_run': array([ True,  True]), 'reward_ctrl': array([-0.24503504, -0.21944423], dtype=float32), '_reward_ctrl': array([ True,  True])}
         >>> envs = DictInfoToList(envs)
         >>> _ = envs.reset(seed=123)
         >>> _ = envs.action_space.seed(123)
         >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
         >>> infos
-        [{'x_position': 0.0333221090036294, 'x_velocity': -0.06296527291998574, 'reward_run': -0.06296527291998574, 'reward_ctrl': -0.2450350284576416}, {'x_position': 0.10172354684460168, 'x_velocity': 0.8934584807363618, 'reward_run': 0.8934584807363618, 'reward_ctrl': -0.21944422721862794}]
+        [{'x_position': np.float64(0.0333221090036294), 'x_velocity': np.float64(-0.06296527291998574), 'reward_run': np.float64(-0.06296527291998574), 'reward_ctrl': np.float32(-0.24503504)}, {'x_position': np.float64(0.10172354684460168), 'x_velocity': np.float64(0.8934584807363618), 'reward_run': np.float64(0.8934584807363618), 'reward_ctrl': np.float32(-0.21944423)}]
 
     Change logs:
      * v0.24.0 - Initially added as ``VectorListInfo``

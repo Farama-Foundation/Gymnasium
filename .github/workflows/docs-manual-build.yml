@@ -1,10 +1,18 @@
-name: Docs Versioning
+name: Manually Build Website
 
 on:
-  push:
-    tags:
-      - 'v?*.*.*'
-      -
+  workflow_dispatch:
+    inputs:
+      version:
+          description: 'Documentation version to create'
+          required: true
+      commit:
+          description: 'Commit used to build the Documentation version'
+          required: false
+      latest:
+          description: 'Latest version'
+          type: boolean
+
 permissions:
   contents: write
 
@@ -16,6 +24,12 @@ jobs:
       SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+        if: inputs.commit == ''
+
+      - uses: actions/checkout@v4
+        if: inputs.commit != ''
+        with:
+          ref: ${{ inputs.commit }}
 
       - uses: actions/setup-python@v5
         with:
@@ -46,12 +60,12 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: _build
-          target-folder: ${{github.ref_name}}
+          target-folder: ${{ inputs.version }}
           clean: false
 
       - name: Upload to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
-        if: ${{ !contains(github.ref_name, 'a') }}
+        if: inputs.latest
         with:
           folder: _build
           clean-exclude: |

@@ -1,6 +1,6 @@
 # https://pre-commit.com
 # This GitHub Action assumes that the repo contains a valid .pre-commit-config.yaml file.
-name: pre-commit
+name: Run pre-commit
 on:
   pull_request:
   push:
