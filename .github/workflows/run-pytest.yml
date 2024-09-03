@@ -1,4 +1,4 @@
-name: build
+name: Run PyTest
 on: [pull_request, push]
 
 permissions:
