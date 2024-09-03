@@ -146,7 +146,7 @@ class RescaleAction(
         >>> wrapped_env = RescaleAction(env, min_action=min_action, max_action=max_action)
         >>> wrapped_env_obs, _, _, _, _ = wrapped_env.step(max_action)
         >>> np.all(obs == wrapped_env_obs)
-        True
+        np.True_
 
     Change logs:
      * v0.15.4 - Initially added

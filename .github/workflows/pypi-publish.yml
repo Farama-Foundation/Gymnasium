@@ -4,7 +4,7 @@
 #   - https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
 #
 # derived from https://github.com/Farama-Foundation/PettingZoo/blob/e230f4d80a5df3baf9bd905149f6d4e8ce22be31/.github/workflows/build-publish.yml
-name: build-publish
+name: Build artifact for PyPI
 
 on:
   push:
@@ -20,11 +20,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.8'
+    - uses: actions/setup-python@v5
 
     - name: Install dependencies
       run: python -m pip install --upgrade pip setuptools build
