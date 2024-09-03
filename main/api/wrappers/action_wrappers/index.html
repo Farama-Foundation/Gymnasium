@@ -609,7 +609,7 @@ or <code class="xref py py-attr docutils literal notranslate"><span class="pre">
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">RescaleAction</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">min_action</span><span class="o">=</span><span class="n">min_action</span><span class="p">,</span> <span class="n">max_action</span><span class="o">=</span><span class="n">max_action</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env_obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">wrapped_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">max_action</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">obs</span> <span class="o">==</span> <span class="n">wrapped_env_obs</span><span class="p">)</span>
-<span class="go">True</span>
+<span class="go">np.True_</span>
 </pre></div>
 </div>
 <dl class="simple">
