@@ -189,6 +189,13 @@ Buffalo-Gym is a Multi-Armed Bandit (MAB) gymnasium built primarily to assist in
 
 ICU-Sepsis is a tabular reinforcement learning environment that simulates the treatment of sepsis in an intensive care unit (ICU). Introduced in the paper [ICU-Sepsis: A Benchmark MDP Built from Real Medical Data](https://arxiv.org/abs/2406.05646), the environment is lightweight and easy to use, yet challenging for most reinforcement learning algorithms.
 
+### [FlyCraft: A Fixed-wing UAV Environment](https://github.com/GongXudong/fly-craft)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/GongXudong/fly-craft)
+
+FlyCraft is a Gymnasium environment for fixed-wing UAV tasks. By default, FlyCraft provides two tasks: attitude control and velocity vector control. These tasks are characterized by their multi-goal and long-horizon nature, posing significant challenges for RL exploration. Additionally, the rewards can be configured as either Markovian or non-Markovian, making FlyCraft suitable for research on non-Markovian problems.
+
 ## Third-Party Environments using Gym
 
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
