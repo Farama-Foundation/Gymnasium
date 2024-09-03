@@ -509,9 +509,9 @@
 <span class="sd">        &gt;&gt;&gt; for _ in range(100):</span>
 <span class="sd">        ...     obs, *_ = envs.step(envs.action_space.sample())</span>
 <span class="sd">        &gt;&gt;&gt; np.mean(obs)</span>
-<span class="sd">        0.024251968</span>
+<span class="sd">        np.float32(0.024251968)</span>
 <span class="sd">        &gt;&gt;&gt; np.std(obs)</span>
-<span class="sd">        0.62259156</span>
+<span class="sd">        np.float32(0.62259156)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
 
 <span class="sd">    Example with the normalize reward wrapper:</span>
@@ -523,9 +523,9 @@
 <span class="sd">        &gt;&gt;&gt; for _ in range(100):</span>
 <span class="sd">        ...     obs, *_ = envs.step(envs.action_space.sample())</span>
 <span class="sd">        &gt;&gt;&gt; np.mean(obs)</span>
-<span class="sd">        -0.2359734</span>
+<span class="sd">        np.float32(-0.2359734)</span>
 <span class="sd">        &gt;&gt;&gt; np.std(obs)</span>
-<span class="sd">        1.1938739</span>
+<span class="sd">        np.float32(1.1938739)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

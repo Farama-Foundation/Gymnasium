@@ -585,7 +585,7 @@ instantiated or the policy was changed recently.</p>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span>
-<span class="go">0.0008876301247721108</span>
+<span class="go">np.float64(0.0008876301247721108)</span>
 </pre></div>
 </div>
 </dd>
@@ -604,7 +604,7 @@ instantiated or the policy was changed recently.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># will approach 0.99 with more episodes</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span>
-<span class="go">0.010162116476634746</span>
+<span class="go">np.float64(0.010162116476634746)</span>
 </pre></div>
 </div>
 </dd>
@@ -638,7 +638,7 @@ instantiated or the policy was changed recently.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rew</span>
-<span class="go">0.5</span>
+<span class="go">np.float64(0.5)</span>
 </pre></div>
 </div>
 <dl class="simple">

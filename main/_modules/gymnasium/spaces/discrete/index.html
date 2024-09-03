@@ -492,10 +492,10 @@
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Discrete</span>
 <span class="sd">        &gt;&gt;&gt; observation_space = Discrete(2, seed=42) # {0, 1}</span>
 <span class="sd">        &gt;&gt;&gt; observation_space.sample()</span>
-<span class="sd">        0</span>
+<span class="sd">        np.int64(0)</span>
 <span class="sd">        &gt;&gt;&gt; observation_space = Discrete(3, start=-1, seed=42)  # {-1, 0, 1}</span>
 <span class="sd">        &gt;&gt;&gt; observation_space.sample()</span>
-<span class="sd">        -1</span>
+<span class="sd">        np.int64(-1)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
