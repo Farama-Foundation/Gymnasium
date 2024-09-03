@@ -557,9 +557,9 @@ class MaxAndSkipObservation(
         >>> wrapped_obs0, *_ = wrapped_env.reset(seed=123)
         >>> wrapped_obs1, *_ = wrapped_env.step(1)
         >>> np.all(obs0 == wrapped_obs0)
-        True
+        np.True_
         >>> np.all(wrapped_obs1 == skip_and_max_obs)
-        True
+        np.True_
 
     Change logs:
      * v1.0.0 - Initially add

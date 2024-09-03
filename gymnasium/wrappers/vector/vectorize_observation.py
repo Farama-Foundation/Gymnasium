@@ -321,15 +321,15 @@ class RescaleObservation(VectorizeTransformObservation):
         >>> envs = gym.make_vec("MountainCar-v0", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.min()
-        -0.46352962
+        np.float32(-0.46352962)
         >>> obs.max()
-        0.0
+        np.float32(0.0)
         >>> envs = RescaleObservation(envs, min_obs=-5.0, max_obs=5.0)
         >>> obs, info = envs.reset(seed=123)
         >>> obs.min()
-        -0.90849805
+        np.float32(-0.90849805)
         >>> obs.max()
-        0.0
+        np.float32(0.0)
         >>> envs.close()
     """
 
