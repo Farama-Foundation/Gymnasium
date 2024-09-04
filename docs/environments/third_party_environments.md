@@ -28,6 +28,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)),
 
 *If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/bnJ6kubTg6).*
 
+### [Buffalo-Gym: Multi-Armed Bandit Gymnasium](https://github.com/foreverska/buffalo-gym)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/foreverska/buffalo-gym)
+
+Buffalo-Gym is a Multi-Armed Bandit (MAB) gymnasium built primarily to assist in debugging RL implementations. MABs are often easy to reason about what the agent is learning and whether it is correct. Buffalo-gym encompasses Bandits, Contextual bandits, and contextual bandits with aliasing.
+
 ### [CARL: context adaptive RL](https://github.com/automl/CARL)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
@@ -49,6 +56,13 @@ Craftium wraps the [Minetest](https://www.minetest.net/) game engine into the Gy
 
 A benchmark library for [Dynamic Algorithm Configuration](https://www.automl.org/dynamic-algorithm-configuration/). Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
+### [EV2Gym: A Realistic EV-V2G-Gym Simulator for EV Smart Charging](https://github.com/StavrosOrf/EV2Gym)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/StavrosOrf/EV2Gym)
+
+EV2Gym is a fully customizable and easily configurable environment for Electric Vehicle (EV) smart charging simulations on a small and large scale. Also, includes non-RL baseline implementations such as mathematical programming, model predictive control, and heuristics.
+
 ### [flappy-bird-env](https://github.com/robertoschiavone/flappy-bird-env)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
@@ -62,6 +76,13 @@ Flappy Bird as a Farama Gymnasium environment.
 ![GitHub stars](https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium)
 
 A simple environment for single-agent reinforcement learning algorithms on a clone of [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.
+
+### [FlyCraft: A Fixed-wing UAV Environment](https://github.com/GongXudong/fly-craft)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/GongXudong/fly-craft)
+
+FlyCraft is a Gymnasium environment for fixed-wing UAV tasks. By default, FlyCraft provides two tasks: attitude control and velocity vector control. These tasks are characterized by their multi-goal and long-horizon nature, posing significant challenges for RL exploration. Additionally, the rewards can be configured as either Markovian or non-Markovian, making FlyCraft suitable for research on non-Markovian problems.
 
 ### [gym-cellular-automata: Cellular Automata environments](https://github.com/elbecerrasoto/gym-cellular-automata)
 
@@ -97,6 +118,13 @@ An environment for guiding automated theorem provers based on saturation algorit
 ![Github stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)
 
 Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
+
+### [ICU-Sepsis: A Benchmark MDP Built from Real Medical Data](https://github.com/icu-sepsis/icu-sepsis)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/icu-sepsis/icu-sepsis)
+
+ICU-Sepsis is a tabular reinforcement learning environment that simulates the treatment of sepsis in an intensive care unit (ICU). Introduced in the paper [ICU-Sepsis: A Benchmark MDP Built from Real Medical Data](https://arxiv.org/abs/2406.05646), the environment is lightweight and easy to use, yet challenging for most reinforcement learning algorithms.
 
 ### [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
 
@@ -167,27 +195,6 @@ Gymnasium wrapper for various environments in the SUMO traffic simulator. Suppor
 ![GitHub stars](https://img.shields.io/github/stars/trackmania-rl/tmrl)
 
 tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
-
-### [EV2Gym: A Realistic EV-V2G-Gym Simulator for EV Smart Charging](https://github.com/StavrosOrf/EV2Gym)
-
-![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
-![GitHub stars](https://img.shields.io/github/stars/StavrosOrf/EV2Gym)
-
-EV2Gym is a fully customizable and easily configurable environment for Electric Vehicle (EV) smart charging simulations on a small and large scale. Also, includes non-RL baseline implementations such as mathematical programming, model predictive control, and heuristics.
-
-### [Buffalo-Gym: Multi-Armed Bandit Gymnasium](https://github.com/foreverska/buffalo-gym)
-
-![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
-![GitHub stars](https://img.shields.io/github/stars/foreverska/buffalo-gym)
-
-Buffalo-Gym is a Multi-Armed Bandit (MAB) gymnasium built primarily to assist in debugging RL implementations. MABs are often easy to reason about what the agent is learning and whether it is correct. Buffalo-gym encompasses Bandits, Contextual bandits, and contextual bandits with aliasing.
-
-### [ICU-Sepsis: A Benchmark MDP Built from Real Medical Data](https://github.com/icu-sepsis/icu-sepsis)
-
-![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
-![GitHub stars](https://img.shields.io/github/stars/icu-sepsis/icu-sepsis)
-
-ICU-Sepsis is a tabular reinforcement learning environment that simulates the treatment of sepsis in an intensive care unit (ICU). Introduced in the paper [ICU-Sepsis: A Benchmark MDP Built from Real Medical Data](https://arxiv.org/abs/2406.05646), the environment is lightweight and easy to use, yet challenging for most reinforcement learning algorithms.
 
 ## Third-Party Environments using Gym
 
