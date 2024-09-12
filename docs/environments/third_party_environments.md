@@ -189,6 +189,13 @@ spark-sched-sim simulates Spark clusters for RL-based job scheduling algorithms.
 
 Gymnasium wrapper for various environments in the SUMO traffic simulator. Supports both single and multiagent settings (using [pettingzoo](https://pettingzoo.farama.org/)).
 
+### [Tetris Gymnasium: A fully configurable Gymnasium compatible Tetris environment](https://github.com/Max-We/Tetris-Gymnasium)
+
+![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+![GitHub stars](https://img.shields.io/github/stars/Max-We/Tetris-Gymnasium)
+
+Tetris Gymnasium is a clean implementation of Tetris as a Gymnasium environment. It can be extensively customized (e.g. board dimensions, gravity, ...), is well documented and includes many examples on how to use it e.g. by providing training scripts.
+
 ### [tmrl: TrackMania 2020 through RL](https://github.com/trackmania-rl/tmrl/)
 
 ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
