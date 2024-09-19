@@ -9,7 +9,9 @@ from gymnasium.spaces import Box, Graph, Sequence, utils
 from gymnasium.spaces.utils import is_space_dtype_shape_equiv
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import (
+    batch_space,
     create_shared_memory,
+    iterate,
     read_from_shared_memory,
     write_to_shared_memory,
 )
@@ -189,7 +191,9 @@ def test_all_space_pairs_for_is_space_dtype_shape_equiv(space_1):
                     "has a dynamic shape so its not possible to make a static shared memory."
                     in str(err)
                 )
-                pytest.skip("Skipping space with dynamic shape")
+                continue
+
+            batched_space = batch_space(space_1, n=2)
 
             space_1.seed(123)
             space_2.seed(123)
@@ -199,9 +203,8 @@ def test_all_space_pairs_for_is_space_dtype_shape_equiv(space_1):
             write_to_shared_memory(space_1, 0, sample_1, shared_memory)
             write_to_shared_memory(space_2, 1, sample_2, shared_memory)
 
-            read_sample_1, read_sample_2 = read_from_shared_memory(
-                space_1, shared_memory, n=2
-            )
+            read_samples = read_from_shared_memory(space_1, shared_memory, n=2)
+            read_sample_1, read_sample_2 = iterate(batched_space, read_samples)
 
             assert data_equivalence(sample_1, read_sample_1)
             assert data_equivalence(sample_2, read_sample_2)
