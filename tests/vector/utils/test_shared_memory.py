@@ -9,7 +9,9 @@ from gymnasium import Space
 from gymnasium.error import CustomSpaceError
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import (
+    batch_space,
     create_shared_memory,
+    iterate,
     read_from_shared_memory,
     write_to_shared_memory,
 )
@@ -31,8 +33,7 @@ def test_shared_memory_create_read_write(space, num, ctx):
         )
     ctx = _ctx
 
-    samples = [space.sample() for _ in range(num)]
-
+    batched_space = batch_space(space, n=num)
     try:
         shared_memory = create_shared_memory(space, n=num, ctx=ctx)
     except TypeError as err:
@@ -42,11 +43,13 @@ def test_shared_memory_create_read_write(space, num, ctx):
         )
         pytest.skip("Skipping space with dynamic shape")
 
+    samples = [space.sample() for _ in range(num)]
     for i, sample in enumerate(samples):
         write_to_shared_memory(space, i, sample, shared_memory)
 
     read_samples = read_from_shared_memory(space, shared_memory, n=num)
-    for read_sample, sample in zip(read_samples, samples):
+    assert read_samples in batched_space
+    for read_sample, sample in zip(iterate(batched_space, read_samples), samples):
         assert data_equivalence(read_sample, sample)
 
 
