@@ -103,7 +103,7 @@ def _create_oneof_shared_memory(space: OneOf, n: int = 1, ctx=mp):
 @create_shared_memory.register(Sequence)
 def _create_dynamic_shared_memory(space: Graph | Sequence, n: int = 1, ctx=mp):
     raise TypeError(
-        f"As {space} has a dynamic shape so its not possible to make a static shared memory."
+        f"As {space} has a dynamic shape so its not possible to make a static shared memory. For `AsyncVectorEnv`, disable `shared_memory`."
     )
 
 
@@ -154,22 +154,18 @@ def _read_base_from_shared_memory(
 
 @read_from_shared_memory.register(Tuple)
 def _read_tuple_from_shared_memory(space: Tuple, shared_memory, n: int = 1):
-    subspace_samples = tuple(
+    return tuple(
         read_from_shared_memory(subspace, memory, n=n)
         for (memory, subspace) in zip(shared_memory, space.spaces)
     )
-    return tuple(zip(*subspace_samples))
 
 
 @read_from_shared_memory.register(Dict)
 def _read_dict_from_shared_memory(space: Dict, shared_memory, n: int = 1):
-    subspace_samples = {
+    return {
         key: read_from_shared_memory(subspace, shared_memory[key], n=n)
         for (key, subspace) in space.spaces.items()
     }
-    return tuple(
-        {key: subspace_samples[key][i] for key in space.keys()} for i in range(n)
-    )
 
 
 @read_from_shared_memory.register(Text)
