@@ -1,5 +1,7 @@
 """Test vector environment implementations."""
 
+from __future__ import annotations
+
 from functools import partial
 
 import numpy as np
