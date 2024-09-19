@@ -289,8 +289,8 @@ class Wrapper(
     """Wraps a :class:`gymnasium.Env` to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.
 
     This class is the base class of all wrappers to change the behavior of the underlying environment.
-    Wrappers that inherit from this class can modify the :attr:`action_space`, :attr:`observation_space`,
-    :attr:`reward_range` and :attr:`metadata` attributes, without changing the underlying environment's attributes.
+    Wrappers that inherit from this class can modify the :attr:`action_space`, :attr:`observation_space`
+    and :attr:`metadata` attributes, without changing the underlying environment's attributes.
     Moreover, the behavior of the :meth:`step` and :meth:`reset` methods can be changed by these wrappers.
 
     Some attributes (:attr:`spec`, :attr:`render_mode`, :attr:`np_random`) will point back to the wrapper's environment
@@ -568,8 +568,6 @@ class RewardWrapper(Wrapper[ObsType, ActType, ObsType, ActType]):
     If you would like to apply a function to the reward that is returned by the base environment before
     passing it to learning code, you can simply inherit from :class:`RewardWrapper` and overwrite the method
     :meth:`reward` to implement that transformation.
-    This transformation might change the :attr:`reward_range`; to specify the :attr:`reward_range` of your wrapper,
-    you can simply define :attr:`self.reward_range` in :meth:`__init__`.
     """
 
     def __init__(self, env: Env[ObsType, ActType]):

@@ -82,7 +82,7 @@ if __name__ == "__main__":
 # ------------------------------------------------
 # Reward wrappers are used to transform the reward that is returned by an environment.
 # As for the previous wrappers, you need to specify that transformation by implementing the
-# :meth:`gymnasium.RewardWrapper.reward` method. Also, you might want to update the reward range of the wrapper.
+# :meth:`gymnasium.RewardWrapper.reward` method.
 #
 # Let us look at an example: Sometimes (especially when we do not have control over the reward
 # because it is intrinsic), we want to clip the reward to a range to gain some numerical stability.
@@ -96,7 +96,6 @@ class ClipReward(RewardWrapper):
         super().__init__(env)
         self.min_reward = min_reward
         self.max_reward = max_reward
-        self.reward_range = (min_reward, max_reward)
 
     def reward(self, r: SupportsFloat) -> SupportsFloat:
         return np.clip(r, self.min_reward, self.max_reward)
@@ -110,7 +109,7 @@ class ClipReward(RewardWrapper):
 # Such wrappers can be implemented by inheriting from :class:`gymnasium.Wrapper`.
 #
 # - You can set a new action or observation space by defining ``self.action_space`` or ``self.observation_space`` in ``__init__``, respectively
-# - You can set new metadata and reward range by defining ``self.metadata`` and ``self.reward_range`` in ``__init__``, respectively
+# - You can set new metadata by defining ``self.metadata`` in ``__init__``
 # - You can override :meth:`gymnasium.Wrapper.step`, :meth:`gymnasium.Wrapper.render`, :meth:`gymnasium.Wrapper.close` etc.
 #
 # If you do this, you can access the environment that was passed
