@@ -26,7 +26,6 @@ class FunctionalJaxEnv(gym.Env):
         func_env: FuncEnv,
         metadata: dict[str, Any] | None = None,
         render_mode: str | None = None,
-        reward_range: tuple[float, float] = (-float("inf"), float("inf")),
         spec: EnvSpec | None = None,
     ):
         """Initialize the environment from a FuncEnv."""
@@ -41,7 +40,6 @@ class FunctionalJaxEnv(gym.Env):
 
         self.metadata = metadata
         self.render_mode = render_mode
-        self.reward_range = reward_range
 
         self.spec = spec
 
@@ -112,7 +110,6 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         max_episode_steps: int = 0,
         metadata: dict[str, Any] | None = None,
         render_mode: str | None = None,
-        reward_range: tuple[float, float] = (-float("inf"), float("inf")),
         spec: EnvSpec | None = None,
     ):
         """Initialize the environment from a FuncEnv."""
@@ -131,7 +128,6 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
 
         self.metadata = metadata
         self.render_mode = render_mode
-        self.reward_range = reward_range
         self.spec = spec
         self.time_limit = max_episode_steps
 
