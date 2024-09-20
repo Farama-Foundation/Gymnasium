@@ -1,8 +1,0 @@
-# Enable mod_rewrite
-RewriteEngine On
-
-# Redirect for the main Atari environments page
-RewriteRule ^atari/?$ https://ale.farama.org/environments/ [R=301,L]
-
-# Redirect for all files under the Atari directory
-RewriteRule ^atari/(.*)$ https://ale.farama.org/environments/$1 [R=301,L]

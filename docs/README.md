@@ -2,23 +2,13 @@
 
 This folder contains the documentation for [Gymnasium](https://github.com/Farama-Foundation/Gymnasium).
 
-If you are modifying an atari environment page, please follow the instructions below. For more information about how to contribute to the documentation go to our [CONTRIBUTING.md](https://github.com/Farama-Foundation/Celshast/blob/main/CONTRIBUTING.md)
-
 ## Instructions for modifying environment pages
 
 ### Editing an environment page
 
-If you are editing an Atari environment, directly edit the Markdown file in this repository.
-
-Otherwise, fork Gymnasium and edit the docstring in the environment's Python file. Then, pip install your Gymnasium fork and run `docs/_scripts/gen_mds.py` in this repo. This will automatically generate a Markdown documentation file for the environment.
+Fork Gymnasium and edit the docstring in the environment's Python file. Then, pip install your Gymnasium fork and run `docs/_scripts/gen_mds.py` in this repo. This will automatically generate a Markdown documentation file for the environment.
 
 ### Adding a new environment
-
-#### Atari env
-
-For Atari envs, add a Markdown file into `docs/environments/atari` then complete the [other steps](#other-steps).
-
-#### Non-Atari env
 
 Ensure the environment is in Gymnasium (or your fork). Ensure that the environment's Python file has a properly formatted markdown docstring. Install using `pip install -e .` and then run `docs/_scripts/gen_mds.py`. This will automatically generate a md page for the environment. Then complete the [other steps](#other-steps).
 

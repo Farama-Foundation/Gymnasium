@@ -1,7 +1,10 @@
 ---
+title: Atari
 firstpage:
 lastpage:
 ---
+
+# Atari
 
 ```{toctree}
 :hidden:
