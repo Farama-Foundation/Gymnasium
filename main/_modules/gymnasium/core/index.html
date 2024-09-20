@@ -671,8 +671,8 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps a :class:`gymnasium.Env` to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.</span>
 
 <span class="sd">    This class is the base class of all wrappers to change the behavior of the underlying environment.</span>
-<span class="sd">    Wrappers that inherit from this class can modify the :attr:`action_space`, :attr:`observation_space`,</span>
-<span class="sd">    :attr:`reward_range` and :attr:`metadata` attributes, without changing the underlying environment&#39;s attributes.</span>
+<span class="sd">    Wrappers that inherit from this class can modify the :attr:`action_space`, :attr:`observation_space`</span>
+<span class="sd">    and :attr:`metadata` attributes, without changing the underlying environment&#39;s attributes.</span>
 <span class="sd">    Moreover, the behavior of the :meth:`step` and :meth:`reset` methods can be changed by these wrappers.</span>
 
 <span class="sd">    Some attributes (:attr:`spec`, :attr:`render_mode`, :attr:`np_random`) will point back to the wrapper&#39;s environment</span>
@@ -980,8 +980,6 @@
 <span class="sd">    If you would like to apply a function to the reward that is returned by the base environment before</span>
 <span class="sd">    passing it to learning code, you can simply inherit from :class:`RewardWrapper` and overwrite the method</span>
 <span class="sd">    :meth:`reward` to implement that transformation.</span>
-<span class="sd">    This transformation might change the :attr:`reward_range`; to specify the :attr:`reward_range` of your wrapper,</span>
-<span class="sd">    you can simply define :attr:`self.reward_range` in :meth:`__init__`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
