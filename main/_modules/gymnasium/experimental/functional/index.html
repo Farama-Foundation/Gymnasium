@@ -10,7 +10,7 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/experimental/functional.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/experimental/functional.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.experimental.functional - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -215,38 +215,41 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/migration-guide/">v21 to v26 Migration Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/train_agent/">Training an Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/create_custom_env/">Create a Custom Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/record_agent/">Recording Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/speed_up_env/">Speeding Up Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction/migration_guide/">Migration Guide - v0.21 to v1.0.0</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/env/">Env</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Register and Make</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry/">Make and register</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/fundamental/">Fundamental Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/composite/">Composite Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/utils/">Spaces Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/spaces/vector_utils/">Spaces Vector Utils</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/table/">List of Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/vector/">Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utils</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/experimental/">Experimental</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Experimental</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/functional/">Functional Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/wrappers/">Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector/">Vectorizing Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_wrappers/">Vector Environment Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/experimental/vector_utils/">Utility functions for vectorisation</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
 <ul>
@@ -287,7 +290,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../environments/atari/">Atari</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Atari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/adventure/">Adventure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/air_raid/">AirRaid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/air_raid/">Air Raid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/alien/">Alien</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/amidar/">Amidar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/assault/">Assault</a></li>
@@ -296,10 +299,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/atlantis/">Atlantis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/atlantis2/">Atlantis2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/backgammon/">Backgammon</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/bank_heist/">BankHeist</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/basic_math/">BasicMath</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/battle_zone/">BattleZone</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/beam_rider/">BeamRider</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/bank_heist/">Bank Heist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/basic_math/">Basic Math</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/battle_zone/">Battle Zone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/beam_rider/">Beam Rider</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/berzerk/">Berzerk</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/blackjack/">Blackjack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/bowling/">Bowling</a></li>
@@ -308,21 +311,21 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/carnival/">Carnival</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/casino/">Casino</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/centipede/">Centipede</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/chopper_command/">ChopperCommand</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/crazy_climber/">CrazyClimber</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/chopper_command/">Chopper Command</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/crazy_climber/">Crazy Climber</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/crossbow/">Crossbow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/darkchambers/">Darkchambers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/defender/">Defender</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/demon_attack/">DemonAttack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/donkey_kong/">DonkeyKong</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/double_dunk/">DoubleDunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/demon_attack/">Demon Attack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/donkey_kong/">Donkey Kong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/double_dunk/">Double Dunk</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/earthworld/">Earthworld</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/elevator_action/">ElevatorAction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/elevator_action/">Elevator Action</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/enduro/">Enduro</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/entombed/">Entombed</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/et/">Et</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/fishing_derby/">FishingDerby</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/flag_capture/">FlagCapture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/fishing_derby/">Fishing Derby</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/flag_capture/">Flag Capture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/freeway/">Freeway</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/frogger/">Frogger</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/frostbite/">Frostbite</a></li>
@@ -330,28 +333,28 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/gopher/">Gopher</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/gravitar/">Gravitar</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/hangman/">Hangman</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/haunted_house/">HauntedHouse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/haunted_house/">Haunted House</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/hero/">Hero</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/human_cannonball/">HumanCannonball</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/ice_hockey/">IceHockey</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/human_cannonball/">Human Cannonball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/ice_hockey/">Ice Hockey</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/jamesbond/">Jamesbond</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/journey_escape/">JourneyEscape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/journey_escape/">Journey Escape</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/kaboom/">Kaboom</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/kangaroo/">Kangaroo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/keystone_kapers/">KeystoneKapers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/king_kong/">KingKong</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/keystone_kapers/">Keystone Kapers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/king_kong/">King Kong</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/klax/">Klax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/koolaid/">Koolaid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/krull/">Krull</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/kung_fu_master/">KungFuMaster</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/laser_gates/">LaserGates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/lost_luggage/">LostLuggage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/mario_bros/">MarioBros</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/miniature_golf/">MiniatureGolf</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/montezuma_revenge/">MontezumaRevenge</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/mr_do/">MrDo</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/ms_pacman/">MsPacman</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/name_this_game/">NameThisGame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/kung_fu_master/">Kung Fu Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/laser_gates/">Laser Gates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/lost_luggage/">Lost Luggage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/mario_bros/">Mario Bros</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/miniature_golf/">Miniature Golf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/montezuma_revenge/">Montezuma Revenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/mr_do/">Mr Do</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/ms_pacman/">Ms Pacman</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/name_this_game/">Name This Game</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/othello/">Othello</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/pacman/">Pacman</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/phoenix/">Phoenix</a></li>
@@ -359,44 +362,45 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/pitfall2/">Pitfall2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/pong/">Pong</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/pooyan/">Pooyan</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/private_eye/">PrivateEye</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/private_eye/">Private Eye</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/qbert/">Qbert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/riverraid/">Riverraid</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/road_runner/">RoadRunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/road_runner/">Road Runner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/robotank/">Robotank</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/seaquest/">Seaquest</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/sir_lancelot/">SirLancelot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/sir_lancelot/">Sir Lancelot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/skiing/">Skiing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/solaris/">Solaris</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/space_invaders/">SpaceInvaders</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/space_war/">SpaceWar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/star_gunner/">StarGunner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/space_invaders/">Space Invaders</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/space_war/">Space War</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/star_gunner/">Star Gunner</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/superman/">Superman</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/surround/">Surround</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/tennis/">Tennis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/tetris/">Tetris</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/tic_tac_toe_3d/">TicTacToe3D</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/time_pilot/">TimePilot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/tic_tac_toe_3d/">Tic Tac Toe 3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/time_pilot/">Time Pilot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/trondead/">Trondead</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/turmoil/">Turmoil</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/tutankham/">Tutankham</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/up_n_down/">UpNDown</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/up_n_down/">Up N Down</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/venture/">Venture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/video_checkers/">VideoCheckers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/video_chess/">VideoChess</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/video_cube/">VideoCube</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/video_pinball/">VideoPinball</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/wizard_of_wor/">WizardOfWor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/word_zapper/">WordZapper</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/yars_revenge/">YarsRevenge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/video_checkers/">Video Checkers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/video_chess/">Video Chess</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/video_cube/">Video Cube</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/video_pinball/">Video Pinball</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/wizard_of_wor/">Wizard Of Wor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/word_zapper/">Word Zapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/yars_revenge/">Yars Revenge</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../environments/atari/zaxxon/">Zaxxon</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../environments/third_party_environments/">Third-Party Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../environments/third_party_environments/">External Environments</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../tutorials/gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
@@ -409,11 +413,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/training_agents/FrozenLake_tuto/">Frozenlake benchmark</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasium/?utm_source=gymnasium&amp;utm_medium=partner&amp;utm_campaign=partner_gymnasium_2023&amp;utm_content=docs_gymnasium">Comet Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/third-party-tutorials/">Third-Party Tutorials</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arxiv.org/abs/2407.17032">Paper</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../gymnasium_release_notes/">Gymnasium Release Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../gym_release_notes/">Gym Release Notes</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
@@ -466,6 +471,7 @@
             
             <h1>Source code for gymnasium.experimental.functional</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Base class and definitions for an alternative, functional backend for gym envs, particularly suitable for hardware accelerated and otherwise transformed environments.&quot;&quot;&quot;</span>
+
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
@@ -481,25 +487,29 @@
 <span class="n">RewardType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;RewardType&quot;</span><span class="p">)</span>
 <span class="n">TerminalType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;TerminalType&quot;</span><span class="p">)</span>
 <span class="n">RenderStateType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;RenderStateType&quot;</span><span class="p">)</span>
+<span class="n">Params</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;Params&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="FuncEnv">
-<a class="viewcode-back" href="../../../../api/experimental/functional/#gymnasium.experimental.functional.FuncEnv">[docs]</a>
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv">[docs]</a>
 <span class="k">class</span> <span class="nc">FuncEnv</span><span class="p">(</span>
-    <span class="n">Generic</span><span class="p">[</span><span class="n">StateType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">RewardType</span><span class="p">,</span> <span class="n">TerminalType</span><span class="p">,</span> <span class="n">RenderStateType</span><span class="p">]</span>
+    <span class="n">Generic</span><span class="p">[</span>
+        <span class="n">StateType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">RewardType</span><span class="p">,</span> <span class="n">TerminalType</span><span class="p">,</span> <span class="n">RenderStateType</span><span class="p">,</span> <span class="n">Params</span>
+    <span class="p">]</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class (template) for functional envs.</span>
 
 <span class="sd">    This API is meant to be used in a stateless manner, with the environment state being passed around explicitly.</span>
 <span class="sd">    That being said, nothing here prevents users from using the environment statefully, it&#39;s just not recommended.</span>
 <span class="sd">    A functional env consists of the following functions (in this case, instance methods):</span>
-<span class="sd">    - initial: returns the initial state of the POMDP</span>
-<span class="sd">    - observation: returns the observation in a given state</span>
-<span class="sd">    - transition: returns the next state after taking an action in a given state</span>
-<span class="sd">    - reward: returns the reward for a given (state, action, next_state) tuple</span>
-<span class="sd">    - terminal: returns whether a given state is terminal</span>
-<span class="sd">    - state_info: optional, returns a dict of info about a given state</span>
-<span class="sd">    - step_info: optional, returns a dict of info about a given (state, action, next_state) tuple</span>
+
+<span class="sd">     * initial: returns the initial state of the POMDP</span>
+<span class="sd">     * observation: returns the observation in a given state</span>
+<span class="sd">     * transition: returns the next state after taking an action in a given state</span>
+<span class="sd">     * reward: returns the reward for a given (state, action, next_state) tuple</span>
+<span class="sd">     * terminal: returns whether a given state is terminal</span>
+<span class="sd">     * state_info: optional, returns a dict of info about a given state</span>
+<span class="sd">     * step_info: optional, returns a dict of info about a given (state, action, next_state) tuple</span>
 
 <span class="sd">    The class-based structure serves the purpose of allowing environment constants to be defined in the class,</span>
 <span class="sd">    and then using them by name in the code itself.</span>
@@ -514,39 +524,78 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the environment constants.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">options</span> <span class="ow">or</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_params</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StateType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initial state.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+<div class="viewcode-block" id="FuncEnv.initial">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.initial">[docs]</a>
+    <span class="k">def</span> <span class="nf">initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StateType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates the initial state of the environment with a random number generator.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-    <span class="k">def</span> <span class="nf">transition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StateType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transition.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Observation.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+<div class="viewcode-block" id="FuncEnv.transition">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.transition">[docs]</a>
+    <span class="k">def</span> <span class="nf">transition</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StateType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates (transitions) the state with an action and random number generator.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
+
+<div class="viewcode-block" id="FuncEnv.observation">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.observation">[docs]</a>
+    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates an observation for a given state of an environment.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="FuncEnv.reward">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.reward">[docs]</a>
     <span class="k">def</span> <span class="nf">reward</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">next_state</span><span class="p">:</span> <span class="n">StateType</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">,</span>
+        <span class="n">next_state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span>
+        <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RewardType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reward.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes the reward for a given transition between `state`, `action` to `next_state`.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminalType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Terminal state.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">def</span> <span class="nf">state_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="FuncEnv.terminal">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.terminal">[docs]</a>
+    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminalType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns if the state is a final terminal state.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="FuncEnv.state_info">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.state_info">[docs]</a>
+    <span class="k">def</span> <span class="nf">state_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Info dict about a single state.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="p">{}</span></div>
 
-    <span class="k">def</span> <span class="nf">step_info</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">next_state</span><span class="p">:</span> <span class="n">StateType</span>
+
+<div class="viewcode-block" id="FuncEnv.transition_info">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.transition_info">[docs]</a>
+    <span class="k">def</span> <span class="nf">transition_info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span>
+        <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">,</span>
+        <span class="n">next_state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Info dict about a full transition.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="p">{}</span></div>
 
+
+<div class="viewcode-block" id="FuncEnv.transform">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.transform">[docs]</a>
     <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">],</span> <span class="n">Callable</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Functional transformations.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">)</span>
@@ -555,21 +604,38 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">reward</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reward</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terminal</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state_info</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_info</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">step_info</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_info</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transition_info</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="FuncEnv.render_image">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.render_image">[docs]</a>
     <span class="k">def</span> <span class="nf">render_image</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">render_state</span><span class="p">:</span> <span class="n">RenderStateType</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span>
+        <span class="n">render_state</span><span class="p">:</span> <span class="n">RenderStateType</span><span class="p">,</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RenderStateType</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Show the state.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-    <span class="k">def</span> <span class="nf">render_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderStateType</span><span class="p">:</span>
+
+<div class="viewcode-block" id="FuncEnv.render_init">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.render_init">[docs]</a>
+    <span class="k">def</span> <span class="nf">render_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderStateType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the render state.&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-    <span class="k">def</span> <span class="nf">render_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_state</span><span class="p">:</span> <span class="n">RenderStateType</span><span class="p">):</span>
+
+<div class="viewcode-block" id="FuncEnv.render_close">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.render_close">[docs]</a>
+    <span class="k">def</span> <span class="nf">render_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_state</span><span class="p">:</span> <span class="n">RenderStateType</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the render state.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+    <span class="k">def</span> <span class="nf">get_default_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the default params.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 </pre></div>
           </article>
@@ -688,8 +754,8 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=cecadf6f"></script>
-    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/documentation_options.js?v=3596a5a1"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
     
