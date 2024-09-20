@@ -271,7 +271,7 @@ def _batch_spaces_undefined(spaces: list[Graph | Text | Sequence | OneOf]):
 
 
 @singledispatch
-def iterate(space: Space[T_cov], items: Iterable[T_cov]) -> Iterator:
+def iterate(space: Space[T_cov], items: T_cov) -> Iterator:
     """Iterate over the elements of a (batched) space.
 
     Args:
