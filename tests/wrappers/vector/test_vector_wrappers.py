@@ -25,7 +25,7 @@ from tests.testing_env import GenericTestEnv
 @pytest.fixture
 def custom_environments():
     gym.register(
-        "CustomDictEnv-v0",
+        "DictObsEnv-v0",
         lambda: GenericTestEnv(
             observation_space=Dict({"a": Box(0, 1), "b": Discrete(5)})
         ),
@@ -33,14 +33,14 @@ def custom_environments():
 
     yield
 
-    del gym.registry["CustomDictEnv-v0"]
+    del gym.registry["DictObsEnv-v0"]
 
 
 @pytest.mark.parametrize("num_envs", (1, 3))
 @pytest.mark.parametrize(
     "env_id, wrapper_name, kwargs",
     (
-        ("CustomDictEnv-v0", "FilterObservation", {"filter_keys": ["a"]}),
+        ("DictObsEnv-v0", "FilterObservation", {"filter_keys": ["a"]}),
         ("CartPole-v1", "FlattenObservation", {}),
         ("CarRacing-v3", "GrayscaleObservation", {}),
         ("CarRacing-v3", "ResizeObservation", {"shape": (35, 45)}),
