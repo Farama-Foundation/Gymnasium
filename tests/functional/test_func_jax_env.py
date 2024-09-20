@@ -4,7 +4,9 @@ import numpy as np
 import pytest
 
 
-pytest.skip("Github CI is running forever for the tests in this file.", allow_module_level=True)
+pytest.skip(
+    "Github CI is running forever for the tests in this file.", allow_module_level=True
+)
 
 jax = pytest.importorskip("jax")
 import jax.numpy as jnp  # noqa: E402
