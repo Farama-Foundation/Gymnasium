@@ -40,7 +40,7 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained within the space.
     - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained within the space.
     - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`
-    - :attr:`metadata` - The metadata of the environment, e.g., `{"render_modes": ["rgb_array", "human"], "render_fps": 30}`. For Jax or Torch, this can be indicated to users with `"jax"=True` or `"torch"=True`.
+    - :attr:`metadata` - The metadata of the environment, e.g. `{"render_modes": ["rgb_array", "human"], "render_fps": 30}`. For Jax or Torch, this can be indicated to users with `"jax"=True` or `"torch"=True`.
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
       ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.
 
@@ -50,7 +50,7 @@ class Env(Generic[ObsType, ActType]):
         To get reproducible sampling of actions, a seed can be set with ``env.action_space.seed(123)``.
 
     Note:
-        For strict type checking (e.g., mypy or pyright), :class:`Env` is a generic class with two parameterized types: ``ObsType`` and ``ActType``.
+        For strict type checking (e.g. mypy or pyright), :class:`Env` is a generic class with two parameterized types: ``ObsType`` and ``ActType``.
         The ``ObsType`` and ``ActType`` are the expected types of the observations and actions used in :meth:`reset` and :meth:`step`.
         The environment's :attr:`observation_space` and :attr:`action_space` should have type ``Space[ObsType]`` and ``Space[ActType]``,
         see a space's implementation to find its parameterized type.
