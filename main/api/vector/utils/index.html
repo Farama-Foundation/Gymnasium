@@ -401,19 +401,19 @@
 <span class="sig-prename descclassname"><span class="pre">gymnasium.vector.utils.</span></span><span class="sig-name descname"><span class="pre">batch_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/composite/#gymnasium.spaces.Graph" title="gymnasium.spaces.Graph"><span class="pre">Graph</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../spaces/fundamental/#gymnasium.spaces.Text" title="gymnasium.spaces.Text"><span class="pre">Text</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../spaces/composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><span class="pre">Sequence</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../spaces/composite/#gymnasium.spaces.OneOf" title="gymnasium.spaces.OneOf"><span class="pre">OneOf</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span></dt>
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">gymnasium.vector.utils.</span></span><span class="sig-name descname"><span class="pre">batch_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/composite/#gymnasium.spaces.Graph" title="gymnasium.spaces.Graph"><span class="pre">Graph</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../spaces/fundamental/#gymnasium.spaces.Text" title="gymnasium.spaces.Text"><span class="pre">Text</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../spaces/composite/#gymnasium.spaces.Sequence" title="gymnasium.spaces.Sequence"><span class="pre">Sequence</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../spaces/composite/#gymnasium.spaces.OneOf" title="gymnasium.spaces.OneOf"><span class="pre">OneOf</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Create a (batched) space, containing multiple copies of a single space.</p>
+<dd><p>Batch spaces of size <cite>n</cite> optimized for neural networks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>space</strong> – Space (e.g. the observation space) for a single environment in the vectorized environment.</p></li>
-<li><p><strong>n</strong> – Number of environments in the vectorized environment.</p></li>
+<li><p><strong>space</strong> – Space (e.g. the observation space for a single environment in the vectorized environment).</p></li>
+<li><p><strong>n</strong> – Number of spaces to batch by (e.g. the number of environments in a vectorized environment).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Space</strong> (<em>e.g. the observation space</em>)</p>
+<dd class="field-even"><p><strong>Batched space of size `n`.</strong></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ValueError</strong> – Cannot batch space does not have a registered function.</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – Cannot batch spaces that does not have a registered function.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -458,16 +458,16 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>space</strong> – Observation space of a single environment in the vectorized environment.</p></li>
-<li><p><strong>items</strong> – Samples to be concatenated.</p></li>
-<li><p><strong>out</strong> – The output object. This object is a (possibly nested) numpy array.</p></li>
+<li><p><strong>space</strong> – Space of each item (e.g. <cite>single_action_space</cite> from vectorized environment)</p></li>
+<li><p><strong>items</strong> – Samples to be concatenated (e.g. all sample should be an element of the <cite>space</cite>).</p></li>
+<li><p><strong>out</strong> – The output object (e.g. generated from <cite>create_empty_array</cite>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>The output object. This object is a</strong> (<em>possibly nested</em>)</p>
+<dd class="field-even"><p><strong>The output object, can be the same object `out`.</strong></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ValueError</strong> – Space</p>
+<dd class="field-odd"><p><strong>ValueError</strong> – Space is not a valid <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Space</span></code> instance</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -485,7 +485,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.vector.utils.iterate">
-<span class="sig-prename descclassname"><span class="pre">gymnasium.vector.utils.</span></span><span class="sig-name descname"><span class="pre">iterate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/utils/space_utils/#iterate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.utils.iterate" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">gymnasium.vector.utils.</span></span><span class="sig-name descname"><span class="pre">iterate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T_cov</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">T_cov</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/utils/space_utils/#iterate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.utils.iterate" title="Link to this definition">¶</a></dt>
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">gymnasium.vector.utils.</span></span><span class="sig-name descname"><span class="pre">iterate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.discrete.Discrete"><span class="pre">Discrete</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">items</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span></span></em><span class="sig-paren">)</span></dt>
 <dt class="sig sig-object py">
@@ -502,16 +502,9 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>space</strong> – Observation space of a single environment in the vectorized environment.</p></li>
-<li><p><strong>items</strong> – Samples to be concatenated.</p></li>
-<li><p><strong>out</strong> – The output object. This object is a (possibly nested) numpy array.</p></li>
+<li><p><strong>space</strong> – (batched) space (e.g. <cite>action_space</cite> or <cite>observation_space</cite> from vectorized environment).</p></li>
+<li><p><strong>items</strong> – Batched samples to be iterated over (e.g. sample from the space).</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>The output object. This object is a</strong> (<em>possibly nested</em>)</p>
-</dd>
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ValueError</strong> – Space is not an instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Space</span></code></p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -559,7 +552,7 @@
 <span class="sig-prename descclassname"><span class="pre">gymnasium.vector.utils.</span></span><span class="sig-name descname"><span class="pre">create_empty_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/composite/#gymnasium.spaces.OneOf" title="gymnasium.spaces.oneof.OneOf"><span class="pre">OneOf</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">np.zeros</span></span></em><span class="sig-paren">)</span></dt>
 <dt class="sig sig-object py">
 <span class="sig-prename descclassname"><span class="pre">gymnasium.vector.utils.</span></span><span class="sig-name descname"><span class="pre">create_empty_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space:</span> <span class="pre">~gymnasium.spaces.space.Space</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn=&lt;built-in</span> <span class="pre">function</span> <span class="pre">zeros&gt;</span></span></em><span class="sig-paren">)</span></dt>
-<dd><p>Create an empty (possibly nested) (normally numpy-based) array, used in conjunction with <code class="docutils literal notranslate"><span class="pre">concatenate(...,</span> <span class="pre">out=array)</span></code>.</p>
+<dd><p>Create an empty (possibly nested and normally numpy-based) array, used in conjunction with <code class="docutils literal notranslate"><span class="pre">concatenate(...,</span> <span class="pre">out=array)</span></code>.</p>
 <p>In most cases, the array will be contained within the batched space, however, this is not guaranteed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

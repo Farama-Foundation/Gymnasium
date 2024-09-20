@@ -407,7 +407,7 @@
 <span class="sd">    - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained within the space.</span>
 <span class="sd">    - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained within the space.</span>
 <span class="sd">    - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`</span>
-<span class="sd">    - :attr:`metadata` - The metadata of the environment, e.g., `{&quot;render_modes&quot;: [&quot;rgb_array&quot;, &quot;human&quot;], &quot;render_fps&quot;: 30}`. For Jax or Torch, this can be indicated to users with `&quot;jax&quot;=True` or `&quot;torch&quot;=True`.</span>
+<span class="sd">    - :attr:`metadata` - The metadata of the environment, e.g. `{&quot;render_modes&quot;: [&quot;rgb_array&quot;, &quot;human&quot;], &quot;render_fps&quot;: 30}`. For Jax or Torch, this can be indicated to users with `&quot;jax&quot;=True` or `&quot;torch&quot;=True`.</span>
 <span class="sd">    - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during</span>
 <span class="sd">      ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.</span>
 
@@ -417,7 +417,7 @@
 <span class="sd">        To get reproducible sampling of actions, a seed can be set with ``env.action_space.seed(123)``.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        For strict type checking (e.g., mypy or pyright), :class:`Env` is a generic class with two parameterized types: ``ObsType`` and ``ActType``.</span>
+<span class="sd">        For strict type checking (e.g. mypy or pyright), :class:`Env` is a generic class with two parameterized types: ``ObsType`` and ``ActType``.</span>
 <span class="sd">        The ``ObsType`` and ``ActType`` are the expected types of the observations and actions used in :meth:`reset` and :meth:`step`.</span>
 <span class="sd">        The environment&#39;s :attr:`observation_space` and :attr:`action_space` should have type ``Space[ObsType]`` and ``Space[ActType]``,</span>
 <span class="sd">        see a space&#39;s implementation to find its parameterized type.</span>
