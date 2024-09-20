@@ -5,23 +5,23 @@ title: Functional
 # Functional Env
 
 ```{eval-rst}
-.. autoclass:: gymnasium.functional.FuncEnv
+.. autoclass:: gymnasium.experimental.functional.FuncEnv
 
-    .. automethod:: gymnasium.functional.FuncEnv.transform
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.transform
 
-    .. automethod:: gymnasium.functional.FuncEnv.initial
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.initial
 
-    .. automethod:: gymnasium.functional.FuncEnv.transition
-    .. automethod:: gymnasium.functional.FuncEnv.observation
-    .. automethod:: gymnasium.functional.FuncEnv.reward
-    .. automethod:: gymnasium.functional.FuncEnv.terminal
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.transition
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.observation
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.reward
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.terminal
 
-    .. automethod:: gymnasium.functional.FuncEnv.state_info
-    .. automethod:: gymnasium.functional.FuncEnv.transition_info
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.state_info
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.transition_info
 
-    .. automethod:: gymnasium.functional.FuncEnv.render_init
-    .. automethod:: gymnasium.functional.FuncEnv.render_image
-    .. automethod:: gymnasium.functional.FuncEnv.render_close
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.render_init
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.render_image
+    .. automethod:: gymnasium.experimental.functional.FuncEnv.render_close
 ```
 
 ## Converting Jax-based Functional environments to standard Env

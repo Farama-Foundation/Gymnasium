@@ -15,11 +15,10 @@ Gymnasium provides a number of compatibility methods for a range of Environment 
 For environments that are registered solely in OpenAI Gym and not in Gymnasium, Gymnasium v0.26.3 and above allows importing them through either a special environment or a wrapper. The ``"GymV26Environment-v0"`` environment was introduced in Gymnasium v0.26.3, and allows importing of Gym environments through the ``env_name`` argument along with other relevant kwargs environment kwargs. To perform conversion through a wrapper, the environment itself can be passed to the wrapper :class:`EnvCompatibility` through the ``env`` kwarg.
 ```
 
-An example of this is atari 0.8.0 which does not have a gymnasium implementation.
 ```python
 import gymnasium as gym
 
-env = gym.make("GymV26Environment-v0", env_id="ALE/Pong-v5")
+env = gym.make("GymV26Environment-v0", env_id="GymEnv-v1")
 ```
 
 ## Gym v0.21 Environment Compatibility
