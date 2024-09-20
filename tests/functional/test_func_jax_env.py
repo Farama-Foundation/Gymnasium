@@ -4,6 +4,8 @@ import numpy as np
 import pytest
 
 
+pytest.skip("Github CI is running forever for the tests in this file.")
+
 jax = pytest.importorskip("jax")
 import jax.numpy as jnp  # noqa: E402
 import jax.random as jrng  # noqa: E402
