@@ -138,7 +138,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         self.same_out = self.action_space == self.env.action_space
-        self.out = create_empty_array(self.single_action_space, self.num_envs)
+        self.out = create_empty_array(self.env.single_action_space, self.num_envs)
 
     def actions(self, actions: ActType) -> ActType:
         """Applies the wrapper to each of the action.
@@ -151,7 +151,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         """
         if self.same_out:
             return concatenate(
-                self.single_action_space,
+                self.env.single_action_space,
                 tuple(
                     self.wrapper.func(action)
                     for action in iterate(self.action_space, actions)
@@ -161,10 +161,10 @@ class VectorizeTransformAction(VectorActionWrapper):
         else:
             return deepcopy(
                 concatenate(
-                    self.single_action_space,
+                    self.env.single_action_space,
                     tuple(
                         self.wrapper.func(action)
-                        for action in iterate(self.env.action_space, actions)
+                        for action in iterate(self.action_space, actions)
                     ),
                     self.out,
                 )
