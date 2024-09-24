@@ -1,4 +1,5 @@
 """Vectorizes observation wrappers to works for `VectorEnv`."""
+
 from __future__ import annotations
 
 from copy import deepcopy
@@ -212,7 +213,7 @@ class FlattenObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3, vectorization_mode="sync")
+        >>> envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.shape
         (3, 96, 96, 3)
@@ -237,7 +238,7 @@ class GrayscaleObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3, vectorization_mode="sync")
+        >>> envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.shape
         (3, 96, 96, 3)
@@ -265,7 +266,7 @@ class ResizeObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3, vectorization_mode="sync")
+        >>> envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.shape
         (3, 96, 96, 3)
@@ -291,7 +292,7 @@ class ReshapeObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CarRacing-v2", num_envs=3, vectorization_mode="sync")
+        >>> envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.shape
         (3, 96, 96, 3)
@@ -317,18 +318,18 @@ class RescaleObservation(VectorizeTransformObservation):
 
     Example:
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+        >>> envs = gym.make_vec("MountainCar-v0", num_envs=3, vectorization_mode="sync")
         >>> obs, info = envs.reset(seed=123)
         >>> obs.min()
-        -0.0446179
+        np.float32(-0.46352962)
         >>> obs.max()
-        0.0469136
+        np.float32(0.0)
         >>> envs = RescaleObservation(envs, min_obs=-5.0, max_obs=5.0)
         >>> obs, info = envs.reset(seed=123)
         >>> obs.min()
-        -0.33379582
+        np.float32(-0.90849805)
         >>> obs.max()
-        0.55998987
+        np.float32(0.0)
         >>> envs.close()
     """
 

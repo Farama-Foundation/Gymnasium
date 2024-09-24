@@ -1,4 +1,5 @@
 """Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""
+
 from __future__ import annotations
 
 from copy import deepcopy
@@ -39,7 +40,7 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained within the space.
     - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained within the space.
     - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`
-    - :attr:`metadata` - The metadata of the environment, e.g., `{"render_modes": ["rgb_array", "human"], "render_fps": 30}`. For Jax or Torch, this can be indicated to users with `"jax"=True` or `"torch"=True`.
+    - :attr:`metadata` - The metadata of the environment, e.g. `{"render_modes": ["rgb_array", "human"], "render_fps": 30}`. For Jax or Torch, this can be indicated to users with `"jax"=True` or `"torch"=True`.
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
       ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.
 
@@ -49,7 +50,7 @@ class Env(Generic[ObsType, ActType]):
         To get reproducible sampling of actions, a seed can be set with ``env.action_space.seed(123)``.
 
     Note:
-        For strict type checking (e.g., mypy or pyright), :class:`Env` is a generic class with two parameterized types: ``ObsType`` and ``ActType``.
+        For strict type checking (e.g. mypy or pyright), :class:`Env` is a generic class with two parameterized types: ``ObsType`` and ``ActType``.
         The ``ObsType`` and ``ActType`` are the expected types of the observations and actions used in :meth:`reset` and :meth:`step`.
         The environment's :attr:`observation_space` and :attr:`action_space` should have type ``Space[ObsType]`` and ``Space[ActType]``,
         see a space's implementation to find its parameterized type.
@@ -288,8 +289,8 @@ class Wrapper(
     """Wraps a :class:`gymnasium.Env` to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.
 
     This class is the base class of all wrappers to change the behavior of the underlying environment.
-    Wrappers that inherit from this class can modify the :attr:`action_space`, :attr:`observation_space`,
-    :attr:`reward_range` and :attr:`metadata` attributes, without changing the underlying environment's attributes.
+    Wrappers that inherit from this class can modify the :attr:`action_space`, :attr:`observation_space`
+    and :attr:`metadata` attributes, without changing the underlying environment's attributes.
     Moreover, the behavior of the :meth:`step` and :meth:`reset` methods can be changed by these wrappers.
 
     Some attributes (:attr:`spec`, :attr:`render_mode`, :attr:`np_random`) will point back to the wrapper's environment
@@ -567,8 +568,6 @@ class RewardWrapper(Wrapper[ObsType, ActType, ObsType, ActType]):
     If you would like to apply a function to the reward that is returned by the base environment before
     passing it to learning code, you can simply inherit from :class:`RewardWrapper` and overwrite the method
     :meth:`reward` to implement that transformation.
-    This transformation might change the :attr:`reward_range`; to specify the :attr:`reward_range` of your wrapper,
-    you can simply define :attr:`self.reward_range` in :meth:`__init__`.
     """
 
     def __init__(self, env: Env[ObsType, ActType]):

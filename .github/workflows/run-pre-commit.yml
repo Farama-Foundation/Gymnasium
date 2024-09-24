@@ -1,6 +1,6 @@
 # https://pre-commit.com
 # This GitHub Action assumes that the repo contains a valid .pre-commit-config.yaml file.
-name: pre-commit
+name: Run pre-commit
 on:
   pull_request:
   push:
@@ -17,5 +17,4 @@ jobs:
       - uses: actions/setup-python@v5
       - run: python -m pip install pre-commit
       - run: python -m pre_commit --version
-      - run: python -m pre_commit install
       - run: python -m pre_commit run --all-files

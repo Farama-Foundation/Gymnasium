@@ -1,4 +1,5 @@
 """Helper functions and wrapper class for converting between PyTorch and NumPy."""
+
 from __future__ import annotations
 
 import functools
@@ -35,10 +36,15 @@ def torch_to_numpy(value: Any) -> Any:
 
 
 @torch_to_numpy.register(numbers.Number)
-@torch_to_numpy.register(torch.Tensor)
-def _number_torch_to_numpy(value: numbers.Number | torch.Tensor) -> Any:
-    """Convert a python number (int, float, complex) and torch.Tensor to a numpy array."""
+def _number_to_numpy(value: numbers.Number) -> Any:
+    """Convert a python number (int, float, complex) to a numpy array."""
     return np.array(value)
+
+
+@torch_to_numpy.register(torch.Tensor)
+def _torch_to_numpy(value: torch.Tensor) -> Any:
+    """Convert a torch.Tensor to a numpy array."""
+    return value.numpy(force=True)
 
 
 @torch_to_numpy.register(abc.Mapping)
@@ -93,9 +99,9 @@ def _numpy_iterable_to_torch(
     if hasattr(value, "_make"):
         # namedtuple - underline used to prevent potential name conflicts
         # noinspection PyProtectedMember
-        return type(value)._make(numpy_to_torch(v) for v in value)
+        return type(value)._make(numpy_to_torch(v, device) for v in value)
     else:
-        return type(value)(numpy_to_torch(v) for v in value)
+        return type(value)(numpy_to_torch(v, device) for v in value)
 
 
 class NumpyToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):

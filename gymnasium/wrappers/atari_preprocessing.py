@@ -1,4 +1,5 @@
 """Implementation of Atari 2600 Preprocessing following the guidelines of Machado et al., 2018."""
+
 from __future__ import annotations
 
 from typing import Any, SupportsFloat
@@ -35,9 +36,15 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     - Scale observation: Whether to scale the observation between [0, 1) or [0, 255), not scaled by default.
 
     Example:
-        >>> import gymnasium as gym # doctest: +SKIP
-        >>> env = gym.make("ALE/Adventure-v5") # doctest: +SKIP
-        >>> env = AtariPreprocessing(env, noop_max=10, frame_skip=0, screen_size=84, terminal_on_life_loss=True, grayscale_obs=False, grayscale_newaxis=False) # doctest: +SKIP
+        >>> import gymnasium as gym
+        >>> import ale_py
+        >>> gym.register_envs(ale_py)
+        >>> env = gym.make("ALE/Pong-v5", frameskip=1)
+        >>> env = AtariPreprocessing(
+        ...     env,
+        ...     noop_max=10, frame_skip=4, terminal_on_life_loss=True,
+        ...     screen_size=84, grayscale_obs=False, grayscale_newaxis=False
+        ... )
 
     Change logs:
      * Added in gym v0.12.2 (gym #1455)
@@ -48,7 +55,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         env: gym.Env,
         noop_max: int = 30,
         frame_skip: int = 4,
-        screen_size: int = 84,
+        screen_size: int | tuple[int, int] = 84,
         terminal_on_life_loss: bool = False,
         grayscale_obs: bool = True,
         grayscale_newaxis: bool = False,
@@ -60,7 +67,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
             env (Env): The environment to apply the preprocessing
             noop_max (int): For No-op reset, the max number no-ops actions are taken at reset, to turn off, set to 0.
             frame_skip (int): The number of frames between new observation the agents observations effecting the frequency at which the agent experiences the game.
-            screen_size (int): resize Atari frame.
+            screen_size (int | tuple[int, int]): resize Atari frame.
             terminal_on_life_loss (bool): `if True`, then :meth:`step()` returns `terminated=True` whenever a
                 life is lost.
             grayscale_obs (bool): if True, then gray scale observation is returned, otherwise, RGB observation
@@ -94,7 +101,11 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
             )
 
         assert frame_skip > 0
-        assert screen_size > 0
+        assert (isinstance(screen_size, int) and screen_size > 0) or (
+            isinstance(screen_size, tuple)
+            and len(screen_size) == 2
+            and all(isinstance(size, int) and size > 0 for size in screen_size)
+        ), f"Expect the `screen_size` to be positive, actually: {screen_size}"
         assert noop_max >= 0
         if frame_skip > 1 and getattr(env.unwrapped, "_frameskip", None) != 1:
             raise ValueError(
@@ -104,7 +115,11 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         assert env.unwrapped.get_action_meanings()[0] == "NOOP"
 
         self.frame_skip = frame_skip
-        self.screen_size = screen_size
+        self.screen_size: tuple[int, int] = (
+            screen_size
+            if isinstance(screen_size, tuple)
+            else (screen_size, screen_size)
+        )
         self.terminal_on_life_loss = terminal_on_life_loss
         self.grayscale_obs = grayscale_obs
         self.grayscale_newaxis = grayscale_newaxis
@@ -126,15 +141,11 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         self.lives = 0
         self.game_over = False
 
-        _low, _high, _obs_dtype = (
-            (0, 255, np.uint8) if not scale_obs else (0, 1, np.float32)
-        )
-        _shape = (screen_size, screen_size, 1 if grayscale_obs else 3)
+        _low, _high, _dtype = (0, 1, np.float32) if scale_obs else (0, 255, np.uint8)
+        _shape = self.screen_size + (1 if grayscale_obs else 3,)
         if grayscale_obs and not grayscale_newaxis:
             _shape = _shape[:-1]  # Remove channel axis
-        self.observation_space = Box(
-            low=_low, high=_high, shape=_shape, dtype=_obs_dtype
-        )
+        self.observation_space = Box(low=_low, high=_high, shape=_shape, dtype=_dtype)
 
     @property
     def ale(self):
@@ -207,7 +218,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
         obs = cv2.resize(
             self.obs_buffer[0],
-            (self.screen_size, self.screen_size),
+            self.screen_size,
             interpolation=cv2.INTER_AREA,
         )
 

@@ -3,6 +3,7 @@ Training A2C with Vector Envs and Domain Randomization
 ======================================================
 
 """
+
 # %%
 # Notice
 # ------
@@ -416,7 +417,7 @@ agent = A2C(obs_shape, action_shape, device, critic_lr, actor_lr, n_envs)
 # For our training loop, we are using the `RecordEpisodeStatistics` wrapper to record the episode lengths and returns and we are also saving
 # the losses and entropies to plot them after the agent finished training.
 #
-# You may notice that the don't reset the vectorized envs at the start of each episode like we would usually do.
+# You may notice that we don't reset the vectorized envs at the start of each episode like we would usually do.
 # This is because each environment resets automatically once the episode finishes (each environment takes a different number of timesteps to finish
 # an episode because of the random seeds). As a result, we are also not collecting data in `episodes`, but rather just play a certain number of steps
 # (`n_steps_per_update`) in each environment (as an example, this could mean that we play 20 timesteps to finish an episode and then

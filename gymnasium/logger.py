@@ -1,40 +1,19 @@
 """Set of functions for logging messages."""
-import sys
+
 import warnings
 from typing import Optional, Type
 
 from gymnasium.utils import colorize
 
 
-DEBUG = 10
-INFO = 20
 WARN = 30
 ERROR = 40
-DISABLED = 50
 
 min_level = 30
 
 
 # Ensure DeprecationWarning to be displayed (#2685, #3059)
 warnings.filterwarnings("once", "", DeprecationWarning, module=r"^gymnasium\.")
-
-
-def set_level(level: int):
-    """Set logging threshold on current logger."""
-    global min_level
-    min_level = level
-
-
-def debug(msg: str, *args: object):
-    """Logs a debug message to the user."""
-    if min_level <= DEBUG:
-        print(f"DEBUG: {msg % args}", file=sys.stderr)
-
-
-def info(msg: str, *args: object):
-    """Logs an info message to the user."""
-    if min_level <= INFO:
-        print(f"INFO: {msg % args}", file=sys.stderr)
 
 
 def warn(
@@ -67,8 +46,4 @@ def deprecation(msg: str, *args: object):
 def error(msg: str, *args: object):
     """Logs an error message if min_level <= ERROR in red on the sys.stderr."""
     if min_level <= ERROR:
-        print(colorize(f"ERROR: {msg % args}", "red"), file=sys.stderr)
-
-
-# DEPRECATED:
-setLevel = set_level
+        warnings.warn(colorize(f"ERROR: {msg % args}", "red"), stacklevel=3)

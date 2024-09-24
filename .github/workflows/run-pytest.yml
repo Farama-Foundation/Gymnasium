@@ -1,4 +1,4 @@
-name: build
+name: Run PyTest
 on: [pull_request, push]
 
 permissions:
@@ -8,17 +8,24 @@ jobs:
   build-all:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: true
       matrix:
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        numpy-version: ['>=1.21,<2.0', '>=2.0']
+        exclude:
+          - python-version: '3.8'  # numpy>=2.0 requires Python>=3.9
+            numpy-version: '>=2.0'
     steps:
       - uses: actions/checkout@v4
       - run: |
-           docker build -f bin/all-py.Dockerfile \
-             --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
-             --tag gymnasium-all-docker .
+          docker build -f bin/all-py.Dockerfile \
+            --build-arg PYTHON_VERSION="${{ matrix.python-version }}" \
+            --build-arg NUMPY_VERSION="${{ matrix.numpy-version }}" \
+            --tag gymnasium-all-docker .
       - name: Run tests
         run: docker run gymnasium-all-docker pytest tests/*
       - name: Run doctests
+        if: ${{ matrix.python-version != '3.8' }}
         run: docker run gymnasium-all-docker pytest --doctest-modules gymnasium/
 
   build-necessary:

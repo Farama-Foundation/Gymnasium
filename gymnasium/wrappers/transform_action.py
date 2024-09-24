@@ -4,6 +4,7 @@
 * ``ClipAction`` - Clips the action within a bounds
 * ``RescaleAction`` - Rescales the action within a minimum and maximum actions
 """
+
 from __future__ import annotations
 
 from typing import Callable
@@ -16,6 +17,8 @@ from gymnasium.spaces import Box, Space
 
 
 __all__ = ["TransformAction", "ClipAction", "RescaleAction"]
+
+from gymnasium.wrappers.utils import rescale_box
 
 
 class TransformAction(
@@ -143,7 +146,7 @@ class RescaleAction(
         >>> wrapped_env = RescaleAction(env, min_action=min_action, max_action=max_action)
         >>> wrapped_env_obs, _, _, _, _ = wrapped_env.step(max_action)
         >>> np.all(obs == wrapped_env_obs)
-        True
+        np.True_
 
     Change logs:
      * v0.15.4 - Initially added
@@ -152,8 +155,8 @@ class RescaleAction(
     def __init__(
         self,
         env: gym.Env[ObsType, ActType],
-        min_action: float | int | np.ndarray,
-        max_action: float | int | np.ndarray,
+        min_action: np.floating | np.integer | np.ndarray,
+        max_action: np.floating | np.integer | np.ndarray,
     ):
         """Constructor for the Rescale Action wrapper.
 
@@ -162,49 +165,16 @@ class RescaleAction(
             min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
         """
+        assert isinstance(env.action_space, Box)
+
         gym.utils.RecordConstructorArgs.__init__(
             self, min_action=min_action, max_action=max_action
         )
 
-        assert isinstance(env.action_space, Box)
-        assert not np.any(env.action_space.low == np.inf) and not np.any(
-            env.action_space.high == np.inf
-        )
-
-        if not isinstance(min_action, np.ndarray):
-            assert np.issubdtype(type(min_action), np.integer) or np.issubdtype(
-                type(min_action), np.floating
-            )
-            min_action = np.full(env.action_space.shape, min_action)
-
-        assert min_action.shape == env.action_space.shape
-        assert not np.any(min_action == np.inf)
-
-        if not isinstance(max_action, np.ndarray):
-            assert np.issubdtype(type(max_action), np.integer) or np.issubdtype(
-                type(max_action), np.floating
-            )
-            max_action = np.full(env.action_space.shape, max_action)
-        assert max_action.shape == env.action_space.shape
-        assert not np.any(max_action == np.inf)
-
-        assert isinstance(env.action_space, Box)
-        assert np.all(np.less_equal(min_action, max_action))
-
-        # Imagine the x-axis between the old Box and the y-axis being the new Box
-        gradient = (env.action_space.high - env.action_space.low) / (
-            max_action - min_action
-        )
-        intercept = gradient * -min_action + env.action_space.low
-
+        act_space, _, func = rescale_box(env.action_space, min_action, max_action)
         TransformAction.__init__(
             self,
             env=env,
-            func=lambda action: gradient * action + intercept,
-            action_space=Box(
-                low=min_action,
-                high=max_action,
-                shape=env.action_space.shape,
-                dtype=env.action_space.dtype,
-            ),
+            func=func,
+            action_space=act_space,
         )

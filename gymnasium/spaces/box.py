@@ -1,4 +1,5 @@
 """Implementation of a space that represents closed boxes in euclidean space."""
+
 from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence, SupportsFloat

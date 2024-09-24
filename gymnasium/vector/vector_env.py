@@ -1,4 +1,5 @@
 """Base class for vectorized environments."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
@@ -58,16 +59,13 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         >>> envs.action_space
         MultiDiscrete([2 2 2])
         >>> envs.observation_space
-        Box([[-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
-           0.00000000e+00]
-         [-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
-           0.00000000e+00]
-         [-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
-           0.00000000e+00]], [[4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+        Box([[-4.80000019        -inf -0.41887903        -inf  0.        ]
+         [-4.80000019        -inf -0.41887903        -inf  0.        ]
+         [-4.80000019        -inf -0.41887903        -inf  0.        ]], [[4.80000019e+00            inf 4.18879032e-01            inf
           5.00000000e+02]
-         [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+         [4.80000019e+00            inf 4.18879032e-01            inf
           5.00000000e+02]
-         [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+         [4.80000019e+00            inf 4.18879032e-01            inf
           5.00000000e+02]], (3, 5), float64)
         >>> observations, infos = envs.reset(seed=123)
         >>> observations
@@ -95,8 +93,9 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     To avoid having to wait for all sub-environments to terminated before resetting, implementations will autoreset
     sub-environments on episode end (`terminated or truncated is True`). As a result, when adding observations
-    to a replay buffer, this requires a knowning where the observation (and info) for each sub-environment are the first
-    observation from an autoreset. We recommend using an additional variable to store this information.
+    to a replay buffer, this requires knowing when an observation (and info) for each sub-environment are the first
+    observation from an autoreset. We recommend using an additional variable to store this information such as
+    ``has_autoreset = np.logical_or(terminated, truncated)``.
 
     The Vector Environments have the additional attributes for users to understand the implementation
 
@@ -188,6 +187,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             >>> infos
             {}
         """
+        raise NotImplementedError(f"{self.__str__()} step function is not implemented.")
 
     def render(self) -> tuple[RenderFrame, ...] | None:
         """Returns the rendered frames from the parallel environments.

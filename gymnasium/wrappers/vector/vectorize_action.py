@@ -1,4 +1,5 @@
 """Vectorizes action wrappers to work for `VectorEnv`."""
+
 from __future__ import annotations
 
 from copy import deepcopy
@@ -32,7 +33,7 @@ class TransformAction(VectorActionWrapper):
         >>> obs
         array([[-0.46553135, -0.00142543],
                [-0.498371  , -0.00715587],
-               [-0.4651575 , -0.00624371]], dtype=float32)
+               [-0.46515748, -0.00624371]], dtype=float32)
 
     Example - With action transformation:
         >>> import gymnasium as gym
@@ -137,7 +138,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         self.same_out = self.action_space == self.env.action_space
-        self.out = create_empty_array(self.single_action_space, self.num_envs)
+        self.out = create_empty_array(self.env.single_action_space, self.num_envs)
 
     def actions(self, actions: ActType) -> ActType:
         """Applies the wrapper to each of the action.
@@ -150,7 +151,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         """
         if self.same_out:
             return concatenate(
-                self.single_action_space,
+                self.env.single_action_space,
                 tuple(
                     self.wrapper.func(action)
                     for action in iterate(self.action_space, actions)
@@ -160,10 +161,10 @@ class VectorizeTransformAction(VectorActionWrapper):
         else:
             return deepcopy(
                 concatenate(
-                    self.single_action_space,
+                    self.env.single_action_space,
                     tuple(
                         self.wrapper.func(action)
-                        for action in iterate(self.env.action_space, actions)
+                        for action in iterate(self.action_space, actions)
                     ),
                     self.out,
                 )

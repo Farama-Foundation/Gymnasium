@@ -6,6 +6,7 @@
 * ``OrderEnforcing`` - Enforces the order of function calls to environments
 * ``RecordEpisodeStatistics`` - Records the episode statistics
 """
+
 from __future__ import annotations
 
 import time
@@ -95,8 +96,11 @@ class TimeLimit(
 
         Args:
             env: The environment to apply the wrapper
-            max_episode_steps: An optional max episode steps (if ``None``, ``env.spec.max_episode_steps`` is used)
+            max_episode_steps: the environment step after which the episode is truncated (``elapsed >= max_episode_steps``)
         """
+        assert (
+            isinstance(max_episode_steps, int) and max_episode_steps > 0
+        ), f"Expect the `max_episode_steps` to be positive, actually: {max_episode_steps}"
         gym.utils.RecordConstructorArgs.__init__(
             self, max_episode_steps=max_episode_steps
         )

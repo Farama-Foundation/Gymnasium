@@ -6,6 +6,7 @@ The exception is the data converter wrappers
  * Different implementations - `LambdaObservation`, `LambdaReward` and `LambdaAction`
  * Different random sources - `StickyAction`
 """
+
 from __future__ import annotations
 
 from typing import Any
@@ -24,7 +25,7 @@ from tests.testing_env import GenericTestEnv
 @pytest.fixture
 def custom_environments():
     gym.register(
-        "CustomDictEnv-v0",
+        "DictObsEnv-v0",
         lambda: GenericTestEnv(
             observation_space=Dict({"a": Box(0, 1), "b": Discrete(5)})
         ),
@@ -32,20 +33,27 @@ def custom_environments():
 
     yield
 
-    del gym.registry["CustomDictEnv-v0"]
+    del gym.registry["DictObsEnv-v0"]
 
 
 @pytest.mark.parametrize("num_envs", (1, 3))
 @pytest.mark.parametrize(
     "env_id, wrapper_name, kwargs",
     (
-        ("CustomDictEnv-v0", "FilterObservation", {"filter_keys": ["a"]}),
+        ("DictObsEnv-v0", "FilterObservation", {"filter_keys": ["a"]}),
         ("CartPole-v1", "FlattenObservation", {}),
-        ("CarRacing-v2", "GrayscaleObservation", {}),
-        ("CarRacing-v2", "ResizeObservation", {"shape": (35, 45)}),
-        ("CarRacing-v2", "ReshapeObservation", {"shape": (96, 48, 6)}),
-        ("CartPole-v1", "RescaleObservation", {"min_obs": 0, "max_obs": 1}),
-        ("CarRacing-v2", "DtypeObservation", {"dtype": np.int32}),
+        ("CarRacing-v3", "GrayscaleObservation", {}),
+        ("CarRacing-v3", "ResizeObservation", {"shape": (35, 45)}),
+        ("CarRacing-v3", "ReshapeObservation", {"shape": (96, 48, 6)}),
+        (
+            "CartPole-v1",
+            "RescaleObservation",
+            {
+                "min_obs": np.array([0, -np.inf, 0, -np.inf]),
+                "max_obs": np.array([1, np.inf, 1, np.inf]),
+            },
+        ),
+        ("CarRacing-v3", "DtypeObservation", {"dtype": np.int32}),
         # ("CartPole-v1", "RenderObservation", {}),  # not implemented
         # ("CartPole-v1", "TimeAwareObservation", {}),  # not implemented
         # ("CartPole-v1", "FrameStackObservation", {}),  # not implemented

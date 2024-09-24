@@ -1,4 +1,5 @@
 """Implementation of a space that represents the cartesian product of other spaces."""
+
 from __future__ import annotations
 
 import typing
@@ -18,7 +19,7 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
         >>> from gymnasium.spaces import Tuple, Box, Discrete
         >>> observation_space = Tuple((Discrete(2), Box(-1, 1, shape=(2,))), seed=42)
         >>> observation_space.sample()
-        (0, array([-0.3991573 ,  0.21649833], dtype=float32))
+        (np.int64(0), array([-0.3991573 ,  0.21649833], dtype=float32))
     """
 
     def __init__(
@@ -46,14 +47,14 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces)
 
-    def seed(self, seed: int | tuple[int] | None = None) -> tuple[int, ...]:
+    def seed(self, seed: int | typing.Sequence[int] | None = None) -> tuple[int, ...]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
 
         * ``None`` - All the subspaces will use a random initial seed
         * ``Int`` - The integer is used to seed the :class:`Tuple` space that is used to generate seed values for each of the subspaces. Warning, this does not guarantee unique seeds for all the subspaces.
-        * ``List`` - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces ``[42, 54, ...]``.
+        * ``List`` / ``Tuple`` - Values used to seed the subspaces. This allows the seeding of multiple composite subspaces ``[42, 54, ...]``.
 
         Args:
             seed: An optional list of ints or int to seed the (sub-)spaces.

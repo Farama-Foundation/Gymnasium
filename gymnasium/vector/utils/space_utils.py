@@ -1,12 +1,15 @@
 """Space-based utility functions for vector environments.
 
-- ``batch_space``: Create a (batched) space, containing multiple copies of a single space.
+- ``batch_space``: Create a (batched) space containing multiple copies of a single space.
+- ``batch_differing_spaces``: Create a (batched) space containing copies of different compatible spaces (share a common dtype and shape)
 - ``concatenate``: Concatenate multiple samples from (unbatched) space into a single object.
 - ``Iterate``: Iterate over the elements of a (batched) space and items.
 - ``create_empty_array``: Create an empty (possibly nested) (normally numpy-based) array, used in conjunction with ``concatenate(..., out=array)``
 """
+
 from __future__ import annotations
 
+import typing
 from copy import deepcopy
 from functools import singledispatch
 from typing import Any, Iterable, Iterator
@@ -31,22 +34,28 @@ from gymnasium.spaces import (
 from gymnasium.spaces.space import T_cov
 
 
-__all__ = ["batch_space", "iterate", "concatenate", "create_empty_array"]
+__all__ = [
+    "batch_space",
+    "batch_differing_spaces",
+    "iterate",
+    "concatenate",
+    "create_empty_array",
+]
 
 
 @singledispatch
 def batch_space(space: Space[Any], n: int = 1) -> Space[Any]:
-    """Create a (batched) space, containing multiple copies of a single space.
+    """Batch spaces of size `n` optimized for neural networks.
 
     Args:
-        space: Space (e.g. the observation space) for a single environment in the vectorized environment.
-        n: Number of environments in the vectorized environment.
+        space: Space (e.g. the observation space for a single environment in the vectorized environment).
+        n: Number of spaces to batch by (e.g. the number of environments in a vectorized environment).
 
     Returns:
-        Space (e.g. the observation space) for a batch of environments in the vectorized environment.
+        Batched space of size `n`.
 
     Raises:
-        ValueError: Cannot batch space does not have a registered function.
+        ValueError: Cannot batch spaces that does not have a registered function.
 
     Example:
 
@@ -139,19 +148,135 @@ def _batch_space_custom(space: Graph | Text | Sequence | OneOf, n: int = 1):
 
 
 @singledispatch
-def iterate(space: Space[T_cov], items: Iterable[T_cov]) -> Iterator:
+def batch_differing_spaces(spaces: typing.Sequence[Space]) -> Space:
+    """Batch a Sequence of spaces where subspaces to contain minor differences.
+
+    Args:
+        spaces: A sequence of Spaces with minor differences (the same space type but different parameters).
+
+    Returns:
+        A batched space
+
+    Example:
+        >>> from gymnasium.spaces import Discrete
+        >>> spaces = [Discrete(3), Discrete(5), Discrete(4), Discrete(8)]
+        >>> batch_differing_spaces(spaces)
+        MultiDiscrete([3 5 4 8])
+    """
+    assert len(spaces) > 0, "Expects a non-empty list of spaces"
+    assert all(
+        isinstance(space, type(spaces[0])) for space in spaces
+    ), f"Expects all spaces to be the same shape, actual types: {[type(space) for space in spaces]}"
+    assert (
+        type(spaces[0]) in batch_differing_spaces.registry
+    ), f"Requires the Space type to have a registered `batch_differing_space`, current list: {batch_differing_spaces.registry}"
+
+    return batch_differing_spaces.dispatch(type(spaces[0]))(spaces)
+
+
+@batch_differing_spaces.register(Box)
+def _batch_differing_spaces_box(spaces: list[Box]):
+    assert all(
+        spaces[0].dtype == space.dtype for space in spaces
+    ), f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
+    assert all(
+        spaces[0].low.shape == space.low.shape for space in spaces
+    ), f"Expected all Box.low shape to be equal, actually {[space.low.shape for space in spaces]}"
+    assert all(
+        spaces[0].high.shape == space.high.shape for space in spaces
+    ), f"Expected all Box.high shape to be equal, actually {[space.high.shape for space in spaces]}"
+
+    return Box(
+        low=np.array([space.low for space in spaces]),
+        high=np.array([space.high for space in spaces]),
+        dtype=spaces[0].dtype,
+        seed=deepcopy(spaces[0].np_random),
+    )
+
+
+@batch_differing_spaces.register(Discrete)
+def _batch_differing_spaces_discrete(spaces: list[Discrete]):
+    return MultiDiscrete(
+        nvec=np.array([space.n for space in spaces]),
+        start=np.array([space.start for space in spaces]),
+        seed=deepcopy(spaces[0].np_random),
+    )
+
+
+@batch_differing_spaces.register(MultiDiscrete)
+def _batch_differing_spaces_multi_discrete(spaces: list[MultiDiscrete]):
+    assert all(
+        spaces[0].dtype == space.dtype for space in spaces
+    ), f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
+    assert all(
+        spaces[0].nvec.shape == space.nvec.shape for space in spaces
+    ), f"Expects all MultiDiscrete.nvec shape, actually {[space.nvec.shape for space in spaces]}"
+    assert all(
+        spaces[0].start.shape == space.start.shape for space in spaces
+    ), f"Expects all MultiDiscrete.start shape, actually {[space.start.shape for space in spaces]}"
+
+    return Box(
+        low=np.array([space.start for space in spaces]),
+        high=np.array([space.start + space.nvec for space in spaces]) - 1,
+        dtype=spaces[0].dtype,
+        seed=deepcopy(spaces[0].np_random),
+    )
+
+
+@batch_differing_spaces.register(MultiBinary)
+def _batch_differing_spaces_multi_binary(spaces: list[MultiBinary]):
+    assert all(spaces[0].shape == space.shape for space in spaces)
+
+    return Box(
+        low=0,
+        high=1,
+        shape=(len(spaces),) + spaces[0].shape,
+        dtype=spaces[0].dtype,
+        seed=deepcopy(spaces[0].np_random),
+    )
+
+
+@batch_differing_spaces.register(Tuple)
+def _batch_differing_spaces_tuple(spaces: list[Tuple]):
+    return Tuple(
+        tuple(
+            batch_differing_spaces(subspaces)
+            for subspaces in zip(*[space.spaces for space in spaces])
+        ),
+        seed=deepcopy(spaces[0].np_random),
+    )
+
+
+@batch_differing_spaces.register(Dict)
+def _batch_differing_spaces_dict(spaces: list[Dict]):
+    assert all(spaces[0].keys() == space.keys() for space in spaces)
+
+    return Dict(
+        {
+            key: batch_differing_spaces([space[key] for space in spaces])
+            for key in spaces[0].keys()
+        },
+        seed=deepcopy(spaces[0].np_random),
+    )
+
+
+@batch_differing_spaces.register(Graph)
+@batch_differing_spaces.register(Text)
+@batch_differing_spaces.register(Sequence)
+@batch_differing_spaces.register(OneOf)
+def _batch_spaces_undefined(spaces: list[Graph | Text | Sequence | OneOf]):
+    return Tuple(
+        [deepcopy(space) for space in spaces], seed=deepcopy(spaces[0].np_random)
+    )
+
+
+@singledispatch
+def iterate(space: Space[T_cov], items: T_cov) -> Iterator:
     """Iterate over the elements of a (batched) space.
 
     Args:
-        space: Observation space of a single environment in the vectorized environment.
-        items: Samples to be concatenated.
-        out: The output object. This object is a (possibly nested) numpy array.
-
-    Returns:
-        The output object. This object is a (possibly nested) numpy array.
-
-    Raises:
-        ValueError: Space is not an instance of :class:`gymnasium.Space`
+        space: (batched) space (e.g. `action_space` or `observation_space` from vectorized environment).
+        items: Batched samples to be iterated over (e.g. sample from the space).
 
     Example:
         >>> from gymnasium.spaces import Box, Dict
@@ -235,15 +360,15 @@ def concatenate(
     """Concatenate multiple samples from space into a single object.
 
     Args:
-        space: Observation space of a single environment in the vectorized environment.
-        items: Samples to be concatenated.
-        out: The output object. This object is a (possibly nested) numpy array.
+        space: Space of each item (e.g. `single_action_space` from vectorized environment)
+        items: Samples to be concatenated (e.g. all sample should be an element of the `space`).
+        out: The output object (e.g. generated from `create_empty_array`)
 
     Returns:
-        The output object. This object is a (possibly nested) numpy array.
+        The output object, can be the same object `out`.
 
     Raises:
-        ValueError: Space
+        ValueError: Space is not a valid :class:`gymnasium.Space` instance
 
     Example:
         >>> from gymnasium.spaces import Box
@@ -305,7 +430,7 @@ def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, 
 def create_empty_array(
     space: Space, n: int = 1, fn: callable = np.zeros
 ) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
-    """Create an empty (possibly nested) (normally numpy-based) array, used in conjunction with ``concatenate(..., out=array)``.
+    """Create an empty (possibly nested and normally numpy-based) array, used in conjunction with ``concatenate(..., out=array)``.
 
     In most cases, the array will be contained within the batched space, however, this is not guaranteed.
 

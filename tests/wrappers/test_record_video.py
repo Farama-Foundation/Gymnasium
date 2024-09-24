@@ -1,4 +1,5 @@
 """Test suite for RecordVideo wrapper."""
+
 import os
 import shutil
 from typing import List

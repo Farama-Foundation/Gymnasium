@@ -41,8 +41,9 @@ Instructions for installing the MuJoCo engine can be found on their [website](ht
 For MuJoCo `v3` environments and older the `mujoco-py` framework is required (`pip install gymnasium[mujoco-py]`) which can be found in the [GitHub repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py).
 
 There are eleven MuJoCo environments (in roughly increasing complexity):
+
 | Robot                  | Short Description                                                    |
-| ---------------------- | -------------------------------------------------------------------- |
+|------------------------|----------------------------------------------------------------------|
 | **CartPoles**          |                                                                      |
 | InvertedPendulum       | MuJoCo version of the CartPole Environment (with Continuous actions) |
 | InvertedDoublePendulum | 2 Pole variation of the CartPole Environment                         |
@@ -51,8 +52,8 @@ There are eleven MuJoCo environments (in roughly increasing complexity):
 | Pusher                 | 3d arm with the goal of pushing an object to a target location       |
 | **2D Runners**         |                                                                      |
 | HalfCheetah            | 2d quadruped with the goal of running                                |
-| Hopper                 | 2d monoped with the goal of hopping                          |
-| Walker2d               | 2d biped with the goal of walking                                   |
+| Hopper                 | 2d monoped with the goal of hopping                                  |
+| Walker2d               | 2d biped with the goal of walking                                    |
 | **Swimmers**           |                                                                      |
 | Swimmer                | 3d robot with the goal of swimming                                   |
 | **Quarduped**          |                                                                      |
@@ -75,10 +76,10 @@ Environments can be configured by changing the `xml_file` argument and/or by twe
 ## Versions
 Gymnasium includes the following versions of the environments:
 
-| Version | Simulator       | Notes                                            |
-| ------- | --------------- | ------------------------------------------------ |
-| `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)      |
-| `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                   |
+| Version | Simulator       | Notes                                                  |
+|---------|-----------------|--------------------------------------------------------|
+| `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)            |
+| `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                         |
 | `v3`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
 | `v2`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
 
@@ -103,17 +104,15 @@ All of the MuJoCo Environments besides the general Gymnasium arguments, and envi
 env = gymnasium.make("Ant-v5", render_mode="rgb_array", width=1280, height=720)
 ```
 
-| Parameter                   | Type                              | Default      | Description                               |
-| --------------------------- | -------------                     | ------------ | ----------------------------------------- |
-| `width`                     | **int**                           | `480`        | The width of the render window            |
-| `height`                    | **int**                           | `480`        | The height of the render window           |
-| `camera_id`                 |**int \| None**                    | `None`       | The camera ID used for the render window  |
-| `camera_name`               |**str \| None**                    | `None`       | The name of the camera used for the render window (mutally exclusive option with `camera_id`) |
-| `default_camera_config`     |**dict[str, float \| int] \| None**| `None`       |  The [mjvCamera](https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjvcamera) properties |
-| `max_geom`                  | **int**                           | `1000`       | Max number of geometrical objects to render (useful for 3rd-party environments) |
-| `visual_options`            | **Dict[int, bool]**               | `{}`         | A dictionary with [mjVisual](https://mujoco.readthedocs.io/en/stable/overview.html#mjvisual) flags and value pairs, example `{mujoco.mjtVisFlag.mjVIS_CONTACTPOINT: True, mujoco.mjtVisFlag.mjVIS_CONTACTFORCE: True}` (show contact points and forces). |
-
-
+| Parameter               | Type                                | Default | Description                                                                                                                                                                                                                                              |
+|-------------------------|-------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `width`                 | **int**                             | `480`   | The width of the render window                                                                                                                                                                                                                           |
+| `height`                | **int**                             | `480`   | The height of the render window                                                                                                                                                                                                                          |
+| `camera_id`             | **int \| None**                     | `None`  | The camera ID used for the render window                                                                                                                                                                                                                 |
+| `camera_name`           | **str \| None**                     | `None`  | The name of the camera used for the render window (mutually exclusive option with `camera_id`)                                                                                                                                                           |
+| `default_camera_config` | **dict[str, float \| int] \| None** | `None`  | The [mjvCamera](https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjvcamera) properties                                                                                                                                                 |
+| `max_geom`              | **int**                             | `1000`  | Max number of geometrical objects to render (useful for 3rd-party environments)                                                                                                                                                                          |
+| `visual_options`        | **Dict[int, bool]**                 | `{}`    | A dictionary with [mjVisual](https://mujoco.readthedocs.io/en/stable/overview.html#mjvisual) flags and value pairs, example `{mujoco.mjtVisFlag.mjVIS_CONTACTPOINT: True, mujoco.mjtVisFlag.mjVIS_CONTACTFORCE: True}` (show contact points and forces). |
 
 <!--
 ## Custom Models

@@ -1,4 +1,5 @@
 """Helper functions and wrapper class for converting between numpy and Jax."""
+
 from __future__ import annotations
 
 import functools

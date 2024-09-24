@@ -1,4 +1,5 @@
 """Implementation of a Jax-accelerated cartpole environment."""
+
 from __future__ import annotations
 
 from typing import Any, Tuple
@@ -12,7 +13,7 @@ from jax.random import PRNGKey
 import gymnasium as gym
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv, FunctionalJaxVectorEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
 
 
@@ -88,13 +89,13 @@ class CartPoleFunctional(
         return state
 
     def observation(
-        self, state: jax.Array, params: CartPoleParams = CartPoleParams
+        self, state: jax.Array, rng: Any, params: CartPoleParams = CartPoleParams
     ) -> jax.Array:
         """Cartpole observation."""
         return state
 
     def terminal(
-        self, state: jax.Array, params: CartPoleParams = CartPoleParams
+        self, state: jax.Array, rng: Any, params: CartPoleParams = CartPoleParams
     ) -> jax.Array:
         """Checks if the state is terminal."""
         x, _, theta, _ = state
@@ -113,6 +114,7 @@ class CartPoleFunctional(
         state: StateType,
         action: ActType,
         next_state: StateType,
+        rng: Any,
         params: CartPoleParams = CartPoleParams,
     ) -> jax.Array:
         """Computes the reward for the state transition using the action."""
@@ -210,7 +212,10 @@ class CartPoleFunctional(
         )
 
     def render_init(
-        self, screen_width: int = 600, screen_height: int = 400
+        self,
+        params: CartPoleParams = CartPoleParams,
+        screen_width: int = 600,
+        screen_height: int = 400,
     ) -> RenderStateType:
         """Initialises the render state for a screen width and height."""
         try:
@@ -226,7 +231,9 @@ class CartPoleFunctional(
 
         return screen, clock
 
-    def render_close(self, render_state: RenderStateType) -> None:
+    def render_close(
+        self, render_state: RenderStateType, params: CartPoleParams = CartPoleParams
+    ) -> None:
         """Closes the render state."""
         try:
             import pygame

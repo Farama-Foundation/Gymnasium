@@ -6,6 +6,7 @@
 * ``NormalizeObservation`` - Normalized the observations to have unit variance with a moving mean
 * ``MaxAndSkipObservation`` - Return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.
 """
+
 from __future__ import annotations
 
 from collections import deque
@@ -128,8 +129,7 @@ class TimeAwareObservation(
         >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservation(env)
         >>> env.observation_space
-        Box([-4.80000019e+00 -3.40282347e+38 -4.18879032e-01 -3.40282347e+38
-          0.00000000e+00], [4.80000019e+00 3.40282347e+38 4.18879032e-01 3.40282347e+38
+        Box([-4.80000019        -inf -0.41887903        -inf  0.        ], [4.80000019e+00            inf 4.18879032e-01            inf
          5.00000000e+02], (5,), float64)
         >>> env.reset(seed=42)[0]
         array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ])
@@ -141,8 +141,7 @@ class TimeAwareObservation(
         >>> env = gym.make('CartPole-v1')
         >>> env = TimeAwareObservation(env, normalize_time=True)
         >>> env.observation_space
-        Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38
-          0.0000000e+00], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38 1.0000000e+00], (5,), float32)
+        Box([-4.8               -inf -0.41887903        -inf  0.        ], [4.8               inf 0.41887903        inf 1.        ], (5,), float32)
         >>> env.reset(seed=42)[0]
         array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ],
               dtype=float32)
@@ -155,7 +154,7 @@ class TimeAwareObservation(
         >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservation(env, flatten=False)
         >>> env.observation_space
-        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
+        Dict('obs': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), 'time': Box(0, 500, (1,), int32))
         >>> env.reset(seed=42)[0]
         {'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}
         >>> _ = env.action_space.seed(42)
@@ -310,7 +309,7 @@ class FrameStackObservation(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import FrameStackObservation
-        >>> env = gym.make("CarRacing-v2")
+        >>> env = gym.make("CarRacing-v3")
         >>> env = FrameStackObservation(env, stack_size=4)
         >>> env.observation_space
         Box(0, 255, (4, 96, 96, 3), uint8)
@@ -558,9 +557,9 @@ class MaxAndSkipObservation(
         >>> wrapped_obs0, *_ = wrapped_env.reset(seed=123)
         >>> wrapped_obs1, *_ = wrapped_env.step(1)
         >>> np.all(obs0 == wrapped_obs0)
-        True
+        np.True_
         >>> np.all(wrapped_obs1 == skip_and_max_obs)
-        True
+        np.True_
 
     Change logs:
      * v1.0.0 - Initially add

@@ -10,6 +10,7 @@
 * ``DtypeObservation`` - Convert an observation to a dtype
 * ``RenderObservation`` - Allows the observation to the rendered frame
 """
+
 from __future__ import annotations
 
 from typing import Any, Callable, Final, Sequence
@@ -33,6 +34,8 @@ __all__ = [
     "DtypeObservation",
     "AddRenderObservation",
 ]
+
+from gymnasium.wrappers.utils import rescale_box
 
 
 class TransformObservation(
@@ -106,7 +109,7 @@ class FilterObservation(
         >>> env = gym.make("CartPole-v1")
         >>> env = gym.wrappers.TimeAwareObservation(env, flatten=False)
         >>> env.observation_space
-        Dict('obs': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32), 'time': Box(0, 500, (1,), int32))
+        Dict('obs': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), 'time': Box(0, 500, (1,), int32))
         >>> env.reset(seed=42)
         ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}, {})
         >>> env = FilterObservation(env, filter_keys=['time'])
@@ -222,7 +225,7 @@ class FlattenObservation(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import FlattenObservation
-        >>> env = gym.make("CarRacing-v2")
+        >>> env = gym.make("CarRacing-v3")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> env = FlattenObservation(env)
@@ -264,7 +267,7 @@ class GrayscaleObservation(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import GrayscaleObservation
-        >>> env = gym.make("CarRacing-v2")
+        >>> env = gym.make("CarRacing-v3")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> grayscale_env = GrayscaleObservation(env)
@@ -342,7 +345,7 @@ class ResizeObservation(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import ResizeObservation
-        >>> env = gym.make("CarRacing-v2")
+        >>> env = gym.make("CarRacing-v3")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> resized_env = ResizeObservation(env, (32, 32))
@@ -413,7 +416,7 @@ class ReshapeObservation(
     Example:
         >>> import gymnasium as gym
         >>> from gymnasium.wrappers import ReshapeObservation
-        >>> env = gym.make("CarRacing-v2")
+        >>> env = gym.make("CarRacing-v3")
         >>> env.observation_space.shape
         (96, 96, 3)
         >>> reshape_env = ReshapeObservation(env, (24, 4, 96, 1, 3))
@@ -461,6 +464,8 @@ class RescaleObservation(
 ):
     """Affinely (linearly) rescales a ``Box`` observation space of the environment to within the range of ``[min_obs, max_obs]``.
 
+    For unbounded components in the original observation space, the corresponding target bounds must also be infinite and vice versa.
+
     A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.RescaleObservation`.
 
     Example:
@@ -491,57 +496,15 @@ class RescaleObservation(
             max_obs: The new maximum observation bound
         """
         assert isinstance(env.observation_space, spaces.Box)
-        assert not np.any(env.observation_space.low == np.inf) and not np.any(
-            env.observation_space.high == np.inf
-        )
-
-        if not isinstance(min_obs, np.ndarray):
-            assert np.issubdtype(type(min_obs), np.integer) or np.issubdtype(
-                type(max_obs), np.floating
-            )
-            min_obs = np.full(env.observation_space.shape, min_obs)
-        assert (
-            min_obs.shape == env.observation_space.shape
-        ), f"{min_obs.shape}, {env.observation_space.shape}, {min_obs}, {env.observation_space.low}"
-        assert not np.any(min_obs == np.inf)
-
-        if not isinstance(max_obs, np.ndarray):
-            assert np.issubdtype(type(max_obs), np.integer) or np.issubdtype(
-                type(max_obs), np.floating
-            )
-            max_obs = np.full(env.observation_space.shape, max_obs)
-        assert max_obs.shape == env.observation_space.shape
-        assert not np.any(max_obs == np.inf)
-
-        self.min_obs = min_obs
-        self.max_obs = max_obs
-
-        # Imagine the x-axis between the old Box and the y-axis being the new Box
-        # float128 is not available everywhere
-        try:
-            high_low_diff_dtype = np.float128
-        except AttributeError:
-            high_low_diff_dtype = np.float64
-        high_low_diff = np.array(
-            env.observation_space.high, dtype=high_low_diff_dtype
-        ) - np.array(env.observation_space.low, dtype=high_low_diff_dtype)
-        gradient = np.array(
-            (max_obs - min_obs) / high_low_diff, dtype=env.observation_space.dtype
-        )
-
-        intercept = gradient * -env.observation_space.low + min_obs
 
         gym.utils.RecordConstructorArgs.__init__(self, min_obs=min_obs, max_obs=max_obs)
+
+        obs_space, func, _ = rescale_box(env.observation_space, min_obs, max_obs)
         TransformObservation.__init__(
             self,
             env=env,
-            func=lambda obs: gradient * obs + intercept,
-            observation_space=spaces.Box(
-                low=min_obs,
-                high=max_obs,
-                shape=env.observation_space.shape,
-                dtype=env.observation_space.dtype,
-            ),
+            func=func,
+            observation_space=obs_space,
         )
 
 
@@ -631,28 +594,28 @@ class AddRenderObservation(
         >>> obs, _ = env.reset(seed=123)
         >>> image = env.render()
         >>> np.all(obs == image)
-        True
+        np.True_
         >>> obs, *_ = env.step(env.action_space.sample())
         >>> image = env.render()
         >>> np.all(obs == image)
-        True
+        np.True_
 
     Example - Add the rendered image to the original observation as a dictionary item:
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = AddRenderObservation(env, render_only=False)
         >>> env.observation_space
-        Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8000002e+00 -3.4028235e+38 -4.1887903e-01 -3.4028235e+38], [4.8000002e+00 3.4028235e+38 4.1887903e-01 3.4028235e+38], (4,), float32))
+        Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32))
         >>> obs, info = env.reset(seed=123)
         >>> obs.keys()
         dict_keys(['state', 'pixels'])
         >>> obs["state"]
         array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)
         >>> np.all(obs["pixels"] == env.render())
-        True
+        np.True_
         >>> obs, reward, terminates, truncates, info = env.step(env.action_space.sample())
         >>> image = env.render()
         >>> np.all(obs["pixels"] == image)
-        True
+        np.True_
 
     Change logs:
      * v0.15.0 - Initially added as ``PixelObservationWrapper``

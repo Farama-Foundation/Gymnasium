@@ -1,4 +1,5 @@
 """A set of functions for passively checking environment implementations."""
+
 import inspect
 from functools import partial
 from typing import Callable
@@ -31,15 +32,9 @@ def _check_box_observation_space(observation_space: spaces.Box):
     ), f"The Box observation space shape and high shape have have different shapes, high shape: {observation_space.high.shape}, box shape: {observation_space.shape}"
 
     if np.any(observation_space.low == observation_space.high):
-        logger.warn(
-            "A Box observation space maximum and minimum values are equal. "
-            f"Actual equal coordinates: {[x for x in zip(*np.where(observation_space.low == observation_space.high))]}"
-        )
+        logger.warn("A Box observation space maximum and minimum values are equal.")
     elif np.any(observation_space.high < observation_space.low):
-        logger.warn(
-            "A Box observation space low value is greater than a high value. "
-            f"Actual less than coordinates: {[x for x in zip(*np.where(observation_space.high < observation_space.low))]}"
-        )
+        logger.warn("A Box observation space low value is greater than a high value.")
 
 
 def _check_box_action_space(action_space: spaces.Box):
@@ -56,10 +51,7 @@ def _check_box_action_space(action_space: spaces.Box):
     ), f"The Box action space shape and high shape have different shapes, high shape: {action_space.high.shape}, box shape: {action_space.shape}"
 
     if np.any(action_space.low == action_space.high):
-        logger.warn(
-            "A Box action space maximum and minimum values are equal. "
-            f"Actual equal coordinates: {[x for x in zip(*np.where(action_space.low == action_space.high))]}"
-        )
+        logger.warn("A Box action space maximum and minimum values are equal.")
 
 
 def check_space(

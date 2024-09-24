@@ -253,12 +253,12 @@ class FrozenLakeEnv(Env):
             return (row, col)
 
         def update_probability_matrix(row, col, action):
-            newrow, newcol = inc(row, col, action)
-            newstate = to_s(newrow, newcol)
-            newletter = desc[newrow, newcol]
-            terminated = bytes(newletter) in b"GH"
-            reward = float(newletter == b"G")
-            return newstate, reward, terminated
+            new_row, new_col = inc(row, col, action)
+            new_state = to_s(new_row, new_col)
+            new_letter = desc[new_row, new_col]
+            terminated = bytes(new_letter) in b"GH"
+            reward = float(new_letter == b"G")
+            return new_state, reward, terminated
 
         for row in range(nrow):
             for col in range(ncol):

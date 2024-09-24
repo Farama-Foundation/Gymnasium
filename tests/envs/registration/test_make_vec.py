@@ -1,4 +1,5 @@
 """Testing of the `gym.make_vec` function."""
+
 import re
 
 import pytest
