@@ -10,10 +10,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
         numpy-version: ['>=1.21,<2.0', '>=2.0']
         exclude:
-          - python-version: '3.8'  # numpy>=2.0 requires Python>=3.9
+          - python-version: '3.9'  # numpy>=2.0 requires Python>=3.9
             numpy-version: '>=2.0'
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
            docker build -f bin/necessary-py.Dockerfile \
-             --build-arg PYTHON_VERSION='3.10' \
+             --build-arg PYTHON_VERSION='3.13' \
              --tag gymnasium-necessary-docker .
       - name: Run tests
         run: |
