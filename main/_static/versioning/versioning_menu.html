@@ -122,15 +122,30 @@
         });
 
         const sortVersions = (a, b) => {
-            // Alpha versions
-            if (a.includes("a")) return 1;
-            if (b.includes("a")) return -1;
-            if (a.replace("v", "") > b.replace("v", ""))
-                return -1
-            else if (a.replace("v", "") < b.replace("v", ""))
-                return 1
-            else
-                return 0
+            const normVersionNames = (a) => {
+                return a.replace("v", "").split("");
+            };
+            const innerA = normVersionNames(a);
+            const innerB = normVersionNames(b);
+
+            while (innerA.length && innerB.length) {
+                const charA = innerA.shift();
+                const charB = innerB.shift();
+
+                if (charA === charB) continue;
+                else if (charA === ".") return 1;
+                else if (charB === ".") return -1;
+                else if (charA.match(/[0-9]/) && charB.match(/[0-9]/)) {
+                    return Number(charA) - Number(charB);
+                } else {
+                    if (charA < charB) return -1;
+                    else if (charA > charB) return 1;
+                    else return 0;
+                }
+            }
+            if (innerA < innerB) return -1;
+            else if (innerA > innerB) return 1;
+            else return 0;
         }
 
         if ((githubUser !== null && githubUser !== "") || (repo !== null && repo !== "")) {
