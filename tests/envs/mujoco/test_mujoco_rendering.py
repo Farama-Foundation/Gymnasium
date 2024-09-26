@@ -1,6 +1,7 @@
 import os
 
 import mujoco
+import gymnasium
 import pytest
 
 from gymnasium.envs.mujoco.mujoco_env import DEFAULT_SIZE
@@ -81,3 +82,17 @@ def test_max_geom_attribute(
 
     # close viewer after usage
     viewer.close()
+
+
+def test_camera_id():
+    """Assert that the camera_id parameter works correctly."""
+    env_a = gymnasium.make("Ant-v5", camera_id=0)
+    env_b = gymnasium.make("Ant-v5", camera_id=0)
+    env_c = gymnasium.make("Ant-v5", camera_id=1)
+
+    env_a.reset(seed=5)
+    env_b.reset(seed=5)
+    env_c.reset(seed=5)
+
+    assert env_a.render() == env_b.render(), "If this fails, the test is not valid"
+    assert env_a.render() != env_c.render(), "render() output should be different for different camera_id"
