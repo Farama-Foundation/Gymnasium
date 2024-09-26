@@ -687,6 +687,8 @@ class MujocoRenderer:
                 mujoco.mjtObj.mjOBJ_CAMERA,
                 camera_name,
             )
+        else:
+            self.camera_id = camera_id
 
     def render(
         self,
