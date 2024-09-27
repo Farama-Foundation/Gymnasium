@@ -94,7 +94,9 @@ def test_camera_id():
     env_b.reset(seed=5)
     env_c.reset(seed=5)
 
-    assert (env_a.render() == env_b.render()).all(), "If this fails, the test is not valid"
     assert (
-        (env_a.render() != env_c.render()).all()
-    ), "render() output should be different for different camera_id"
+        env_a.render() == env_b.render()
+    ).all(), "If this fails, the test is not valid"
+    assert (
+        env_a.render() != env_c.render()
+    ).all(), "render() output should be different for different camera_id"
