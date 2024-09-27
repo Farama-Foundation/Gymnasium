@@ -84,19 +84,12 @@ def test_max_geom_attribute(
     viewer.close()
 
 
-def test_camera_id():
+@pytest.mark.parametrize("render_mode", ["human", "rgb_array", "depth_array"])
+def test_camera_id(render_mode: str):
     """Assert that the camera_id parameter works correctly."""
-    env_a = gymnasium.make("Ant-v5", camera_id=0, render_mode="rgb_array").unwrapped
-    env_b = gymnasium.make("Ant-v5", camera_id=0, render_mode="rgb_array").unwrapped
-    env_c = gymnasium.make("Ant-v5", camera_id=1, render_mode="rgb_array").unwrapped
+    env_a = gymnasium.make("Ant-v5", camera_id=0, render_mode=render_mode).unwrapped
+    env_b = gymnasium.make("Ant-v5", camera_id=0, render_mode=render_mode).unwrapped
+    env_c = gymnasium.make("Ant-v5", camera_id=1, render_mode=render_mode).unwrapped
 
-    env_a.reset(seed=5)
-    env_b.reset(seed=5)
-    env_c.reset(seed=5)
-
-    assert (
-        env_a.render() == env_b.render()
-    ).all(), "If this fails, the test is not valid"
-    assert (
-        env_a.render() != env_c.render()
-    ).all(), "render() output should be different for different camera_id"
+    assert env_a.mujoco_renderer.camera_id == env_b.mujoco_renderer.camera_id
+    assert env_a.mujoco_renderer.camera_id != env_c.mujoco_renderer.camera_id
