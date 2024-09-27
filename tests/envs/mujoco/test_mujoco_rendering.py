@@ -86,9 +86,9 @@ def test_max_geom_attribute(
 
 def test_camera_id():
     """Assert that the camera_id parameter works correctly."""
-    env_a = gymnasium.make("Ant-v5", camera_id=0)
-    env_b = gymnasium.make("Ant-v5", camera_id=0)
-    env_c = gymnasium.make("Ant-v5", camera_id=1)
+    env_a = gymnasium.make("Ant-v5", camera_id=0, render_mode="rgb_array").unwrapped
+    env_b = gymnasium.make("Ant-v5", camera_id=0, render_mode="rgb_array").unwrapped
+    env_c = gymnasium.make("Ant-v5", camera_id=1, render_mode="rgb_array").unwrapped
 
     env_a.reset(seed=5)
     env_b.reset(seed=5)
