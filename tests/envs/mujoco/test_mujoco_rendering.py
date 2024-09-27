@@ -1,9 +1,9 @@
 import os
 
 import mujoco
-import gymnasium
 import pytest
 
+import gymnasium
 from gymnasium.envs.mujoco.mujoco_env import DEFAULT_SIZE
 from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer, OffScreenViewer
 
@@ -95,4 +95,6 @@ def test_camera_id():
     env_c.reset(seed=5)
 
     assert env_a.render() == env_b.render(), "If this fails, the test is not valid"
-    assert env_a.render() != env_c.render(), "render() output should be different for different camera_id"
+    assert (
+        env_a.render() != env_c.render()
+    ), "render() output should be different for different camera_id"
