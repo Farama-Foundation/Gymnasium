@@ -35,9 +35,9 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         >>> for _ in range(100):
         ...     obs, *_ = envs.step(envs.action_space.sample())
         >>> np.mean(obs)
-        np.float32(0.024251968)
+        0.024251968
         >>> np.std(obs)
-        np.float32(0.62259156)
+        0.62259156
         >>> envs.close()
 
     Example with the normalize reward wrapper:
@@ -49,7 +49,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         >>> for _ in range(100):
         ...     obs, *_ = envs.step(envs.action_space.sample())
         >>> np.mean(obs)
-        np.float32(-0.2359734)
+        -0.2359734
         >>> np.std(obs)
         np.float32(1.1938739)
         >>> envs.close()
