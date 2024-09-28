@@ -136,7 +136,7 @@
                 else if (charA === ".") return 1;
                 else if (charB === ".") return -1;
                 else if (charA.match(/[0-9]/) && charB.match(/[0-9]/)) {
-                    return Number(charA) - Number(charB);
+                    return Number(charB) - Number(charA);
                 } else {
                     if (charA < charB) return 1;
                     else if (charA > charB) return -1;
