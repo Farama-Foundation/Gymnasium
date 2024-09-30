@@ -4,9 +4,6 @@ on: [pull_request, push]
 permissions:
   contents: read # to fetch code (actions/checkout)
 
-  #env:
-  #MUJOCO_GL: glfw
-
 jobs:
   build-all:
     runs-on: ubuntu-latest
