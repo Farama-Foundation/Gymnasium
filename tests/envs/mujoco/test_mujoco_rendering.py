@@ -3,6 +3,7 @@ import os
 import mujoco
 import pytest
 
+import gymnasium
 from gymnasium.envs.mujoco.mujoco_env import DEFAULT_SIZE
 from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer, OffScreenViewer
 
@@ -81,3 +82,18 @@ def test_max_geom_attribute(
 
     # close viewer after usage
     viewer.close()
+
+
+@pytest.mark.parametrize("render_mode", ["human", "rgb_array", "depth_array"])
+def test_camera_id(render_mode: str):
+    """Assert that the camera_id parameter works correctly."""
+    env_a = gymnasium.make("Ant-v5", camera_id=0, render_mode=render_mode).unwrapped
+    env_b = gymnasium.make("Ant-v5", camera_id=0, render_mode=render_mode).unwrapped
+    env_c = gymnasium.make("Ant-v5", camera_id=-1, render_mode=render_mode).unwrapped
+
+    assert env_a.mujoco_renderer.camera_id == env_b.mujoco_renderer.camera_id
+    assert env_a.mujoco_renderer.camera_id != env_c.mujoco_renderer.camera_id
+
+    if render_mode != "human":
+        assert (env_a.render() == env_b.render()).all()
+        assert (env_a.render() != env_c.render()).any()
