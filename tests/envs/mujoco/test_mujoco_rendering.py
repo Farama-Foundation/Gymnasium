@@ -89,7 +89,7 @@ def test_camera_id(render_mode: str):
     """Assert that the camera_id parameter works correctly."""
     env_a = gymnasium.make("Ant-v5", camera_id=0, render_mode=render_mode).unwrapped
     env_b = gymnasium.make("Ant-v5", camera_id=0, render_mode=render_mode).unwrapped
-    env_c = gymnasium.make("Ant-v5", camera_id=1, render_mode=render_mode).unwrapped
+    env_c = gymnasium.make("Ant-v5", camera_id=-1, render_mode=render_mode).unwrapped
 
     assert env_a.mujoco_renderer.camera_id == env_b.mujoco_renderer.camera_id
     assert env_a.mujoco_renderer.camera_id != env_c.mujoco_renderer.camera_id
