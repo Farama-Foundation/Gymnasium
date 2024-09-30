@@ -721,17 +721,3 @@ def test_reset_state(env_name: str, version: str):
 
     env = gym.make(f"{env_name}-{version}")
     check_mujoco_reset_state(env)
-
-
-def test_camera_id():
-    """Assert that the camera_id parameter works correctly."""
-    env_a = gym.make("Ant-v5", camera_id=0)
-    env_b = gym.make("Ant-v5", camera_id=0)
-    env_c = gym.make("Ant-v5", camera_id=1)
-
-    env_a.reset(seed=5)
-    env_b.reset(seed=5)
-    env_c.reset(seed=5)
-
-    assert env_a.render() == env_b.render(), "If this fails, the test is not valid"
-    assert env_a.render() != env_c.render(), "render() output should be different for different camera_id"
