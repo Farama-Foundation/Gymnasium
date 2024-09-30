@@ -687,6 +687,8 @@ class MujocoRenderer:
                 mujoco.mjtObj.mjOBJ_CAMERA,
                 camera_name,
             )
+        else:
+            self.camera_id = camera_id
 
     def render(
         self,
@@ -698,7 +700,7 @@ class MujocoRenderer:
             render_mode: The format to render the frame, it can be: "human", "rgb_array", or "depth_array"
 
         Returns:
-            If render_mode is "rgb_array" or "depth_arra" it returns a numpy array in the specified format. "human" render mode does not return anything.
+            If render_mode is "rgb_array" or "depth_array" it returns a numpy array in the specified format. "human" render mode does not return anything.
         """
 
         viewer = self._get_viewer(render_mode=render_mode)
