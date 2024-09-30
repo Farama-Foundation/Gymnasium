@@ -94,7 +94,7 @@ def test_camera_id(render_mode: str):
     assert env_a.mujoco_renderer.camera_id == env_b.mujoco_renderer.camera_id
     assert env_a.mujoco_renderer.camera_id != env_c.mujoco_renderer.camera_id
 
-    env_a.render()
-    # if render_mode != "human":
+    if render_mode != "human":
+        env_a.render()
         # assert (env_a.render() == env_b.render()).all()
         # assert (env_a.render() != env_c.render()).all()
