@@ -285,6 +285,12 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   SimpleGrid is a super simple and minimal grid environment for Gymnasium. It is easy to use and customise and it is intended to offer an environment for rapidly testing and prototyping different RL algorithms.
 
+- [Gym-Gridworld: Collection of Minimalistic Gridworlds](https://github.com/sparisi/gym_gridworlds)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/sparisi/gym_gridworlds)
+
+  The default class implements a "go-to goal", but it can be easily customized for different task, with a variety of grids, rewards, dynamics, and tasks. It supports a variety of observation types. Useful for quickly testing and prototyping RL algorithms, both tabular and with function approximation.
 
 ## Third-Party Environments using Gym
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
