@@ -114,6 +114,16 @@ env = gymnasium.make("Ant-v5", render_mode="rgb_array", width=1280, height=720)
 | `max_geom`              | **int**                             | `1000`  | Max number of geometrical objects to render (useful for 3rd-party environments)                                                                                                                                                                          |
 | `visual_options`        | **Dict[int, bool]**                 | `{}`    | A dictionary with [mjVisual](https://mujoco.readthedocs.io/en/stable/overview.html#mjvisual) flags and value pairs, example `{mujoco.mjtVisFlag.mjVIS_CONTACTPOINT: True, mujoco.mjtVisFlag.mjVIS_CONTACTFORCE: True}` (show contact points and forces). |
 
+### Rendering Backend
+The MuJoCo simulator renders images with OpenGL and can use 3 different back ends "glfw" (default), "egl", "omesa", which can be selected by setting an [environment variable](https://en.wikipedia.org/wiki/Environment_variable).
+
+| Backend | Environment Variable       | Description                       |
+|---------|----------------------------|-----------------------------------|
+| `glfw`  | `MUJOCO_GL=glfw` (default) | Renders with window System on GPU |
+| `egl`   | `MUJOCO_GL=egl`            | Renders headless on GPU           |
+| `omesa` | `MUJOCO_GL=omesa`          | Renders headless on CPU           |
+
+More information of the [MuJoCo/OpenGL documentation](https://mujoco.readthedocs.io/en/stable/programming/index.html#using-opengl).
 <!--
 ## Custom Models
 For more complex locomotion robot environments you can use third party models with the environments.
