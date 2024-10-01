@@ -122,15 +122,18 @@
         });
 
         const sortVersions = (a, b) => {
-            const normVersionNames = (a) => {
-                return a.replace("v", "").split("");
-            };
-            const innerA = normVersionNames(a);
-            const innerB = normVersionNames(b);
+            const innerA = a.replace("v", "");
+            const innerB = b.replace("v", "");
 
-            while (innerA.length && innerB.length) {
-                const charA = innerA.shift();
-                const charB = innerB.shift();
+            if (innerA.match(/[a-z]/) && !innerB.match(/[a-z]/)) return 1;
+            if (!innerA.match(/[a-z]/) && innerB.match(/[a-z]/)) return -1;
+
+            const splittedInnerA = innerA.split("");
+            const splittedInnerB = innerB.split("");
+
+            while (splittedInnerA.length && splittedInnerB.length) {
+                const charA = splittedInnerA.shift();
+                const charB = splittedInnerB.shift();
 
                 if (charA === charB) continue;
                 else if (charA === ".") return 1;
