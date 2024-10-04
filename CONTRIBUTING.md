@@ -15,6 +15,16 @@ Notably, we are not accepting these forms of contributions:
 
 This section contains technical instructions & hints for the contributors.
 
+## Setup Development Environment
+
+1. Fork the repo.
+2. Clone it on local machine.
+3. (Optional) add main repo as upstream
+4. Install Gymnasium `pip install "gymnasium[all]"`
+5. Install Mujoco-py from openai
+6. Install following dependencies before running pytest
+    - `mesalib glew glfw patchelf`
+
 ## Type checking
 
 The project uses `pyright` to check types.
