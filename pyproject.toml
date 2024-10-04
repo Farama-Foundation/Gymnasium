@@ -13,7 +13,7 @@ authors = [{ name = "Farama Foundation", email = "contact@farama.org" }]
 license = { text = "MIT License" }
 keywords = ["Reinforcement Learning", "game", "RL", "AI", "gymnasium"]
 classifiers = [
-    "Development Status :: 4 - Beta",  # change to `5 - Production/Stable` when ready
+    "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
