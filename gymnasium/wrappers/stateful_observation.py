@@ -372,9 +372,9 @@ class FrameStackObservation(
             raise TypeError(
                 f"The stack_size is expected to be an integer, actual type: {type(stack_size)}"
             )
-        if not 1 < stack_size:
+        if not 0 < stack_size:
             raise ValueError(
-                f"The stack_size needs to be greater than one, actual value: {stack_size}"
+                f"The stack_size needs to be greater than zero, actual value: {stack_size}"
             )
         if isinstance(padding_type, str) and (
             padding_type == "reset" or padding_type == "zero"
