@@ -99,9 +99,9 @@ class Discrete(Space[np.int64]):
                 np.logical_or(mask == 0, valid_action_mask)
             ), f"All values of a mask should be 0 or 1, actual values: {mask}"
             if np.any(valid_action_mask):
-                return self.start + self.dtype.type(self.np_random.choice(
-                    np.where(valid_action_mask)[0]
-                ))
+                return self.start + self.dtype.type(
+                    self.np_random.choice(np.where(valid_action_mask)[0])
+                )
             else:
                 return self.start
 
