@@ -746,9 +746,9 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The stack_size is expected to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stack_size</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">stack_size</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">stack_size</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The stack_size needs to be greater than one, actual value: </span><span class="si">{</span><span class="n">stack_size</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;The stack_size needs to be greater than zero, actual value: </span><span class="si">{</span><span class="n">stack_size</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">padding_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
             <span class="n">padding_type</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span> <span class="ow">or</span> <span class="n">padding_type</span> <span class="o">==</span> <span class="s2">&quot;zero&quot;</span>
