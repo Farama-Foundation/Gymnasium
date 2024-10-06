@@ -105,7 +105,7 @@ class Discrete(Space[np.int64]):
             else:
                 return self.start
 
-        return self.start + self.dtype.type(self.np_random.integers(self.n))
+        return self.start + self.np_random.integers(self.n).astype(self.dtype)
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
