@@ -27,6 +27,7 @@ class Discrete(Space[np.int64]):
     def __init__(
         self,
         n: int | np.integer[Any],
+        dtype: str | type[np.integer[Any]] = np.int64,
         seed: int | np.random.Generator | None = None,
         start: int | np.integer[Any] = 0,
     ):
@@ -36,6 +37,7 @@ class Discrete(Space[np.int64]):
 
         Args:
             n (int): The number of elements of this space.
+            dtype: This should be some kind of integer type.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the ``Dict`` space.
             start (int): The smallest element of this space.
         """
@@ -47,9 +49,22 @@ class Discrete(Space[np.int64]):
             type(start), np.integer
         ), f"Expects `start` to be an integer, actual type: {type(start)}"
 
-        self.n = np.int64(n)
-        self.start = np.int64(start)
-        super().__init__((), np.int64, seed)
+        # determine dtype
+        if dtype is None:
+            raise ValueError(
+                "Discrete dtype must be explicitly provided, cannot be None."
+            )
+        self.dtype = np.dtype(dtype)
+
+        #  * check that dtype is an accepted dtype
+        if not (np.issubdtype(self.dtype, np.integer)):
+            raise ValueError(
+                f"Invalid Discrete dtype ({self.dtype}), must be an integer dtype"
+            )
+
+        self.n = self.dtype.type(n)
+        self.start = self.dtype.type(start)
+        super().__init__((), self.dtype, seed)
 
     @property
     def is_np_flattenable(self):
