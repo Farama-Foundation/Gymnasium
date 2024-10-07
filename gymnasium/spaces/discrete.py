@@ -37,7 +37,7 @@ class Discrete(Space[np.int64]):
 
         Args:
             n (int): The number of elements of this space.
-            dtype: This should be some kind of integer type.
+            dtype: The space type, for example, ``int``, ``np.int64``, ``np.int32``, or ``np.uint8``.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the ``Dict`` space.
             start (int): The smallest element of this space.
         """
