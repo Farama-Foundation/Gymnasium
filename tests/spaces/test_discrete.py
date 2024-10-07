@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 import numpy as np
+import pytest
 
 from gymnasium.spaces import Discrete
 
@@ -32,3 +33,30 @@ def test_sample_mask():
     assert space.sample(mask=np.array([0, 1, 0, 0], dtype=np.int8)) == 3
     assert space.sample(mask=np.array([0, 0, 0, 0], dtype=np.int8)) == 2
     assert space.sample(mask=np.array([0, 1, 0, 1], dtype=np.int8)) in [3, 5]
+
+
+@pytest.mark.parametrize("dtype, sample_dtype", [
+    (int, np.int64),
+    (np.int64, np.int64),
+    (np.int32, np.int32),
+    (np.uint8, np.uint8),
+])
+def test_dtype(dtype, sample_dtype):
+    space = Discrete(n=5, dtype=dtype, start=2)
+
+    sample = space.sample()
+    sample_mask = space.sample(mask=np.array([0, 1, 0, 0, 0], dtype=np.int8))
+    print(f'{sample=}, {sample_mask=}')
+    print(f'{type(sample)=}, {type(sample_mask)=}')
+    assert isinstance(sample, sample_dtype), type(sample)
+    assert isinstance(sample_mask, sample_dtype), type(sample_mask)
+
+
+@pytest.mark.parametrize("dtype", [
+    str,
+    np.float32,
+    np.complex64,
+])
+def test_dtype_error(dtype):
+    with pytest.raises(ValueError, match="Invalid Discrete dtype"):
+        Discrete(4, dtype=dtype)
