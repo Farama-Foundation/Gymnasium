@@ -58,6 +58,7 @@ def test_dtype(dtype, sample_dtype):
 @pytest.mark.parametrize(
     "dtype",
     [
+        None,
         str,
         np.float32,
         np.complex64,
