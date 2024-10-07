@@ -25,7 +25,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 ## Third-party environments with Gymnasium
 *This page contains environments which are not maintained by Farama Foundation and, as such, cannot be guaranteed to function as intended.*
 
-*If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/bnJ6kubTg6), then submit a PR by editing this [file](https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/environments/third_party_environments.md).*
+*If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/MHCFauP67z), then submit a PR by editing this [file](https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/environments/third_party_environments.md).*
 
 <!-- Template
 - [NAME: SUB_NAME_IF_PRESENT](LINK)
@@ -270,6 +270,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![GitHub stars](https://img.shields.io/github/stars/elbecerrasoto/gym-cellular-automata)
 
   Environments where the agent interacts with _Cellular Automata_ by changing its cell states.
+
+- [Gym-Gridworlds: Collection of Customizable Minimalistic Gridworlds](https://github.com/sparisi/gym_gridworlds)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/sparisi/gym_gridworlds)
+
+  The default class implements a "go-to goal", but it can be easily customized for different tasks, with a variety of grids, rewards, dynamics, and tasks. It supports different observation types (discrete, coordinates, binary, pixels, partial). Useful for quickly testing and prototyping RL algorithms, both tabular and with function approximation.
 
 - [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
 
