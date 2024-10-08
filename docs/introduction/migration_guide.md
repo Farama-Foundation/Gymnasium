@@ -8,7 +8,10 @@ title: Migration Guide
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.wrappers
 
-Gymnasium is a fork of `OpenAI Gym v0.26 <https://github.com/openai/gym/releases/tag/0.26.2>`_, which introduced a large breaking change from `Gym v0.21 <https://github.com/openai/gym/releases/tag/v0.21.0>`_. In this guide, we briefly outline the API changes from Gym v0.21 - which a number of tutorials have been written for - to Gym v0.26. For environments still stuck in the v0.21 API, see the `guide </content/gym_compatibility>`_
+Gymnasium is a fork of `OpenAI Gym v0.26 <https://github.com/openai/gym/releases/tag/0.26.2>`_, which introduced a large breaking change from 
+`Gym v0.21 <https://github.com/openai/gym/releases/tag/v0.21.0>`_.
+In this guide, we briefly outline the API changes from Gym v0.21 - which a number of tutorials have been written for - to Gym v0.26 (and later, including 1.0.0).
+For environments still stuck in the v0.21 API, see the `guide </content/gym_compatibility>`_
 ```
 
 ## Example code for v0.21
@@ -29,7 +32,7 @@ while not done:
 env.close()
 ```
 
-## Example code for v0.26
+## Example code for v0.26+
 
 ```python
 import gym
