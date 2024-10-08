@@ -8,7 +8,7 @@ title: Migration Guide
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.wrappers
 
-Gymnasium is a fork of `OpenAI Gym v0.26 <https://github.com/openai/gym/releases/tag/0.26.2>`_, which introduced a large breaking change from `Gym v0.21 <https://github.com/openai/gym/releases/tag/v0.21.0>`_. In this guide, we briefly outline the API changes from Gym v0.21 - which a number of tutorials have been written for - to Gym v0.26. For environments still stuck in the v0.21 API, see the `guide </content/gym_compatibility>`_
+Gymnasium is a fork of `OpenAI Gym v0.26 <https://github.com/openai/gym/releases/tag/0.26.2>`_, which introduced a large breaking change from `Gym v0.21 <https://github.com/openai/gym/releases/tag/v0.21.0>`_.In this guide, we briefly outline the API changes from Gym v0.21 - which a number of tutorials have been written for - to Gym v0.26 (and later, including 1.0.0). For environments still stuck in the v0.21 API, see the `guide </content/gym_compatibility>`_
 ```
 
 ## Example code for v0.21
@@ -29,7 +29,7 @@ while not done:
 env.close()
 ```
 
-## Example code for v0.26
+## Example code for v0.26 and later, including v1.0.0
 
 ```python
 import gym
@@ -59,7 +59,7 @@ Gymnasium v0.26 changed to using ``numpy.random.Generator`` instead of a custom 
 ## Environment Reset
 
 ```{eval-rst}
-In v0.26, :meth:`reset` takes two optional parameters and returns one value. This contrasts to v0.21 which takes no parameters and returns ``None``. The two parameters are ``seed`` for setting the random number generator and ``options`` which allows additional data to be passed to the environment on reset. For example, in classic control, the ``options`` parameter now allows users to modify the range of the state bound. See the original `PR <https://github.com/openai/gym/pull/2921>`_ for more details.
+In v0.26+, :meth:`reset` takes two optional parameters and returns one value. This contrasts to v0.21 which takes no parameters and returns ``None``. The two parameters are ``seed`` for setting the random number generator and ``options`` which allows additional data to be passed to the environment on reset. For example, in classic control, the ``options`` parameter now allows users to modify the range of the state bound. See the original `PR <https://github.com/openai/gym/pull/2921>`_ for more details.
 
 :meth:`reset` further returns ``info``, similar to the ``info`` returned by :meth:`step`. This is important because ``info`` can include metrics or valid action mask that is used or saved in the next step.
 
@@ -78,13 +78,13 @@ For users wishing to update, in most cases, replacing ``done`` with ``terminated
 ```{eval-rst}
 In v0.21, the :class:`TimeLimit` wrapper added an extra key in the ``info`` dictionary ``TimeLimit.truncated`` whenever the agent reached the time limit without reaching a terminal state.
 
-In v0.26, this information is instead communicated through the `truncated` return value described in the previous section, which is `True` if the agent reaches the time limit, whether or not it reaches a terminal state. The old dictionary entry is equivalent to ``truncated and not terminated``
+In v0.26+, this information is instead communicated through the `truncated` return value described in the previous section, which is `True` if the agent reaches the time limit, whether or not it reaches a terminal state. The old dictionary entry is equivalent to ``truncated and not terminated``
 ```
 
 ## Environment Render
 
 ```{eval-rst}
-In v0.26, a new render API was introduced such that the render mode is fixed at initialisation as some environments don't allow on-the-fly render mode changes. Therefore, users should now specify the :attr:`render_mode` within ``gym.make`` as shown in the v0.26 example code above.
+In v0.26, a new render API was introduced such that the render mode is fixed at initialisation as some environments don't allow on-the-fly render mode changes. Therefore, users should now specify the :attr:`render_mode` within ``gym.make`` as shown in the v0.26+ example code above.
 
 For a more complete explanation of the changes, please refer to this `summary <https://younis.dev/blog/render-api/>`_.
 ```
