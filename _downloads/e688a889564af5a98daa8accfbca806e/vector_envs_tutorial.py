@@ -3,6 +3,7 @@ Training A2C with Vector Envs and Domain Randomization
 ======================================================
 
 """
+
 # %%
 # Notice
 # ------
@@ -267,7 +268,7 @@ class A2C(nn.Module):
 # The simplest way to create vector environments is by calling `gym.vector.make`, which creates multiple instances of the same environment:
 #
 
-envs = gym.vector.make("LunarLander-v2", num_envs=3, max_episode_steps=600)
+envs = gym.vector.make("LunarLander-v3", num_envs=3, max_episode_steps=600)
 
 
 # %%
@@ -277,13 +278,13 @@ envs = gym.vector.make("LunarLander-v2", num_envs=3, max_episode_steps=600)
 # If we want to randomize the environment for training to get more robust agents (that can deal with different parameterizations of an environment
 # and theirfore might have a higher degree of generalization), we can set the desired parameters manually or use a pseudo-random number generator to generate them.
 #
-# Manually setting up 3 parallel 'LunarLander-v2' envs with different parameters:
+# Manually setting up 3 parallel 'LunarLander-v3' envs with different parameters:
 
 
 envs = gym.vector.AsyncVectorEnv(
     [
         lambda: gym.make(
-            "LunarLander-v2",
+            "LunarLander-v3",
             gravity=-10.0,
             enable_wind=True,
             wind_power=15.0,
@@ -291,7 +292,7 @@ envs = gym.vector.AsyncVectorEnv(
             max_episode_steps=600,
         ),
         lambda: gym.make(
-            "LunarLander-v2",
+            "LunarLander-v3",
             gravity=-9.8,
             enable_wind=True,
             wind_power=10.0,
@@ -299,7 +300,7 @@ envs = gym.vector.AsyncVectorEnv(
             max_episode_steps=600,
         ),
         lambda: gym.make(
-            "LunarLander-v2", gravity=-7.0, enable_wind=False, max_episode_steps=600
+            "LunarLander-v3", gravity=-7.0, enable_wind=False, max_episode_steps=600
         ),
     ]
 )
@@ -309,14 +310,14 @@ envs = gym.vector.AsyncVectorEnv(
 #
 # ------------------------------
 #
-# Randomly generating the parameters for 3 parallel 'LunarLander-v2' envs, using `np.clip` to stay in the recommended parameter space:
+# Randomly generating the parameters for 3 parallel 'LunarLander-v3' envs, using `np.clip` to stay in the recommended parameter space:
 #
 
 
 envs = gym.vector.AsyncVectorEnv(
     [
         lambda: gym.make(
-            "LunarLander-v2",
+            "LunarLander-v3",
             gravity=np.clip(
                 np.random.normal(loc=-10.0, scale=1.0), a_min=-11.99, a_max=-0.01
             ),
@@ -374,7 +375,7 @@ if randomize_domain:
     envs = gym.vector.AsyncVectorEnv(
         [
             lambda: gym.make(
-                "LunarLander-v2",
+                "LunarLander-v3",
                 gravity=np.clip(
                     np.random.normal(loc=-10.0, scale=1.0), a_min=-11.99, a_max=-0.01
                 ),
@@ -392,7 +393,7 @@ if randomize_domain:
     )
 
 else:
-    envs = gym.vector.make("LunarLander-v2", num_envs=n_envs, max_episode_steps=600)
+    envs = gym.vector.make("LunarLander-v3", num_envs=n_envs, max_episode_steps=600)
 
 
 obs_shape = envs.single_observation_space.shape[0]
@@ -416,7 +417,7 @@ agent = A2C(obs_shape, action_shape, device, critic_lr, actor_lr, n_envs)
 # For our training loop, we are using the `RecordEpisodeStatistics` wrapper to record the episode lengths and returns and we are also saving
 # the losses and entropies to plot them after the agent finished training.
 #
-# You may notice that the don't reset the vectorized envs at the start of each episode like we would usually do.
+# You may notice that we don't reset the vectorized envs at the start of each episode like we would usually do.
 # This is because each environment resets automatically once the episode finishes (each environment takes a different number of timesteps to finish
 # an episode because of the random seeds). As a result, we are also not collecting data in `episodes`, but rather just play a certain number of steps
 # (`n_steps_per_update`) in each environment (as an example, this could mean that we play 20 timesteps to finish an episode and then
@@ -499,7 +500,7 @@ for sample_phase in tqdm(range(n_updates)):
 rolling_length = 20
 fig, axs = plt.subplots(nrows=2, ncols=2, figsize=(12, 5))
 fig.suptitle(
-    f"Training plots for {agent.__class__.__name__} in the LunarLander-v2 environment \n \
+    f"Training plots for {agent.__class__.__name__} in the LunarLander-v3 environment \n \
              (n_envs={n_envs}, n_steps_per_update={n_steps_per_update}, randomize_domain={randomize_domain})"
 )
 
@@ -606,7 +607,7 @@ plt.show()
 # because the gradients of the environments are good enough after a relatively low number of environments
 # (especially if the environment is not very complex). In this case, increasing the number of environments
 # does not increase the learning speed, and actually increases the runtime, possibly due to the additional time
-# needed to calculate the gradients. For LunarLander-v2, the best performing configuration used a AsyncVectorEnv
+# needed to calculate the gradients. For LunarLander-v3, the best performing configuration used a AsyncVectorEnv
 # with 10 parallel environments, but environments with a higher complexity may require more
 # parallel environments to achieve optimal performance.
 #
@@ -662,7 +663,7 @@ for episode in range(n_showcase_episodes):
     # create a new sample environment to get new random parameters
     if randomize_domain:
         env = gym.make(
-            "LunarLander-v2",
+            "LunarLander-v3",
             render_mode="human",
             gravity=np.clip(
                 np.random.normal(loc=-10.0, scale=2.0), a_min=-11.99, a_max=-0.01
@@ -677,7 +678,7 @@ for episode in range(n_showcase_episodes):
             max_episode_steps=500,
         )
     else:
-        env = gym.make("LunarLander-v2", render_mode="human", max_episode_steps=500)
+        env = gym.make("LunarLander-v3", render_mode="human", max_episode_steps=500)
 
     # get an initial state
     state, info = env.reset()
@@ -705,7 +706,7 @@ env.close()
 
 # from gymnasium.utils.play import play
 #
-# play(gym.make('LunarLander-v2', render_mode='rgb_array'),
+# play(gym.make('LunarLander-v3', render_mode='rgb_array'),
 #     keys_to_action={'w': 2, 'a': 1, 'd': 3}, noop=0)
 
 
