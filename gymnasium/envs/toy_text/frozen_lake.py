@@ -162,7 +162,12 @@ class FrozenLakeEnv(Env):
     ```
         desc=["SFFF", "FHFH", "FFFH", "HFFG"].
     ```
-
+    The tile letters denote:
+    - "S" for Start tile
+    - "G" for Goal tile
+    - "F" for frozen tile
+    - "H" for a tile with a hole
+    
     A random generated map can be specified by calling the function `generate_random_map`.
     ```
     from gymnasium.envs.toy_text.frozen_lake import generate_random_map
