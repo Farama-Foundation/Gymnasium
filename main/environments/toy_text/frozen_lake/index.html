@@ -475,6 +475,13 @@ The number of possible observations is dependent on the size of the map.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">desc</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SFFF&quot;</span><span class="p">,</span> <span class="s2">&quot;FHFH&quot;</span><span class="p">,</span> <span class="s2">&quot;FFFH&quot;</span><span class="p">,</span> <span class="s2">&quot;HFFG&quot;</span><span class="p">]</span><span class="o">.</span>
 </pre></div>
 </div>
+<p>The tile letters denote:</p>
+<ul class="simple">
+<li><p>“S” for Start tile</p></li>
+<li><p>“G” for Goal tile</p></li>
+<li><p>“F” for frozen tile</p></li>
+<li><p>“H” for a tile with a hole</p></li>
+</ul>
 <p>A random generated map can be specified by calling the function <code class="docutils literal notranslate"><span class="pre">generate_random_map</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gymnasium.envs.toy_text.frozen_lake</span> <span class="kn">import</span> <span class="n">generate_random_map</span>
 
