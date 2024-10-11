@@ -74,12 +74,12 @@ You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032
 
 ```
 @article{kwiatkowski2024gymnasium,
-      title={Gymnasium: A Standard Interface for Reinforcement Learning Environments}, 
+      title={Gymnasium: A Standard Interface for Reinforcement Learning Environments},
       author={Ariel Kwiatkowski and Mark Towers and Jordan Terry and John U. Balis and Gianluca De Cola and Tristan Deleu and Manuel Goulão and Andreas Kallinteris and Markus Krimmel and Arjun KG and Rodrigo Perez-Vicente and Andrea Pierré and Sander Schulhoff and Jun Jet Tai and Hannah Tan and Omar G. Younis},
       year={2024},
       eprint={2407.17032},
       archivePrefix={arXiv},
       primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2407.17032}, 
+      url={https://arxiv.org/abs/2407.17032},
 }
 ```
