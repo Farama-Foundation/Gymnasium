@@ -23,7 +23,7 @@ jobs:
     - uses: actions/setup-python@v5
 
     - name: Install dependencies
-      run: python -m pipx install --upgrade pip setuptools build
+      run: python -m pip install --upgrade pip setuptools build --break-system-packages
 
     - name: Build sdist and wheels
       run: python -m build
