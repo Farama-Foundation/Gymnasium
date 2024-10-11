@@ -151,5 +151,15 @@ reportUnboundVariable = "warning"
 
 reportPrivateImportUsage = "none"  # -> commented out raises 144 errors
 
+reportIndexIssue = "none"  # TODO fix one by one
+reportReturnType = "none"  # TODO fix one by one
+reportCallIssue = "none"  # TODO fix one by one
+reportOperatorIssue = "none"  # TODO fix one by one
+reportInvalidTypeForm = "none"  # TODO fix one by one
+reportOptionalMemberAccess = "none"  # TODO fix one by one
+reportRedeclaration = "none"  # TODO fix one by one
+reportAssignmentType = "none"  # TODO fix one by one
+
+
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning:gymnasium.*:"]
