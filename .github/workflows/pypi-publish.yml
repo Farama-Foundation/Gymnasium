@@ -24,7 +24,7 @@ jobs:
 
     - name: Install dependencies
       #run: python -m pip install --upgrade pip setuptools build --break-system-packages
-      run: pipx install setuptools build 
+      run: pipx install build 
 
     - name: Build sdist and wheels
       run: pyproject-build
