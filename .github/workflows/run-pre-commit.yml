@@ -15,8 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-      - run: python -m venv test_env
-      - run: source test_env/bin/activate
-      - run: python -m pip install pre-commit
+      # These do not work
+      # - run: python -m venv test_env
+      # - run: source test_env/bin/activate
+      - run: python -m pip install pre-commit --break-system-packages
       - run: python -m pre_commit --version
       - run: python -m pre_commit run --all-files
