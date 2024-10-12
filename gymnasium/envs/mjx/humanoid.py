@@ -1,4 +1,5 @@
 """Contains the classes for the humaanoid environments environments, `Humanoid` and `HumanoidStandup`."""
+
 import gymnasium
 
 

@@ -1,4 +1,5 @@
 """Contains the class for the `Swimmer` environment."""
+
 import gymnasium
 
 
