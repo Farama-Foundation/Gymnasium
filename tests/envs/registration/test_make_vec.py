@@ -1,10 +1,11 @@
 """Testing of the `gym.make_vec` function."""
+
 import re
 
 import pytest
 
 import gymnasium as gym
-from gymnasium import VectorizeMode
+from gymnasium import VectorizeMode, error, wrappers
 from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.envs.classic_control.cartpole import CartPoleVectorEnv
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
@@ -114,6 +115,22 @@ def test_make_vec_vectorization_mode():
         gym.make_vec("CartPole-v1", vectorization_mode=123)
 
 
+def test_make_vec_render_mode():
+    envs = gym.make_vec(
+        "CartPole-v1", vectorization_mode=VectorizeMode.VECTOR_ENTRY_POINT
+    )
+    assert envs.render_mode is None
+    envs.close()
+
+    envs = gym.make_vec(
+        "CartPole-v1",
+        render_mode="rgb_array",
+        vectorization_mode=VectorizeMode.VECTOR_ENTRY_POINT,
+    )
+    assert envs.render_mode == "rgb_array"
+    envs.close()
+
+
 def test_make_vec_wrappers():
     """Tests that the `gym.make_vec` wrappers parameter works."""
     env = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
@@ -167,6 +184,9 @@ def test_make_vec_wrappers():
             },
         ),
         ("CartPole-v1", {"render_mode": "rgb_array"}),
+        ("CartPole-v1", {"vectorization_mode": "sync", "max_episode_steps": 5}),
+        ("CartPole-v1", {"sutton_barto_reward": True}),
+        ("CartPole-v1", {"vectorization_mode": "sync", "sutton_barto_reward": True}),
         (gym.spec("CartPole-v1"), {}),
         (gym.spec("CartPole-v1"), {"num_envs": 3}),
         (gym.spec("CartPole-v1"), {"vectorization_mode": "sync"}),
@@ -183,6 +203,15 @@ def test_make_vec_wrappers():
             },
         ),
         (gym.spec("CartPole-v1"), {"render_mode": "rgb_array"}),
+        (
+            gym.spec("CartPole-v1"),
+            {"vectorization_mode": "sync", "max_episode_steps": 5},
+        ),
+        (gym.spec("CartPole-v1"), {"sutton_barto_reward": True}),
+        (
+            gym.spec("CartPole-v1"),
+            {"vectorization_mode": "sync", "sutton_barto_reward": True},
+        ),
     ),
 )
 def test_make_vec_with_spec(env_id: str, kwargs: dict):
@@ -216,3 +245,39 @@ def test_async_with_dynamically_registered_env(ctx):
     )
 
     del gym.registry["TestEnv-v0"]
+
+
+def test_make_vec_with_spec_additional_wrappers():
+    gym.register(
+        "TestEnv-v0",
+        entry_point=CartPoleEnv,
+        additional_wrappers=(
+            wrappers.ClipReward.wrapper_spec(min_reward=-0.5, max_reward=0.5),
+        ),
+    )
+
+    env = gym.make("TestEnv-v0")
+    assert isinstance(env, wrappers.ClipReward)
+    env.close()
+
+    envs = gym.make_vec("TestEnv-v0")
+    assert isinstance(envs.envs[0], wrappers.ClipReward)
+    envs.close()
+
+    gym.register(
+        "TestEnv-v1",
+        vector_entry_point=CartPoleVectorEnv,
+        additional_wrappers=(
+            wrappers.ClipReward.wrapper_spec(min_reward=-0.5, max_reward=0.5),
+        ),
+    )
+    with pytest.raises(
+        error.Error,
+        match=re.escape(
+            "Cannot use `vector_entry_point` vectorization mode with the additional_wrappers parameter in spec being not empty"
+        ),
+    ):
+        gym.make_vec("TestEnv-v1")
+
+    del gym.registry["TestEnv-v0"]
+    del gym.registry["TestEnv-v1"]

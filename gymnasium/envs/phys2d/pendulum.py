@@ -1,4 +1,5 @@
 """Implementation of a Jax-accelerated pendulum environment."""
+
 from __future__ import annotations
 
 from os import path
@@ -13,7 +14,7 @@ from jax.random import PRNGKey
 import gymnasium as gym
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv, FunctionalJaxVectorEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
 
 
@@ -75,7 +76,7 @@ class PendulumFunctional(
         return new_state
 
     def observation(
-        self, state: jax.Array, params: PendulumParams = PendulumParams
+        self, state: jax.Array, rng: Any, params: PendulumParams = PendulumParams
     ) -> jax.Array:
         """Generates an observation based on the state."""
         theta, thetadot = state
@@ -86,6 +87,7 @@ class PendulumFunctional(
         state: StateType,
         action: ActType,
         next_state: StateType,
+        rng: Any,
         params: PendulumParams = PendulumParams,
     ) -> float:
         """Generates the reward based on the state, action and next state."""
@@ -100,7 +102,7 @@ class PendulumFunctional(
         return -costs
 
     def terminal(
-        self, state: StateType, params: PendulumParams = PendulumParams
+        self, state: StateType, rng: Any, params: PendulumParams = PendulumParams
     ) -> bool:
         """Determines if the state is a terminal state."""
         return False
@@ -117,7 +119,7 @@ class PendulumFunctional(
             from pygame import gfxdraw
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
         screen, clock, last_u = render_state
 
@@ -191,7 +193,7 @@ class PendulumFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
 
         pygame.init()
@@ -210,7 +212,7 @@ class PendulumFunctional(
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic-control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
         pygame.display.quit()
         pygame.quit()
@@ -223,7 +225,7 @@ class PendulumFunctional(
 class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
     """Jax-based pendulum environment using the functional version as base."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 30}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 30, "jax": True}
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
         """Constructor where the kwargs are passed to the base environment to modify the parameters."""
@@ -242,7 +244,7 @@ class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
 class PendulumJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
     """Jax-based implementation of the vectorized CartPole environment."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(
         self,

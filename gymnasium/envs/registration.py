@@ -1,4 +1,5 @@
 """Functions for registering environments within gymnasium using public functions ``make``, ``register`` and ``spec``."""
+
 from __future__ import annotations
 
 import contextlib
@@ -52,15 +53,13 @@ __all__ = [
 class EnvCreator(Protocol):
     """Function type expected for an environment."""
 
-    def __call__(self, **kwargs: Any) -> Env:
-        ...
+    def __call__(self, **kwargs: Any) -> Env: ...
 
 
 class VectorEnvCreator(Protocol):
     """Function type expected for an environment."""
 
-    def __call__(self, **kwargs: Any) -> gym.vector.VectorEnv:
-        ...
+    def __call__(self, **kwargs: Any) -> gym.vector.VectorEnv: ...
 
 
 @dataclass
@@ -161,7 +160,7 @@ class EnvSpec:
 
         for key, value in env_spec.items():
             if callable(value):
-                ValueError(
+                raise ValueError(
                     f"Callable found in {spec_name} for {key} attribute with value={value}. Currently, Gymnasium does not support serialising callables."
                 )
 
@@ -754,6 +753,21 @@ def make(
                 f"{e} was raised from the environment creator for {env_spec.id} with kwargs ({env_spec_kwargs})"
             )
 
+    if not isinstance(env, gym.Env):
+        if (
+            str(env.__class__.__base__) == "<class 'gym.core.Env'>"
+            or str(env.__class__.__base__) == "<class 'gym.core.Wrapper'>"
+        ):
+            raise TypeError(
+                "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
+                "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+            )
+        else:
+            raise TypeError(
+                f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
+                "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+            )
+
     # Set the minimal env spec for the environment.
     env.unwrapped.spec = EnvSpec(
         id=env_spec.id,
@@ -830,7 +844,7 @@ def make_vec(
     We refer to the Vector environment as the vectorizor while the environment being vectorized is the base or vectorized environment (``vectorizor(vectorized env)``).
 
     Args:
-        id: Name of the environment. Optionally, a module to import can be included, eg. 'module:Env-v0'
+        id: Name of the environment. Optionally, a module to import can be included, e.g. 'module:Env-v0'
         num_envs: Number of environments to create
         vectorization_mode: The vectorization method used, defaults to ``None`` such that if env id' spec has a ``vector_entry_point`` (not ``None``),
             this is first used otherwise defaults to ``sync`` to use the :class:`gymnasium.vector.SyncVectorEnv`.
@@ -859,6 +873,8 @@ def make_vec(
 
     env_spec = copy.deepcopy(env_spec)
     env_spec_kwargs = env_spec.kwargs
+    # for sync or async, these parameters should be passed in `make(..., **kwargs)` rather than in the env spec kwargs, therefore, we `reset` the kwargs
+    env_spec.kwargs = dict()
 
     num_envs = env_spec_kwargs.pop("num_envs", num_envs)
     vectorization_mode = env_spec_kwargs.pop("vectorization_mode", vectorization_mode)
@@ -915,6 +931,19 @@ def make_vec(
         )
 
     elif vectorization_mode == VectorizeMode.VECTOR_ENTRY_POINT:
+        if len(vector_kwargs) > 0:
+            raise error.Error(
+                f"Custom vector environment can be passed arguments only through kwargs and `vector_kwargs` is not empty ({vector_kwargs})"
+            )
+        elif len(wrappers) > 0:
+            raise error.Error(
+                f"Cannot use `vector_entry_point` vectorization mode with the wrappers argument ({wrappers})."
+            )
+        elif len(env_spec.additional_wrappers) > 0:
+            raise error.Error(
+                f"Cannot use `vector_entry_point` vectorization mode with the additional_wrappers parameter in spec being not empty ({env_spec.additional_wrappers})."
+            )
+
         entry_point = env_spec.vector_entry_point
         if entry_point is None:
             raise error.Error(
@@ -925,15 +954,13 @@ def make_vec(
         else:  # Assume it's a string
             env_creator = load_env_creator(entry_point)
 
-        if len(wrappers) > 0:
-            raise error.Error(
-                "Cannot use `vector_entry_point` vectorization mode with the wrappers argument."
-            )
-        if "max_episode_steps" not in vector_kwargs:
-            assert vector_kwargs is not None
-            vector_kwargs["max_episode_steps"] = env_spec.max_episode_steps
+        if (
+            env_spec.max_episode_steps is not None
+            and "max_episode_steps" not in env_spec_kwargs
+        ):
+            env_spec_kwargs["max_episode_steps"] = env_spec.max_episode_steps
 
-        env = env_creator(num_envs=num_envs, **vector_kwargs)
+        env = env_creator(num_envs=num_envs, **env_spec_kwargs)
     else:
         raise error.Error(f"Unknown vectorization mode: {vectorization_mode}")
 

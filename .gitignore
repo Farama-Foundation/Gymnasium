@@ -41,3 +41,6 @@ tutorial/*.html
 # PyCharm project files
 .idea
 vizdoom.ini
+
+# Data generated from pytest
+save_videos*/

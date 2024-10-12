@@ -14,6 +14,7 @@
 import os
 import re
 import sys
+import time
 
 import sphinx_gallery.gen_rst
 from furo.gen_tutorials import generate_tutorials
@@ -27,7 +28,7 @@ import gymnasium  # noqa: E402
 
 
 project = "Gymnasium"
-copyright = "2023 Farama Foundation"
+copyright = f"{time.localtime().tm_year} Farama Foundation"
 author = "Farama Foundation"
 
 # The full version, including alpha/beta/rc tags
@@ -130,6 +131,7 @@ sphinx_gallery_conf = {
     "ignore_pattern": r"__init__\.py",
     "examples_dirs": "./tutorials",
     "gallery_dirs": "./tutorials",
+    "copyfile_regex": r"./tutorials/.*\.md",
     "show_signature": False,
     "show_memory": False,
     "min_reported_time": float("inf"),

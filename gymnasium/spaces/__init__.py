@@ -10,12 +10,14 @@ are vectors in the two-dimensional unit cube, the environment code may contain t
 
 All spaces inherit from the :class:`Space` superclass.
 """
+
 from gymnasium.spaces.box import Box
 from gymnasium.spaces.dict import Dict
 from gymnasium.spaces.discrete import Discrete
 from gymnasium.spaces.graph import Graph, GraphInstance
 from gymnasium.spaces.multi_binary import MultiBinary
 from gymnasium.spaces.multi_discrete import MultiDiscrete
+from gymnasium.spaces.oneof import OneOf
 from gymnasium.spaces.sequence import Sequence
 from gymnasium.spaces.space import Space
 from gymnasium.spaces.text import Text
@@ -38,6 +40,7 @@ __all__ = [
     "Tuple",
     "Sequence",
     "Dict",
+    "OneOf",
     # util functions (there are more utility functions in vector/utils/spaces.py)
     "flatdim",
     "flatten_space",

@@ -41,22 +41,23 @@ Instructions for installing the MuJoCo engine can be found on their [website](ht
 For MuJoCo `v3` environments and older the `mujoco-py` framework is required (`pip install gymnasium[mujoco-py]`) which can be found in the [GitHub repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py).
 
 There are eleven MuJoCo environments (in roughly increasing complexity):
+
 | Robot                  | Short Description                                                    |
-| ---------------------- | -------------------------------------------------------------------- |
+|------------------------|----------------------------------------------------------------------|
 | **CartPoles**          |                                                                      |
-| InvertedPendulum       | MuJuCo version of the CartPole Environment (with Continuous actions) |
+| InvertedPendulum       | MuJoCo version of the CartPole Environment (with Continuous actions) |
 | InvertedDoublePendulum | 2 Pole variation of the CartPole Environment                         |
 | **Arms**               |                                                                      |
 | Reacher                | 2d arm with the goal of reaching an object                           |
 | Pusher                 | 3d arm with the goal of pushing an object to a target location       |
 | **2D Runners**         |                                                                      |
 | HalfCheetah            | 2d quadruped with the goal of running                                |
-| Hopper                 | 2d monoped with the goal of goal of hopping                          |
-| Walker2d               | 2d bidped with the goal of walking                                   |
+| Hopper                 | 2d monoped with the goal of hopping                                  |
+| Walker2d               | 2d biped with the goal of walking                                    |
 | **Swimmers**           |                                                                      |
 | Swimmer                | 3d robot with the goal of swimming                                   |
 | **Quarduped**          |                                                                      |
-| Ant                    | 3d quadurped with the goal of running                                |
+| Ant                    | 3d quadruped with the goal of running                                |
 | **Humanoid Bipeds**    |                                                                      |
 | Humanoid               | 3d humanoid with the goal of running                                 |
 | HumanoidStandup        | 3d humanoid with the goal of standing up                             |
@@ -75,37 +76,54 @@ Environments can be configured by changing the `xml_file` argument and/or by twe
 ## Versions
 Gymnasium includes the following versions of the environments:
 
-| Version | Simulator       | Notes                                            |
-| ------- | --------------- | ------------------------------------------------ |
-| `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)      |
-| `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                   |
-| `v3`    | `mujoco-py`     | Maintained for reproducibility (limited support) |
-| `v2`    | `mujoco-py`     | Maintained for reproducibility (limited support) |
+| Version | Simulator       | Notes                                                  |
+|---------|-----------------|--------------------------------------------------------|
+| `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)            |
+| `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                         |
+| `v3`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
+| `v2`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
 
 For more information, see the section "Version History" for each environment.
 
 `v1` and older are no longer included in Gymnasium.
 
-Note: The exact behavior of the MuJoCo simulator changes slightly between `mujoco`  versions due to floating point operation ordering (more information of their [Documentation]( https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility))
+### Comparing training performance across versions
+The training performance of `v2` and `v3` is identical assuming the same/default arguments were used.
 
+The training performance of `v2`/`v3` and `v4` are not directly comparable because of the change to the newer simulator, but the results for not Ant and not Humanoids are comparable (for more information see [GitHub Comment #1](https://github.com/openai/gym/pull/2595#issuecomment-1099152505) and [GitHub Comment #2](https://github.com/openai/gym/pull/2762#issuecomment-1135362092)).
+
+The Training performance of `v4` and `v5` is different because of the many changes in the environments, but the Half Cheetah and Swimmer exhibits identical behaviour, Pusher and Swimmer are close (for more information see [GitHub Issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
+
+### Exact reproducibility
+Note: The exact behavior of the MuJoCo simulator changes slightly between `mujoco` versions due to floating point operation ordering (more information of their [Documentation]( https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility)), if exact reproducibility is need besides using the `seed` for experiments the same simulator version should be used.
 
 ## Rendering Arguments
-The all MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:
+All of the MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:
 
 ```python
 env = gymnasium.make("Ant-v5", render_mode="rgb_array", width=1280, height=720)
 ```
 
-| Parameter                   | Type          | Default      | Description                               |
-| --------------------------- | ------------- | ------------ | ----------------------------------------- |
-| `width`                     | **int**       | `480`        | The width of the render window            |
-| `height`                    | **int**       | `480`        | The height of the render window           |
-| `camera_id`                 |**int \| None**| `None`       | The camera ID used for the render window  |
-| `camera_name`               |**str \| None**| `None`       | The name of the camera used for the render window (mutally exclusive option with `camera_id`) |
-| `default_camera_config`     |**dict[str, float \| int] \| None**| `None` |  The [mjvCamera](https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjvcamera) properties |
-| `max_geom`                  | **int**       | `1000`       | Max number of geometrical objects to render (useful for 3rd-party environments) |
+| Parameter               | Type                                | Default | Description                                                                                                                                                                                                                                              |
+|-------------------------|-------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `width`                 | **int**                             | `480`   | The width of the render window                                                                                                                                                                                                                           |
+| `height`                | **int**                             | `480`   | The height of the render window                                                                                                                                                                                                                          |
+| `camera_id`             | **int \| None**                     | `None`  | The camera ID used for the render window                                                                                                                                                                                                                 |
+| `camera_name`           | **str \| None**                     | `None`  | The name of the camera used for the render window (mutually exclusive option with `camera_id`)                                                                                                                                                           |
+| `default_camera_config` | **dict[str, float \| int] \| None** | `None`  | The [mjvCamera](https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjvcamera) properties                                                                                                                                                 |
+| `max_geom`              | **int**                             | `1000`  | Max number of geometrical objects to render (useful for 3rd-party environments)                                                                                                                                                                          |
+| `visual_options`        | **Dict[int, bool]**                 | `{}`    | A dictionary with [mjVisual](https://mujoco.readthedocs.io/en/stable/overview.html#mjvisual) flags and value pairs, example `{mujoco.mjtVisFlag.mjVIS_CONTACTPOINT: True, mujoco.mjtVisFlag.mjVIS_CONTACTFORCE: True}` (show contact points and forces). |
 
+### Rendering Backend
+The MuJoCo simulator renders images with OpenGL and can use 3 different back ends "glfw" (default), "egl", "omesa", which can be selected by setting an [environment variable](https://en.wikipedia.org/wiki/Environment_variable).
 
+| Backend | Environment Variable       | Description                       |
+|---------|----------------------------|-----------------------------------|
+| `glfw`  | `MUJOCO_GL=glfw` (default) | Renders with window System on GPU |
+| `egl`   | `MUJOCO_GL=egl`            | Renders headless on GPU           |
+| `omesa` | `MUJOCO_GL=omesa`          | Renders headless on CPU           |
+
+More information of the [MuJoCo/OpenGL documentation](https://mujoco.readthedocs.io/en/stable/programming/index.html#using-opengl).
 <!--
 ## Custom Models
 For more complex locomotion robot environments you can use third party models with the environments.

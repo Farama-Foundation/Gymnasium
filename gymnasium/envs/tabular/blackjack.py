@@ -1,6 +1,5 @@
 """This module provides a Blackjack functional environment and Gymnasium environment wrapper BlackJackJaxEnv."""
 
-
 import math
 import os
 from typing import NamedTuple, Optional, Tuple, Union
@@ -15,7 +14,7 @@ from jax.random import PRNGKey
 from gymnasium import spaces
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle, seeding
 from gymnasium.wrappers import HumanRendering
 
@@ -292,7 +291,7 @@ class BlackjackFunctional(
         return state
 
     def observation(
-        self, state: EnvState, params: BlackJackParams = BlackJackParams
+        self, state: EnvState, rng: PRNGKey, params: BlackJackParams = BlackJackParams
     ) -> jax.Array:
         """Blackjack observation."""
         return jnp.array(
@@ -305,7 +304,7 @@ class BlackjackFunctional(
         )
 
     def terminal(
-        self, state: EnvState, params: BlackJackParams = BlackJackParams
+        self, state: EnvState, rng: PRNGKey, params: BlackJackParams = BlackJackParams
     ) -> jax.Array:
         """Determines if a particular Blackjack observation is terminal."""
         return (state.done) > 0
@@ -315,6 +314,7 @@ class BlackjackFunctional(
         state: EnvState,
         action: ActType,
         next_state: StateType,
+        rng: PRNGKey,
         params: BlackJackParams = BlackJackParams,
     ) -> jax.Array:
         """Calculates reward from a state."""
@@ -353,7 +353,7 @@ class BlackjackFunctional(
             import pygame
         except ImportError:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             )
 
         rng = seeding.np_random(0)[0]
@@ -377,11 +377,11 @@ class BlackjackFunctional(
             import pygame
         except ImportError:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[toy_text]`"
+                'pygame is not installed, run `pip install "gymnasium[toy_text]"`'
             )
         screen, dealer_top_card_value_str, dealer_top_card_suit = render_state
 
-        player_sum, dealer_card_value, usable_ace = self.observation(state)
+        player_sum, dealer_card_value, usable_ace = self.observation(state, None)
         screen_width, screen_height = 600, 500
         card_img_height = screen_height // 3
         card_img_width = int(card_img_height * 142 / 197)
@@ -477,13 +477,15 @@ class BlackjackFunctional(
             np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
         )
 
-    def render_close(self, render_state: RenderStateType) -> None:
+    def render_close(
+        self, render_state: RenderStateType, params: BlackJackParams = BlackJackParams
+    ) -> None:
         """Closes the render state."""
         try:
             import pygame
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[classic_control]`"
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
         pygame.display.quit()
         pygame.quit()
@@ -496,7 +498,7 @@ class BlackjackFunctional(
 class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
     """A Gymnasium Env wrapper for the functional blackjack env."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(self, render_mode: Optional[str] = None, **kwargs):
         """Initializes Gym wrapper for blackjack functional env."""

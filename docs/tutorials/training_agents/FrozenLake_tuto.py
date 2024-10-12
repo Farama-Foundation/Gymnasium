@@ -4,7 +4,6 @@ Frozenlake benchmark
 
 """
 
-
 # %%
 # In this post we'll compare a bunch of different map sizes on the
 # `FrozenLake <https://gymnasium.farama.org/environments/toy_text/frozen_lake/>`__
@@ -161,12 +160,10 @@ class EpsilonGreedy:
         # Exploitation (taking the biggest Q-value for this state)
         else:
             # Break ties randomly
-            # If all actions are the same for this state we choose a random one
-            # (otherwise `np.argmax()` would always take the first one)
-            if np.all(qtable[state, :]) == qtable[state, 0]:
-                action = action_space.sample()
-            else:
-                action = np.argmax(qtable[state, :])
+            # Find the indices where the Q-value equals the maximum value
+            # Choose a random action from the indices where the Q-value is maximum
+            max_ids = np.where(qtable[state, :] == max(qtable[state, :]))[0]
+            action = rng.choice(max_ids)
         return action
 
 

@@ -1,0 +1,50 @@
+name: Build main branch documentation website
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    name: Generate Website
+    runs-on: ubuntu-latest
+    env:
+      SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+            python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r docs/requirements.txt
+
+      - name: Install Gymnasium
+        run: pip install .[box2d,mujoco,jax] torch matplotlib
+
+      - name: Build Envs Docs
+        run: python docs/_scripts/gen_mds.py && python docs/_scripts/gen_envs_display.py
+
+      - name: Build
+        run: sphinx-build -b dirhtml -v docs _build
+
+      - name: Move 404
+        run: mv _build/404/index.html _build/404.html
+
+      - name: Update 404 links
+        run: python docs/_scripts/move_404.py _build/404.html
+
+      - name: Remove .doctrees
+        run: rm -r _build/.doctrees
+
+      - name: Upload to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: _build
+          target-folder: main
+          clean: false

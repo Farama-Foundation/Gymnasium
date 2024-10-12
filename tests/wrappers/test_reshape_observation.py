@@ -1,4 +1,5 @@
 """Test suite for ReshapeObservation wrapper."""
+
 from gymnasium.spaces import Box
 from gymnasium.wrappers import ReshapeObservation
 from tests.testing_env import GenericTestEnv

@@ -43,8 +43,9 @@ Such wrappers can be easily implemented by inheriting from :class:`gymnasium.Act
 :class:`gymnasium.ObservationWrapper`, or :class:`gymnasium.RewardWrapper` and implementing the respective transformation.
 If you need a wrapper to do more complicated tasks, you can inherit from the :class:`gymnasium.Wrapper` class directly.
 
-If you'd like to implement your own custom wrapper, check out `the corresponding tutorial <../../tutorials/implementing_custom_wrappers>`_.
+If you'd like to implement your own custom wrapper, check out `the corresponding tutorial <../../tutorials/gymnasium_basics/implementing_custom_wrappers>`_.
 """
+
 # pyright: reportUnsupportedDunderAll=false
 import importlib
 

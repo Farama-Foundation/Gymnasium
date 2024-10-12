@@ -3,6 +3,7 @@
 * ``TransformReward`` - Transforms the reward by a function
 * ``ClipReward`` - Clips the reward between a minimum and maximum value
 """
+
 from __future__ import annotations
 
 from typing import Callable, SupportsFloat
@@ -76,7 +77,7 @@ class ClipReward(TransformReward[ObsType, ActType], gym.utils.RecordConstructorA
         >>> _ = env.reset()
         >>> _, rew, _, _, _ = env.step(1)
         >>> rew
-        0.5
+        np.float64(0.5)
 
     Change logs:
      * v1.0.0 - Initially added

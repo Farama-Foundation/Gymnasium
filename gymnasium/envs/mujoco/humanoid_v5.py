@@ -38,7 +38,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     :name: humanoid
     ```
 
-    The action space is a `Box(-1, 1, (17,), float32)`. An action represents the torques applied at the hinge joints.
+    The action space is a `Box(-0.4, 0.4, (17,), float32)`. An action represents the torques applied at the hinge joints.
 
     | Num | Action                                                                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     | --- | ---------------------------------------------------------------------------------- | ----------- | ----------- | -------------------------------- | ----- | ------------ |
@@ -92,10 +92,10 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     | Num | Observation                                                                                                     | Min  | Max | Name (in corresponding XML file) | Joint | Type (Unit)                |
     | --- | --------------------------------------------------------------------------------------------------------------- | ---- | --- | -------------------------------- | ----- | -------------------------- |
     | 0   | z-coordinate of the torso (centre)                                                                              | -Inf | Inf | root                             | free  | position (m)               |
-    | 1   | x-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
-    | 2   | y-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
-    | 3   | z-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
-    | 4   | w-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
+    | 1   | w-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
+    | 2   | x-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
+    | 3   | y-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
+    | 4   | z-orientation of the torso (centre)                                                                             | -Inf | Inf | root                             | free  | angle (rad)                |
     | 5   | z-angle of the abdomen (in lower_waist)                                                                         | -Inf | Inf | abdomen_z                        | hinge | angle (rad)                |
     | 6   | y-angle of the abdomen (in lower_waist)                                                                         | -Inf | Inf | abdomen_y                        | hinge | angle (rad)                |
     | 7   | x-angle of the abdomen (in pelvis)                                                                              | -Inf | Inf | abdomen_x                        | hinge | angle (rad)                |
@@ -290,7 +290,9 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         - Removed `info["forward_reward"]` as it is equivalent to `info["reward_forward"]`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
+        - Note: the environment robot model was slightly changed at `gym==0.21.0` and training results are not comparable with `gym<0.21` and `gym>=0.21` (related [GitHub PR](https://github.com/openai/gym/pull/932/files))
     * v2: All continuous control environments now use mujoco-py >= 1.50
+        - Note: the environment robot model was slightly changed at `gym==0.21.0` and training results are not comparable with `gym<0.21` and `gym>=0.21` (related [GitHub PR](https://github.com/openai/gym/pull/932/files))
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release
     """

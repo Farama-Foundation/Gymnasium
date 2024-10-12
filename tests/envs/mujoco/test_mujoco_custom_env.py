@@ -15,7 +15,7 @@ from gymnasium.utils.env_checker import check_env
 
 class PointEnv(MujocoEnv, utils.EzPickle):
     """
-    A simple mujuco env to test third party mujoco env, using the `Gymansium.MujocoEnv` environment API.
+    A simple mujoco env to test third party mujoco env, using the `Gymnasium.MujocoEnv` environment API.
     """
 
     metadata = {

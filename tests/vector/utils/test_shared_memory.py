@@ -9,7 +9,9 @@ from gymnasium import Space
 from gymnasium.error import CustomSpaceError
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import (
+    batch_space,
     create_shared_memory,
+    iterate,
     read_from_shared_memory,
     write_to_shared_memory,
 )
@@ -22,26 +24,33 @@ from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
     "ctx", [None, "fork", "spawn"], ids=["default", "fork", "spawn"]
 )
 def test_shared_memory_create_read_write(space, num, ctx):
-    """Test the shared memory functions, create, read and write for all of the testing spaces."""
-    if ctx not in mp.get_all_start_methods():
+    """Test the shared memory functions, create, read and write for all testing spaces."""
+    try:
+        _ctx = mp.get_context(ctx)
+    except ValueError:
         pytest.skip(
             f"Multiprocessing start method {ctx} not available on this platform."
         )
+    ctx = _ctx
 
-    ctx = mp if ctx is None else mp.get_context(ctx)
-    samples = [space.sample() for _ in range(num)]
-
+    batched_space = batch_space(space, n=num)
     try:
         shared_memory = create_shared_memory(space, n=num, ctx=ctx)
-    except TypeError:
-        return
+    except TypeError as err:
+        assert (
+            "has a dynamic shape so its not possible to make a static shared memory."
+            in str(err)
+        )
+        pytest.skip("Skipping space with dynamic shape")
 
+    samples = [space.sample() for _ in range(num)]
     for i, sample in enumerate(samples):
         write_to_shared_memory(space, i, sample, shared_memory)
 
     read_samples = read_from_shared_memory(space, shared_memory, n=num)
-    for read_sample, sample in zip(read_samples, samples):
-        data_equivalence(read_sample, sample)
+    assert read_samples in batched_space
+    for read_sample, sample in zip(iterate(batched_space, read_samples), samples):
+        assert data_equivalence(read_sample, sample)
 
 
 def test_custom_space():

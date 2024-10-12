@@ -6,11 +6,12 @@ import numpy as np
 import pytest
 
 from gymnasium.spaces import Box, Dict, Discrete
+from gymnasium.utils.env_checker import data_equivalence
 
 
 def test_dict_init():
     with pytest.raises(
-        AssertionError,
+        TypeError,
         match=r"^Unexpected Dict space input, expecting dict, OrderedDict or Sequence, actual type: ",
     ):
         Dict(Discrete(2))
@@ -56,17 +57,16 @@ DICT_SPACE = Dict(
 
 
 def test_dict_seeding():
-    seeds = DICT_SPACE.seed(
-        {
-            "a": 0,
-            "b": {
-                "b_1": 1,
-                "b_2": 2,
-            },
-            "c": 3,
-        }
-    )
-    assert all(isinstance(seed, int) for seed in seeds)
+    seeding_values = {
+        "a": 0,
+        "b": {
+            "b_1": 1,
+            "b_2": 2,
+        },
+        "c": 3,
+    }
+    seeded_values = DICT_SPACE.seed(seeding_values)
+    assert data_equivalence(seeded_values, seeding_values)
 
     # "Unpack" the dict sub-spaces into individual spaces
     a = Box(low=0, high=1, shape=(3, 3), seed=0)
@@ -84,7 +84,7 @@ def test_dict_seeding():
 
 def test_int_seeding():
     seeds = DICT_SPACE.seed(1)
-    assert all(isinstance(seed, int) for seed in seeds)
+    assert isinstance(seeds, dict)
 
     # rng, seeds = seeding.np_random(1)
     # subseeds = rng.choice(np.iinfo(int).max, size=3, replace=False)
@@ -92,10 +92,10 @@ def test_int_seeding():
     # b_subseeds = b_rng.choice(np.iinfo(int).max, size=2, replace=False)
 
     # "Unpack" the dict sub-spaces into individual spaces
-    a = Box(low=0, high=1, shape=(3, 3), seed=seeds[1])
-    b_1 = Box(low=-100, high=100, shape=(2,), seed=seeds[3])
-    b_2 = Box(low=-1, high=1, shape=(2,), seed=seeds[4])
-    c = Discrete(5, seed=seeds[5])
+    a = Box(low=0, high=1, shape=(3, 3), seed=seeds["a"])
+    b_1 = Box(low=-100, high=100, shape=(2,), seed=seeds["b"]["b_1"])
+    b_2 = Box(low=-1, high=1, shape=(2,), seed=seeds["b"]["b_2"])
+    c = Discrete(5, seed=seeds["c"])
 
     for i in range(10):
         dict_sample = DICT_SPACE.sample()
@@ -107,7 +107,7 @@ def test_int_seeding():
 
 def test_none_seeding():
     seeds = DICT_SPACE.seed(None)
-    assert len(seeds) == 4 and all(isinstance(seed, int) for seed in seeds)
+    assert isinstance(seeds, dict)
 
 
 def test_bad_seed():

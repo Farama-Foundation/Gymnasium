@@ -2,6 +2,7 @@
 
 * ``NormalizeReward`` - Normalizes the rewards to a mean and standard deviation
 """
+
 from __future__ import annotations
 
 from typing import Any, SupportsFloat
@@ -19,8 +20,9 @@ __all__ = ["NormalizeReward"]
 class NormalizeReward(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    r"""Normalizes immediate rewards such that their exponential moving average has a fixed variance.
+    r"""This wrapper will scale rewards s.t. the discounted returns have a mean of 0 and std of 1.
 
+    In a nutshell, the rewards are divided through by the standard deviation of a rolling discounted sum of the reward.
     The exponential moving average will have variance :math:`(1 - \gamma)^2`.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
@@ -28,6 +30,11 @@ class NormalizeReward(
     If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.
 
     A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.NormalizeReward`.
+
+    Important note:
+        Contrary to what the name suggests, this wrapper does not normalize the rewards to have a mean of 0 and a standard
+        deviation of 1. Instead, it scales the rewards such that **discounted returns** have approximately unit variance.
+        See [Engstrom et al.](https://openreview.net/forum?id=r1etN1rtPB) on "reward scaling" for more information.
 
     Note:
         In v0.27, NormalizeReward was updated as the forward discounted reward estimate was incorrectly computed in Gym v0.25+.
@@ -51,7 +58,7 @@ class NormalizeReward(
         ...
         >>> env.close()
         >>> np.var(episode_rewards)
-        0.0008876301247721108
+        np.float64(0.0008876301247721108)
 
     Example with the normalize reward wrapper:
         >>> import numpy as np
@@ -69,7 +76,7 @@ class NormalizeReward(
         >>> env.close()
         >>> # will approach 0.99 with more episodes
         >>> np.var(episode_rewards)
-        0.010162116476634746
+        np.float64(0.010162116476634746)
 
     Change logs:
      * v0.21.0 - Initially added

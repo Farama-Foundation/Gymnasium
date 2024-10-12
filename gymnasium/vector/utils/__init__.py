@@ -7,6 +7,7 @@ from gymnasium.vector.utils.shared_memory import (
     write_to_shared_memory,
 )
 from gymnasium.vector.utils.space_utils import (
+    batch_differing_spaces,
     batch_space,
     concatenate,
     create_empty_array,
@@ -16,6 +17,7 @@ from gymnasium.vector.utils.space_utils import (
 
 __all__ = [
     "batch_space",
+    "batch_differing_spaces",
     "iterate",
     "concatenate",
     "create_empty_array",

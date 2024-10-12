@@ -1,4 +1,5 @@
 """Utility functions for testing the wrappers."""
+
 from __future__ import annotations
 
 import gymnasium as gym

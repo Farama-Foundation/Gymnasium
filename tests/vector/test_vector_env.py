@@ -1,13 +1,17 @@
 """Test vector environment implementations."""
 
+from __future__ import annotations
+
 from functools import partial
 
 import numpy as np
 import pytest
 
+from gymnasium.core import ActType, ObsType
 from gymnasium.spaces import Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
+from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 from tests.testing_env import GenericTestEnv
 from tests.vector.testing_utils import make_env
 
@@ -59,6 +63,49 @@ def test_vector_env_equal(shared_memory):
 
     async_env.close()
     sync_env.close()
+
+
+def debug_step_func(self, action: ActType) -> tuple[ObsType, float, bool, bool, dict]:
+    assert action in self.action_space
+    return self.observation_space.sample(), 0, False, False, {}
+
+
+@pytest.mark.parametrize(
+    "vectoriser",
+    (
+        SyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=True),
+        partial(AsyncVectorEnv, shared_memory=False),
+    ),
+    ids=["Sync", "Async with shared memory", "Async without shared memory"],
+)
+@pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+def test_vector_obs_action_spaces(vectoriser, space, num_envs=3):
+    try:
+        envs = vectoriser(
+            [
+                lambda: GenericTestEnv(
+                    action_space=space,
+                    observation_space=space,
+                    step_func=debug_step_func,
+                )
+                for _ in range(num_envs)
+            ]
+        )
+    except TypeError as err:
+        assert (
+            "has a dynamic shape so its not possible to make a static shared memory."
+            in str(err)
+        )
+        pytest.skip("Skipping space with dynamic shape")
+
+    assert envs.observation_space == envs.action_space
+
+    obs, _ = envs.reset()
+    assert obs in envs.observation_space
+    obs, _, _, _, _ = envs.step(envs.action_space.sample())
+
+    envs.close()
 
 
 @pytest.mark.parametrize(
@@ -122,3 +169,46 @@ def test_final_obs_info(vectoriser):
     )
 
     env.close()
+
+
+@pytest.fixture
+def example_env_list():
+    """Example vector environment."""
+    return [make_env("CartPole-v1", i) for i in range(4)]
+
+
+@pytest.mark.parametrize(
+    "venv_constructor",
+    [
+        SyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=True),
+        partial(AsyncVectorEnv, shared_memory=False),
+    ],
+)
+def test_random_seeding_basics(venv_constructor, example_env_list):
+    seed = 42
+    vector_env = venv_constructor(example_env_list)
+    vector_env.reset(seed=seed)
+    assert vector_env.np_random_seed == tuple(
+        seed + i for i in range(vector_env.num_envs)
+    )
+    # resetting with seed=None means seed remains the same
+    vector_env.reset(seed=None)
+    assert vector_env.np_random_seed == tuple(
+        seed + i for i in range(vector_env.num_envs)
+    )
+
+
+@pytest.mark.parametrize(
+    "venv_constructor",
+    [
+        SyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=True),
+        partial(AsyncVectorEnv, shared_memory=False),
+    ],
+)
+def test_random_seeds_set_at_retrieval(venv_constructor, example_env_list):
+    vector_env = venv_constructor(example_env_list)
+    assert len(set(vector_env.np_random_seed)) == vector_env.num_envs
+    # default seed starts at zero. Adjust or remove this test if the default seed changes
+    assert vector_env.np_random_seed == tuple(range(vector_env.num_envs))

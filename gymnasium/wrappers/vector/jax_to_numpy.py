@@ -1,4 +1,5 @@
 """Vector wrapper for converting between NumPy and Jax."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -37,7 +38,7 @@ class JaxToNumpy(VectorWrapper):
         """
         if jnp is None:
             raise DependencyNotInstalled(
-                "jax is not installed, run `pip install gymnasium[jax]`"
+                'Jax is not installed, run `pip install "gymnasium[jax]"`'
             )
         super().__init__(env)
 

@@ -1,4 +1,5 @@
 """Utility functions to save rendering videos."""
+
 from __future__ import annotations
 
 import os
@@ -12,7 +13,7 @@ try:
     from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 except ImportError as e:
     raise gym.error.DependencyNotInstalled(
-        "moviepy is not installed, run `pip install moviepy`"
+        'moviepy is not installed, run `pip install "gymnasium[other]"`'
     ) from e
 
 

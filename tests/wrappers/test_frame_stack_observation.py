@@ -1,4 +1,5 @@
 """Test suite for FrameStackObservation wrapper."""
+
 import re
 
 import numpy as np
@@ -133,9 +134,11 @@ def test_stack_size_failures():
 
     with pytest.raises(
         ValueError,
-        match=re.escape("The stack_size needs to be greater than one, actual value: 1"),
+        match=re.escape(
+            "The stack_size needs to be greater than zero, actual value: 0"
+        ),
     ):
-        FrameStackObservation(env, stack_size=1)
+        FrameStackObservation(env, stack_size=0)
 
     with pytest.raises(
         ValueError,

@@ -1,4 +1,5 @@
 """Test suite for TorchToJax wrapper."""
+
 from typing import NamedTuple
 
 import numpy as np
@@ -96,9 +97,6 @@ class ExampleNamedTuple(NamedTuple):
 )
 def test_roundtripping(value, expected_value):
     """We test numpy -> jax -> numpy as this is direction in the NumpyToJax wrapper."""
-    print(f"{value=}")
-    print(f"{torch_to_jax(value)=}")
-    print(f"{jax_to_torch(torch_to_jax(value))=}")
     roundtripped_value = jax_to_torch(torch_to_jax(value))
     assert torch_data_equivalence(roundtripped_value, expected_value)
 

@@ -6,6 +6,7 @@
 * ``OrderEnforcing`` - Enforces the order of function calls to environments
 * ``RecordEpisodeStatistics`` - Records the episode statistics
 """
+
 from __future__ import annotations
 
 import time
@@ -95,8 +96,11 @@ class TimeLimit(
 
         Args:
             env: The environment to apply the wrapper
-            max_episode_steps: An optional max episode steps (if ``None``, ``env.spec.max_episode_steps`` is used)
+            max_episode_steps: the environment step after which the episode is truncated (``elapsed >= max_episode_steps``)
         """
+        assert (
+            isinstance(max_episode_steps, int) and max_episode_steps > 0
+        ), f"Expect the `max_episode_steps` to be positive, actually: {max_episode_steps}"
         gym.utils.RecordConstructorArgs.__init__(
             self, max_episode_steps=max_episode_steps
         )
@@ -149,8 +153,14 @@ class TimeLimit(
 
         env_spec = self.env.spec
         if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.max_episode_steps = self._max_episode_steps
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.max_episode_steps = self._max_episode_steps
+            except Exception as e:
+                gym.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec
@@ -159,28 +169,9 @@ class TimeLimit(
 class Autoreset(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """The wrapped environment is automatically reset when an terminated or truncated state is reached.
+    """The wrapped environment is automatically reset when a terminated or truncated state is reached.
 
-    When calling step causes :meth:`Env.step` to return `terminated=True` or `truncated=True`, :meth:`Env.reset` is called,
-    and the return format of :meth:`self.step` is as follows: ``(new_obs, final_reward, final_terminated, final_truncated, info)``
-    with new step API and ``(new_obs, final_reward, final_done, info)`` with the old step API.
-    No vector version of the wrapper exists.
-
-     - ``obs`` is the first observation after calling :meth:`self.env.reset`
-     - ``final_reward`` is the reward after calling :meth:`self.env.step`, prior to calling :meth:`self.env.reset`.
-     - ``final_terminated`` is the terminated value before calling :meth:`self.env.reset`.
-     - ``final_truncated`` is the truncated value before calling :meth:`self.env.reset`. Both `final_terminated` and `final_truncated` cannot be False.
-     - ``info`` is a dict containing all the keys from the info dict returned by the call to :meth:`self.env.reset`,
-       with an additional key "final_observation" containing the observation returned by the last call to :meth:`self.env.step`
-       and "final_info" containing the info dict returned by the last call to :meth:`self.env.step`.
-
-    Warning:
-        When using this wrapper to collect rollouts, note that when :meth:`Env.step` returns `terminated` or `truncated`, a
-        new observation from after calling :meth:`Env.reset` is returned by :meth:`Env.step` alongside the
-        final reward, terminated and truncated state from the previous episode.
-        If you need the final state from the previous episode, you need to retrieve it via the
-        "final_observation" key in the info dict.
-        Make sure you know what you're doing if you use this wrapper!
+    This follows the vector autoreset api where on the step after an episode terminates or truncated then the environment is reset.
 
     Change logs:
      * v0.24.0 - Initially added as `AutoResetWrapper`
@@ -254,13 +245,28 @@ class PassiveEnvChecker(
         gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
-        assert hasattr(
-            env, "action_space"
-        ), "The environment must specify an action space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
+        if not isinstance(env, gym.Env):
+            if str(env.__class__.__base__) == "<class 'gym.core.Env'>":
+                raise TypeError(
+                    "Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "
+                    "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+                )
+            else:
+                raise TypeError(
+                    f"The environment must inherit from the gymnasium.Env class, actual class: {type(env)}. "
+                    "See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."
+                )
+
+        if not hasattr(env, "action_space"):
+            raise AttributeError(
+                "The environment must specify an action space. https://gymnasium.farama.org/introduction/create_custom_env/"
+            )
         check_action_space(env.action_space)
-        assert hasattr(
-            env, "observation_space"
-        ), "The environment must specify an observation space. https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation/"
+
+        if not hasattr(env, "observation_space"):
+            raise AttributeError(
+                "The environment must specify an observation space. https://gymnasium.farama.org/introduction/create_custom_env/"
+            )
         check_observation_space(env.observation_space)
 
         self.checked_reset: bool = False
@@ -304,8 +310,14 @@ class PassiveEnvChecker(
 
         env_spec = self.env.spec
         if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.disable_env_checker = False
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.disable_env_checker = False
+            except Exception as e:
+                gym.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec
@@ -409,8 +421,14 @@ class OrderEnforcing(
 
         env_spec = self.env.spec
         if env_spec is not None:
-            env_spec = deepcopy(env_spec)
-            env_spec.order_enforce = True
+            try:
+                env_spec = deepcopy(env_spec)
+                env_spec.order_enforce = True
+            except Exception as e:
+                gym.logger.warn(
+                    f"An exception occurred ({e}) while copying the environment spec={env_spec}"
+                )
+                return None
 
         self._cached_spec = env_spec
         return env_spec
@@ -440,10 +458,6 @@ class RecordEpisodeStatistics(
     For a vectorized environments the output will be in the form of::
 
         >>> infos = {
-        ...     "final_observation": "<array of length num-envs>",
-        ...     "_final_observation": "<boolean array of length num-envs>",
-        ...     "final_info": "<array of length num-envs>",
-        ...     "_final_info": "<boolean array of length num-envs>",
         ...     "episode": {
         ...         "r": "<array of cumulative reward>",
         ...         "l": "<array of episode length>",

@@ -6,15 +6,46 @@ import pytest
 import gymnasium as gym
 from gymnasium.envs.box2d import BipedalWalker, CarRacing
 from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
-from gymnasium.envs.toy_text import TaxiEnv
+from gymnasium.envs.toy_text import CliffWalkingEnv, TaxiEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
 
 def test_lunar_lander_heuristics():
     """Tests the LunarLander environment by checking if the heuristic lander works."""
-    lunar_lander = gym.make("LunarLander-v2", disable_env_checker=True)
+    lunar_lander = gym.make("LunarLander-v3", disable_env_checker=True)
     total_reward = demo_heuristic_lander(lunar_lander, seed=1)
     assert total_reward > 100
+
+
+@pytest.mark.parametrize("seed", [0, 10, 20, 30, 40])
+def test_lunar_lander_random_wind_seed(seed: int):
+    """Test that the wind_idx and torque are correctly drawn when setting a seed"""
+
+    lunar_lander = gym.make(
+        "LunarLander-v3", disable_env_checker=True, enable_wind=True
+    ).unwrapped
+    lunar_lander.reset(seed=seed)
+
+    # Test that same seed gives same wind
+    w1, t1 = lunar_lander.wind_idx, lunar_lander.torque_idx
+    lunar_lander.reset(seed=seed)
+    w2, t2 = lunar_lander.wind_idx, lunar_lander.torque_idx
+    assert (
+        w1 == w2 and t1 == t2
+    ), "Setting same seed caused different initial wind or torque index"
+
+    # Test that different seed gives different wind
+    # There is a small chance that different seeds causes same number so test
+    # 10 times (with different seeds) to make this chance incredibly tiny.
+    for i in range(1, 11):
+        lunar_lander.reset(seed=seed + i)
+        w3, t3 = lunar_lander.wind_idx, lunar_lander.torque_idx
+        if w2 != w3 and t1 != t3:  # Found different initial values
+            break
+    else:  # no break
+        raise AssertionError(
+            "Setting different seed caused same initial wind or torque index"
+        )
 
 
 def test_carracing_domain_randomize():
@@ -23,7 +54,7 @@ def test_carracing_domain_randomize():
     CarRacing DomainRandomize should have different colours at every reset.
     However, it should have same colours when `options={"randomize": False}` is given to reset.
     """
-    env: CarRacing = gym.make("CarRacing-v2", domain_randomize=True).unwrapped
+    env: CarRacing = gym.make("CarRacing-v3", domain_randomize=True).unwrapped
 
     road_color = env.road_color
     bg_color = env.bg_color
@@ -54,6 +85,26 @@ def test_carracing_domain_randomize():
     assert (
         grass_color != env.grass_color
     ).all(), f"Have same grass color after reset. Before: {grass_color}, after: {env.grass_color}."
+
+
+def test_slippery_cliffwalking():
+    """Test that the slippery cliffwalking environment is correctly implemented.
+    We check here that there are always 3 possible transitions for each action and
+    that there is a 1/3 probability for each.
+    """
+    envs = CliffWalkingEnv(is_slippery=True)
+    for actions_dict in envs.P.values():
+        for transitions in actions_dict.values():
+            assert len(transitions) == 3
+            assert all([r[0] == 1 / 3 for r in transitions])
+
+
+def test_cliffwalking():
+    env = CliffWalkingEnv(is_slippery=False)
+    for actions_dict in env.P.values():
+        for transitions in actions_dict.values():
+            assert len(transitions) == 1
+            assert all([r[0] == 1.0 for r in transitions])
 
 
 @pytest.mark.parametrize("seed", range(5))
@@ -223,3 +274,72 @@ def test_invalid_customizable_resets(env_name: str, low_high: list):
         # match=re.escape(f"Lower bound ({low}) must be lower than higher bound ({high}).")
         # match=f"An option ({x}) could not be converted to a float."
         env.reset(options={"low": low, "high": high})
+
+
+def test_cartpole_vector_equiv():
+    env = gym.make("CartPole-v1")
+    envs = gym.make_vec("CartPole-v1", num_envs=1)
+
+    assert env.action_space == envs.single_action_space
+    assert env.observation_space == envs.single_observation_space
+
+    # for seed in range(0, 10_000):
+    seed = np.random.randint(0, 1000)
+
+    # reset
+    obs, info = env.reset(seed=seed)
+    vec_obs, vec_info = envs.reset(seed=seed)
+
+    env.action_space.seed(seed=seed)
+
+    assert obs in env.observation_space
+    assert vec_obs in envs.observation_space
+    assert np.all(obs == vec_obs[0])
+    assert info == vec_info
+
+    assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+
+    # step
+    for i in range(100):
+        action = env.action_space.sample()
+        assert np.array([action]) in envs.action_space
+
+        obs, reward, term, trunc, info = env.step(action)
+        vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
+            np.array([action])
+        )
+
+        assert obs in env.observation_space
+        assert vec_obs in envs.observation_space
+        assert np.all(obs == vec_obs[0])
+        assert reward == vec_reward
+        assert term == vec_term
+        assert trunc == vec_trunc
+        assert info == vec_info
+
+        assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+
+        if term or trunc:
+            break
+
+    # if the sub-environment episode ended
+    if term or trunc:
+        obs, info = env.reset()
+        # the vector action shouldn't matter as autoreset
+        assert envs.unwrapped.prev_done
+        vec_obs, vec_reward, vec_term, vec_trunc, vec_info = envs.step(
+            envs.action_space.sample()
+        )
+
+        assert obs in env.observation_space
+        assert vec_obs in envs.observation_space
+        assert np.all(obs == vec_obs[0])
+        assert vec_reward == np.array([0])
+        assert vec_term == np.array([False])
+        assert vec_trunc == np.array([False])
+        assert info == vec_info
+
+        assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
+
+    env.close()
+    envs.close()

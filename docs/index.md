@@ -23,7 +23,7 @@ An API standard for reinforcement learning with a diverse collection of referenc
 import gymnasium as gym
 
 # Initialise the environment
-env = gym.make("LunarLander-v2", render_mode="human")
+env = gym.make("LunarLander-v3", render_mode="human")
 
 # Reset the environment to generate the first observation
 observation, info = env.reset(seed=42)
@@ -87,7 +87,6 @@ environments/third_party_environments
 
 tutorials/**/index
 tutorials/third-party-tutorials
-Comet Tutorial <https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasium/?utm_source=gymnasium&utm_medium=partner&utm_campaign=partner_gymnasium_2023&utm_content=docs_gymnasium>
 ```
 
 ```{toctree}
@@ -95,6 +94,7 @@ Comet Tutorial <https://www.comet.com/docs/v2/integrations/ml-frameworks/gymnasi
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
+Paper <https://arxiv.org/abs/2407.17032>
 gymnasium_release_notes/index
 gym_release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>

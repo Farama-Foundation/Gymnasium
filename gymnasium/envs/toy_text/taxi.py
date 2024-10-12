@@ -96,7 +96,10 @@ class TaxiEnv(Env):
     This gives a total of 404 reachable discrete states.
 
     ## Starting State
-    The episode starts with the player in a random state.
+    The initial state is sampled uniformly from the possible states
+    where the passenger is neither at their destination nor inside the taxi.
+    There are 300 possible initial states: 25 taxi positions, 4 passenger locations (excluding inside the taxi)
+    and 3 destinations (excluding the passenger's current location).
 
     ## Rewards
     - -1 per step unless other reward is triggered.
@@ -328,7 +331,7 @@ class TaxiEnv(Env):
             import pygame  # dependency to pygame only if rendering with human
         except ImportError as e:
             raise DependencyNotInstalled(
-                "pygame is not installed, run `pip install gymnasium[toy-text]`"
+                'pygame is not installed, run `pip install "gymnasium[toy-text]"`'
             ) from e
 
         if self.window is None:
