@@ -10,6 +10,7 @@ import numpy as np
 import gymnasium
 from gymnasium.envs.mujoco import MujocoRenderer
 from gymnasium.envs.mujoco.mujoco_env import expand_model_path
+from gymnasium.experimental.functional import FuncEnv
 
 
 try:
@@ -51,7 +52,7 @@ def mjx_set_physics_state(mjx_data: mjx.Data, mjx_physics_state) -> mjx.Data:
 # TODO add init_qvel
 # TODO create pip install gymnasium[mjx]
 class MJXEnv(
-    gymnasium.functional.FuncEnv[
+    FuncEnv[
         mjx.Data,
         jnp.ndarray,
         jnp.ndarray,
