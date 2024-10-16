@@ -117,11 +117,11 @@ env = gymnasium.make("Ant-v5", render_mode="rgb_array", width=1280, height=720)
 ### Rendering Backend
 The MuJoCo simulator renders images with OpenGL and can use 3 different back ends "glfw" (default), "egl", "omesa", which can be selected by setting an [environment variable](https://en.wikipedia.org/wiki/Environment_variable).
 
-| Backend | Environment Variable       | Description                       |
-|---------|----------------------------|-----------------------------------|
-| `glfw`  | `MUJOCO_GL=glfw` (default) | Renders with window System on GPU |
-| `egl`   | `MUJOCO_GL=egl`            | Renders headless on GPU           |
-| `omesa` | `MUJOCO_GL=omesa`          | Renders headless on CPU           |
+| Backend  | Environment Variable       | Description                       |
+|----------|----------------------------|-----------------------------------|
+| `GLFW`   | `MUJOCO_GL=glfw` (default) | Renders with Window System on GPU |
+| `EGL`    | `MUJOCO_GL=egl`            | Renders headless on GPU           |
+| `OSMESA` | `MUJOCO_GL=osmesa`         | Renders headless on CPU           |
 
 More information of the [MuJoCo/OpenGL documentation](https://mujoco.readthedocs.io/en/stable/programming/index.html#using-opengl).
 <!--
