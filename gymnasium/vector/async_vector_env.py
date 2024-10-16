@@ -6,11 +6,12 @@ import multiprocessing
 import sys
 import time
 import traceback
+from collections.abc import Sequence
 from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
-from typing import Any, Callable, Sequence
+from typing import Any, Callable
 
 import numpy as np
 

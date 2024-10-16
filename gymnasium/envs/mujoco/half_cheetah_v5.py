@@ -1,6 +1,6 @@
 __credits__ = ["Kallinteris-Andreas", "Rushiv Arora"]
 
-from typing import Dict, Union
+from typing import Union
 
 import numpy as np
 
@@ -156,7 +156,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "half_cheetah.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 0.1,
         reset_noise_scale: float = 0.1,

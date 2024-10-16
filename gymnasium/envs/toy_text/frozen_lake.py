@@ -1,7 +1,7 @@
 from contextlib import closing
 from io import StringIO
 from os import path
-from typing import List, Optional
+from typing import Optional
 
 import numpy as np
 
@@ -33,7 +33,7 @@ MAPS = {
 
 
 # DFS to check that it's a valid path.
-def is_valid(board: List[List[str]], max_size: int) -> bool:
+def is_valid(board: list[list[str]], max_size: int) -> bool:
     frontier, discovered = [], set()
     frontier.append((0, 0))
     while frontier:
@@ -55,7 +55,7 @@ def is_valid(board: List[List[str]], max_size: int) -> bool:
 
 def generate_random_map(
     size: int = 8, p: float = 0.8, seed: Optional[int] = None
-) -> List[str]:
+) -> list[str]:
     """Generates a random valid map (one that has a path from start to goal)
 
     Args:

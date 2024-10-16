@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 import numpy as np
 
@@ -6,7 +6,7 @@ from gymnasium.experimental.functional import FuncEnv
 
 
 class BasicTestEnv(FuncEnv):
-    def __init__(self, options: Optional[Dict[str, Any]] = None):
+    def __init__(self, options: Optional[dict[str, Any]] = None):
         super().__init__(options)
 
     def initial(self, rng: Any) -> np.ndarray:

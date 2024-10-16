@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
 
-class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
+class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
     """A tuple (more precisely: the cartesian product) of :class:`Space` instances.
 
     Elements of this space are tuples of elements of the constituent spaces.

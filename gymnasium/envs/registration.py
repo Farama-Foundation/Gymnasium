@@ -12,10 +12,11 @@ import json
 import re
 import sys
 from collections import defaultdict
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from types import ModuleType
-from typing import Any, Callable, Iterable, Sequence
+from typing import Any, Callable
 
 import gymnasium as gym
 from gymnasium import Env, Wrapper, error, logger

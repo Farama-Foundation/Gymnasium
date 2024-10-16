@@ -13,7 +13,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Final, Sequence
+from collections.abc import Sequence
+from typing import Any, Callable, Final
 
 import numpy as np
 

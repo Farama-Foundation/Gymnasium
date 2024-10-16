@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Tuple
+from typing import Any
 
 import jax
 import jax.numpy as jnp
@@ -17,7 +17,7 @@ from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
 
 
-RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
+RenderStateType = tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
 
 
 @struct.dataclass

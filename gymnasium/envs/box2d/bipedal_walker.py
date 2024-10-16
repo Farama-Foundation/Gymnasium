@@ -1,7 +1,7 @@
 __credits__ = ["Andrea PIERRÉ"]
 
 import math
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 
@@ -179,7 +179,7 @@ class BipedalWalker(gym.Env, EzPickle):
         self.isopen = True
 
         self.world = Box2D.b2World()
-        self.terrain: List[Box2D.b2Body] = []
+        self.terrain: list[Box2D.b2Body] = []
         self.hull: Optional[Box2D.b2Body] = None
 
         self.prev_shaping = None
@@ -458,8 +458,8 @@ class BipedalWalker(gym.Env, EzPickle):
             (self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM), 0), True
         )
 
-        self.legs: List[Box2D.b2Body] = []
-        self.joints: List[Box2D.b2RevoluteJoint] = []
+        self.legs: list[Box2D.b2Body] = []
+        self.joints: list[Box2D.b2RevoluteJoint] = []
         for i in [-1, +1]:
             leg = self.world.CreateDynamicBody(
                 position=(init_x, init_y - LEG_H / 2 - LEG_DOWN),

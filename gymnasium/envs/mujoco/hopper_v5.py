@@ -1,6 +1,6 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple, Union
+from typing import Union
 
 import numpy as np
 
@@ -166,14 +166,14 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "hopper.xml",
         frame_skip: int = 4,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 1e-3,
         healthy_reward: float = 1.0,
         terminate_when_unhealthy: bool = True,
-        healthy_state_range: Tuple[float, float] = (-100.0, 100.0),
-        healthy_z_range: Tuple[float, float] = (0.7, float("inf")),
-        healthy_angle_range: Tuple[float, float] = (-0.2, 0.2),
+        healthy_state_range: tuple[float, float] = (-100.0, 100.0),
+        healthy_z_range: tuple[float, float] = (0.7, float("inf")),
+        healthy_angle_range: tuple[float, float] = (-0.2, 0.2),
         reset_noise_scale: float = 5e-3,
         exclude_current_positions_from_observation: bool = True,
         **kwargs,

@@ -1,5 +1,5 @@
 from os import path
-from typing import Dict, Optional, Tuple, Union
+from typing import Optional, Union
 
 import numpy as np
 from numpy.typing import NDArray
@@ -47,9 +47,9 @@ class MujocoEnv(gym.Env):
         height: int = DEFAULT_SIZE,
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
-        default_camera_config: Optional[Dict[str, Union[float, int]]] = None,
+        default_camera_config: Optional[dict[str, Union[float, int]]] = None,
         max_geom: int = 1000,
-        visual_options: Dict[int, bool] = {},
+        visual_options: dict[int, bool] = {},
     ):
         """Base abstract class for mujoco based environments.
 
@@ -121,7 +121,7 @@ class MujocoEnv(gym.Env):
 
     def _initialize_simulation(
         self,
-    ) -> Tuple["mujoco.MjModel", "mujoco.MjData"]:
+    ) -> tuple["mujoco.MjModel", "mujoco.MjData"]:
         """
         Initialize MuJoCo simulation data structures `mjModel` and `mjData`.
         """
@@ -215,7 +215,7 @@ class MujocoEnv(gym.Env):
     # ----------------------------
     def step(
         self, action: NDArray[np.float32]
-    ) -> Tuple[NDArray[np.float64], np.float64, bool, bool, Dict[str, np.float64]]:
+    ) -> tuple[NDArray[np.float64], np.float64, bool, bool, dict[str, np.float64]]:
         raise NotImplementedError
 
     def reset_model(self) -> NDArray[np.float64]:
@@ -225,7 +225,7 @@ class MujocoEnv(gym.Env):
         """
         raise NotImplementedError
 
-    def _get_reset_info(self) -> Dict[str, float]:
+    def _get_reset_info(self) -> dict[str, float]:
         """Function that generates the `info` that is returned during a `reset()`."""
         return {}
 
