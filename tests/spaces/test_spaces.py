@@ -3,7 +3,8 @@ import itertools
 import json  # note: ujson fails this test due to float equality
 import pickle
 import tempfile
-from typing import Callable, Union
+from collections.abc import Callable
+from typing import Union
 
 import numpy as np
 import pytest

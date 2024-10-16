@@ -316,8 +316,8 @@ def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> np.int64:
 
 @unflatten.register(MultiDiscrete)
 def _unflatten_multidiscrete(
-    space: MultiDiscrete, x: NDArray[np.integer[Any]]
-) -> NDArray[np.integer[Any]]:
+    space: MultiDiscrete, x: NDArray[np.integer]
+) -> NDArray[np.integer]:
     offsets = np.zeros((space.nvec.size + 1,), dtype=space.dtype)
     offsets[1:] = np.cumsum(space.nvec.flatten())
     nonzero = np.nonzero(x)

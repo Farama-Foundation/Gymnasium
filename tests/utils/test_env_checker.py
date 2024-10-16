@@ -2,7 +2,8 @@
 
 import re
 import warnings
-from typing import Callable, Union
+from collections.abc import Callable
+from typing import Union
 
 import numpy as np
 import pytest

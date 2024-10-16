@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 import numpy as np
 
@@ -10,6 +11,12 @@ from gymnasium import Env
 from gymnasium.vector import VectorEnv, VectorRewardWrapper
 from gymnasium.vector.vector_env import ArrayType
 from gymnasium.wrappers import transform_reward
+
+__all__ = [
+    "TransformReward",
+    "VectorizeTransformReward",
+    "ClipReward",
+]
 
 
 class TransformReward(VectorRewardWrapper):

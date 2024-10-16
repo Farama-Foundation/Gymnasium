@@ -23,9 +23,9 @@ class GraphInstance(NamedTuple):
     * edge_links (Optional[np.ndarray]): an (m x 2) sized array of ints representing the indices of the two nodes that each edge connects.
     """
 
-    nodes: NDArray[Any]
-    edges: NDArray[Any] | None
-    edge_links: NDArray[Any] | None
+    nodes: NDArray
+    edges: NDArray | None
+    edge_links: NDArray | None
 
 
 class Graph(Space[GraphInstance]):

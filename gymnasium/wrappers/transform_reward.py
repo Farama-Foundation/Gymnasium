@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, SupportsFloat
+from collections.abc import Callable, SupportsFloat
 
 import numpy as np
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import typing
+import collections.abc
 from collections.abc import Iterable
 from typing import Any
 
@@ -34,7 +34,7 @@ class OneOf(Space[Any]):
     def __init__(
         self,
         spaces: Iterable[Space[Any]],
-        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
+        seed: int | collections.abc.Sequence[int] | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`OneOf` space.
 
@@ -143,7 +143,7 @@ class OneOf(Space[Any]):
         return "OneOf(" + ", ".join([str(s) for s in self.spaces]) + ")"
 
     def to_jsonable(
-        self, sample_n: typing.Sequence[tuple[int, Any]]
+        self, sample_n: collections.abc.Sequence[tuple[int, Any]]
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [

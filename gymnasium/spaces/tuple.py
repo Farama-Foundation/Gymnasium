@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import typing
 from collections.abc import Iterable
+import collections.abc
 from typing import Any
 
 import numpy as np
@@ -11,7 +11,7 @@ import numpy as np
 from gymnasium.spaces.space import Space
 
 
-class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
+class Tuple(Space[tuple[Any, ...]], collections.abc.Sequence[Any]):
     """A tuple (more precisely: the cartesian product) of :class:`Space` instances.
 
     Elements of this space are tuples of elements of the constituent spaces.
@@ -26,7 +26,7 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
     def __init__(
         self,
         spaces: Iterable[Space[Any]],
-        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
+        seed: int | collections.abc.Sequence[int] | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Tuple` space.
 
@@ -48,7 +48,7 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces)
 
-    def seed(self, seed: int | typing.Sequence[int] | None = None) -> tuple[int, ...]:
+    def seed(self, seed: int | collections.abc.Sequence[int] | None = None) -> tuple[int, ...]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently
@@ -131,7 +131,7 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         return "Tuple(" + ", ".join([str(s) for s in self.spaces]) + ")"
 
     def to_jsonable(
-        self, sample_n: typing.Sequence[tuple[Any, ...]]
+        self, sample_n: collections.abc.Sequence[tuple[Any, ...]]
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # serialize as list-repr of tuple of vectors

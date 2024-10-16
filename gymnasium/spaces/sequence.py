@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import typing
 from typing import Any, Union
+import collections.abc
 
 import numpy as np
 from numpy.typing import NDArray
@@ -186,7 +186,7 @@ class Sequence(Space[Union[tuple[Any, ...], Any]]):
         return f"Sequence({self.feature_space}, stack={self.stack})"
 
     def to_jsonable(
-        self, sample_n: typing.Sequence[tuple[Any, ...] | Any]
+        self, sample_n: collections.abc.Sequence[tuple[Any, ...] | Any]
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         if self.stack:

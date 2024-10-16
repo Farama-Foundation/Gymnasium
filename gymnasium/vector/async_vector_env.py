@@ -6,12 +6,14 @@ import multiprocessing
 import sys
 import time
 import traceback
-from collections.abc import Sequence
+import collections.abc
 from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
-from typing import Any, Callable
+from multiprocessing.sharedctypes import SynchronizedArray
+from typing import Any
+from collections.abc import Callable
 
 import numpy as np
 
@@ -90,7 +92,7 @@ class AsyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns: Sequence[Callable[[], Env]],
+        env_fns: collections.abc.Sequence[Callable[[], Env]],
         shared_memory: bool = True,
         copy: bool = True,
         context: str | None = None,
@@ -684,10 +686,10 @@ class AsyncVectorEnv(VectorEnv):
 
 def _async_worker(
     index: int,
-    env_fn: callable,
+    env_fn: Callable,
     pipe: Connection,
     parent_pipe: Connection,
-    shared_memory: multiprocessing.Array | dict[str, Any] | tuple[Any, ...],
+    shared_memory: SynchronizedArray | dict[str, Any] | tuple[Any, ...],
     error_queue: Queue,
 ):
     env = env_fn()

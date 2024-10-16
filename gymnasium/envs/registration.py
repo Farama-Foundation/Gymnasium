@@ -12,11 +12,12 @@ import json
 import re
 import sys
 from collections import defaultdict
-from collections.abc import Iterable, Sequence
+import collections.abc
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum
 from types import ModuleType
-from typing import Any, Callable
+from typing import Any, runtime_checkable
 
 import gymnasium as gym
 from gymnasium import Env, Wrapper, error, logger
@@ -51,12 +52,14 @@ __all__ = [
 ]
 
 
+@runtime_checkable
 class EnvCreator(Protocol):
     """Function type expected for an environment."""
 
     def __call__(self, **kwargs: Any) -> Env: ...
 
 
+@runtime_checkable
 class VectorEnvCreator(Protocol):
     """Function type expected for an environment."""
 
@@ -100,7 +103,7 @@ class EnvSpec:
     entry_point: EnvCreator | str | None = field(default=None)
 
     # Environment attributes
-    reward_threshold: float | None = field(default=None)
+    reward_threshold: float | int | None = field(default=None)
     nondeterministic: bool = field(default=False)
 
     # Wrappers
@@ -570,7 +573,7 @@ def namespace(ns: str):
 def register(
     id: str,
     entry_point: EnvCreator | str | None = None,
-    reward_threshold: float | None = None,
+    reward_threshold: float | int | None = None,
     nondeterministic: bool = False,
     max_episode_steps: int | None = None,
     order_enforce: bool = True,
@@ -836,7 +839,7 @@ def make_vec(
     num_envs: int = 1,
     vectorization_mode: VectorizeMode | str | None = None,
     vector_kwargs: dict[str, Any] | None = None,
-    wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
+    wrappers: collections.abc.Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
 ) -> gym.vector.VectorEnv:
     """Create a vector environment according to the given ID.

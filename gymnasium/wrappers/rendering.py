@@ -8,8 +8,9 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, Callable, SupportsFloat
+from typing import Any, SupportsFloat
 
 import numpy as np
 
