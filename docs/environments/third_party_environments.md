@@ -33,8 +33,16 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![Gymnasium version dependency](ADD YOUR BADGE HERE)
   ![GitHub stars](ADD YOUR BADGE HERE OPTIONAL)
 
-  A short 2 sentence description.
+  A short 2-5 sentence description.
 -->
+
+<!-- Instructions
+- Follow the template in the file 
+- Environments and environment categories are alphabetically sorted
+- You are responible for picking the environment category, if you would like to add a category please ask
+- Name you PR something like "Add external environment X" 
+--> 
+
 
 
 ### Autonomous Driving environments
