@@ -23,7 +23,7 @@ jobs:
             --build-arg NUMPY_VERSION="${{ matrix.numpy-version }}" \
             --tag gymnasium-all-docker .
       - name: Run tests
-        run: docker run gymnasium-all-docker pytest tests/*
+        run: docker run gymnasium-all-docker pytest --beartype-package="gymnasium" tests/*
       - name: Run doctests
         if: ${{ matrix.python-version != '3.8' }}
         run: docker run gymnasium-all-docker pytest --doctest-modules gymnasium/
@@ -39,4 +39,4 @@ jobs:
              --tag gymnasium-necessary-docker .
       - name: Run tests
         run: |
-           docker run gymnasium-necessary-docker pytest tests/test_core.py tests/envs/test_envs.py tests/spaces
+           docker run gymnasium-necessary-docker pytest --beartype-package="gymnasium" tests/test_core.py tests/envs/test_envs.py tests/spaces
