@@ -25,7 +25,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 ## Third-party environments with Gymnasium
 *This page contains environments which are not maintained by Farama Foundation and, as such, cannot be guaranteed to function as intended.*
 
-*If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/MHCFauP67z), then submit a PR by editing this [file](https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/environments/third_party_environments.md).*
+*If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/MHCFauP67z), then submit a PR by editing this [file](https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/environments/third_party_environments.md), additional instructions can be found inside that file*
 
 <!-- Template
 - [NAME: SUB_NAME_IF_PRESENT](LINK)
