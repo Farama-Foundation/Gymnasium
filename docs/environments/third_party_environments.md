@@ -37,11 +37,11 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 -->
 
 <!-- Instructions
-- Follow the template in the file 
+- Follow the template in the file
 - Environments and environment categories are alphabetically sorted
-- You are responible for picking the environment category, if you would like to add a category please ask
-- Name you PR something like "Add external environment X" 
---> 
+- You are responsible for picking the environment category, if you would like to add a category please ask
+- Name your PR something like "Add external environment X"
+-->
 
 
 
