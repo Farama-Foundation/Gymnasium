@@ -68,3 +68,9 @@ repos:
         additional_dependencies: ["pyright@1.1.383"]
         args:
           - --project=pyproject.toml
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: '1.12.0'  # Use the sha / tag you want to point at
+    hooks:
+    -   id: mypy
+        args: [--strict, --ignore-missing-imports]
+        additional_dependencies: [tokenize-rt==3.2.0]
