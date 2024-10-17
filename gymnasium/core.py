@@ -313,7 +313,7 @@ class Wrapper(
         self._observation_space: spaces.Space[WrapperObsType] | None = None
         self._metadata: dict[str, Any] | None = None
 
-        self._cached_spec: EnvSpec | None = None
+        self._cached_spec: gymnasium.envs.registration.EnvSpec | None = None
 
     def step(
         self, action: WrapperActType
