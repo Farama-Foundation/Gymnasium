@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
 import collections.abc
+from collections.abc import Iterable
 from typing import Any
 
 import numpy as np
@@ -48,7 +48,9 @@ class Tuple(Space[tuple[Any, ...]], collections.abc.Sequence[Any]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces)
 
-    def seed(self, seed: int | collections.abc.Sequence[int] | None = None) -> tuple[int, ...]:
+    def seed(
+        self, seed: int | collections.abc.Sequence[int] | None = None
+    ) -> tuple[int, ...]:
         """Seed the PRNG of this space and all subspaces.
 
         Depending on the type of seed, the subspaces will be seeded differently

@@ -10,7 +10,7 @@
 from __future__ import annotations
 
 import collections.abc
-from collections.abc import Iterable, Iterator, Callable
+from collections.abc import Callable, Iterable, Iterator
 from copy import deepcopy
 from functools import singledispatch
 from typing import Any

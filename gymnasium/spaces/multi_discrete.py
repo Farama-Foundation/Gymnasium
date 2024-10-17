@@ -43,10 +43,10 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
     def __init__(
         self,
-        nvec: NDArray[np.integer[Any]] | list[int],
-        dtype: str | type[np.integer[Any]] = np.int64,
+        nvec: NDArray[np.integer] | list[int],
+        dtype: str | type[np.integer] = np.int64,
         seed: int | np.random.Generator | None = None,
-        start: NDArray[np.integer[Any]] | list[int] | None = None,
+        start: NDArray[np.integer] | list[int] | None = None,
     ):
         """Constructor of :class:`MultiDiscrete` space.
 
@@ -98,7 +98,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
     def sample(
         self, mask: tuple[MaskNDArray, ...] | None = None
-    ) -> NDArray[np.integer[Any]]:
+    ) -> NDArray[np.integer]:
         """Generates a single random sample this space.
 
         Args:
@@ -113,8 +113,8 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
             def _apply_mask(
                 sub_mask: MaskNDArray | tuple[MaskNDArray, ...],
-                sub_nvec: MaskNDArray | np.integer[Any],
-                sub_start: MaskNDArray | np.integer[Any],
+                sub_nvec: MaskNDArray | np.integer,
+                sub_start: MaskNDArray | np.integer,
             ) -> int | list[Any]:
                 if isinstance(sub_nvec, np.ndarray):
                     assert isinstance(
@@ -178,14 +178,12 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         )
 
     def to_jsonable(
-        self, sample_n: Sequence[NDArray[np.integer[Any]]]
+        self, sample_n: Sequence[NDArray[np.integer]]
     ) -> list[Sequence[int]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [sample.tolist() for sample in sample_n]
 
-    def from_jsonable(
-        self, sample_n: list[Sequence[int]]
-    ) -> list[NDArray[np.integer[Any]]]:
+    def from_jsonable(self, sample_n: list[Sequence[int]]) -> list[NDArray[np.integer]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [np.array(sample, dtype=np.int64) for sample in sample_n]
 

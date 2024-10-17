@@ -12,9 +12,11 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.vector import VectorEnv, VectorWrapper
 from gymnasium.vector.vector_env import ArrayType
 
+
 __all__ = [
     "HumanRendering",
 ]
+
 
 class HumanRendering(VectorWrapper):
     """Adds support for Human-based Rendering for Vector-based environments."""

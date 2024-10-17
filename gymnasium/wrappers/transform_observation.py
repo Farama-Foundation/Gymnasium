@@ -126,7 +126,9 @@ class FilterObservation(
     """
 
     def __init__(
-        self, env: gym.Env[ObsType, ActType], filter_keys: collections.abc.Sequence[str | int]
+        self,
+        env: gym.Env[ObsType, ActType],
+        filter_keys: collections.abc.Sequence[str | int],
     ):
         """Constructor for the filter observation wrapper.
 

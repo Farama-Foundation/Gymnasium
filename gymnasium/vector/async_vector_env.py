@@ -2,18 +2,18 @@
 
 from __future__ import annotations
 
+import collections.abc
 import multiprocessing
 import sys
 import time
 import traceback
-import collections.abc
+from collections.abc import Callable
 from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
 from multiprocessing.sharedctypes import SynchronizedArray
 from typing import Any
-from collections.abc import Callable
 
 import numpy as np
 

@@ -15,6 +15,7 @@ from gymnasium.vector import VectorEnv, VectorObservationWrapper
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.wrappers import transform_observation
 
+
 __all__ = [
     "TransformObservation",
     "VectorizeTransformObservation",
@@ -26,6 +27,7 @@ __all__ = [
     "RescaleObservation",
     "DtypeObservation",
 ]
+
 
 class TransformObservation(VectorObservationWrapper):
     """Transforms an observation via a function provided to the wrapper.
@@ -209,7 +211,9 @@ class FilterObservation(VectorizeTransformObservation):
               dtype=float32)}
     """
 
-    def __init__(self, env: VectorEnv, filter_keys: collections.abc.Sequence[str | int]):
+    def __init__(
+        self, env: VectorEnv, filter_keys: collections.abc.Sequence[str | int]
+    ):
         """Constructor for the filter observation wrapper.
 
         Args:

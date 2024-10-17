@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Union
 import collections.abc
+from typing import Any, Union
 
 import numpy as np
 from numpy.typing import NDArray

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import collections.abc
 import contextlib
 import copy
 import dataclasses
@@ -12,7 +13,6 @@ import json
 import re
 import sys
 from collections import defaultdict
-import collections.abc
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum

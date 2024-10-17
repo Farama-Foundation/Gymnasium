@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import multiprocessing as mp
-from multiprocessing.sharedctypes import SynchronizedArray
 from ctypes import c_bool
 from functools import singledispatch
+from multiprocessing.sharedctypes import SynchronizedArray
 from typing import Any
 
 import numpy as np
@@ -110,7 +110,9 @@ def _create_dynamic_shared_memory(space: Graph | Sequence, n: int = 1, ctx=mp):
 
 @singledispatch
 def read_from_shared_memory(
-    space: Space, shared_memory: dict[str, Any] | tuple[Any, ...] | SynchronizedArray, n: int = 1
+    space: Space,
+    shared_memory: dict[str, Any] | tuple[Any, ...] | SynchronizedArray,
+    n: int = 1,
 ) -> dict[str, Any] | tuple[Any, ...] | np.ndarray:
     """Read the batch of observations from shared memory as a numpy array.
 

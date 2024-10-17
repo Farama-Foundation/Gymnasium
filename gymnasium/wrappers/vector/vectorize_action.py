@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from copy import deepcopy
 from typing import Any
-from collections.abc import Callable
 
 import numpy as np
 
@@ -15,12 +15,8 @@ from gymnasium.vector.utils import batch_space, concatenate, create_empty_array,
 from gymnasium.wrappers import transform_action
 
 
-__all__ = [
-    "TransformAction",
-    "VectorizeTransformAction",
-    "ClipAction",
-    "RescaleAction"
-]
+__all__ = ["TransformAction", "VectorizeTransformAction", "ClipAction", "RescaleAction"]
+
 
 class TransformAction(VectorActionWrapper):
     """Transforms an action via a function provided to the wrapper.
