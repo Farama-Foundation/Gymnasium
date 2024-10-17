@@ -25,7 +25,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 ## Third-party environments with Gymnasium
 *This page contains environments which are not maintained by Farama Foundation and, as such, cannot be guaranteed to function as intended.*
 
-*If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/MHCFauP67z), then submit a PR by editing this [file](https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/environments/third_party_environments.md).*
+*If you'd like to contribute an environment, please reach out on [Discord](https://discord.gg/MHCFauP67z), then submit a PR by editing this [file](https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/environments/third_party_environments.md), additional instructions can be found inside that file*
 
 <!-- Template
 - [NAME: SUB_NAME_IF_PRESENT](LINK)
@@ -33,8 +33,16 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![Gymnasium version dependency](ADD YOUR BADGE HERE)
   ![GitHub stars](ADD YOUR BADGE HERE OPTIONAL)
 
-  A short 2 sentence description.
+  A short 2-5 sentence description.
 -->
+
+<!-- Instructions
+- Follow the template in the file
+- Environments and environment categories are alphabetically sorted
+- You are responsible for picking the environment category, if you would like to add a category please ask
+- Name your PR something like "Add external environment X"
+-->
+
 
 
 ### Autonomous Driving environments
@@ -117,6 +125,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![GitHub stars](https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium)
 
   A simple environment for single-agent reinforcement learning algorithms on a clone of [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird), the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.
+
+- [Generals.io bots: Develop your agent for generals.io!](https://github.com/strakam/generals-bots)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.0.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/strakam/generals-bots)
+
+  Generals.io is a fast-paced strategy game on a 2D grid. We make bot development accessible via the Gymnasium/PettingZoo API.
 
 - [pystk2-gymnasium: SuperTuxKart races gymnasium wrapper](https://github.com/bpiwowar/pystk2-gymnasium)
 
