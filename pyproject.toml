@@ -146,7 +146,6 @@ reportGeneralTypeIssues = "none"  # -> commented out raises 489 errors
 reportAttributeAccessIssue = "none"
 reportArgumentType = "none"
 
-reportPrivateUsage = "warning"
 reportUnboundVariable = "warning"
 
 reportPrivateImportUsage = "none"  # -> commented out raises 144 errors

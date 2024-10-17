@@ -59,7 +59,7 @@ def data_equivalence(data_1, data_2, exact: bool = False) -> bool:
                 )
             else:
                 if exact:
-                    return np.all(data_1 == data_2)
+                    return bool(np.all(data_1 == data_2))
                 else:
                     return np.allclose(data_1, data_2, rtol=1e-5, atol=1e-5)
         else:
@@ -89,9 +89,9 @@ def check_reset_seed_determinism(env: gym.Env):
                 obs_1 in env.observation_space
             ), "The observation returned by `env.reset(seed=123)` is not within the observation space."
             assert (
-                env.unwrapped._np_random is not None
+                env.unwrapped.np_random is not None
             ), "Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`."
-            seed_123_rng_1 = deepcopy(env.unwrapped._np_random)
+            seed_123_rng_1 = deepcopy(env.unwrapped.np_random)
 
             obs_2, info = env.reset()
             assert (
@@ -102,7 +102,7 @@ def check_reset_seed_determinism(env: gym.Env):
             assert (
                 obs_3 in env.observation_space
             ), "The observation returned by `env.reset(seed=123)` is not within the observation space."
-            seed_123_rng_3 = deepcopy(env.unwrapped._np_random)
+            seed_123_rng_3 = deepcopy(env.unwrapped.np_random)
 
             obs_4, info = env.reset()
             assert (
@@ -134,7 +134,7 @@ def check_reset_seed_determinism(env: gym.Env):
                 obs_5 in env.observation_space
             ), "The observation returned by `env.reset(seed=456)` is not within the observation space."
             assert (
-                env.unwrapped._np_random.bit_generator.state
+                env.unwrapped.np_random.bit_generator.state
                 != seed_123_rng_1.bit_generator.state
             ), "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`."
 
@@ -203,14 +203,13 @@ def check_step_determinism(env: gym.Env, seed=123):
 
     env.reset(seed=seed)
     obs_0, rew_0, term_0, trunc_0, info_0 = env.step(action)
-    seeded_rng: np.random.Generator = deepcopy(env.unwrapped._np_random)
+    seeded_rng: np.random.Generator = deepcopy(env.unwrapped.np_random)
 
     env.reset(seed=seed)
     obs_1, rew_1, term_1, trunc_1, info_1 = env.step(action)
 
     assert (
-        env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportOptionalMemberAccess]
-        == seeded_rng.bit_generator.state
+        env.unwrapped.np_random.bit_generator.state == seeded_rng.bit_generator.state
     ), "The `.np_random` is not properly been updated after step."
 
     assert data_equivalence(
