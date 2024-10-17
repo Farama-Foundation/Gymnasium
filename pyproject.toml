@@ -142,9 +142,6 @@ reportAttributeAccessIssue = "none"  # pyright provides false positives
 reportArgumentType = "none"  # pyright provides false positives
 
 reportPrivateUsage = "warning"
-# reportUnboundVariable = "warning"
-
-# reportPrivateImportUsage = "none"  # -> commented out raises 144 errors
 
 reportIndexIssue = "none"  # TODO fix one by one
 reportReturnType = "none"  # TODO fix one by one
