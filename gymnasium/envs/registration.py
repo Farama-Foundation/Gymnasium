@@ -1,7 +1,5 @@
 """Functions for registering environments within gymnasium using public functions ``make``, ``register`` and ``spec``."""
 
-from __future__ import annotations
-
 import collections.abc
 import contextlib
 import copy
@@ -17,7 +15,7 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum
 from types import ModuleType
-from typing import Any, runtime_checkable
+from typing import Any, Optional, runtime_checkable
 
 import gymnasium as gym
 from gymnasium import Env, Wrapper, error, logger
@@ -63,7 +61,7 @@ class EnvCreator(Protocol):
 class VectorEnvCreator(Protocol):
     """Function type expected for an environment."""
 
-    def __call__(self, **kwargs: Any) -> gym.vector.VectorEnv: ...
+    def __call__(self, **kwargs: Any) -> "gym.vector.VectorEnv": ...
 
 
 @dataclass
@@ -169,7 +167,7 @@ class EnvSpec:
                 )
 
     @staticmethod
-    def from_json(json_env_spec: str) -> EnvSpec:
+    def from_json(json_env_spec: str) -> "gym.envs.registration.EnvSpec":
         """Converts a JSON string into a specification stack.
 
         Args:
@@ -264,7 +262,7 @@ class VectorizeMode(Enum):
 
 # Global registry of environments. Meant to be accessed through `register` and `make`
 registry: dict[str, EnvSpec] = {}
-current_namespace: str | None = None
+current_namespace: Optional[str] = None
 
 
 def parse_env_id(env_id: str) -> tuple[str | None, str, int | None]:
@@ -841,7 +839,7 @@ def make_vec(
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: collections.abc.Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
-) -> gym.vector.VectorEnv:
+) -> "gym.vector.VectorEnv":
     """Create a vector environment according to the given ID.
 
     To find all available environments use :func:`gymnasium.pprint_registry` or ``gymnasium.registry.keys()`` for all valid ids.

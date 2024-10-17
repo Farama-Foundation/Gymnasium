@@ -43,10 +43,10 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
     def __init__(
         self,
-        nvec: NDArray[np.integer] | list[int],
+        nvec: NDArray[np.integer] | list[int] | list[list[int]],
         dtype: str | type[np.integer] = np.int64,
         seed: int | np.random.Generator | None = None,
-        start: NDArray[np.integer] | list[int] | None = None,
+        start: NDArray[np.integer] | list[int] | list[list[int]] | None = None,
     ):
         """Constructor of :class:`MultiDiscrete` space.
 

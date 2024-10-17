@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
-from typing import Any, SupportsFloat
+from typing import Any, SupportsFloat, no_type_check
 
 import numpy as np
 from numpy.typing import NDArray
@@ -54,6 +54,7 @@ class Box(Space[NDArray[Any]]):
         Box([-1. -2.], [2. 4.], (2,), float32)
     """
 
+    @no_type_check
     def __init__(
         self,
         low: SupportsFloat | NDArray[Any],
