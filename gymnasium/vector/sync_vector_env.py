@@ -17,7 +17,7 @@ from gymnasium.vector.utils import (
     create_empty_array,
     iterate,
 )
-from gymnasium.vector.vector_env import ArrayType, VectorEnv
+from gymnasium.vector.vector_env import ArrayType, AutoresetMode, VectorEnv
 
 
 __all__ = ["SyncVectorEnv"]
@@ -65,6 +65,7 @@ class SyncVectorEnv(VectorEnv):
         env_fns: Iterator[Callable[[], Env]] | Sequence[Callable[[], Env]],
         copy: bool = True,
         observation_mode: str | Space = "same",
+        autoreset_mode: str | AutoresetMode = AutoresetMode.NEXT_STEP,
     ):
         """Vectorized environment that serially runs multiple environments.
 
@@ -74,13 +75,22 @@ class SyncVectorEnv(VectorEnv):
             observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
                 'different' defines that there can be multiple observation spaces with the same length but different high/low values batched together. Passing a ``Space`` object
                 allows the user to set some custom observation space mode not covered by 'same' or 'different.'
+            autoreset_mode: The Autoreset Mode used, see todo for more details.
+
         Raises:
             RuntimeError: If the observation space of some sub-environment does not match observation_space
                 (or, by default, the observation space of the first sub-environment).
         """
-        self.copy = copy
+        super().__init__()
+
         self.env_fns = env_fns
+        self.copy = copy
         self.observation_mode = observation_mode
+        self.autoreset_mode = (
+            autoreset_mode
+            if isinstance(autoreset_mode, AutoresetMode)
+            else AutoresetMode(autoreset_mode)
+        )
 
         # Initialise all sub-environments
         self.envs = [env_fn() for env_fn in env_fns]
@@ -89,6 +99,7 @@ class SyncVectorEnv(VectorEnv):
         # As we support `make_vec(spec)` then we can't include a `spec = self.envs[0].spec` as this doesn't guarantee we can actual recreate the vector env.
         self.num_envs = len(self.envs)
         self.metadata = self.envs[0].metadata
+        self.metadata["autoreset_mode"] = self.autoreset_mode
         self.render_mode = self.envs[0].render_mode
 
         self.single_action_space = self.envs[0].action_space
@@ -130,6 +141,7 @@ class SyncVectorEnv(VectorEnv):
             ), f"Sub-environment action space doesn't make the `single_action_space`, action_space={env.action_space}, single_action_space={self.single_action_space}"
 
         # Initialise attributes used in `step` and `reset`
+        self._env_obs = [None for _ in range(self.num_envs)]
         self._observations = create_empty_array(
             self.single_observation_space, n=self.num_envs, fn=np.zeros
         )
@@ -175,23 +187,52 @@ class SyncVectorEnv(VectorEnv):
             len(seed) == self.num_envs
         ), f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
 
-        self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
-        self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
+        if options is not None and "mask" in options:
+            reset_mask = options.pop("mask")
+            assert isinstance(
+                reset_mask, np.ndarray
+            ), f"`options['mask': mask]` must be a numpy array, got {type(reset_mask)}"
+            assert reset_mask.shape == (
+                self.num_envs,
+            ), f"`options['mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
+            assert (
+                reset_mask.dtype == np.bool_
+            ), f"`options['mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
+            assert np.any(
+                reset_mask
+            ), f"`options['mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
 
-        observations, infos = [], {}
-        for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
-            env_obs, env_info = env.reset(seed=single_seed, options=options)
+            self._terminations[reset_mask] = False
+            self._truncations[reset_mask] = False
+            self._autoreset_envs[reset_mask] = False
 
-            observations.append(env_obs)
-            infos = self._add_info(infos, env_info, i)
+            infos = {}
+            for i, (env, single_seed, env_mask) in enumerate(
+                zip(self.envs, seed, reset_mask)
+            ):
+                if env_mask:
+                    self._env_obs[i], env_info = env.reset(
+                        seed=single_seed, options=options
+                    )
+
+                    infos = self._add_info(infos, env_info, i)
+        else:
+            self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
+            self._truncations = np.zeros((self.num_envs,), dtype=np.bool_)
+            self._autoreset_envs = np.zeros((self.num_envs,), dtype=np.bool_)
+
+            infos = {}
+            for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
+                self._env_obs[i], env_info = env.reset(
+                    seed=single_seed, options=options
+                )
+
+                infos = self._add_info(infos, env_info, i)
 
         # Concatenate the observations
         self._observations = concatenate(
-            self.single_observation_space, observations, self._observations
+            self.single_observation_space, self._env_obs, self._observations
         )
-
-        self._autoreset_envs = np.zeros((self.num_envs,), dtype=np.bool_)
-
         return deepcopy(self._observations) if self.copy else self._observations, infos
 
     def step(
@@ -204,29 +245,58 @@ class SyncVectorEnv(VectorEnv):
         """
         actions = iterate(self.action_space, actions)
 
-        observations, infos = [], {}
+        infos = {}
         for i, action in enumerate(actions):
-            if self._autoreset_envs[i]:
-                env_obs, env_info = self.envs[i].reset()
+            if self.autoreset_mode == AutoresetMode.NEXT_STEP:
+                if self._autoreset_envs[i]:
+                    self._env_obs[i], env_info = self.envs[i].reset()
 
-                self._rewards[i] = 0.0
-                self._terminations[i] = False
-                self._truncations[i] = False
-            else:
+                    self._rewards[i] = 0.0
+                    self._terminations[i] = False
+                    self._truncations[i] = False
+                else:
+                    (
+                        self._env_obs[i],
+                        self._rewards[i],
+                        self._terminations[i],
+                        self._truncations[i],
+                        env_info,
+                    ) = self.envs[i].step(action)
+            elif self.autoreset_mode == AutoresetMode.DISABLED:
+                # assumes that the user has correctly autoreset
+                assert not self._autoreset_envs[i], f"{self._autoreset_envs=}"
                 (
-                    env_obs,
+                    self._env_obs[i],
+                    self._rewards[i],
+                    self._terminations[i],
+                    self._truncations[i],
+                    env_info,
+                ) = self.envs[i].step(action)
+            elif self.autoreset_mode == AutoresetMode.SAME_STEP:
+                (
+                    self._env_obs[i],
                     self._rewards[i],
                     self._terminations[i],
                     self._truncations[i],
                     env_info,
                 ) = self.envs[i].step(action)
 
-            observations.append(env_obs)
+                if self._terminations[i] or self._truncations[i]:
+                    infos = self._add_info(
+                        infos,
+                        {"final_obs": self._env_obs[i], "final_info": env_info},
+                        i,
+                    )
+
+                    self._env_obs[i], env_info = self.envs[i].reset()
+            else:
+                raise ValueError(f"Unexpected autoreset mode, {self.autoreset_mode}")
+
             infos = self._add_info(infos, env_info, i)
 
         # Concatenate the observations
         self._observations = concatenate(
-            self.single_observation_space, observations, self._observations
+            self.single_observation_space, self._env_obs, self._observations
         )
         self._autoreset_envs = np.logical_or(self._terminations, self._truncations)
 

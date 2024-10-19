@@ -7,10 +7,12 @@ from functools import partial
 import numpy as np
 import pytest
 
+import gymnasium as gym
 from gymnasium.core import ActType, ObsType
 from gymnasium.spaces import Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.vector.vector_env import AutoresetMode
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 from tests.testing_env import GenericTestEnv
 from tests.vector.testing_utils import make_env
@@ -212,3 +214,68 @@ def test_random_seeds_set_at_retrieval(venv_constructor, example_env_list):
     assert len(set(vector_env.np_random_seed)) == vector_env.num_envs
     # default seed starts at zero. Adjust or remove this test if the default seed changes
     assert vector_env.np_random_seed == tuple(range(vector_env.num_envs))
+
+
+@pytest.mark.parametrize(
+    "vectoriser",
+    [
+        SyncVectorEnv,
+        AsyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=False),
+    ],
+    ids=["Sync", "Async(shared_memory=True)", "Async(shared_memory=False)"],
+)
+def test_partial_reset(vectoriser):
+    envs = vectoriser(
+        [lambda: gym.make("CartPole-v1") for _ in range(3)],
+        autoreset_mode=AutoresetMode.DISABLED,
+    )
+    initial_obs, initial_info = envs.reset(seed=[0, 1, 2])
+
+    envs.action_space.seed(123)
+    envs.step(envs.action_space.sample())
+    envs.step(envs.action_space.sample())
+    step_obs, *_ = envs.step(envs.action_space.sample())
+
+    mask_obs, mask_info = envs.reset(
+        seed=[0, 1, 0], options={"mask": np.array([True, True, False])}
+    )
+    assert np.all(mask_obs[:2] == initial_obs[:2])
+    assert np.all(mask_obs[2] == step_obs[2])
+
+    envs.close()
+
+
+@pytest.mark.parametrize(
+    "vectoriser",
+    [
+        SyncVectorEnv,
+        AsyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=False),
+    ],
+    ids=["Sync", "Async(shared_memory=True)", "Async(shared_memory=False)"],
+)
+def test_partial_reset_failure(vectoriser):
+    envs = vectoriser(
+        [lambda: gym.make("CartPole-v1") for _ in range(3)],
+        autoreset_mode=AutoresetMode.DISABLED,
+    )
+
+    # Test first reset using a mask
+    with pytest.raises(AssertionError):
+        envs.reset(options={"mask": np.array([True, True, False])})
+
+    # Reset with all trues
+    envs.reset(options={"mask": np.array([True, True, True])})
+
+    # Reset with mask of an incorrect shape
+    with pytest.raises(AssertionError):
+        envs.reset(options={"mask": np.array([True])})
+    with pytest.raises(AssertionError):
+        envs.reset(options={"mask": np.array([True, True, False, False])})
+    with pytest.raises(AssertionError):
+        envs.reset(options={"mask": np.array([[True, True, True]])})
+    with pytest.raises(AssertionError):
+        envs.reset(options={"mask": np.array([[1, 1, 0]])})
+    with pytest.raises(AssertionError):
+        envs.reset(options={"mask": np.array([[1.0, 1.0, 0.0]])})

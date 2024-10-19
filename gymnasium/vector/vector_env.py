@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import numpy as np
@@ -24,7 +25,16 @@ __all__ = [
     "VectorActionWrapper",
     "VectorRewardWrapper",
     "ArrayType",
+    "AutoresetMode",
 ]
+
+
+class AutoresetMode(Enum):
+    """Enum representing the different autoreset modes, next step, same step and disabled."""
+
+    NEXT_STEP: str = "NextStep"
+    SAME_STEP: str = "SameStep"
+    DISABLED: str = "Disabled"
 
 
 class VectorEnv(Generic[ObsType, ActType, ArrayType]):
