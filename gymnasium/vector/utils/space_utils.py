@@ -9,10 +9,11 @@
 
 from __future__ import annotations
 
-import typing
+import collections.abc
+from collections.abc import Callable, Iterable, Iterator
 from copy import deepcopy
 from functools import singledispatch
-from typing import Any, Iterable, Iterator
+from typing import Any
 
 import numpy as np
 
@@ -148,7 +149,7 @@ def _batch_space_custom(space: Graph | Text | Sequence | OneOf, n: int = 1):
 
 
 @singledispatch
-def batch_differing_spaces(spaces: typing.Sequence[Space]) -> Space:
+def batch_differing_spaces(spaces: collections.abc.Sequence[Space]) -> Space:
     """Batch a Sequence of spaces where subspaces to contain minor differences.
 
     Args:
@@ -428,7 +429,7 @@ def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, 
 
 @singledispatch
 def create_empty_array(
-    space: Space, n: int = 1, fn: callable = np.zeros
+    space: Space, n: int = 1, fn: Callable = np.zeros
 ) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
     """Create an empty (possibly nested and normally numpy-based) array, used in conjunction with ``concatenate(..., out=array)``.
 

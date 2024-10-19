@@ -1,7 +1,7 @@
 """Set of functions for logging messages."""
 
 import warnings
-from typing import Optional, Type
+from typing import Optional
 
 from gymnasium.utils import colorize
 
@@ -19,7 +19,7 @@ warnings.filterwarnings("once", "", DeprecationWarning, module=r"^gymnasium\.")
 def warn(
     msg: str,
     *args: object,
-    category: Optional[Type[Warning]] = None,
+    category: Optional[type[Warning]] = None,
     stacklevel: int = 1,
 ):
     """Raises a warning to the user if the min_level <= WARN.

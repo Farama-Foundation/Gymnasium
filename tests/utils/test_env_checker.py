@@ -2,7 +2,8 @@
 
 import re
 import warnings
-from typing import Callable, Tuple, Union
+from collections.abc import Callable
+from typing import Union
 
 import numpy as np
 import pytest
@@ -137,7 +138,7 @@ def test_check_reset_seed_determinism(test, func: Callable, message: str):
 
 def _deprecated_return_info(
     self, return_info: bool = False
-) -> Union[Tuple[ObsType, dict], ObsType]:
+) -> Union[tuple[ObsType, dict], ObsType]:
     """function to simulate the signature and behavior of a `reset` function with the deprecated `return_info` optional argument"""
     if return_info:
         return self.observation_space.sample(), {}
