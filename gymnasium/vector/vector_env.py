@@ -9,6 +9,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType, RenderFrame
+from gymnasium.logger import warn
 from gymnasium.utils import seeding
 
 
@@ -516,6 +517,13 @@ class VectorObservationWrapper(VectorWrapper):
 
     Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.
     """
+
+    def __init__(self, env: VectorEnv):
+        super().__init__(env)
+        if "autoreset_mode" not in env.metadata:
+            warn('todo')
+        else:
+            assert env.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP or env.metadata["autoreset_mode"] == AutoresetMode.DISABLED
 
     def reset(
         self,

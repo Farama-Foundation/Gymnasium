@@ -263,19 +263,19 @@ def test_partial_reset_failure(vectoriser):
 
     # Test first reset using a mask
     with pytest.raises(AssertionError):
-        envs.reset(options={"mask": np.array([True, True, False])})
+        envs.reset(options={"reset_mask": np.array([True, True, False])})
 
     # Reset with all trues
-    envs.reset(options={"mask": np.array([True, True, True])})
+    envs.reset(options={"reset_mask": np.array([True, True, True])})
 
     # Reset with mask of an incorrect shape
     with pytest.raises(AssertionError):
-        envs.reset(options={"mask": np.array([True])})
+        envs.reset(options={"reset_mask": np.array([True])})
     with pytest.raises(AssertionError):
-        envs.reset(options={"mask": np.array([True, True, False, False])})
+        envs.reset(options={"reset_mask": np.array([True, True, False, False])})
     with pytest.raises(AssertionError):
-        envs.reset(options={"mask": np.array([[True, True, True]])})
+        envs.reset(options={"reset_mask": np.array([[True, True, True]])})
     with pytest.raises(AssertionError):
-        envs.reset(options={"mask": np.array([[1, 1, 0]])})
+        envs.reset(options={"reset_mask": np.array([[1, 1, 0]])})
     with pytest.raises(AssertionError):
-        envs.reset(options={"mask": np.array([[1.0, 1.0, 0.0]])})
+        envs.reset(options={"reset_mask": np.array([[1.0, 1.0, 0.0]])})

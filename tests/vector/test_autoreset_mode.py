@@ -215,7 +215,7 @@ def test_autoreset_disabled(vectoriser):
     assert np.all(truncations == [False, False, False])
     assert info == {}
 
-    obs, info = envs.reset(options={"mask": terminations})
+    obs, info = envs.reset(options={"reset_mask": terminations})
     assert np.all(obs == [0, 2, 2])
     assert info == {}
 
@@ -226,7 +226,7 @@ def test_autoreset_disabled(vectoriser):
     assert np.all(truncations == [False, False, False])
     assert info == {}
 
-    obs, info = envs.reset(options={"mask": terminations})
+    obs, info = envs.reset(options={"reset_mask": terminations})
     assert np.all(obs == [1, 0, 0])
     assert info == {}
 

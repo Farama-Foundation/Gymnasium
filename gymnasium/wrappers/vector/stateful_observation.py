@@ -5,11 +5,14 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ObsType
-from gymnasium.vector.vector_env import VectorEnv, VectorObservationWrapper
+from gymnasium.logger import warn
+from gymnasium.vector.vector_env import VectorEnv, VectorObservationWrapper, AutoresetMode
 from gymnasium.wrappers.utils import RunningMeanStd
 
 
@@ -65,6 +68,11 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
         VectorObservationWrapper.__init__(self, env)
 
+        if "autoreset_mode" not in self.env.metadata:
+            warn(f'{self} is missing `autoreset_mode` data. Assuming that the vector environment it follows the `NextStep` autoreset api or autoreset is disabled. Read todo for more details.')
+        else:
+            assert self.env.metadata["autoreset_mode"] in {AutoresetMode.NEXT_STEP}
+
         self.obs_rms = RunningMeanStd(
             shape=self.single_observation_space.shape,
             dtype=self.single_observation_space.dtype,
@@ -81,6 +89,15 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
     def update_running_mean(self, setting: bool):
         """Sets the property to freeze/continue the running mean calculation of the observation statistics."""
         self._update_running_mean = setting
+
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
+        assert "reset_mask" not in options or np.all(options["reset_mask"])
+        return super().reset(seed=seed, options=options)
 
     def observations(self, observations: ObsType) -> ObsType:
         """Defines the vector observation normalization function.

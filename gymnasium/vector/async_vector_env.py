@@ -299,20 +299,20 @@ class AsyncVectorEnv(VectorEnv):
                 str(self._state.value),
             )
 
-        if options is not None and "mask" in options:
-            reset_mask = options.pop("mask")
+        if options is not None and "reset_mask" in options:
+            reset_mask = options.pop("reset_mask")
             assert isinstance(
                 reset_mask, np.ndarray
-            ), f"`options['mask': mask]` must be a numpy array, got {type(reset_mask)}"
+            ), f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
             assert reset_mask.shape == (
                 self.num_envs,
-            ), f"`options['mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
+            ), f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
             assert (
                 reset_mask.dtype == np.bool_
-            ), f"`options['mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
+            ), f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
             assert np.any(
                 reset_mask
-            ), f"`options['mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
+            ), f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
 
             for pipe, env_seed, env_reset in zip(self.parent_pipes, seed, reset_mask):
                 if env_reset:
