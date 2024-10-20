@@ -1,5 +1,6 @@
 """Testing of the `gym.make_vec` function."""
 
+import multiprocessing
 import re
 
 import pytest
@@ -236,7 +237,7 @@ def test_make_vec_with_spec(env_id: str, kwargs: dict):
     recreated_envs.close()
 
 
-@pytest.mark.parametrize("ctx", [None, "spawn", "fork", "forkserver"])
+@pytest.mark.parametrize("ctx", [None] + multiprocessing.get_all_start_methods())
 def test_async_with_dynamically_registered_env(ctx):
     gym.register("TestEnv-v0", CartPoleEnv)
 
