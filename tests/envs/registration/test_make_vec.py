@@ -1,6 +1,6 @@
 """Testing of the `gym.make_vec` function."""
 
-import multiprocess
+import multiprocessing
 import re
 
 import pytest
