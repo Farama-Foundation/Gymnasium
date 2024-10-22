@@ -8,9 +8,10 @@ from typing import Any, Callable, Sequence
 import numpy as np
 
 from gymnasium import Space
-from gymnasium.core import Env, ObsType
+from gymnasium.core import ActType, Env, ObsType
 from gymnasium.vector import VectorEnv, VectorObservationWrapper
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
+from gymnasium.vector.vector_env import ArrayType
 from gymnasium.wrappers import transform_observation
 
 
@@ -148,6 +149,23 @@ class VectorizeTransformObservation(VectorObservationWrapper):
 
         self.same_out = self.observation_space == self.env.observation_space
         self.out = create_empty_array(self.single_observation_space, self.num_envs)
+
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        obs, rewards, terminations, truncations, infos = self.env.step(actions)
+        obs = self.observations(obs)
+
+        if "final_obs" in infos:
+            final_obs = infos["final_obs"]
+
+            for i, (sub_obs, has_final_obs) in enumerate(
+                zip(final_obs, infos["_final_obs"])
+            ):
+                if has_final_obs:
+                    final_obs[i] = self.wrapper.observation(sub_obs)
+
+        return obs, rewards, terminations, truncations, infos
 
     def observations(self, observations: ObsType) -> ObsType:
         """Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again."""

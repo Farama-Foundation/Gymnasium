@@ -19,6 +19,7 @@ from gymnasium import wrappers
 from gymnasium.spaces import Box, Dict, Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import VectorEnv
+from gymnasium.vector.vector_env import AutoresetMode
 from tests.testing_env import GenericTestEnv
 
 
@@ -36,6 +37,7 @@ def custom_environments():
     del gym.registry["DictObsEnv-v0"]
 
 
+@pytest.mark.parametrize("autoreset_mode", [AutoresetMode.NEXT_STEP, AutoresetMode.SAME_STEP])
 @pytest.mark.parametrize("num_envs", (1, 3))
 @pytest.mark.parametrize(
     "env_id, wrapper_name, kwargs",

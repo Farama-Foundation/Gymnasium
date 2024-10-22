@@ -19,13 +19,18 @@ from tests.vector.testing_utils import make_env
 
 
 @pytest.mark.parametrize("shared_memory", [True, False])
-def test_vector_env_equal(shared_memory):
+@pytest.mark.parametrize(
+    "autoreset_mode", [AutoresetMode.NEXT_STEP, AutoresetMode.SAME_STEP]
+)
+def test_vector_env_equal(shared_memory, autoreset_mode):
     """Test that vector environment are equal for both async and sync variants."""
     env_fns = [make_env("CartPole-v1", i) for i in range(4)]
     num_steps = 100
 
-    async_env = AsyncVectorEnv(env_fns, shared_memory=shared_memory)
-    sync_env = SyncVectorEnv(env_fns)
+    async_env = AsyncVectorEnv(
+        env_fns, shared_memory=shared_memory, autoreset_mode=autoreset_mode
+    )
+    sync_env = SyncVectorEnv(env_fns, autoreset_mode=autoreset_mode)
 
     assert async_env.num_envs == sync_env.num_envs
     assert async_env.observation_space == sync_env.observation_space

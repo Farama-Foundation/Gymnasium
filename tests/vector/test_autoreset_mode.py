@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from functools import partial
 
 import numpy as np
@@ -9,6 +11,7 @@ from gymnasium.spaces import Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.vector.vector_env import AutoresetMode
+from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 from tests.testing_env import GenericTestEnv
 
 
@@ -292,3 +295,50 @@ def test_make_vec_autoreset(vectorization_mode, autoreset_mode):
     )
     envs.metadata["autoreset_mode"] = autoreset_mode
     envs.close()
+
+
+def count_reset_obs(
+    self: GenericTestEnv, seed: int | None = None, options: dict | None = None
+):
+    super(GenericTestEnv, self).reset(seed=seed)
+
+    self.count = seed if seed is not None else 0
+    return self.observation_space.sample(), {}
+
+
+def count_step_obs(self: GenericTestEnv, action):
+    self.count += 1
+
+    return (
+        self.observation_space.sample(),
+        action,
+        self.count == self.max_count,
+        False,
+        {},
+    )
+
+
+@pytest.mark.parametrize("obs_space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
+def test_same_step_final_obs(obs_space):
+    envs = SyncVectorEnv(
+        [
+            lambda: GenericTestEnv(
+                action_space=Discrete(5),
+                observation_space=obs_space,
+                reset_func=count_reset_obs,
+                step_func=count_step_obs,
+            )
+            for _ in range(3)
+        ],
+        autoreset_mode=AutoresetMode.SAME_STEP,
+    )
+    assert envs.metadata["autoreset_mode"] == AutoresetMode.SAME_STEP
+    envs.set_attr("max_count", [2, 3, 3])
+
+    envs.reset()
+    envs.step([1, 2, 3])
+    obs, rewards, terminations, truncations, info = envs.step([1, 2, 3])
+    assert info["final_obs"][0] in envs.single_observation_space
+    obs, rewards, terminations, truncations, info = envs.step([1, 2, 3])
+    assert info["final_obs"][1] in envs.single_observation_space
+    assert info["final_obs"][2] in envs.single_observation_space

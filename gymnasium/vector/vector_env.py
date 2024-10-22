@@ -291,8 +291,15 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             infos (dict): the (updated) infos of the vectorized environment
         """
         for key, value in env_info.items():
+            # It is easier for users to access their `final_obs` in the unbatched array of `obs` objects
+            if key == "final_obs":
+                if "final_obs" in vector_infos:
+                    array = vector_infos["final_obs"]
+                else:
+                    array = np.full(self.num_envs, fill_value=None, dtype=object)
+                array[env_num] = value
             # If value is a dictionary, then we apply the `_add_info` recursively.
-            if isinstance(value, dict):
+            elif isinstance(value, dict):
                 array = self._add_info(vector_infos.get(key, {}), value, env_num)
             # Otherwise, we are a base case to group the data
             else:
@@ -326,7 +333,6 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
             # Update the vector info with the updated data and mask information
             vector_infos[key], vector_infos[f"_{key}"] = array, array_mask
-
         return vector_infos
 
     def __del__(self):
@@ -521,9 +527,12 @@ class VectorObservationWrapper(VectorWrapper):
     def __init__(self, env: VectorEnv):
         super().__init__(env)
         if "autoreset_mode" not in env.metadata:
-            warn('todo')
+            warn("todo")
         else:
-            assert env.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP or env.metadata["autoreset_mode"] == AutoresetMode.DISABLED
+            assert (
+                env.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP
+                or env.metadata["autoreset_mode"] == AutoresetMode.DISABLED
+            )
 
     def reset(
         self,

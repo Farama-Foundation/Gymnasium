@@ -9,7 +9,13 @@ import numpy as np
 
 from gymnasium.core import ActType, ObsType
 from gymnasium.logger import warn
-from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper, AutoresetMode
+from gymnasium.vector.vector_env import (
+    ArrayType,
+    AutoresetMode,
+    VectorEnv,
+    VectorWrapper,
+)
+
 
 __all__ = ["RecordEpisodeStatistics"]
 
@@ -79,7 +85,7 @@ class RecordEpisodeStatistics(VectorWrapper):
         super().__init__(env)
         self._stats_key = stats_key
         if "autoreset_mode" not in self.env.metadata:
-            warn('todo')
+            warn("todo")
             self._autoreset_mode = AutoresetMode.NEXT_STEP
         else:
             assert isinstance(self.env.metadata["autoreset_mode"], AutoresetMode)
@@ -148,9 +154,11 @@ class RecordEpisodeStatistics(VectorWrapper):
         ), f"`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is {type(infos)}. This may be due to usage of other wrappers in the wrong order."
 
         self.episode_returns[self.prev_dones] = 0
-        self.episode_returns[np.logical_not(self.prev_dones)] += rewards[np.logical_not(self.prev_dones)]
+        self.episode_returns[np.logical_not(self.prev_dones)] += rewards[
+            np.logical_not(self.prev_dones)
+        ]
 
-        self.episode_lengths[self.prev_dones] = -1 if self._autoreset_mode == AutoresetMode.NEXT_STEP else 0
+        self.episode_lengths[self.prev_dones] = 0
         self.episode_lengths[~self.prev_dones] += 1
 
         self.episode_start_times[self.prev_dones] = time.perf_counter()
