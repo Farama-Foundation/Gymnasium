@@ -37,7 +37,9 @@ def custom_environments():
     del gym.registry["DictObsEnv-v0"]
 
 
-@pytest.mark.parametrize("autoreset_mode", [AutoresetMode.NEXT_STEP, AutoresetMode.SAME_STEP])
+@pytest.mark.parametrize(
+    "autoreset_mode", [AutoresetMode.NEXT_STEP, AutoresetMode.SAME_STEP]
+)
 @pytest.mark.parametrize("num_envs", (1, 3))
 @pytest.mark.parametrize(
     "env_id, wrapper_name, kwargs",
@@ -70,6 +72,7 @@ def custom_environments():
     ),
 )
 def test_vector_wrapper_equivalence(
+    autoreset_mode: AutoresetMode,
     env_id: str,
     wrapper_name: str,
     kwargs: dict[str, Any],
