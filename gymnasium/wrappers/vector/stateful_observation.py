@@ -102,6 +102,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         seed: int | list[int] | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
+        """Reset function for `NormalizeObservationWrapper` which is disabled for partial resets."""
         assert (
             options is None
             or "reset_mask" not in options

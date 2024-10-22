@@ -525,9 +525,16 @@ class VectorObservationWrapper(VectorWrapper):
     """
 
     def __init__(self, env: VectorEnv):
+        """Vector observation wrapper that batch transforms observations.
+
+        Args:
+            env: Vector environment.
+        """
         super().__init__(env)
         if "autoreset_mode" not in env.metadata:
-            warn("todo")
+            warn(
+                f"Vector environment ({env}) is missing `autoreset_mode` metadata key."
+            )
         else:
             assert (
                 env.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP

@@ -230,8 +230,6 @@ class SyncVectorEnv(VectorEnv):
                 infos = self._add_info(infos, env_info, i)
 
         # Concatenate the observations
-        print(f"{self._env_obs=}")
-        print(f"{self._observations}")
         self._observations = concatenate(
             self.single_observation_space, self._env_obs, self._observations
         )

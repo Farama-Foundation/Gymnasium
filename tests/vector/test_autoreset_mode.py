@@ -52,7 +52,6 @@ def test_autoreset_next_step(vectoriser):
         ],
         autoreset_mode=AutoresetMode.NEXT_STEP,
     )
-    print(f"{envs.metadata=}")
     assert envs.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP
     envs.set_attr("max_count", [2, 3, 3])
 
@@ -135,7 +134,7 @@ def test_autoreset_within_step(vectoriser):
     assert data_equivalence(
         info,
         {
-            "final_obs": np.array([2, 0, 0]),
+            "final_obs": np.array([2, None, None], dtype=object),
             "final_info": {},
             "_final_obs": np.array([True, False, False]),
             "_final_info": np.array([True, False, False]),
@@ -150,7 +149,7 @@ def test_autoreset_within_step(vectoriser):
     assert data_equivalence(
         info,
         {
-            "final_obs": np.array([0, 3, 3]),
+            "final_obs": np.array([None, 3, 3], dtype=object),
             "final_info": {},
             "_final_obs": np.array([False, True, True]),
             "_final_info": np.array([False, True, True]),
@@ -165,7 +164,7 @@ def test_autoreset_within_step(vectoriser):
     assert data_equivalence(
         info,
         {
-            "final_obs": np.array([2, 0, 0]),
+            "final_obs": np.array([2, None, None], dtype=object),
             "final_info": {},
             "_final_obs": np.array([True, False, False]),
             "_final_info": np.array([True, False, False]),

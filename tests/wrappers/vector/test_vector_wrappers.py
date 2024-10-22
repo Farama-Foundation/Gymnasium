@@ -73,11 +73,11 @@ def custom_environments():
 )
 def test_vector_wrapper_equivalence(
     autoreset_mode: AutoresetMode,
+    num_envs: int,
     env_id: str,
     wrapper_name: str,
     kwargs: dict[str, Any],
-    num_envs: int,
-    custom_environments,
+    custom_environments,  # pytest fixture
     vectorization_mode: str = "sync",
     num_steps: int = 50,
 ):

@@ -235,18 +235,18 @@ def test_partial_reset(vectoriser):
         [lambda: gym.make("CartPole-v1") for _ in range(3)],
         autoreset_mode=AutoresetMode.DISABLED,
     )
-    initial_obs, initial_info = envs.reset(seed=[0, 1, 2])
+    reset_obs, _ = envs.reset(seed=[0, 1, 2])
 
     envs.action_space.seed(123)
     envs.step(envs.action_space.sample())
     envs.step(envs.action_space.sample())
     step_obs, *_ = envs.step(envs.action_space.sample())
 
-    mask_obs, mask_info = envs.reset(
-        seed=[0, 1, 0], options={"mask": np.array([True, True, False])}
+    reset_mask_obs, _ = envs.reset(
+        seed=[0, 1, 0], options={"reset_mask": np.array([True, True, False])}
     )
-    assert np.all(mask_obs[:2] == initial_obs[:2])
-    assert np.all(mask_obs[2] == step_obs[2])
+    assert np.all(reset_mask_obs[:2] == reset_obs[:2])
+    assert np.all(reset_mask_obs[2] == step_obs[2])
 
     envs.close()
 
