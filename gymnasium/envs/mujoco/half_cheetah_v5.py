@@ -149,6 +149,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_array",
         ],
     }
 
@@ -198,6 +199,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
                 "human",
                 "rgb_array",
                 "depth_array",
+                "rgbd_array",
             ],
             "render_fps": int(np.round(1.0 / self.dt)),
         }

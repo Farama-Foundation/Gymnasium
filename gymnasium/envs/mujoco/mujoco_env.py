@@ -86,6 +86,7 @@ class MujocoEnv(gym.Env):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_array"
         ], self.metadata["render_modes"]
         if "render_fps" in self.metadata:
             assert (

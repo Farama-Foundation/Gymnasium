@@ -281,6 +281,10 @@ class OffScreenViewer(BaseRender):
                         seg_ids[geom.segid + 1, 1] = geom.objid
                 rgb_img = seg_ids[seg_img]
 
+            if render_mode == "rgbd_array":
+                depth_img = depth_arr.reshape(self.viewport.height, self.viewport.width)
+                return rgb_img[::-1, :, :], depth_img[::-1, :]
+
             # original image is upside-down, so flip i
             return rgb_img[::-1, :, :]
 
@@ -705,7 +709,7 @@ class MujocoRenderer:
 
         viewer = self._get_viewer(render_mode=render_mode)
 
-        if render_mode in ["rgb_array", "depth_array"]:
+        if render_mode in ["rgb_array", "depth_array", "rgbd_array"]:
             return viewer.render(render_mode=render_mode, camera_id=self.camera_id)
         elif render_mode == "human":
             return viewer.render()
@@ -726,7 +730,7 @@ class MujocoRenderer:
                     self.max_geom,
                     self._vopt,
                 )
-            elif render_mode in {"rgb_array", "depth_array"}:
+            elif render_mode in {"rgb_array", "depth_array", "rgbd_array"}:
                 self.viewer = OffScreenViewer(
                     self.model,
                     self.data,
@@ -737,7 +741,7 @@ class MujocoRenderer:
                 )
             else:
                 raise AttributeError(
-                    f"Unexpected mode: {render_mode}, expected modes: human, rgb_array, or depth_array"
+                    f"Unexpected mode: {render_mode}, expected modes: human, rgb_array, depth_array, or rgbd_array"
                 )
             # Add default camera parameters
             self._set_cam_config()
