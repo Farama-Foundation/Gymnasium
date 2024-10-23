@@ -140,7 +140,7 @@ class ReturnInfoEnv(gym.Env):
 
 
 @pytest.mark.parametrize("vectorizer", [AsyncVectorEnv, SyncVectorEnv])
-def test_vectorizers(vectorizer):
+def test_vector_return_info(vectorizer):
     vec_env = vectorizer(
         [
             lambda: ReturnInfoEnv([{"a": 1}, {"c": np.array([1, 2])}]),

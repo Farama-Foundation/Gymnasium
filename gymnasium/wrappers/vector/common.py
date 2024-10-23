@@ -8,7 +8,13 @@ from collections import deque
 import numpy as np
 
 from gymnasium.core import ActType, ObsType
-from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
+from gymnasium.logger import warn
+from gymnasium.vector.vector_env import (
+    ArrayType,
+    AutoresetMode,
+    VectorEnv,
+    VectorWrapper,
+)
 
 
 __all__ = ["RecordEpisodeStatistics"]
@@ -78,13 +84,19 @@ class RecordEpisodeStatistics(VectorWrapper):
         """
         super().__init__(env)
         self._stats_key = stats_key
+        if "autoreset_mode" not in self.env.metadata:
+            warn("todo")
+            self._autoreset_mode = AutoresetMode.NEXT_STEP
+        else:
+            assert isinstance(self.env.metadata["autoreset_mode"], AutoresetMode)
+            self._autoreset_mode = self.env.metadata["autoreset_mode"]
 
         self.episode_count = 0
 
-        self.episode_start_times: np.ndarray = np.zeros(())
-        self.episode_returns: np.ndarray = np.zeros(())
-        self.episode_lengths: np.ndarray = np.zeros((), dtype=int)
-        self.prev_dones: np.ndarray = np.zeros((), dtype=bool)
+        self.episode_start_times: np.ndarray = np.zeros((self.num_envs,))
+        self.episode_returns: np.ndarray = np.zeros((self.num_envs,))
+        self.episode_lengths: np.ndarray = np.zeros((self.num_envs,), dtype=int)
+        self.prev_dones: np.ndarray = np.zeros((self.num_envs,), dtype=bool)
 
         self.time_queue = deque(maxlen=buffer_length)
         self.return_queue = deque(maxlen=buffer_length)
@@ -98,10 +110,30 @@ class RecordEpisodeStatistics(VectorWrapper):
         """Resets the environment using kwargs and resets the episode returns and lengths."""
         obs, info = super().reset(seed=seed, options=options)
 
-        self.episode_start_times = np.full(self.num_envs, time.perf_counter())
-        self.episode_returns = np.zeros(self.num_envs)
-        self.episode_lengths = np.zeros(self.num_envs, dtype=int)
-        self.prev_dones = np.zeros(self.num_envs, dtype=bool)
+        if options is not None and "reset_mask" in options:
+            reset_mask = options.pop("reset_mask")
+            assert isinstance(
+                reset_mask, np.ndarray
+            ), f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
+            assert reset_mask.shape == (
+                self.num_envs,
+            ), f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
+            assert (
+                reset_mask.dtype == np.bool_
+            ), f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
+            assert np.any(
+                reset_mask
+            ), f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
+
+            self.episode_start_times[reset_mask] = time.perf_counter()
+            self.episode_returns[reset_mask] = 0
+            self.episode_lengths[reset_mask] = 0
+            self.prev_dones[reset_mask] = False
+        else:
+            self.episode_start_times = np.full(self.num_envs, time.perf_counter())
+            self.episode_returns = np.zeros(self.num_envs)
+            self.episode_lengths = np.zeros(self.num_envs, dtype=int)
+            self.prev_dones = np.zeros(self.num_envs, dtype=bool)
 
         return obs, info
 
@@ -122,10 +154,14 @@ class RecordEpisodeStatistics(VectorWrapper):
         ), f"`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is {type(infos)}. This may be due to usage of other wrappers in the wrong order."
 
         self.episode_returns[self.prev_dones] = 0
+        self.episode_returns[np.logical_not(self.prev_dones)] += rewards[
+            np.logical_not(self.prev_dones)
+        ]
+
         self.episode_lengths[self.prev_dones] = 0
-        self.episode_start_times[self.prev_dones] = time.perf_counter()
-        self.episode_returns[~self.prev_dones] += rewards[~self.prev_dones]
         self.episode_lengths[~self.prev_dones] += 1
+
+        self.episode_start_times[self.prev_dones] = time.perf_counter()
 
         self.prev_dones = dones = np.logical_or(terminations, truncations)
         num_dones = np.sum(dones)
@@ -133,7 +169,7 @@ class RecordEpisodeStatistics(VectorWrapper):
         if num_dones:
             if self._stats_key in infos or f"_{self._stats_key}" in infos:
                 raise ValueError(
-                    f"Attempted to add episode stats when they already exist, info keys: {list(infos.keys())}"
+                    f"Attempted to add episode stats with key '{self._stats_key}' but this key already exists in info: {list(infos.keys())}"
                 )
             else:
                 episode_time_length = np.round(
