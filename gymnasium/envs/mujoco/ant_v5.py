@@ -1,6 +1,6 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple, Union
+from typing import Union
 
 import numpy as np
 
@@ -231,15 +231,15 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "ant.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1,
         ctrl_cost_weight: float = 0.5,
         contact_cost_weight: float = 5e-4,
         healthy_reward: float = 1.0,
         main_body: Union[int, str] = 1,
         terminate_when_unhealthy: bool = True,
-        healthy_z_range: Tuple[float, float] = (0.2, 1.0),
-        contact_force_range: Tuple[float, float] = (-1.0, 1.0),
+        healthy_z_range: tuple[float, float] = (0.2, 1.0),
+        contact_force_range: tuple[float, float] = (-1.0, 1.0),
         reset_noise_scale: float = 0.1,
         exclude_current_positions_from_observation: bool = True,
         include_cfrc_ext_in_observation: bool = True,

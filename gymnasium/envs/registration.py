@@ -1,7 +1,6 @@
 """Functions for registering environments within gymnasium using public functions ``make``, ``register`` and ``spec``."""
 
-from __future__ import annotations
-
+import collections.abc
 import contextlib
 import copy
 import dataclasses
@@ -12,10 +11,11 @@ import json
 import re
 import sys
 from collections import defaultdict
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from enum import Enum
 from types import ModuleType
-from typing import Any, Callable, Iterable, Sequence
+from typing import Any, Optional, runtime_checkable
 
 import gymnasium as gym
 from gymnasium import Env, Wrapper, error, logger
@@ -50,16 +50,18 @@ __all__ = [
 ]
 
 
+@runtime_checkable
 class EnvCreator(Protocol):
     """Function type expected for an environment."""
 
     def __call__(self, **kwargs: Any) -> Env: ...
 
 
+@runtime_checkable
 class VectorEnvCreator(Protocol):
     """Function type expected for an environment."""
 
-    def __call__(self, **kwargs: Any) -> gym.vector.VectorEnv: ...
+    def __call__(self, **kwargs: Any) -> "gym.vector.VectorEnv": ...
 
 
 @dataclass
@@ -99,7 +101,7 @@ class EnvSpec:
     entry_point: EnvCreator | str | None = field(default=None)
 
     # Environment attributes
-    reward_threshold: float | None = field(default=None)
+    reward_threshold: float | int | None = field(default=None)
     nondeterministic: bool = field(default=False)
 
     # Wrappers
@@ -165,7 +167,7 @@ class EnvSpec:
                 )
 
     @staticmethod
-    def from_json(json_env_spec: str) -> EnvSpec:
+    def from_json(json_env_spec: str) -> "gym.envs.registration.EnvSpec":
         """Converts a JSON string into a specification stack.
 
         Args:
@@ -260,7 +262,7 @@ class VectorizeMode(Enum):
 
 # Global registry of environments. Meant to be accessed through `register` and `make`
 registry: dict[str, EnvSpec] = {}
-current_namespace: str | None = None
+current_namespace: Optional[str] = None
 
 
 def parse_env_id(env_id: str) -> tuple[str | None, str, int | None]:
@@ -569,7 +571,7 @@ def namespace(ns: str):
 def register(
     id: str,
     entry_point: EnvCreator | str | None = None,
-    reward_threshold: float | None = None,
+    reward_threshold: float | int | None = None,
     nondeterministic: bool = False,
     max_episode_steps: int | None = None,
     order_enforce: bool = True,
@@ -835,9 +837,9 @@ def make_vec(
     num_envs: int = 1,
     vectorization_mode: VectorizeMode | str | None = None,
     vector_kwargs: dict[str, Any] | None = None,
-    wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
+    wrappers: collections.abc.Sequence[Callable[[Env], Wrapper]] | None = None,
     **kwargs,
-) -> gym.vector.VectorEnv:
+) -> "gym.vector.VectorEnv":
     """Create a vector environment according to the given ID.
 
     To find all available environments use :func:`gymnasium.pprint_registry` or ``gymnasium.registry.keys()`` for all valid ids.

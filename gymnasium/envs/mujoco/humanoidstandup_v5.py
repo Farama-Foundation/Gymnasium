@@ -1,6 +1,6 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple, Union
+from typing import Union
 
 import numpy as np
 
@@ -289,11 +289,11 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "humanoidstandup.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
         uph_cost_weight: float = 1,
         ctrl_cost_weight: float = 0.1,
         impact_cost_weight: float = 0.5e-6,
-        impact_cost_range: Tuple[float, float] = (-np.inf, 10.0),
+        impact_cost_range: tuple[float, float] = (-np.inf, 10.0),
         reset_noise_scale: float = 1e-2,
         exclude_current_positions_from_observation: bool = True,
         include_cinert_in_observation: bool = True,

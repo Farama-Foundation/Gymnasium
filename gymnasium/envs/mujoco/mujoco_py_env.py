@@ -1,5 +1,5 @@
 from os import path
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Optional, Union
 
 import numpy as np
 from numpy.typing import NDArray
@@ -110,7 +110,7 @@ class BaseMujocoPyEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
     # ----------------------------
     def step(
         self, action: NDArray[np.float32]
-    ) -> Tuple[NDArray[np.float64], np.float64, bool, bool, Dict[str, np.float64]]:
+    ) -> tuple[NDArray[np.float64], np.float64, bool, bool, dict[str, np.float64]]:
         raise NotImplementedError
 
     def reset_model(self) -> NDArray[np.float64]:
@@ -120,7 +120,7 @@ class BaseMujocoPyEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         """
         raise NotImplementedError
 
-    def _initialize_simulation(self) -> Tuple[Any, Any]:
+    def _initialize_simulation(self) -> tuple[Any, Any]:
         """
         Initialize MuJoCo simulation data structures mjModel and mjData.
         """
@@ -145,7 +145,7 @@ class BaseMujocoPyEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         raise NotImplementedError
 
     # -----------------------------
-    def _get_reset_info(self) -> Dict[str, float]:
+    def _get_reset_info(self) -> dict[str, float]:
         """Function that generates the `info` that is returned during a `reset()`."""
         return {}
 

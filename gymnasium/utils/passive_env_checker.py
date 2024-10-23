@@ -1,8 +1,8 @@
 """A set of functions for passively checking environment implementations."""
 
 import inspect
+from collections.abc import Callable
 from functools import partial
-from typing import Callable
 
 import numpy as np
 
