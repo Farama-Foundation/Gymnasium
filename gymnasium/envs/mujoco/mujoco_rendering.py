@@ -701,10 +701,10 @@ class MujocoRenderer:
         """Renders a frame of the simulation in a specific format and camera view.
 
         Args:
-            render_mode: The format to render the frame, it can be: "human", "rgb_array", or "depth_array"
+            render_mode: The format to render the frame, it can be: "human", "rgb_array", "depth_array", or "rgbd_array"
 
         Returns:
-            If render_mode is "rgb_array" or "depth_array" it returns a numpy array in the specified format. "human" render mode does not return anything.
+            If render_mode is "rgb_array" or "depth_array" it returns a numpy array in the specified format. "rgbd_array" returns a tuple of numpy arrays of the form (rgb, depth). "human" render mode does not return anything.
         """
 
         viewer = self._get_viewer(render_mode=render_mode)
@@ -717,7 +717,7 @@ class MujocoRenderer:
     def _get_viewer(self, render_mode: Optional[str]):
         """Initializes and returns a viewer class depending on the render_mode
         - `WindowViewer` class for "human" render mode
-        - `OffScreenViewer` class for "rgb_array" or "depth_array" render mode
+        - `OffScreenViewer` class for "rgb_array", "depth_array", or "rgbd_array" render mode
         """
         self.viewer = self._viewers.get(render_mode)
         if self.viewer is None:
