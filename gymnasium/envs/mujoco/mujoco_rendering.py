@@ -715,6 +715,11 @@ class MujocoRenderer:
         - `WindowViewer` class for "human" render mode
         - `OffScreenViewer` class for "rgb_array" or "depth_array" render mode
         """
+        if render_mode != "human":
+            assert (
+                self.width is not None and self.height is not None
+            ), "The width and height cannot be `None` when the render_mode is not Human."
+
         self.viewer = self._viewers.get(render_mode)
         if self.viewer is None:
             if render_mode == "human":
