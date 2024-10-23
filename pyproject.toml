@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 name = "gymnasium"
 description = "A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)."
 readme = "README.md"
-requires-python = ">= 3.8"
+requires-python = ">= 3.9"
 authors = [{ name = "Farama Foundation", email = "contact@farama.org" }]
 license = { text = "MIT License" }
 keywords = ["Reinforcement Learning", "game", "RL", "AI", "gymnasium"]
