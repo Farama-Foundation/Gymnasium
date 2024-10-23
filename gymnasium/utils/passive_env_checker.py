@@ -292,34 +292,6 @@ def _check_render_return(render_mode, render_return):
             logger.warn(
                 f"Depth-array rendering should return a numpy array with two axes, got {render_return.ndim}"
             )
-    elif render_mode == "rgbd_array":
-        rgb, depth = render_return
-        if not isinstance(rgb, np.ndarray):
-            logger.warn(
-                f"RGB-array of RGB-D rendering should return a numpy array, got {type(render_return)}"
-            )
-        else:
-            if rgb.dtype != np.uint8:
-                logger.warn(
-                    f"RGB-array of RGB-D rendering should return a numpy array with dtype uint8, got {render_return.dtype}"
-                )
-            if rgb.ndim != 3:
-                logger.warn(
-                    f"RGB-array of RGB-D rendering should return a numpy array with three axes, got {render_return.ndim}"
-                )
-            if rgb.ndim == 3 and rgb.shape[2] != 3:
-                logger.warn(
-                    f"RGB-array of RGB-D rendering should return a numpy array in which the last axis has three dimensions, got {render_return.shape[2]}"
-                )
-        if not isinstance(depth, np.ndarray):
-            logger.warn(
-                f"Depth-array of RGB-D rendering should return a numpy array, got {type(render_return)}"
-            )
-        elif depth.ndim != 2:
-            logger.warn(
-                f"Depth-array of RGB-D rendering should return a numpy array with two axes, got {render_return.ndim}"
-            )
-
     elif render_mode in ["ansi", "ascii"]:
         if not isinstance(render_return, str):
             logger.warn(
