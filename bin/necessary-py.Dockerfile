@@ -20,7 +20,8 @@ RUN apt-get -y update \
 COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
 
-RUN pip install --upgrade "numpy>=1.21,<2.0"
-RUN pip install .[testing] --no-cache-dir
+RUN pip install uv
+RUN uv pip install --system --upgrade "numpy>=1.21,<2.0"
+RUN uv pip install --system .[testing] --no-cache-dir
 
 ENTRYPOINT ["/usr/local/gymnasium/bin/docker_entrypoint"]
