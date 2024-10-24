@@ -718,7 +718,7 @@ class MujocoRenderer:
         if render_mode != "human":
             assert (
                 self.width is not None and self.height is not None
-            ), "The width and height cannot be `None` when the render_mode is not Human."
+            ), f"The width: {self.width} and height: {self.height} cannot be `None` when the render_mode is not `human`."
 
         self.viewer = self._viewers.get(render_mode)
         if self.viewer is None:
