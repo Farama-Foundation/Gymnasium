@@ -702,6 +702,10 @@ class MujocoRenderer:
         Returns:
             If render_mode is "rgb_array" or "depth_array" it returns a numpy array in the specified format. "human" render mode does not return anything.
         """
+        if render_mode != "human":
+            assert (
+                self.width is not None and self.height is not None
+            ), f"The width: {self.width} and height: {self.height} cannot be `None` when the render_mode is not `human`."
 
         viewer = self._get_viewer(render_mode=render_mode)
 
@@ -715,11 +719,6 @@ class MujocoRenderer:
         - `WindowViewer` class for "human" render mode
         - `OffScreenViewer` class for "rgb_array" or "depth_array" render mode
         """
-        if render_mode != "human":
-            assert (
-                self.width is not None and self.height is not None
-            ), f"The width: {self.width} and height: {self.height} cannot be `None` when the render_mode is not `human`."
-
         self.viewer = self._viewers.get(render_mode)
         if self.viewer is None:
             if render_mode == "human":
