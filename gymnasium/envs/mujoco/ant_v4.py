@@ -16,6 +16,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_array",
         ],
         "render_fps": 20,
     }

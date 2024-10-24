@@ -59,7 +59,9 @@ def test_offscreen_viewer_custom_dimensions(
     viewer.close()
 
 
-@pytest.mark.parametrize("render_mode", ["human", "rgb_array", "depth_array"])
+@pytest.mark.parametrize(
+    "render_mode", ["human", "rgb_array", "depth_array", "rgbd_array"]
+)
 @pytest.mark.parametrize("max_geom", [10, 100, 1000, 10000])
 def test_max_geom_attribute(
     model: mujoco.MjModel, data: mujoco.MjData, render_mode: str, max_geom: int
@@ -84,7 +86,9 @@ def test_max_geom_attribute(
     viewer.close()
 
 
-@pytest.mark.parametrize("render_mode", ["human", "rgb_array", "depth_array"])
+@pytest.mark.parametrize(
+    "render_mode", ["human", "rgb_array", "depth_array", "rgbd_array"]
+)
 def test_camera_id(render_mode: str):
     """Assert that the camera_id parameter works correctly."""
     env_a = gymnasium.make("Ant-v5", camera_id=0, render_mode=render_mode).unwrapped
@@ -94,6 +98,15 @@ def test_camera_id(render_mode: str):
     assert env_a.mujoco_renderer.camera_id == env_b.mujoco_renderer.camera_id
     assert env_a.mujoco_renderer.camera_id != env_c.mujoco_renderer.camera_id
 
-    if render_mode != "human":
+    if render_mode == "rgbd_array":
+        rgb_a, depth_a = env_a.render()
+        rgb_b, depth_b = env_b.render()
+        rgb_c, depth_c = env_c.render()
+        assert (rgb_a == rgb_b).all()
+        assert (depth_a == depth_b).all()
+        assert (rgb_a != rgb_c).any()
+        assert (depth_a != depth_c).any()
+
+    elif render_mode != "human":
         assert (env_a.render() == env_b.render()).all()
         assert (env_a.render() != env_c.render()).any()
