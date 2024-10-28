@@ -32,7 +32,7 @@ def check_rendered(rendered_frame, mode: str):
     elif mode == "depth_array":
         assert isinstance(rendered_frame, np.ndarray)
         assert len(rendered_frame.shape) == 2
-    elif mode == "rgbd_array":
+    elif mode == "rgbd_tuple":
         rendered_rgb, rendered_depth = rendered_frame
         assert isinstance(rendered_rgb, np.ndarray)
         assert isinstance(rendered_depth, np.ndarray)

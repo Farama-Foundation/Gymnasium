@@ -141,7 +141,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
-            "rgbd_array",
+            "rgbd_tuple",
         ],
     }
 
@@ -183,7 +183,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
                 "human",
                 "rgb_array",
                 "depth_array",
-                "rgbd_array",
+                "rgbd_tuple",
             ],
             "render_fps": int(np.round(1.0 / self.dt)),
         }

@@ -701,15 +701,15 @@ class MujocoRenderer:
         """Renders a frame of the simulation in a specific format and camera view.
 
         Args:
-            render_mode: The format to render the frame, it can be: "human", "rgb_array", "depth_array", or "rgbd_array"
+            render_mode: The format to render the frame, it can be: "human", "rgb_array", "depth_array", or "rgbd_tuple"
 
         Returns:
-            If render_mode is "rgb_array" or "depth_array" it returns a numpy array in the specified format. "rgbd_array" returns a tuple of numpy arrays of the form (rgb, depth). "human" render mode does not return anything.
+            If render_mode is "rgb_array" or "depth_array" it returns a numpy array in the specified format. "rgbd_tuple" returns a tuple of numpy arrays of the form (rgb, depth). "human" render mode does not return anything.
         """
 
         viewer = self._get_viewer(render_mode=render_mode)
 
-        if render_mode in ["rgb_array", "depth_array", "rgbd_array"]:
+        if render_mode in ["rgb_array", "depth_array", "rgbd_tuple"]:
             return viewer.render(render_mode=render_mode, camera_id=self.camera_id)
         elif render_mode == "human":
             return viewer.render()
@@ -717,7 +717,7 @@ class MujocoRenderer:
     def _get_viewer(self, render_mode: Optional[str]):
         """Initializes and returns a viewer class depending on the render_mode
         - `WindowViewer` class for "human" render mode
-        - `OffScreenViewer` class for "rgb_array", "depth_array", or "rgbd_array" render mode
+        - `OffScreenViewer` class for "rgb_array", "depth_array", or "rgbd_tuple" render mode
         """
         self.viewer = self._viewers.get(render_mode)
         if self.viewer is None:
@@ -730,7 +730,7 @@ class MujocoRenderer:
                     self.max_geom,
                     self._vopt,
                 )
-            elif render_mode in {"rgb_array", "depth_array", "rgbd_array"}:
+            elif render_mode in {"rgb_array", "depth_array", "rgbd_tuple"}:
                 self.viewer = OffScreenViewer(
                     self.model,
                     self.data,
@@ -741,7 +741,7 @@ class MujocoRenderer:
                 )
             else:
                 raise AttributeError(
-                    f"Unexpected mode: {render_mode}, expected modes: human, rgb_array, depth_array, or rgbd_array"
+                    f"Unexpected mode: {render_mode}, expected modes: human, rgb_array, depth_array, or rgbd_tuple"
                 )
             # Add default camera parameters
             self._set_cam_config()

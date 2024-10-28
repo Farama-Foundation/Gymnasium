@@ -60,7 +60,7 @@ def test_offscreen_viewer_custom_dimensions(
 
 
 @pytest.mark.parametrize(
-    "render_mode", ["human", "rgb_array", "depth_array", "rgbd_array"]
+    "render_mode", ["human", "rgb_array", "depth_array", "rgbd_tuple"]
 )
 @pytest.mark.parametrize("max_geom", [10, 100, 1000, 10000])
 def test_max_geom_attribute(
@@ -87,7 +87,7 @@ def test_max_geom_attribute(
 
 
 @pytest.mark.parametrize(
-    "render_mode", ["human", "rgb_array", "depth_array", "rgbd_array"]
+    "render_mode", ["human", "rgb_array", "depth_array", "rgbd_tuple"]
 )
 def test_camera_id(render_mode: str):
     """Assert that the camera_id parameter works correctly."""
@@ -98,7 +98,7 @@ def test_camera_id(render_mode: str):
     assert env_a.mujoco_renderer.camera_id == env_b.mujoco_renderer.camera_id
     assert env_a.mujoco_renderer.camera_id != env_c.mujoco_renderer.camera_id
 
-    if render_mode == "rgbd_array":
+    if render_mode == "rgbd_tuple":
         rgb_a, depth_a = env_a.render()
         rgb_b, depth_b = env_b.render()
         rgb_c, depth_c = env_c.render()
