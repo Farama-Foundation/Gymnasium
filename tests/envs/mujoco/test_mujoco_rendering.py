@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 import mujoco
 import pytest
 
@@ -110,3 +112,14 @@ def test_camera_id(render_mode: str):
     elif render_mode != "human":
         assert (env_a.render() == env_b.render()).all()
         assert (env_a.render() != env_c.render()).any()
+
+def test_rgbd_tuple():
+    """Assert that rgbd_tuple is the proper combination of rgb and depth images as tuple"""
+    env = gymnasium.make("Ant-v5", camera_id=0, render_mode="rgbd_tuple").unwrapped
+    rgb, depth = env.render()
+    assert isinstance(rgb, np.ndarray)
+    assert isinstance(depth, np.ndarray)
+    assert rgb.dtype == np.uint8
+    assert depth.dtype == np.float32
+    assert rgb.ndim == 3
+    assert depth.ndim == 2
