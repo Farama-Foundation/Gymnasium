@@ -288,7 +288,7 @@ class OffScreenViewer(BaseRender):
         if render_mode == "rgb_array":
             return rgb_img
         elif render_mode == "depth_array":
-            return depth_arr
+            return depth_img
         else:  # "rgbd_tuple"
             return rgb_img, depth_img
 
