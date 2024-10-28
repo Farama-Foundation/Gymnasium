@@ -653,37 +653,42 @@ Often some of the first positional elements are omitted from the state space sin
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">width</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">render_mode</span></code></p></td>
+<td><p><strong>str</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>The modality of the render result. Must be one of <code class="docutils literal notranslate"><span class="pre">human</span></code>, <code class="docutils literal notranslate"><span class="pre">rgb_array</span></code>, <code class="docutils literal notranslate"><span class="pre">depth_array</span></code>, or <code class="docutils literal notranslate"><span class="pre">rgbd_tuple</span></code>. Note that <code class="docutils literal notranslate"><span class="pre">human</span></code> does not return a rendered image, but renders directly to the window</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">width</span></code></p></td>
 <td><p><strong>int</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">480</span></code></p></td>
 <td><p>The width of the render window</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">height</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">height</span></code></p></td>
 <td><p><strong>int</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">480</span></code></p></td>
 <td><p>The height of the render window</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">camera_id</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">camera_id</span></code></p></td>
 <td><p><strong>int | None</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
 <td><p>The camera ID used for the render window</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">camera_name</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">camera_name</span></code></p></td>
 <td><p><strong>str | None</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
 <td><p>The name of the camera used for the render window (mutually exclusive option with <code class="docutils literal notranslate"><span class="pre">camera_id</span></code>)</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default_camera_config</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">default_camera_config</span></code></p></td>
 <td><p><strong>dict[str, float | int] | None</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
 <td><p>The <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/APIreference/APItypes.html#mjvcamera">mjvCamera</a> properties</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_geom</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_geom</span></code></p></td>
 <td><p><strong>int</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
 <td><p>Max number of geometrical objects to render (useful for 3rd-party environments)</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">visual_options</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">visual_options</span></code></p></td>
 <td><p><strong>Dict[int, bool]</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
 <td><p>A dictionary with <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/overview.html#mjvisual">mjVisual</a> flags and value pairs, example <code class="docutils literal notranslate"><span class="pre">{mujoco.mjtVisFlag.mjVIS_CONTACTPOINT:</span> <span class="pre">True,</span> <span class="pre">mujoco.mjtVisFlag.mjVIS_CONTACTFORCE:</span> <span class="pre">True}</span></code> (show contact points and forces).</p></td>
