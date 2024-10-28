@@ -256,11 +256,12 @@ class OffScreenViewer(BaseRender):
 
         mujoco.mjr_readPixels(rgb_arr, depth_arr, self.viewport, self.con)
 
-        if render_mode == "depth_array":
+        # Process rendered images according to render_mode
+        if render_mode in ["depth_array", "rgbd_tuple"]:
             depth_img = depth_arr.reshape(self.viewport.height, self.viewport.width)
             # original image is upside-down, so flip it
-            return depth_img[::-1, :]
-        else:
+            depth_img = depth_img[::-1, :]
+        if render_mode in ["rgb_array", "rgbd_tuple"]:
             rgb_img = rgb_arr.reshape(self.viewport.height, self.viewport.width, 3)
 
             if segmentation:
@@ -280,13 +281,17 @@ class OffScreenViewer(BaseRender):
                         seg_ids[geom.segid + 1, 0] = geom.objtype
                         seg_ids[geom.segid + 1, 1] = geom.objid
                 rgb_img = seg_ids[seg_img]
+                # original image is upside-down, so flip it
+                rgb_img = rgb_img[::-1, :, :]
 
-            if render_mode == "rgbd_array":
-                depth_img = depth_arr.reshape(self.viewport.height, self.viewport.width)
-                return rgb_img[::-1, :, :], depth_img[::-1, :]
+        # Return processed images based on render_mode
+        if render_mode == "rgb_array":
+            return rgb_img
+        elif render_mode == "depth_array":
+            return depth_arr
+        else: # "rgbd_tuple"
+            return rgb_img, depth_img
 
-            # original image is upside-down, so flip i
-            return rgb_img[::-1, :, :]
 
     def close(self):
         self.free()
