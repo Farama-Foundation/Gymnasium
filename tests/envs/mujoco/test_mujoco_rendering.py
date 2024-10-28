@@ -115,11 +115,20 @@ def test_camera_id(render_mode: str):
 
 def test_rgbd_tuple():
     """Assert that rgbd_tuple is the proper combination of rgb and depth images as tuple"""
-    env = gymnasium.make("Ant-v5", camera_id=0, render_mode="rgbd_tuple").unwrapped
-    rgb, depth = env.render()
-    assert isinstance(rgb, np.ndarray)
-    assert isinstance(depth, np.ndarray)
-    assert rgb.dtype == np.uint8
-    assert depth.dtype == np.float32
-    assert rgb.ndim == 3
-    assert depth.ndim == 2
+    env_a = gymnasium.make("Ant-v5", render_mode="rgbd_tuple").unwrapped
+    env_b = gymnasium.make("Ant-v5", render_mode="rgb_array").unwrapped
+    env_c = gymnasium.make("Ant-v5", render_mode="depth_array").unwrapped
+
+    rgb_a, depth_a = env_a.render()
+    rgb_b = env_b.render()
+    depth_c = env_c.render()
+
+    assert isinstance(rgb_a, np.ndarray)
+    assert isinstance(depth_c, np.ndarray)
+    assert rgb_a.dtype == np.uint8
+    assert depth_a.dtype == np.float32
+    assert rgb_a.ndim == 3
+    assert depth_a.ndim == 2
+
+    assert (rgb_a == rgb_b).all()
+    assert (depth_a == depth_c).all()
