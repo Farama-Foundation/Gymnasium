@@ -289,9 +289,8 @@ class OffScreenViewer(BaseRender):
             return rgb_img
         elif render_mode == "depth_array":
             return depth_arr
-        else: # "rgbd_tuple"
+        else:  # "rgbd_tuple"
             return rgb_img, depth_img
-
 
     def close(self):
         self.free()

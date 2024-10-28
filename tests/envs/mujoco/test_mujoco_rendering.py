@@ -1,8 +1,7 @@
 import os
 
-import numpy as np
-
 import mujoco
+import numpy as np
 import pytest
 
 import gymnasium
@@ -112,6 +111,7 @@ def test_camera_id(render_mode: str):
     elif render_mode != "human":
         assert (env_a.render() == env_b.render()).all()
         assert (env_a.render() != env_c.render()).any()
+
 
 def test_rgbd_tuple():
     """Assert that rgbd_tuple is the proper combination of rgb and depth images as tuple"""
