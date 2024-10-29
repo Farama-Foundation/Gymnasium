@@ -219,6 +219,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   A simple environment using [PyBullet](https://github.com/bulletphysics/bullet3) to simulate the dynamics of a [Bitcraze Crazyflie 2.x](https://www.bitcraze.io/documentation/hardware/crazyflie_2_1/crazyflie_2_1-datasheet.pdf) nanoquadrotor.
 
+- [Itomori: UAV Risk-aware Flight Environment](https://github.com/gustavo-moura/itomori)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/gustavo-moura/itomori)
+
+  Itomori is an environment for risk-aware UAV flight, it provides tools to solve Chance-Constrained Markov Decision Processes (CCMDP). The env allows to simulate, visualize, and evaluate UAV navigation in complex and risky environments, incorporating variables like GPS uncertainty, collision risk, and adaptive flight planning. Itomori is intended to support UAV path-planning research by offering adjustable parameters, detailed visualizations, and insights into agent behavior in uncertain environments.
+
 - [OmniIsaacGymEnvs: Gym environments for NVIDIA Omniverse Isaac ](https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/)
 
   Reinforcement Learning Environments for [Omniverse Isaac simulator](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/overview.html).
