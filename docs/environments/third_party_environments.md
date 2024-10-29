@@ -224,7 +224,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
   ![GitHub stars](https://img.shields.io/github/stars/gustavo-moura/itomori)
 
-  Itomori is a Gymnasium environment for risk-aware UAV flight. Designed as part of a research project, Itomori provides tools to solve Chance-Constrained Markov Decision Processes (CCMDP). The env allows to simulate, visualize, and evaluate UAV navigation in complex and risky environments, incorporating variables like GPS uncertainty, collision risk, and adaptive flight planning. Itomori is intended to support UAV path-planning research by offering adjustable parameters, detailed visualizations, and insights into agent behavior in uncertain environments.
+  Itomori is an environment for risk-aware UAV flight, it provides tools to solve Chance-Constrained Markov Decision Processes (CCMDP). The env allows to simulate, visualize, and evaluate UAV navigation in complex and risky environments, incorporating variables like GPS uncertainty, collision risk, and adaptive flight planning. Itomori is intended to support UAV path-planning research by offering adjustable parameters, detailed visualizations, and insights into agent behavior in uncertain environments.
 
 - [OmniIsaacGymEnvs: Gym environments for NVIDIA Omniverse Isaac ](https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/)
 
