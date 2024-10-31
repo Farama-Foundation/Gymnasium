@@ -115,7 +115,11 @@ start_epsilon = 1.0
 epsilon_decay = start_epsilon / (n_episodes / 2)  # reduce the exploration over time
 final_epsilon = 0.1
 
+env = gym.make("Blackjack-v1", sab=False)
+env = gym.wrappers.RecordEpisodeStatistics(env, deque_size=n_episodes)
+
 agent = BlackjackAgent(
+    env=env,
     learning_rate=learning_rate,
     initial_epsilon=start_epsilon,
     epsilon_decay=epsilon_decay,
@@ -128,17 +132,14 @@ Info: The current hyperparameters are set to quickly train a decent agent. If yo
 ```python
 from tqdm import tqdm
 
-env = gym.make("Blackjack-v1", sab=False)
-env = gym.wrappers.RecordEpisodeStatistics(env, deque_size=n_episodes)
-
 for episode in tqdm(range(n_episodes)):
-    obs, info = env.reset()
+    obs, info = agent.env.reset()
     done = False
 
     # play one episode
     while not done:
         action = agent.get_action(obs)
-        next_obs, reward, terminated, truncated, info = env.step(action)
+        next_obs, reward, terminated, truncated, info = agent.env.step(action)
 
         # update the agent
         agent.update(obs, action, reward, terminated, next_obs)
@@ -148,6 +149,42 @@ for episode in tqdm(range(n_episodes)):
         obs = next_obs
 
     agent.decay_epsilon()
+
+    # calculate the average training error for each episode
+    agent.training_error[-agent.env.length_queue[-1]:] = [sum(agent.training_error[-agent.env.length_queue[-1]:])/agent.env.length_queue[-1]]
+
+    # calculate the average return, episode length and training error until now
+    # these codes below are transfering values in each episode to average values, because env only record data for each episode
+    if episode > 0:
+        agent.env.return_queue[-1] = agent.env.return_queue[-2]*episode/(episode+1) + agent.env.return_queue[-1]/(episode+1)
+        agent.env.length_queue[-1] = agent.env.length_queue[-2]*episode/(episode+1) + agent.env.length_queue[-1]/(episode+1)
+        agent.training_error[-1] = agent.training_error[-2]*episode/(episode+1) + agent.training_error[-1]/(episode+1)
+```
+
+You can use `matplotlib` to visualize the training reward and length.
+
+```python
+from matplotlib import pyplot as plt
+# visualize the episode rewards, episode length and training error in one figure
+fig, axs = plt.subplots(1, 3, figsize=(20, 8))
+
+axs[0].plot(agent.env.return_queue)
+axs[0].set_title("Episode Rewards")
+axs[0].set_xlabel("Episode")
+axs[0].set_ylabel("Reward")
+
+axs[1].plot(agent.env.length_queue)
+axs[1].set_title("Episode Lengths")
+axs[1].set_xlabel("Episode")
+axs[1].set_ylabel("Length")
+
+axs[2].plot(agent.training_error)
+axs[2].set_title("Training Error")
+axs[2].set_xlabel("Episode")
+axs[2].set_ylabel("Temporal Difference")
+
+plt.tight_layout()
+plt.show()
 ```
 
 ![](../_static/img/tutorials/blackjack_training_plots.png "Training Plot")
