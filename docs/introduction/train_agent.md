@@ -116,6 +116,7 @@ epsilon_decay = start_epsilon / (n_episodes / 2)  # reduce the exploration over 
 final_epsilon = 0.1
 
 agent = BlackjackAgent(
+    env,
     learning_rate=learning_rate,
     initial_epsilon=start_epsilon,
     epsilon_decay=epsilon_decay,
