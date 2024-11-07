@@ -43,7 +43,8 @@ class StickyAction(
     """
 
     def __init__(
-        self, env: gym.Env[ObsType, ActType],
+        self,
+        env: gym.Env[ObsType, ActType],
         repeat_action_probability: float,
         repeat_action_duration: int = 1,
     ):
