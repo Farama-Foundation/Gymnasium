@@ -16,16 +16,29 @@ def test_sticky_action():
         repeat_action_probability=0.5,
     )
 
-    previous_action = None
-    for _ in range(NUM_STEPS):
-        input_action = env.action_space.sample()
-        executed_action, _, _, _, _ = env.step(input_action)
+previous_action = None
+for _ in range(NUM_STEPS):
+    input_action = env.action_space.sample()
+    executed_action, _, _, _, _ = env.step(input_action)
 
-        assert np.all(executed_action == input_action) or np.all(
-            executed_action == previous_action
-        )
-        previous_action = executed_action
+    assert np.all(executed_action == input_action) or np.all(
+        executed_action == previous_action
+    )
+    previous_action = executed_action
 
+env = StickyAction(
+    GenericTestEnv(step_func=record_action_as_obs_step),
+    repeat_action_probability=0.5, repeat_action_duration=4,
+)
+
+previous_action = None
+for _ in range(NUM_STEPS):
+    input_action = env.action_space.sample()
+    executed_action, _, _, _, _ = env.step(input_action)
+    assert np.all(executed_action == input_action) or np.all(
+        executed_action == previous_action
+    )
+    previous_action = executed_action
 
 @pytest.mark.parametrize("repeat_action_probability", [-1, 1, 1.5])
 def test_sticky_action_raise(repeat_action_probability):
@@ -33,4 +46,12 @@ def test_sticky_action_raise(repeat_action_probability):
     with pytest.raises(InvalidProbability):
         StickyAction(
             GenericTestEnv(), repeat_action_probability=repeat_action_probability
+        )
+
+@pytest.mark.parametrize("repeat_action_duration", [-4, 0])
+def test_sticky_action_raise(repeat_action_duration):
+    """Tests the stick action wrapper with durations that should raise an error."""
+    with pytest.raises(ValueError):
+        StickyAction(
+            GenericTestEnv(), 0.5, repeat_action_duration=repeat_action_duration
         )
