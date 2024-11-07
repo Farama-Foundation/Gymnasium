@@ -629,7 +629,9 @@ class AddWhiteNoise(
                 size=render_out.shape,
                 dtype=np.uint8,
             )
+
         mask = self.np_random.random(
             render_out.shape[0:2]
         ) < self.observation_noise_probability
+
         return np.where(mask[..., None], rnd_color, render_out)
