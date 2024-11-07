@@ -133,13 +133,13 @@ Info: The current hyperparameters are set to quickly train a decent agent. If yo
 from tqdm import tqdm
 
 for episode in tqdm(range(n_episodes)):
-    obs, info = agent.env.reset()
+    obs, info = env.reset()
     done = False
 
     # play one episode
     while not done:
         action = agent.get_action(obs)
-        next_obs, reward, terminated, truncated, info = agent.env.step(action)
+        next_obs, reward, terminated, truncated, info = env.step(action)
 
         # update the agent
         agent.update(obs, action, reward, terminated, next_obs)
@@ -149,16 +149,6 @@ for episode in tqdm(range(n_episodes)):
         obs = next_obs
 
     agent.decay_epsilon()
-
-    # calculate the average training error for each episode
-    agent.training_error[-agent.env.length_queue[-1]:] = [sum(agent.training_error[-agent.env.length_queue[-1]:])/agent.env.length_queue[-1]]
-
-    # calculate the average return, episode length and training error until now
-    # these codes below are transfering values in each episode to average values, because env only record data for each episode
-    if episode > 0:
-        agent.env.return_queue[-1] = agent.env.return_queue[-2]*episode/(episode+1) + agent.env.return_queue[-1]/(episode+1)
-        agent.env.length_queue[-1] = agent.env.length_queue[-2]*episode/(episode+1) + agent.env.length_queue[-1]/(episode+1)
-        agent.training_error[-1] = agent.training_error[-2]*episode/(episode+1) + agent.training_error[-1]/(episode+1)
 ```
 
 You can use `matplotlib` to visualize the training reward and length.
@@ -168,17 +158,19 @@ from matplotlib import pyplot as plt
 # visualize the episode rewards, episode length and training error in one figure
 fig, axs = plt.subplots(1, 3, figsize=(20, 8))
 
-axs[0].plot(agent.env.return_queue)
+# np.convolve will compute the rolling mean for 100 episodes
+
+axs[0].plot(np.convolve(env.return_queue, np.ones(100)))
 axs[0].set_title("Episode Rewards")
 axs[0].set_xlabel("Episode")
 axs[0].set_ylabel("Reward")
 
-axs[1].plot(agent.env.length_queue)
+axs[1].plot(np.convolve(env.length_queue, np.ones(100)))
 axs[1].set_title("Episode Lengths")
 axs[1].set_xlabel("Episode")
 axs[1].set_ylabel("Length")
 
-axs[2].plot(agent.training_error)
+axs[2].plot(np.convolve(agent.training_error, np.ones(100)))
 axs[2].set_title("Training Error")
 axs[2].set_xlabel("Episode")
 axs[2].set_ylabel("Temporal Difference")
