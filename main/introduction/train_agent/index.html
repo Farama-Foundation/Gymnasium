@@ -478,8 +478,11 @@
 <span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">start_epsilon</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_episodes</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># reduce the exploration over time</span>
 <span class="n">final_epsilon</span> <span class="o">=</span> <span class="mf">0.1</span>
 
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Blackjack-v1&quot;</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">deque_size</span><span class="o">=</span><span class="n">n_episodes</span><span class="p">)</span>
+
 <span class="n">agent</span> <span class="o">=</span> <span class="n">BlackjackAgent</span><span class="p">(</span>
-    <span class="n">env</span><span class="p">,</span>
+    <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
     <span class="n">learning_rate</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span>
     <span class="n">initial_epsilon</span><span class="o">=</span><span class="n">start_epsilon</span><span class="p">,</span>
     <span class="n">epsilon_decay</span><span class="o">=</span><span class="n">epsilon_decay</span><span class="p">,</span>
@@ -489,9 +492,6 @@
 </div>
 <p>Info: The current hyperparameters are set to quickly train a decent agent. If you want to converge to the optimal policy, try increasing the <code class="docutils literal notranslate"><span class="pre">n_episodes</span></code> by 10x and lower the learning_rate (e.g. to 0.001).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
-
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Blackjack-v1&quot;</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">deque_size</span><span class="o">=</span><span class="n">n_episodes</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">)):</span>
     <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -510,6 +510,32 @@
         <span class="n">obs</span> <span class="o">=</span> <span class="n">next_obs</span>
 
     <span class="n">agent</span><span class="o">.</span><span class="n">decay_epsilon</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can use <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> to visualize the training reward and length.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="c1"># visualize the episode rewards, episode length and training error in one figure</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="c1"># np.convolve will compute the rolling mean for 100 episodes</span>
+
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Episode Rewards&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Reward&quot;</span><span class="p">)</span>
+
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Episode Lengths&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Length&quot;</span><span class="p">)</span>
+
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">training_error</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">100</span><span class="p">)))</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Training Error&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Temporal Difference&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 <p><img alt="" src="../../_images/blackjack_training_plots.png" /></p>
