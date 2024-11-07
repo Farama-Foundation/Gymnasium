@@ -17,7 +17,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import error, logger
 from gymnasium.core import ActType, ObsType, RenderFrame
-from gymnasium.error import DependencyNotInstalled
+from gymnasium.error import DependencyNotInstalled, InvalidProbability
 
 
 __all__ = [
