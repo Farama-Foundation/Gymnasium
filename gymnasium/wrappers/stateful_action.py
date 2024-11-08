@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import numpy as np
 from typing import Any
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType
-from gymnasium.error import InvalidProbability
+from gymnasium.error import InvalidProbability, InvalidBound
 
 
 __all__ = ["StickyAction"]
@@ -46,21 +47,43 @@ class StickyAction(
         self,
         env: gym.Env[ObsType, ActType],
         repeat_action_probability: float,
-        repeat_action_duration: int = 1,
+        repeat_action_duration: int | tuple[int, int] = 1,
     ):
         """Initialize StickyAction wrapper.
 
         Args:
             env (Env): the wrapped environment,
             repeat_action_probability (int | float): a probability of repeating the old action,
-            repeat_action_duration (int): the number of steps the action is repeated.
+            repeat_action_duration (int | tuple[int, int]): the number of steps
+                the action is repeated. It can be either an int (for deterministic
+                repeats) or a tuple[int, int] for a range of stochastic number of repeats.
         """
         if not 0 <= repeat_action_probability < 1:
             raise InvalidProbability(
                 f"repeat_action_probability should be in the interval [0,1). Received {repeat_action_probability}"
             )
 
-        if repeat_action_duration < 1:
+        if isinstance(repeat_action_duration, int):
+            repeat_action_duration = [repeat_action_duration, repeat_action_duration]
+        elif not (
+            isinstance(repeat_action_duration, tuple)
+            or isinstance(repeat_action_duration, list)
+        ):
+            raise ValueError(
+                f"repeat_action_duration should be either an integer, a tuple, or a list. Received {repeat_action_duration}"
+            )
+
+        if len(repeat_action_duration) != 2:
+            raise ValueError(
+                f"repeat_action_duration should be a tuple or a list of two integers. Received {repeat_action_duration}"
+            )
+
+        if repeat_action_duration[1] < repeat_action_duration[0]:
+            raise InvalidBound(
+                f"repeat_action_duration is not a valid bound. Received {repeat_action_duration}"
+            )
+
+        if np.any(np.array(repeat_action_duration) < 1):
             raise ValueError(
                 f"repeat_action_duration should be larger or equal than 1. Received {repeat_action_duration}"
             )
@@ -71,18 +94,20 @@ class StickyAction(
         gym.ActionWrapper.__init__(self, env)
 
         self.repeat_action_probability = repeat_action_probability
-        self.repeat_action_duration = repeat_action_duration
+        self.repeat_action_duration_range = repeat_action_duration
         self.last_action: ActType | None = None
-        self.last_action_repeats = 0
-        self.is_repeating = False
+        self.last_action_repeats = None  # number of steps last action will be repeated
+        self.is_repeating = False  # if the agent is currently "stuck" into repeats
+        self.is_repeating_since = 0  # number of steps last action has been repeated
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[ObsType, dict[str, Any]]:
         """Reset the environment."""
         self.last_action = None
-        self.last_action_repeats = 0
+        self.last_action_repeats = None
         self.is_repeating = False
+        self.is_repeating_since = 0
 
         return super().reset(seed=seed, options=options)
 
@@ -92,14 +117,20 @@ class StickyAction(
             self.is_repeating
             or self.last_action is not None
             and self.np_random.uniform() < self.repeat_action_probability
-        ):
+        ):  # either the agent was already "stuck" into repeats, or a new series of repeats is triggered
+            if self.last_action_repeats is None:  # if a new series starts, randomly sample its duration
+                self.last_action_repeats = self.np_random.integers(
+                    self.repeat_action_duration_range[0],
+                    self.repeat_action_duration_range[1] + 1,
+                )
             action = self.last_action
             self.is_repeating = True
-            self.last_action_repeats += 1
+            self.is_repeating_since += 1
 
-        if self.last_action_repeats == self.repeat_action_duration:
+        if self.last_action_repeats == self.is_repeating_since:  # repeats are done, reset "stuck" status
+            self.last_action_repeats = None
             self.is_repeating = False
-            self.last_action_repeats = 0
+            self.is_repeating_since = 0
 
         self.last_action = action
         return action

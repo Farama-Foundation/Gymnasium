@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from gymnasium.error import InvalidProbability
+from gymnasium.error import InvalidProbability, InvalidBound
 from gymnasium.wrappers import StickyAction
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import NUM_STEPS, record_action_as_obs_step
@@ -51,10 +51,10 @@ def test_sticky_action_raise_probability(repeat_action_probability):
         )
 
 
-@pytest.mark.parametrize("repeat_action_duration", [-4, 0])
+@pytest.mark.parametrize("repeat_action_duration", [-4, 0, (0, 0), (4, 2), [1,]])
 def test_sticky_action_raise_duration(repeat_action_duration):
     """Tests the stick action wrapper with durations that should raise an error."""
-    with pytest.raises(ValueError):
+    with pytest.raises((ValueError, InvalidBound)):
         StickyAction(
             GenericTestEnv(), 0.5, repeat_action_duration=repeat_action_duration
         )
