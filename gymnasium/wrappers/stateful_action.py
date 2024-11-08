@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-import numpy as np
 from typing import Any
+
+import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType
-from gymnasium.error import InvalidProbability, InvalidBound
+from gymnasium.error import InvalidBound, InvalidProbability
 
 
 __all__ = ["StickyAction"]
@@ -118,7 +119,9 @@ class StickyAction(
             or self.last_action is not None
             and self.np_random.uniform() < self.repeat_action_probability
         ):  # either the agent was already "stuck" into repeats, or a new series of repeats is triggered
-            if self.last_action_repeats is None:  # if a new series starts, randomly sample its duration
+            if (
+                self.last_action_repeats is None
+            ):  # if a new series starts, randomly sample its duration
                 self.last_action_repeats = self.np_random.integers(
                     self.repeat_action_duration_range[0],
                     self.repeat_action_duration_range[1] + 1,
@@ -127,7 +130,9 @@ class StickyAction(
             self.is_repeating = True
             self.is_repeating_since += 1
 
-        if self.last_action_repeats == self.is_repeating_since:  # repeats are done, reset "stuck" status
+        if (
+            self.last_action_repeats == self.is_repeating_since
+        ):  # repeats are done, reset "stuck" status
             self.last_action_repeats = None
             self.is_repeating = False
             self.is_repeating_since = 0
