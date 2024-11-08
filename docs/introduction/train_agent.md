@@ -116,7 +116,7 @@ epsilon_decay = start_epsilon / (n_episodes / 2)  # reduce the exploration over 
 final_epsilon = 0.1
 
 env = gym.make("Blackjack-v1", sab=False)
-env = gym.wrappers.RecordEpisodeStatistics(env, deque_size=n_episodes)
+env = gym.wrappers.RecordEpisodeStatistics(env, buffer_length=n_episodes)
 
 agent = BlackjackAgent(
     env=env,
