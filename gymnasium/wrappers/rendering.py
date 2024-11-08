@@ -571,8 +571,8 @@ class HumanRendering(
 class AddWhiteNoise(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """
-    Randomly replaces pixels with white noise.
+    """Randomly replaces pixels with white noise.
+
     If used with ``render_mode="rgb_array"`` and ``AddRenderObservation``, it will
     make observations noisy.
     The environment may also become partially-observable, turning the MDP into a POMDP.
@@ -614,17 +614,20 @@ class AddWhiteNoise(
         self.grayscale_noise = grayscale_noise
 
     def render(self) -> RenderFrame:
-        """Compute the render frames as specified by render_mode attribute during
-        initialization of the environment, then add white noise."""
+        """Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise."""
         render_out = super().render()
 
         if self.grayscale_noise:
-            rnd_color = self.np_random.integers(
-                (0, 0, 0),
-                255 * np.array([0.2989, 0.5870, 0.1140]),
-                size=render_out.shape,
-                dtype=np.uint8,
-            ).sum(-1, keepdims=True).repeat(3, -1)
+            rnd_color = (
+                self.np_random.integers(
+                    (0, 0, 0),
+                    255 * np.array([0.2989, 0.5870, 0.1140]),
+                    size=render_out.shape,
+                    dtype=np.uint8,
+                )
+                .sum(-1, keepdims=True)
+                .repeat(3, -1)
+            )
         else:
             rnd_color = self.np_random.integers(
                 0,
@@ -633,9 +636,10 @@ class AddWhiteNoise(
                 dtype=np.uint8,
             )
 
-        mask = self.np_random.random(
-            render_out.shape[0:2]
-        ) < self.observation_noise_probability
+        mask = (
+            self.np_random.random(render_out.shape[0:2])
+            < self.observation_noise_probability
+        )
 
         return np.where(mask[..., None], rnd_color, render_out)
 
@@ -643,8 +647,8 @@ class AddWhiteNoise(
 class ObstructView(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    """
-    Randomly obstructs rendering with white noise patches.
+    """Randomly obstructs rendering with white noise patches.
+
     If used with ``render_mode="rgb_array"`` and ``AddRenderObservation``, it will
     make observations noisy.
     The number of patches depends on how many pixels we want to obstruct.
@@ -692,13 +696,12 @@ class ObstructView(
         )
         gym.Wrapper.__init__(self, env)
 
-        self.obstruction_centers_ratio = obstructed_pixels_ratio / obstruction_width ** 2
+        self.obstruction_centers_ratio = obstructed_pixels_ratio / obstruction_width**2
         self.obstruction_width = obstruction_width
         self.grayscale_noise = grayscale_noise
 
     def render(self) -> RenderFrame:
-        """Compute the render frames as specified by render_mode attribute during
-        initialization of the environment, then add white noise patches."""
+        """Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise patches."""
         render_out = super().render()
 
         render_shape = render_out.shape
@@ -716,12 +719,16 @@ class ObstructView(
             ] = True
 
         if self.grayscale_noise:
-            rnd_color = self.np_random.integers(
-                (0, 0, 0),
-                255 * np.array([0.2989, 0.5870, 0.1140]),
-                size=render_out.shape,
-                dtype=np.uint8,
-            ).sum(-1, keepdims=True).repeat(3, -1)
+            rnd_color = (
+                self.np_random.integers(
+                    (0, 0, 0),
+                    255 * np.array([0.2989, 0.5870, 0.1140]),
+                    size=render_out.shape,
+                    dtype=np.uint8,
+                )
+                .sum(-1, keepdims=True)
+                .repeat(3, -1)
+            )
         else:
             rnd_color = self.np_random.integers(
                 0,
