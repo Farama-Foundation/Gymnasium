@@ -125,7 +125,7 @@ class CarRacing(gym.Env, EzPickle):
     If continuous there are 3 actions :
     - 0: steering, -1 is full left, +1 is full right
     - 1: gas
-    - 2: breaking
+    - 2: braking
 
     If discrete there are 5 actions:
     - 0: do nothing
