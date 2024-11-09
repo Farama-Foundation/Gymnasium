@@ -579,7 +579,7 @@ class AddWhiteNoise(
 
     Example - Every pixel will be replaced by white noise with probability 0.5:
         >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
-        >>> env = AddWhiteNoise(env, observation_noise_probability=0.5)
+        >>> env = AddWhiteNoise(env, probability_of_noise_per_pixel=0.5)
         >>> env = HumanRendering(env)
         >>> obs, _ = env.reset(seed=123)
         >>> obs, *_ = env.step(env.action_space.sample())
@@ -588,37 +588,37 @@ class AddWhiteNoise(
     def __init__(
         self,
         env: gym.Env[ObsType, ActType],
-        observation_noise_probability: float,
-        grayscale_noise: bool = False,
+        probability_of_noise_per_pixel: float,
+        is_noise_grayscale: bool = False,
     ):
         """Wrapper replaces random pixels with white noise.
 
         Args:
             env: The environment that is being wrapped
-            observation_noise_probability: the probability that a pixel is white noise
-            grayscale_noise: if True, RGB noise is converted to grayscale
+            probability_of_noise_per_pixel: the probability that a pixel is white noise
+            is_noise_grayscale: if True, RGB noise is converted to grayscale
         """
-        if not 0 <= observation_noise_probability < 1:
+        if not 0 <= probability_of_noise_per_pixel < 1:
             raise InvalidProbability(
-                f"observation_noise_probability should be in the interval [0,1). Received {observation_noise_probability}"
+                f"probability_of_noise_per_pixel should be in the interval [0,1). Received {probability_of_noise_per_pixel}"
             )
 
         gym.utils.RecordConstructorArgs.__init__(
             self,
-            observation_noise_probability=observation_noise_probability,
-            grayscale_noise=grayscale_noise,
+            probability_of_noise_per_pixel=probability_of_noise_per_pixel,
+            is_noise_grayscale=is_noise_grayscale,
         )
         gym.Wrapper.__init__(self, env)
 
-        self.observation_noise_probability = observation_noise_probability
-        self.grayscale_noise = grayscale_noise
+        self.probability_of_noise_per_pixel = probability_of_noise_per_pixel
+        self.is_noise_grayscale = is_noise_grayscale
 
     def render(self) -> RenderFrame:
         """Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise."""
         render_out = super().render()
 
-        if self.grayscale_noise:
-            rnd_color = (
+        if self.is_noise_grayscale:
+            noise = (
                 self.np_random.integers(
                     (0, 0, 0),
                     255 * np.array([0.2989, 0.5870, 0.1140]),
@@ -629,7 +629,7 @@ class AddWhiteNoise(
                 .repeat(3, -1)
             )
         else:
-            rnd_color = self.np_random.integers(
+            noise = self.np_random.integers(
                 0,
                 255,
                 size=render_out.shape,
@@ -638,10 +638,10 @@ class AddWhiteNoise(
 
         mask = (
             self.np_random.random(render_out.shape[0:2])
-            < self.observation_noise_probability
+            < self.probability_of_noise_per_pixel
         )
 
-        return np.where(mask[..., None], rnd_color, render_out)
+        return np.where(mask[..., None], noise, render_out)
 
 
 class ObstructView(
@@ -668,7 +668,7 @@ class ObstructView(
         env: gym.Env[ObsType, ActType],
         obstructed_pixels_ratio: float,
         obstruction_width: int,
-        grayscale_noise: bool = False,
+        is_noise_grayscale: bool = False,
     ):
         """Wrapper obstructs pixels with white noise patches.
 
@@ -676,7 +676,7 @@ class ObstructView(
             env: The environment that is being wrapped
             obstructed_pixels_ratio: the percentage of pixels obstructed with white noise
             obstruction_width: the width of the obstruction patches
-            grayscale_noise: if True, RGB noise is converted to grayscale
+            is_noise_grayscale: if True, RGB noise is converted to grayscale
         """
         if not 0 <= obstructed_pixels_ratio < 1:
             raise ValueError(
@@ -692,13 +692,13 @@ class ObstructView(
             self,
             obstructed_pixels_ratio=obstructed_pixels_ratio,
             obstruction_width=obstruction_width,
-            grayscale_noise=grayscale_noise,
+            is_noise_grayscale=is_noise_grayscale,
         )
         gym.Wrapper.__init__(self, env)
 
         self.obstruction_centers_ratio = obstructed_pixels_ratio / obstruction_width**2
         self.obstruction_width = obstruction_width
-        self.grayscale_noise = grayscale_noise
+        self.is_noise_grayscale = is_noise_grayscale
 
     def render(self) -> RenderFrame:
         """Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise patches."""
@@ -718,8 +718,8 @@ class ObstructView(
                 max(y - low, 0) : min(y + high, render_shape[1]),
             ] = True
 
-        if self.grayscale_noise:
-            rnd_color = (
+        if self.is_noise_grayscale:
+            noise = (
                 self.np_random.integers(
                     (0, 0, 0),
                     255 * np.array([0.2989, 0.5870, 0.1140]),
@@ -730,11 +730,11 @@ class ObstructView(
                 .repeat(3, -1)
             )
         else:
-            rnd_color = self.np_random.integers(
+            noise = self.np_random.integers(
                 0,
                 255,
                 size=render_out.shape,
                 dtype=np.uint8,
             )
 
-        return np.where(mask[..., None], rnd_color, render_out)
+        return np.where(mask[..., None], noise, render_out)
