@@ -1,11 +1,7 @@
 """Test suite of AddWhiteNoise and ObstructView wrapper."""
 
-import re
-
-import pytest
-
 import gymnasium as gym
-from gymnasium.wrappers import AddWhiteNoise, ObstructView, HumanRendering
+from gymnasium.wrappers import AddWhiteNoise, HumanRendering, ObstructView
 
 
 def test_white_noise_rendering():
