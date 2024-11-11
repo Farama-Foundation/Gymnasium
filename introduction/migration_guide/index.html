@@ -375,7 +375,7 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="migration-guide-v0-21-to-v1-0-0">
 <h1>Migration Guide - v0.21 to v1.0.0<a class="headerlink" href="#migration-guide-v0-21-to-v1-0-0" title="Link to this heading">¶</a></h1>
-<p>Gymnasium is a fork of <a class="reference external" href="https://github.com/openai/gym/releases/tag/0.26.2">OpenAI Gym v0.26</a>, which introduced a large breaking change from <a class="reference external" href="https://github.com/openai/gym/releases/tag/v0.21.0">Gym v0.21</a>. In this guide, we briefly outline the API changes from Gym v0.21 - which a number of tutorials have been written for - to Gym v0.26. For environments still stuck in the v0.21 API, see the <a class="reference external" href="/content/gym_compatibility">guide</a></p>
+<p>Gymnasium is a fork of <a class="reference external" href="https://github.com/openai/gym/releases/tag/0.26.2">OpenAI Gym v0.26</a>, which introduced a large breaking change from <a class="reference external" href="https://github.com/openai/gym/releases/tag/v0.21.0">Gym v0.21</a>.In this guide, we briefly outline the API changes from Gym v0.21 - which a number of tutorials have been written for - to Gym v0.26 (and later, including 1.0.0). For environments still stuck in the v0.21 API, see the <a class="reference external" href="/content/gym_compatibility">guide</a></p>
 <section id="example-code-for-v0-21">
 <h2>Example code for v0.21<a class="headerlink" href="#example-code-for-v0-21" title="Link to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span>
@@ -394,8 +394,8 @@
 </pre></div>
 </div>
 </section>
-<section id="example-code-for-v0-26">
-<h2>Example code for v0.26<a class="headerlink" href="#example-code-for-v0-26" title="Link to this heading">¶</a></h2>
+<section id="example-code-for-v0-26-and-later-including-v1-0-0">
+<h2>Example code for v0.26 and later, including v1.0.0<a class="headerlink" href="#example-code-for-v0-26-and-later-including-v1-0-0" title="Link to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
 <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
@@ -418,7 +418,7 @@
 </section>
 <section id="environment-reset">
 <h2>Environment Reset<a class="headerlink" href="#environment-reset" title="Link to this heading">¶</a></h2>
-<p>In v0.26, <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> takes two optional parameters and returns one value. This contrasts to v0.21 which takes no parameters and returns <code class="docutils literal notranslate"><span class="pre">None</span></code>. The two parameters are <code class="docutils literal notranslate"><span class="pre">seed</span></code> for setting the random number generator and <code class="docutils literal notranslate"><span class="pre">options</span></code> which allows additional data to be passed to the environment on reset. For example, in classic control, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter now allows users to modify the range of the state bound. See the original <a class="reference external" href="https://github.com/openai/gym/pull/2921">PR</a> for more details.</p>
+<p>In v0.26+, <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> takes two optional parameters and returns one value. This contrasts to v0.21 which takes no parameters and returns <code class="docutils literal notranslate"><span class="pre">None</span></code>. The two parameters are <code class="docutils literal notranslate"><span class="pre">seed</span></code> for setting the random number generator and <code class="docutils literal notranslate"><span class="pre">options</span></code> which allows additional data to be passed to the environment on reset. For example, in classic control, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter now allows users to modify the range of the state bound. See the original <a class="reference external" href="https://github.com/openai/gym/pull/2921">PR</a> for more details.</p>
 <p><a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> further returns <code class="docutils literal notranslate"><span class="pre">info</span></code>, similar to the <code class="docutils literal notranslate"><span class="pre">info</span></code> returned by <a class="reference internal" href="../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a>. This is important because <code class="docutils literal notranslate"><span class="pre">info</span></code> can include metrics or valid action mask that is used or saved in the next step.</p>
 <p>To update older environments, we highly recommend that <code class="docutils literal notranslate"><span class="pre">super().reset(seed=seed)</span></code> is called on the first line of <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a>. This will automatically update the <a class="reference internal" href="../../api/env/#gymnasium.Env.np_random" title="gymnasium.Env.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a> with the seed value.</p>
 </section>
@@ -430,11 +430,11 @@
 <section id="timelimit-wrapper">
 <h2>TimeLimit Wrapper<a class="headerlink" href="#timelimit-wrapper" title="Link to this heading">¶</a></h2>
 <p>In v0.21, the <code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code> wrapper added an extra key in the <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionary <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code> whenever the agent reached the time limit without reaching a terminal state.</p>
-<p>In v0.26, this information is instead communicated through the <cite>truncated</cite> return value described in the previous section, which is <cite>True</cite> if the agent reaches the time limit, whether or not it reaches a terminal state. The old dictionary entry is equivalent to <code class="docutils literal notranslate"><span class="pre">truncated</span> <span class="pre">and</span> <span class="pre">not</span> <span class="pre">terminated</span></code></p>
+<p>In v0.26+, this information is instead communicated through the <cite>truncated</cite> return value described in the previous section, which is <cite>True</cite> if the agent reaches the time limit, whether or not it reaches a terminal state. The old dictionary entry is equivalent to <code class="docutils literal notranslate"><span class="pre">truncated</span> <span class="pre">and</span> <span class="pre">not</span> <span class="pre">terminated</span></code></p>
 </section>
 <section id="environment-render">
 <h2>Environment Render<a class="headerlink" href="#environment-render" title="Link to this heading">¶</a></h2>
-<p>In v0.26, a new render API was introduced such that the render mode is fixed at initialisation as some environments don’t allow on-the-fly render mode changes. Therefore, users should now specify the <a class="reference internal" href="../../api/env/#gymnasium.Env.render_mode" title="gymnasium.Env.render_mode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">render_mode</span></code></a> within <code class="docutils literal notranslate"><span class="pre">gym.make</span></code> as shown in the v0.26 example code above.</p>
+<p>In v0.26, a new render API was introduced such that the render mode is fixed at initialisation as some environments don’t allow on-the-fly render mode changes. Therefore, users should now specify the <a class="reference internal" href="../../api/env/#gymnasium.Env.render_mode" title="gymnasium.Env.render_mode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">render_mode</span></code></a> within <code class="docutils literal notranslate"><span class="pre">gym.make</span></code> as shown in the v0.26+ example code above.</p>
 <p>For a more complete explanation of the changes, please refer to this <a class="reference external" href="https://younis.dev/blog/render-api/">summary</a>.</p>
 </section>
 <section id="removed-code">
@@ -481,7 +481,7 @@
           <div class="bottom-of-page">
             <div class="left-details">
               <div class="copyright">
-                Copyright &#169; 2023 Farama Foundation
+                Copyright &#169; 2024 Farama Foundation
               </div>
               <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
@@ -519,7 +519,7 @@
               <ul>
 <li><a class="reference internal" href="#">Migration Guide - v0.21 to v1.0.0</a><ul>
 <li><a class="reference internal" href="#example-code-for-v0-21">Example code for v0.21</a></li>
-<li><a class="reference internal" href="#example-code-for-v0-26">Example code for v0.26</a></li>
+<li><a class="reference internal" href="#example-code-for-v0-26-and-later-including-v1-0-0">Example code for v0.26 and later, including v1.0.0</a></li>
 <li><a class="reference internal" href="#seed-and-random-number-generator">Seed and random number generator</a></li>
 <li><a class="reference internal" href="#environment-reset">Environment Reset</a></li>
 <li><a class="reference internal" href="#environment-step">Environment Step</a></li>
