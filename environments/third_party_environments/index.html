@@ -396,14 +396,20 @@ goal-RL (<a class="reference external" href="https://robotics.farama.org/">Gymna
 <section id="third-party-environments-with-gymnasium">
 <h2>Third-party environments with Gymnasium<a class="headerlink" href="#third-party-environments-with-gymnasium" title="Link to this heading">¶</a></h2>
 <p><em>This page contains environments which are not maintained by Farama Foundation and, as such, cannot be guaranteed to function as intended.</em></p>
-<p><em>If you’d like to contribute an environment, please reach out on <a class="reference external" href="https://discord.gg/MHCFauP67z">Discord</a>, then submit a PR by editing this <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/environments/third_party_environments.md">file</a>.</em></p>
+<p><em>If you’d like to contribute an environment, please reach out on <a class="reference external" href="https://discord.gg/MHCFauP67z">Discord</a>, then submit a PR by editing this <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/environments/third_party_environments.md">file</a>, additional instructions can be found inside that file</em></p>
 <!-- Template
 - [NAME: SUB_NAME_IF_PRESENT](LINK)
 
   ![Gymnasium version dependency](ADD YOUR BADGE HERE)
   ![GitHub stars](ADD YOUR BADGE HERE OPTIONAL)
 
-  A short 2 sentence description.
+  A short 2-5 sentence description.
+-->
+<!-- Instructions
+- Follow the template in the file
+- Environments and environment categories are alphabetically sorted
+- You are responsible for picking the environment category, if you would like to add a category please ask
+- Name your PR something like "Add external environment X"
 -->
 <section id="autonomous-driving-environments">
 <h3>Autonomous Driving environments<a class="headerlink" href="#autonomous-driving-environments" title="Link to this heading">¶</a></h3>
@@ -480,6 +486,11 @@ goal-RL (<a class="reference external" href="https://robotics.farama.org/">Gymna
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium" /></p>
 <p>A simple environment for single-agent reinforcement learning algorithms on a clone of <a class="reference external" href="https://en.wikipedia.org/wiki/Flappy_Bird">Flappy Bird</a>, the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.</p>
 </li>
+<li><p><a class="reference external" href="https://github.com/strakam/generals-bots">Generals.io bots: Develop your agent for generals.io!</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v1.0.0-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/strakam/generals-bots" /></p>
+<p>Generals.io is a fast-paced strategy game on a 2D grid. We make bot development accessible via the Gymnasium/PettingZoo API.</p>
+</li>
 <li><p><a class="reference external" href="https://github.com/bpiwowar/pystk2-gymnasium">pystk2-gymnasium: SuperTuxKart races gymnasium wrapper</a></p>
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/bpiwowar/pystk2-gymnasium" /></p>
@@ -547,6 +558,11 @@ goal-RL (<a class="reference external" href="https://robotics.farama.org/">Gymna
 <p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/JacopoPan/gym-pybullet-drones" /></p>
 <p>A simple environment using <a class="reference external" href="https://github.com/bulletphysics/bullet3">PyBullet</a> to simulate the dynamics of a <a class="reference external" href="https://www.bitcraze.io/documentation/hardware/crazyflie_2_1/crazyflie_2_1-datasheet.pdf">Bitcraze Crazyflie 2.x</a> nanoquadrotor.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/gustavo-moura/itomori">Itomori: UAV Risk-aware Flight Environment</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/gustavo-moura/itomori" /></p>
+<p>Itomori is an environment for risk-aware UAV flight, it provides tools to solve Chance-Constrained Markov Decision Processes (CCMDP). The env allows to simulate, visualize, and evaluate UAV navigation in complex and risky environments, incorporating variables like GPS uncertainty, collision risk, and adaptive flight planning. Itomori is intended to support UAV path-planning research by offering adjustable parameters, detailed visualizations, and insights into agent behavior in uncertain environments.</p>
 </li>
 <li><p><a class="reference external" href="https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/">OmniIsaacGymEnvs: Gym environments for NVIDIA Omniverse Isaac </a></p>
 <p>Reinforcement Learning Environments for <a class="reference external" href="https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/overview.html">Omniverse Isaac simulator</a>.</p>
@@ -742,7 +758,7 @@ Many of these can be adapted to work with gymnasium (see <a class="reference ext
           <div class="bottom-of-page">
             <div class="left-details">
               <div class="copyright">
-                Copyright &#169; 2023 Farama Foundation
+                Copyright &#169; 2024 Farama Foundation
               </div>
               <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
