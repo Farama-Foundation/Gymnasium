@@ -10,7 +10,7 @@ title: Recording Agents
 
 During training or when evaluating an agent, it may be interesting to record agent behaviour over an episode and log the total reward accumulated. This can be achieved through two wrappers: :class:`RecordEpisodeStatistics` and :class:`RecordVideo`, the first tracks episode data such as the total rewards, episode length and time taken and the second generates mp4 videos of the agents using the environment renderings.
 
-We show how to apply these wrappers for two types of problems; the first for recording data for every episode (normally evaluation) and second for recording data periodiclly (for normal training).
+We show how to apply these wrappers for two types of problems; the first for recording data for every episode (normally evaluation) and second for recording data periodically (for normal training).
 ```
 
 ## Recording Every Episode
