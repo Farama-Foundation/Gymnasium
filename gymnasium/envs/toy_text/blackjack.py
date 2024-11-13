@@ -59,7 +59,7 @@ class BlackjackEnv(gym.Env):
     The card values are:
     - Face cards (Jack, Queen, King) have a point value of 10.
     - Aces can either count as 11 (called a 'usable ace') or 1.
-    - Numerical cards (2-9) have a value equal to their number.
+    - Numerical cards (2-10) have a value equal to their number.
 
     The player has the sum of cards held. The player can request
     additional cards (hit) until they decide to stop (stick) or exceed 21 (bust,
