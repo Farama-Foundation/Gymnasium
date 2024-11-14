@@ -525,10 +525,11 @@ or <code class="xref py py-attr docutils literal notranslate"><span class="pre">
 
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.StickyAction">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">StickyAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat_action_probability</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_action/#StickyAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.StickyAction" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">StickyAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">gym.Env</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat_action_probability</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat_action_duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_action/#StickyAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.StickyAction" title="Link to this definition">¶</a></dt>
 <dd><p>Adds a probability that the action is repeated for the same <code class="docutils literal notranslate"><span class="pre">step</span></code> function.</p>
 <p>This wrapper follows the implementation proposed by <a class="reference external" href="https://arxiv.org/pdf/1709.06009.pdf">Machado et al., 2018</a>
-in Section 5.2 on page 12.</p>
+in Section 5.2 on page 12, and adds the possibility to repeat the action for
+more than one step.</p>
 <p>No vector version of the wrapper exists.</p>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -549,14 +550,18 @@ in Section 5.2 on page 12.</p>
 <dl class="simple">
 <dt>Change logs:</dt><dd><ul class="simple">
 <li><p>v1.0.0 - Initially added</p></li>
+<li><p>v1.1.0 - Add <cite>repeat_action_duration</cite> argument for dynamic number of sticky actions</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – the wrapped environment</p></li>
-<li><p><strong>repeat_action_probability</strong> (<em>int</em><em> | </em><em>float</em>) – a probability of repeating the old action.</p></li>
+<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – the wrapped environment,</p></li>
+<li><p><strong>repeat_action_probability</strong> (<em>int</em><em> | </em><em>float</em>) – a probability of repeating the old action,</p></li>
+<li><p><strong>repeat_action_duration</strong> (<em>int</em><em> | </em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – the number of steps
+the action is repeated. It can be either an int (for deterministic
+repeats) or a tuple[int, int] for a range of stochastic number of repeats.</p></li>
 </ul>
 </dd>
 </dl>
