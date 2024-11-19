@@ -105,7 +105,7 @@ class BlackjackAgent:
 
 ## Training the agent
 
-To train the agent, we will let the agent play one episode (one complete game is called an episode) at a time and then update it's Q-values after each episode. The agent will have to experience a lot of episodes to explore the environment sufficiently.
+To train the agent, we will let the agent play one episode (one complete game is called an episode) at a time and update it's Q-values after each action taken during the episode. The agent will have to experience a lot of episodes to explore the environment sufficiently.
 
 ```python
 # hyperparameters
