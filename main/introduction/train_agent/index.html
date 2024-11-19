@@ -470,7 +470,7 @@
 </section>
 <section id="training-the-agent">
 <h2>Training the agent<a class="headerlink" href="#training-the-agent" title="Link to this heading">¶</a></h2>
-<p>To train the agent, we will let the agent play one episode (one complete game is called an episode) at a time and then update it’s Q-values after each episode. The agent will have to experience a lot of episodes to explore the environment sufficiently.</p>
+<p>To train the agent, we will let the agent play one episode (one complete game is called an episode) at a time and update it’s Q-values after each action taken during the episode. The agent will have to experience a lot of episodes to explore the environment sufficiently.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># hyperparameters</span>
 <span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span>
 <span class="n">n_episodes</span> <span class="o">=</span> <span class="mi">100_000</span>
