@@ -307,7 +307,7 @@ class Wrapper(
             env: The environment to wrap
         """
         self.env = env
-        assert isinstance(env, Env)
+        assert isinstance(env, Env), f'Expected env to be a `gymnasium.Env` but got {type(env)}'
 
         self._action_space: spaces.Space[WrapperActType] | None = None
         self._observation_space: spaces.Space[WrapperObsType] | None = None
