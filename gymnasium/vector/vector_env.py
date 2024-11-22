@@ -355,7 +355,9 @@ class VectorWrapper(VectorEnv):
             env: The environment to wrap
         """
         self.env = env
-        assert isinstance(env, VectorEnv), f'Expected env to be a `gymnasium.vector.VectorEnv` but got {type(env)}'
+        assert isinstance(
+            env, VectorEnv
+        ), f"Expected env to be a `gymnasium.vector.VectorEnv` but got {type(env)}"
 
         self._observation_space: gym.Space | None = None
         self._action_space: gym.Space | None = None
