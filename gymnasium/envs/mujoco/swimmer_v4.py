@@ -13,6 +13,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_tuple",
         ],
         "render_fps": 25,
     }

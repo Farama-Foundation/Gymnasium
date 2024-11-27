@@ -46,7 +46,7 @@ toy-text = ["pygame >=2.1.3"]
 toy_text = ["pygame >=2.1.3"]  # kept for backward compatibility
 jax = ["jax >=0.4.0", "jaxlib >=0.4.0", "flax >=0.5.0"]
 torch = ["torch >=1.0.0"]
-other = ["moviepy >=1.0.0", "matplotlib >=3.0", "opencv-python >=3.0"]
+other = ["moviepy >=1.0.0", "matplotlib >=3.0", "opencv-python >=3.0", "seaborn >= 0.13"]
 all = [
     # All dependencies above except accept-rom-license
     # NOTE: No need to manually remove the duplicates, setuptools automatically does that.
@@ -137,17 +137,20 @@ reportMissingTypeStubs = false
 # For warning and error, will raise an error when
 reportInvalidTypeVarUse = "none"
 
-# reportUnknownMemberType = "warning"  # -> raises 6035 warnings
-# reportUnknownParameterType = "warning"  # -> raises 1327 warnings
-# reportUnknownVariableType = "warning"  # -> raises 2585 warnings
-# reportUnknownArgumentType = "warning"  # -> raises 2104 warnings
 reportGeneralTypeIssues = "none"  # -> commented out raises 489 errors
-# reportUntypedFunctionDecorator = "none"  # -> pytest.mark.parameterize issues
+reportAttributeAccessIssue = "none"  # pyright provides false positives
+reportArgumentType = "none"  # pyright provides false positives
 
 reportPrivateUsage = "warning"
-reportUnboundVariable = "warning"
 
-reportPrivateImportUsage = "none"  # -> commented out raises 144 errors
+reportIndexIssue = "none"  # TODO fix one by one
+reportReturnType = "none"  # TODO fix one by one
+reportCallIssue = "none"  # TODO fix one by one
+reportOperatorIssue = "none"  # TODO fix one by one
+reportInvalidTypeForm = "none"  # TODO fix one by one
+reportOptionalMemberAccess = "none"  # TODO fix one by one
+reportAssignmentType = "none"  # TODO fix one by one
+
 
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning:gymnasium.*:"]

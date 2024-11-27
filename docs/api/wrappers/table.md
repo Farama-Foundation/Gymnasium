@@ -47,7 +47,7 @@ wrapper in the page on the wrapper type
     * - :class:`NumpyToTorch`
       - Wraps a NumPy-based environment such that it can be interacted with PyTorch Tensors.
     * - :class:`OrderEnforcing`
-      - Will produce an error if ``step`` or ``render`` is called before ``render``.
+      - Will produce an error if ``step`` or ``render`` is called before ``reset``.
     * - :class:`PassiveEnvChecker`
       - A passive environment checker wrapper that surrounds the ``step``, ``reset`` and ``render`` functions to check they follows gymnasium's API.
     * - :class:`RecordEpisodeStatistics`

@@ -256,11 +256,12 @@ class OffScreenViewer(BaseRender):
 
         mujoco.mjr_readPixels(rgb_arr, depth_arr, self.viewport, self.con)
 
-        if render_mode == "depth_array":
+        # Process rendered images according to render_mode
+        if render_mode in ["depth_array", "rgbd_tuple"]:
             depth_img = depth_arr.reshape(self.viewport.height, self.viewport.width)
             # original image is upside-down, so flip it
-            return depth_img[::-1, :]
-        else:
+            depth_img = depth_img[::-1, :]
+        if render_mode in ["rgb_array", "rgbd_tuple"]:
             rgb_img = rgb_arr.reshape(self.viewport.height, self.viewport.width, 3)
 
             if segmentation:
@@ -280,9 +281,16 @@ class OffScreenViewer(BaseRender):
                         seg_ids[geom.segid + 1, 0] = geom.objtype
                         seg_ids[geom.segid + 1, 1] = geom.objid
                 rgb_img = seg_ids[seg_img]
+                # original image is upside-down, so flip it
+                rgb_img = rgb_img[::-1, :, :]
 
-            # original image is upside-down, so flip i
-            return rgb_img[::-1, :, :]
+        # Return processed images based on render_mode
+        if render_mode == "rgb_array":
+            return rgb_img
+        elif render_mode == "depth_array":
+            return depth_img
+        else:  # "rgbd_tuple"
+            return rgb_img, depth_img
 
     def close(self):
         self.free()
@@ -697,15 +705,19 @@ class MujocoRenderer:
         """Renders a frame of the simulation in a specific format and camera view.
 
         Args:
-            render_mode: The format to render the frame, it can be: "human", "rgb_array", or "depth_array"
+            render_mode: The format to render the frame, it can be: "human", "rgb_array", "depth_array", or "rgbd_tuple"
 
         Returns:
-            If render_mode is "rgb_array" or "depth_array" it returns a numpy array in the specified format. "human" render mode does not return anything.
+            If render_mode is "rgb_array" or "depth_array" it returns a numpy array in the specified format. "rgbd_tuple" returns a tuple of numpy arrays of the form (rgb, depth). "human" render mode does not return anything.
         """
+        if render_mode != "human":
+            assert (
+                self.width is not None and self.height is not None
+            ), f"The width: {self.width} and height: {self.height} cannot be `None` when the render_mode is not `human`."
 
         viewer = self._get_viewer(render_mode=render_mode)
 
-        if render_mode in ["rgb_array", "depth_array"]:
+        if render_mode in ["rgb_array", "depth_array", "rgbd_tuple"]:
             return viewer.render(render_mode=render_mode, camera_id=self.camera_id)
         elif render_mode == "human":
             return viewer.render()
@@ -713,7 +725,7 @@ class MujocoRenderer:
     def _get_viewer(self, render_mode: Optional[str]):
         """Initializes and returns a viewer class depending on the render_mode
         - `WindowViewer` class for "human" render mode
-        - `OffScreenViewer` class for "rgb_array" or "depth_array" render mode
+        - `OffScreenViewer` class for "rgb_array", "depth_array", or "rgbd_tuple" render mode
         """
         self.viewer = self._viewers.get(render_mode)
         if self.viewer is None:
@@ -726,7 +738,7 @@ class MujocoRenderer:
                     self.max_geom,
                     self._vopt,
                 )
-            elif render_mode in {"rgb_array", "depth_array"}:
+            elif render_mode in {"rgb_array", "depth_array", "rgbd_tuple"}:
                 self.viewer = OffScreenViewer(
                     self.model,
                     self.data,
@@ -737,7 +749,7 @@ class MujocoRenderer:
                 )
             else:
                 raise AttributeError(
-                    f"Unexpected mode: {render_mode}, expected modes: human, rgb_array, or depth_array"
+                    f"Unexpected mode: {render_mode}, expected modes: human, rgb_array, depth_array, or rgbd_tuple"
                 )
             # Add default camera parameters
             self._set_cam_config()

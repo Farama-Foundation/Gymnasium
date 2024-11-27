@@ -106,7 +106,7 @@ Oftentimes, info will also contain some data that is only available inside the :
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.Env
 
-As the purpose of :meth:`reset` is to initiate a new episode for an environment and has two parameters: ``seed`` and ``options``. The seed can be used to initialize the random number generator to a deterministic state and options can be used to specify values used within reset. On the first line of the reset, you need to call ``super().reset(seed=seed)`` which will initialize the random number generate (:attr:`np_random`) to use through the rest of the :meth:`reset`.
+The purpose of :meth:`reset` is to initiate a new episode for an environment and has two parameters: ``seed`` and ``options``. The seed can be used to initialize the random number generator to a deterministic state and options can be used to specify values used within reset. On the first line of the reset, you need to call ``super().reset(seed=seed)`` which will initialize the random number generate (:attr:`np_random`) to use through the rest of the :meth:`reset`.
 
 Within our custom environment, the :meth:`reset` needs to randomly choose the agent and target's positions (we repeat this if they have the same position). The return type of :meth:`reset` is a tuple of the initial observation and any auxiliary information. Therefore, we can use the methods ``_get_obs`` and ``_get_info`` that we implemented earlier for that:
 ```
@@ -144,9 +144,9 @@ The :meth:`step` method usually contains most of the logic for your environment,
 
 For our environment, several things need to happen during the step function:
 
- - We use the self._action_to_direction to convert the discrete action (e.g., 2) to a grid direction with our agent location. To prevent the agent from going out of bounds of the grd, we clip the agen't location to stay within bounds.
+ - We use the self._action_to_direction to convert the discrete action (e.g., 2) to a grid direction with our agent location. To prevent the agent from going out of bounds of the grid, we clip the agent's location to stay within bounds.
  - We compute the agent's reward by checking if the agent's current position is equal to the target's location.
- - Since the environment doesn't truncate internally (we can apply a time limit wrapper to the environment during :meth:make), we permanently set truncated to False.
+ - Since the environment doesn't truncate internally (we can apply a time limit wrapper to the environment during :meth:`make`), we permanently set truncated to False.
  - We once again use _get_obs and _get_info to obtain the agent's observation and auxiliary information.
 ```
 

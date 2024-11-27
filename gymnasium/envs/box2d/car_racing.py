@@ -125,7 +125,7 @@ class CarRacing(gym.Env, EzPickle):
     If continuous there are 3 actions :
     - 0: steering, -1 is full left, +1 is full right
     - 1: gas
-    - 2: breaking
+    - 2: braking
 
     If discrete there are 5 actions:
     - 0: do nothing
@@ -541,8 +541,8 @@ class CarRacing(gym.Env, EzPickle):
     def step(self, action: Union[np.ndarray, int]):
         assert self.car is not None
         if action is not None:
-            action = action.astype(np.float64)
             if self.continuous:
+                action = action.astype(np.float64)
                 self.car.steer(-action[0])
                 self.car.gas(action[1])
                 self.car.brake(action[2])

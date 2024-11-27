@@ -128,7 +128,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         - Added `xml_file` argument.
         - Added `reset_noise_scale` argument to set the range of initial states.
         - Added `healthy_reward` argument to configure the reward function (defaults are effectively the same as in `v4`).
-        - Added individual reward terms in `info` ( `info["reward_survive"]`, `info["distance_penalty"]`, `info["velocity_penalty"]`).
+        - Added individual reward terms in `info` (`info["reward_survive"]`, `info["distance_penalty"]`, `info["velocity_penalty"]`).
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
     * v3: This environment does not have a v3 release.
     * v2: All continuous control environments now use mujoco-py >= 1.50.
@@ -141,6 +141,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_tuple",
         ],
     }
 
@@ -174,6 +175,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
                 "human",
                 "rgb_array",
                 "depth_array",
+                "rgbd_tuple",
             ],
             "render_fps": int(np.round(1.0 / self.dt)),
         }

@@ -154,7 +154,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
         - In v2, v3 and v4 the models have different friction values for the two feet (left foot friction == 1.9 and right foot friction == 0.9). The `Walker-v5` model is updated to have the same friction for both feet (set to 1.9). This causes the Walker2d's the right foot to slide less on the surface and therefore require more force to move (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
         - Fixed bug: `healthy_reward` was given on every step (even if the Walker2D is unhealthy), now it is only given if the Walker2d is healthy. The `info` "reward_survive" is updated with this change (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
         - Restored the `xml_file` argument (was removed in `v4`).
-        - Added individual reward terms in `info` (`info["reward_forward"]`, info`["reward_ctrl"]`, `info["reward_survive"]`).
+        - Added individual reward terms in `info` (`info["reward_forward"]`, `info["reward_ctrl"]`, `info["reward_survive"]`).
         - Added `info["z_distance_from_origin"]` which is equal to the vertical distance of the "torso" body from its initial position.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
@@ -168,6 +168,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_tuple",
         ],
     }
 
@@ -231,6 +232,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
                 "human",
                 "rgb_array",
                 "depth_array",
+                "rgbd_tuple",
             ],
             "render_fps": int(np.round(1.0 / self.dt)),
         }
