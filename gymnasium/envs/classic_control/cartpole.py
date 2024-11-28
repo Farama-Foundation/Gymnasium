@@ -13,7 +13,7 @@ import gymnasium as gym
 from gymnasium import logger, spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.vector import VectorEnv
+from gymnasium.vector import AutoresetMode, VectorEnv
 from gymnasium.vector.utils import batch_space
 
 
@@ -355,6 +355,7 @@ class CartPoleVectorEnv(VectorEnv):
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 50,
+        "autoreset_mode": AutoresetMode.NEXT_STEP,
     }
 
     def __init__(

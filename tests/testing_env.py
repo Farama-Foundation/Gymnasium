@@ -45,7 +45,6 @@ def basic_render_func(self):
     pass
 
 
-# todo: change all testing environment to this generic class
 class GenericTestEnv(gym.Env):
     """A generic testing environment for use in testing with modified environments are required."""
 

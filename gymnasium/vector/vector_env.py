@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType, RenderFrame
+from gymnasium.logger import warn
 from gymnasium.utils import seeding
 
 
@@ -24,7 +26,16 @@ __all__ = [
     "VectorActionWrapper",
     "VectorRewardWrapper",
     "ArrayType",
+    "AutoresetMode",
 ]
+
+
+class AutoresetMode(Enum):
+    """Enum representing the different autoreset modes, next step, same step and disabled."""
+
+    NEXT_STEP: str = "NextStep"
+    SAME_STEP: str = "SameStep"
+    DISABLED: str = "Disabled"
 
 
 class VectorEnv(Generic[ObsType, ActType, ArrayType]):
@@ -280,8 +291,15 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             infos (dict): the (updated) infos of the vectorized environment
         """
         for key, value in env_info.items():
+            # It is easier for users to access their `final_obs` in the unbatched array of `obs` objects
+            if key == "final_obs":
+                if "final_obs" in vector_infos:
+                    array = vector_infos["final_obs"]
+                else:
+                    array = np.full(self.num_envs, fill_value=None, dtype=object)
+                array[env_num] = value
             # If value is a dictionary, then we apply the `_add_info` recursively.
-            if isinstance(value, dict):
+            elif isinstance(value, dict):
                 array = self._add_info(vector_infos.get(key, {}), value, env_num)
             # Otherwise, we are a base case to group the data
             else:
@@ -315,7 +333,6 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
             # Update the vector info with the updated data and mask information
             vector_infos[key], vector_infos[f"_{key}"] = array, array_mask
-
         return vector_infos
 
     def __del__(self):
@@ -508,6 +525,23 @@ class VectorObservationWrapper(VectorWrapper):
 
     Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.
     """
+
+    def __init__(self, env: VectorEnv):
+        """Vector observation wrapper that batch transforms observations.
+
+        Args:
+            env: Vector environment.
+        """
+        super().__init__(env)
+        if "autoreset_mode" not in env.metadata:
+            warn(
+                f"Vector environment ({env}) is missing `autoreset_mode` metadata key."
+            )
+        else:
+            assert (
+                env.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP
+                or env.metadata["autoreset_mode"] == AutoresetMode.DISABLED
+            )
 
     def reset(
         self,

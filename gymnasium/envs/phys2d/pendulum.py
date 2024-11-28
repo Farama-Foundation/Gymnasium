@@ -16,6 +16,7 @@ from gymnasium.envs.functional_jax_env import FunctionalJaxEnv, FunctionalJaxVec
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle
+from gymnasium.vector import AutoresetMode
 
 
 RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]]  # type: ignore  # noqa: F821
@@ -225,7 +226,12 @@ class PendulumFunctional(
 class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
     """Jax-based pendulum environment using the functional version as base."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 30, "jax": True}
+    metadata = {
+        "render_modes": ["rgb_array"],
+        "render_fps": 30,
+        "jax": True,
+        "autoreset_mode": AutoresetMode.NEXT_STEP,
+    }
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
         """Constructor where the kwargs are passed to the base environment to modify the parameters."""
