@@ -368,12 +368,14 @@
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">RenderFrame</span>
+<span class="kn">from</span> <span class="nn">gymnasium.logger</span> <span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span> <span class="nn">gymnasium.utils</span> <span class="kn">import</span> <span class="n">seeding</span>
 
 
@@ -390,7 +392,16 @@
     <span class="s2">&quot;VectorActionWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;VectorRewardWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ArrayType&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AutoresetMode&quot;</span><span class="p">,</span>
 <span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">AutoresetMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum representing the different autoreset modes, next step, same step and disabled.&quot;&quot;&quot;</span>
+
+    <span class="n">NEXT_STEP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;NextStep&quot;</span>
+    <span class="n">SAME_STEP</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SameStep&quot;</span>
+    <span class="n">DISABLED</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Disabled&quot;</span>
 
 
 <div class="viewcode-block" id="VectorEnv">
@@ -660,8 +671,15 @@
 <span class="sd">            infos (dict): the (updated) infos of the vectorized environment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">env_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># It is easier for users to access their `final_obs` in the unbatched array of `obs` objects</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;final_obs&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;final_obs&quot;</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="p">:</span>
+                    <span class="n">array</span> <span class="o">=</span> <span class="n">vector_infos</span><span class="p">[</span><span class="s2">&quot;final_obs&quot;</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+                <span class="n">array</span><span class="p">[</span><span class="n">env_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="c1"># If value is a dictionary, then we apply the `_add_info` recursively.</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">vector_infos</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{}),</span> <span class="n">value</span><span class="p">,</span> <span class="n">env_num</span><span class="p">)</span>
             <span class="c1"># Otherwise, we are a base case to group the data</span>
             <span class="k">else</span><span class="p">:</span>
@@ -695,7 +713,6 @@
 
             <span class="c1"># Update the vector info with the updated data and mask information</span>
             <span class="n">vector_infos</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">vector_infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">,</span> <span class="n">array_mask</span>
-
         <span class="k">return</span> <span class="n">vector_infos</span>
 
     <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -906,6 +923,23 @@
 
 <span class="sd">    Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vector observation wrapper that batch transforms observations.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: Vector environment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;autoreset_mode&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Vector environment (</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">) is missing `autoreset_mode` metadata key.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;autoreset_mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span>
+                <span class="ow">or</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;autoreset_mode&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">DISABLED</span>
+            <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
