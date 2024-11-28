@@ -258,11 +258,13 @@ class OffScreenViewer(BaseRender):
 
         # Process rendered images according to render_mode
         if render_mode in ["depth_array", "rgbd_tuple"]:
-            depth_img = depth_arr.reshape(self.viewport.height, self.viewport.width)
+            depth_img = depth_arr.reshape((self.viewport.height, self.viewport.width))
             # original image is upside-down, so flip it
             depth_img = depth_img[::-1, :]
         if render_mode in ["rgb_array", "rgbd_tuple"]:
-            rgb_img = rgb_arr.reshape(self.viewport.height, self.viewport.width, 3)
+            rgb_img = rgb_arr.reshape((self.viewport.height, self.viewport.width, 3))
+            # original image is upside-down, so flip it
+            rgb_img = rgb_img[::-1, :]
 
             if segmentation:
                 seg_img = (
@@ -281,8 +283,6 @@ class OffScreenViewer(BaseRender):
                         seg_ids[geom.segid + 1, 0] = geom.objtype
                         seg_ids[geom.segid + 1, 1] = geom.objid
                 rgb_img = seg_ids[seg_img]
-                # original image is upside-down, so flip it
-                rgb_img = rgb_img[::-1, :, :]
 
         # Return processed images based on render_mode
         if render_mode == "rgb_array":
