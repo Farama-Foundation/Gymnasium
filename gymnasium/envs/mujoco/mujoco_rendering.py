@@ -258,7 +258,7 @@ class OffScreenViewer(BaseRender):
 
         # Process rendered images according to render_mode
         if render_mode in ["depth_array", "rgbd_tuple"]:
-            depth_img = depth_arr.reshape((self.viewport.width, self.viewport.height))
+            depth_img = depth_arr.reshape((self.viewport.height, self.viewport.width))
             # original image is upside-down, so flip it
             depth_img = depth_img[::-1, :]
         if render_mode in ["rgb_array", "rgbd_tuple"]:
