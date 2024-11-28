@@ -8,9 +8,11 @@ from typing import Any, Callable, Sequence
 import numpy as np
 
 from gymnasium import Space
-from gymnasium.core import Env, ObsType
+from gymnasium.core import ActType, Env, ObsType
+from gymnasium.logger import warn
 from gymnasium.vector import VectorEnv, VectorObservationWrapper
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
+from gymnasium.vector.vector_env import ArrayType, AutoresetMode
 from gymnasium.wrappers import transform_observation
 
 
@@ -138,6 +140,15 @@ class VectorizeTransformObservation(VectorObservationWrapper):
         """
         super().__init__(env)
 
+        if "autoreset_mode" not in env.metadata:
+            warn(
+                f"Vector environment ({env}) is missing `autoreset_mode` metadata key."
+            )
+            self.autoreset_mode = AutoresetMode.NEXT_STEP
+        else:
+            assert isinstance(env.metadata["autoreset_mode"], AutoresetMode)
+            self.autoreset_mode = env.metadata["autoreset_mode"]
+
         self.wrapper = wrapper(
             self._SingleEnv(self.env.single_observation_space), **kwargs
         )
@@ -148,6 +159,24 @@ class VectorizeTransformObservation(VectorObservationWrapper):
 
         self.same_out = self.observation_space == self.env.observation_space
         self.out = create_empty_array(self.single_observation_space, self.num_envs)
+
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        """Steps through the vector environments, transforming the observation and for final obs individually transformed."""
+        obs, rewards, terminations, truncations, infos = self.env.step(actions)
+        obs = self.observations(obs)
+
+        if self.autoreset_mode == AutoresetMode.SAME_STEP and "final_obs" in infos:
+            final_obs = infos["final_obs"]
+
+            for i, (sub_obs, has_final_obs) in enumerate(
+                zip(final_obs, infos["_final_obs"])
+            ):
+                if has_final_obs:
+                    final_obs[i] = self.wrapper.observation(sub_obs)
+
+        return obs, rewards, terminations, truncations, infos
 
     def observations(self, observations: ObsType) -> ObsType:
         """Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again."""

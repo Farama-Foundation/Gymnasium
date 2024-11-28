@@ -12,6 +12,7 @@ import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import seeding
+from gymnasium.vector import AutoresetMode
 from gymnasium.vector.utils import batch_space
 
 
@@ -115,7 +116,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         """Initialize the environment from a FuncEnv."""
         super().__init__()
         if metadata is None:
-            metadata = {}
+            metadata = {"autoreset_mode": AutoresetMode.NEXT_STEP}
         self.func_env = func_env
         self.num_envs = num_envs
 
