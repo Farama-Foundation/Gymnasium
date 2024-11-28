@@ -355,7 +355,7 @@ class CartPoleVectorEnv(VectorEnv):
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 50,
-        "autoreset-mode": AutoresetMode.NEXT_STEP,
+        "autoreset_mode": AutoresetMode.NEXT_STEP,
     }
 
     def __init__(

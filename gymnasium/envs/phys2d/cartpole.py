@@ -277,7 +277,7 @@ class CartPoleJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
         "render_modes": ["rgb_array"],
         "render_fps": 50,
         "jax": True,
-        "AutoresetMode": AutoresetMode.NEXT_STEP,
+        "autoreset_mode": AutoresetMode.NEXT_STEP,
     }
 
     def __init__(

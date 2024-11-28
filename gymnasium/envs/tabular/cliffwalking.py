@@ -137,7 +137,7 @@ class CliffWalkingFunctional(
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 4,
-        "AutoresetMode": AutoresetMode.NEXT_STEP,
+        "autoreset_mode": AutoresetMode.NEXT_STEP,
     }
 
     def transition(

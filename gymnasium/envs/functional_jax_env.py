@@ -116,7 +116,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         """Initialize the environment from a FuncEnv."""
         super().__init__()
         if metadata is None:
-            metadata = {"AutoresetMode": AutoresetMode.NEXT_STEP}
+            metadata = {"autoreset_mode": AutoresetMode.NEXT_STEP}
         self.func_env = func_env
         self.num_envs = num_envs
 

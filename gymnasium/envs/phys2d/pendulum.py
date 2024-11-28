@@ -230,7 +230,7 @@ class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
         "render_modes": ["rgb_array"],
         "render_fps": 30,
         "jax": True,
-        "AutoresetMode": AutoresetMode.NEXT_STEP,
+        "autoreset_mode": AutoresetMode.NEXT_STEP,
     }
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):

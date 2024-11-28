@@ -240,7 +240,7 @@ class BlackjackFunctional(
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 4,
-        "AutoresetMode": AutoresetMode.NEXT_STEP,
+        "autoreseet-mode": AutoresetMode.NEXT_STEP,
     }
 
     def transition(

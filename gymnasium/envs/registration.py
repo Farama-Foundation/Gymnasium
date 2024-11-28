@@ -978,11 +978,13 @@ def make_vec(
         copied_id_spec.kwargs["wrappers"] = wrappers
     env.unwrapped.spec = copied_id_spec
 
-    if "AutoresetMode" not in env.metadata:
-        warn(f"The VectorEnv ({env}) is missing AutoresetMode metadata.")
-    elif not isinstance(env.metadata["AutoresetMode"], AutoresetMode):
+    if "autoreset_mode" not in env.metadata:
         warn(
-            f"The VectorEnv ({env}) AutoresetMode metadata is not an instance of AutoresetMode, {type(env.metadata['AutoresetMode'])}."
+            f"The VectorEnv ({env}) is missing AutoresetMode metadata, metadata={env.metadata}"
+        )
+    elif not isinstance(env.metadata["autoreset_mode"], AutoresetMode):
+        warn(
+            f"The VectorEnv ({env}) metadata['autoreset_mode'] is not an instance of AutoresetMode, {type(env.metadata['autoreset_mode'])}."
         )
 
     return env
