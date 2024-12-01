@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import collections.abc
+from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, Callable, Sequence
+from typing import Any
 
 import numpy as np
 
@@ -14,6 +16,19 @@ from gymnasium.vector import VectorEnv, VectorObservationWrapper
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import ArrayType, AutoresetMode
 from gymnasium.wrappers import transform_observation
+
+
+__all__ = [
+    "TransformObservation",
+    "VectorizeTransformObservation",
+    "FilterObservation",
+    "FlattenObservation",
+    "GrayscaleObservation",
+    "ResizeObservation",
+    "RescaleObservation",
+    "RescaleObservation",
+    "DtypeObservation",
+]
 
 
 class TransformObservation(VectorObservationWrapper):
@@ -225,12 +240,14 @@ class FilterObservation(VectorizeTransformObservation):
               dtype=float32)}
     """
 
-    def __init__(self, env: VectorEnv, filter_keys: Sequence[str | int]):
+    def __init__(
+        self, env: VectorEnv, filter_keys: collections.abc.Sequence[str | int]
+    ):
         """Constructor for the filter observation wrapper.
 
         Args:
             env: The vector environment to wrap
-            filter_keys: The subspaces to be included, use a list of strings or integers for ``Dict`` and ``Tuple`` spaces respectivesly
+            filter_keys: The subspaces to be included, use a list of strings or integers for ``Dict`` and ``Tuple`` spaces respectively
         """
         super().__init__(
             env, transform_observation.FilterObservation, filter_keys=filter_keys
