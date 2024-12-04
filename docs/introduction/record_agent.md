@@ -53,7 +53,7 @@ print(f'Episode lengths: {env.length_queue}')
 
 In the script above, for the :class:`RecordVideo` wrapper, we specify three different variables: ``video_folder`` to specify the folder that the videos should be saved (change for your problem), ``name_prefix`` for the prefix of videos themselves and finally an ``episode_trigger`` such that every episode is recorded. This means that for every episode of the environment, a video will be recorded and saved in the style "cartpole-agent/eval-episode-x.mp4".
 
-For the :class:`RecordEpisodicStatistics`, we only need to specify the buffer lengths, this is the max length of the internal ``time_queue``, ``return_queue`` and ``length_queue``. Rather than collect the data for each episode individually, we can use the data queues to print the information at the end of the evaluation.
+For the :class:`RecordEpisodeStatistics`, we only need to specify the buffer lengths, this is the max length of the internal ``time_queue``, ``return_queue`` and ``length_queue``. Rather than collect the data for each episode individually, we can use the data queues to print the information at the end of the evaluation.
 
 For speed ups in evaluating environments, it is possible to implement this with vector environments in order to evaluate ``N`` episodes at the same time in parallel rather than series.
 ```

@@ -16,6 +16,7 @@ from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle, seeding
+from gymnasium.vector import AutoresetMode
 from gymnasium.wrappers import HumanRendering
 
 
@@ -239,6 +240,7 @@ class BlackjackFunctional(
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 4,
+        "autoreseet-mode": AutoresetMode.NEXT_STEP,
     }
 
     def transition(

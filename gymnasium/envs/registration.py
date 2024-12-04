@@ -19,6 +19,8 @@ from typing import Any, Callable, Iterable, Sequence
 
 import gymnasium as gym
 from gymnasium import Env, Wrapper, error, logger
+from gymnasium.logger import warn
+from gymnasium.vector import AutoresetMode
 
 
 if sys.version_info < (3, 10):
@@ -975,6 +977,15 @@ def make_vec(
     if len(wrappers) > 0:
         copied_id_spec.kwargs["wrappers"] = wrappers
     env.unwrapped.spec = copied_id_spec
+
+    if "autoreset_mode" not in env.metadata:
+        warn(
+            f"The VectorEnv ({env}) is missing AutoresetMode metadata, metadata={env.metadata}"
+        )
+    elif not isinstance(env.metadata["autoreset_mode"], AutoresetMode):
+        warn(
+            f"The VectorEnv ({env}) metadata['autoreset_mode'] is not an instance of AutoresetMode, {type(env.metadata['autoreset_mode'])}."
+        )
 
     return env
 
