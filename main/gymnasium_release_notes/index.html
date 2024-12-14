@@ -405,7 +405,7 @@
 
 env = gym.make(&quot;ALE/Pong-v5&quot;)"><pre><span class="pl-k">import</span> <span class="pl-s1">gymnasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
 
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">"ALE/Pong-v5"</span>)</pre></div>
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">"ALE/Pong-v5"</span>)</pre></div>
 <p>Despite Atari never being imported (i.e., <code>import ale_py</code>), users can still create an Atari environment. This feature has been removed in <code>v1.0.0</code>, which will require users to update to</p>
 <div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="import gymnasium as gym
 import ale_py
@@ -415,15 +415,15 @@ gym.register_envs(ale_py)  # optional, helpful for IDEs or pre-commit
 env = gym.make(&quot;ALE/Pong-v5&quot;)"><pre><span class="pl-k">import</span> <span class="pl-s1">gymnasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
 <span class="pl-k">import</span> <span class="pl-s1">ale_py</span>
 
-<span class="pl-s1">gym</span>.<span class="pl-en">register_envs</span>(<span class="pl-s1">ale_py</span>)  <span class="pl-c"># optional, helpful for IDEs or pre-commit</span>
+<span class="pl-s1">gym</span>.<span class="pl-c1">register_envs</span>(<span class="pl-s1">ale_py</span>)  <span class="pl-c"># optional, helpful for IDEs or pre-commit</span>
 
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">"ALE/Pong-v5"</span>)</pre></div>
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">"ALE/Pong-v5"</span>)</pre></div>
 <p>Alternatively, users can use the following structure, <code>module_name:env_id, ' so that the module is imported first before the environment is created. e.g., </code>ale_py:ALE/Pong-v5`.</p>
 <div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="import gymnasium as gym
 
 env = gym.make(&quot;ale_py:ALE/Pong-v5&quot;)"><pre><span class="pl-k">import</span> <span class="pl-s1">gymnasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
 
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">"ale_py:ALE/Pong-v5"</span>)</pre></div>
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">"ale_py:ALE/Pong-v5"</span>)</pre></div>
 <p>To help users with IDEs (e.g., VSCode, PyCharm), when importing modules to register environments (e.g., <code>import ale_py</code>) this can cause the IDE (and pre-commit isort / black / flake8) to believe that the import is pointless and should be removed. Therefore, we have introduced <code>gymnasium.register_envs</code> as a no-op function (the function literally does nothing) to make the IDE believe that something is happening and the import statement is required.</p>
 <h2>Vector Environments</h2>
 <p>To increase the sample speed of an environment, vectorizing is one of the easiest ways to sample multiple instances of the same environment simultaneously. Gym and Gymnasium provide the <code>VectorEnv</code> as a base class for this, but one of its issues has been that it inherited <code>Env</code>. This can cause particular issues with type checking (the return type of <code>step</code> is different for <code>Env</code> and <code>VectorEnv</code>), testing the environment type (<code>isinstance(env, Env)</code> can be true for vector environments despite the two acting differently) and finally wrappers (some Gym and Gymnasium wrappers supported Vector environments, but there are no clear or consistent API for determining which do or don't). Therefore, we have separated out <code>Env</code> and <code>VectorEnv</code> to not inherit from each other.</p>
@@ -433,11 +433,11 @@ env = gym.make(&quot;ale_py:ALE/Pong-v5&quot;)"><pre><span class="pl-k">import</
 env = gym.wrappers.ClipReward(env, min_reward=-1, max_reward=3)
 
 envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3)
-envs = gym.wrappers.vector.ClipReward(envs, min_reward=-1, max_reward=3)"><pre><span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">"CartPole-v1"</span>)
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-s1">wrappers</span>.<span class="pl-v">ClipReward</span>(<span class="pl-s1">env</span>, <span class="pl-s1">min_reward</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">max_reward</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)
+envs = gym.wrappers.vector.ClipReward(envs, min_reward=-1, max_reward=3)"><pre><span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">"CartPole-v1"</span>)
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">wrappers</span>.<span class="pl-c1">ClipReward</span>(<span class="pl-s1">env</span>, <span class="pl-s1">min_reward</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">max_reward</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)
 
-<span class="pl-s1">envs</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make_vec</span>(<span class="pl-s">"CartPole-v1"</span>, <span class="pl-s1">num_envs</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)
-<span class="pl-s1">envs</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-s1">wrappers</span>.<span class="pl-s1">vector</span>.<span class="pl-v">ClipReward</span>(<span class="pl-s1">envs</span>, <span class="pl-s1">min_reward</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">max_reward</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)</pre></div>
+<span class="pl-s1">envs</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make_vec</span>(<span class="pl-s">"CartPole-v1"</span>, <span class="pl-s1">num_envs</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)
+<span class="pl-s1">envs</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">wrappers</span>.<span class="pl-c1">vector</span>.<span class="pl-c1">ClipReward</span>(<span class="pl-s1">envs</span>, <span class="pl-s1">min_reward</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">max_reward</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)</pre></div>
 <p>Due to this split of <code>Env</code> and <code>VectorEnv</code>, there are now <code>Env</code> only wrappers and <code>VectorEnv</code> only wrappers in <code>gymnasium.wrappers</code> and <code>gymnasium.wrappers.vector</code> respectively. Furthermore, we updated the names of the base vector wrappers from <code>VectorEnvWrapper</code> to <code>VectorWrapper</code> and added <code>VectorObservationWrapper</code>, <code>VectorRewardWrapper</code> and <code>VectorActionWrapper</code> classes. See the <a href="https://gymnasium.farama.org/main/api/vector/wrappers/" rel="nofollow">vector wrapper</a> page for new information.</p>
 <p>To increase the efficiency of vector environments, autoreset is a common feature that allows sub-environments to reset without requiring all sub-environments to finish before resetting them all. Previously in Gym and Gymnasium, auto-resetting was done on the same step as the environment episode ends, such that the final observation and info would be stored in the step's info, i.e., <code>info["final_observation"]</code> and <code>info[“final_info”]</code> and standard obs and info containing the sub-environment's reset observation and info. Thus, accurately sampling observations from a vector environment required the following code (note the need to extract the <code>infos["next_obs"][j]</code> if the sub-environment was terminated or truncated). Additionally, for on-policy algorithms that use rollout would require an additional forward pass to compute the correct next observation (this is often not done as an optimization assuming that environments only terminate, not truncate).</p>
 <div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="replay_buffer = []
@@ -456,17 +456,17 @@ for _ in range(total_timesteps):
             ))
 
     obs = next_obs"><pre><span class="pl-s1">replay_buffer</span> <span class="pl-c1">=</span> []
-<span class="pl-s1">obs</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-en">reset</span>()
+<span class="pl-s1">obs</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-c1">reset</span>()
 <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">total_timesteps</span>):
-    <span class="pl-s1">next_obs</span>, <span class="pl-s1">rewards</span>, <span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>, <span class="pl-s1">infos</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-en">step</span>(<span class="pl-s1">envs</span>.<span class="pl-s1">action_space</span>.<span class="pl-en">sample</span>())
+    <span class="pl-s1">next_obs</span>, <span class="pl-s1">rewards</span>, <span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>, <span class="pl-s1">infos</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-c1">step</span>(<span class="pl-s1">envs</span>.<span class="pl-c1">action_space</span>.<span class="pl-c1">sample</span>())
 
-    <span class="pl-k">for</span> <span class="pl-s1">j</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">envs</span>.<span class="pl-s1">num_envs</span>):
+    <span class="pl-k">for</span> <span class="pl-s1">j</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">envs</span>.<span class="pl-c1">num_envs</span>):
         <span class="pl-k">if</span> <span class="pl-c1">not</span> (<span class="pl-s1">terminations</span>[<span class="pl-s1">j</span>] <span class="pl-c1">or</span> <span class="pl-s1">truncations</span>[<span class="pl-s1">j</span>]):
-            <span class="pl-s1">replay_buffer</span>.<span class="pl-en">append</span>((
+            <span class="pl-s1">replay_buffer</span>.<span class="pl-c1">append</span>((
                 <span class="pl-s1">obs</span>[<span class="pl-s1">j</span>], <span class="pl-s1">rewards</span>[<span class="pl-s1">j</span>], <span class="pl-s1">terminations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">truncations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">next_obs</span>[<span class="pl-s1">j</span>]
             ))
         <span class="pl-k">else</span>:
-            <span class="pl-s1">replay_buffer</span>.<span class="pl-en">append</span>((
+            <span class="pl-s1">replay_buffer</span>.<span class="pl-c1">append</span>((
                 <span class="pl-s1">obs</span>[<span class="pl-s1">j</span>], <span class="pl-s1">rewards</span>[<span class="pl-s1">j</span>], <span class="pl-s1">terminations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">truncations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">infos</span>[<span class="pl-s">"next_obs"</span>][<span class="pl-s1">j</span>]
             ))
 
@@ -486,19 +486,19 @@ for _ in range(total_timesteps):
 
     obs = next_obs
     autoreset = np.logical_or(terminations, truncations)"><pre><span class="pl-s1">replay_buffer</span> <span class="pl-c1">=</span> []
-<span class="pl-s1">obs</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-en">reset</span>()
-<span class="pl-s1">autoreset</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-en">zeros</span>(<span class="pl-s1">envs</span>.<span class="pl-s1">num_envs</span>)
+<span class="pl-s1">obs</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-c1">reset</span>()
+<span class="pl-s1">autoreset</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">zeros</span>(<span class="pl-s1">envs</span>.<span class="pl-c1">num_envs</span>)
 <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">total_timesteps</span>):
-    <span class="pl-s1">next_obs</span>, <span class="pl-s1">rewards</span>, <span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-en">step</span>(<span class="pl-s1">envs</span>.<span class="pl-s1">action_space</span>.<span class="pl-en">sample</span>())
+    <span class="pl-s1">next_obs</span>, <span class="pl-s1">rewards</span>, <span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-c1">step</span>(<span class="pl-s1">envs</span>.<span class="pl-c1">action_space</span>.<span class="pl-c1">sample</span>())
 
-    <span class="pl-k">for</span> <span class="pl-s1">j</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">envs</span>.<span class="pl-s1">num_envs</span>):
+    <span class="pl-k">for</span> <span class="pl-s1">j</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">envs</span>.<span class="pl-c1">num_envs</span>):
         <span class="pl-k">if</span> <span class="pl-c1">not</span> <span class="pl-s1">autoreset</span>[<span class="pl-s1">j</span>]:
-            <span class="pl-s1">replay_buffer</span>.<span class="pl-en">append</span>((
+            <span class="pl-s1">replay_buffer</span>.<span class="pl-c1">append</span>((
                 <span class="pl-s1">obs</span>[<span class="pl-s1">j</span>], <span class="pl-s1">rewards</span>[<span class="pl-s1">j</span>], <span class="pl-s1">terminations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">truncations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">next_obs</span>[<span class="pl-s1">j</span>]
             ))
 
     <span class="pl-s1">obs</span> <span class="pl-c1">=</span> <span class="pl-s1">next_obs</span>
-    <span class="pl-s1">autoreset</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-en">logical_or</span>(<span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>)</pre></div>
+    <span class="pl-s1">autoreset</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">logical_or</span>(<span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>)</pre></div>
 <p>For on-policy rollout, to account for the autoreset requires masking the error for the first observation in a new episode (<code>done[t+1]</code>) to prevent computing the error between the last and first observations of episodes.</p>
 <p>Finally, we have improved <code>AsyncVectorEnv.set_attr</code> and <code>SyncVectorEnv.set_attr</code> functions to use the <code>Wrapper.set_wrapper_attr</code> to allow users to set variables anywhere in the environment stack if it already exists. Previously, this was not possible and users could only modify the variable in the "top" wrapper on the environment stack, importantly not the actual environment itself.</p>
 <h2>Wrappers</h2>
@@ -559,18 +559,18 @@ class ExampleFuncEnv(gym.functional.FuncEnv):
 <span class="pl-k">import</span> <span class="pl-s1">gymnasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
 <span class="pl-k">from</span> <span class="pl-s1">gymnasium</span>.<span class="pl-s1">functional</span> <span class="pl-k">import</span> <span class="pl-v">StateType</span>, <span class="pl-v">ObsType</span>, <span class="pl-v">ActType</span>, <span class="pl-v">RewardType</span>, <span class="pl-v">TerminalType</span>, <span class="pl-v">Params</span>
 
-<span class="pl-k">class</span> <span class="pl-v">ExampleFuncEnv</span>(<span class="pl-s1">gym</span>.<span class="pl-s1">functional</span>.<span class="pl-v">FuncEnv</span>):
-  <span class="pl-k">def</span> <span class="pl-en">initial</span>(<span class="pl-s1">self</span>, <span class="pl-s1">rng</span>: <span class="pl-v">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) <span class="pl-c1">-&gt;</span> <span class="pl-v">StateType</span>:
+<span class="pl-k">class</span> <span class="pl-v">ExampleFuncEnv</span>(<span class="pl-s1">gym</span>.<span class="pl-c1">functional</span>.<span class="pl-c1">FuncEnv</span>):
+  <span class="pl-k">def</span> <span class="pl-en">initial</span>(<span class="pl-s1">self</span>, <span class="pl-s1">rng</span>: <span class="pl-smi">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) <span class="pl-c1">-&gt;</span> <span class="pl-smi">StateType</span>:
     ...
-  <span class="pl-k">def</span> <span class="pl-en">transition</span>(<span class="pl-s1">self</span>, <span class="pl-s1">state</span>: <span class="pl-v">StateType</span>, <span class="pl-s1">action</span>: <span class="pl-v">ActType</span>, <span class="pl-s1">rng</span>: <span class="pl-v">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) <span class="pl-c1">-&gt;</span> <span class="pl-v">StateType</span>:
+  <span class="pl-k">def</span> <span class="pl-en">transition</span>(<span class="pl-s1">self</span>, <span class="pl-s1">state</span>: <span class="pl-smi">StateType</span>, <span class="pl-s1">action</span>: <span class="pl-smi">ActType</span>, <span class="pl-s1">rng</span>: <span class="pl-smi">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) <span class="pl-c1">-&gt;</span> <span class="pl-smi">StateType</span>:
     ...
-  <span class="pl-k">def</span> <span class="pl-en">observation</span>(<span class="pl-s1">self</span>, <span class="pl-s1">state</span>: <span class="pl-v">StateType</span>, <span class="pl-s1">rng</span>: <span class="pl-v">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) <span class="pl-c1">-&gt;</span> <span class="pl-v">ObsType</span>:
+  <span class="pl-k">def</span> <span class="pl-en">observation</span>(<span class="pl-s1">self</span>, <span class="pl-s1">state</span>: <span class="pl-smi">StateType</span>, <span class="pl-s1">rng</span>: <span class="pl-smi">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) <span class="pl-c1">-&gt;</span> <span class="pl-smi">ObsType</span>:
     ...
   <span class="pl-k">def</span> <span class="pl-en">reward</span>(
-      <span class="pl-s1">self</span>, <span class="pl-s1">state</span>: <span class="pl-v">StateType</span>, <span class="pl-s1">action</span>: <span class="pl-v">ActType</span>, <span class="pl-s1">next_state</span>: <span class="pl-v">StateType</span>, <span class="pl-s1">rng</span>: <span class="pl-v">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>
-  ) <span class="pl-c1">-&gt;</span> <span class="pl-v">RewardType</span>:
+      <span class="pl-s1">self</span>, <span class="pl-s1">state</span>: <span class="pl-smi">StateType</span>, <span class="pl-s1">action</span>: <span class="pl-smi">ActType</span>, <span class="pl-s1">next_state</span>: <span class="pl-smi">StateType</span>, <span class="pl-s1">rng</span>: <span class="pl-smi">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>
+  ) <span class="pl-c1">-&gt;</span> <span class="pl-smi">RewardType</span>:
     ...
-  <span class="pl-k">def</span> <span class="pl-en">terminal</span>(<span class="pl-s1">self</span>, <span class="pl-s1">state</span>: <span class="pl-v">StateType</span>, <span class="pl-s1">rng</span>: <span class="pl-v">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) <span class="pl-c1">-&gt;</span> <span class="pl-v">TerminalType</span>:
+  <span class="pl-k">def</span> <span class="pl-en">terminal</span>(<span class="pl-s1">self</span>, <span class="pl-s1">state</span>: <span class="pl-smi">StateType</span>, <span class="pl-s1">rng</span>: <span class="pl-smi">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) <span class="pl-c1">-&gt;</span> <span class="pl-smi">TerminalType</span>:
     ...</pre></div>
 <p><code>FuncEnv</code> requires that <code>initial</code> and <code>transition</code> functions return a new state given its inputs as a partial implementation of <code>Env.step</code> and <code>Env.reset</code>. As a result, users can sample (and save) the next state for a range of inputs to use with planning, searching, etc. Given a state, <code>observation</code>, <code>reward</code>, and <code>terminal</code> provide users explicit definitions to understand how each can affect the environment's output.</p>
 <h2>Collecting Seeding Values</h2>
@@ -582,11 +582,11 @@ reseed_values = space.seed(seeded_values)
 reseed_samples = [space.sample() for _ in range(10)]
 
 assert seeded_values == reseed_values
-assert initial_samples == reseed_samples"><pre><span class="pl-s1">seeded_values</span> <span class="pl-c1">=</span> <span class="pl-s1">space</span>.<span class="pl-en">seed</span>(<span class="pl-c1">None</span>)
-<span class="pl-s1">initial_samples</span> <span class="pl-c1">=</span> [<span class="pl-s1">space</span>.<span class="pl-en">sample</span>() <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">10</span>)]
+assert initial_samples == reseed_samples"><pre><span class="pl-s1">seeded_values</span> <span class="pl-c1">=</span> <span class="pl-s1">space</span>.<span class="pl-c1">seed</span>(<span class="pl-c1">None</span>)
+<span class="pl-s1">initial_samples</span> <span class="pl-c1">=</span> [<span class="pl-s1">space</span>.<span class="pl-c1">sample</span>() <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">10</span>)]
 
-<span class="pl-s1">reseed_values</span> <span class="pl-c1">=</span> <span class="pl-s1">space</span>.<span class="pl-en">seed</span>(<span class="pl-s1">seeded_values</span>)
-<span class="pl-s1">reseed_samples</span> <span class="pl-c1">=</span> [<span class="pl-s1">space</span>.<span class="pl-en">sample</span>() <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">10</span>)]
+<span class="pl-s1">reseed_values</span> <span class="pl-c1">=</span> <span class="pl-s1">space</span>.<span class="pl-c1">seed</span>(<span class="pl-s1">seeded_values</span>)
+<span class="pl-s1">reseed_samples</span> <span class="pl-c1">=</span> [<span class="pl-s1">space</span>.<span class="pl-c1">sample</span>() <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">10</span>)]
 
 <span class="pl-k">assert</span> <span class="pl-s1">seeded_values</span> <span class="pl-c1">==</span> <span class="pl-s1">reseed_values</span>
 <span class="pl-k">assert</span> <span class="pl-s1">initial_samples</span> <span class="pl-c1">==</span> <span class="pl-s1">reseed_samples</span></pre></div>
@@ -687,11 +687,11 @@ reseed_values = space.seed(seeded_values)
 reseed_samples = [space.sample() for _ in range(10)]
 
 assert seeded_values == reseed_values
-assert initial_samples == reseed_samples"><pre><span class="pl-s1">seeded_values</span> <span class="pl-c1">=</span> <span class="pl-s1">space</span>.<span class="pl-en">seed</span>(<span class="pl-c1">None</span>)
-<span class="pl-s1">initial_samples</span> <span class="pl-c1">=</span> [<span class="pl-s1">space</span>.<span class="pl-en">sample</span>() <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">10</span>)]
+assert initial_samples == reseed_samples"><pre><span class="pl-s1">seeded_values</span> <span class="pl-c1">=</span> <span class="pl-s1">space</span>.<span class="pl-c1">seed</span>(<span class="pl-c1">None</span>)
+<span class="pl-s1">initial_samples</span> <span class="pl-c1">=</span> [<span class="pl-s1">space</span>.<span class="pl-c1">sample</span>() <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">10</span>)]
 
-<span class="pl-s1">reseed_values</span> <span class="pl-c1">=</span> <span class="pl-s1">space</span>.<span class="pl-en">seed</span>(<span class="pl-s1">seeded_values</span>)
-<span class="pl-s1">reseed_samples</span> <span class="pl-c1">=</span> [<span class="pl-s1">space</span>.<span class="pl-en">sample</span>() <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">10</span>)]
+<span class="pl-s1">reseed_values</span> <span class="pl-c1">=</span> <span class="pl-s1">space</span>.<span class="pl-c1">seed</span>(<span class="pl-s1">seeded_values</span>)
+<span class="pl-s1">reseed_samples</span> <span class="pl-c1">=</span> [<span class="pl-s1">space</span>.<span class="pl-c1">sample</span>() <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">10</span>)]
 
 <span class="pl-k">assert</span> <span class="pl-s1">seeded_values</span> <span class="pl-c1">==</span> <span class="pl-s1">reseed_values</span>
 <span class="pl-k">assert</span> <span class="pl-s1">initial_samples</span> <span class="pl-c1">==</span> <span class="pl-s1">reseed_samples</span></pre></div>
@@ -744,7 +744,7 @@ assert initial_samples == reseed_samples"><pre><span class="pl-s1">seeded_values
 
 env = gym.make(&quot;ALE/Pong-v5&quot;)"><pre><span class="pl-k">import</span> <span class="pl-s1">gymnasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
 
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">"ALE/Pong-v5"</span>)</pre></div>
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">"ALE/Pong-v5"</span>)</pre></div>
 <p>such that despite Atari never being imported (i.e., <code>import ale_py</code>), users can still load an Atari environment. This feature has been removed in v1.0.0, which will require users to update to</p>
 <div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="import gymnasium as gym
 import ale_py
@@ -754,15 +754,15 @@ gym.register_envs(ale_py)  # optional
 env = gym.make(&quot;ALE/Pong-v5&quot;)"><pre><span class="pl-k">import</span> <span class="pl-s1">gymnasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
 <span class="pl-k">import</span> <span class="pl-s1">ale_py</span>
 
-<span class="pl-s1">gym</span>.<span class="pl-en">register_envs</span>(<span class="pl-s1">ale_py</span>)  <span class="pl-c"># optional</span>
+<span class="pl-s1">gym</span>.<span class="pl-c1">register_envs</span>(<span class="pl-s1">ale_py</span>)  <span class="pl-c"># optional</span>
 
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">"ALE/Pong-v5"</span>)</pre></div>
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">"ALE/Pong-v5"</span>)</pre></div>
 <p>Alternatively, users can do the following where the <code>ale_py</code>  within the environment id will import the module</p>
 <div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="import gymnasium as gym
 
 env = gym.make(&quot;ale_py:ALE/Pong-v5&quot;)  # `module_name:env_id`"><pre><span class="pl-k">import</span> <span class="pl-s1">gymnasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
 
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">"ale_py:ALE/Pong-v5"</span>)  <span class="pl-c"># `module_name:env_id`</span></pre></div>
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">"ale_py:ALE/Pong-v5"</span>)  <span class="pl-c"># `module_name:env_id`</span></pre></div>
 <p>For users with IDEs (i.e., VSCode, PyCharm), then <code>import ale_py</code> can cause the IDE (and pre-commit isort / black / flake8) to believe that the import statement does nothing. Therefore, we have introduced <code>gymnasium.register_envs</code> as a no-op function (the function literally does nothing) to make the IDE believe that something is happening and the import statement is required.</p>
 <p>Note: ALE-py, Minigrid, and HighwayEnv must be updated to work with Gymnasium v1.0.0, which we hope to complete for all projects affected by alpha 2.</p>
 <h2>Vector environments</h2>
@@ -773,11 +773,11 @@ env = gym.make(&quot;ale_py:ALE/Pong-v5&quot;)  # `module_name:env_id`"><pre><sp
 env = gym.wrappers.ClipReward(env, min_reward=-1, max_reward=3)
 
 envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3)
-envs = gym.wrappers.vector.ClipReward(envs, min_reward=-1, max_reward=3)"><pre>​​<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">"CartPole-v1"</span>)
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-s1">wrappers</span>.<span class="pl-v">ClipReward</span>(<span class="pl-s1">env</span>, <span class="pl-s1">min_reward</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">max_reward</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)
+envs = gym.wrappers.vector.ClipReward(envs, min_reward=-1, max_reward=3)"><pre>​​<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">"CartPole-v1"</span>)
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">wrappers</span>.<span class="pl-c1">ClipReward</span>(<span class="pl-s1">env</span>, <span class="pl-s1">min_reward</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">max_reward</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)
 
-<span class="pl-s1">envs</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make_vec</span>(<span class="pl-s">"CartPole-v1"</span>, <span class="pl-s1">num_envs</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)
-<span class="pl-s1">envs</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-s1">wrappers</span>.<span class="pl-s1">vector</span>.<span class="pl-v">ClipReward</span>(<span class="pl-s1">envs</span>, <span class="pl-s1">min_reward</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">max_reward</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)</pre></div>
+<span class="pl-s1">envs</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make_vec</span>(<span class="pl-s">"CartPole-v1"</span>, <span class="pl-s1">num_envs</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)
+<span class="pl-s1">envs</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">wrappers</span>.<span class="pl-c1">vector</span>.<span class="pl-c1">ClipReward</span>(<span class="pl-s1">envs</span>, <span class="pl-s1">min_reward</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">max_reward</span><span class="pl-c1">=</span><span class="pl-c1">3</span>)</pre></div>
 <p>Due to this split of <code>Env</code> and <code>VectorEnv</code>, there are now <code>Env</code> only wrappers and <code>VectorEnv</code> only wrappers in <code>gymnasium.wrappers</code> and <code>gymnasium.wrappers.vector</code> respectively. Furthermore, we updated the names of the base vector wrappers from <code>VectorEnvWrapper</code> to <code>VectorWrapper</code> and added <code>VectorObservationWrapper</code>, <code>VectorRewardWrapper</code> and <code>VectorActionWrapper</code> classes. See the <a href="https://gymnasium.farama.org/main/api/vector/wrappers/" rel="nofollow">vector wrapper</a> page for new information.</p>
 <p>To increase the efficiency of vector environment, autoreset is a common feature that allows sub-environments to reset without requiring all sub-environments to finish before resetting them all. Previously in Gym and Gymnasium, auto-resetting was done on the same step as the environment episode ends, such that the final observation and info would be stored in the step’s info, i.e., <code>info["final_observation"]</code> and <code>info[“final_info”]</code> and standard obs and info containing the sub-environment’s reset observation and info. This required similar general sampling for vectorized environments.</p>
 <div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="replay_buffer = []
@@ -796,17 +796,17 @@ for _ in range(total_timesteps):
             ))
 
     obs = next_obs"><pre><span class="pl-s1">replay_buffer</span> <span class="pl-c1">=</span> []
-<span class="pl-s1">obs</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-en">reset</span>()
+<span class="pl-s1">obs</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-c1">reset</span>()
 <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">total_timesteps</span>):
-    <span class="pl-s1">next_obs</span>, <span class="pl-s1">rewards</span>, <span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>, <span class="pl-s1">infos</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-en">step</span>(<span class="pl-s1">envs</span>.<span class="pl-s1">action_space</span>.<span class="pl-en">sample</span>())
+    <span class="pl-s1">next_obs</span>, <span class="pl-s1">rewards</span>, <span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>, <span class="pl-s1">infos</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-c1">step</span>(<span class="pl-s1">envs</span>.<span class="pl-c1">action_space</span>.<span class="pl-c1">sample</span>())
 
-    <span class="pl-k">for</span> <span class="pl-s1">j</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">envs</span>.<span class="pl-s1">num_envs</span>):
+    <span class="pl-k">for</span> <span class="pl-s1">j</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">envs</span>.<span class="pl-c1">num_envs</span>):
         <span class="pl-k">if</span> <span class="pl-c1">not</span> (<span class="pl-s1">terminations</span>[<span class="pl-s1">j</span>] <span class="pl-c1">or</span> <span class="pl-s1">truncations</span>[<span class="pl-s1">j</span>]):
-            <span class="pl-s1">replay_buffer</span>.<span class="pl-en">append</span>((
+            <span class="pl-s1">replay_buffer</span>.<span class="pl-c1">append</span>((
                 <span class="pl-s1">obs</span>[<span class="pl-s1">j</span>], <span class="pl-s1">rewards</span>[<span class="pl-s1">j</span>], <span class="pl-s1">terminations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">truncations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">next_obs</span>[<span class="pl-s1">j</span>]
             ))
         <span class="pl-k">else</span>:
-            <span class="pl-s1">replay_buffer</span>.<span class="pl-en">append</span>((
+            <span class="pl-s1">replay_buffer</span>.<span class="pl-c1">append</span>((
                 <span class="pl-s1">obs</span>[<span class="pl-s1">j</span>], <span class="pl-s1">rewards</span>[<span class="pl-s1">j</span>], <span class="pl-s1">terminations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">truncations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">infos</span>[<span class="pl-s">"next_obs"</span>][<span class="pl-s1">j</span>]
             ))
 
@@ -826,19 +826,19 @@ for _ in range(total_timesteps):
 
     obs = next_obs
     autoreset = np.logical_or(terminations, truncations)"><pre><span class="pl-s1">replay_buffer</span> <span class="pl-c1">=</span> []
-<span class="pl-s1">obs</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-en">reset</span>()
-<span class="pl-s1">autoreset</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-en">zeros</span>(<span class="pl-s1">envs</span>.<span class="pl-s1">num_envs</span>)
+<span class="pl-s1">obs</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-c1">reset</span>()
+<span class="pl-s1">autoreset</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">zeros</span>(<span class="pl-s1">envs</span>.<span class="pl-c1">num_envs</span>)
 <span class="pl-k">for</span> <span class="pl-s1">_</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">total_timesteps</span>):
-    <span class="pl-s1">next_obs</span>, <span class="pl-s1">rewards</span>, <span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-en">step</span>(<span class="pl-s1">envs</span>.<span class="pl-s1">action_space</span>.<span class="pl-en">sample</span>())
+    <span class="pl-s1">next_obs</span>, <span class="pl-s1">rewards</span>, <span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">envs</span>.<span class="pl-c1">step</span>(<span class="pl-s1">envs</span>.<span class="pl-c1">action_space</span>.<span class="pl-c1">sample</span>())
 
-    <span class="pl-k">for</span> <span class="pl-s1">j</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">envs</span>.<span class="pl-s1">num_envs</span>):
+    <span class="pl-k">for</span> <span class="pl-s1">j</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">envs</span>.<span class="pl-c1">num_envs</span>):
         <span class="pl-k">if</span> <span class="pl-c1">not</span> <span class="pl-s1">autoreset</span>[<span class="pl-s1">j</span>]:
-            <span class="pl-s1">replay_buffer</span>.<span class="pl-en">append</span>((
+            <span class="pl-s1">replay_buffer</span>.<span class="pl-c1">append</span>((
                 <span class="pl-s1">obs</span>[<span class="pl-s1">j</span>], <span class="pl-s1">rewards</span>[<span class="pl-s1">j</span>], <span class="pl-s1">terminations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">truncations</span>[<span class="pl-s1">j</span>], <span class="pl-s1">next_obs</span>[<span class="pl-s1">j</span>]
             ))
 
     <span class="pl-s1">obs</span> <span class="pl-c1">=</span> <span class="pl-s1">next_obs</span>
-    <span class="pl-s1">autoreset</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-en">logical_or</span>(<span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>)</pre></div>
+    <span class="pl-s1">autoreset</span> <span class="pl-c1">=</span> <span class="pl-s1">np</span>.<span class="pl-c1">logical_or</span>(<span class="pl-s1">terminations</span>, <span class="pl-s1">truncations</span>)</pre></div>
 <p>Finally, we have improved <code>AsyncVectorEnv.set_attr</code> and <code>SyncVectorEnv.set_attr</code> functions to use the <code>Wrapper.set_wrapper_attr</code> to allow users to set variables anywhere in the environment stack if it already exists. Previously, this was not possible and users could only modify the variable in the “top” wrapper on the environment stack, importantly not the actual environment its self.</p>
 <h2>Wrappers</h2>
 <p>Previously, some wrappers could support both environment and vector environments, however, this was not standardized, and was unclear which wrapper did and didn't support vector environments. For v1.0.0, with separating <code>Env</code> and <code>VectorEnv</code> to no longer inherit from each other (read more in the vector section), the wrappers in <code>gymnasium.wrappers</code> will only support standard environments and wrappers in <code>gymnasium.wrappers.vector</code> contains the provided specialized vector wrappers (most but not all wrappers are supported, please raise a feature request if you require it).</p>
@@ -898,18 +898,18 @@ class ExampleFuncEnv(gym.functional.FuncEnv):
 <span class="pl-k">import</span> <span class="pl-s1">gymnasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
 <span class="pl-k">from</span> <span class="pl-s1">gymnasium</span>.<span class="pl-s1">functional</span> <span class="pl-k">import</span> <span class="pl-v">StateType</span>, <span class="pl-v">ObsType</span>, <span class="pl-v">ActType</span>, <span class="pl-v">RewardType</span>, <span class="pl-v">TerminalType</span>, <span class="pl-v">Params</span>
 
-<span class="pl-k">class</span> <span class="pl-v">ExampleFuncEnv</span>(<span class="pl-s1">gym</span>.<span class="pl-s1">functional</span>.<span class="pl-v">FuncEnv</span>):
-  <span class="pl-k">def</span> <span class="pl-s1">initial</span>(<span class="pl-s1">rng</span>: <span class="pl-v">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) → <span class="pl-v">StateType</span>
+<span class="pl-k">class</span> <span class="pl-v">ExampleFuncEnv</span>(<span class="pl-s1">gym</span>.<span class="pl-c1">functional</span>.<span class="pl-c1">FuncEnv</span>):
+  <span class="pl-k">def</span> <span class="pl-s1">initial</span>(<span class="pl-s1">rng</span>: <span class="pl-smi">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) → <span class="pl-v">StateType</span>
     …
-  <span class="pl-k">def</span> <span class="pl-s1">transition</span>(<span class="pl-s1">state</span>: <span class="pl-v">StateType</span>, <span class="pl-s1">action</span>: <span class="pl-v">ActType</span>, <span class="pl-s1">rng</span>: <span class="pl-v">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) → <span class="pl-v">StateType</span>
+  <span class="pl-k">def</span> <span class="pl-s1">transition</span>(<span class="pl-s1">state</span>: <span class="pl-smi">StateType</span>, <span class="pl-s1">action</span>: <span class="pl-smi">ActType</span>, <span class="pl-s1">rng</span>: <span class="pl-smi">Any</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) → <span class="pl-v">StateType</span>
     …
-  <span class="pl-k">def</span> <span class="pl-s1">observation</span>(<span class="pl-s1">state</span>: <span class="pl-v">StateType</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) → <span class="pl-v">ObsType</span>
+  <span class="pl-k">def</span> <span class="pl-s1">observation</span>(<span class="pl-s1">state</span>: <span class="pl-smi">StateType</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) → <span class="pl-v">ObsType</span>
     …
   <span class="pl-k">def</span> <span class="pl-s1">reward</span>(
-      <span class="pl-s1">state</span>: <span class="pl-v">StateType</span>, <span class="pl-s1">action</span>: <span class="pl-v">ActType</span>, <span class="pl-s1">next_state</span>: <span class="pl-v">StateType</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>
+      <span class="pl-s1">state</span>: <span class="pl-smi">StateType</span>, <span class="pl-s1">action</span>: <span class="pl-smi">ActType</span>, <span class="pl-s1">next_state</span>: <span class="pl-smi">StateType</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>
   ) →   <span class="pl-v">RewardType</span>
     …
-  <span class="pl-k">def</span> <span class="pl-s1">terminal</span>(<span class="pl-s1">state</span>: <span class="pl-v">StateType</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) → <span class="pl-v">TerminalType</span>
+  <span class="pl-k">def</span> <span class="pl-s1">terminal</span>(<span class="pl-s1">state</span>: <span class="pl-smi">StateType</span>, <span class="pl-s1">params</span>: <span class="pl-v">Params</span> <span class="pl-c1">|</span> <span class="pl-c1">None</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>) → <span class="pl-v">TerminalType</span>
     …</pre></div>
 <p><code>FuncEnv</code> requires that <code>initial</code> and <code>transition</code> functions to return a new state given its inputs as a partial implementation of <code>Env.step</code> and <code>Env.reset</code>. As a result, users can sample (and save) the next state for a range of inputs to use with planning, searching, etc. Given a state, <code>observation</code>, <code>reward</code>, and <code>terminal</code> provide users explicit definitions to understand how each can affect the environment's output.</p>
 <h2>Additional bug fixes</h2>
@@ -1109,12 +1109,12 @@ print(recreated_env)
 # &lt;TimeAwareObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v0&gt;&gt;&gt;&gt;&gt;&gt;
 # Be aware that the `TimeAwareObservation` was included by `make`"><pre><span class="pl-k">import</span> <span class="pl-s1">gymnasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
 
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">"CartPole-v0"</span>)
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-s1">wrappers</span>.<span class="pl-v">TimeAwareObservation</span>(<span class="pl-s1">env</span>)
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">"CartPole-v0"</span>)
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">wrappers</span>.<span class="pl-c1">TimeAwareObservation</span>(<span class="pl-s1">env</span>)
 <span class="pl-en">print</span>(<span class="pl-s1">env</span>)  
 <span class="pl-c"># &lt;TimeAwareObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v0&gt;&gt;&gt;&gt;&gt;&gt;</span>
-<span class="pl-s1">env_spec</span> <span class="pl-c1">=</span> <span class="pl-s1">env</span>.<span class="pl-s1">spec</span>
-<span class="pl-s1">env_spec</span>.<span class="pl-en">pprint</span>()
+<span class="pl-s1">env_spec</span> <span class="pl-c1">=</span> <span class="pl-s1">env</span>.<span class="pl-c1">spec</span>
+<span class="pl-s1">env_spec</span>.<span class="pl-c1">pprint</span>()
 <span class="pl-c"># id=CartPole-v0</span>
 <span class="pl-c"># reward_threshold=195.0</span>
 <span class="pl-c"># max_episode_steps=200</span>
@@ -1125,9 +1125,9 @@ print(recreated_env)
 <span class="pl-k">import</span> <span class="pl-s1">json</span>
 <span class="pl-k">import</span> <span class="pl-s1">pickle</span>
 
-<span class="pl-s1">json_env_spec</span> <span class="pl-c1">=</span> <span class="pl-s1">json</span>.<span class="pl-en">loads</span>(<span class="pl-s1">env_spec</span>.<span class="pl-en">to_json</span>())
-<span class="pl-s1">pickled_env_spec</span> <span class="pl-c1">=</span> <span class="pl-s1">pickle</span>.<span class="pl-en">loads</span>(<span class="pl-s1">pickle</span>.<span class="pl-en">dumps</span>(<span class="pl-s1">env_spec</span>))
-<span class="pl-s1">recreated_env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s1">json_env_spec</span>)
+<span class="pl-s1">json_env_spec</span> <span class="pl-c1">=</span> <span class="pl-s1">json</span>.<span class="pl-c1">loads</span>(<span class="pl-s1">env_spec</span>.<span class="pl-c1">to_json</span>())
+<span class="pl-s1">pickled_env_spec</span> <span class="pl-c1">=</span> <span class="pl-s1">pickle</span>.<span class="pl-c1">loads</span>(<span class="pl-s1">pickle</span>.<span class="pl-c1">dumps</span>(<span class="pl-s1">env_spec</span>))
+<span class="pl-s1">recreated_env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s1">json_env_spec</span>)
 <span class="pl-en">print</span>(<span class="pl-s1">recreated_env</span>)  
 <span class="pl-c"># &lt;TimeAwareObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v0&gt;&gt;&gt;&gt;&gt;&gt;</span>
 <span class="pl-c"># Be aware that the `TimeAwareObservation` was included by `make`</span></pre></div>
