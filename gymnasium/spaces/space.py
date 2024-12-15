@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Generic, Iterable, Mapping, Sequence, TypeVar
+from collections.abc import Iterable, Mapping, Sequence
+from typing import Any, Generic, TypeVar
 
 import numpy as np
 import numpy.typing as npt

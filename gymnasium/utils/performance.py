@@ -1,7 +1,7 @@
 """A collection of runtime performance bencharks, useful for debugging performance related issues."""
 
 import time
-from typing import Callable
+from collections.abc import Callable
 
 import gymnasium
 

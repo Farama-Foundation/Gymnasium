@@ -7,7 +7,6 @@ These functions mostly take care of flattening and unflattening elements of spac
 from __future__ import annotations
 
 import operator as op
-import typing
 from functools import reduce, singledispatch
 from typing import Any, TypeVar, Union, cast
 
@@ -111,9 +110,7 @@ def _flatdim_oneof(space: OneOf) -> int:
 
 
 T = TypeVar("T")
-FlatType = Union[
-    NDArray[Any], typing.Dict[str, Any], typing.Tuple[Any, ...], GraphInstance
-]
+FlatType = Union[NDArray[Any], dict[str, Any], tuple[Any, ...], GraphInstance]
 
 
 @singledispatch
@@ -319,8 +316,8 @@ def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> np.int64:
 
 @unflatten.register(MultiDiscrete)
 def _unflatten_multidiscrete(
-    space: MultiDiscrete, x: NDArray[np.integer[Any]]
-) -> NDArray[np.integer[Any]]:
+    space: MultiDiscrete, x: NDArray[np.integer]
+) -> NDArray[np.integer]:
     offsets = np.zeros((space.nvec.size + 1,), dtype=space.dtype)
     offsets[1:] = np.cumsum(space.nvec.flatten())
     nonzero = np.nonzero(x)

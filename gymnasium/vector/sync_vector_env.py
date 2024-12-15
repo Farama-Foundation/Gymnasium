@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import collections.abc
+from collections.abc import Callable, Iterator
 from copy import deepcopy
-from typing import Any, Callable, Iterator, Sequence
+from typing import Any
 
 import numpy as np
 
@@ -62,7 +64,9 @@ class SyncVectorEnv(VectorEnv):
 
     def __init__(
         self,
-        env_fns: Iterator[Callable[[], Env]] | Sequence[Callable[[], Env]],
+        env_fns: (
+            Iterator[Callable[[], Env]] | collections.abc.Sequence[Callable[[], Env]]
+        ),
         copy: bool = True,
         observation_mode: str | Space = "same",
         autoreset_mode: str | AutoresetMode = AutoresetMode.NEXT_STEP,

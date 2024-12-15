@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import Callable
+from collections.abc import Callable
 
 import gymnasium as gym
 from gymnasium import logger

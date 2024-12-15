@@ -13,7 +13,9 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Final, Sequence
+import collections.abc
+from collections.abc import Callable
+from typing import Any, Final
 
 import numpy as np
 
@@ -124,7 +126,9 @@ class FilterObservation(
     """
 
     def __init__(
-        self, env: gym.Env[ObsType, ActType], filter_keys: Sequence[str | int]
+        self,
+        env: gym.Env[ObsType, ActType],
+        filter_keys: collections.abc.Sequence[str | int],
     ):
         """Constructor for the filter observation wrapper.
 
@@ -132,7 +136,7 @@ class FilterObservation(
             env: The environment to wrap
             filter_keys: The set of subspaces to be *included*, use a list of strings for ``Dict`` and integers for ``Tuple`` spaces
         """
-        if not isinstance(filter_keys, Sequence):
+        if not isinstance(filter_keys, collections.abc.Sequence):
             raise TypeError(
                 f"Expects `filter_keys` to be a Sequence, actual type: {type(filter_keys)}"
             )
@@ -211,7 +215,7 @@ class FilterObservation(
                 f"FilterObservation wrapper is only usable with `Dict` and `Tuple` observations, actual type: {type(env.observation_space)}"
             )
 
-        self.filter_keys: Final[Sequence[str | int]] = filter_keys
+        self.filter_keys: Final[collections.abc.Sequence[str | int]] = filter_keys
 
 
 class FlattenObservation(
