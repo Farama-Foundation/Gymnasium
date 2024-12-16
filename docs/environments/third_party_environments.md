@@ -49,6 +49,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 *Autonomous Vehicle and traffic management.*
 
 - [BlueSky-Gym: Reinforcement Learning Environments for Air Traffic Applications](https://github.com/TUDelft-CNS-ATM/bluesky-gym)
+
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
   ![GitHub stars](https://img.shields.io/github/stars/TUDelft-CNS-ATM/bluesky-gym)
 
