@@ -48,6 +48,12 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 ### Autonomous Driving environments
 *Autonomous Vehicle and traffic management.*
 
+- [BlueSky-Gym: Reinforcement Learning Environments for Air Traffic Applications](https://github.com/TUDelft-CNS-ATM/bluesky-gym)
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/TUDelft-CNS-ATM/bluesky-gym)
+
+  A collection of Gymnasium environments for air traffic management tasks, allowing for both civil and urban aviation applications. Build on the open-source air traffic simulator [BlueSky](https://github.com/TUDelft-CNS-ATM/bluesky).
+
 - [gym-electric-motor: Gym environments for electric motor simulations](https://github.com/upb-lea/gym-electric-motor)
 
   An environment for simulating a wide variety of electric drives taking into account different types of electric motors and converters.
