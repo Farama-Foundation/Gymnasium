@@ -126,7 +126,9 @@ class MujocoEnv(gym.Env):
         """
         Initialize MuJoCo simulation data structures `mjModel` and `mjData`.
         """
-        model = mujoco.MjModel.from_xml_path(self.fullpath)
+        with open(self.fullpath, 'r') as f:
+            xml_content = f.read()
+        model = mujoco.MjModel.from_xml_string(xml_content)
         # MjrContext will copy model.vis.global_.off* to con.off*
         model.vis.global_.offwidth = self.width
         model.vis.global_.offheight = self.height
