@@ -63,6 +63,12 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Gymnasium wrapper for various environments in the SUMO traffic simulator. Supports both single and multiagent settings (using [pettingzoo](https://pettingzoo.farama.org/)).
 
+- [BlueSky-Gym: Reinforcement Learning Environments for Air Traffic Applications](https://github.com/TUDelft-CNS-ATM/bluesky-gym)
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/TUDelft-CNS-ATM/bluesky-gym)
+
+  A collection of Gymnasium environments for air traffic management tasks, allowing for both civil and urban aviation applications. Build on the open-source air traffic simulator [BlueSky](https://github.com/TUDelft-CNS-ATM/bluesky).
+
 ### Biological / Medical environments
 *Interacting with Biological Systems.*
 
