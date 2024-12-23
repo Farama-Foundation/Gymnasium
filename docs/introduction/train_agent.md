@@ -163,7 +163,7 @@ def get_moving_avgs(arr, window, convolution_mode):
         mode=convolution_mode
     ) / window
 
-# Smooth over a 500 episode window 
+# Smooth over a 500 episode window
 rolling_length = 500
 fig, axs = plt.subplots(ncols=3, figsize=(12, 5))
 axs[0].set_title("Episode rewards")
