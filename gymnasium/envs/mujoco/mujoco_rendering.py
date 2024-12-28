@@ -356,11 +356,19 @@ class WindowViewer(BaseRender):
         glfw.make_context_current(self.window)
 
     def free(self):
-        if self.window:
-            if glfw.get_current_context() == self.window:
-                glfw.make_context_current(None)
-            glfw.destroy_window(self.window)
-            self.window = None
+        """
+        Safely frees the OpenGL context and destroys the GLFW window, 
+        handling potential issues during interpreter shutdown or resource cleanup.
+        """
+        try:
+            if self.window:
+                if glfw.get_current_context() == self.window:
+                    glfw.make_context_current(None)
+                glfw.destroy_window(self.window)
+                self.window = None
+        except AttributeError:
+            # Handle cases where attributes are missing due to improper environment closure
+            print("Warning: Environment was not properly closed using 'env.close()'. Please ensure to close the environment explicitly. GLFW module or dependencies are unloaded. Window cleanup might not have completed.")
 
     def __del__(self):
         """Eliminate all of the OpenGL glfw contexts and windows"""
