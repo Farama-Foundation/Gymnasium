@@ -368,7 +368,8 @@ class WindowViewer(BaseRender):
                 self.window = None
         except AttributeError:
             # Handle cases where attributes are missing due to improper environment closure
-            print("Warning: Environment was not properly closed using 'env.close()'. Please ensure to close the environment explicitly. GLFW module or dependencies are unloaded. Window cleanup might not have completed.")
+            print("""Warning: Environment was not properly closed using 'env.close()'. Please ensure to close the environment explicitly. 
+                  GLFW module or dependencies are unloaded. Window cleanup might not have completed.""")
 
     def __del__(self):
         """Eliminate all of the OpenGL glfw contexts and windows"""
