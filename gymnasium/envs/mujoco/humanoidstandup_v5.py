@@ -195,8 +195,8 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     A reward for moving up (trying to stand up).
     This is not a relative reward, measuring how far up the robot has moved since the last timestep,
     but an absolute reward measuring how far up the Humanoid has moved up in total.
-    It is measured as $w_{uph} \times \frac{z_{after-action} - 0}{dt}$,
-    where $z_{after-action}$ is the z coordinate of the torso after taking an action,
+    It is measured as $w_{uph} \times \frac{z_{after\_action} - 0}{dt}$,
+    where $z_{after\_action}$ is the z coordinate of the torso after taking an action,
     and $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is $5$),
     and `frametime`, which is $0.01$ - so the default is $dt = 5 \times 0.01 = 0.05$,
     and $w_{uph}$ is `uph_cost_weight` (default is $1$).
