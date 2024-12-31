@@ -367,7 +367,7 @@ class WindowViewer(BaseRender):
                     glfw.make_context_current(None)
                 glfw.destroy_window(self.window)
                 self.window = None
-        except AttributeError as e:
+        except AttributeError:
             # Handle cases where attributes are missing due to improper environment closure
             warn(
             "Environment was not properly closed using 'env.close()'. Please ensure to close the environment explicitly. "
