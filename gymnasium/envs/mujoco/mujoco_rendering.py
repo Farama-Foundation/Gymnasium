@@ -1,11 +1,12 @@
 import os
 import time
 from typing import Dict, Optional
-
 import glfw
 import imageio
 import mujoco
 import numpy as np
+
+from gymnasium.logger import warn
 
 
 def _import_egl(width, height):
@@ -366,10 +367,12 @@ class WindowViewer(BaseRender):
                     glfw.make_context_current(None)
                 glfw.destroy_window(self.window)
                 self.window = None
-        except AttributeError:
+        except AttributeError as e:
             # Handle cases where attributes are missing due to improper environment closure
-            print("""Warning: Environment was not properly closed using 'env.close()'. Please ensure to close the environment explicitly. 
-                  GLFW module or dependencies are unloaded. Window cleanup might not have completed.""")
+            warn(
+            "Environment was not properly closed using 'env.close()'. Please ensure to close the environment explicitly. "
+            "GLFW module or dependencies are unloaded. Window cleanup might not have completed."
+            )
 
     def __del__(self):
         """Eliminate all of the OpenGL glfw contexts and windows"""
