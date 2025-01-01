@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=82c8b628" />
     
     
 
@@ -1164,11 +1164,11 @@ Therefore, it is recommended to use a <code class="docutils literal notranslate"
 A reward for moving up (trying to stand up).
 This is not a relative reward, measuring how far up the robot has moved since the last timestep,
 but an absolute reward measuring how far up the Humanoid has moved up in total.
-It is measured as <span class="math notranslate nohighlight">\(w{uph} \times (z_{after action} - 0)/dt\)</span>,
-where <span class="math notranslate nohighlight">\(z_{after action}\)</span> is the z coordinate of the torso after taking an action,
+It is measured as <span class="math notranslate nohighlight">\(w_{uph} \times \frac{z_{after\_action} - 0}{dt}\)</span>,
+where <span class="math notranslate nohighlight">\(z_{after\_action}\)</span> is the z coordinate of the torso after taking an action,
 and <span class="math notranslate nohighlight">\(dt\)</span> is the time between actions, which depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter (default is <span class="math notranslate nohighlight">\(5\)</span>),
 and <code class="docutils literal notranslate"><span class="pre">frametime</span></code>, which is <span class="math notranslate nohighlight">\(0.01\)</span> - so the default is <span class="math notranslate nohighlight">\(dt = 5 \times 0.01 = 0.05\)</span>,
-and <span class="math notranslate nohighlight">\(w_{uph}\)</span> is <code class="docutils literal notranslate"><span class="pre">uph_cost_weight</span></code>.</p></li>
+and <span class="math notranslate nohighlight">\(w_{uph}\)</span> is <code class="docutils literal notranslate"><span class="pre">uph_cost_weight</span></code> (default is <span class="math notranslate nohighlight">\(1\)</span>).</p></li>
 <li><p><em>quad_ctrl_cost</em>:
 A negative reward to penalize the Humanoid for taking actions that are too large.
 <span class="math notranslate nohighlight">\(w_{quad\_control} \times \|action\|_2^2\)</span>,
@@ -1340,7 +1340,7 @@ These parameters can be applied during <code class="docutils literal notranslate
           <div class="bottom-of-page">
             <div class="left-details">
               <div class="copyright">
-                Copyright &#169; 2024 Farama Foundation
+                Copyright &#169; 2025 Farama Foundation
               </div>
               <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
