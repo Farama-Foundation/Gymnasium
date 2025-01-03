@@ -1,6 +1,7 @@
 import os
 import time
 from typing import Dict, Optional
+
 import glfw
 import imageio
 import mujoco
@@ -358,7 +359,7 @@ class WindowViewer(BaseRender):
 
     def free(self):
         """
-        Safely frees the OpenGL context and destroys the GLFW window, 
+        Safely frees the OpenGL context and destroys the GLFW window,
         handling potential issues during interpreter shutdown or resource cleanup.
         """
         try:
@@ -370,8 +371,8 @@ class WindowViewer(BaseRender):
         except AttributeError:
             # Handle cases where attributes are missing due to improper environment closure
             warn(
-            "Environment was not properly closed using 'env.close()'. Please ensure to close the environment explicitly. "
-            "GLFW module or dependencies are unloaded. Window cleanup might not have completed."
+                "Environment was not properly closed using 'env.close()'. Please ensure to close the environment explicitly. "
+                "GLFW module or dependencies are unloaded. Window cleanup might not have completed."
             )
 
     def __del__(self):
