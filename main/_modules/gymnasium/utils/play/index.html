@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.utils.play - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -366,48 +366,48 @@
             <h1>Source code for gymnasium.utils.play</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utilities of visualising an environment.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">Env</span><span class="p">,</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
-<span class="kn">from</span> <span class="nn">gymnasium.error</span> <span class="kn">import</span> <span class="n">DependencyNotInstalled</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Env</span><span class="p">,</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyNotInstalled</span>
 
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pygame</span>
-    <span class="kn">from</span> <span class="nn">pygame</span> <span class="kn">import</span> <span class="n">Surface</span>
-    <span class="kn">from</span> <span class="nn">pygame.event</span> <span class="kn">import</span> <span class="n">Event</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pygame</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pygame</span><span class="w"> </span><span class="kn">import</span> <span class="n">Surface</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pygame.event</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">gym</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">DependencyNotInstalled</span><span class="p">(</span>
         <span class="s1">&#39;pygame is not installed, run `pip install &quot;gymnasium[classic_control]&quot;`&#39;</span>
-    <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">matplotlib</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
 
     <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;TkAgg&quot;</span><span class="p">)</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;matplotlib is not installed, run `pip install &quot;gymnasium[other]&quot;`&#39;</span><span class="p">)</span>
     <span class="n">matplotlib</span><span class="p">,</span> <span class="n">plt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
 
-<span class="k">class</span> <span class="nc">MissingKeysToAction</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingKeysToAction</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when the environment does not have a default ``keys_to_action`` mapping.&quot;&quot;&quot;</span>
 
 
 <div class="viewcode-block" id="PlayableGame">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayableGame">[docs]</a>
-<span class="k">class</span> <span class="nc">PlayableGame</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlayableGame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps an environment allowing keyboard inputs to interact with the environment.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
         <span class="n">keys_to_action</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -435,7 +435,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pressed_keys</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_get_relevant_keys</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_relevant_keys</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">keys_to_action</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">keys_to_action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -451,7 +451,7 @@
         <span class="n">relevant_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">sum</span><span class="p">((</span><span class="nb">list</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys_to_action</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="p">[]))</span>
         <span class="k">return</span> <span class="n">relevant_keys</span>
 
-    <span class="k">def</span> <span class="nf">_get_video_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zoom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_video_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zoom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">rendered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rendered</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
             <span class="n">rendered</span> <span class="o">=</span> <span class="n">rendered</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -465,7 +465,7 @@
 
 <div class="viewcode-block" id="PlayableGame.process_event">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayableGame.process_event">[docs]</a>
-    <span class="k">def</span> <span class="nf">process_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">process_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a PyGame event.</span>
 
 <span class="sd">        In particular, this function is used to keep track of which buttons are currently pressed</span>
@@ -494,7 +494,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">display_arr</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_arr</span><span class="p">(</span>
     <span class="n">screen</span><span class="p">:</span> <span class="n">Surface</span><span class="p">,</span> <span class="n">arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">video_size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">transpose</span><span class="p">:</span> <span class="nb">bool</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Displays a numpy array on screen.</span>
@@ -518,7 +518,7 @@
 
 <div class="viewcode-block" id="play">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.play">[docs]</a>
-<span class="k">def</span> <span class="nf">play</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">play</span><span class="p">(</span>
     <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">,</span>
     <span class="n">transpose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">fps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -686,7 +686,7 @@
 
 <div class="viewcode-block" id="PlayPlot">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayPlot">[docs]</a>
-<span class="k">class</span> <span class="nc">PlayPlot</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PlayPlot</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides a callback to create live plots of arbitrary metrics when using :func:`play`.</span>
 
 <span class="sd">    This class is instantiated with a function that accepts information about a single environment transition:</span>
@@ -714,7 +714,7 @@
 <span class="sd">        &gt;&gt;&gt; play(your_env, callback=plotter.callback)                                                # doctest: +SKIP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">horizon_timesteps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">plot_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor of :class:`PlayPlot`.</span>
@@ -751,7 +751,7 @@
 
 <div class="viewcode-block" id="PlayPlot.callback">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayPlot.callback">[docs]</a>
-    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">callback</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">obs_t</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">,</span>
         <span class="n">obs_tp1</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">,</span>

@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.utils.step_api_compatibility - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -366,13 +366,13 @@
             <h1>Source code for gymnasium.utils.step_api_compatibility</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Contains methods for step compatibility, from old-to-new and new-to-old API.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ObsType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObsType</span>
 
 
 <span class="n">DoneStepType</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span>
@@ -393,7 +393,7 @@
 
 <div class="viewcode-block" id="convert_to_terminated_truncated_step_api">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api">[docs]</a>
-<span class="k">def</span> <span class="nf">convert_to_terminated_truncated_step_api</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_terminated_truncated_step_api</span><span class="p">(</span>
     <span class="n">step_returns</span><span class="p">:</span> <span class="n">DoneStepType</span> <span class="o">|</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">,</span> <span class="n">is_vector_env</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to transform step returns to new step API irrespective of input API.</span>
@@ -450,7 +450,7 @@
 
 <div class="viewcode-block" id="convert_to_done_step_api">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_done_step_api">[docs]</a>
-<span class="k">def</span> <span class="nf">convert_to_done_step_api</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_to_done_step_api</span><span class="p">(</span>
     <span class="n">step_returns</span><span class="p">:</span> <span class="n">TerminatedTruncatedStepType</span> <span class="o">|</span> <span class="n">DoneStepType</span><span class="p">,</span>
     <span class="n">is_vector_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DoneStepType</span><span class="p">:</span>
@@ -510,7 +510,7 @@
 
 <div class="viewcode-block" id="step_api_compatibility">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.step_api_compatibility.step_api_compatibility">[docs]</a>
-<span class="k">def</span> <span class="nf">step_api_compatibility</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">step_api_compatibility</span><span class="p">(</span>
     <span class="n">step_returns</span><span class="p">:</span> <span class="n">TerminatedTruncatedStepType</span> <span class="o">|</span> <span class="n">DoneStepType</span><span class="p">,</span>
     <span class="n">output_truncation_bool</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">is_vector_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>

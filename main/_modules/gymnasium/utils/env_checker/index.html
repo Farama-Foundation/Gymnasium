@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.utils.env_checker - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -380,14 +380,14 @@
 <span class="sd">These projects are covered by the MIT License.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">logger</span><span class="p">,</span> <span class="n">spaces</span>
-<span class="kn">from</span> <span class="nn">gymnasium.utils.passive_env_checker</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span><span class="p">,</span> <span class="n">spaces</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.utils.passive_env_checker</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">check_action_space</span><span class="p">,</span>
     <span class="n">check_observation_space</span><span class="p">,</span>
     <span class="n">env_render_passive_checker</span><span class="p">,</span>
@@ -396,7 +396,7 @@
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">data_equivalence</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">data_equivalence</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Assert equality between data 1 and 2, i.e. observations, actions, info.</span>
 
 <span class="sd">    Args:</span>
@@ -434,7 +434,7 @@
         <span class="k">return</span> <span class="n">data_1</span> <span class="o">==</span> <span class="n">data_2</span>
 
 
-<span class="k">def</span> <span class="nf">check_reset_seed_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_reset_seed_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the environment can be reset with a seed.</span>
 
 <span class="sd">    Args:</span>
@@ -508,7 +508,7 @@
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
                 <span class="s2">&quot;The environment cannot be reset with a random seed, even though `seed` or `kwargs` appear in the signature. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;This should never happen, please report this issue. The error was: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="n">seed_param</span> <span class="o">=</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">)</span>
         <span class="c1"># Check the default value is None</span>
@@ -523,7 +523,7 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">check_reset_options</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_reset_options</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the environment can be reset with options.</span>
 
 <span class="sd">    Args:</span>
@@ -544,14 +544,14 @@
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
                 <span class="s2">&quot;The environment cannot be reset with options, even though `options` or `**kwargs` appear in the signature. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;This should never happen, please report this issue. The error was: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">gym</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
             <span class="s2">&quot;The `reset` method does not provide an `options` or `**kwargs` keyword argument.&quot;</span>
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">check_step_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_step_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the environment steps deterministically after reset.</span>
 
 <span class="sd">    Note: This check assumes that seeded `reset()` is deterministic (it must have passed `check_reset_seed`) and that `step()` returns valid values (passed `env_step_passive_checker`).</span>
@@ -612,7 +612,7 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">check_reset_return_info_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_reset_return_info_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Makes sure support for deprecated `return_info` argument is dropped.</span>
 
 <span class="sd">    Args:</span>
@@ -629,7 +629,7 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">check_seed_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_seed_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Makes sure support for deprecated function `seed` is dropped.</span>
 
 <span class="sd">    Args:</span>
@@ -645,7 +645,7 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">check_reset_return_type</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_reset_return_type</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks that :meth:`reset` correctly returns a tuple of the form `(obs , info)`.</span>
 
 <span class="sd">    Args:</span>
@@ -670,7 +670,7 @@
     <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The second element returned by `env.reset()` was not a dictionary, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
 
-<span class="k">def</span> <span class="nf">check_space_limit</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">space_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_space_limit</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">space_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the space limit for only the Box space as a test that only runs as part of `check_env`.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)):</span>
@@ -710,7 +710,7 @@
 
 <div class="viewcode-block" id="check_env">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.env_checker.check_env">[docs]</a>
-<span class="k">def</span> <span class="nf">check_env</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_env</span><span class="p">(</span>
     <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
     <span class="n">warn</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">skip_render_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>

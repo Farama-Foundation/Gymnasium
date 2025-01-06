@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Load custom quadruped robot environments - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -418,8 +418,8 @@
 <section id="step-1-load-the-model">
 <h2>Step 1 - Load the model<a class="headerlink" href="#step-1-load-the-model" title="Link to this heading">¶</a></h2>
 <p>To load the model, all we have to do is use the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument with the <code class="docutils literal notranslate"><span class="pre">Ant-v5</span></code> framework.</p>
-<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Ant-v5&#39;</span><span class="p">,</span> <span class="n">xml_file</span><span class="o">=</span><span class="s1">&#39;./mujoco_menagerie/unitree_go1/scene.xml&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -550,7 +550,7 @@ Note: <code class="docutils literal notranslate"><span class="pre">healthy_z_ran
 <h2>Step 3 - Train your Agent<a class="headerlink" href="#step-3-train-your-agent" title="Link to this heading">¶</a></h2>
 <p>Finally, we are done, we can use a RL algorithm to train an agent to walk/run the <code class="docutils literal notranslate"><span class="pre">Go1</span></code> robot.
 Note: If you have followed this guide with your own robot model, you may discover during training that some environment parameters were not as desired, feel free to go back to step 2 and change anything as needed.</p>
-<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
     <span class="s1">&#39;Ant-v5&#39;</span><span class="p">,</span>

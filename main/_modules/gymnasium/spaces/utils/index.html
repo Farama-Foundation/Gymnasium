@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.spaces.utils - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -370,18 +370,18 @@
 <span class="sd"> to facilitate their usage in learning code.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">operator</span> <span class="k">as</span> <span class="nn">op</span>
-<span class="kn">import</span> <span class="nn">typing</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span><span class="p">,</span> <span class="n">singledispatch</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">op</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduce</span><span class="p">,</span> <span class="n">singledispatch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Box</span><span class="p">,</span>
     <span class="n">Dict</span><span class="p">,</span>
     <span class="n">Discrete</span><span class="p">,</span>
@@ -400,7 +400,7 @@
 <div class="viewcode-block" id="flatdim">
 <a class="viewcode-back" href="../../../../api/spaces/utils/#gymnasium.spaces.utils.flatdim">[docs]</a>
 <span class="nd">@singledispatch</span>
-<span class="k">def</span> <span class="nf">flatdim</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">flatdim</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the number of dimensions a flattened equivalent of this space would have.</span>
 
 <span class="sd">    Args:</span>
@@ -430,22 +430,22 @@
 
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatdim_box_multibinary</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatdim_box_multibinary</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">mul</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatdim_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatdim_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
 
 
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatdim_multidiscrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">MultiDiscrete</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatdim_multidiscrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">MultiDiscrete</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="p">))</span>
 
 
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatdim_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatdim_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">is_np_flattenable</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">flatdim</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -454,7 +454,7 @@
 
 
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatdim_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatdim_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">is_np_flattenable</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">flatdim</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -463,19 +463,19 @@
 
 
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Graph</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatdim_graph</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatdim_graph</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
         <span class="s2">&quot;Cannot get flattened size as the Graph Space in Gym has a dynamic size.&quot;</span>
     <span class="p">)</span>
 
 
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatdim_text</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatdim_text</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">space</span><span class="o">.</span><span class="n">max_length</span>
 
 
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatdim_oneof</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatdim_oneof</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">max</span><span class="p">(</span><span class="n">flatdim</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span>
 
 
@@ -488,7 +488,7 @@
 <div class="viewcode-block" id="flatten">
 <a class="viewcode-back" href="../../../../api/spaces/utils/#gymnasium.spaces.utils.flatten">[docs]</a>
 <span class="nd">@singledispatch</span>
-<span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlatType</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FlatType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Flatten a data point from a space.</span>
 
 <span class="sd">    This is useful when e.g. points from spaces must be passed to a neural</span>
@@ -535,19 +535,19 @@
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_box_multibinary</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_box_multibinary</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]:</span>
     <span class="n">onehot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
     <span class="n">onehot</span><span class="p">[</span><span class="n">x</span> <span class="o">-</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">onehot</span>
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_multidiscrete</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_multidiscrete</span><span class="p">(</span>
     <span class="n">space</span><span class="p">:</span> <span class="n">MultiDiscrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]:</span>
     <span class="n">offsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
@@ -559,7 +559,7 @@
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">is_np_flattenable</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
             <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">x_part</span><span class="p">))</span> <span class="k">for</span> <span class="n">x_part</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">)]</span>
@@ -568,7 +568,7 @@
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">is_np_flattenable</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
             <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">flatten</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
@@ -577,10 +577,10 @@
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Graph</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_graph</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">GraphInstance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GraphInstance</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_graph</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">GraphInstance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GraphInstance</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;We&#39;re not using ``.unflatten()`` for :class:`Box` and :class:`Discrete` because a graph is not a homogeneous space, see `.flatten` docstring.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_graph_unflatten</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_graph_unflatten</span><span class="p">(</span>
         <span class="n">unflatten_space</span><span class="p">:</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="n">Box</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">unflatten_x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
@@ -607,7 +607,7 @@
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_text</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_text</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">]:</span>
     <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
         <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">max_length</span><span class="p">,),</span> <span class="n">fill_value</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">character_set</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span>
     <span class="p">)</span>
@@ -617,7 +617,7 @@
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_sequence</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_sequence</span><span class="p">(</span>
     <span class="n">space</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">Any</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">stack</span><span class="p">:</span>
@@ -635,7 +635,7 @@
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_oneof</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_oneof</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="n">idx</span><span class="p">,</span> <span class="n">sample</span> <span class="o">=</span> <span class="n">x</span>
     <span class="n">sub_space</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
     <span class="n">flat_sample</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">sub_space</span><span class="p">,</span> <span class="n">sample</span><span class="p">)</span>
@@ -653,7 +653,7 @@
 <div class="viewcode-block" id="unflatten">
 <a class="viewcode-back" href="../../../../api/spaces/utils/#gymnasium.spaces.utils.unflatten">[docs]</a>
 <span class="nd">@singledispatch</span>
-<span class="k">def</span> <span class="nf">unflatten</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">FlatType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unflatten</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="n">x</span><span class="p">:</span> <span class="n">FlatType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Unflatten a data point from a space.</span>
 
 <span class="sd">    This reverses the transformation applied by :func:`flatten`. You must ensure</span>
@@ -675,14 +675,14 @@
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_unflatten_box_multibinary</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_box_multibinary</span><span class="p">(</span>
     <span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_unflatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span>
     <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonzero</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -693,7 +693,7 @@
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_unflatten_multidiscrete</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_multidiscrete</span><span class="p">(</span>
     <span class="n">space</span><span class="p">:</span> <span class="n">MultiDiscrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="n">offsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
@@ -712,7 +712,7 @@
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_unflatten_tuple</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_tuple</span><span class="p">(</span>
     <span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">is_np_flattenable</span><span class="p">:</span>
@@ -732,7 +732,7 @@
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_unflatten_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">is_np_flattenable</span><span class="p">:</span>
         <span class="n">dims</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">flatdim</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">values</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">)</span>
         <span class="n">list_flattened</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dims</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
@@ -748,14 +748,14 @@
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Graph</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_unflatten_graph</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">GraphInstance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GraphInstance</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_graph</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">GraphInstance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GraphInstance</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;We&#39;re not using `.unflatten() for :class:`Box` and :class:`Discrete` because a graph is not a homogeneous space.</span>
 
 <span class="sd">    The size of the outcome is actually not fixed, but determined based on the number of</span>
 <span class="sd">    nodes and edges in the graph.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_graph_unflatten</span><span class="p">(</span><span class="n">unflatten_space</span><span class="p">,</span> <span class="n">unflatten_x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_graph_unflatten</span><span class="p">(</span><span class="n">unflatten_space</span><span class="p">,</span> <span class="n">unflatten_x</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">unflatten_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">unflatten_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unflatten_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
@@ -771,14 +771,14 @@
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_unflatten_text</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_text</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
         <span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">character_list</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">x</span> <span class="k">if</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">character_set</span><span class="p">)]</span>
     <span class="p">)</span>
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_unflatten_sequence</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">Any</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_sequence</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">stack</span><span class="p">:</span>
         <span class="n">flattened_space</span> <span class="o">=</span> <span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">feature_space</span><span class="p">)</span>
         <span class="n">flatten_iters</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">flattened_space</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
@@ -796,7 +796,7 @@
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_unflatten_oneof</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_oneof</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">sub_space</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
 
@@ -809,7 +809,7 @@
 <div class="viewcode-block" id="flatten_space">
 <a class="viewcode-back" href="../../../../api/spaces/utils/#gymnasium.spaces.utils.flatten_space">[docs]</a>
 <span class="nd">@singledispatch</span>
-<span class="k">def</span> <span class="nf">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Dict</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="n">Tuple</span> <span class="o">|</span> <span class="n">Graph</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Dict</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="n">Tuple</span> <span class="o">|</span> <span class="n">Graph</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Flatten a space into a space that is as flat as possible.</span>
 
 <span class="sd">    This function will attempt to flatten ``space`` into a single :class:`gymnasium.spaces.Box` space.</span>
@@ -876,19 +876,19 @@
 
 
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_space_box</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Box</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_space_box</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Box</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
 
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_space_binary</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="n">MultiBinary</span> <span class="o">|</span> <span class="n">MultiDiscrete</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_space_binary</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="n">MultiBinary</span> <span class="o">|</span> <span class="n">MultiDiscrete</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">flatdim</span><span class="p">(</span><span class="n">space</span><span class="p">),),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
 
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_space_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Tuple</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_space_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Tuple</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">is_np_flattenable</span><span class="p">:</span>
         <span class="n">space_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">flatten_space</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">Box</span><span class="p">(</span>
@@ -900,7 +900,7 @@
 
 
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_space_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_space_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">is_np_flattenable</span><span class="p">:</span>
         <span class="n">space_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">flatten_space</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
         <span class="k">return</span> <span class="n">Box</span><span class="p">(</span>
@@ -914,7 +914,7 @@
 
 
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Graph</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_space_graph</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_space_graph</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Graph</span><span class="p">(</span>
         <span class="n">node_space</span><span class="o">=</span><span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">),</span>
         <span class="n">edge_space</span><span class="o">=</span><span class="p">(</span>
@@ -924,19 +924,19 @@
 
 
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_space_text</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_space_text</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span>
         <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">character_set</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">max_length</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span>
     <span class="p">)</span>
 
 
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_space_sequence</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_space_sequence</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequence</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Sequence</span><span class="p">(</span><span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">feature_space</span><span class="p">),</span> <span class="n">stack</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">stack</span><span class="p">)</span>
 
 
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_flatten_space_oneof</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_space_oneof</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
     <span class="n">num_subspaces</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span>
     <span class="n">max_flatdim</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">flatdim</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 
@@ -954,7 +954,7 @@
 
 
 <span class="nd">@singledispatch</span>
-<span class="k">def</span> <span class="nf">is_space_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">space_2</span><span class="p">:</span> <span class="n">Space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_space_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">space_2</span><span class="p">:</span> <span class="n">Space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns if two spaces share a common dtype and shape (plus any critical variables).</span>
 
 <span class="sd">    This function is primarily used to check for compatibility of different spaces in a vector environment.</span>
@@ -978,7 +978,7 @@
 <span class="nd">@is_space_dtype_shape_equiv</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
 <span class="nd">@is_space_dtype_shape_equiv</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
 <span class="nd">@is_space_dtype_shape_equiv</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_is_space_fundamental_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_space_fundamental_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="c1"># this check is necessary as singledispatch only checks the first variable and there are many options</span>
         <span class="nb">type</span><span class="p">(</span><span class="n">space_1</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="n">space_2</span><span class="p">)</span>
@@ -988,7 +988,7 @@
 
 
 <span class="nd">@is_space_dtype_shape_equiv</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_is_space_text_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_space_text_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="nb">isinstance</span><span class="p">(</span><span class="n">space_2</span><span class="p">,</span> <span class="n">Text</span><span class="p">)</span>
         <span class="ow">and</span> <span class="n">space_1</span><span class="o">.</span><span class="n">max_length</span> <span class="o">==</span> <span class="n">space_2</span><span class="o">.</span><span class="n">max_length</span>
@@ -997,7 +997,7 @@
 
 
 <span class="nd">@is_space_dtype_shape_equiv</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_is_space_dict_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_space_dict_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="nb">isinstance</span><span class="p">(</span><span class="n">space_2</span><span class="p">,</span> <span class="n">Dict</span><span class="p">)</span>
         <span class="ow">and</span> <span class="n">space_1</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">==</span> <span class="n">space_2</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -1009,14 +1009,14 @@
 
 
 <span class="nd">@is_space_dtype_shape_equiv</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_is_space_tuple_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_space_tuple_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space_2</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
         <span class="n">is_space_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">space_2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">space_1</span><span class="p">))</span>
     <span class="p">)</span>
 
 
 <span class="nd">@is_space_dtype_shape_equiv</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Graph</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_is_space_graph_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_space_graph_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="nb">isinstance</span><span class="p">(</span><span class="n">space_2</span><span class="p">,</span> <span class="n">Graph</span><span class="p">)</span>
         <span class="ow">and</span> <span class="n">is_space_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">space_2</span><span class="o">.</span><span class="n">node_space</span><span class="p">)</span>
@@ -1032,7 +1032,7 @@
 
 
 <span class="nd">@is_space_dtype_shape_equiv</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_is_space_oneof_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_space_oneof_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="nb">isinstance</span><span class="p">(</span><span class="n">space_2</span><span class="p">,</span> <span class="n">OneOf</span><span class="p">)</span>
         <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">space_1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">space_2</span><span class="p">)</span>
@@ -1044,7 +1044,7 @@
 
 
 <span class="nd">@is_space_dtype_shape_equiv</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">_is_space_sequence_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_space_sequence_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">space_2</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="nb">isinstance</span><span class="p">(</span><span class="n">space_2</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span>
         <span class="ow">and</span> <span class="n">space_1</span><span class="o">.</span><span class="n">stack</span> <span class="ow">is</span> <span class="n">space_2</span><span class="o">.</span><span class="n">stack</span>

@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.experimental.functional - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -366,13 +366,13 @@
             <h1>Source code for gymnasium.experimental.functional</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Base class and definitions for an alternative, functional backend for gym envs, particularly suitable for hardware accelerated and otherwise transformed environments.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">Space</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Space</span>
 
 
 <span class="n">StateType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;StateType&quot;</span><span class="p">)</span>
@@ -386,7 +386,7 @@
 
 <div class="viewcode-block" id="FuncEnv">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv">[docs]</a>
-<span class="k">class</span> <span class="nc">FuncEnv</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FuncEnv</span><span class="p">(</span>
     <span class="n">Generic</span><span class="p">[</span>
         <span class="n">StateType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">RewardType</span><span class="p">,</span> <span class="n">TerminalType</span><span class="p">,</span> <span class="n">RenderStateType</span><span class="p">,</span> <span class="n">Params</span>
     <span class="p">]</span>
@@ -415,21 +415,21 @@
     <span class="n">observation_space</span><span class="p">:</span> <span class="n">Space</span>
     <span class="n">action_space</span><span class="p">:</span> <span class="n">Space</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the environment constants.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">options</span> <span class="ow">or</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_default_params</span><span class="p">()</span>
 
 <div class="viewcode-block" id="FuncEnv.initial">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.initial">[docs]</a>
-    <span class="k">def</span> <span class="nf">initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StateType</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StateType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates the initial state of the environment with a random number generator.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="FuncEnv.transition">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.transition">[docs]</a>
-    <span class="k">def</span> <span class="nf">transition</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transition</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StateType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates (transitions) the state with an action and random number generator.&quot;&quot;&quot;</span>
@@ -438,7 +438,7 @@
 
 <div class="viewcode-block" id="FuncEnv.observation">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.observation">[docs]</a>
-    <span class="k">def</span> <span class="nf">observation</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates an observation for a given state of an environment.&quot;&quot;&quot;</span>
@@ -447,7 +447,7 @@
 
 <div class="viewcode-block" id="FuncEnv.reward">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.reward">[docs]</a>
-    <span class="k">def</span> <span class="nf">reward</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span>
         <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">,</span>
@@ -461,7 +461,7 @@
 
 <div class="viewcode-block" id="FuncEnv.terminal">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.terminal">[docs]</a>
-    <span class="k">def</span> <span class="nf">terminal</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">terminal</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminalType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns if the state is a final terminal state.&quot;&quot;&quot;</span>
@@ -470,14 +470,14 @@
 
 <div class="viewcode-block" id="FuncEnv.state_info">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.state_info">[docs]</a>
-    <span class="k">def</span> <span class="nf">state_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">state_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Info dict about a single state.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{}</span></div>
 
 
 <div class="viewcode-block" id="FuncEnv.transition_info">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.transition_info">[docs]</a>
-    <span class="k">def</span> <span class="nf">transition_info</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transition_info</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span>
         <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">,</span>
@@ -490,7 +490,7 @@
 
 <div class="viewcode-block" id="FuncEnv.transform">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.transform">[docs]</a>
-    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">],</span> <span class="n">Callable</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Callable</span><span class="p">],</span> <span class="n">Callable</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Functional transformations.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initial</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transition</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transition</span><span class="p">)</span>
@@ -503,7 +503,7 @@
 
 <div class="viewcode-block" id="FuncEnv.render_image">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.render_image">[docs]</a>
-    <span class="k">def</span> <span class="nf">render_image</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_image</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span><span class="p">,</span>
         <span class="n">render_state</span><span class="p">:</span> <span class="n">RenderStateType</span><span class="p">,</span>
@@ -515,19 +515,19 @@
 
 <div class="viewcode-block" id="FuncEnv.render_init">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.render_init">[docs]</a>
-    <span class="k">def</span> <span class="nf">render_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderStateType</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderStateType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the render state.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="FuncEnv.render_close">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.experimental.functional.FuncEnv.render_close">[docs]</a>
-    <span class="k">def</span> <span class="nf">render_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_state</span><span class="p">:</span> <span class="n">RenderStateType</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">render_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_state</span><span class="p">:</span> <span class="n">RenderStateType</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the render state.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
-    <span class="k">def</span> <span class="nf">get_default_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_default_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Params</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the default params.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
