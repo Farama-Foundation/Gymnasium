@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Frozenlake benchmark - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -388,17 +388,17 @@ Q-learning algorithm.</p>
 <span class="c1"># License: MIT License</span>
 
 
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NamedTuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium.envs.toy_text.frozen_lake</span> <span class="kn">import</span> <span class="n">generate_random_map</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.toy_text.frozen_lake</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_random_map</span>
 
 
 <span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">()</span>
@@ -409,7 +409,7 @@ Q-learning algorithm.</p>
 </section>
 <section id="parameters-we-ll-use">
 <h2>Parameters we’ll use<a class="headerlink" href="#parameters-we-ll-use" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Params</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Params</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
     <span class="n">total_episodes</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># Total episodes</span>
     <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># Learning rate</span>
     <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># Discounting rate</span>
@@ -473,15 +473,15 @@ zero with the states number as rows and the actions number as columns.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;State size: </span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">state_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">Qlearning</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">state_size</span><span class="p">,</span> <span class="n">action_size</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Qlearning</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">state_size</span><span class="p">,</span> <span class="n">action_size</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state_size</span> <span class="o">=</span> <span class="n">state_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_size</span> <span class="o">=</span> <span class="n">action_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">gamma</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_qtable</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">new_state</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">new_state</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Update Q(s,a):= Q(s,a) + lr [R(s,a) + gamma * max Q(s&#39;,a&#39;) - Q(s,a)]&quot;&quot;&quot;</span>
         <span class="n">delta</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">reward</span>
@@ -491,16 +491,16 @@ zero with the states number as rows and the actions number as columns.</p>
         <span class="n">q_update</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">delta</span>
         <span class="k">return</span> <span class="n">q_update</span>
 
-    <span class="k">def</span> <span class="nf">reset_qtable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset_qtable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the Q-table.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">qtable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">state_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_size</span><span class="p">))</span>
 
 
-<span class="k">class</span> <span class="nc">EpsilonGreedy</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EpsilonGreedy</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
 
-    <span class="k">def</span> <span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_space</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">qtable</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">choose_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_space</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">qtable</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Choose an action `a` in the current world state (s).&quot;&quot;&quot;</span>
         <span class="c1"># First we randomize a number</span>
         <span class="n">explor_exploit_tradeoff</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -537,7 +537,7 @@ zero with the states number as rows and the actions number as columns.</p>
 <p>This will be our main function to run our environment until the maximum
 number of episodes <code class="docutils literal notranslate"><span class="pre">params.total_episodes</span></code>. To account for
 stochasticity, we will also run our environment a few times.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_env</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_env</span><span class="p">():</span>
     <span class="n">rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">params</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">n_runs</span><span class="p">))</span>
     <span class="n">steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">params</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">n_runs</span><span class="p">))</span>
     <span class="n">episodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">)</span>
@@ -593,7 +593,7 @@ stochasticity, we will also run our environment a few times.</p>
 <h3>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">¶</a></h3>
 <p>To make it easy to plot the results with Seaborn, we’ll save the main
 results of the simulation in Pandas dataframes.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="n">episodes</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">map_size</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">postprocess</span><span class="p">(</span><span class="n">episodes</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">map_size</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert the results of the simulation in dataframes.&quot;&quot;&quot;</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
         <span class="n">data</span><span class="o">=</span><span class="p">{</span>
@@ -614,7 +614,7 @@ results of the simulation in Pandas dataframes.</p>
 we will: 1. extract the best Q-values from the Q-table for each state,
 2. get the corresponding best action for those Q-values, 3. map each
 action to an arrow so we can visualize it.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">qtable_directions_map</span><span class="p">(</span><span class="n">qtable</span><span class="p">,</span> <span class="n">map_size</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">qtable_directions_map</span><span class="p">(</span><span class="n">qtable</span><span class="p">,</span> <span class="n">map_size</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the best learned action &amp; map it to arrows.&quot;&quot;&quot;</span>
     <span class="n">qtable_val_max</span> <span class="o">=</span> <span class="n">qtable</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">map_size</span><span class="p">,</span> <span class="n">map_size</span><span class="p">)</span>
     <span class="n">qtable_best_action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">qtable</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">map_size</span><span class="p">,</span> <span class="n">map_size</span><span class="p">)</span>
@@ -636,7 +636,7 @@ the simulation. If the agent learned a good policy to solve the task, we
 expect to see it on the tile of the treasure in the last frame of the
 video. On the right we’ll plot the policy the agent has learned. Each
 arrow will represent the best action to choose for each tile/state.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_q_values_map</span><span class="p">(</span><span class="n">qtable</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">map_size</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_q_values_map</span><span class="p">(</span><span class="n">qtable</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">map_size</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the last frame of the simulation and the policy learned.&quot;&quot;&quot;</span>
     <span class="n">qtable_val_max</span><span class="p">,</span> <span class="n">qtable_directions</span> <span class="o">=</span> <span class="n">qtable_directions_map</span><span class="p">(</span><span class="n">qtable</span><span class="p">,</span> <span class="n">map_size</span><span class="p">)</span>
 
@@ -670,7 +670,7 @@ arrow will represent the best action to choose for each tile/state.</p>
 </div>
 <p>As a sanity check, we will plot the distributions of states and actions
 with the following function:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_states_actions_distribution</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">map_size</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_states_actions_distribution</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">map_size</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the distributions of states and actions.&quot;&quot;&quot;</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;LEFT&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;DOWN&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;RIGHT&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;UP&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
 
@@ -760,7 +760,7 @@ rewards, as well as the number of steps needed until the end of the
 episode. If our agent is learning, we expect to see the cumulated sum of
 rewards to increase and the number of steps to solve the task to
 decrease.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_steps_and_rewards</span><span class="p">(</span><span class="n">rewards_df</span><span class="p">,</span> <span class="n">steps_df</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_steps_and_rewards</span><span class="p">(</span><span class="n">rewards_df</span><span class="p">,</span> <span class="n">steps_df</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the steps and rewards from dataframes.&quot;&quot;&quot;</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
     <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span>

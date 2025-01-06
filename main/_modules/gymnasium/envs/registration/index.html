@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.envs.registration - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -366,35 +366,35 @@
             <h1>Source code for gymnasium.envs.registration</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Functions for registering environments within gymnasium using public functions ``make``, ``register`` and ``spec``.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">contextlib</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">dataclasses</span>
-<span class="kn">import</span> <span class="nn">difflib</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">import</span> <span class="nn">importlib.util</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">ModuleType</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">difflib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">Env</span><span class="p">,</span> <span class="n">Wrapper</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">gymnasium.logger</span> <span class="kn">import</span> <span class="n">warn</span>
-<span class="kn">from</span> <span class="nn">gymnasium.vector</span> <span class="kn">import</span> <span class="n">AutoresetMode</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Env</span><span class="p">,</span> <span class="n">Wrapper</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoresetMode</span>
 
 
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
-    <span class="kn">import</span> <span class="nn">importlib_metadata</span> <span class="k">as</span> <span class="nn">metadata</span>  <span class="c1"># type: ignore</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">importlib_metadata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">metadata</span>  <span class="c1"># type: ignore</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">importlib.metadata</span> <span class="k">as</span> <span class="nn">metadata</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">metadata</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Protocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Protocol</span>
 
 
 <span class="n">ENV_ID_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
@@ -418,22 +418,22 @@
 <span class="p">]</span>
 
 
-<span class="k">class</span> <span class="nc">EnvCreator</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvCreator</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function type expected for an environment.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span> <span class="o">...</span>
 
 
-<span class="k">class</span> <span class="nc">VectorEnvCreator</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorEnvCreator</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function type expected for an environment.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">VectorEnv</span><span class="p">:</span> <span class="o">...</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">VectorEnv</span><span class="p">:</span> <span class="o">...</span>
 
 
 <div class="viewcode-block" id="WrapperSpec">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.WrapperSpec">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">WrapperSpec</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WrapperSpec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A specification for recording wrapper configs.</span>
 
 <span class="sd">    * name: The name of the wrapper.</span>
@@ -450,7 +450,7 @@
 <div class="viewcode-block" id="EnvSpec">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.EnvSpec">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">EnvSpec</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnvSpec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A specification for creating environments with :meth:`gymnasium.make`.</span>
 
 <span class="sd">    * **id**: The string used to create the environment with :meth:`gymnasium.make`</span>
@@ -494,15 +494,15 @@
     <span class="c1"># Vectorized environment entry point</span>
     <span class="n">vector_entry_point</span><span class="p">:</span> <span class="n">VectorEnvCreator</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls after the spec is created to extract the namespace, name and version from the environment id.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">parse_env_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls ``make`` using the environment spec and any keyword arguments.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts the environment spec into a json compatible string.</span>
 
 <span class="sd">        Returns:</span>
@@ -520,7 +520,7 @@
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">env_spec_dict</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_check_can_jsonify</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_can_jsonify</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Warns the user about serialisation failing if the spec contains a callable.</span>
 
 <span class="sd">        Args:</span>
@@ -538,7 +538,7 @@
                 <span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">from_json</span><span class="p">(</span><span class="n">json_env_spec</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_json</span><span class="p">(</span><span class="n">json_env_spec</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts a JSON string into a specification stack.</span>
 
 <span class="sd">        Args:</span>
@@ -556,7 +556,7 @@
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;An issue occurred when trying to make </span><span class="si">{</span><span class="n">wrapper_spec_json</span><span class="si">}</span><span class="s2"> a WrapperSpec&quot;</span>
-                <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">env_spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="p">(</span><span class="o">**</span><span class="n">parsed_env_spec</span><span class="p">)</span>
@@ -564,11 +564,11 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;An issue occurred when trying to make </span><span class="si">{</span><span class="n">parsed_env_spec</span><span class="si">}</span><span class="s2"> an EnvSpec&quot;</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="k">return</span> <span class="n">env_spec</span>
 
-    <span class="k">def</span> <span class="nf">pprint</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pprint</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">disable_print</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">include_entry_points</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -624,7 +624,7 @@
 
 
 
-<span class="k">class</span> <span class="nc">VectorizeMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorizeMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;All possible vectorization modes used in `make_vec`.&quot;&quot;&quot;</span>
 
     <span class="n">ASYNC</span> <span class="o">=</span> <span class="s2">&quot;async&quot;</span>
@@ -639,7 +639,7 @@
 
 <div class="viewcode-block" id="parse_env_id">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.parse_env_id">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_env_id</span><span class="p">(</span><span class="n">env_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_env_id</span><span class="p">(</span><span class="n">env_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse environment ID string format - ``[namespace/](env-name)[-v(version)]`` where the namespace and version are optional.</span>
 
 <span class="sd">    Args:</span>
@@ -666,7 +666,7 @@
 
 <div class="viewcode-block" id="get_env_id">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.get_env_id">[docs]</a>
-<span class="k">def</span> <span class="nf">get_env_id</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_env_id</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the full env ID given a name and (optional) version and namespace. Inverse of :meth:`parse_env_id`.</span>
 
 <span class="sd">    Args:</span>
@@ -689,7 +689,7 @@
 
 <div class="viewcode-block" id="find_highest_version">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.find_highest_version">[docs]</a>
-<span class="k">def</span> <span class="nf">find_highest_version</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_highest_version</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Finds the highest registered version of the environment given the namespace and name in the registry.</span>
 
 <span class="sd">    Args:</span>
@@ -710,7 +710,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_check_namespace_exists</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_namespace_exists</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if a namespace exists. If it doesn&#39;t, print a helpful error message.&quot;&quot;&quot;</span>
     <span class="c1"># If the namespace is none, then the namespace does exist</span>
     <span class="k">if</span> <span class="n">ns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -737,7 +737,7 @@
     <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">NamespaceNotFound</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Namespace </span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s2"> not found. </span><span class="si">{</span><span class="n">suggestion_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_check_name_exists</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_name_exists</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if an env exists in a namespace. If it doesn&#39;t, print a helpful error message.&quot;&quot;&quot;</span>
     <span class="c1"># First check if the namespace exists</span>
     <span class="n">_check_namespace_exists</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span>
@@ -759,7 +759,7 @@
     <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_check_version_exists</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_version_exists</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if an env version exists in a namespace. If it doesn&#39;t, print a helpful error message.</span>
 
 <span class="sd">    This is a complete test whether an environment identifier is valid, and will provide the best available hints.</span>
@@ -817,7 +817,7 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_check_spec_register</span><span class="p">(</span><span class="n">testing_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_spec_register</span><span class="p">(</span><span class="n">testing_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks whether the spec is valid to be registered. Helper function for `register`.&quot;&quot;&quot;</span>
     <span class="n">latest_versioned_spec</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
         <span class="p">(</span>
@@ -856,7 +856,7 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_check_metadata</span><span class="p">(</span><span class="n">testing_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_metadata</span><span class="p">(</span><span class="n">testing_metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the metadata of an environment.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">testing_metadata</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">InvalidMetadata</span><span class="p">(</span>
@@ -874,7 +874,7 @@
         <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_find_spec</span><span class="p">(</span><span class="n">env_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_find_spec</span><span class="p">(</span><span class="n">env_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
     <span class="c1"># For string id&#39;s, load the environment spec from the registry then make the environment spec</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
@@ -887,7 +887,7 @@
             <span class="k">raise</span> <span class="ne">ModuleNotFoundError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. Environment registration via importing a module failed. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Check whether &#39;</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">&#39; contains env registration and can be imported.&quot;</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="c1"># load the env spec from the registry</span>
     <span class="n">env_spec</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">env_name</span><span class="p">)</span>
@@ -921,7 +921,7 @@
 
 <div class="viewcode-block" id="load_env_creator">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.load_env_creator">[docs]</a>
-<span class="k">def</span> <span class="nf">load_env_creator</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvCreator</span> <span class="o">|</span> <span class="n">VectorEnvCreator</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_env_creator</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvCreator</span> <span class="o">|</span> <span class="n">VectorEnvCreator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Loads an environment with name of style ``&quot;(import path):(environment name)&quot;`` and returns the environment creation function, normally the environment class type.</span>
 
 <span class="sd">    Args:</span>
@@ -937,7 +937,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">register_envs</span><span class="p">(</span><span class="n">env_module</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_envs</span><span class="p">(</span><span class="n">env_module</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A No-op function such that it can appear to IDEs that a module is used.&quot;&quot;&quot;</span>
     <span class="k">pass</span>
 
@@ -945,7 +945,7 @@
 <div class="viewcode-block" id="namespace">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.namespace">[docs]</a>
 <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-<span class="k">def</span> <span class="nf">namespace</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">namespace</span><span class="p">(</span><span class="n">ns</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager for modifying the current namespace.&quot;&quot;&quot;</span>
     <span class="k">global</span> <span class="n">current_namespace</span>
     <span class="n">old_namespace</span> <span class="o">=</span> <span class="n">current_namespace</span>
@@ -957,7 +957,7 @@
 
 <div class="viewcode-block" id="register">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.register">[docs]</a>
-<span class="k">def</span> <span class="nf">register</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">entry_point</span><span class="p">:</span> <span class="n">EnvCreator</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">reward_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1037,7 +1037,7 @@
 
 <div class="viewcode-block" id="make">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.make">[docs]</a>
-<span class="k">def</span> <span class="nf">make</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">max_episode_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">disable_env_checker</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1141,7 +1141,7 @@
                 <span class="sa">f</span><span class="s2">&quot;You passed render_mode=&#39;human&#39; although </span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> doesn&#39;t implement human-rendering natively. &quot;</span>
                 <span class="s2">&quot;Gym tried to apply the HumanRendering wrapper but it looks like your environment is using the old &quot;</span>
                 <span class="s2">&quot;rendering API, which is not supported by the HumanRendering wrapper.&quot;</span>
-            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)(</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> was raised from the environment creator for </span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> with kwargs (</span><span class="si">{</span><span class="n">env_spec_kwargs</span><span class="si">}</span><span class="s2">)&quot;</span>
@@ -1227,7 +1227,7 @@
 
 <div class="viewcode-block" id="make_vec">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.make_vec">[docs]</a>
-<span class="k">def</span> <span class="nf">make_vec</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_vec</span><span class="p">(</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">num_envs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">vectorization_mode</span><span class="p">:</span> <span class="n">VectorizeMode</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1296,7 +1296,7 @@
             <span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vectorization_mode</span><span class="p">,</span> <span class="n">VectorizeMode</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">create_single_env</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_single_env</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
         <span class="n">single_env</span> <span class="o">=</span> <span class="n">make</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="o">**</span><span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="n">wrappers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1388,7 +1388,7 @@
 
 <div class="viewcode-block" id="spec">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.spec">[docs]</a>
-<span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="n">env_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spec</span><span class="p">(</span><span class="n">env_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the :class:`EnvSpec` for the environment id from the :attr:`registry`.</span>
 
 <span class="sd">    Args:</span>
@@ -1415,7 +1415,7 @@
 
 <div class="viewcode-block" id="pprint_registry">
 <a class="viewcode-back" href="../../../../api/registry/#gymnasium.pprint_registry">[docs]</a>
-<span class="k">def</span> <span class="nf">pprint_registry</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pprint_registry</span><span class="p">(</span>
     <span class="n">print_registry</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">registry</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
     <span class="n">num_cols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>

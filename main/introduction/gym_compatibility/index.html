@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Compatibility with Gym - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -379,7 +379,7 @@
 <section id="loading-openai-gym-environments">
 <h2>Loading OpenAI Gym environments<a class="headerlink" href="#loading-openai-gym-environments" title="Link to this heading">¶</a></h2>
 <p>For environments that are registered solely in OpenAI Gym and not in Gymnasium, Gymnasium v0.26.3 and above allows importing them through either a special environment or a wrapper. The <code class="docutils literal notranslate"><span class="pre">&quot;GymV26Environment-v0&quot;</span></code> environment was introduced in Gymnasium v0.26.3, and allows importing of Gym environments through the <code class="docutils literal notranslate"><span class="pre">env_name</span></code> argument along with other relevant kwargs environment kwargs. To perform conversion through a wrapper, the environment itself can be passed to the wrapper <code class="xref py py-class docutils literal notranslate"><span class="pre">EnvCompatibility</span></code> through the <code class="docutils literal notranslate"><span class="pre">env</span></code> kwarg.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV26Environment-v0&quot;</span><span class="p">,</span> <span class="n">env_id</span><span class="o">=</span><span class="s2">&quot;GymEnv-v1&quot;</span><span class="p">)</span>
 </pre></div>
@@ -388,13 +388,13 @@
 <section id="gym-v0-21-environment-compatibility">
 <h2>Gym v0.21 Environment Compatibility<a class="headerlink" href="#gym-v0-21-environment-compatibility" title="Link to this heading">¶</a></h2>
 <p>A number of environments have not updated to the recent Gym changes, in particular since v0.21. This update is significant for the introduction of <code class="docutils literal notranslate"><span class="pre">termination</span></code> and <code class="docutils literal notranslate"><span class="pre">truncation</span></code> signatures in favour of the previously used <code class="docutils literal notranslate"><span class="pre">done</span></code>. To allow backward compatibility, Gym and Gymnasium v0.26+ include an <code class="docutils literal notranslate"><span class="pre">apply_api_compatibility</span></code> kwarg when calling <a class="reference internal" href="../../api/registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make()</span></code></a> that automatically converts a v0.21 API compliant environment to one that is compatible with v0.26+.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gym</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gym</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;OldV21Env-v0&quot;</span><span class="p">,</span> <span class="n">apply_api_compatibility</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Additionally, in Gymnasium we provide specialist environments for compatibility that for <code class="docutils literal notranslate"><span class="pre">env_id</span></code> will call <code class="docutils literal notranslate"><span class="pre">gym.make</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV21Environment-v0&quot;</span><span class="p">,</span> <span class="n">env_id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
 <span class="c1"># or</span>

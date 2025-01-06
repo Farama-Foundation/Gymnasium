@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.vector.utils.misc - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -366,13 +366,13 @@
             <h1>Source code for gymnasium.vector.utils.misc</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Miscellaneous utilities.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">contextlib</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 
-<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Env</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CloudpickleWrapper&quot;</span><span class="p">,</span> <span class="s2">&quot;clear_mpi_env_vars&quot;</span><span class="p">]</span>
@@ -380,26 +380,26 @@
 
 <div class="viewcode-block" id="CloudpickleWrapper">
 <a class="viewcode-back" href="../../../../../api/vector/utils/#gymnasium.vector.utils.CloudpickleWrapper">[docs]</a>
-<span class="k">class</span> <span class="nc">CloudpickleWrapper</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CloudpickleWrapper</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper that uses cloudpickle to pickle and unpickle the result.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Env</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Env</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Cloudpickle wrapper for a function.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span>
 
-    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the state using `cloudpickle.dumps(self.fn)`.&quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">cloudpickle</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">cloudpickle</span>
 
         <span class="k">return</span> <span class="n">cloudpickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ob</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ob</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the state with obs.&quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">pickle</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">ob</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls the function `self.fn` with no arguments.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">()</span></div>
 
@@ -408,7 +408,7 @@
 <div class="viewcode-block" id="clear_mpi_env_vars">
 <a class="viewcode-back" href="../../../../../api/vector/utils/#gymnasium.vector.utils.clear_mpi_env_vars">[docs]</a>
 <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-<span class="k">def</span> <span class="nf">clear_mpi_env_vars</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">clear_mpi_env_vars</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clears the MPI of environment variables.</span>
 
 <span class="sd">    ``from mpi4py import MPI`` will call ``MPI_Init`` by default.</span>

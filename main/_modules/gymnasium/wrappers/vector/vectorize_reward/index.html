@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.wrappers.vector.vectorize_reward - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -366,21 +366,21 @@
             <h1>Source code for gymnasium.wrappers.vector.vectorize_reward</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Vectorizes reward function to work with `VectorEnv`.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">Env</span>
-<span class="kn">from</span> <span class="nn">gymnasium.vector</span> <span class="kn">import</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">VectorRewardWrapper</span>
-<span class="kn">from</span> <span class="nn">gymnasium.vector.vector_env</span> <span class="kn">import</span> <span class="n">ArrayType</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">transform_reward</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">VectorRewardWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.vector_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">transform_reward</span>
 
 
 <div class="viewcode-block" id="TransformReward">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.TransformReward">[docs]</a>
-<span class="k">class</span> <span class="nc">TransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A reward wrapper that allows a custom function to modify the step reward.</span>
 
 <span class="sd">    Example with reward transformation:</span>
@@ -401,7 +401,7 @@
 <span class="sd">               [-4.3118435e-01, -1.5342437e-03]], dtype=float32)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ArrayType</span><span class="p">],</span> <span class="n">ArrayType</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ArrayType</span><span class="p">],</span> <span class="n">ArrayType</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize LambdaReward wrapper.</span>
 
 <span class="sd">        Args:</span>
@@ -412,7 +412,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
-    <span class="k">def</span> <span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to reward.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span></div>
 
@@ -420,7 +420,7 @@
 
 <div class="viewcode-block" id="VectorizeTransformReward">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.VectorizeTransformReward">[docs]</a>
-<span class="k">class</span> <span class="nc">VectorizeTransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorizeTransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Vectorizes a single-agent transform reward wrapper for vector environments.</span>
 
 <span class="sd">    An example such that applies a ReLU to the reward:</span>
@@ -436,7 +436,7 @@
 <span class="sd">        array([-0., -0., -0.])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
         <span class="n">wrapper</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">transform_reward</span><span class="o">.</span><span class="n">TransformReward</span><span class="p">],</span>
@@ -453,7 +453,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span><span class="p">(</span><span class="n">Env</span><span class="p">(),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterates over the reward updating each with the wrapper func.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">reward</span><span class="p">):</span>
             <span class="n">reward</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
@@ -463,7 +463,7 @@
 
 <div class="viewcode-block" id="ClipReward">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.ClipReward">[docs]</a>
-<span class="k">class</span> <span class="nc">ClipReward</span><span class="p">(</span><span class="n">VectorizeTransformReward</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClipReward</span><span class="p">(</span><span class="n">VectorizeTransformReward</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper that clips the rewards for an environment between an upper and lower bound.</span>
 
 <span class="sd">    Example with clipped rewards:</span>
@@ -481,7 +481,7 @@
 <span class="sd">        array([0., 0., 0.])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
         <span class="n">min_reward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.utils.save_video - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -366,26 +366,26 @@
             <h1>Source code for gymnasium.utils.save_video</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utility functions to save rendering videos.&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">logger</span>
 
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">moviepy.video.io.ImageSequenceClip</span> <span class="kn">import</span> <span class="n">ImageSequenceClip</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">moviepy.video.io.ImageSequenceClip</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageSequenceClip</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">gym</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">DependencyNotInstalled</span><span class="p">(</span>
         <span class="s1">&#39;moviepy is not installed, run `pip install &quot;gymnasium[other]&quot;`&#39;</span>
-    <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 
 <div class="viewcode-block" id="capped_cubic_video_schedule">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.save_video.capped_cubic_video_schedule">[docs]</a>
-<span class="k">def</span> <span class="nf">capped_cubic_video_schedule</span><span class="p">(</span><span class="n">episode_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">capped_cubic_video_schedule</span><span class="p">(</span><span class="n">episode_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The default episode trigger.</span>
 
 <span class="sd">    This function will trigger recordings at the episode indices :math:`\{0, 1, 4, 8, 27, ..., k^3, ..., 729, 1000, 2000, 3000, ...\}`</span>
@@ -405,7 +405,7 @@
 
 <div class="viewcode-block" id="save_video">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.save_video.save_video">[docs]</a>
-<span class="k">def</span> <span class="nf">save_video</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_video</span><span class="p">(</span>
     <span class="n">frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
     <span class="n">video_folder</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">episode_trigger</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

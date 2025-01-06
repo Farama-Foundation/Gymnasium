@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>gymnasium.wrappers.transform_action - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -371,25 +371,25 @@
 <span class="sd">* ``RescaleAction`` - Rescales the action within a minimum and maximum actions</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span>
-<span class="kn">from</span> <span class="nn">gymnasium.spaces</span> <span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Space</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Space</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TransformAction&quot;</span><span class="p">,</span> <span class="s2">&quot;ClipAction&quot;</span><span class="p">,</span> <span class="s2">&quot;RescaleAction&quot;</span><span class="p">]</span>
 
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers.utils</span> <span class="kn">import</span> <span class="n">rescale_box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">rescale_box</span>
 
 
 <div class="viewcode-block" id="TransformAction">
 <a class="viewcode-back" href="../../../../api/wrappers/action_wrappers/#gymnasium.wrappers.TransformAction">[docs]</a>
-<span class="k">class</span> <span class="nc">TransformAction</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransformAction</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">ActionWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies a function to the ``action`` before passing the modified value to the environment ``step`` function.</span>
@@ -415,7 +415,7 @@
 <span class="sd">     * v1.0.0 - Initially added</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">WrapperActType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">],</span>
@@ -438,7 +438,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
-    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to action.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div>
 
@@ -446,7 +446,7 @@
 
 <div class="viewcode-block" id="ClipAction">
 <a class="viewcode-back" href="../../../../api/wrappers/action_wrappers/#gymnasium.wrappers.ClipAction">[docs]</a>
-<span class="k">class</span> <span class="nc">ClipAction</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClipAction</span><span class="p">(</span>
     <span class="n">TransformAction</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Clips the ``action`` pass to ``step`` to be within the environment&#39;s `action_space`.</span>
@@ -470,7 +470,7 @@
 <span class="sd">     * v1.0.0 - Action space is updated to infinite bounds as is technically correct</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A wrapper for clipping continuous actions within the valid bound.</span>
 
 <span class="sd">        Args:</span>
@@ -497,7 +497,7 @@
 
 <div class="viewcode-block" id="RescaleAction">
 <a class="viewcode-back" href="../../../../api/wrappers/action_wrappers/#gymnasium.wrappers.RescaleAction">[docs]</a>
-<span class="k">class</span> <span class="nc">RescaleAction</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RescaleAction</span><span class="p">(</span>
     <span class="n">TransformAction</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Affinely (linearly) rescales a ``Box`` action space of the environment to within the range of ``[min_action, max_action]``.</span>
@@ -526,7 +526,7 @@
 <span class="sd">     * v0.15.4 - Initially added</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
         <span class="n">min_action</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>

@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Recording Agents - Gymnasium Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
@@ -380,8 +380,8 @@
 <section id="recording-every-episode">
 <h2>Recording Every Episode<a class="headerlink" href="#recording-every-episode" title="Link to this heading">¶</a></h2>
 <p>Given a trained agent, you may wish to record several episodes during evaluation to see how the agent acts. Below we provide an example script to do this with the <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span><span class="p">,</span> <span class="n">RecordVideo</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span><span class="p">,</span> <span class="n">RecordVideo</span>
 
 <span class="n">num_eval_episodes</span> <span class="o">=</span> <span class="mi">4</span>
 
@@ -413,10 +413,10 @@
 <section id="recording-the-agent-during-training">
 <h2>Recording the Agent during Training<a class="headerlink" href="#recording-the-agent-during-training" title="Link to this heading">¶</a></h2>
 <p>During training, an agent will act in hundreds or thousands of episodes, therefore, you can’t record a video for each episode, but developers might still want to know how the agent acts at different points in the training, recording episodes periodically during training. While for the episode statistics, it is more helpful to know this data for every episode. The following script provides an example of how to periodically record episodes of an agent while recording every episode’s statistics (we use the python’s logger but <a class="reference external" href="https://www.tensorflow.org/tensorboard">tensorboard</a>, <a class="reference external" href="https://docs.wandb.ai/guides/track">wandb</a> and other modules are available).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span><span class="p">,</span> <span class="n">RecordVideo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span><span class="p">,</span> <span class="n">RecordVideo</span>
 
 <span class="n">training_period</span> <span class="o">=</span> <span class="mi">250</span>  <span class="c1"># record the agent&#39;s episode every 250</span>
 <span class="n">num_training_episodes</span> <span class="o">=</span> <span class="mi">10_000</span>  <span class="c1"># total number of training episodes</span>
