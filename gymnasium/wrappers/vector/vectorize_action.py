@@ -92,6 +92,7 @@ class TransformAction(VectorActionWrapper):
         if action_space is None:
             if single_action_space is not None:
                 self.action_space = batch_space(single_action_space, self.num_envs)
+                self._single_action_space = single_action_space
         else:
             self.action_space = action_space
             if single_action_space is None:

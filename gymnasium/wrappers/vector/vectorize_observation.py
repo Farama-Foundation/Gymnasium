@@ -76,6 +76,7 @@ class TransformObservation(VectorObservationWrapper):
                 self.observation_space = batch_space(
                     single_observation_space, self.num_envs
                 )
+                self._single_observation_space = single_observation_space
         else:
             self.observation_space = observation_space
             if single_observation_space is None:

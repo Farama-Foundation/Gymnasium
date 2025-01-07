@@ -29,6 +29,7 @@ def test_observation_space_from_single_observation_space(
         ),
     )
 
+    # Check action space
     assert isinstance(vec_env.action_space, spaces.Box)
     assert vec_env.action_space.shape == (n_envs, 3)
     assert vec_env.action_space.dtype == np.float32
@@ -38,4 +39,15 @@ def test_observation_space_from_single_observation_space(
     assert (
         vec_env.action_space.high
         == np.array([[110, 95, 110]] * n_envs, dtype=np.float32)
+    ).all()
+
+    # Check single action space
+    assert isinstance(vec_env.single_action_space, spaces.Box)
+    assert vec_env.single_action_space.shape == (3,)
+    assert vec_env.single_action_space.dtype == np.float32
+    assert (
+        vec_env.single_action_space.low == np.array([100, 90, 95], dtype=np.float32)
+    ).all()
+    assert (
+        vec_env.single_action_space.high == np.array([110, 95, 110], dtype=np.float32)
     ).all()
