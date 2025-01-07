@@ -61,24 +61,56 @@ class TransformAction(VectorActionWrapper):
         env: VectorEnv,
         func: Callable[[ActType], Any],
         action_space: Space | None = None,
+        single_action_space: Space | None = None,
     ):
         """Constructor for the lambda action wrapper.
 
         Args:
             env: The vector environment to wrap
             func: A function that will transform an action. If this transformed action is outside the action space of ``env.action_space`` then provide an ``action_space``.
-            action_space: The action spaces of the wrapper, if None, then it is assumed the same as ``env.action_space``.
+            action_space: The action spaces of the wrapper. If None, then it is computed from ``single_action_space``. If ``single_action_space`` is not provided either, then it is assumed to be the same as ``env.action_space``.
+            single_action_space: The action space of the non-vectorized environment. If None, then it is assumed the same as ``env.single_action_space``.
         """
         super().__init__(env)
 
-        if action_space is not None:
+        """
+        self._single_observation_space_error = None
+        self._single_observation_space = self.env.single_observation_space
+        if observation_space is None:
+            if single_observation_space is not None:
+                self.observation_space = batch_space(single_observation_space, self.num_envs)
+        else:
+            self.observation_space = observation_space
+            if single_observation_space is None:
+                # TODO: We could compute this from the observation_space.
+                self._single_observation_space_error = "`single_observation_space` not defined. A new observation space was provided to the TransformObservation wrapper, but not the single observation space."
+            else:
+                self._single_observation_space = single_observation_space
+        """
+        self._single_action_space_error = None
+        self._single_action_space = self.env.single_action_space
+        if action_space is None:
+            if single_action_space is not None:
+                self.action_space = batch_space(single_action_space, self.num_envs)
+        else:
             self.action_space = action_space
+            if single_action_space is None:
+                self._single_action_space_error = "`single_action_space` not defined. A new action space was provided to the TransformAction wrapper, but not the single action space."
+            else:
+                self._single_action_space = single_action_space
 
         self.func = func
 
     def actions(self, actions: ActType) -> ActType:
         """Applies the :attr:`func` to the actions."""
         return self.func(actions)
+
+    @property
+    def single_action_space(self) -> Space:
+        """The single observation space of the environment."""
+        if self._single_action_space_error is not None:
+            raise AttributeError(self._single_action_space_error)
+        return self._single_action_space
 
 
 class VectorizeTransformAction(VectorActionWrapper):
