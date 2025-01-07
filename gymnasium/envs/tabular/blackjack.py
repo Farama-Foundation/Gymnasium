@@ -2,7 +2,7 @@
 
 import math
 import os
-from typing import NamedTuple, Optional, Tuple, Union
+from typing import NamedTuple, Optional, Union
 
 import jax
 import jax.numpy as jnp
@@ -20,7 +20,7 @@ from gymnasium.vector import AutoresetMode
 from gymnasium.wrappers import HumanRendering
 
 
-RenderStateType = Tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
+RenderStateType = tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
 
 
 deck = jnp.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10])
@@ -373,7 +373,7 @@ class BlackjackFunctional(
         state: StateType,
         render_state: RenderStateType,
         params: BlackJackParams = BlackJackParams,
-    ) -> Tuple[RenderStateType, np.ndarray]:
+    ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an image from a state."""
         try:
             import pygame

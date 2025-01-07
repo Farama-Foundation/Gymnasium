@@ -1,7 +1,7 @@
 from contextlib import closing
 from io import StringIO
 from os import path
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Optional, Union
 
 import numpy as np
 
@@ -159,8 +159,8 @@ class CliffWalkingEnv(Env):
         return coord
 
     def _calculate_transition_prob(
-        self, current: Union[List[int], np.ndarray], move: int
-    ) -> List[Tuple[float, Any, int, bool]]:
+        self, current: Union[list[int], np.ndarray], move: int
+    ) -> list[tuple[float, Any, int, bool]]:
         """Determine the outcome for an action. Transition Prob is always 1.0.
 
         Args:

@@ -1,6 +1,7 @@
 import re
 import warnings
-from typing import Callable, Dict, Union
+from collections.abc import Callable
+from typing import Union
 
 import numpy as np
 import pytest
@@ -267,7 +268,7 @@ def _make_reset_results(results):
         ],
     ],
 )
-def test_passive_env_reset_checker(test, func: Callable, message: str, kwargs: Dict):
+def test_passive_env_reset_checker(test, func: Callable, message: str, kwargs: dict):
     """Tests the passive env reset check"""
     if test is UserWarning:
         with pytest.warns(

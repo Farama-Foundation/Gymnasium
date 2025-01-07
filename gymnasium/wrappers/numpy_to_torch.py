@@ -5,7 +5,8 @@ from __future__ import annotations
 import functools
 import numbers
 from collections import abc
-from typing import Any, Iterable, Mapping, SupportsFloat, Union
+from collections.abc import Iterable, Mapping
+from typing import Any, SupportsFloat, Union
 
 import numpy as np
 

@@ -1,6 +1,6 @@
 import os
 import time
-from typing import Dict, Optional
+from typing import Optional
 
 import glfw
 import imageio
@@ -43,7 +43,7 @@ class BaseRender:
         width: int,
         height: int,
         max_geom: int = 1000,
-        visual_options: Dict[int, bool] = {},
+        visual_options: dict[int, bool] = {},
     ):
         """Render context superclass for offscreen and window rendering."""
         self.model = model
@@ -149,7 +149,7 @@ class OffScreenViewer(BaseRender):
         width: int,
         height: int,
         max_geom: int = 1000,
-        visual_options: Dict[int, bool] = {},
+        visual_options: dict[int, bool] = {},
     ):
         # We must make GLContext before MjrContext
         self._get_opengl_backend(width, height)
@@ -309,7 +309,7 @@ class WindowViewer(BaseRender):
         width: Optional[int] = None,
         height: Optional[int] = None,
         max_geom: int = 1000,
-        visual_options: Dict[int, bool] = {},
+        visual_options: dict[int, bool] = {},
     ):
         glfw.init()
 
@@ -667,7 +667,7 @@ class MujocoRenderer:
         max_geom: int = 1000,
         camera_id: Optional[int] = None,
         camera_name: Optional[str] = None,
-        visual_options: Dict[int, bool] = {},
+        visual_options: dict[int, bool] = {},
     ):
         """A wrapper for clipping continuous actions within the valid bound.
 

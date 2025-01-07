@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import typing
+import collections.abc
 from typing import Any, Union
 
 import numpy as np
@@ -12,7 +12,7 @@ import gymnasium as gym
 from gymnasium.spaces.space import Space
 
 
-class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
+class Sequence(Space[Union[tuple[Any, ...], Any]]):
     r"""This space represent sets of finite-length sequences.
 
     This space represents the set of tuples of the form :math:`(a_0, \dots, a_n)` where the :math:`a_i` belong
@@ -186,7 +186,7 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
         return f"Sequence({self.feature_space}, stack={self.stack})"
 
     def to_jsonable(
-        self, sample_n: typing.Sequence[tuple[Any, ...] | Any]
+        self, sample_n: collections.abc.Sequence[tuple[Any, ...] | Any]
     ) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         if self.stack:
