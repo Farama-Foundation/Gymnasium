@@ -1,12 +1,16 @@
 """Test suite for TimeAwareObservation wrapper."""
 
+import re
+import warnings
+
 import numpy as np
 import pytest
 
 import gymnasium as gym
 from gymnasium import spaces
+from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.spaces import Box, Dict, Tuple
-from gymnasium.wrappers import TimeAwareObservation
+from gymnasium.wrappers import TimeAwareObservation, TimeLimit
 from tests.testing_env import GenericTestEnv
 
 
@@ -39,6 +43,25 @@ def test_default(env_id):
     assert wrapped_env.timesteps == 0.0
     assert wrapped_obs[-1] == 0.0
     assert wrapped_obs.shape[0] == obs.shape[0] + 1
+
+
+def test_no_spec():
+    env = CartPoleEnv()
+
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`."
+        ),
+    ):
+        TimeAwareObservation(env)
+
+    env = TimeLimit(env, 100)
+    with warnings.catch_warnings(record=True) as caught_warnings:
+        env = TimeAwareObservation(env)
+
+        assert env.max_timesteps == 100
+    assert len(caught_warnings) == 0
 
 
 def test_no_flatten():
