@@ -569,9 +569,18 @@
         <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">max_timesteps</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`.&quot;</span>
-            <span class="p">)</span>
+            <span class="c1"># else we need to loop through the environment stack to check if a `TimeLimit` wrapper exists</span>
+            <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">env</span>
+            <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wrapped_env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wrapped_env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeLimit</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">max_timesteps</span> <span class="o">=</span> <span class="n">wrapped_env</span><span class="o">.</span><span class="n">_max_episode_steps</span>
+                    <span class="k">break</span>
+                <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">wrapped_env</span><span class="o">.</span><span class="n">env</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wrapped_env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeLimit</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`.&quot;</span>
+                <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">timesteps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
