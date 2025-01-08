@@ -1,4 +1,4 @@
-"""Test suite for vector TransformObservation wrapper."""
+"""Test suite for vector TransformAction wrapper."""
 
 import numpy as np
 

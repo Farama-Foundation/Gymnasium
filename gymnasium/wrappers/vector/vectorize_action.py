@@ -73,20 +73,6 @@ class TransformAction(VectorActionWrapper):
         """
         super().__init__(env)
 
-        """
-        self._single_observation_space_error = None
-        self._single_observation_space = self.env.single_observation_space
-        if observation_space is None:
-            if single_observation_space is not None:
-                self.observation_space = batch_space(single_observation_space, self.num_envs)
-        else:
-            self.observation_space = observation_space
-            if single_observation_space is None:
-                # TODO: We could compute this from the observation_space.
-                self._single_observation_space_error = "`single_observation_space` not defined. A new observation space was provided to the TransformObservation wrapper, but not the single observation space."
-            else:
-                self._single_observation_space = single_observation_space
-        """
         self._single_action_space_error = None
         self._single_action_space = self.env.single_action_space
         if action_space is None:
@@ -108,7 +94,7 @@ class TransformAction(VectorActionWrapper):
 
     @property
     def single_action_space(self) -> Space:
-        """The single observation space of the environment."""
+        """The single action space of the environment."""
         if self._single_action_space_error is not None:
             raise AttributeError(self._single_action_space_error)
         return self._single_action_space
