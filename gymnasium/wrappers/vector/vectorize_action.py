@@ -9,6 +9,7 @@ import numpy as np
 
 from gymnasium import Space
 from gymnasium.core import ActType, Env
+from gymnasium.logger import warn
 from gymnasium.vector import VectorActionWrapper, VectorEnv
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.wrappers import transform_action
@@ -73,31 +74,25 @@ class TransformAction(VectorActionWrapper):
         """
         super().__init__(env)
 
-        self._single_action_space_error = None
-        self._single_action_space = self.env.single_action_space
         if action_space is None:
             if single_action_space is not None:
+                self.single_action_space = single_action_space
                 self.action_space = batch_space(single_action_space, self.num_envs)
-                self._single_action_space = single_action_space
         else:
             self.action_space = action_space
-            if single_action_space is None:
-                self._single_action_space_error = "`single_action_space` not defined. A new action space was provided to the TransformAction wrapper, but not the single action space."
-            else:
-                self._single_action_space = single_action_space
+            if single_action_space is not None:
+                self.single_action_space = single_action_space
+            # TODO: We could compute single_action_space from the action_space if only the latter is provided and avoid the warning below.
+        if self.action_space != batch_space(self.single_action_space, self.num_envs):
+            warn(
+                "The action space and the batched single action space don't match as expected."
+            )
 
         self.func = func
 
     def actions(self, actions: ActType) -> ActType:
         """Applies the :attr:`func` to the actions."""
         return self.func(actions)
-
-    @property
-    def single_action_space(self) -> Space:
-        """The single action space of the environment."""
-        if self._single_action_space_error is not None:
-            raise AttributeError(self._single_action_space_error)
-        return self._single_action_space
 
 
 class VectorizeTransformAction(VectorActionWrapper):

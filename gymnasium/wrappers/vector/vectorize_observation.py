@@ -69,34 +69,29 @@ class TransformObservation(VectorObservationWrapper):
         """
         super().__init__(env)
 
-        self._single_observation_space_error = None
-        self._single_observation_space = self.env.single_observation_space
         if observation_space is None:
             if single_observation_space is not None:
+                self.single_observation_space = single_observation_space
                 self.observation_space = batch_space(
                     single_observation_space, self.num_envs
                 )
-                self._single_observation_space = single_observation_space
         else:
             self.observation_space = observation_space
-            if single_observation_space is None:
-                # TODO: We could compute this from the observation_space.
-                self._single_observation_space_error = "`single_observation_space` not defined. A new observation space was provided to the TransformObservation wrapper, but not the single observation space."
-            else:
+            if single_observation_space is not None:
                 self._single_observation_space = single_observation_space
+            # TODO: We could compute single_observation_space from the observation_space if only the latter is provided and avoid the warning below.
+        if self.observation_space != batch_space(
+            self.single_observation_space, self.num_envs
+        ):
+            warn(
+                "The observation space and the batched single observation space don't match as expected."
+            )
 
         self.func = func
 
     def observations(self, observations: ObsType) -> ObsType:
         """Apply function to the vector observation."""
         return self.func(observations)
-
-    @property
-    def single_observation_space(self) -> Space:
-        """Returns the single observation space."""
-        if self._single_observation_space_error is not None:
-            raise AttributeError(self._single_observation_space_error)
-        return self._single_observation_space
 
 
 class VectorizeTransformObservation(VectorObservationWrapper):

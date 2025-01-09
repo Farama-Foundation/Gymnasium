@@ -81,23 +81,17 @@ def test_observation_space_from_single_observation_space(
     ).all()
 
 
-def test_error_on_unspecified_single_observation_space(
+def test_warning_on_mismatched_single_observation_space(
     n_envs: int = 5,
 ):
     vec_env = SyncVectorEnv([create_env for _ in range(n_envs)])
-    vec_env = wrappers.vector.TransformObservation(
-        vec_env,
-        func=lambda x: x + 100,
-        observation_space=spaces.Box(
-            low=np.array([[0, -10, -5]] * n_envs, dtype=np.float32) + 100,
-            high=np.array([[10, -5, 10]] * n_envs, dtype=np.float32) + 100,
-        ),
-    )
-
-    # Environment should still work normally
-    obs, _ = vec_env.reset()
-    obs, *_ = vec_env.step(vec_env.action_space.sample())
-
-    # But if we try to access the single_observation_space, it should error
-    with pytest.raises(AttributeError):
-        vec_env.single_observation_space
+    # We only specify observation_space without single_observation_space, so single_observation_space inherits its value from the wrapped env which would not match. This mismatch should give us a warning.
+    with pytest.warns(Warning):
+        vec_env = wrappers.vector.TransformObservation(
+            vec_env,
+            func=lambda x: x + 100,
+            observation_space=spaces.Box(
+                low=np.array([[0, -10, -5]] * n_envs, dtype=np.float32) + 100,
+                high=np.array([[10, -5, 10]] * n_envs, dtype=np.float32) + 100,
+            ),
+        )
