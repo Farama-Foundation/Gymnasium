@@ -1,6 +1,7 @@
 """Test suite for vector TransformAction wrapper."""
 
 import numpy as np
+import pytest
 
 from gymnasium import spaces, wrappers
 from gymnasium.vector import SyncVectorEnv
@@ -16,7 +17,7 @@ def create_env():
     )
 
 
-def test_observation_space_from_single_observation_space(
+def test_action_space_from_single_action_space(
     n_envs: int = 5,
 ):
     vec_env = SyncVectorEnv([create_env for _ in range(n_envs)])
@@ -51,3 +52,22 @@ def test_observation_space_from_single_observation_space(
     assert (
         vec_env.single_action_space.high == np.array([110, 95, 110], dtype=np.float32)
     ).all()
+
+
+def test_warning_on_mismatched_single_action_space(
+    n_envs: int = 2,
+):
+    vec_env = SyncVectorEnv([create_env for _ in range(n_envs)])
+    # We only specify action_space without single_action_space, so single_action_space inherits its value from the wrapped env which would not match. This mismatch should give us a warning.
+    with pytest.warns(
+        Warning,
+        match=r"the action space and the batched single action space don't match as expected",
+    ):
+        vec_env = wrappers.vector.TransformAction(
+            vec_env,
+            func=lambda x: x + 100,
+            action_space=spaces.Box(
+                low=np.array([[0, -10, -5]] * n_envs, dtype=np.float32) + 100,
+                high=np.array([[10, -5, 10]] * n_envs, dtype=np.float32) + 100,
+            ),
+        )

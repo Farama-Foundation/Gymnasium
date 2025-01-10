@@ -85,7 +85,7 @@ class TransformAction(VectorActionWrapper):
             # TODO: We could compute single_action_space from the action_space if only the latter is provided and avoid the warning below.
         if self.action_space != batch_space(self.single_action_space, self.num_envs):
             warn(
-                "The action space and the batched single action space don't match as expected."
+                f"For {env}, the action space and the batched single action space don't match as expected, action_space={env.action_space}, batched single_action_space={batch_space(self.single_action_space, self.num_envs)}"
             )
 
         self.func = func

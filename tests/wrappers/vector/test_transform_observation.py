@@ -82,11 +82,14 @@ def test_observation_space_from_single_observation_space(
 
 
 def test_warning_on_mismatched_single_observation_space(
-    n_envs: int = 5,
+    n_envs: int = 2,
 ):
     vec_env = SyncVectorEnv([create_env for _ in range(n_envs)])
     # We only specify observation_space without single_observation_space, so single_observation_space inherits its value from the wrapped env which would not match. This mismatch should give us a warning.
-    with pytest.warns(Warning):
+    with pytest.warns(
+        Warning,
+        match=r"the observation space and the batched single observation space don't match as expected",
+    ):
         vec_env = wrappers.vector.TransformObservation(
             vec_env,
             func=lambda x: x + 100,

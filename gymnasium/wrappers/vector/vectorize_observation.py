@@ -84,7 +84,7 @@ class TransformObservation(VectorObservationWrapper):
             self.single_observation_space, self.num_envs
         ):
             warn(
-                "The observation space and the batched single observation space don't match as expected."
+                f"For {env}, the observation space and the batched single observation space don't match as expected, observation_space={env.observation_space}, batched single_observation_space={batch_space(self.single_observation_space, self.num_envs)}"
             )
 
         self.func = func
