@@ -20,21 +20,13 @@ __all__ = ["NormalizeReward"]
 class NormalizeReward(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
-    r"""This wrapper will scale rewards s.t. the discounted returns have a mean of 0 and std of 1.
-
-    In a nutshell, the rewards are divided through by the standard deviation of a rolling discounted sum of the reward.
-    The exponential moving average will have variance :math:`(1 - \gamma)^2`.
+    r"""Normalizes immediate rewards such that their exponential moving average has an approximately fixed variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
     statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.normalize()` is called.
     If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.
 
     A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.NormalizeReward`.
-
-    Important note:
-        Contrary to what the name suggests, this wrapper does not normalize the rewards to have a mean of 0 and a standard
-        deviation of 1. Instead, it scales the rewards such that **discounted returns** have approximately unit variance.
-        See [Engstrom et al.](https://openreview.net/forum?id=r1etN1rtPB) on "reward scaling" for more information.
 
     Note:
         In v0.27, NormalizeReward was updated as the forward discounted reward estimate was incorrectly computed in Gym v0.25+.
@@ -74,7 +66,6 @@ class NormalizeReward(
         ...     episode_rewards.append(reward)
         ...
         >>> env.close()
-        >>> # will approach 0.99 with more episodes
         >>> np.var(episode_rewards)
         np.float64(0.010162116476634746)
 
@@ -89,7 +80,7 @@ class NormalizeReward(
         gamma: float = 0.99,
         epsilon: float = 1e-8,
     ):
-        """This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.
+        """This wrapper will normalize immediate rewards s.t. their exponential moving average has an approximately fixed variance.
 
         Args:
             env (env): The environment to apply the wrapper
