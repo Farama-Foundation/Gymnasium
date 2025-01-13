@@ -388,21 +388,13 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">NormalizeReward</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;This wrapper will scale rewards s.t. the discounted returns have a mean of 0 and std of 1.</span>
-
-<span class="sd">    In a nutshell, the rewards are divided through by the standard deviation of a rolling discounted sum of the reward.</span>
-<span class="sd">    The exponential moving average will have variance :math:`(1 - \gamma)^2`.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Normalizes immediate rewards such that their exponential moving average has an approximately fixed variance.</span>
 
 <span class="sd">    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward</span>
 <span class="sd">    statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.normalize()` is called.</span>
 <span class="sd">    If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.</span>
 
 <span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.NormalizeReward`.</span>
-
-<span class="sd">    Important note:</span>
-<span class="sd">        Contrary to what the name suggests, this wrapper does not normalize the rewards to have a mean of 0 and a standard</span>
-<span class="sd">        deviation of 1. Instead, it scales the rewards such that **discounted returns** have approximately unit variance.</span>
-<span class="sd">        See [Engstrom et al.](https://openreview.net/forum?id=r1etN1rtPB) on &quot;reward scaling&quot; for more information.</span>
 
 <span class="sd">    Note:</span>
 <span class="sd">        In v0.27, NormalizeReward was updated as the forward discounted reward estimate was incorrectly computed in Gym v0.25+.</span>
@@ -442,7 +434,6 @@
 <span class="sd">        ...     episode_rewards.append(reward)</span>
 <span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; env.close()</span>
-<span class="sd">        &gt;&gt;&gt; # will approach 0.99 with more episodes</span>
 <span class="sd">        &gt;&gt;&gt; np.var(episode_rewards)</span>
 <span class="sd">        np.float64(0.010162116476634746)</span>
 
@@ -457,7 +448,7 @@
         <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.99</span><span class="p">,</span>
         <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will normalize immediate rewards s.t. their exponential moving average has a fixed variance.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will normalize immediate rewards s.t. their exponential moving average has an approximately fixed variance.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (env): The environment to apply the wrapper</span>

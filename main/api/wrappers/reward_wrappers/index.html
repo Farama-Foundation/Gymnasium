@@ -440,19 +440,11 @@ passing it to learning code, you can simply inherit from <a class="reference int
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.NormalizeReward">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">NormalizeReward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.99</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_reward/#NormalizeReward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.NormalizeReward" title="Link to this definition">¶</a></dt>
-<dd><p>This wrapper will scale rewards s.t. the discounted returns have a mean of 0 and std of 1.</p>
-<p>In a nutshell, the rewards are divided through by the standard deviation of a rolling discounted sum of the reward.
-The exponential moving average will have variance <span class="math notranslate nohighlight">\((1 - \gamma)^2\)</span>.</p>
+<dd><p>Normalizes immediate rewards such that their exponential moving average has an approximately fixed variance.</p>
 <p>The property <cite>_update_running_mean</cite> allows to freeze/continue the running mean calculation of the reward
 statistics. If <cite>True</cite> (default), the <cite>RunningMeanStd</cite> will get updated every time <cite>self.normalize()</cite> is called.
 If False, the calculated statistics are used but not updated anymore; this may be used during evaluation.</p>
 <p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.NormalizeReward" title="gymnasium.wrappers.vector.NormalizeReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.NormalizeReward</span></code></a>.</p>
-<dl class="simple">
-<dt>Important note:</dt><dd><p>Contrary to what the name suggests, this wrapper does not normalize the rewards to have a mean of 0 and a standard
-deviation of 1. Instead, it scales the rewards such that <strong>discounted returns</strong> have approximately unit variance.
-See [Engstrom et al.](<a class="reference external" href="https://openreview.net/forum?id=r1etN1rtPB">https://openreview.net/forum?id=r1etN1rtPB</a>) on “reward scaling” for more information.</p>
-</dd>
-</dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In v0.27, NormalizeReward was updated as the forward discounted reward estimate was incorrectly computed in Gym v0.25+.
@@ -494,7 +486,6 @@ instantiated or the policy was changed recently.</p>
 <span class="gp">... </span>    <span class="n">episode_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># will approach 0.99 with more episodes</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span>
 <span class="go">np.float64(0.010162116476634746)</span>
 </pre></div>
@@ -723,8 +714,6 @@ instantiated or the policy was changed recently.</p>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
-    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script>
 
