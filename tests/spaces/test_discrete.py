@@ -68,7 +68,7 @@ def test_invalid_probability_mask():
     except AssertionError as e:
         assert (
             str(e)
-            == "The expected dtype of the probability mask is np.float64, actual dtype: np.int8"
+            == "The expected dtype of the probability mask is np.float64, actual dtype: int8"
         ), f"unexpected error message: {e}"
     else:
         assert False, "Expected AssertionError not raised"
@@ -78,7 +78,7 @@ def test_invalid_probability_mask():
     except AssertionError as e:
         assert (
             str(e)
-            == "All values of a mask should be 0, 1, or in between, actual values: [-0.5  1.   0.5]"
+            == "All values of a mask should be 0, 1, or in between, actual values: [-0.5  1.   0.5  0. ]"
         ), f"unexpected error message: {e}"
     else:
         assert False, "Expected AssertionError not raised"
@@ -98,7 +98,7 @@ def test_invalid_probability_mask():
     except AssertionError as e:
         assert (
             str(e)
-            == "The sum of all values of the probability mask should be 1, actual sum: 0"
+            == "The sum of all values of the probability mask should be 1, actual sum: 0.0"
         ), f"unexpected error message: {e}"
     else:
         assert False, "Expected AssertionError not raised"
