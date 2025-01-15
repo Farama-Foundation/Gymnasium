@@ -67,7 +67,7 @@ class Discrete(Space[np.int64]):
     ) -> np.int64:
         """Generates a single random sample from this space.
 
-        A sample will be chosen uniformly at random with the mask if provided
+        A sample will be chosen uniformly at random with a mask if provided
 
         Args:
             mask: An optional mask for if an action can be selected.
@@ -113,7 +113,7 @@ class Discrete(Space[np.int64]):
             assert probability.shape == (
                 self.n,
             ), f"The expected shape of the probability mask is {(self.n,)}, actual shape: {probability.shape}"
-            valid_action_mask = probability > 0 and probability <= 1
+            valid_action_mask = 0 < probability <= 1
             assert np.all(
                 np.logical_or(probability == 0, valid_action_mask)
             ), f"All values of a mask should be 0, 1, or in between, actual values: {probability}"
