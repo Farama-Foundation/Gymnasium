@@ -120,7 +120,9 @@ class Discrete(Space[np.int64]):
             assert (
                 np.sum(probability) == 1
             ), f"The sum of all values of the probability mask should be 1, actual sum: {np.sum(probability)}"
-            normalized_probability = probability / np.sum(probability, dtype=float)
+            normalized_probability = probability / np.sum(
+                probability, dtype=float
+            )  # as recommended by the numpy.random.Generator.choice documentation
             return self.start + self.np_random.choice(
                 np.where(valid_action_mask)[0],
                 p=normalized_probability[valid_action_mask],
