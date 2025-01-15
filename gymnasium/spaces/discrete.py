@@ -22,6 +22,12 @@ class Discrete(Space[np.int64]):
         >>> observation_space = Discrete(3, start=-1, seed=42)  # {-1, 0, 1}
         >>> observation_space.sample()
         np.int64(-1)
+        >>> observation_space.sample(mask=np.array([0,0,1], dtype=np.int8))
+        np.int64(1)
+        >>> observation_space.sample(probability=np.array([0,0,1], dtype=np.float64))
+        np.int64(1)
+        >>> observation_space.sample(probability=np.array([0,0.3,0.7], dtype=np.float64))
+        np.int64(1)
     """
 
     def __init__(
@@ -56,7 +62,9 @@ class Discrete(Space[np.int64]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(self, mask: MaskNDArray | None = None) -> np.int64:
+    def sample(
+        self, mask: MaskNDArray | None = None, probability: MaskNDArray | None = None
+    ) -> np.int64:
         """Generates a single random sample from this space.
 
         A sample will be chosen uniformly at random with the mask if provided
@@ -65,11 +73,17 @@ class Discrete(Space[np.int64]):
             mask: An optional mask for if an action can be selected.
                 Expected `np.ndarray` of shape ``(n,)`` and dtype ``np.int8`` where ``1`` represents valid actions and ``0`` invalid / infeasible actions.
                 If there are no possible actions (i.e. ``np.all(mask == 0)``) then ``space.start`` will be returned.
+            probability: An optional probability mask describing the probability of each action being selected.
+                Expected `np.ndarray` of shape ``(n,)`` and dtype ``np.float64`` where each value is in the range ``[0, 1]`` and the sum of all values is 1.
+                If the values do not sum to 1, an exception will be thrown.
 
         Returns:
             A sampled integer from the space
         """
         if mask is not None:
+            assert (
+                probability is None
+            ), "Either mask or probability can be provided, not both"
             assert isinstance(
                 mask, np.ndarray
             ), f"The expected type of the mask is np.ndarray, actual type: {type(mask)}"
@@ -89,6 +103,28 @@ class Discrete(Space[np.int64]):
                 )
             else:
                 return self.start
+        elif probability is not None:
+            assert isinstance(
+                probability, np.ndarray
+            ), f"The expected type of the probability mask is np.ndarray, actual type: {type(probability)}"
+            assert (
+                probability.dtype == np.float64
+            ), f"The expected dtype of the probability mask is np.float64, actual dtype: {probability.dtype}"
+            assert probability.shape == (
+                self.n,
+            ), f"The expected shape of the probability mask is {(self.n,)}, actual shape: {probability.shape}"
+            valid_action_mask = probability > 0 and probability <= 1
+            assert np.all(
+                np.logical_or(probability == 0, valid_action_mask)
+            ), f"All values of a mask should be 0, 1, or in between, actual values: {probability}"
+            assert (
+                np.sum(probability) == 1
+            ), f"The sum of all values of the probability mask should be 1, actual sum: {np.sum(probability)}"
+            normalized_probability = probability / np.sum(probability, dtype=float)
+            return self.start + self.np_random.choice(
+                np.where(valid_action_mask)[0],
+                p=normalized_probability[valid_action_mask],
+            )
 
         return self.start + self.np_random.integers(self.n)
 
