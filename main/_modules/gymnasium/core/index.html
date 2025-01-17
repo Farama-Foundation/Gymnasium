@@ -835,18 +835,23 @@
 <span class="sd">            name: The variable name</span>
 <span class="sd">            value: The new variable value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sub_env</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span>
-        <span class="n">attr_set</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">sub_env</span> <span class="o">=</span> <span class="bp">self</span>
 
-        <span class="k">while</span> <span class="n">attr_set</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sub_env</span><span class="p">,</span> <span class="n">Wrapper</span><span class="p">):</span>
+        <span class="c1"># loop through all the wrappers, checking if it has the variable name then setting it</span>
+        <span class="c1">#   otherwise stripping the wrapper to check the next.</span>
+        <span class="c1">#   end when the core env is reached</span>
+        <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sub_env</span><span class="p">,</span> <span class="n">Wrapper</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sub_env</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="n">sub_env</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-                <span class="n">attr_set</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">sub_env</span> <span class="o">=</span> <span class="n">sub_env</span><span class="o">.</span><span class="n">env</span>
+                <span class="k">return</span>
 
-        <span class="k">if</span> <span class="n">attr_set</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="nb">setattr</span><span class="p">(</span><span class="n">sub_env</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+            <span class="n">sub_env</span> <span class="o">=</span> <span class="n">sub_env</span><span class="o">.</span><span class="n">env</span>
+
+        <span class="c1"># check if the base environment has the wrapper, otherwise, we set it on the top (this) wrapper</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sub_env</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">sub_env</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
