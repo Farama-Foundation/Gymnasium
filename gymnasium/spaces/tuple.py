@@ -87,7 +87,20 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
                 f"Expected seed type: list, tuple, int or None, actual type: {type(seed)}"
             )
 
-    def sample(self, mask: tuple[Any | None, ...] | None = None) -> tuple[Any, ...]:
+    def _verify_mask(self, mask: tuple[Any | None, ...], mask_name: str) -> None:
+        """Check the validity of the mask."""
+        assert isinstance(
+            mask, tuple
+        ), f"Expected type of {mask_name} is tuple, actual type: {type(mask)}"
+        assert len(mask) == len(
+            self.spaces
+        ), f"Expected length of {mask_name} is {len(self.spaces)}, actual length: {len(mask)}"
+
+    def sample(
+        self,
+        mask: tuple[Any | None, ...] | None = None,
+        probability: tuple[Any | None, ...] | None = None,
+    ) -> tuple[Any, ...]:
         """Generates a single random sample inside this space.
 
         This method draws independent samples from the subspaces.
@@ -95,21 +108,26 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
         Args:
             mask: An optional tuple of optional masks for each of the subspace's samples,
                 expects the same number of masks as spaces
+            probability: An optional tuple of optional probability masks for each of the subspace's samples,
+                expects the same number of probability masks as spaces
 
         Returns:
             Tuple of the subspace's samples
         """
         if mask is not None:
-            assert isinstance(
-                mask, tuple
-            ), f"Expected type of mask is tuple, actual type: {type(mask)}"
-            assert len(mask) == len(
-                self.spaces
-            ), f"Expected length of mask is {len(self.spaces)}, actual length: {len(mask)}"
-
+            assert (
+                probability is None
+            ), "Either mask or probability can be provided, not both"
+            self._verify_mask(mask, "mask")
             return tuple(
                 space.sample(mask=sub_mask)
                 for space, sub_mask in zip(self.spaces, mask)
+            )
+        elif probability is not None:
+            self._verify_mask(probability, "probability")
+            return tuple(
+                space.sample(probability=sub_probability)
+                for space, sub_probability in zip(self.spaces, probability)
             )
 
         return tuple(space.sample() for space in self.spaces)
