@@ -19,8 +19,6 @@ ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
 RenderFrame = TypeVar("RenderFrame")
 
-NOT_FOUND = object()
-
 
 class Env(Generic[ObsType, ActType]):
     r"""The main Gymnasium class for implementing Reinforcement Learning Agents environments.
@@ -417,15 +415,15 @@ class Wrapper(
         Returns:
             The variable with name in wrapper or lower environments
         """
-        attr = getattr(self, name, NOT_FOUND)
-        if attr is NOT_FOUND:
+        if hasattr(self, name):
+            return getattr(self, name)
+        else:
             try:
                 return self.env.get_wrapper_attr(name)
             except AttributeError as e:
                 raise AttributeError(
                     f"wrapper {self.class_name()} has no attribute {name!r}"
                 ) from e
-        return attr
 
     def set_wrapper_attr(self, name: str, value: Any):
         """Sets an attribute on this wrapper or lower environment if `name` is already defined.
@@ -435,16 +433,22 @@ class Wrapper(
             value: The new variable value
         """
         sub_env = self
-        while True:
+
+        # loop through all the wrappers, checking if it has the variable name then setting it
+        #   otherwise stripping the wrapper to check the next.
+        #   end when the core env is reached
+        while isinstance(sub_env, Wrapper):
             if hasattr(sub_env, name):
                 setattr(sub_env, name, value)
                 return
-            if isinstance(sub_env, Wrapper):
-                sub_env = sub_env.env
-            else:
-                sub_env = self
-                break
-        setattr(sub_env, name, value)
+
+            sub_env = sub_env.env
+
+        # check if the base environment has the wrapper, otherwise, we set it on the top (this) wrapper
+        if hasattr(sub_env, name):
+            setattr(sub_env, name, value)
+
+        setattr(self, name, value)
 
     def __str__(self):
         """Returns the wrapper name and the :attr:`env` representation string."""
