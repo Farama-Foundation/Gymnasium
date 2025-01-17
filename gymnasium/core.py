@@ -432,18 +432,23 @@ class Wrapper(
             name: The variable name
             value: The new variable value
         """
-        sub_env = self.env
-        attr_set = False
+        sub_env = self
 
-        while attr_set is False and isinstance(sub_env, Wrapper):
+        # loop through all the wrappers, checking if it has the variable name then setting it
+        #   otherwise stripping the wrapper to check the next.
+        #   end when the core env is reached
+        while isinstance(sub_env, Wrapper):
             if hasattr(sub_env, name):
                 setattr(sub_env, name, value)
-                attr_set = True
-            else:
-                sub_env = sub_env.env
+                return
 
-        if attr_set is False:
+            sub_env = sub_env.env
+
+        # check if the base environment has the wrapper, otherwise, we set it on the top (this) wrapper
+        if hasattr(sub_env, name):
             setattr(sub_env, name, value)
+        else:
+            setattr(self, name, value)
 
     def __str__(self):
         """Returns the wrapper name and the :attr:`env` representation string."""
