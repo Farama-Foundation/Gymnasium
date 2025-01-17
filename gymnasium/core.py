@@ -447,8 +447,8 @@ class Wrapper(
         # check if the base environment has the wrapper, otherwise, we set it on the top (this) wrapper
         if hasattr(sub_env, name):
             setattr(sub_env, name, value)
-
-        setattr(self, name, value)
+        else:
+            setattr(self, name, value)
 
     def __str__(self):
         """Returns the wrapper name and the :attr:`env` representation string."""
