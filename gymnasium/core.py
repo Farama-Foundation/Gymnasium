@@ -19,6 +19,8 @@ ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
 RenderFrame = TypeVar("RenderFrame")
 
+NOT_FOUND = object()
+
 
 class Env(Generic[ObsType, ActType]):
     r"""The main Gymnasium class for implementing Reinforcement Learning Agents environments.
@@ -415,15 +417,15 @@ class Wrapper(
         Returns:
             The variable with name in wrapper or lower environments
         """
-        if hasattr(self, name):
-            return getattr(self, name)
-        else:
+        attr = getattr(self, name, NOT_FOUND)
+        if attr is NOT_FOUND:
             try:
                 return self.env.get_wrapper_attr(name)
             except AttributeError as e:
                 raise AttributeError(
                     f"wrapper {self.class_name()} has no attribute {name!r}"
                 ) from e
+        return attr
 
     def set_wrapper_attr(self, name: str, value: Any):
         """Sets an attribute on this wrapper or lower environment if `name` is already defined.
@@ -432,18 +434,17 @@ class Wrapper(
             name: The variable name
             value: The new variable value
         """
-        sub_env = self.env
-        attr_set = False
-
-        while attr_set is False and isinstance(sub_env, Wrapper):
+        sub_env = self
+        while True:
             if hasattr(sub_env, name):
                 setattr(sub_env, name, value)
-                attr_set = True
-            else:
+                return
+            if isinstance(sub_env, Wrapper):
                 sub_env = sub_env.env
-
-        if attr_set is False:
-            setattr(sub_env, name, value)
+            else:
+                sub_env = self
+                break
+        setattr(sub_env, name, value)
 
     def __str__(self):
         """Returns the wrapper name and the :attr:`env` representation string."""
