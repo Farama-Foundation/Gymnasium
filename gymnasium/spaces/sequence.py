@@ -177,13 +177,13 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
                 The second element of the mask tuple ``sample_mask`` specifies a mask that is applied when
                 sampling elements from the base space. The mask is applied for each feature space sample.
             probability: An optional probability mask for (optionally) the length of the sequence and (optionally) the values in the sequence.
-                If you specify ``probability``, it is expected to be a tuple of the form ``(length_probability, sample_probability)`` where ``length_probability`` is
+                If you specify ``probability``, it is expected to be a tuple of the form ``(length_mask, sample_mask)`` where ``length_mask`` is
 
                 * ``None`` The length will be randomly drawn from a geometric distribution
                 * ``np.ndarray`` of integers, in which case the length of the sampled sequence is randomly drawn from this array.
                 * ``int`` for a fixed length sample
 
-                The second element of the probability tuple ``sample_probability` specifies a probability mask that is applied when
+                The second element of the probability tuple ``sample_mask`` specifies a probability mask that is applied when
                 sampling elements from the base space. The probability mask is applied for each feature space sample.
 
         Returns:
