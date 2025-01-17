@@ -67,7 +67,7 @@ class Discrete(Space[np.int64]):
     ) -> np.int64:
         """Generates a single random sample from this space.
 
-        A sample will be chosen uniformly at random with a mask if provided
+        A sample will be chosen uniformly at random with the mask if provided, or it will be chosen according to a specified probability distribution if the probability mask is provided.
 
         Args:
             mask: An optional mask for if an action can be selected.
