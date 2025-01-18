@@ -177,7 +177,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         if mask is not None:
             assert (
                 probability is None
-            ), "Either mask or probability can be provided, not both"
+            ), "Only one of `mask` or `probability` can be provided"
             self._verify_mask(mask, "mask")
             return {k: space.sample(mask=mask[k]) for k, space in self.spaces.items()}
         elif probability is not None:

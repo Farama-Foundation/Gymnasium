@@ -100,7 +100,11 @@ class OneOf(Space[Any]):
                 f"Expected None, int, or tuple of ints, actual type: {type(seed)}"
             )
 
-    def sample(self, mask: tuple[Any | None, ...] | None = None) -> tuple[int, Any]:
+    def sample(
+        self,
+        mask: tuple[Any | None, ...] | None = None,
+        probability: tuple[Any | None, ...] | None = None,
+    ) -> tuple[int, Any]:
         """Generates a single random sample inside this space.
 
         This method draws independent samples from the subspaces.
@@ -108,23 +112,40 @@ class OneOf(Space[Any]):
         Args:
             mask: An optional tuple of optional masks for each of the subspace's samples,
                 expects the same number of masks as spaces
+            probability: An optional tuple of optional probability masks for each of the subspace's samples,
+                expects the same number of probability masks as spaces
 
         Returns:
             Tuple of the subspace's samples
         """
         subspace_idx = self.np_random.integers(0, len(self.spaces), dtype=np.int64)
         subspace = self.spaces[subspace_idx]
-        if mask is not None:
+
+        if mask is not None and probability is not None:
+            raise ValueError("Only one of `mask` or `probability` can be provided.")
+
+        mask_type = (
+            "mask"
+            if mask is not None
+            else "probability" if probability is not None else None
+        )
+        chosen_mask = mask if mask is not None else probability
+
+        if chosen_mask is not None:
             assert isinstance(
-                mask, tuple
-            ), f"Expected type of mask is tuple, actual type: {type(mask)}"
-            assert len(mask) == len(
+                chosen_mask, tuple
+            ), f"Expected type of `{mask_type}` is tuple, actual type: {type(chosen_mask)}"
+            assert len(chosen_mask) == len(
                 self.spaces
-            ), f"Expected length of mask is {len(self.spaces)}, actual length: {len(mask)}"
+            ), f"Expected length of `{mask_type}` is {len(self.spaces)}, actual length: {len(chosen_mask)}"
+            chosen_mask = chosen_mask[subspace_idx]
 
-            mask = mask[subspace_idx]
-
-        return subspace_idx, subspace.sample(mask=mask)
+        subspace_sample = (
+            subspace.sample(mask=chosen_mask)
+            if mask_type == "mask"
+            else subspace.sample(probability=chosen_mask)
+        )
+        return subspace_idx, subspace_sample
 
     def contains(self, x: tuple[int, Any]) -> bool:
         """Return boolean specifying if x is a valid member of this space."""

@@ -272,7 +272,7 @@ class Graph(Space[GraphInstance]):
         if mask is not None:
             assert (
                 probability is None
-            ), "Either mask or probability can be provided, not both"
+            ), "Only one of `mask` or `probability` can be provided"
             node_space_mask, edge_space_mask = mask
             mask_type = "mask"
         elif probability is not None:

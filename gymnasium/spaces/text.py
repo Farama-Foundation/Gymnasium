@@ -78,6 +78,7 @@ class Text(Space[str]):
     def sample(
         self,
         mask: None | (tuple[int | None, NDArray[np.int8] | None]) = None,
+        probability: None | (tuple[int | None, NDArray[np.float64] | None]) = None,
     ) -> str:
         """Generates a single random sample from this space with by default a random length between ``min_length`` and ``max_length`` and sampled from the ``charset``.
 
@@ -86,40 +87,30 @@ class Text(Space[str]):
                 The length is expected to be between the ``min_length`` and ``max_length`` otherwise a random integer between ``min_length`` and ``max_length`` is selected.
                 For the mask, we expect a numpy array of length of the charset passed with ``dtype == np.int8``.
                 If the charlist mask is all zero then an empty string is returned no matter the ``min_length``
+            probability: An optional tuples of length and probability mask for the text.
+                The length is expected to be between the ``min_length`` and ``max_length`` otherwise a random integer between ``min_length`` and ``max_length`` is selected.
+                For the probability mask, we expect a numpy array of length of the charset passed with ``dtype == np.float64``.
+                The sum of the probability mask should be 1, otherwise an exception is raised.
 
         Returns:
             A sampled string from the space
         """
-        if mask is not None:
-            assert isinstance(
-                mask, tuple
-            ), f"Expects the mask type to be a tuple, actual type: {type(mask)}"
-            assert (
-                len(mask) == 2
-            ), f"Expects the mask length to be two, actual length: {len(mask)}"
-            length, charlist_mask = mask
+        if mask is not None and probability is not None:
+            raise ValueError("Only one of `mask` or `probability` can be provided.")
 
-            if length is not None:
-                assert np.issubdtype(
-                    type(length), np.integer
-                ), f"Expects the Text sample length to be an integer, actual type: {type(length)}"
-                assert (
-                    self.min_length <= length <= self.max_length
-                ), f"Expects the Text sample length be between {self.min_length} and {self.max_length}, actual length: {length}"
+        mask_type = (
+            "mask"
+            if mask is not None
+            else "probability" if probability is not None else None
+        )
+        chosen_mask = mask if mask is not None else probability
 
-            if charlist_mask is not None:
-                assert isinstance(
-                    charlist_mask, np.ndarray
-                ), f"Expects the Text sample mask to be an np.ndarray, actual type: {type(charlist_mask)}"
-                assert (
-                    charlist_mask.dtype == np.int8
-                ), f"Expects the Text sample mask to be an np.ndarray, actual dtype: {charlist_mask.dtype}"
-                assert charlist_mask.shape == (
-                    len(self.character_set),
-                ), f"expects the Text sample mask to be {(len(self.character_set),)}, actual shape: {charlist_mask.shape}"
-                assert np.all(
-                    np.logical_or(charlist_mask == 0, charlist_mask == 1)
-                ), f"Expects all masks values to 0 or 1, actual values: {charlist_mask}"
+        if chosen_mask is not None:
+            length, charlist_mask = self._validate_mask(
+                chosen_mask,
+                np.int8 if mask_type == "mask" else np.float64,
+                mask_type,
+            )
         else:
             length, charlist_mask = None, None
 
@@ -129,23 +120,80 @@ class Text(Space[str]):
         if charlist_mask is None:
             string = self.np_random.choice(self.character_list, size=length)
         else:
-            valid_mask = charlist_mask == 1
-            valid_indexes = np.where(valid_mask)[0]
-            if len(valid_indexes) == 0:
-                if self.min_length == 0:
-                    string = ""
+            valid_action_mask = charlist_mask > 0
+            if mask_type == "mask":
+                valid_indexes = np.where(valid_action_mask)[0]
+                if len(valid_indexes) == 0:
+                    if self.min_length == 0:
+                        string = ""
+                    else:
+                        # Otherwise the string will not be contained in the space
+                        raise ValueError(
+                            f"Trying to sample with a minimum length > 0 ({self.min_length}) but the character mask is all zero meaning that no character could be sampled."
+                        )
                 else:
-                    # Otherwise the string will not be contained in the space
-                    raise ValueError(
-                        f"Trying to sample with a minimum length > 0 ({self.min_length}) but the character mask is all zero meaning that no character could be sampled."
+                    string = "".join(
+                        self.character_list[index]
+                        for index in self.np_random.choice(valid_indexes, size=length)
                     )
-            else:
+            elif mask_type == "probability":
+                normalized_probability = charlist_mask / np.sum(
+                    charlist_mask, dtype=float
+                )
                 string = "".join(
                     self.character_list[index]
-                    for index in self.np_random.choice(valid_indexes, size=length)
+                    for index in self.np_random.choice(
+                        np.where(valid_action_mask)[0],
+                        size=length,
+                        p=normalized_probability[valid_action_mask],
+                    )
                 )
 
         return "".join(string)
+
+    def _validate_mask(
+        self,
+        mask: tuple[int | None, NDArray[np.int8] | NDArray[np.float64] | None],
+        expected_dtype: type,
+        mask_type: str,
+    ) -> tuple[int | None, NDArray[np.int8] | NDArray[np.float64] | None]:
+        assert isinstance(
+            mask, tuple
+        ), f"Expects the `{mask_type}` type to be a tuple, actual type: {type(mask)}"
+        assert (
+            len(mask) == 2
+        ), f"Expects the `{mask_type}` length to be two, actual length: {len(mask)}"
+        length, charlist_mask = mask
+
+        if length is not None:
+            assert np.issubdtype(
+                type(length), np.integer
+            ), f"Expects the Text sample length to be an integer, actual type: {type(length)}"
+            assert (
+                self.min_length <= length <= self.max_length
+            ), f"Expects the Text sample length be between {self.min_length} and {self.max_length}, actual length: {length}"
+        if charlist_mask is not None:
+            assert isinstance(
+                charlist_mask, np.ndarray
+            ), f"Expects the Text sample `{mask_type}` to be an np.ndarray, actual type: {type(charlist_mask)}"
+            assert (
+                charlist_mask.dtype == expected_dtype
+            ), f"Expects the Text sample `{mask_type}` to be type {expected_dtype}, actual dtype: {charlist_mask.dtype}"
+            assert charlist_mask.shape == (
+                len(self.character_set),
+            ), f"expects the Text sample `{mask_type}` to be {(len(self.character_set),)}, actual shape: {charlist_mask.shape}"
+            if mask_type == "mask":
+                assert np.all(
+                    np.logical_or(charlist_mask == 0, charlist_mask == 1)
+                ), f"Expects all mask values to 0 or 1, actual values: {charlist_mask}"
+            elif mask_type == "probability":
+                assert np.all(
+                    np.logical_and(charlist_mask >= 0, charlist_mask <= 1)
+                ), f"Expects all probability mask values to be within [0,1], actual values: {charlist_mask}"
+                assert np.isclose(
+                    np.sum(charlist_mask), 1
+                ), f"Expects the sum of the probability mask to be 1, actual sum: {np.sum(charlist_mask)}"
+        return length, charlist_mask
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
