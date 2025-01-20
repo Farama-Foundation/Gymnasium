@@ -196,3 +196,52 @@ def test_space_legacy_pickling():
     new_legacy_space.__setstate__(legacy_state)
     assert new_legacy_space == legacy_space
     assert np.all(new_legacy_space.start == np.array([0, 0, 0]))
+
+
+def test_multidiscrete_sample_edge_cases():
+    # Test edge case where one dimension has size 1
+    space = MultiDiscrete([5, 1, 3])
+    samples = [space.sample() for _ in range(1000)]
+    samples = np.array(samples)
+
+    # The second dimension should always be 0 (only one valid value)
+    assert np.all(samples[:, 1] == 0)
+
+
+def test_multidiscrete_sample():
+    # Test sampling without a mask
+    space = MultiDiscrete([5, 2, 3])
+    samples = [space.sample() for _ in range(1000)]
+    samples = np.array(samples)
+
+    # Check that the samples fall within the bounds
+    assert np.all(samples[:, 0] < 5)
+    assert np.all(samples[:, 1] < 2)
+    assert np.all(samples[:, 2] < 3)
+
+
+def test_multidiscrete_sample_with_mask():
+    # Test sampling with a mask
+    space = MultiDiscrete([5, 2, 3])
+    mask = np.array([[1, 0, 1], [1, 1, 0], [1, 0, 1]])
+    samples = [space.sample(mask=mask) for _ in range(1000)]
+    samples = np.array(samples)
+
+    # Check that the samples respect the mask
+    for i, dim in enumerate(space.nvec):
+        for j in range(dim):
+            if mask[i, j] == 0:
+                assert np.all(samples[:, i] != j)
+
+
+def test_multidiscrete_sample_probabilities():
+    # Test sampling with probabilities
+    space = MultiDiscrete([3, 3])
+    probabilities = np.array([[0.1, 0.7, 0.2], [0.3, 0.3, 0.4]])
+    samples = [space.sample(probabilities=probabilities) for _ in range(10000)]
+    samples = np.array(samples)
+
+    # Check empirical probabilities
+    for i in range(2):
+        counts = np.bincount(samples[:, i], minlength=3) / len(samples)
+        np.testing.assert_allclose(counts, probabilities[i], atol=0.05)

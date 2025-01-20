@@ -170,3 +170,109 @@ def test_keys_contains():
     assert "a" in space.keys()
 
     assert "c" not in space.keys()
+
+
+def test_sample_with_mask():
+    """Test the sample method with valid masks."""
+    space = Dict(
+        {
+            "a": Discrete(5),
+            "b": Box(low=0, high=1, shape=(2,)),
+        }
+    )
+
+    mask = {
+        "a": [0, 1, 0, 0, 0],  # Only allow sampling the value 1
+        "b": None,  # No mask for Box space
+    }
+
+    for _ in range(10):
+        sample = space.sample(mask=mask)
+        assert sample["a"] == 1  # Discrete space should only return 1
+        assert space["b"].contains(sample["b"])
+
+
+def test_sample_with_probability():
+    """Test the sample method with valid probabilities."""
+    space = Dict(
+        {
+            "a": Discrete(3),
+            "b": Box(low=0, high=1, shape=(2,)),
+        }
+    )
+
+    probability = {
+        "a": [0.1, 0.7, 0.2],  # Sampling probabilities for Discrete space
+        "b": None,  # No probability for Box space
+    }
+
+    samples = [space.sample(probability=probability)["a"] for _ in range(1000)]
+
+    # Check that the sampling roughly follows the probability distribution
+    counts = np.bincount(samples, minlength=3) / len(samples)
+    np.testing.assert_almost_equal(counts, probability["a"], decimal=1)
+
+
+def test_sample_with_invalid_mask():
+    """Test the sample method with an invalid mask."""
+    space = Dict(
+        {
+            "a": Discrete(5),
+            "b": Box(low=0, high=1, shape=(2,)),
+        }
+    )
+
+    invalid_mask = {
+        "a": [1, 0, 0],  # Length mismatch
+        "b": None,
+    }
+
+    with pytest.raises(
+        AssertionError, match="Expected mask keys to be same as space keys"
+    ):
+        space.sample(mask=invalid_mask)
+
+
+def test_sample_with_invalid_probability():
+    """Test the sample method with an invalid probability."""
+    space = Dict(
+        {
+            "a": Discrete(5),
+            "b": Box(low=0, high=1, shape=(2,)),
+        }
+    )
+
+    invalid_probability = {
+        "a": [0.5, 0.5],  # Length mismatch
+        "b": None,
+    }
+
+    with pytest.raises(
+        AssertionError, match="Expected probability keys to be same as space keys"
+    ):
+        space.sample(probability=invalid_probability)
+
+
+def test_sample_with_mask_and_probability():
+    """Ensure an error is raised when both mask and probability are provided."""
+    space = Dict(
+        {
+            "a": Discrete(3),
+            "b": Box(low=0, high=1, shape=(2,)),
+        }
+    )
+
+    mask = {
+        "a": [1, 0, 1],
+        "b": None,
+    }
+
+    probability = {
+        "a": [0.5, 0.2, 0.3],
+        "b": None,
+    }
+
+    with pytest.raises(
+        AssertionError, match="Only one of `mask` or `probability` can be provided"
+    ):
+        space.sample(mask=mask, probability=probability)

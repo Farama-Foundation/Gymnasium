@@ -61,7 +61,7 @@ class MultiBinary(Space[NDArray[np.int8]]):
         return True
 
     def sample(
-        self, mask: MaskNDArray | None = None, probability: MaskNDArray | None = None
+        self, mask: MaskNDArray | None = None, probability: None = None
     ) -> NDArray[np.int8]:
         """Generates a single random sample from this space.
 

@@ -108,7 +108,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
                 Only ``mask values == 1`` are possible to sample unless all mask values for an action are ``0`` then the default action ``self.start`` (the smallest element) is sampled.
             probability: An optional probability mask for multi-discrete, expects tuples with a ``np.ndarray`` probability mask in the position of each
                 action with shape ``(n,)`` where ``n`` is the number of actions and ``dtype=np.float64``.
-                Only ``0 <= probability mask values <= 1`` are possible to sample as long as the sum of all values is ``1``.
+                Only probability mask values within ``[0,1]`` are possible to sample as long as the sum of all values is ``1``.
 
         Returns:
             An ``np.ndarray`` of :meth:`Space.shape`
