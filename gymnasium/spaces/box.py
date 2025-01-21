@@ -366,7 +366,7 @@ class Box(Space[NDArray[Any]]):
             )
         elif probability is not None:
             raise gym.error.Error(
-                f"Box.sample cannot be provided a probability, actual value: {probability}"
+                f"Box.sample cannot be provided a probability mask, actual value: {probability}"
             )
 
         high = self.high if self.dtype.kind == "f" else self.high.astype("int64") + 1

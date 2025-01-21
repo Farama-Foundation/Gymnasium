@@ -81,7 +81,7 @@ class Discrete(Space[np.int64]):
             A sampled integer from the space
         """
         if mask is not None and probability is not None:
-            raise ValueError("Only one of `mask` or `probability` can be provided.")
+            raise ValueError("Only one of `mask` or `probability` can be provided")
 
         mask_type = (
             "mask"

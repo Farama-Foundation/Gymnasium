@@ -8,3 +8,4 @@ pygame
 sphinx_github_changelog
 ale_py
 tabulate
+mujoco-py<2.2,>=2.1

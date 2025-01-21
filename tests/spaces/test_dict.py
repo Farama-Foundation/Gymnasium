@@ -182,7 +182,9 @@ def test_sample_with_mask():
     )
 
     mask = {
-        "a": [0, 1, 0, 0, 0],  # Only allow sampling the value 1
+        "a": np.array(
+            [0, 1, 0, 0, 0], dtype=np.int8
+        ),  # Only allow sampling the value 1
         "b": None,  # No mask for Box space
     }
 
@@ -202,7 +204,9 @@ def test_sample_with_probability():
     )
 
     probability = {
-        "a": [0.1, 0.7, 0.2],  # Sampling probabilities for Discrete space
+        "a": np.array(
+            [0.1, 0.7, 0.2], dtype=np.float64
+        ),  # Sampling probabilities for Discrete space
         "b": None,  # No probability for Box space
     }
 
@@ -223,12 +227,15 @@ def test_sample_with_invalid_mask():
     )
 
     invalid_mask = {
-        "a": [1, 0, 0],  # Length mismatch
+        "a": np.array([1, 0, 0], dtype=np.float64),  # Length mismatch
         "b": None,
     }
 
     with pytest.raises(
-        AssertionError, match="Expected mask keys to be same as space keys"
+        AssertionError,
+        match=re.escape(
+            "The expected shape of `mask` is (np.int64(5),), actual shape: (3,)"
+        ),
     ):
         space.sample(mask=invalid_mask)
 
@@ -243,12 +250,15 @@ def test_sample_with_invalid_probability():
     )
 
     invalid_probability = {
-        "a": [0.5, 0.5],  # Length mismatch
+        "a": np.array([0.5, 0.5], dtype=np.float64),  # Length mismatch
         "b": None,
     }
 
     with pytest.raises(
-        AssertionError, match="Expected probability keys to be same as space keys"
+        AssertionError,
+        match=re.escape(
+            "The expected shape of `probability` is (np.int64(5),), actual shape: (2,)"
+        ),
     ):
         space.sample(probability=invalid_probability)
 
@@ -263,16 +273,17 @@ def test_sample_with_mask_and_probability():
     )
 
     mask = {
-        "a": [1, 0, 1],
+        "a": np.array([1, 0, 1], dtype=np.int8),
         "b": None,
     }
 
     probability = {
-        "a": [0.5, 0.2, 0.3],
+        "a": np.array([0.5, 0.2, 0.3], dtype=np.float64),
         "b": None,
     }
 
     with pytest.raises(
-        AssertionError, match="Only one of `mask` or `probability` can be provided"
+        AssertionError,
+        match=re.escape("Only one of `mask` or `probability` can be provided"),
     ):
         space.sample(mask=mask, probability=probability)

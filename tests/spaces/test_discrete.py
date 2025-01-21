@@ -1,6 +1,8 @@
+import re
 from copy import deepcopy
 
 import numpy as np
+import pytest
 
 from gymnasium.spaces import Discrete
 
@@ -39,8 +41,13 @@ def test_probability_mask():
     """Test that the probability parameter of the sample function works as expected."""
     space = Discrete(4, start=2)
     assert space.sample(probability=np.array([0, 1, 0, 0], dtype=np.float64)) == 3
-    assert space.sample(mask=np.array([0, 0.5, 0, 0.5], dtype=np.float64)) in [3, 5]
-    assert space.sample(mask=np.array([0.1, 0.2, 0.3, 0.4], dtype=np.float64)) in [
+    assert space.sample(probability=np.array([0, 0.5, 0, 0.5], dtype=np.float64)) in [
+        3,
+        5,
+    ]
+    assert space.sample(
+        probability=np.array([0.1, 0.2, 0.3, 0.4], dtype=np.float64)
+    ) in [
         2,
         3,
         4,
@@ -48,57 +55,57 @@ def test_probability_mask():
     ]
 
 
-def test_invalid_probability_mask():
-    """Test that invalid activities raise the correct exception."""
+def test_sample_with_mask_and_probability():
+    """Ensure an error is raised when both mask and probability are provided."""
     space = Discrete(4, start=2)
-    try:
+
+    with pytest.raises(
+        ValueError,
+        match=re.escape("Only one of `mask` or `probability` can be provided"),
+    ):
         space.sample(
             mask=np.array([0, 1, 0, 0], dtype=np.int8),
             probability=np.array([0, 1, 0, 0], dtype=np.float64),
         )
-    except AssertionError as e:
-        assert (
-            str(e) == "Either mask or probability can be provided, not both"
-        ), f"unexpected error message: {e}"
-    else:
-        assert False, "Expected AssertionError not raised"
 
-    try:
+
+def test_invalid_probability_mask_dtype():
+    """Test that invalid probability mask dtype raises the correct exception."""
+    space = Discrete(4, start=2)
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The expected dtype of `probability` is <class 'numpy.float64'>, actual dtype: int8"
+        ),
+    ):
         space.sample(probability=np.array([0, 1, 0, 0], dtype=np.int8))
-    except AssertionError as e:
-        assert (
-            str(e)
-            == "The expected dtype of the probability mask is np.float64, actual dtype: int8"
-        ), f"unexpected error message: {e}"
-    else:
-        assert False, "Expected AssertionError not raised"
 
-    try:
+
+def test_invalid_probability_mask_values():
+    """Test that invalid probability mask values raises the correct exception."""
+    space = Discrete(4, start=2)
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "All values of `probability mask` should be 0, 1, or in between, actual values: [-0.5  1.   0.5  0. ]"
+        ),
+    ):
         space.sample(probability=np.array([-0.5, 1, 0.5, 0], dtype=np.float64))
-    except AssertionError as e:
-        assert (
-            str(e)
-            == "All values of a mask should be 0, 1, or in between, actual values: [-0.5  1.   0.5  0. ]"
-        ), f"unexpected error message: {e}"
-    else:
-        assert False, "Expected AssertionError not raised"
 
-    try:
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The sum of all values of `probability mask` should be 1, actual sum: 1.1"
+        ),
+    ):
         space.sample(probability=np.array([0.2, 0.3, 0.4, 0.2], dtype=np.float64))
-    except AssertionError as e:
-        assert (
-            str(e)
-            == "The sum of all values of the probability mask should be 1, actual sum: 1.1"
-        ), f"unexpected error message: {e}"
-    else:
-        assert False, "Expected AssertionError not raised"
 
-    try:
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The sum of all values of `probability mask` should be 1, actual sum: 0.0"
+        ),
+    ):
         space.sample(probability=np.array([0, 0, 0, 0], dtype=np.float64))
-    except AssertionError as e:
-        assert (
-            str(e)
-            == "The sum of all values of the probability mask should be 1, actual sum: 0.0"
-        ), f"unexpected error message: {e}"
-    else:
-        assert False, "Expected AssertionError not raised"

@@ -140,6 +140,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         sub_start: MaskNDArray | np.integer[Any],
         mask_type: str,
     ) -> int | list[Any]:
+        """Returns a sample using the provided mask or probability mask."""
         if isinstance(sub_nvec, np.ndarray):
             assert isinstance(
                 sub_mask, tuple

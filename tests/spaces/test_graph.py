@@ -146,12 +146,12 @@ def test_probability_node_sampling():
     space.seed(42)
 
     # Define a probability distribution for nodes
-    probability = np.array([0.7, 0.2, 0.1], dtype=np.float32)
+    probability = np.array([0.7, 0.2, 0.1], dtype=np.float64)
     num_samples = 1000
 
     # Collect samples with the given probability
     samples = [
-        space.sample(mask=(probability, None), num_nodes=1).nodes[0]
+        space.sample(probability=((probability,), None), num_nodes=1).nodes[0]
         for _ in range(num_samples)
     ]
 
@@ -173,12 +173,12 @@ def test_probability_edge_sampling():
     space.seed(42)
 
     # Define a probability distribution for edges
-    probability = np.array([0.5, 0.3, 0.2], dtype=np.float32)
+    probability = np.array([0.5, 0.3, 0.2], dtype=np.float64)
     num_samples = 1000
 
     # Collect samples with the given probability
     samples = [
-        space.sample(mask=(None, probability), num_edges=1).edges[0]
+        space.sample(probability=(None, (probability,)), num_edges=1).edges[0]
         for _ in range(num_samples)
     ]
 
@@ -200,8 +200,8 @@ def test_probability_node_and_edge_sampling():
     space.seed(42)
 
     # Define probability distributions for nodes and edges
-    node_probability = np.array([0.6, 0.3, 0.1], dtype=np.float32)
-    edge_probability = np.array([0.4, 0.4, 0.2], dtype=np.float32)
+    node_probability = np.array([0.6, 0.3, 0.1], dtype=np.float64)
+    edge_probability = np.array([0.4, 0.4, 0.2], dtype=np.float64)
     num_samples = 1000
 
     # Collect samples with the given probabilities
@@ -209,7 +209,9 @@ def test_probability_node_and_edge_sampling():
     edge_samples = []
     for _ in range(num_samples):
         sample = space.sample(
-            mask=(node_probability, edge_probability), num_nodes=1, num_edges=1
+            probability=((node_probability,), (edge_probability,)),
+            num_nodes=1,
+            num_edges=1,
         )
         node_samples.append(sample.nodes[0])
         edge_samples.append(sample.edges[0])
