@@ -199,7 +199,7 @@ class Graph(Space[GraphInstance]):
                 (Box spaces don't support sample masks).
                 If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges
             probability: An optional tuple of optional node and edge probability mask that is only possible with Discrete spaces
-                (Box spaces don't support sample masks).
+                (Box spaces don't support sample probability masks).
                 If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges
             num_nodes: The number of nodes that will be sampled, the default is `10` nodes
             num_edges: An optional number of edges, otherwise, a random number between `0` and :math:`num_nodes^2`
