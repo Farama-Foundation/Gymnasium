@@ -345,6 +345,13 @@ class CliffWalkingEnv(Env):
         with closing(outfile):
             return outfile.getvalue()
 
+    def close(self):
+        if self.window_surface is not None:
+            import pygame
+
+            pygame.display.quit()
+            pygame.quit()
+
 
 # Elf and stool from https://franuka.itch.io/rpg-snow-tileset
 # All other assets by ____
