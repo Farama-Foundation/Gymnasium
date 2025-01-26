@@ -27,6 +27,7 @@ class Discrete(Space[np.int64]):
     def __init__(
         self,
         n: int | np.integer[Any],
+        dtype: str | type[np.integer[Any]] = np.int64,
         seed: int | np.random.Generator | None = None,
         start: int | np.integer[Any] = 0,
     ):
@@ -36,6 +37,7 @@ class Discrete(Space[np.int64]):
 
         Args:
             n (int): The number of elements of this space.
+            dtype: The space type, for example, ``int``, ``np.int64``, ``np.int32``, or ``np.uint8``.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the ``Dict`` space.
             start (int): The smallest element of this space.
         """
@@ -47,16 +49,27 @@ class Discrete(Space[np.int64]):
             type(start), np.integer
         ), f"Expects `start` to be an integer, actual type: {type(start)}"
 
-        self.n = np.int64(n)
-        self.start = np.int64(start)
-        super().__init__((), np.int64, seed)
+        # determine dtype
+        if dtype is None:
+            raise ValueError("Invalid Discrete dtype ({self.dtype}), cannot be None.")
+        self.dtype = np.dtype(dtype)
+
+        #  * check that dtype is an accepted dtype
+        if not (np.issubdtype(self.dtype, np.integer)):
+            raise ValueError(
+                f"Invalid Discrete dtype ({self.dtype}), must be an integer dtype"
+            )
+
+        self.n = self.dtype.type(n)
+        self.start = self.dtype.type(start)
+        super().__init__((), self.dtype, seed)
 
     @property
     def is_np_flattenable(self):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(self, mask: MaskNDArray | None = None) -> np.int64:
+    def sample(self, mask: MaskNDArray | None = None) -> np.integer[Any]:
         """Generates a single random sample from this space.
 
         A sample will be chosen uniformly at random with the mask if provided
@@ -84,13 +97,13 @@ class Discrete(Space[np.int64]):
                 np.logical_or(mask == 0, valid_action_mask)
             ), f"All values of a mask should be 0 or 1, actual values: {mask}"
             if np.any(valid_action_mask):
-                return self.start + self.np_random.choice(
-                    np.where(valid_action_mask)[0]
+                return self.start + self.dtype.type(
+                    self.np_random.choice(np.where(valid_action_mask)[0])
                 )
             else:
                 return self.start
 
-        return self.start + self.np_random.integers(self.n)
+        return self.start + self.np_random.integers(self.n).astype(self.dtype)
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
@@ -137,7 +150,7 @@ class Discrete(Space[np.int64]):
 
         super().__setstate__(state)
 
-    def to_jsonable(self, sample_n: Sequence[np.int64]) -> list[int]:
+    def to_jsonable(self, sample_n: Sequence[np.integer[Any]]) -> list[int]:
         """Converts a list of samples to a list of ints."""
         return [int(x) for x in sample_n]
 
