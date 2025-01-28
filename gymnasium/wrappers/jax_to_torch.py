@@ -75,7 +75,7 @@ def _number_torch_to_jax(value: numbers.Number) -> Any:
 def _tensor_torch_to_jax(value: torch.Tensor) -> jax.Array:
     """Converts a PyTorch Tensor into a Jax Array."""
     if _FULL_DLPACK_SUPPORT:
-        return jax_dlpack.from_dlpack(value)
+        return jax_dlpack.from_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
     tensor = torch_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
     tensor = jax_dlpack.from_dlpack(tensor)  # pyright: ignore[reportPrivateImportUsage]
     return tensor
@@ -113,7 +113,7 @@ def _devicearray_jax_to_torch(
     """Converts a Jax Array into a PyTorch Tensor."""
     assert jax_dlpack is not None and torch_dlpack is not None
     if _FULL_DLPACK_SUPPORT:
-        tensor = torch_dlpack.from_dlpack(value)
+        tensor = torch_dlpack.from_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
     else:
         tensor = jax_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
         tensor = torch_dlpack.from_dlpack(tensor)  # pyright: ignore[reportPrivateImportUsage]
