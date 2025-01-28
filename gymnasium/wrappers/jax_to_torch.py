@@ -46,7 +46,9 @@ try:
     import torch
     from torch.utils import dlpack as torch_dlpack
 
-    _FULL_DLPACK_SUPPORT = _FULL_DLPACK_SUPPORT and _at_least_version(torch.__version__, "1.10.0")
+    _FULL_DLPACK_SUPPORT = _FULL_DLPACK_SUPPORT and _at_least_version(
+        torch.__version__, "1.10.0"
+    )
     Device = Union[str, torch.device]
 except ImportError:
     raise DependencyNotInstalled(
@@ -75,7 +77,9 @@ def _number_torch_to_jax(value: numbers.Number) -> Any:
 def _tensor_torch_to_jax(value: torch.Tensor) -> jax.Array:
     """Converts a PyTorch Tensor into a Jax Array."""
     if _FULL_DLPACK_SUPPORT:
-        return jax_dlpack.from_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
+        return jax_dlpack.from_dlpack(  # pyright: ignore[reportPrivateImportUsage]
+            value
+        )
     tensor = torch_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
     tensor = jax_dlpack.from_dlpack(tensor)  # pyright: ignore[reportPrivateImportUsage]
     return tensor
@@ -113,10 +117,16 @@ def _devicearray_jax_to_torch(
     """Converts a Jax Array into a PyTorch Tensor."""
     assert jax_dlpack is not None and torch_dlpack is not None
     if _FULL_DLPACK_SUPPORT:
-        tensor = torch_dlpack.from_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
+        tensor = torch_dlpack.from_dlpack(  # pyright: ignore[reportPrivateImportUsage]
+            value
+        )
     else:
-        tensor = jax_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
-        tensor = torch_dlpack.from_dlpack(tensor)  # pyright: ignore[reportPrivateImportUsage]
+        tensor = jax_dlpack.to_dlpack(  # pyright: ignore[reportPrivateImportUsage]
+            value
+        )
+        tensor = torch_dlpack.from_dlpack(  # pyright: ignore[reportPrivateImportUsage]
+            tensor
+        )
     if device:
         return tensor.to(device=device)
     return tensor
