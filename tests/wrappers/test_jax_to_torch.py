@@ -2,7 +2,6 @@
 
 from typing import NamedTuple
 
-import numpy as np
 import pytest
 
 
@@ -30,7 +29,7 @@ def torch_data_equivalence(data_1, data_2) -> bool:
                 torch_data_equivalence(o_1, o_2) for o_1, o_2 in zip(data_1, data_2)
             )
         elif isinstance(data_1, torch.Tensor):
-            return data_1.shape == data_2.shape and np.allclose(
+            return data_1.shape == data_2.shape and torch.allclose(
                 data_1, data_2, atol=0.00001
             )
         else:
@@ -44,23 +43,25 @@ class ExampleNamedTuple(NamedTuple):
     b: torch.Tensor
 
 
+# Unless jax_enable_x64 is set at startup, jax will prevent us from creating double precision
+# arrays. Therefore, all arrays are expected to be single precision after a roundtrip.
 @pytest.mark.parametrize(
     "value, expected_value",
     [
         (1.0, torch.tensor(1.0)),
-        (2, torch.tensor(2)),
-        ((3.0, 4), (torch.tensor(3.0), torch.tensor(4))),
-        ([3.0, 4], [torch.tensor(3.0), torch.tensor(4)]),
+        (2, torch.tensor(2, dtype=torch.int32)),
+        ((3.0, 4), (torch.tensor(3.0), torch.tensor(4, dtype=torch.int32))),
+        ([3.0, 4], [torch.tensor(3.0), torch.tensor(4, dtype=torch.int32)]),
         (
             {
                 "a": 6.0,
                 "b": 7,
             },
-            {"a": torch.tensor(6.0), "b": torch.tensor(7)},
+            {"a": torch.tensor(6.0), "b": torch.tensor(7, dtype=torch.int32)},
         ),
         (torch.tensor(1.0), torch.tensor(1.0)),
-        (torch.tensor(1.0), torch.tensor(1.0)),
-        (torch.tensor([1, 2]), torch.tensor([1, 2])),
+        (torch.tensor(1), torch.tensor(1, dtype=torch.int32)),
+        (torch.tensor([1, 2]), torch.tensor([1, 2], dtype=torch.int32)),
         (
             torch.tensor([[1.0], [2.0]]),
             torch.tensor([[1.0], [2.0]]),
@@ -76,11 +77,11 @@ class ExampleNamedTuple(NamedTuple):
             },
             {
                 "a": (
-                    torch.tensor(1),
+                    torch.tensor(1, dtype=torch.int32),
                     torch.tensor(2.0),
-                    torch.tensor([3, 4]),
+                    torch.tensor([3, 4], dtype=torch.int32),
                 ),
-                "b": {"c": torch.tensor(5)},
+                "b": {"c": torch.tensor(5, dtype=torch.int32)},
             },
         ),
         (
@@ -89,7 +90,7 @@ class ExampleNamedTuple(NamedTuple):
                 b=torch.tensor([1.0, 2.0]),
             ),
             ExampleNamedTuple(
-                a=torch.tensor([1, 2]),
+                a=torch.tensor([1, 2], dtype=torch.int32),
                 b=torch.tensor([1.0, 2.0]),
             ),
         ),
