@@ -25,18 +25,6 @@ try:
     import jax.numpy as jnp
     from jax import dlpack as jax_dlpack
 
-    def _at_least_version(version: str, target: str) -> bool:
-        """Check if a version string has at least a certain version."""
-        version = version.split("+")[0]  # Remove any local version identifiers
-        version_parts = list(map(int, version.split(".")))
-        target_parts = list(map(int, target.split(".")))
-        # Pad shorter version to match lengths for comparison (e.g., '0.4.8' vs '0.4')
-        version_parts.extend([0] * (len(target_parts) - len(version_parts)))
-        target_parts.extend([0] * (len(version_parts) - len(target_parts)))
-        return tuple(version_parts) >= tuple(target_parts)
-
-    # TODO: Remove when we drop support for older jax and torch versions
-    _FULL_DLPACK_SUPPORT = _at_least_version(jax.__version__, "0.4.16")
 except ImportError:
     raise DependencyNotInstalled(
         'Jax is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[jax]"`'
@@ -46,9 +34,6 @@ try:
     import torch
     from torch.utils import dlpack as torch_dlpack
 
-    _FULL_DLPACK_SUPPORT = _FULL_DLPACK_SUPPORT and _at_least_version(
-        torch.__version__, "1.10.0"
-    )
     Device = Union[str, torch.device]
 except ImportError:
     raise DependencyNotInstalled(
@@ -76,13 +61,7 @@ def _number_torch_to_jax(value: numbers.Number) -> Any:
 @torch_to_jax.register(torch.Tensor)
 def _tensor_torch_to_jax(value: torch.Tensor) -> jax.Array:
     """Converts a PyTorch Tensor into a Jax Array."""
-    if _FULL_DLPACK_SUPPORT:
-        return jax_dlpack.from_dlpack(  # pyright: ignore[reportPrivateImportUsage]
-            value
-        )
-    tensor = torch_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
-    tensor = jax_dlpack.from_dlpack(tensor)  # pyright: ignore[reportPrivateImportUsage]
-    return tensor
+    return jax_dlpack.from_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
 
 
 @torch_to_jax.register(abc.Mapping)
@@ -116,17 +95,9 @@ def _devicearray_jax_to_torch(
 ) -> torch.Tensor:
     """Converts a Jax Array into a PyTorch Tensor."""
     assert jax_dlpack is not None and torch_dlpack is not None
-    if _FULL_DLPACK_SUPPORT:
-        tensor = torch_dlpack.from_dlpack(  # pyright: ignore[reportPrivateImportUsage]
-            value
-        )
-    else:
-        tensor = jax_dlpack.to_dlpack(  # pyright: ignore[reportPrivateImportUsage]
-            value
-        )
-        tensor = torch_dlpack.from_dlpack(  # pyright: ignore[reportPrivateImportUsage]
-            tensor
-        )
+    tensor = torch_dlpack.from_dlpack(
+        value
+    )  # pyright: ignore[reportPrivateImportUsage]
     if device:
         return tensor.to(device=device)
     return tensor
