@@ -390,6 +390,7 @@
     <span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">jax</span><span class="w"> </span><span class="kn">import</span> <span class="n">dlpack</span> <span class="k">as</span> <span class="n">jax_dlpack</span>
+
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
         <span class="s1">&#39;Jax is not installed therefore cannot call `torch_to_jax`, run `pip install &quot;gymnasium[jax]&quot;`&#39;</span>
@@ -426,9 +427,7 @@
 <span class="nd">@torch_to_jax</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_tensor_torch_to_jax</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a PyTorch Tensor into a Jax Array.&quot;&quot;&quot;</span>
-    <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch_dlpack</span><span class="o">.</span><span class="n">to_dlpack</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportPrivateImportUsage]</span>
-    <span class="n">tensor</span> <span class="o">=</span> <span class="n">jax_dlpack</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportPrivateImportUsage]</span>
-    <span class="k">return</span> <span class="n">tensor</span>
+    <span class="k">return</span> <span class="n">jax_dlpack</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportPrivateImportUsage]</span>
 
 
 <span class="nd">@torch_to_jax</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span>
@@ -462,8 +461,9 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a Jax Array into a PyTorch Tensor.&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">jax_dlpack</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">torch_dlpack</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-    <span class="n">dlpack</span> <span class="o">=</span> <span class="n">jax_dlpack</span><span class="o">.</span><span class="n">to_dlpack</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportPrivateImportUsage]</span>
-    <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch_dlpack</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">dlpack</span><span class="p">)</span>
+    <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch_dlpack</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span>
+        <span class="n">value</span>
+    <span class="p">)</span>  <span class="c1"># pyright: ignore[reportPrivateImportUsage]</span>
     <span class="k">if</span> <span class="n">device</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">tensor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">tensor</span>
