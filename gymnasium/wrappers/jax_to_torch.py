@@ -24,6 +24,7 @@ try:
     import jax
     import jax.numpy as jnp
     from jax import dlpack as jax_dlpack
+
 except ImportError:
     raise DependencyNotInstalled(
         'Jax is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[jax]"`'
@@ -60,9 +61,7 @@ def _number_torch_to_jax(value: numbers.Number) -> Any:
 @torch_to_jax.register(torch.Tensor)
 def _tensor_torch_to_jax(value: torch.Tensor) -> jax.Array:
     """Converts a PyTorch Tensor into a Jax Array."""
-    tensor = torch_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
-    tensor = jax_dlpack.from_dlpack(tensor)  # pyright: ignore[reportPrivateImportUsage]
-    return tensor
+    return jax_dlpack.from_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
 
 
 @torch_to_jax.register(abc.Mapping)
@@ -96,8 +95,9 @@ def _devicearray_jax_to_torch(
 ) -> torch.Tensor:
     """Converts a Jax Array into a PyTorch Tensor."""
     assert jax_dlpack is not None and torch_dlpack is not None
-    dlpack = jax_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
-    tensor = torch_dlpack.from_dlpack(dlpack)
+    tensor = torch_dlpack.from_dlpack(
+        value
+    )  # pyright: ignore[reportPrivateImportUsage]
     if device:
         return tensor.to(device=device)
     return tensor
