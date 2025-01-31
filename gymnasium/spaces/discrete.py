@@ -22,6 +22,12 @@ class Discrete(Space[np.int64]):
         >>> observation_space = Discrete(3, start=-1, seed=42)  # {-1, 0, 1}
         >>> observation_space.sample()
         np.int64(-1)
+        >>> observation_space.sample(mask=np.array([0,0,1], dtype=np.int8))
+        np.int64(1)
+        >>> observation_space.sample(probability=np.array([0,0,1], dtype=np.float64))
+        np.int64(1)
+        >>> observation_space.sample(probability=np.array([0,0.3,0.7], dtype=np.float64))
+        np.int64(1)
     """
 
     def __init__(
@@ -56,41 +62,93 @@ class Discrete(Space[np.int64]):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
-    def sample(self, mask: MaskNDArray | None = None) -> np.int64:
+    def sample(
+        self, mask: MaskNDArray | None = None, probability: MaskNDArray | None = None
+    ) -> np.int64:
         """Generates a single random sample from this space.
 
-        A sample will be chosen uniformly at random with the mask if provided
+        A sample will be chosen uniformly at random with the mask if provided, or it will be chosen according to a specified probability distribution if the probability mask is provided.
 
         Args:
             mask: An optional mask for if an action can be selected.
                 Expected `np.ndarray` of shape ``(n,)`` and dtype ``np.int8`` where ``1`` represents valid actions and ``0`` invalid / infeasible actions.
                 If there are no possible actions (i.e. ``np.all(mask == 0)``) then ``space.start`` will be returned.
+            probability: An optional probability mask describing the probability of each action being selected.
+                Expected `np.ndarray` of shape ``(n,)`` and dtype ``np.float64`` where each value is in the range ``[0, 1]`` and the sum of all values is 1.
+                If the values do not sum to 1, an exception will be thrown.
 
         Returns:
             A sampled integer from the space
         """
-        if mask is not None:
-            assert isinstance(
-                mask, np.ndarray
-            ), f"The expected type of the mask is np.ndarray, actual type: {type(mask)}"
-            assert (
-                mask.dtype == np.int8
-            ), f"The expected dtype of the mask is np.int8, actual dtype: {mask.dtype}"
-            assert mask.shape == (
-                self.n,
-            ), f"The expected shape of the mask is {(self.n,)}, actual shape: {mask.shape}"
+        if mask is not None and probability is not None:
+            raise ValueError("Only one of `mask` or `probability` can be provided")
+
+        mask_type = (
+            "mask"
+            if mask is not None
+            else "probability" if probability is not None else None
+        )
+        chosen_mask = mask if mask is not None else probability
+
+        if chosen_mask is not None:
+            self._validate_mask(
+                chosen_mask,
+                (self.n,),
+                np.int8 if mask is not None else np.float64,
+                mask_type,
+            )
+            valid_action_mask = self._get_valid_action_mask(chosen_mask, mask_type)
+            if mask_type == "mask":
+                if np.any(valid_action_mask):
+                    return self.start + self.np_random.choice(
+                        np.where(valid_action_mask)[0]
+                    )
+                return self.start
+            elif mask_type == "probability":
+                normalized_probability = probability / np.sum(
+                    probability, dtype=float
+                )  # as recommended by the numpy.random.Generator.choice documentation
+                return self.start + self.np_random.choice(
+                    np.where(valid_action_mask)[0],
+                    p=normalized_probability[valid_action_mask],
+                )
+
+        return self.start + self.np_random.integers(self.n)
+
+    def _validate_mask(
+        self,
+        mask: MaskNDArray,
+        expected_shape: tuple[int],
+        expected_dtype: type,
+        mask_type: str,
+    ):
+        """Validates the type, shape, and dtype of a mask."""
+        assert isinstance(
+            mask, np.ndarray
+        ), f"The expected type of `{mask_type}` is np.ndarray, actual type: {type(mask)}"
+        assert (
+            mask.shape == expected_shape
+        ), f"The expected shape of `{mask_type}` is {expected_shape}, actual shape: {mask.shape}"
+        assert (
+            mask.dtype == expected_dtype
+        ), f"The expected dtype of `{mask_type}` is {expected_dtype}, actual dtype: {mask.dtype}"
+
+    def _get_valid_action_mask(self, mask: MaskNDArray, mask_type: str) -> MaskNDArray:
+        """Returns a valid action mask based on the mask type."""
+        if mask_type == "mask":
             valid_action_mask = mask == 1
             assert np.all(
                 np.logical_or(mask == 0, valid_action_mask)
-            ), f"All values of a mask should be 0 or 1, actual values: {mask}"
-            if np.any(valid_action_mask):
-                return self.start + self.np_random.choice(
-                    np.where(valid_action_mask)[0]
-                )
-            else:
-                return self.start
-
-        return self.start + self.np_random.integers(self.n)
+            ), f"All values of `mask` should be 0 or 1, actual values: {mask}"
+        elif mask_type == "probability":
+            valid_action_mask = np.logical_and(mask > 0, mask <= 1)
+            assert np.all(
+                np.logical_or(mask == 0, valid_action_mask)
+            ), f"All values of `probability mask` should be 0, 1, or in between, actual values: {mask}"
+            assert np.isclose(
+                np.sum(mask), 1
+            ), f"The sum of all values of `probability mask` should be 1, actual sum: {np.sum(mask)}"
+        return valid_action_mask
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""

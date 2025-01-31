@@ -107,6 +107,12 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
                 Any,
             ]
         ) = None,
+        probability: None | (
+            tuple[
+                None | np.integer | NDArray[np.integer],
+                Any,
+            ]
+        ) = None,
     ) -> tuple[Any] | Any:
         """Generates a single random sample from this space.
 
@@ -118,45 +124,76 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
                 * ``np.ndarray`` of integers, in which case the length of the sampled sequence is randomly drawn from this array.
                 * ``int`` for a fixed length sample
 
-                The second element of the mask tuple ``sample`` mask specifies a mask that is applied when
+                The second element of the mask tuple ``sample_mask`` specifies a mask that is applied when
                 sampling elements from the base space. The mask is applied for each feature space sample.
+            probability: An optional probability mask for (optionally) the length of the sequence and (optionally) the values in the sequence.
+                If you specify ``probability``, it is expected to be a tuple of the form ``(length_mask, sample_mask)`` where ``length_mask`` is
+
+                * ``None`` The length will be randomly drawn from a geometric distribution
+                * ``np.ndarray`` of integers, in which case the length of the sampled sequence is randomly drawn from this array.
+                * ``int`` for a fixed length sample
+
+                The second element of the probability tuple ``sample_mask`` specifies a probability mask that is applied when
+                sampling elements from the base space. The probability mask is applied for each feature space sample.
 
         Returns:
             A tuple of random length with random samples of elements from the :attr:`feature_space`.
         """
-        if mask is not None:
-            length_mask, feature_mask = mask
+        if mask is not None and probability is not None:
+            raise ValueError("Only one of `mask` or `probability` can be provided.")
+
+        mask_type = (
+            "mask"
+            if mask is not None
+            else "probability" if probability is not None else None
+        )
+        chosen_mask = mask if mask is not None else probability
+
+        if chosen_mask is not None:
+            length_mask, feature_mask = chosen_mask
         else:
             length_mask, feature_mask = None, None
+        return self._sample(length_mask, feature_mask, mask_type)
 
+    def _sample(
+        self,
+        length_mask: None | np.integer | NDArray[np.integer],
+        feature_mask: Any,
+        mask_type: None | str,
+    ) -> tuple[Any] | Any:
         if length_mask is not None:
             if np.issubdtype(type(length_mask), np.integer):
                 assert (
                     0 <= length_mask
-                ), f"Expects the length mask to be greater than or equal to zero, actual value: {length_mask}"
+                ), f"Expects the length mask of `{mask_type}` to be greater than or equal to zero, actual value: {length_mask}"
                 length = length_mask
             elif isinstance(length_mask, np.ndarray):
                 assert (
                     len(length_mask.shape) == 1
-                ), f"Expects the shape of the length mask to be 1-dimensional, actual shape: {length_mask.shape}"
+                ), f"Expects the shape of the length mask of `{mask_type}` to be 1-dimensional, actual shape: {length_mask.shape}"
                 assert np.all(
                     0 <= length_mask
-                ), f"Expects all values in the length_mask to be greater than or equal to zero, actual values: {length_mask}"
+                ), f"Expects all values in the length_mask of `{mask_type}` to be greater than or equal to zero, actual values: {length_mask}"
                 assert np.issubdtype(
                     length_mask.dtype, np.integer
-                ), f"Expects the length mask array to have dtype to be an numpy integer, actual type: {length_mask.dtype}"
+                ), f"Expects the length mask array of `{mask_type}` to have dtype of np.integer, actual type: {length_mask.dtype}"
                 length = self.np_random.choice(length_mask)
             else:
                 raise TypeError(
-                    f"Expects the type of length_mask to an integer or a np.ndarray, actual type: {type(length_mask)}"
+                    f"Expects the type of length_mask of `{mask_type}` to be an integer or a np.ndarray, actual type: {type(length_mask)}"
                 )
         else:
             # The choice of 0.25 is arbitrary
             length = self.np_random.geometric(0.25)
 
         # Generate sample values from feature_space.
+        sample_kwargs = (
+            {"probability": feature_mask}
+            if mask_type == "probability"
+            else {"mask": feature_mask}
+        )
         sampled_values = tuple(
-            self.feature_space.sample(mask=feature_mask) for _ in range(length)
+            self.feature_space.sample(**sample_kwargs) for _ in range(length)
         )
 
         if self.stack:

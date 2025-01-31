@@ -34,7 +34,7 @@ def test_sample():
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "Expects the length mask to be greater than or equal to zero, actual value: -1"
+            "Expects the length mask of `mask` to be greater than or equal to zero, actual value: -1"
         ),
     ):
         space.sample(mask=(-1, None))
@@ -51,7 +51,7 @@ def test_sample():
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "Expects the shape of the length mask to be 1-dimensional, actual shape: (2, 2)"
+            "Expects the shape of the length mask of `mask` to be 1-dimensional, actual shape: (2, 2)"
         ),
     ):
         space.sample(mask=(np.array([[2, 2], [2, 2]]), None))
@@ -59,7 +59,7 @@ def test_sample():
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "Expects all values in the length_mask to be greater than or equal to zero, actual values: [ 1  2 -1]"
+            "Expects all values in the length_mask of `mask` to be greater than or equal to zero, actual values: [ 1  2 -1]"
         ),
     ):
         space.sample(mask=(np.array([1, 2, -1]), None))
@@ -68,7 +68,63 @@ def test_sample():
     with pytest.raises(
         TypeError,
         match=re.escape(
-            "Expects the type of length_mask to an integer or a np.ndarray, actual type: <class 'str'>"
+            "Expects the type of length_mask of `mask` to be an integer or a np.ndarray, actual type: <class 'str'>"
         ),
     ):
         space.sample(mask=("abc", None))
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "Expects the shape of the length mask of `probability` to be 1-dimensional, actual shape: (2, 2)"
+        ),
+    ):
+        space.sample(probability=(np.array([[2, 2], [2, 2]]), None))
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "Expects all values in the length_mask of `probability` to be greater than or equal to zero, actual values: [ 1  2 -1]"
+        ),
+    ):
+        space.sample(probability=(np.array([1, 2, -1]), None))
+
+    # Test with an invalid length
+    with pytest.raises(
+        TypeError,
+        match=re.escape(
+            "Expects the type of length_mask of `probability` to be an integer or a np.ndarray, actual type: <class 'str'>"
+        ),
+    ):
+        space.sample(probability=("abc", None))
+
+
+def test_sample_with_mask():
+    """Tests sampling with mask"""
+    space = gym.spaces.Sequence(gym.spaces.Discrete(2))
+    sample = space.sample(mask=(np.array([20]), np.array([0, 1], dtype=np.int8)))
+    sample = np.array(sample)
+    assert np.all(sample[:] == 1)
+    assert np.all(value in space for value in sample)
+    assert len(sample) == 20
+
+
+def test_sample_with_probability():
+    """Tests sampling with probability mask"""
+    space = gym.spaces.Sequence(gym.spaces.Discrete(2))
+    sample = space.sample(
+        probability=(np.array([20]), np.array([0, 1], dtype=np.float64))
+    )
+    sample = np.array(sample)
+    assert np.all(sample[:] == 1)
+    assert np.all(value in space for value in sample)
+    assert len(sample) == 20
+
+    space = gym.spaces.Sequence(gym.spaces.Discrete(3))
+    probability = (np.array([1000]), np.array([0, 0.2, 0.8], dtype=np.float64))
+    sample = space.sample(probability=probability)
+    sample = np.array(sample)
+    assert np.all(np.isin(sample[:], [1, 2]))
+    assert np.all(value in space for value in sample)
+    counts = np.bincount(sample[:], minlength=3) / len(sample)
+    np.testing.assert_allclose(counts, probability[1], atol=0.05)

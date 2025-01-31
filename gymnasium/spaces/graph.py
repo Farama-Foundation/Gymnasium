@@ -183,6 +183,12 @@ class Graph(Space[GraphInstance]):
                 NDArray[Any] | tuple[Any, ...] | None,
             ]
         ) = None,
+        probability: None | (
+            tuple[
+                NDArray[Any] | tuple[Any, ...] | None,
+                NDArray[Any] | tuple[Any, ...] | None,
+            ]
+        ) = None,
         num_nodes: int = 10,
         num_edges: int | None = None,
     ) -> GraphInstance:
@@ -191,6 +197,9 @@ class Graph(Space[GraphInstance]):
         Args:
             mask: An optional tuple of optional node and edge mask that is only possible with Discrete spaces
                 (Box spaces don't support sample masks).
+                If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges
+            probability: An optional tuple of optional node and edge probability mask that is only possible with Discrete spaces
+                (Box spaces don't support sample probability masks).
                 If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges
             num_nodes: The number of nodes that will be sampled, the default is `10` nodes
             num_edges: An optional number of edges, otherwise, a random number between `0` and :math:`num_nodes^2`
@@ -202,11 +211,31 @@ class Graph(Space[GraphInstance]):
             num_nodes > 0
         ), f"The number of nodes is expected to be greater than 0, actual value: {num_nodes}"
 
+        mask_type = None
         if mask is not None:
+            assert (
+                probability is None
+            ), "Only one of `mask` or `probability` can be provided"
             node_space_mask, edge_space_mask = mask
+            mask_type = "mask"
+        elif probability is not None:
+            node_space_mask, edge_space_mask = probability
+            mask_type = "probability"
         else:
             node_space_mask, edge_space_mask = None, None
 
+        return self._sample(
+            node_space_mask, edge_space_mask, num_nodes, num_edges, mask_type
+        )
+
+    def _sample(
+        self,
+        node_space_mask: NDArray[Any] | tuple[Any, ...] | None,
+        edge_space_mask: NDArray[Any] | tuple[Any, ...] | None,
+        num_nodes: int,
+        num_edges: int | None,
+        mask_type: str,
+    ) -> GraphInstance:
         # we only have edges when we have at least 2 nodes
         if num_edges is None:
             if num_nodes > 1:
@@ -231,9 +260,19 @@ class Graph(Space[GraphInstance]):
         sampled_edge_space = self._generate_sample_space(self.edge_space, num_edges)
 
         assert sampled_node_space is not None
-        sampled_nodes = sampled_node_space.sample(node_space_mask)
+        node_sample_kwargs = (
+            {"probability": node_space_mask}
+            if mask_type == "probability"
+            else {"mask": node_space_mask}
+        )
+        edge_sample_kwargs = (
+            {"probability": edge_space_mask}
+            if mask_type == "probability"
+            else {"mask": edge_space_mask}
+        )
+        sampled_nodes = sampled_node_space.sample(**node_sample_kwargs)
         sampled_edges = (
-            sampled_edge_space.sample(edge_space_mask)
+            sampled_edge_space.sample(**edge_sample_kwargs)
             if sampled_edge_space is not None
             else None
         )
