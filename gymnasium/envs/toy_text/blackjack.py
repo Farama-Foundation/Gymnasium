@@ -1,227 +1,180 @@
 import os
 from typing import Optional
-
 import numpy as np
-
 import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.error import DependencyNotInstalled
 
-
 def cmp(a, b):
     return float(a > b) - float(a < b)
 
+"""
+  Blackjack is a card game where the goal is to beat the dealer by obtaining cards
+  that sum to closer to 21 (without going over 21) than the dealers cards.
 
-# 1 = Ace, 2-10 = Number cards, Jack/Queen/King = 10
-deck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+  ## Description
+  The game starts with the dealer having one face up and one face down card,
+  while the player has two face up cards. All cards are drawn from an infinite deck
+  (i.e. with replacement).
 
+  The card values are:
+  - Face cards (Jack, Queen, King) have a point value of 10.
+  - Aces can either count as 11 (called a 'usable ace') or 1.
+  - Numerical cards (2-10) have a value equal to their number.
 
-def draw_card(np_random):
-    return int(np_random.choice(deck))
+  The player has the sum of cards held. The player can request
+  additional cards (hit) until they decide to stop (stick) or exceed 21 (bust,
+  immediate loss).
 
+  After the player sticks, the dealer reveals their facedown card, and draws cards
+  until their sum is 17 or greater. If the dealer goes bust, the player wins.
 
-def draw_hand(np_random):
-    return [draw_card(np_random), draw_card(np_random)]
+  If neither the player nor the dealer busts, the outcome (win, lose, draw) is
+  decided by whose sum is closer to 21.
 
+  This environment corresponds to the version of the blackjack problem
+  described in Example 5.1 in Reinforcement Learning: An Introduction
+  by Sutton and Barto [<a href="#blackjack_ref">1</a>].
 
-def usable_ace(hand):  # Does this hand have a usable ace?
-    return int(1 in hand and sum(hand) + 10 <= 21)
+  ## Action Space
+  The action shape is `(1,)` in the range `{0, 1}` indicating
+  whether to stick or hit.
 
+  - 0: Stick
+  - 1: Hit
 
-def sum_hand(hand):  # Return current hand total
-    if usable_ace(hand):
-        return sum(hand) + 10
-    return sum(hand)
+  ## Observation Space
+  The observation consists of a 3-tuple containing: the player's current sum,
+  the value of the dealer's one showing card (1-10 where 1 is ace),
+  and whether the player holds a usable ace (0 or 1).
 
+  The observation is returned as `(int(), int(), int())`.
 
-def is_bust(hand):  # Is this hand a bust?
-    return sum_hand(hand) > 21
+  ## Starting State
+  The starting state is initialised with the following values.
 
+  | Observation               | Values         |
+  |---------------------------|----------------|
+  | Player current sum        |  4, 5, ..., 21 |
+  | Dealer showing card value |  1, 2, ..., 10 |
+  | Usable Ace                |  0, 1          |
 
-def score(hand):  # What is the score of this hand (0 if bust)
-    return 0 if is_bust(hand) else sum_hand(hand)
+  ## Rewards
+  - win game: +1
+  - lose game: -1
+  - draw game: 0
+  - win game with natural blackjack:
+  +1.5 (if <a href="#nat">natural</a> is True)
+  +1 (if <a href="#nat">natural</a> is False)
 
+  ## Episode End
+  The episode ends if the following happens:
 
-def is_natural(hand):  # Is this hand a natural blackjack?
-    return sorted(hand) == [1, 10]
+  - Termination:
+  1. The player hits and the sum of hand exceeds 21.
+  2. The player sticks.
 
+  An ace will always be counted as usable (11) unless it busts the player.
+
+  ## Information
+
+  No additional information is returned.
+
+  ## Arguments
+
+  ```python
+  import gymnasium as gym
+  gym.make('Blackjack-v1', natural=False, sab=False)
+  ```
+
+  <a id="nat"></a>`natural=False`: Whether to give an additional reward for
+  starting with a natural blackjack, i.e. starting with an ace and ten (sum is 21).
+
+  <a id="sab"></a>`sab=False`: Whether to follow the exact rules outlined in the book by
+  Sutton and Barto. If `sab` is `True`, the keyword argument `natural` will be ignored.
+  If the player achieves a natural blackjack and the dealer does not, the player
+  will win (i.e. get a reward of +1). The reverse rule does not apply.
+  If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).
+
+  ## References
+  <a id="blackjack_ref"></a>[1] R. Sutton and A. Barto, “Reinforcement Learning:
+  An Introduction” 2020. [Online]. Available: [http://www.incompleteideas.net/book/RLbook2020.pdf](http://www.incompleteideas.net/book/RLbook2020.pdf)
+
+  ## Version History
+  * v1: Fix the natural handling in Blackjack
+  * v0: Initial version release
+  """
 
 class BlackjackEnv(gym.Env):
-    """
-    Blackjack is a card game where the goal is to beat the dealer by obtaining cards
-    that sum to closer to 21 (without going over 21) than the dealers cards.
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    ## Description
-    The game starts with the dealer having one face up and one face down card,
-    while the player has two face up cards. All cards are drawn from an infinite deck
-    (i.e. with replacement).
-
-    The card values are:
-    - Face cards (Jack, Queen, King) have a point value of 10.
-    - Aces can either count as 11 (called a 'usable ace') or 1.
-    - Numerical cards (2-10) have a value equal to their number.
-
-    The player has the sum of cards held. The player can request
-    additional cards (hit) until they decide to stop (stick) or exceed 21 (bust,
-    immediate loss).
-
-    After the player sticks, the dealer reveals their facedown card, and draws cards
-    until their sum is 17 or greater. If the dealer goes bust, the player wins.
-
-    If neither the player nor the dealer busts, the outcome (win, lose, draw) is
-    decided by whose sum is closer to 21.
-
-    This environment corresponds to the version of the blackjack problem
-    described in Example 5.1 in Reinforcement Learning: An Introduction
-    by Sutton and Barto [<a href="#blackjack_ref">1</a>].
-
-    ## Action Space
-    The action shape is `(1,)` in the range `{0, 1}` indicating
-    whether to stick or hit.
-
-    - 0: Stick
-    - 1: Hit
-
-    ## Observation Space
-    The observation consists of a 3-tuple containing: the player's current sum,
-    the value of the dealer's one showing card (1-10 where 1 is ace),
-    and whether the player holds a usable ace (0 or 1).
-
-    The observation is returned as `(int(), int(), int())`.
-
-    ## Starting State
-    The starting state is initialised with the following values.
-
-    | Observation               | Values         |
-    |---------------------------|----------------|
-    | Player current sum        |  4, 5, ..., 21 |
-    | Dealer showing card value |  1, 2, ..., 10 |
-    | Usable Ace                |  0, 1          |
-
-    ## Rewards
-    - win game: +1
-    - lose game: -1
-    - draw game: 0
-    - win game with natural blackjack:
-    +1.5 (if <a href="#nat">natural</a> is True)
-    +1 (if <a href="#nat">natural</a> is False)
-
-    ## Episode End
-    The episode ends if the following happens:
-
-    - Termination:
-    1. The player hits and the sum of hand exceeds 21.
-    2. The player sticks.
-
-    An ace will always be counted as usable (11) unless it busts the player.
-
-    ## Information
-
-    No additional information is returned.
-
-    ## Arguments
-
-    ```python
-    import gymnasium as gym
-    gym.make('Blackjack-v1', natural=False, sab=False)
-    ```
-
-    <a id="nat"></a>`natural=False`: Whether to give an additional reward for
-    starting with a natural blackjack, i.e. starting with an ace and ten (sum is 21).
-
-    <a id="sab"></a>`sab=False`: Whether to follow the exact rules outlined in the book by
-    Sutton and Barto. If `sab` is `True`, the keyword argument `natural` will be ignored.
-    If the player achieves a natural blackjack and the dealer does not, the player
-    will win (i.e. get a reward of +1). The reverse rule does not apply.
-    If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).
-
-    ## References
-    <a id="blackjack_ref"></a>[1] R. Sutton and A. Barto, “Reinforcement Learning:
-    An Introduction” 2020. [Online]. Available: [http://www.incompleteideas.net/book/RLbook2020.pdf](http://www.incompleteideas.net/book/RLbook2020.pdf)
-
-    ## Version History
-    * v1: Fix the natural handling in Blackjack
-    * v0: Initial version release
-    """
-
-    metadata = {
-        "render_modes": ["human", "rgb_array"],
-        "render_fps": 4,
-    }
-
-    def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False):
+    def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False, num_decks=5):
         self.action_space = spaces.Discrete(2)
         self.observation_space = spaces.Tuple(
             (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2))
         )
-
-        # Flag to payout 1.5 on a "natural" blackjack win, like casino rules
-        # Ref: http://www.bicyclecards.com/how-to-play/blackjack/
         self.natural = natural
-
-        # Flag for full agreement with the (Sutton and Barto, 2018) definition. Overrides self.natural
         self.sab = sab
-
         self.render_mode = render_mode
-
+        self.num_decks = num_decks  # Number of decks to use
+        self.deck = []  # Deck to track available cards
+        self.np_random = np.random.default_rng()
+        self._reshuffle_deck()
+    
+    def _reshuffle_deck(self):
+        """Reshuffles the deck with the correct number of decks."""
+        self.deck = self.num_decks * [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10] * 4
+        self.np_random.shuffle(self.deck)
+    
+    def draw_card(self):
+        """Draws a card from the deck, reshuffling if necessary."""
+        if len(self.deck) == 0:
+            self._reshuffle_deck()
+        return self.deck.pop()
+    
+    def draw_hand(self):
+        return [self.draw_card(), self.draw_card()]
+    
+    def sum_hand(self, hand):
+        if 1 in hand and sum(hand) + 10 <= 21:
+            return sum(hand) + 10
+        return sum(hand)
+    
+    def is_bust(self, hand):
+        return self.sum_hand(hand) > 21
+    
+    def score(self, hand):
+        return 0 if self.is_bust(hand) else self.sum_hand(hand)
+    
+    def is_natural(self, hand):
+        return sorted(hand) == [1, 10]
+    
+    def _get_obs(self):
+        return (self.sum_hand(self.player), self.dealer[0], int(1 in self.player and sum(self.player) + 10 <= 21))
+    
     def step(self, action):
         assert self.action_space.contains(action)
-        if action:  # hit: add a card to players hand and return
-            self.player.append(draw_card(self.np_random))
-            if is_bust(self.player):
-                terminated = True
-                reward = -1.0
-            else:
-                terminated = False
-                reward = 0.0
-        else:  # stick: play out the dealers hand, and score
-            terminated = True
-            while sum_hand(self.dealer) < 17:
-                self.dealer.append(draw_card(self.np_random))
-            reward = cmp(score(self.player), score(self.dealer))
-            if self.sab and is_natural(self.player) and not is_natural(self.dealer):
-                # Player automatically wins. Rules consistent with S&B
+        if action:  # hit
+            self.player.append(self.draw_card())
+            if self.is_bust(self.player):
+                return self._get_obs(), -1.0, True, False, {}
+            return self._get_obs(), 0.0, False, False, {}
+        else:  # stick
+            while self.sum_hand(self.dealer) < 17:
+                self.dealer.append(self.draw_card())
+            reward = cmp(self.score(self.player), self.score(self.dealer))
+            if self.sab and self.is_natural(self.player) and not self.is_natural(self.dealer):
                 reward = 1.0
-            elif (
-                not self.sab
-                and self.natural
-                and is_natural(self.player)
-                and reward == 1.0
-            ):
-                # Natural gives extra points, but doesn't autowin. Legacy implementation
+            elif not self.sab and self.natural and self.is_natural(self.player) and reward == 1.0:
                 reward = 1.5
-
-        if self.render_mode == "human":
-            self.render()
-        # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
-        return self._get_obs(), reward, terminated, False, {}
-
-    def _get_obs(self):
-        return (sum_hand(self.player), self.dealer[0], usable_ace(self.player))
-
-    def reset(
-        self,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
-    ):
+            return self._get_obs(), reward, True, False, {}
+    
+    def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
-        self.dealer = draw_hand(self.np_random)
-        self.player = draw_hand(self.np_random)
-
-        _, dealer_card_value, _ = self._get_obs()
-
-        suits = ["C", "D", "H", "S"]
-        self.dealer_top_card_suit = self.np_random.choice(suits)
-
-        if dealer_card_value == 1:
-            self.dealer_top_card_value_str = "A"
-        elif dealer_card_value == 10:
-            self.dealer_top_card_value_str = self.np_random.choice(["J", "Q", "K"])
-        else:
-            self.dealer_top_card_value_str = str(dealer_card_value)
-
-        if self.render_mode == "human":
-            self.render()
+        if len(self.deck) < 15:
+            self._reshuffle_deck()
+        self.dealer = self.draw_hand()
+        self.player = self.draw_hand()
         return self._get_obs(), {}
 
     def render(self):
