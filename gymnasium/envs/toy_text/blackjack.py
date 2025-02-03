@@ -44,8 +44,9 @@ def cmp(a, b):
   - 1: Hit
 
   ## Observation Space
-  The observation consists of a 3-tuple containing: the player's current sum,
+  The observation consists of a 4-tuple containing: the player's current sum,
   the value of the dealer's one showing card (1-10 where 1 is ace),
+  the true count of the table,
   and whether the player holds a usable ace (0 or 1).
 
   The observation is returned as `(int(), int(), int())`.
@@ -123,26 +124,22 @@ class BlackjackEnv(gym.Env):
         self._reshuffle_deck()
     
     def _reshuffle_deck(self):
-        """Reshuffles the deck with the correct number of decks."""
         self.deck = self.num_decks * [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10] * 4
         self.np_random.shuffle(self.deck)
         self.running_count = 0
     
     def _update_running_count(self, card):
-        """Updates the running count based on Hi-Lo strategy."""
         if card in [2, 3, 4, 5, 6]:
             self.running_count += 1
         elif card in [10, 1]:
             self.running_count -= 1
     
     def _get_true_count(self):
-        """Calculates the true count and maps it to discrete values from -5 to 5."""
         remaining_decks = max(1, len(self.deck) / 52)
         true_count = self.running_count / remaining_decks
         return min(5, max(-5, int(round(true_count))))
     
     def draw_card(self):
-        """Draws a card from the deck, reshuffling if necessary."""
         if len(self.deck) == 0:
             self._reshuffle_deck()
         card = self.deck.pop()
