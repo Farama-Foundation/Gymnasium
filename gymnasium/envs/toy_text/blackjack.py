@@ -111,7 +111,7 @@ class BlackjackEnv(gym.Env):
     def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False, num_decks=5):
         self.action_space = spaces.Discrete(2)
         self.observation_space = spaces.Tuple(
-            (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2))
+            (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2), spaces.Discrete(11))
         )
         self.natural = natural
         self.sab = sab
@@ -119,38 +119,41 @@ class BlackjackEnv(gym.Env):
         self.num_decks = num_decks  # Number of decks to use
         self.deck = []  # Deck to track available cards
         self.np_random = np.random.default_rng()
+        self.running_count = 0
         self._reshuffle_deck()
     
     def _reshuffle_deck(self):
         """Reshuffles the deck with the correct number of decks."""
         self.deck = self.num_decks * [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10] * 4
         self.np_random.shuffle(self.deck)
+        self.running_count = 0
+    
+    def _update_running_count(self, card):
+        """Updates the running count based on Hi-Lo strategy."""
+        if card in [2, 3, 4, 5, 6]:
+            self.running_count += 1
+        elif card in [10, 1]:
+            self.running_count -= 1
+    
+    def _get_true_count(self):
+        """Calculates the true count and maps it to discrete values from -5 to 5."""
+        remaining_decks = max(1, len(self.deck) / 52)
+        true_count = self.running_count / remaining_decks
+        return min(5, max(-5, int(round(true_count))))
     
     def draw_card(self):
         """Draws a card from the deck, reshuffling if necessary."""
         if len(self.deck) == 0:
             self._reshuffle_deck()
-        return self.deck.pop()
+        card = self.deck.pop()
+        self._update_running_count(card)
+        return card
     
     def draw_hand(self):
         return [self.draw_card(), self.draw_card()]
     
-    def sum_hand(self, hand):
-        if 1 in hand and sum(hand) + 10 <= 21:
-            return sum(hand) + 10
-        return sum(hand)
-    
-    def is_bust(self, hand):
-        return self.sum_hand(hand) > 21
-    
-    def score(self, hand):
-        return 0 if self.is_bust(hand) else self.sum_hand(hand)
-    
-    def is_natural(self, hand):
-        return sorted(hand) == [1, 10]
-    
     def _get_obs(self):
-        return (self.sum_hand(self.player), self.dealer[0], int(1 in self.player and sum(self.player) + 10 <= 21))
+        return (self.sum_hand(self.player), self.dealer[0], int(1 in self.player and sum(self.player) + 10 <= 21), self._get_true_count())
     
     def step(self, action):
         assert self.action_space.contains(action)
@@ -176,7 +179,6 @@ class BlackjackEnv(gym.Env):
         self.dealer = self.draw_hand()
         self.player = self.draw_hand()
         return self._get_obs(), {}
-
     def render(self):
         if self.render_mode is None:
             assert self.spec is not None
