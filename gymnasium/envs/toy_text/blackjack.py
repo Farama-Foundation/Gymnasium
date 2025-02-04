@@ -46,10 +46,10 @@ def cmp(a, b):
   ## Observation Space
   The observation consists of a 4-tuple containing: the player's current sum,
   the value of the dealer's one showing card (1-10 where 1 is ace),
-  the true count of the table,
-  and whether the player holds a usable ace (0 or 1).
+  whether the player holds a usable ace (0 or 1), 
+  and the true count of the table.
 
-  The observation is returned as `(int(), int(), int())`.
+  The observation is returned as `(int(), int(), int(), int())`.
 
   ## Starting State
   The starting state is initialised with the following values.
@@ -110,9 +110,9 @@ class BlackjackEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False, num_decks=5):
-        self.action_space = spaces.Discrete(2)
+        self.action_space = spaces.Discrete(4)  # 0: Stick, 1: Hit, 2: Double Down, 3: Split
         self.observation_space = spaces.Tuple(
-            (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2), spaces.Discrete(11))
+            (spaces.MultiDiscrete([11, 11]), spaces.Discrete(11), spaces.Discrete(2), spaces.Discrete(11))
         )
         self.natural = natural
         self.sab = sab
@@ -121,6 +121,8 @@ class BlackjackEnv(gym.Env):
         self.deck = []  # Deck to track available cards
         self.np_random = np.random.default_rng()
         self.running_count = 0
+        self.split_hands = []
+        self.current_hand = []
         self._reshuffle_deck()
     
     def _reshuffle_deck(self):
@@ -150,32 +152,52 @@ class BlackjackEnv(gym.Env):
         return [self.draw_card(), self.draw_card()]
     
     def _get_obs(self):
-        return (self.sum_hand(self.player), self.dealer[0], int(1 in self.player and sum(self.player) + 10 <= 21), self._get_true_count())
+        player_hand = self.current_hand if len(self.current_hand) == 2 else [self.current_hand[0], 0]
+        return (player_hand, self.dealer[0], int(1 in self.current_hand and sum(self.current_hand) + 10 <= 21), self._get_true_count())
     
     def step(self, action):
         assert self.action_space.contains(action)
-        if action:  # hit
-            self.player.append(self.draw_card())
-            if self.is_bust(self.player):
+        if action == 1:  # hit
+            self.current_hand.append(self.draw_card())
+            if self.is_bust(self.current_hand):
                 return self._get_obs(), -1.0, True, False, {}
             return self._get_obs(), 0.0, False, False, {}
-        else:  # stick
+
+        elif action == 0:  # stick
             while self.sum_hand(self.dealer) < 17:
                 self.dealer.append(self.draw_card())
-            reward = cmp(self.score(self.player), self.score(self.dealer))
-            if self.sab and self.is_natural(self.player) and not self.is_natural(self.dealer):
+            reward = cmp(self.score(self.current_hand), self.score(self.dealer))
+            if self.sab and self.is_natural(self.current_hand) and not self.is_natural(self.dealer):
                 reward = 1.0
-            elif not self.sab and self.natural and self.is_natural(self.player) and reward == 1.0:
+            elif not self.sab and self.natural and self.is_natural(self.current_hand) and reward == 1.0:
                 reward = 1.5
             return self._get_obs(), reward, True, False, {}
+
+        elif action == 2:  # double down
+            self.current_hand.append(self.draw_card())
+            if self.is_bust(self.current_hand):
+                return self._get_obs(), -2.0, True, False, {}
+            while self.sum_hand(self.dealer) < 17:
+                self.dealer.append(self.draw_card())
+            reward = 2 * cmp(self.score(self.current_hand), self.score(self.dealer))
+            return self._get_obs(), reward, True, False, {}
+            
+        elif action == 3 and len(self.current_hand) == 2 and self.current_hand[0] == self.current_hand[1]:  # split
+            self.split_hands.append([self.current_hand.pop()])
+            self.current_hand.append(self.draw_card())
+            self.split_hands[-1].append(self.draw_card())
+            return self._get_obs(), 0.0, False, False, {}
     
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
         if len(self.deck) < 15:
             self._reshuffle_deck()
         self.dealer = self.draw_hand()
-        self.player = self.draw_hand()
+        self.current_hand = self.draw_hand()
+        self.split_hands = []
         return self._get_obs(), {}
+
+
     def render(self):
         if self.render_mode is None:
             assert self.spec is not None
