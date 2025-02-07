@@ -968,7 +968,7 @@ def make_vec(
 
     # Copies the environment creation specification and kwargs to add to the environment specification details
     copied_id_spec = copy.deepcopy(env_spec)
-    copied_id_spec.kwargs = env_spec_kwargs
+    copied_id_spec.kwargs = env_spec_kwargs.copy()
     if num_envs != 1:
         copied_id_spec.kwargs["num_envs"] = num_envs
     copied_id_spec.kwargs["vectorization_mode"] = vectorization_mode.value
