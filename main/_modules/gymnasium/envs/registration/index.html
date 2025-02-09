@@ -1363,7 +1363,7 @@
 
     <span class="c1"># Copies the environment creation specification and kwargs to add to the environment specification details</span>
     <span class="n">copied_id_spec</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
-    <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span>
+    <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">num_envs</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;num_envs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_envs</span>
     <span class="n">copied_id_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;vectorization_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vectorization_mode</span><span class="o">.</span><span class="n">value</span>
