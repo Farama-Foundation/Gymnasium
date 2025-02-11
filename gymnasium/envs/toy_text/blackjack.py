@@ -201,6 +201,8 @@ class BlackjackEnv(gym.Env):
             self.current_hand.append(self.draw_card())
             self.split_hands[-1].append(self.draw_card())
             return self._get_obs(), 0.0, False, False, {}
+        elif action == 3:
+            return self._get_obs(), -1.0, True, False, {}
     
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
