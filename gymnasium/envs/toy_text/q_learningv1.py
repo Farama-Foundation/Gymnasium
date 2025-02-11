@@ -32,10 +32,10 @@ def main():
     env = BlackjackEnv(render_mode=None, natural=False, sab=False)
 
     # Q-learning parameters
-    num_episodes = 100000     # Number of episodes for training
+    num_episodes = 900000     # Number of episodes for training
     alpha = 0.01             # Learning rate
-    gamma = 0.6            # Discount factor (1.0 since the task is episodic)
-    epsilon = 0.9        # Exploration rate
+    gamma = 1.0            # Discount factor (1.0 since the task is episodic)
+    epsilon = 0.9       # Exploration rate
 
     n_actions = env.action_space.n  # e.g., 4 actions: Stick, Hit, Double Down, Split
 
