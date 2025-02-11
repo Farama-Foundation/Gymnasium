@@ -109,7 +109,7 @@ def cmp(a, b):
 class BlackjackEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False, num_decks=5):
+    def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False, num_decks=5, evaluation_mode=False):
         self.action_space = spaces.Discrete(4)  # 0: Stick, 1: Hit, 2: Double Down, 3: Split
         self.observation_space = spaces.Tuple(
             (spaces.MultiDiscrete([11, 11]), spaces.Discrete(11), spaces.Discrete(2), spaces.Discrete(11))
@@ -121,6 +121,7 @@ class BlackjackEnv(gym.Env):
         self.deck = []  # Deck to track available cards
         self.np_random = np.random.default_rng()
         self.running_count = 0
+        self.evaluation_mode = evaluation_mode
         self.split_hands = []
         self.current_hand = []
         self._reshuffle_deck()
@@ -139,7 +140,11 @@ class BlackjackEnv(gym.Env):
     def _get_true_count(self):
         remaining_decks = max(1, len(self.deck) / 52)
         true_count = self.running_count / remaining_decks
-        return min(5, max(-5, int(round(true_count))))
+        # Bound the true count between -5 and 5
+        bounded_count = int(round(true_count))
+        bounded_count = min(5, max(-5, bounded_count))
+        # Shift the range from [-5, 5] to [0, 10]
+        return bounded_count + 5
     
     def draw_card(self):
         if len(self.deck) == 0:
@@ -212,8 +217,18 @@ class BlackjackEnv(gym.Env):
     
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
-        if len(self.deck) < 15:
+        if self.evaluation_mode:
+            # For evaluation: always reshuffle the deck completely and discard a random number of cards
             self._reshuffle_deck()
+            # Discard a random number of cards to vary the starting true count.
+            num_discards = self.np_random.integers(low=0, high=10)
+            for _ in range(num_discards):
+                if len(self.deck) > 0:
+                    self.deck.pop()
+        else:
+            # For training: persistent deck behavior – reshuffle only when deck is low.
+            if len(self.deck) < 15:
+                self._reshuffle_deck()
         self.dealer = self.draw_hand()
         self.current_hand = self.draw_hand()
         self.split_hands = []
