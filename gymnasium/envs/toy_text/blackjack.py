@@ -166,8 +166,14 @@ class BlackjackEnv(gym.Env):
         return sorted(hand) == [1, 10]
 
     def _get_obs(self):
+        # Ensure that player's hand is returned as a NumPy array.
         player_hand = self.current_hand if len(self.current_hand) == 2 else [self.current_hand[0], 0]
-        return (player_hand, self.dealer[0], int(1 in self.current_hand and sum(self.current_hand) + 10 <= 21), self._get_true_count())
+        player_hand = np.array(player_hand, dtype=np.int64)  # Convert to NumPy array
+        
+        return (player_hand, 
+                self.dealer[0], 
+                int(1 in self.current_hand and sum(self.current_hand) + 10 <= 21), 
+                self._get_true_count())
     
     def step(self, action):
         assert self.action_space.contains(action)
@@ -213,132 +219,150 @@ class BlackjackEnv(gym.Env):
         self.split_hands = []
         return self._get_obs(), {}
 
-
-    def render(self):
-        if self.render_mode is None:
-            assert self.spec is not None
-            gym.logger.warn(
-                "You are calling render method without specifying any render mode. "
-                "You can specify the render_mode at initialization, "
-                f'e.g. gym.make("{self.spec.id}", render_mode="rgb_array")'
-            )
-            return
-
-        try:
-            import pygame
-        except ImportError as e:
-            raise DependencyNotInstalled(
-                'pygame is not installed, run `pip install "gymnasium[toy-text]"`'
-            ) from e
-
-        player_sum, dealer_card_value, usable_ace = self._get_obs()
-        screen_width, screen_height = 600, 500
-        card_img_height = screen_height // 3
-        card_img_width = int(card_img_height * 142 / 197)
-        spacing = screen_height // 20
-
-        bg_color = (7, 99, 36)
-        white = (255, 255, 255)
-
-        if not hasattr(self, "screen"):
-            pygame.init()
-            if self.render_mode == "human":
-                pygame.display.init()
-                self.screen = pygame.display.set_mode((screen_width, screen_height))
-            else:
-                pygame.font.init()
-                self.screen = pygame.Surface((screen_width, screen_height))
-
-        if not hasattr(self, "clock"):
-            self.clock = pygame.time.Clock()
-
-        self.screen.fill(bg_color)
-
-        def get_image(path):
-            cwd = os.path.dirname(__file__)
-            image = pygame.image.load(os.path.join(cwd, path))
-            return image
-
-        def get_font(path, size):
-            cwd = os.path.dirname(__file__)
-            font = pygame.font.Font(os.path.join(cwd, path), size)
-            return font
-
-        small_font = get_font(
-            os.path.join("font", "Minecraft.ttf"), screen_height // 15
-        )
-        dealer_text = small_font.render(
-            "Dealer: " + str(dealer_card_value), True, white
-        )
-        dealer_text_rect = self.screen.blit(dealer_text, (spacing, spacing))
-
-        def scale_card_img(card_img):
-            return pygame.transform.scale(card_img, (card_img_width, card_img_height))
-
-        dealer_card_img = scale_card_img(
-            get_image(
-                os.path.join(
-                    "img",
-                    f"{self.dealer_top_card_suit}{self.dealer_top_card_value_str}.png",
-                )
-            )
-        )
-        dealer_card_rect = self.screen.blit(
-            dealer_card_img,
-            (
-                screen_width // 2 - card_img_width - spacing // 2,
-                dealer_text_rect.bottom + spacing,
-            ),
-        )
-
-        hidden_card_img = scale_card_img(get_image(os.path.join("img", "Card.png")))
-        self.screen.blit(
-            hidden_card_img,
-            (
-                screen_width // 2 + spacing // 2,
-                dealer_text_rect.bottom + spacing,
-            ),
-        )
-
-        player_text = small_font.render("Player", True, white)
-        player_text_rect = self.screen.blit(
-            player_text, (spacing, dealer_card_rect.bottom + 1.5 * spacing)
-        )
-
-        large_font = get_font(os.path.join("font", "Minecraft.ttf"), screen_height // 6)
-        player_sum_text = large_font.render(str(player_sum), True, white)
-        player_sum_text_rect = self.screen.blit(
-            player_sum_text,
-            (
-                screen_width // 2 - player_sum_text.get_width() // 2,
-                player_text_rect.bottom + spacing,
-            ),
-        )
-
-        if usable_ace:
-            usable_ace_text = small_font.render("usable ace", True, white)
-            self.screen.blit(
-                usable_ace_text,
-                (
-                    screen_width // 2 - usable_ace_text.get_width() // 2,
-                    player_sum_text_rect.bottom + spacing // 2,
-                ),
-            )
-        if self.render_mode == "human":
-            pygame.event.pump()
-            pygame.display.update()
-            self.clock.tick(self.metadata["render_fps"])
-        else:
-            return np.transpose(
-                np.array(pygame.surfarray.pixels3d(self.screen)), axes=(1, 0, 2)
-            )
-
     def close(self):
         if hasattr(self, "screen"):
             import pygame
 
             pygame.display.quit()
             pygame.quit()
+
+    def render(self):
+        try:
+            import pygame
+        except ImportError as e:
+            from gymnasium.error import DependencyNotInstalled
+            raise DependencyNotInstalled(
+                'pygame is not installed, run `pip install pygame`'
+            ) from e
+
+        # Set up the display dimensions.
+        screen_width, screen_height = 800, 600
+        if not hasattr(self, "screen"):
+            pygame.init()
+            if self.render_mode == "human":
+                self.screen = pygame.display.set_mode((screen_width, screen_height))
+            else:
+                self.screen = pygame.Surface((screen_width, screen_height))
+            self.clock = pygame.time.Clock()
+        else:
+            screen_width, screen_height = self.screen.get_size()
+
+        # Define colors and fonts.
+        bg_color = (0, 128, 0)        # dark green background
+        card_color = (255, 255, 255)  # white card background
+        border_color = (0, 0, 0)      # black border
+        text_color = (255, 255, 255)  # white text
+
+        self.screen.fill(bg_color)
+
+        pygame.font.init()
+        font_small = pygame.font.SysFont("Arial", 20)
+        font_medium = pygame.font.SysFont("Arial", 24)
+        font_large = pygame.font.SysFont("Arial", 32)
+
+        # Helper functions for drawing cards.
+        def draw_card(surface, card, x, y, width, height):
+            rect = pygame.Rect(x, y, width, height)
+            pygame.draw.rect(surface, card_color, rect)
+            pygame.draw.rect(surface, border_color, rect, 2)
+            label = "A" if card == 1 else str(card)
+            text_surf = font_medium.render(label, True, border_color)
+            text_rect = text_surf.get_rect(center=rect.center)
+            surface.blit(text_surf, text_rect)
+
+        def draw_hidden_card(surface, x, y, width, height):
+            rect = pygame.Rect(x, y, width, height)
+            pygame.draw.rect(surface, (50, 50, 50), rect)  # dark gray for the back
+            pygame.draw.rect(surface, border_color, rect, 2)
+            text_surf = font_medium.render("?", True, border_color)
+            text_rect = text_surf.get_rect(center=rect.center)
+            surface.blit(text_surf, text_rect)
+
+        # Card dimensions and spacing.
+        card_width = 60
+        card_height = 90
+        spacing = 10
+
+        # --- Draw the Dealer's Hand ---
+        dealer_title = font_large.render("Dealer's Hand", True, text_color)
+        self.screen.blit(dealer_title, (spacing, spacing))
+        dealer_x = spacing
+        dealer_y = spacing + dealer_title.get_height() + spacing
+
+        # Hide the dealer's second card if only two cards are present.
+        hide_dealer_second = (len(self.dealer) == 2)
+        for i, card in enumerate(self.dealer):
+            x = dealer_x + i * (card_width + spacing)
+            if hide_dealer_second and i == 1:
+                draw_hidden_card(self.screen, x, dealer_y, card_width, card_height)
+            else:
+                draw_card(self.screen, card, x, dealer_y, card_width, card_height)
+
+        # --- Draw the Player's Hand(s) ---
+        if len(self.split_hands) == 0:
+            player_title = font_large.render("Player's Hand", True, text_color)
+            player_title_y = dealer_y + card_height + 2 * spacing
+            self.screen.blit(player_title, (spacing, player_title_y))
+            player_x = spacing
+            player_y = player_title_y + player_title.get_height() + spacing
+            for i, card in enumerate(self.current_hand):
+                x = player_x + i * (card_width + spacing)
+                draw_card(self.screen, card, x, player_y, card_width, card_height)
+            # Display the player's hand total.
+            total = self.sum_hand(self.current_hand)
+            total_text = font_medium.render(f"Total: {total}", True, text_color)
+            self.screen.blit(total_text, (player_x, player_y + card_height + spacing))
+        else:
+            hands_title = font_large.render("Player's Hands", True, text_color)
+            hands_title_y = dealer_y + card_height + 2 * spacing
+            self.screen.blit(hands_title, (spacing, hands_title_y))
+            start_y = hands_title_y + hands_title.get_height() + spacing
+            all_hands = [self.current_hand] + self.split_hands
+            for j, hand in enumerate(all_hands):
+                hand_label = font_medium.render(f"Hand {j+1}:", True, text_color)
+                hand_y = start_y + j * (card_height + 3 * spacing)
+                self.screen.blit(hand_label, (spacing, hand_y))
+                hand_x = spacing + hand_label.get_width() + spacing
+                for i, card in enumerate(hand):
+                    x = hand_x + i * (card_width + spacing)
+                    draw_card(self.screen, card, x, hand_y, card_width, card_height)
+                total = self.sum_hand(hand)
+                total_text = font_medium.render(f"Total: {total}", True, text_color)
+                self.screen.blit(total_text, (hand_x, hand_y + card_height + spacing))
+
+        # --- Render Card Counts in a Panel on the Right ---
+        # Calculate counts for each card rank (Ace=1 through 10)
+        card_counts = {i: self.deck.count(i) for i in range(1, 11)}
+        panel_width = 150  # width of the counts panel
+        panel_x = screen_width - panel_width - spacing  # position the panel on the far right
+        panel_y = spacing  # start near the top
+
+        # Draw a background for the panel (optional)
+        panel_rect = pygame.Rect(panel_x - spacing // 2, panel_y - spacing // 2,
+                                panel_width + spacing, screen_height - 2 * spacing)
+        pygame.draw.rect(self.screen, (30, 30, 30), panel_rect)
+        pygame.draw.rect(self.screen, border_color, panel_rect, 2)
+
+        # Title for the panel.
+        counts_title = font_large.render("Card Counts", True, text_color)
+        self.screen.blit(counts_title, (panel_x + (panel_width - counts_title.get_width()) // 2, panel_y))
+        
+        # Render each card count.
+        line_height = font_small.get_height() + 5
+        for idx, rank in enumerate(range(1, 11)):
+            label = "A" if rank == 1 else str(rank)
+            count = card_counts[rank]
+            line_text = font_small.render(f"{label}: {count}", True, text_color)
+            text_x = panel_x + spacing // 2
+            text_y = panel_y + counts_title.get_height() + spacing + idx * line_height
+            self.screen.blit(line_text, (text_x, text_y))
+
+        # --- Finalize rendering ---
+        if self.render_mode == "human":
+            pygame.display.flip()
+            self.clock.tick(30)  # Limit to 30 FPS
+        else:
+            return np.array(pygame.surfarray.array3d(self.screen)).transpose(1, 0, 2)
 
 
 # Pixel art from Mariia Khmelnytska (https://www.123rf.com/photo_104453049_stock-vector-pixel-art-playing-cards-standart-deck-vector-set.html)
