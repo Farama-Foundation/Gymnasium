@@ -1,18 +1,9 @@
 import numpy as np
 import gymnasium as gym
-# Import your modified Blackjack environment.
-# For example, if it’s defined in blackjack_env.py:
-# from blackjack import BlackjackEnv
-#
-# Otherwise, if you have registered it with Gymnasium as "Blackjack-v1":
-# env = gym.make("Blackjack-v1", natural=False, sab=False)
-#
-# In this example we assume you can instantiate it directly:
 from blackjack import BlackjackEnv 
 import numpy as np
 import gymnasium as gym
-# Import your modified Blackjack environment.
-# For example, if it’s defined in blackjack_env.py:
+
 def state_to_key(state):
     """
     Recursively convert state to a hashable tuple.
