@@ -150,7 +150,21 @@ class BlackjackEnv(gym.Env):
     
     def draw_hand(self):
         return [self.draw_card(), self.draw_card()]
+
+    def sum_hand(self, hand):
+        if 1 in hand and sum(hand) + 10 <= 21:
+            return sum(hand) + 10
+        return sum(hand)
     
+    def is_bust(self, hand):
+        return self.sum_hand(hand) > 21
+    
+    def score(self, hand):
+        return 0 if self.is_bust(hand) else self.sum_hand(hand)
+    
+    def is_natural(self, hand):
+        return sorted(hand) == [1, 10]
+
     def _get_obs(self):
         player_hand = self.current_hand if len(self.current_hand) == 2 else [self.current_hand[0], 0]
         return (player_hand, self.dealer[0], int(1 in self.current_hand and sum(self.current_hand) + 10 <= 21), self._get_true_count())
