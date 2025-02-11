@@ -41,10 +41,10 @@ def main():
     env = BlackjackEnv(render_mode=None, natural=False, sab=False)
 
     # Q-learning parameters
-    num_episodes = 50000     # Number of episodes for training
-    alpha = 0.1              # Learning rate
-    gamma = 1.0              # Discount factor (1.0 since the task is episodic)
-    epsilon = 0.1            # Exploration rate
+    num_episodes = 100000     # Number of episodes for training
+    alpha = 0.01             # Learning rate
+    gamma = 0.6            # Discount factor (1.0 since the task is episodic)
+    epsilon = 0.9        # Exploration rate
 
     n_actions = env.action_space.n  # e.g., 4 actions: Stick, Hit, Double Down, Split
 
@@ -91,8 +91,12 @@ def main():
     print("Training complete.")
 
     # Evaluate the learned policy over several episodes.
-    num_eval_episodes = 1000
+    num_eval_episodes = 10000
     total_reward = 0.0
+    win_count = 0
+    bust_count = 0
+    push_count = 0
+    loss_count = 0
 
     print("Starting evaluation...")
     for _ in range(num_eval_episodes):
@@ -108,11 +112,22 @@ def main():
             episode_reward += reward
             state = state_to_key(next_obs)
             done = terminated or truncated
-
         total_reward += episode_reward
-
+        if env.is_bust(env.current_hand):
+            bust_count += 1
+        elif episode_reward > 0.0:
+            win_count += 1
+        elif episode_reward == 0.0:
+            push_count += 1
+        elif episode_reward < 0.0:
+            loss_count += 1
     avg_reward = total_reward / num_eval_episodes
     print(f"Average evaluation reward over {num_eval_episodes} episodes: {avg_reward:.3f}")
+    print(f"Outcomes over {num_eval_episodes} episodes:")
+    print(f"  Win Rate   : {win_count/num_eval_episodes*100:.3f}%")
+    print(f"  Bust Rate : {bust_count/num_eval_episodes*100:.3f}%")
+    print(f"  Loss Rate : {loss_count/num_eval_episodes*100:.3f}%")
+    print(f"  Pushes Rate: {push_count/num_eval_episodes*100:.3f}%")
 
     env.close()
 
