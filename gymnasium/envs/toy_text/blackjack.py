@@ -68,7 +68,8 @@ class BlackjackEnv(gym.Env):
             spaces.Discrete(32),
             spaces.Discrete(11),
             spaces.Discrete(2),
-            spaces.Discrete(11)
+            spaces.Discrete(11),
+            spaces.Discrete(2)
         ))
         self.natural = natural
         self.sab = sab
@@ -133,10 +134,13 @@ class BlackjackEnv(gym.Env):
         current_hand = self.player_hands[self.current_hand_index]
         player_total = self.sum_hand(current_hand)
         usable_flag = int(1 in current_hand and sum(current_hand) + 10 <= 21)
+        # New flag: hand is splittable if exactly two cards and they are equal.
+        splittable_flag = int(len(current_hand) == 2 and current_hand[0] == current_hand[1])
         return (player_total,
                 self.dealer[0],
                 usable_flag,
-                self._get_true_count())
+                self._get_true_count(),
+                splittable_flag)
     
     def step(self, action):
         assert self.action_space.contains(action)
