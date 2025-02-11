@@ -109,11 +109,10 @@ def cmp(a, b):
 class BlackjackEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False, num_decks=5, evaluation_mode=False):
+    def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False, num_decks=5):
         self.action_space = spaces.Discrete(4)  # 0: Stick, 1: Hit, 2: Double Down, 3: Split
-        # We assume player sum can range from 0 up to, say, 31.
         self.observation_space = spaces.Tuple(
-            (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2), spaces.Discrete(11))
+            (spaces.MultiDiscrete([11, 11]), spaces.Discrete(11), spaces.Discrete(2), spaces.Discrete(11))
         )
         self.natural = natural
         self.sab = sab
@@ -122,7 +121,6 @@ class BlackjackEnv(gym.Env):
         self.deck = []  # Deck to track available cards
         self.np_random = np.random.default_rng()
         self.running_count = 0
-        self.evaluation_mode = evaluation_mode
         self.split_hands = []
         self.current_hand = []
         self._reshuffle_deck()
@@ -141,11 +139,7 @@ class BlackjackEnv(gym.Env):
     def _get_true_count(self):
         remaining_decks = max(1, len(self.deck) / 52)
         true_count = self.running_count / remaining_decks
-        # Bound the true count between -5 and 5
-        bounded_count = int(round(true_count))
-        bounded_count = min(5, max(-5, bounded_count))
-        # Shift the range from [-5, 5] to [0, 10]
-        return bounded_count + 5
+        return min(5, max(-5, int(round(true_count))))
     
     def draw_card(self):
         if len(self.deck) == 0:
@@ -172,16 +166,14 @@ class BlackjackEnv(gym.Env):
         return sorted(hand) == [1, 10]
 
     def _get_obs(self):
-        # Compute the player's current sum using the sum_hand method.
-        player_sum = self.sum_hand(self.current_hand)
-        # Determine if there is a usable ace.
-        # (A usable ace exists if there's at least one ace and adding 10 doesn't bust.)
-        usable_ace_flag = int(1 in self.current_hand and sum(self.current_hand) + 10 <= 21)
-        # Return the observation as (player_sum, dealer's showing card, usable ace flag, true count)
-        return (player_sum,
-                self.dealer[0],
-                usable_ace_flag,
-                self._get_true_count()) 
+        # Ensure that player's hand is returned as a NumPy array.
+        player_hand = self.current_hand if len(self.current_hand) == 2 else [self.current_hand[0], 0]
+        player_hand = np.array(player_hand, dtype=np.int64)  # Convert to NumPy array
+        
+        return (player_hand, 
+                self.dealer[0], 
+                int(1 in self.current_hand and sum(self.current_hand) + 10 <= 21), 
+                self._get_true_count())
     
     def step(self, action):
         assert self.action_space.contains(action)
@@ -220,19 +212,8 @@ class BlackjackEnv(gym.Env):
     
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
-        if self.evaluation_mode:
-            # For evaluation: fully reshuffle the deck
+        if len(self.deck) < 15:
             self._reshuffle_deck()
-            # Determine the maximum number of cards that can be discarded while keeping at least 15 cards.
-            max_discards = len(self.deck) - 15
-            # Uniformly choose a number of cards to discard from 0 to max_discards (inclusive).
-            num_discards = self.np_random.integers(low=0, high=max_discards + 1)
-            for _ in range(num_discards):
-                self.deck.pop()
-        else:
-            # For training: persistent deck behavior – reshuffle only when the deck is low.
-            if len(self.deck) < 15:
-                self._reshuffle_deck()
         self.dealer = self.draw_hand()
         self.current_hand = self.draw_hand()
         self.split_hands = []

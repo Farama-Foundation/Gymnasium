@@ -30,7 +30,6 @@ def main():
     # Create the environment.
     # Adjust the arguments (natural, sab, etc.) as needed.
     env = BlackjackEnv(render_mode=None, natural=False, sab=False)
-
     # Q-learning parameters
     num_episodes = 900000     # Number of episodes for training
     alpha = 0.01             # Learning rate
