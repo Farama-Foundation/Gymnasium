@@ -218,15 +218,16 @@ class BlackjackEnv(gym.Env):
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
         if self.evaluation_mode:
-            # For evaluation: always reshuffle the deck completely and discard a random number of cards
+            # For evaluation: fully reshuffle the deck
             self._reshuffle_deck()
-            # Discard a random number of cards to vary the starting true count.
-            num_discards = self.np_random.integers(low=0, high=10)
+            # Determine the maximum number of cards that can be discarded while keeping at least 15 cards.
+            max_discards = len(self.deck) - 15
+            # Uniformly choose a number of cards to discard from 0 to max_discards (inclusive).
+            num_discards = self.np_random.integers(low=0, high=max_discards + 1)
             for _ in range(num_discards):
-                if len(self.deck) > 0:
-                    self.deck.pop()
+                self.deck.pop()
         else:
-            # For training: persistent deck behavior – reshuffle only when deck is low.
+            # For training: persistent deck behavior – reshuffle only when the deck is low.
             if len(self.deck) < 15:
                 self._reshuffle_deck()
         self.dealer = self.draw_hand()
