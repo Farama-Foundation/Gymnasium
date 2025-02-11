@@ -111,8 +111,9 @@ class BlackjackEnv(gym.Env):
 
     def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False, num_decks=5, evaluation_mode=False):
         self.action_space = spaces.Discrete(4)  # 0: Stick, 1: Hit, 2: Double Down, 3: Split
+        # We assume player sum can range from 0 up to, say, 31.
         self.observation_space = spaces.Tuple(
-            (spaces.MultiDiscrete([11, 11]), spaces.Discrete(11), spaces.Discrete(2), spaces.Discrete(11))
+            (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2), spaces.Discrete(11))
         )
         self.natural = natural
         self.sab = sab
@@ -171,14 +172,16 @@ class BlackjackEnv(gym.Env):
         return sorted(hand) == [1, 10]
 
     def _get_obs(self):
-        # Ensure that player's hand is returned as a NumPy array.
-        player_hand = self.current_hand if len(self.current_hand) == 2 else [self.current_hand[0], 0]
-        player_hand = np.array(player_hand, dtype=np.int64)  # Convert to NumPy array
-        
-        return (player_hand, 
-                self.dealer[0], 
-                int(1 in self.current_hand and sum(self.current_hand) + 10 <= 21), 
-                self._get_true_count())
+        # Compute the player's current sum using the sum_hand method.
+        player_sum = self.sum_hand(self.current_hand)
+        # Determine if there is a usable ace.
+        # (A usable ace exists if there's at least one ace and adding 10 doesn't bust.)
+        usable_ace_flag = int(1 in self.current_hand and sum(self.current_hand) + 10 <= 21)
+        # Return the observation as (player_sum, dealer's showing card, usable ace flag, true count)
+        return (player_sum,
+                self.dealer[0],
+                usable_ace_flag,
+                self._get_true_count()) 
     
     def step(self, action):
         assert self.action_space.contains(action)
