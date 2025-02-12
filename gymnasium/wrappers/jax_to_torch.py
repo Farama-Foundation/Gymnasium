@@ -12,12 +12,12 @@ from __future__ import annotations
 import functools
 import numbers
 from collections import abc
+from types import NoneType
 from typing import Any, Iterable, Mapping, SupportsFloat, Union
 
 import gymnasium as gym
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.wrappers.jax_to_numpy import jax_to_numpy
 
 
 try:
@@ -81,6 +81,12 @@ def _iterable_torch_to_jax(value: Iterable[Any]) -> Iterable[Any]:
         return type(value)(torch_to_jax(v) for v in value)
 
 
+@torch_to_jax.register(NoneType)
+def _none_torch_to_jax(value: None) -> None:
+    """Passes through None values."""
+    return value
+
+
 @functools.singledispatch
 def jax_to_torch(value: Any, device: Device | None = None) -> Any:
     """Converts a Jax Array into a PyTorch Tensor."""
@@ -122,6 +128,12 @@ def _jax_iterable_to_torch(
         return type(value)._make(jax_to_torch(v, device) for v in value)
     else:
         return type(value)(jax_to_torch(v, device) for v in value)
+
+
+@jax_to_torch.register(NoneType)
+def _none_jax_to_torch(value: None, device: Device | None = None) -> None:
+    """Passes through None values."""
+    return value
 
 
 class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
@@ -208,5 +220,5 @@ class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
         return jax_to_torch(self.env.reset(seed=seed, options=options), self.device)
 
     def render(self) -> RenderFrame | list[RenderFrame] | None:
-        """Returns the rendered frames as a NumPy array."""
-        return jax_to_numpy(self.env.render())
+        """Returns the rendered frames as a torch tensor."""
+        return jax_to_torch(self.env.render())
