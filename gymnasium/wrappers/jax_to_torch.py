@@ -12,7 +12,6 @@ from __future__ import annotations
 import functools
 import numbers
 from collections import abc
-from types import NoneType
 from typing import Any, Iterable, Mapping, SupportsFloat, Union
 
 import gymnasium as gym
@@ -42,6 +41,9 @@ except ImportError:
 
 
 __all__ = ["JaxToTorch", "jax_to_torch", "torch_to_jax", "Device"]
+
+# The NoneType is not defined in Python 3.9. Remove when the minimal version is bumped to >=3.10
+_NoneType = type(None)
 
 
 @functools.singledispatch
@@ -81,7 +83,7 @@ def _iterable_torch_to_jax(value: Iterable[Any]) -> Iterable[Any]:
         return type(value)(torch_to_jax(v) for v in value)
 
 
-@torch_to_jax.register(NoneType)
+@torch_to_jax.register(_NoneType)
 def _none_torch_to_jax(value: None) -> None:
     """Passes through None values."""
     return value
@@ -130,7 +132,7 @@ def _jax_iterable_to_torch(
         return type(value)(jax_to_torch(v, device) for v in value)
 
 
-@jax_to_torch.register(NoneType)
+@jax_to_torch.register(_NoneType)
 def _none_jax_to_torch(value: None, device: Device | None = None) -> None:
     """Passes through None values."""
     return value

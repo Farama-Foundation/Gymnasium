@@ -5,7 +5,6 @@ from __future__ import annotations
 import functools
 import numbers
 from collections import abc
-from types import NoneType
 from typing import Any, Iterable, Mapping, SupportsFloat
 
 import numpy as np
@@ -24,6 +23,9 @@ except ImportError:
     )
 
 __all__ = ["JaxToNumpy", "jax_to_numpy", "numpy_to_jax"]
+
+# The NoneType is not defined in Python 3.9. Remove when the minimal version is bumped to >=3.10
+_NoneType = type(None)
 
 
 @functools.singledispatch
@@ -69,7 +71,7 @@ def _iterable_numpy_to_jax(
         return type(value)(numpy_to_jax(v) for v in value)
 
 
-@numpy_to_jax.register(NoneType)
+@numpy_to_jax.register(_NoneType)
 def _none_numpy_to_jax(value: None) -> None:
     """Passes through None values."""
     return value
@@ -110,7 +112,7 @@ def _iterable_jax_to_numpy(
         return type(value)(jax_to_numpy(v) for v in value)
 
 
-@jax_to_numpy.register(NoneType)
+@jax_to_numpy.register(_NoneType)
 def _none_jax_to_numpy(value: None) -> None:
     """Passes through None values."""
     return value

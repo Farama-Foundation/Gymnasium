@@ -5,7 +5,6 @@ from __future__ import annotations
 import functools
 import numbers
 from collections import abc
-from types import NoneType
 from typing import Any, Iterable, Mapping, SupportsFloat, Union
 
 import numpy as np
@@ -26,6 +25,9 @@ except ImportError:
 
 
 __all__ = ["NumpyToTorch", "torch_to_numpy", "numpy_to_torch"]
+
+# The NoneType is not defined in Python 3.9. Remove when the minimal version is bumped to >=3.10
+_NoneType = type(None)
 
 
 @functools.singledispatch
@@ -65,7 +67,7 @@ def _iterable_torch_to_numpy(value: Iterable[Any]) -> Iterable[Any]:
         return type(value)(torch_to_numpy(v) for v in value)
 
 
-@torch_to_numpy.register(NoneType)
+@torch_to_numpy.register(_NoneType)
 def _none_torch_to_numpy(value: None) -> None:
     """Passes through None values."""
     return value
@@ -111,7 +113,7 @@ def _numpy_iterable_to_torch(
         return type(value)(numpy_to_torch(v, device) for v in value)
 
 
-@numpy_to_torch.register(NoneType)
+@numpy_to_torch.register(_NoneType)
 def _none_numpy_to_torch(value: None) -> None:
     """Passes through None values."""
     return value
