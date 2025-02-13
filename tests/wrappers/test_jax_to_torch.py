@@ -94,6 +94,7 @@ class ExampleNamedTuple(NamedTuple):
                 b=torch.tensor([1.0, 2.0]),
             ),
         ),
+        (None, None),
     ],
 )
 def test_roundtripping(value, expected_value):
@@ -143,3 +144,7 @@ def test_jax_to_torch_wrapper():
     assert isinstance(reward, float)
     assert isinstance(terminated, bool) and isinstance(truncated, bool)
     assert isinstance(info, dict) and isinstance(info["data"], torch.Tensor)
+
+    # Check that the wrapped environment can render. This implicitly returns None and requires  a
+    # None -> None conversion
+    wrapped_env.render()

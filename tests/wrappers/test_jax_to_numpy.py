@@ -72,6 +72,7 @@ class ExampleNamedTuple(NamedTuple):
                 b=np.array([1.0, 2.0], dtype=np.float32),
             ),
         ),
+        (None, None),
     ],
 )
 def test_roundtripping(value, expected_value):
@@ -128,3 +129,7 @@ def test_jax_to_numpy_wrapper():
     assert isinstance(reward, float)
     assert isinstance(terminated, bool) and isinstance(truncated, bool)
     assert isinstance(info, dict) and isinstance(info["data"], np.ndarray)
+
+    # Check that the wrapped environment can render. This implicitly returns None and requires  a
+    # None -> None conversion
+    numpy_env.render()

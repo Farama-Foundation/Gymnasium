@@ -72,6 +72,7 @@ class ExampleNamedTuple(NamedTuple):
                 b=np.array([1.0, 2.0], dtype=np.float32),
             ),
         ),
+        (None, None),
     ],
 )
 def test_roundtripping(value, expected_value):
@@ -123,3 +124,7 @@ def test_numpy_to_torch():
     assert isinstance(reward, float)
     assert isinstance(terminated, bool) and isinstance(truncated, bool)
     assert isinstance(info, dict) and isinstance(info["data"], torch.Tensor)
+
+    # Check that the wrapped environment can render. This implicitly returns None and requires a
+    # None -> None conversion
+    torch_env.render()
