@@ -24,7 +24,7 @@ except ImportError:
     )
 
 
-__all__ = ["NumpyToTorch", "torch_to_numpy", "numpy_to_torch"]
+__all__ = ["NumpyToTorch", "torch_to_numpy", "numpy_to_torch", "Device"]
 
 # The NoneType is not defined in Python 3.9. Remove when the minimal version is bumped to >=3.10
 _NoneType = type(None)
