@@ -24,7 +24,7 @@ except ImportError:
     )
 
 
-__all__ = ["NumpyToTorch", "torch_to_numpy", "numpy_to_torch"]
+__all__ = ["NumpyToTorch", "torch_to_numpy", "numpy_to_torch", "Device"]
 
 
 @functools.singledispatch
