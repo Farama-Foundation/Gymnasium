@@ -10,7 +10,7 @@ from typing import Any, Iterable, Mapping, SupportsFloat, Union
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import WrapperActType, WrapperObsType
+from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 
 
@@ -25,6 +25,9 @@ except ImportError:
 
 
 __all__ = ["NumpyToTorch", "torch_to_numpy", "numpy_to_torch"]
+
+# The NoneType is not defined in Python 3.9. Remove when the minimal version is bumped to >=3.10
+_NoneType = type(None)
 
 
 @functools.singledispatch
@@ -62,6 +65,12 @@ def _iterable_torch_to_numpy(value: Iterable[Any]) -> Iterable[Any]:
         return type(value)._make(torch_to_numpy(v) for v in value)
     else:
         return type(value)(torch_to_numpy(v) for v in value)
+
+
+@torch_to_numpy.register(_NoneType)
+def _none_torch_to_numpy(value: None) -> None:
+    """Passes through None values."""
+    return value
 
 
 @functools.singledispatch
@@ -102,6 +111,12 @@ def _numpy_iterable_to_torch(
         return type(value)._make(numpy_to_torch(v, device) for v in value)
     else:
         return type(value)(numpy_to_torch(v, device) for v in value)
+
+
+@numpy_to_torch.register(_NoneType)
+def _none_numpy_to_torch(value: None) -> None:
+    """Passes through None values."""
+    return value
 
 
 class NumpyToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
@@ -186,3 +201,7 @@ class NumpyToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
             options = torch_to_numpy(options)
 
         return numpy_to_torch(self.env.reset(seed=seed, options=options), self.device)
+
+    def render(self) -> RenderFrame | list[RenderFrame] | None:
+        """Returns the rendered frames as a torch tensor."""
+        return numpy_to_torch(self.env.render())
