@@ -115,23 +115,20 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         """
         if mask is not None and probability is not None:
             raise ValueError("Only one of `mask` or `probability` can be provided.")
-
-        mask_type = (
-            "mask"
-            if mask is not None
-            else "probability" if probability is not None else None
-        )
-        chosen_mask = mask if mask is not None else probability
-
-        if chosen_mask is not None:
+        elif mask is not None:
             return np.array(
-                self._apply_mask(chosen_mask, self.nvec, self.start, mask_type),
+                self._apply_mask(mask, self.nvec, self.start, "mask"),
                 dtype=self.dtype,
             )
-
-        return (self.np_random.random(self.nvec.shape) * self.nvec).astype(
-            self.dtype
-        ) + self.start
+        elif probability is not None:
+            return np.array(
+                self._apply_mask(probability, self.nvec, self.start, "probability"),
+                dtype=self.dtype,
+            )
+        else:
+            return (self.np_random.random(self.nvec.shape) * self.nvec).astype(
+                self.dtype
+            ) + self.start
 
     def _apply_mask(
         self,
@@ -162,6 +159,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         assert (
             len(sub_mask) == sub_nvec
         ), f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, action: {sub_nvec}"
+
         if mask_type == "mask":
             assert (
                 sub_mask.dtype == np.int8
@@ -187,9 +185,8 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             assert np.isclose(
                 np.sum(sub_mask), 1
             ), f"Expects the sum of all mask values to be 1, actual sum: {np.sum(sub_mask)}"
-            normalized_sub_mask = sub_mask / np.sum(
-                sub_mask, dtype=float
-            )  # as recommended by the numpy.random.Generator.choice documentation
+
+            normalized_sub_mask = sub_mask / np.sum(sub_mask)
             return (
                 self.np_random.choice(
                     np.where(valid_action_mask)[0],

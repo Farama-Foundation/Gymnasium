@@ -226,18 +226,31 @@ def test_sample_with_invalid_mask():
         }
     )
 
-    invalid_mask = {
-        "a": np.array([1, 0, 0], dtype=np.float64),  # Length mismatch
-        "b": None,
-    }
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The expected shape of the sample mask is (np.int64(5),), actual shape: (3,)"
+        ),
+    ):
+        space.sample(
+            mask={
+                "a": np.array([1, 0, 0], dtype=np.int8),  # Length mismatch
+                "b": None,
+            }
+        )
 
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "The expected shape of `mask` is (np.int64(5),), actual shape: (3,)"
+            "The expected dtype of the sample mask is np.int8, actual dtype: float32"
         ),
     ):
-        space.sample(mask=invalid_mask)
+        space.sample(
+            mask={
+                "a": np.array([1, 0, 0, 1, 1], dtype=np.float32),  # dtype mismatch
+                "b": None,
+            }
+        )
 
 
 def test_sample_with_invalid_probability():
@@ -249,18 +262,31 @@ def test_sample_with_invalid_probability():
         }
     )
 
-    invalid_probability = {
-        "a": np.array([0.5, 0.5], dtype=np.float64),  # Length mismatch
-        "b": None,
-    }
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The expected shape of the sample probability is (np.int64(5),), actual shape: (2,)"
+        ),
+    ):
+        space.sample(
+            probability={
+                "a": np.array([0.5, 0.5], dtype=np.float64),  # Length mismatch
+                "b": None,
+            }
+        )
 
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "The expected shape of `probability` is (np.int64(5),), actual shape: (2,)"
+            "The expected dtype of the sample probability is np.float64, actual dtype: int8"
         ),
     ):
-        space.sample(probability=invalid_probability)
+        space.sample(
+            probability={
+                "a": np.array([0.5, 0.5], dtype=np.int8),  # dtype mismatch
+                "b": None,
+            }
+        )
 
 
 def test_sample_with_mask_and_probability():
@@ -283,7 +309,7 @@ def test_sample_with_mask_and_probability():
     }
 
     with pytest.raises(
-        AssertionError,
+        ValueError,
         match=re.escape("Only one of `mask` or `probability` can be provided"),
     ):
         space.sample(mask=mask, probability=probability)

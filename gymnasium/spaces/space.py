@@ -95,6 +95,8 @@ class Space(Generic[T_cov]):
 
         Can be uniform or non-uniform sampling based on boundedness of space.
 
+        The binary mask and the probability mask can't be used at the same time.
+
         Args:
             mask: A mask used for random sampling, expected ``dtype=np.int8`` and see sample implementation for expected shape.
             probability: A probability mask used for sampling according to the given probability distribution, expected ``dtype=np.float64`` and see sample implementation for expected shape.

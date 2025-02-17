@@ -7,7 +7,6 @@ from typing import Any, Sequence
 import numpy as np
 from numpy.typing import NDArray
 
-import gymnasium as gym
 from gymnasium.spaces.space import MaskNDArray, Space
 
 
@@ -68,18 +67,21 @@ class MultiBinary(Space[NDArray[np.int8]]):
         A sample is drawn by independent, fair coin tosses (one toss per binary variable of the space).
 
         Args:
-            mask: An optional np.ndarray to mask samples with expected shape of ``space.shape``.
-                For ``mask == 0`` then the samples will be ``0`` and ``mask == 1` then random samples will be generated.
+            mask: An optional ``np.ndarray`` to mask samples with expected shape of ``space.shape``.
+                For ``mask == 0`` then the samples will be ``0``, for a ``mask == 1`` then the samples will be ``1``.
+                For random samples, using a mask value of ``2``.
                 The expected mask shape is the space shape and mask dtype is ``np.int8``.
-            probability: A probability mask for sampling values from the MultiBinary space, currently unsupported.
+            probability: An optional ``np.ndarray`` to mask samples with expected shape of ``space.shape`` where element
+                represent the probability of 1
 
         Returns:
             Sampled values from space
         """
+        if mask is not None and probability is not None:
+            raise ValueError(
+                "Only one of `mask` or `probability` can be provided, and `probability` is currently unsupported"
+            )
         if mask is not None:
-            assert (
-                probability is None
-            ), "Only one of `mask` or `probability` can be provided, and `probability` is currently unsupported"
             assert isinstance(
                 mask, np.ndarray
             ), f"The expected type of the mask is np.ndarray, actual type: {type(mask)}"
@@ -99,11 +101,24 @@ class MultiBinary(Space[NDArray[np.int8]]):
                 mask.astype(self.dtype),
             )
         elif probability is not None:
-            raise gym.error.Error(
-                f"MultiBinary.sample cannot be provided a probability, actual value: {probability}"
-            )
+            assert isinstance(
+                probability, np.ndarray
+            ), f"The expected type of the probability is np.ndarray, actual type: {type(probability)}"
+            assert (
+                probability.dtype == np.float64
+            ), f"The expected dtype of the probability is np.float64, actual dtype: {probability.dtype}"
+            assert (
+                probability.shape == self.shape
+            ), f"The expected shape of the probability is {self.shape}, actual shape: {probability}"
+            assert np.all(
+                np.logical_and(probability >= 0, probability <= 1)
+            ), f"All values of the sample probability should be between 0 and 1, actual values: {probability}"
 
-        return self.np_random.integers(low=0, high=2, size=self.n, dtype=self.dtype)
+            return (self.np_random.random(size=self.shape) <= probability).astype(
+                self.dtype
+            )
+        else:
+            return self.np_random.integers(low=0, high=2, size=self.n, dtype=self.dtype)
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""

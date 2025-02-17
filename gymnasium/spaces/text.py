@@ -98,63 +98,55 @@ class Text(Space[str]):
         if mask is not None and probability is not None:
             raise ValueError("Only one of `mask` or `probability` can be provided.")
 
-        mask_type = (
-            "mask"
-            if mask is not None
-            else "probability" if probability is not None else None
-        )
-        chosen_mask = mask if mask is not None else probability
+        elif mask is not None:
+            length, charlist_mask = self._validate_mask(mask, np.int8, "mask")
 
-        if chosen_mask is not None:
+            if charlist_mask is not None:
+                assert np.all(
+                    np.logical_or(charlist_mask == 0, charlist_mask == 1)
+                ), f"Expects all mask values to 0 or 1, actual values: {charlist_mask}"
+
+                # normalise the mask to use as a probability
+                if np.sum(charlist_mask) > 0:
+                    charlist_mask = charlist_mask / np.sum(charlist_mask)
+        elif probability is not None:
             length, charlist_mask = self._validate_mask(
-                chosen_mask,
-                np.int8 if mask_type == "mask" else np.float64,
-                mask_type,
+                probability, np.float64, "probability"
             )
+
+            if charlist_mask is not None:
+                assert np.all(
+                    np.logical_and(charlist_mask >= 0, charlist_mask <= 1)
+                ), f"Expects all probability mask values to be within [0,1], actual values: {charlist_mask}"
+                assert np.isclose(
+                    np.sum(charlist_mask), 1
+                ), f"Expects the sum of the probability mask to be 1, actual sum: {np.sum(charlist_mask)}"
         else:
-            length, charlist_mask = None, None
+            length = charlist_mask = None
 
         if length is None:
             length = self.np_random.integers(self.min_length, self.max_length + 1)
+        if charlist_mask is None:  # uniform sampling
+            charlist_mask = np.ones(len(self.character_set)) / len(self.character_set)
 
-        if charlist_mask is None:
-            string = self.np_random.choice(self.character_list, size=length)
-        else:
-            valid_action_mask = charlist_mask > 0
-            if mask_type == "mask":
-                valid_indexes = np.where(valid_action_mask)[0]
-                if len(valid_indexes) == 0:
-                    if self.min_length == 0:
-                        string = ""
-                    else:
-                        # Otherwise the string will not be contained in the space
-                        raise ValueError(
-                            f"Trying to sample with a minimum length > 0 ({self.min_length}) but the character mask is all zero meaning that no character could be sampled."
-                        )
-                else:
-                    string = "".join(
-                        self.character_list[index]
-                        for index in self.np_random.choice(valid_indexes, size=length)
-                    )
-            elif mask_type == "probability":
-                normalized_probability = charlist_mask / np.sum(
-                    charlist_mask, dtype=float
-                )
-                string = "".join(
-                    self.character_list[index]
-                    for index in self.np_random.choice(
-                        np.where(valid_action_mask)[0],
-                        size=length,
-                        p=normalized_probability[valid_action_mask],
-                    )
+        if np.all(charlist_mask == 0):
+            if self.min_length == 0:
+                return ""
+            else:
+                # Otherwise the string will not be contained in the space
+                raise ValueError(
+                    f"Trying to sample with a minimum length > 0 ({self.min_length}) but the character mask is all zero meaning that no character could be sampled."
                 )
 
+        string = self.np_random.choice(
+            self.character_list, size=length, p=charlist_mask
+        )
         return "".join(string)
 
     def _validate_mask(
         self,
         mask: tuple[int | None, NDArray[np.int8] | NDArray[np.float64] | None],
-        expected_dtype: type,
+        expected_dtype: np.dtype,
         mask_type: str,
     ) -> tuple[int | None, NDArray[np.int8] | NDArray[np.float64] | None]:
         assert isinstance(
@@ -182,17 +174,7 @@ class Text(Space[str]):
             assert charlist_mask.shape == (
                 len(self.character_set),
             ), f"expects the Text sample `{mask_type}` to be {(len(self.character_set),)}, actual shape: {charlist_mask.shape}"
-            if mask_type == "mask":
-                assert np.all(
-                    np.logical_or(charlist_mask == 0, charlist_mask == 1)
-                ), f"Expects all mask values to 0 or 1, actual values: {charlist_mask}"
-            elif mask_type == "probability":
-                assert np.all(
-                    np.logical_and(charlist_mask >= 0, charlist_mask <= 1)
-                ), f"Expects all probability mask values to be within [0,1], actual values: {charlist_mask}"
-                assert np.isclose(
-                    np.sum(charlist_mask), 1
-                ), f"Expects the sum of the probability mask to be 1, actual sum: {np.sum(charlist_mask)}"
+
         return length, charlist_mask
 
     def contains(self, x: Any) -> bool:

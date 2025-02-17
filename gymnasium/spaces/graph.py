@@ -211,31 +211,19 @@ class Graph(Space[GraphInstance]):
             num_nodes > 0
         ), f"The number of nodes is expected to be greater than 0, actual value: {num_nodes}"
 
-        mask_type = None
-        if mask is not None:
-            assert (
-                probability is None
-            ), "Only one of `mask` or `probability` can be provided"
+        if mask is not None and probability is not None:
+            raise ValueError(
+                f"Only one of `mask` or `probability` can be provided, actual value mask={mask}, probability={probability}"
+            )
+        elif mask is not None:
             node_space_mask, edge_space_mask = mask
             mask_type = "mask"
         elif probability is not None:
             node_space_mask, edge_space_mask = probability
             mask_type = "probability"
         else:
-            node_space_mask, edge_space_mask = None, None
+            node_space_mask = edge_space_mask = mask_type = None
 
-        return self._sample(
-            node_space_mask, edge_space_mask, num_nodes, num_edges, mask_type
-        )
-
-    def _sample(
-        self,
-        node_space_mask: NDArray[Any] | tuple[Any, ...] | None,
-        edge_space_mask: NDArray[Any] | tuple[Any, ...] | None,
-        num_nodes: int,
-        num_edges: int | None,
-        mask_type: str,
-    ) -> GraphInstance:
         # we only have edges when we have at least 2 nodes
         if num_edges is None:
             if num_nodes > 1:
@@ -257,25 +245,19 @@ class Graph(Space[GraphInstance]):
         assert num_edges is not None
 
         sampled_node_space = self._generate_sample_space(self.node_space, num_nodes)
+        assert sampled_node_space is not None
         sampled_edge_space = self._generate_sample_space(self.edge_space, num_edges)
 
-        assert sampled_node_space is not None
-        node_sample_kwargs = (
-            {"probability": node_space_mask}
-            if mask_type == "probability"
-            else {"mask": node_space_mask}
-        )
-        edge_sample_kwargs = (
-            {"probability": edge_space_mask}
-            if mask_type == "probability"
-            else {"mask": edge_space_mask}
-        )
+        if mask_type is not None:
+            node_sample_kwargs = {mask_type: node_space_mask}
+            edge_sample_kwargs = {mask_type: edge_space_mask}
+        else:
+            node_sample_kwargs = edge_sample_kwargs = {}
+
         sampled_nodes = sampled_node_space.sample(**node_sample_kwargs)
-        sampled_edges = (
-            sampled_edge_space.sample(**edge_sample_kwargs)
-            if sampled_edge_space is not None
-            else None
-        )
+        sampled_edges = None
+        if sampled_edge_space is not None:
+            sampled_edges = sampled_edge_space.sample(**edge_sample_kwargs)
 
         sampled_edge_links = None
         if sampled_edges is not None and num_edges > 0:

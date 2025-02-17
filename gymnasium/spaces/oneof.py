@@ -124,27 +124,28 @@ class OneOf(Space[Any]):
         if mask is not None and probability is not None:
             raise ValueError("Only one of `mask` or `probability` can be provided.")
 
-        mask_type = (
-            "mask"
-            if mask is not None
-            else "probability" if probability is not None else None
-        )
-        chosen_mask = mask if mask is not None else probability
-
-        if chosen_mask is not None:
+        elif mask is not None:
             assert isinstance(
-                chosen_mask, tuple
-            ), f"Expected type of `{mask_type}` is tuple, actual type: {type(chosen_mask)}"
-            assert len(chosen_mask) == len(
+                mask, tuple
+            ), f"Expected type of `mask` is tuple, actual type: {type(mask)}"
+            assert len(mask) == len(
                 self.spaces
-            ), f"Expected length of `{mask_type}` is {len(self.spaces)}, actual length: {len(chosen_mask)}"
-            chosen_mask = chosen_mask[subspace_idx]
+            ), f"Expected length of `mask` is {len(self.spaces)}, actual length: {len(mask)}"
 
-        subspace_sample = (
-            subspace.sample(mask=chosen_mask)
-            if mask_type == "mask"
-            else subspace.sample(probability=chosen_mask)
-        )
+            subspace_sample = subspace.sample(mask=mask[subspace_idx])
+
+        elif probability is not None:
+            assert isinstance(
+                probability, tuple
+            ), f"Expected type of `probability` is tuple, actual type: {type(probability)}"
+            assert len(probability) == len(
+                self.spaces
+            ), f"Expected length of `probability` is {len(self.spaces)}, actual length: {len(probability)}"
+
+            subspace_sample = subspace.sample(probability=probability[subspace_idx])
+        else:
+            subspace_sample = subspace.sample()
+
         return subspace_idx, subspace_sample
 
     def contains(self, x: tuple[int, Any]) -> bool:

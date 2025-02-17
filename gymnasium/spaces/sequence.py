@@ -103,13 +103,13 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
         self,
         mask: None | (
             tuple[
-                None | np.integer | NDArray[np.integer],
+                None | int | NDArray[np.integer],
                 Any,
             ]
         ) = None,
         probability: None | (
             tuple[
-                None | np.integer | NDArray[np.integer],
+                None | int | NDArray[np.integer],
                 Any,
             ]
         ) = None,
@@ -120,21 +120,13 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
             mask: An optional mask for (optionally) the length of the sequence and (optionally) the values in the sequence.
                 If you specify ``mask``, it is expected to be a tuple of the form ``(length_mask, sample_mask)`` where ``length_mask`` is
 
-                * ``None`` The length will be randomly drawn from a geometric distribution
-                * ``np.ndarray`` of integers, in which case the length of the sampled sequence is randomly drawn from this array.
-                * ``int`` for a fixed length sample
+                * ``None`` - The length will be randomly drawn from a geometric distribution
+                * ``int`` - Fixed length
+                * ``np.ndarray`` of integers - Length of the sampled sequence is randomly drawn from this array.
 
-                The second element of the mask tuple ``sample_mask`` specifies a mask that is applied when
-                sampling elements from the base space. The mask is applied for each feature space sample.
-            probability: An optional probability mask for (optionally) the length of the sequence and (optionally) the values in the sequence.
-                If you specify ``probability``, it is expected to be a tuple of the form ``(length_mask, sample_mask)`` where ``length_mask`` is
-
-                * ``None`` The length will be randomly drawn from a geometric distribution
-                * ``np.ndarray`` of integers, in which case the length of the sampled sequence is randomly drawn from this array.
-                * ``int`` for a fixed length sample
-
-                The second element of the probability tuple ``sample_mask`` specifies a probability mask that is applied when
-                sampling elements from the base space. The probability mask is applied for each feature space sample.
+                The second element of the tuple ``sample_mask`` specifies how the feature space will be sampled.
+                Depending on if mask or probability is used will affect what argument is used.
+            probability: See mask description above, the only difference is on the ``sample_mask`` for the feature space being probability rather than mask.
 
         Returns:
             A tuple of random length with random samples of elements from the :attr:`feature_space`.
@@ -142,31 +134,45 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
         if mask is not None and probability is not None:
             raise ValueError("Only one of `mask` or `probability` can be provided.")
 
-        mask_type = (
-            "mask"
-            if mask is not None
-            else "probability" if probability is not None else None
-        )
-        chosen_mask = mask if mask is not None else probability
-
-        if chosen_mask is not None:
-            length_mask, feature_mask = chosen_mask
+        if mask is not None:
+            sample_length = self.generate_sample_length(mask[0], "mask")
+            sampled_values = tuple(
+                self.feature_space.sample(mask=mask[1]) for _ in range(sample_length)
+            )
+        elif probability is not None:
+            sample_length = self.generate_sample_length(probability[0], "probability")
+            sampled_values = tuple(
+                self.feature_space.sample(probability=probability[1])
+                for _ in range(sample_length)
+            )
         else:
-            length_mask, feature_mask = None, None
-        return self._sample(length_mask, feature_mask, mask_type)
+            sample_length = self.np_random.geometric(0.25)
+            sampled_values = tuple(
+                self.feature_space.sample() for _ in range(sample_length)
+            )
 
-    def _sample(
+        if self.stack:
+            # Concatenate values if stacked.
+            out = gym.vector.utils.create_empty_array(
+                self.feature_space, len(sampled_values)
+            )
+            return gym.vector.utils.concatenate(self.feature_space, sampled_values, out)
+
+        return sampled_values
+
+    def generate_sample_length(
         self,
         length_mask: None | np.integer | NDArray[np.integer],
-        feature_mask: Any,
         mask_type: None | str,
-    ) -> tuple[Any] | Any:
+    ) -> int:
+        """Generate the sample length for a given length mask and mask type."""
         if length_mask is not None:
             if np.issubdtype(type(length_mask), np.integer):
                 assert (
                     0 <= length_mask
                 ), f"Expects the length mask of `{mask_type}` to be greater than or equal to zero, actual value: {length_mask}"
-                length = length_mask
+
+                return length_mask
             elif isinstance(length_mask, np.ndarray):
                 assert (
                     len(length_mask.shape) == 1
@@ -177,33 +183,15 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
                 assert np.issubdtype(
                     length_mask.dtype, np.integer
                 ), f"Expects the length mask array of `{mask_type}` to have dtype of np.integer, actual type: {length_mask.dtype}"
-                length = self.np_random.choice(length_mask)
+
+                return self.np_random.choice(length_mask)
             else:
                 raise TypeError(
                     f"Expects the type of length_mask of `{mask_type}` to be an integer or a np.ndarray, actual type: {type(length_mask)}"
                 )
         else:
             # The choice of 0.25 is arbitrary
-            length = self.np_random.geometric(0.25)
-
-        # Generate sample values from feature_space.
-        sample_kwargs = (
-            {"probability": feature_mask}
-            if mask_type == "probability"
-            else {"mask": feature_mask}
-        )
-        sampled_values = tuple(
-            self.feature_space.sample(**sample_kwargs) for _ in range(length)
-        )
-
-        if self.stack:
-            # Concatenate values if stacked.
-            out = gym.vector.utils.create_empty_array(
-                self.feature_space, len(sampled_values)
-            )
-            return gym.vector.utils.concatenate(self.feature_space, sampled_values, out)
-
-        return sampled_values
+            return self.np_random.geometric(0.25)
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""

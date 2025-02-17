@@ -76,7 +76,7 @@ def test_invalid_probability_mask_dtype():
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "The expected dtype of `probability` is <class 'numpy.float64'>, actual dtype: int8"
+            "The expected dtype of the sample probability is np.float64, actual dtype: int8"
         ),
     ):
         space.sample(probability=np.array([0, 1, 0, 0], dtype=np.int8))
@@ -89,7 +89,7 @@ def test_invalid_probability_mask_values():
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "All values of `probability mask` should be 0, 1, or in between, actual values: [-0.5  1.   0.5  0. ]"
+            "All values of the sample probability should be between 0 and 1, actual values: [-0.5  1.   0.5  0. ]"
         ),
     ):
         space.sample(probability=np.array([-0.5, 1, 0.5, 0], dtype=np.float64))
@@ -97,7 +97,7 @@ def test_invalid_probability_mask_values():
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "The sum of all values of `probability mask` should be 1, actual sum: 1.1"
+            "The sum of the sample probability should be equal to 1, actual sum: 1.1"
         ),
     ):
         space.sample(probability=np.array([0.2, 0.3, 0.4, 0.2], dtype=np.float64))
@@ -105,7 +105,7 @@ def test_invalid_probability_mask_values():
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "The sum of all values of `probability mask` should be 1, actual sum: 0.0"
+            "The sum of the sample probability should be equal to 1, actual sum: 0.0"
         ),
     ):
         space.sample(probability=np.array([0, 0, 0, 0], dtype=np.float64))
