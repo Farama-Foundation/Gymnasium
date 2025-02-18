@@ -94,7 +94,7 @@ class Discrete(Space[np.int64]):
             ), f"The expected dtype of the sample mask is np.int8, actual dtype: {mask.dtype}"
             assert mask.shape == (
                 self.n,
-            ), f"The expected shape of the sample mask is {(self.n,)}, actual shape: {mask.shape}"
+            ), f"The expected shape of the sample mask is {(int(self.n),)}, actual shape: {mask.shape}"
 
             valid_action_mask = mask == 1
             assert np.all(
@@ -117,7 +117,7 @@ class Discrete(Space[np.int64]):
             ), f"The expected dtype of the sample probability is np.float64, actual dtype: {probability.dtype}"
             assert probability.shape == (
                 self.n,
-            ), f"The expected shape of the sample probability is {(self.n,)}, actual shape: {probability.shape}"
+            ), f"The expected shape of the sample probability is {(int(self.n),)}, actual shape: {probability.shape}"
 
             assert np.all(
                 np.logical_and(probability >= 0, probability <= 1)

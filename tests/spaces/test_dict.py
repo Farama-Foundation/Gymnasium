@@ -229,7 +229,7 @@ def test_sample_with_invalid_mask():
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "The expected shape of the sample mask is (np.int64(5),), actual shape: (3,)"
+            "The expected shape of the sample mask is (5,), actual shape: (3,)"
         ),
     ):
         space.sample(
@@ -265,7 +265,7 @@ def test_sample_with_invalid_probability():
     with pytest.raises(
         AssertionError,
         match=re.escape(
-            "The expected shape of the sample probability is (np.int64(5),), actual shape: (2,)"
+            "The expected shape of the sample probability is (5,), actual shape: (2,)"
         ),
     ):
         space.sample(
