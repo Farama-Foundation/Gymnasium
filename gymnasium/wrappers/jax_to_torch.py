@@ -17,13 +17,13 @@ from typing import Any, Iterable, Mapping, SupportsFloat, Union
 import gymnasium as gym
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.wrappers.jax_to_numpy import jax_to_numpy
 
 
 try:
     import jax
     import jax.numpy as jnp
     from jax import dlpack as jax_dlpack
+
 except ImportError:
     raise DependencyNotInstalled(
         'Jax is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[jax]"`'
@@ -41,6 +41,9 @@ except ImportError:
 
 
 __all__ = ["JaxToTorch", "jax_to_torch", "torch_to_jax", "Device"]
+
+# The NoneType is not defined in Python 3.9. Remove when the minimal version is bumped to >=3.10
+_NoneType = type(None)
 
 
 @functools.singledispatch
@@ -60,9 +63,7 @@ def _number_torch_to_jax(value: numbers.Number) -> Any:
 @torch_to_jax.register(torch.Tensor)
 def _tensor_torch_to_jax(value: torch.Tensor) -> jax.Array:
     """Converts a PyTorch Tensor into a Jax Array."""
-    tensor = torch_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
-    tensor = jax_dlpack.from_dlpack(tensor)  # pyright: ignore[reportPrivateImportUsage]
-    return tensor
+    return jax_dlpack.from_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
 
 
 @torch_to_jax.register(abc.Mapping)
@@ -82,6 +83,12 @@ def _iterable_torch_to_jax(value: Iterable[Any]) -> Iterable[Any]:
         return type(value)(torch_to_jax(v) for v in value)
 
 
+@torch_to_jax.register(_NoneType)
+def _none_torch_to_jax(value: None) -> None:
+    """Passes through None values."""
+    return value
+
+
 @functools.singledispatch
 def jax_to_torch(value: Any, device: Device | None = None) -> Any:
     """Converts a Jax Array into a PyTorch Tensor."""
@@ -96,8 +103,9 @@ def _devicearray_jax_to_torch(
 ) -> torch.Tensor:
     """Converts a Jax Array into a PyTorch Tensor."""
     assert jax_dlpack is not None and torch_dlpack is not None
-    dlpack = jax_dlpack.to_dlpack(value)  # pyright: ignore[reportPrivateImportUsage]
-    tensor = torch_dlpack.from_dlpack(dlpack)
+    tensor = torch_dlpack.from_dlpack(
+        value
+    )  # pyright: ignore[reportPrivateImportUsage]
     if device:
         return tensor.to(device=device)
     return tensor
@@ -122,6 +130,12 @@ def _jax_iterable_to_torch(
         return type(value)._make(jax_to_torch(v, device) for v in value)
     else:
         return type(value)(jax_to_torch(v, device) for v in value)
+
+
+@jax_to_torch.register(_NoneType)
+def _none_jax_to_torch(value: None, device: Device | None = None) -> None:
+    """Passes through None values."""
+    return value
 
 
 class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
@@ -208,5 +222,5 @@ class JaxToTorch(gym.Wrapper, gym.utils.RecordConstructorArgs):
         return jax_to_torch(self.env.reset(seed=seed, options=options), self.device)
 
     def render(self) -> RenderFrame | list[RenderFrame] | None:
-        """Returns the rendered frames as a NumPy array."""
-        return jax_to_numpy(self.env.render())
+        """Returns the rendered frames as a torch tensor."""
+        return jax_to_torch(self.env.render())
