@@ -10,130 +10,89 @@ def cmp(a, b):
 
 """
   Blackjack is a card game where the goal is to beat the dealer by obtaining cards
-  that sum to closer to 21 (without going over 21) than the dealers cards.
+  that sum to closer to 21 (without going over 21) than the dealer's cards.
 
   ## Description
   The game starts with the dealer having one face up and one face down card,
-  while the player has two face up cards. All cards are drawn from an infinite deck
+  while the player initially is dealt two cards. All cards are drawn from an infinite deck
   (i.e. with replacement).
 
-  The card values are:
-  - Face cards (Jack, Queen, King) have a point value of 10.
-  - Aces can either count as 11 (called a 'usable ace') or 1.
-  - Numerical cards (2-10) have a value equal to their number.
+  Card values:
+  - Face cards (Jack, Queen, King) are worth 10.
+  - Aces can count as 11 (usable ace) or 1.
+  - Numerical cards (2-10) are worth their number.
 
-  The player has the sum of cards held. The player can request
-  additional cards (hit) until they decide to stop (stick) or exceed 21 (bust,
-  immediate loss).
-
-  After the player sticks, the dealer reveals their facedown card, and draws cards
-  until their sum is 17 or greater. If the dealer goes bust, the player wins.
-
-  If neither the player nor the dealer busts, the outcome (win, lose, draw) is
-  decided by whose sum is closer to 21.
-
-  This environment corresponds to the version of the blackjack problem
-  described in Example 5.1 in Reinforcement Learning: An Introduction
-  by Sutton and Barto [<a href="#blackjack_ref">1</a>].
-
+  In this modified version, the player's hand is represented by its total sum and
+  a flag indicating if there is a usable ace. Splitting is allowed; when the player
+  splits, the environment internally stores all resulting hands and plays them sequentially.
+  
   ## Action Space
-  The action shape is `(1,)` in the range `{0, 1}` indicating
-  whether to stick or hit.
-
-  - 0: Stick
-  - 1: Hit
+  0: Stick
+  1: Hit
+  2: Double Down
+  3: Split
 
   ## Observation Space
-  The observation consists of a 4-tuple containing: the player's current sum,
-  the value of the dealer's one showing card (1-10 where 1 is ace),
-  whether the player holds a usable ace (0 or 1), 
-  and the true count of the table.
-
-  The observation is returned as `(int(), int(), int(), int())`.
-
-  ## Starting State
-  The starting state is initialised with the following values.
-
-  | Observation               | Values         |
-  |---------------------------|----------------|
-  | Player current sum        |  4, 5, ..., 21 |
-  | Dealer showing card value |  1, 2, ..., 10 |
-  | Usable Ace                |  0, 1          |
-
+  The observation is now a 4-tuple:
+    (player_total, dealer_showing, usable_ace_flag, true_count)
+  where:
+    - player_total: the sum of the current (active) hand (Discrete(32), assumed range 0-31)
+    - dealer_showing: the dealer’s visible card (Discrete(11), values 0–10)
+    - usable_ace_flag: 0 or 1 (Discrete(2))
+    - true_count: an integer between 0 and 10 (Discrete(11))
+  
   ## Rewards
-  - win game: +1
-  - lose game: -1
-  - draw game: 0
-  - win game with natural blackjack:
-  +1.5 (if <a href="#nat">natural</a> is True)
-  +1 (if <a href="#nat">natural</a> is False)
+  - Win: +1 (or +1.5 for a natural blackjack, per your natural flag)
+  - Loss: -1 (or -2 when doubling and busting)
+  - Draw: 0
+  
+  For split actions, a legal split returns a reward of 0 immediately and the episode continues.
 
   ## Episode End
-  The episode ends if the following happens:
-
-  - Termination:
-  1. The player hits and the sum of hand exceeds 21.
-  2. The player sticks.
-
-  An ace will always be counted as usable (11) unless it busts the player.
-
-  ## Information
-
-  No additional information is returned.
-
-  ## Arguments
-
-  ```python
-  import gymnasium as gym
-  gym.make('Blackjack-v1', natural=False, sab=False)
-  ```
-
-  <a id="nat"></a>`natural=False`: Whether to give an additional reward for
-  starting with a natural blackjack, i.e. starting with an ace and ten (sum is 21).
-
-  <a id="sab"></a>`sab=False`: Whether to follow the exact rules outlined in the book by
-  Sutton and Barto. If `sab` is `True`, the keyword argument `natural` will be ignored.
-  If the player achieves a natural blackjack and the dealer does not, the player
-  will win (i.e. get a reward of +1). The reverse rule does not apply.
-  If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).
+  An episode ends only when all of the player’s hands have been played.
 
   ## References
-  <a id="blackjack_ref"></a>[1] R. Sutton and A. Barto, “Reinforcement Learning:
-  An Introduction” 2020. [Online]. Available: [http://www.incompleteideas.net/book/RLbook2020.pdf](http://www.incompleteideas.net/book/RLbook2020.pdf)
-
-  ## Version History
-  * v1: Fix the natural handling in Blackjack
-  * v0: Initial version release
-  """
+  [1] R. Sutton and A. Barto, “Reinforcement Learning: An Introduction” (2020).
+"""
 
 class BlackjackEnv(gym.Env):
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
-    def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False, num_decks=5, evaluation_mode=False):
-        self.action_space = spaces.Discrete(4)  # 0: Stick, 1: Hit, 2: Double Down, 3: Split
-        # We assume player sum can range from 0 up to, say, 31.
-        self.observation_space = spaces.Tuple(
-            (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2), spaces.Discrete(11))
-        )
+    def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False,
+                 num_decks=5, evaluation_mode=False):
+        # Actions: 0: Stick, 1: Hit, 2: Double Down, 3: Split.
+        self.action_space = spaces.Discrete(4)
+        # Observation: (player_total, dealer_showing, usable_ace_flag, true_count)
+        # Assume player's total can be between 0 and 31.
+        self.observation_space = spaces.Tuple((
+            spaces.Discrete(32),
+            spaces.Discrete(11),
+            spaces.Discrete(2),
+            spaces.Discrete(11),
+            spaces.Discrete(2)
+        ))
         self.natural = natural
         self.sab = sab
         self.render_mode = render_mode
-        self.num_decks = num_decks  # Number of decks to use
-        self.deck = []  # Deck to track available cards
+        self.num_decks = num_decks
+        self.deck = []  # List of available cards
         self.np_random = np.random.default_rng()
         self.running_count = 0
         self.evaluation_mode = evaluation_mode
-        self.split_hands = []
-        self.current_hand = []
+
+        # Instead of a single hand, we store all player hands here.
+        self.player_hands = []
+        self.current_hand_index = 0
+        self.dealer = []
         self._reshuffle_deck()
     
     def _reshuffle_deck(self):
-        self.deck = self.num_decks * [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10] * 4
+        self.deck = self.num_decks * [1,2,3,4,5,6,7,8,9,10,10,10,10] * 4
         self.np_random.shuffle(self.deck)
         self.running_count = 0
     
     def _update_running_count(self, card):
-        if card in [2, 3, 4, 5, 6]:
+        if card in [2,3,4,5,6]:
             self.running_count += 1
         elif card in [10, 1]:
             self.running_count -= 1
@@ -141,10 +100,8 @@ class BlackjackEnv(gym.Env):
     def _get_true_count(self):
         remaining_decks = max(1, len(self.deck) / 52)
         true_count = self.running_count / remaining_decks
-        # Bound the true count between -5 and 5
         bounded_count = int(round(true_count))
         bounded_count = min(5, max(-5, bounded_count))
-        # Shift the range from [-5, 5] to [0, 10]
         return bounded_count + 5
     
     def draw_card(self):
@@ -158,6 +115,7 @@ class BlackjackEnv(gym.Env):
         return [self.draw_card(), self.draw_card()]
 
     def sum_hand(self, hand):
+        # Compute hand total, counting a usable ace as 11 if it doesn't bust.
         if 1 in hand and sum(hand) + 10 <= 21:
             return sum(hand) + 10
         return sum(hand)
@@ -172,76 +130,108 @@ class BlackjackEnv(gym.Env):
         return sorted(hand) == [1, 10]
 
     def _get_obs(self):
-        # Compute the player's current sum using the sum_hand method.
-        player_sum = self.sum_hand(self.current_hand)
-        # Determine if there is a usable ace.
-        # (A usable ace exists if there's at least one ace and adding 10 doesn't bust.)
-        usable_ace_flag = int(1 in self.current_hand and sum(self.current_hand) + 10 <= 21)
-        # Return the observation as (player_sum, dealer's showing card, usable ace flag, true count)
-        return (player_sum,
+        # Use the active hand from self.player_hands.
+        current_hand = self.player_hands[self.current_hand_index]
+        player_total = self.sum_hand(current_hand)
+        usable_flag = int(1 in current_hand and sum(current_hand) + 10 <= 21)
+        # New flag: hand is splittable if exactly two cards and they are equal.
+        splittable_flag = int(len(current_hand) == 2 and current_hand[0] == current_hand[1])
+        return (player_total,
                 self.dealer[0],
-                usable_ace_flag,
-                self._get_true_count()) 
+                usable_flag,
+                self._get_true_count(),
+                splittable_flag)
     
     def step(self, action):
         assert self.action_space.contains(action)
-        if action == 1:  # hit
-            self.current_hand.append(self.draw_card())
-            if self.is_bust(self.current_hand):
-                return self._get_obs(), -1.0, True, False, {}
-            return self._get_obs(), 0.0, False, False, {}
-
-        elif action == 0:  # stick
+        # We'll operate on the active hand.
+        current_hand = self.player_hands[self.current_hand_index]
+        
+        if action == 1:  # Hit
+            current_hand.append(self.draw_card())
+            if self.is_bust(current_hand):
+                reward = -1.0
+                # If there are more hands left, move to next hand.
+                if self.current_hand_index < len(self.player_hands) - 1:
+                    self.current_hand_index += 1
+                    return self._get_obs(), reward, False, False, {}
+                else:
+                    return self._get_obs(), reward, True, False, {}
+            else:
+                return self._get_obs(), 0.0, False, False, {}
+        
+        elif action == 0:  # Stick
+            # Player sticks on the active hand.
             while self.sum_hand(self.dealer) < 17:
                 self.dealer.append(self.draw_card())
-            reward = cmp(self.score(self.current_hand), self.score(self.dealer))
-            if self.sab and self.is_natural(self.current_hand) and not self.is_natural(self.dealer):
+            reward = cmp(self.score(current_hand), self.score(self.dealer))
+            # Adjust reward for naturals if applicable.
+            if self.sab and self.is_natural(current_hand) and not self.is_natural(self.dealer):
                 reward = 1.0
-            elif not self.sab and self.natural and self.is_natural(self.current_hand) and reward == 1.0:
+            elif not self.sab and self.natural and self.is_natural(current_hand) and reward == 1.0:
                 reward = 1.5
-            return self._get_obs(), reward, True, False, {}
-
-        elif action == 2:  # double down
-            self.current_hand.append(self.draw_card())
-            if self.is_bust(self.current_hand):
-                return self._get_obs(), -2.0, True, False, {}
+            # Move on to next hand if available.
+            if self.current_hand_index < len(self.player_hands) - 1:
+                self.current_hand_index += 1
+                return self._get_obs(), reward, False, False, {}
+            else:
+                return self._get_obs(), reward, True, False, {}
+        
+        elif action == 2:  # Double Down
+            current_hand.append(self.draw_card())
+            if self.is_bust(current_hand):
+                reward = -2.0
+                if self.current_hand_index < len(self.player_hands) - 1:
+                    self.current_hand_index += 1
+                    return self._get_obs(), reward, False, False, {}
+                else:
+                    return self._get_obs(), reward, True, False, {}
             while self.sum_hand(self.dealer) < 17:
                 self.dealer.append(self.draw_card())
-            reward = 2 * cmp(self.score(self.current_hand), self.score(self.dealer))
-            return self._get_obs(), reward, True, False, {}
-            
-        elif action == 3 and len(self.current_hand) == 2 and self.current_hand[0] == self.current_hand[1]:  # split
-            self.split_hands.append([self.current_hand.pop()])
-            self.current_hand.append(self.draw_card())
-            self.split_hands[-1].append(self.draw_card())
-            return self._get_obs(), 0.0, False, False, {}
+            reward = 2 * cmp(self.score(current_hand), self.score(self.dealer))
+            if self.current_hand_index < len(self.player_hands) - 1:
+                self.current_hand_index += 1
+                return self._get_obs(), reward, False, False, {}
+            else:
+                return self._get_obs(), reward, True, False, {}
+        
         elif action == 3:
-            return self._get_obs(), -20.0, True, False, {}
+            # Split: valid only if active hand has exactly 2 cards and they are equal.
+            if len(current_hand) == 2 and current_hand[0] == current_hand[1]:
+                # Remove one card and form a new hand.
+                split_card = current_hand.pop()
+                new_hand = [split_card]
+                # Deal one new card for each hand.
+                current_hand.append(self.draw_card())
+                new_hand.append(self.draw_card())
+                # Append the new hand.
+                self.player_hands.append(new_hand)
+                # Return observation with reward 0 (the split itself gives no immediate reward).
+                return self._get_obs(), 0.0, False, False, {}
+            else:
+                # Illegal split: penalty and end the episode.
+                return self._get_obs(), -20.0, True, False, {}
     
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
         if self.evaluation_mode:
-            # For evaluation: fully reshuffle the deck
             self._reshuffle_deck()
-            # Determine the maximum number of cards that can be discarded while keeping at least 15 cards.
             max_discards = len(self.deck) - 15
-            # Uniformly choose a number of cards to discard from 0 to max_discards (inclusive).
             num_discards = self.np_random.integers(low=0, high=max_discards + 1)
             for _ in range(num_discards):
                 self.deck.pop()
         else:
-            # For training: persistent deck behavior – reshuffle only when the deck is low.
             if len(self.deck) < 15:
                 self._reshuffle_deck()
+        # Reset dealer and player hands.
         self.dealer = self.draw_hand()
-        self.current_hand = self.draw_hand()
-        self.split_hands = []
+        self.player_hands = [self.draw_hand()]
+        self.current_hand_index = 0
         return self._get_obs(), {}
 
     def close(self):
         if hasattr(self, "screen"):
             import pygame
-
             pygame.display.quit()
             pygame.quit()
 
@@ -254,7 +244,6 @@ class BlackjackEnv(gym.Env):
                 'pygame is not installed, run `pip install pygame`'
             ) from e
 
-        # Set up the display dimensions.
         screen_width, screen_height = 800, 600
         if not hasattr(self, "screen"):
             pygame.init()
@@ -266,20 +255,17 @@ class BlackjackEnv(gym.Env):
         else:
             screen_width, screen_height = self.screen.get_size()
 
-        # Define colors and fonts.
-        bg_color = (0, 128, 0)        # dark green background
-        card_color = (255, 255, 255)  # white card background
-        border_color = (0, 0, 0)      # black border
-        text_color = (255, 255, 255)  # white text
+        bg_color = (0, 128, 0)
+        card_color = (255, 255, 255)
+        border_color = (0, 0, 0)
+        text_color = (255, 255, 255)
 
         self.screen.fill(bg_color)
-
         pygame.font.init()
         font_small = pygame.font.SysFont("Arial", 20)
         font_medium = pygame.font.SysFont("Arial", 24)
         font_large = pygame.font.SysFont("Arial", 32)
 
-        # Helper functions for drawing cards.
         def draw_card(surface, card, x, y, width, height):
             rect = pygame.Rect(x, y, width, height)
             pygame.draw.rect(surface, card_color, rect)
@@ -291,24 +277,21 @@ class BlackjackEnv(gym.Env):
 
         def draw_hidden_card(surface, x, y, width, height):
             rect = pygame.Rect(x, y, width, height)
-            pygame.draw.rect(surface, (50, 50, 50), rect)  # dark gray for the back
+            pygame.draw.rect(surface, (50, 50, 50), rect)
             pygame.draw.rect(surface, border_color, rect, 2)
             text_surf = font_medium.render("?", True, border_color)
             text_rect = text_surf.get_rect(center=rect.center)
             surface.blit(text_surf, text_rect)
 
-        # Card dimensions and spacing.
         card_width = 60
         card_height = 90
         spacing = 10
 
-        # --- Draw the Dealer's Hand ---
+        # --- Render Dealer's Hand ---
         dealer_title = font_large.render("Dealer's Hand", True, text_color)
         self.screen.blit(dealer_title, (spacing, spacing))
         dealer_x = spacing
         dealer_y = spacing + dealer_title.get_height() + spacing
-
-        # Hide the dealer's second card if only two cards are present.
         hide_dealer_second = (len(self.dealer) == 2)
         for i, card in enumerate(self.dealer):
             x = dealer_x + i * (card_width + spacing)
@@ -317,56 +300,35 @@ class BlackjackEnv(gym.Env):
             else:
                 draw_card(self.screen, card, x, dealer_y, card_width, card_height)
 
-        # --- Draw the Player's Hand(s) ---
-        if len(self.split_hands) == 0:
-            player_title = font_large.render("Player's Hand", True, text_color)
-            player_title_y = dealer_y + card_height + 2 * spacing
-            self.screen.blit(player_title, (spacing, player_title_y))
-            player_x = spacing
-            player_y = player_title_y + player_title.get_height() + spacing
-            for i, card in enumerate(self.current_hand):
-                x = player_x + i * (card_width + spacing)
-                draw_card(self.screen, card, x, player_y, card_width, card_height)
-            # Display the player's hand total.
-            total = self.sum_hand(self.current_hand)
+        # --- Render Player's Hands ---
+        # We'll display all player hands (split hands) separately.
+        player_title = font_large.render("Player's Hands", True, text_color)
+        player_title_y = dealer_y + card_height + 2 * spacing
+        self.screen.blit(player_title, (spacing, player_title_y))
+        start_y = player_title_y + player_title.get_height() + spacing
+        for idx, hand in enumerate(self.player_hands):
+            hand_label = font_medium.render(f"Hand {idx+1}:", True, text_color)
+            hand_y = start_y + idx * (card_height + 3 * spacing)
+            self.screen.blit(hand_label, (spacing, hand_y))
+            hand_x = spacing + hand_label.get_width() + spacing
+            for j, card in enumerate(hand):
+                x = hand_x + j * (card_width + spacing)
+                draw_card(self.screen, card, x, hand_y, card_width, card_height)
+            total = self.sum_hand(hand)
             total_text = font_medium.render(f"Total: {total}", True, text_color)
-            self.screen.blit(total_text, (player_x, player_y + card_height + spacing))
-        else:
-            hands_title = font_large.render("Player's Hands", True, text_color)
-            hands_title_y = dealer_y + card_height + 2 * spacing
-            self.screen.blit(hands_title, (spacing, hands_title_y))
-            start_y = hands_title_y + hands_title.get_height() + spacing
-            all_hands = [self.current_hand] + self.split_hands
-            for j, hand in enumerate(all_hands):
-                hand_label = font_medium.render(f"Hand {j+1}:", True, text_color)
-                hand_y = start_y + j * (card_height + 3 * spacing)
-                self.screen.blit(hand_label, (spacing, hand_y))
-                hand_x = spacing + hand_label.get_width() + spacing
-                for i, card in enumerate(hand):
-                    x = hand_x + i * (card_width + spacing)
-                    draw_card(self.screen, card, x, hand_y, card_width, card_height)
-                total = self.sum_hand(hand)
-                total_text = font_medium.render(f"Total: {total}", True, text_color)
-                self.screen.blit(total_text, (hand_x, hand_y + card_height + spacing))
+            self.screen.blit(total_text, (hand_x, hand_y + card_height + spacing))
 
-        # --- Render Card Counts in a Panel on the Right ---
-        # Calculate counts for each card rank (Ace=1 through 10)
+        # --- Render Deck Counts on the Right ---
         card_counts = {i: self.deck.count(i) for i in range(1, 11)}
-        panel_width = 150  # width of the counts panel
-        panel_x = screen_width - panel_width - spacing  # position the panel on the far right
-        panel_y = spacing  # start near the top
-
-        # Draw a background for the panel (optional)
+        panel_width = 150
+        panel_x = screen_width - panel_width - spacing
+        panel_y = spacing
         panel_rect = pygame.Rect(panel_x - spacing // 2, panel_y - spacing // 2,
-                                panel_width + spacing, screen_height - 2 * spacing)
+                                 panel_width + spacing, screen_height - 2 * spacing)
         pygame.draw.rect(self.screen, (30, 30, 30), panel_rect)
         pygame.draw.rect(self.screen, border_color, panel_rect, 2)
-
-        # Title for the panel.
         counts_title = font_large.render("Card Counts", True, text_color)
         self.screen.blit(counts_title, (panel_x + (panel_width - counts_title.get_width()) // 2, panel_y))
-        
-        # Render each card count.
         line_height = font_small.get_height() + 5
         for idx, rank in enumerate(range(1, 11)):
             label = "A" if rank == 1 else str(rank)
@@ -376,12 +338,8 @@ class BlackjackEnv(gym.Env):
             text_y = panel_y + counts_title.get_height() + spacing + idx * line_height
             self.screen.blit(line_text, (text_x, text_y))
 
-        # --- Finalize rendering ---
         if self.render_mode == "human":
             pygame.display.flip()
-            self.clock.tick(30)  # Limit to 30 FPS
+            self.clock.tick(30)
         else:
             return np.array(pygame.surfarray.array3d(self.screen)).transpose(1, 0, 2)
-
-
-# Pixel art from Mariia Khmelnytska (https://www.123rf.com/photo_104453049_stock-vector-pixel-art-playing-cards-standart-deck-vector-set.html)
