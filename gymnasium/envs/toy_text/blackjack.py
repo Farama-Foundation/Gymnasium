@@ -4,6 +4,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.error import DependencyNotInstalled
+import random
 
 def cmp(a, b):
     return float(a > b) - float(a < b)
@@ -84,6 +85,7 @@ class BlackjackEnv(gym.Env):
         self.player_hands = []
         self.current_hand_index = 0
         self.dealer = []
+        self.dealer_turn = False
         self._reshuffle_deck()
     
     def _reshuffle_deck(self):
@@ -102,7 +104,7 @@ class BlackjackEnv(gym.Env):
         true_count = self.running_count / remaining_decks
         bounded_count = int(round(true_count))
         bounded_count = min(5, max(-5, bounded_count))
-        return bounded_count + 5
+        return bounded_count 
     
     def draw_card(self):
         if len(self.deck) == 0:
@@ -162,6 +164,7 @@ class BlackjackEnv(gym.Env):
         
         elif action == 0:  # Stick
             # Player sticks on the active hand.
+            self.dealer_turn = True  # Set dealer's turn to True
             while self.sum_hand(self.dealer) < 17:
                 self.dealer.append(self.draw_card())
             reward = cmp(self.score(current_hand), self.score(self.dealer))
@@ -211,6 +214,7 @@ class BlackjackEnv(gym.Env):
             else:
                 # Illegal split: penalty and end the episode.
                 return self._get_obs(), -20.0, True, False, {}
+
     
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
         super().reset(seed=seed)
@@ -256,90 +260,105 @@ class BlackjackEnv(gym.Env):
             screen_width, screen_height = self.screen.get_size()
 
         bg_color = (0, 128, 0)
-        card_color = (255, 255, 255)
-        border_color = (0, 0, 0)
-        text_color = (255, 255, 255)
-
         self.screen.fill(bg_color)
-        pygame.font.init()
-        font_small = pygame.font.SysFont("Arial", 20)
-        font_medium = pygame.font.SysFont("Arial", 24)
-        font_large = pygame.font.SysFont("Arial", 32)
 
-        def draw_card(surface, card, x, y, width, height):
-            rect = pygame.Rect(x, y, width, height)
-            pygame.draw.rect(surface, card_color, rect)
-            pygame.draw.rect(surface, border_color, rect, 2)
-            label = "A" if card == 1 else str(card)
-            text_surf = font_medium.render(label, True, border_color)
-            text_rect = text_surf.get_rect(center=rect.center)
-            surface.blit(text_surf, text_rect)
+        # Correct the path to the image folder based on the current script location
+        card_image_folder = os.path.join(os.path.dirname(__file__), "img")  # Absolute path to './img'
 
-        def draw_hidden_card(surface, x, y, width, height):
-            rect = pygame.Rect(x, y, width, height)
-            pygame.draw.rect(surface, (50, 50, 50), rect)
-            pygame.draw.rect(surface, border_color, rect, 2)
-            text_surf = font_medium.render("?", True, border_color)
-            text_rect = text_surf.get_rect(center=rect.center)
-            surface.blit(text_surf, text_rect)
+        import random
 
-        card_width = 60
-        card_height = 90
-        spacing = 10
-
-        # --- Render Dealer's Hand ---
-        dealer_title = font_large.render("Dealer's Hand", True, text_color)
-        self.screen.blit(dealer_title, (spacing, spacing))
-        dealer_x = spacing
-        dealer_y = spacing + dealer_title.get_height() + spacing
-        hide_dealer_second = (len(self.dealer) == 2)
-        for i, card in enumerate(self.dealer):
-            x = dealer_x + i * (card_width + spacing)
-            if hide_dealer_second and i == 1:
-                draw_hidden_card(self.screen, x, dealer_y, card_width, card_height)
+        def get_card_suit_and_rank(card_value):
+            """Map card values to a tuple (suit, rank)."""
+            suits = ['H', 'D', 'C', 'S']  # Hearts, Diamonds, Clubs, Spades
+            ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K']
+            
+            # If the card value is 10, pick randomly between T, J, Q, and K
+            if card_value == 10:
+                rank = random.choice(['T', 'J', 'Q', 'K'])
             else:
-                draw_card(self.screen, card, x, dealer_y, card_width, card_height)
+                rank = ranks[(card_value - 1) % 13]  # Adjust for 0-based indexing
+
+            # Randomly pick a suit
+            suit = suits[random.randint(0, 3)]  # Map to suit based on index
+            
+            return suit, rank
+
+
+        def draw_card(surface, suit, rank, x, y, width, height):
+            """Draw the card using the corresponding PNG image."""
+            filename = f"{suit}{rank}.png"  # Construct the filename (XY.png format)
+            image_path = os.path.join(card_image_folder, filename)
+            try:
+                image = pygame.image.load(image_path)
+                image = pygame.transform.scale(image, (width, height))  # Resize to fit the card size
+                surface.blit(image, (x, y))  # Draw the image on the surface
+            except pygame.error:
+                print(f"Warning: {filename} not found. Drawing a blank card.")
+                # If the specific card image is not found, use a generic card back
+                back_image_path = os.path.join(card_image_folder, "Card.png")
+                back_image = pygame.image.load(back_image_path)
+                back_image = pygame.transform.scale(back_image, (width, height))
+                surface.blit(back_image, (x, y))  # Draw the back image on the surface
+        
+        # --- Render Dealer's Hand ---
+        dealer_title = pygame.font.SysFont("Arial", 32).render("Dealer's Hand", True, (255, 255, 255))
+        self.screen.blit(dealer_title, (10, 10))
+        dealer_x = 10
+        dealer_y = 50
+        for i, card in enumerate(self.dealer):
+            suit, rank = get_card_suit_and_rank(card)  # Get the suit and rank for the card
+            x = dealer_x # Adjust card spacing
+            if not self.dealer_turn and i == 1:  # Hide the second card until dealer's turn
+                draw_card(self.screen, 'Card', '', x, dealer_y, 60, 90)  # Draw the back of the card
+            else:
+                draw_card(self.screen, suit, rank, x, dealer_y, 60, 90)
+            dealer_x += 70
+
+        # Calculate dealer's hand total
+        dealer_total = self.sum_hand(self.dealer)
+        dealer_bust = dealer_total > 21
+
+        # Render Dealer's Total and Bust Status
+        dealer_total_text = pygame.font.SysFont("Arial", 24).render(f"Total: {dealer_total}", True, (255, 255, 255))
+        self.screen.blit(dealer_total_text, (dealer_x + 10, dealer_y + 20))  # Position the total
+        if dealer_bust:
+            dealer_bust_text = pygame.font.SysFont("Arial", 24).render("Busted!", True, (255, 0, 0))
+            self.screen.blit(dealer_bust_text, (dealer_x + 10 , dealer_y + + 50))  # Position the bust message
 
         # --- Render Player's Hands ---
-        # We'll display all player hands (split hands) separately.
-        player_title = font_large.render("Player's Hands", True, text_color)
-        player_title_y = dealer_y + card_height + 2 * spacing
-        self.screen.blit(player_title, (spacing, player_title_y))
-        start_y = player_title_y + player_title.get_height() + spacing
-        for idx, hand in enumerate(self.player_hands):
-            hand_label = font_medium.render(f"Hand {idx+1}:", True, text_color)
-            hand_y = start_y + idx * (card_height + 3 * spacing)
-            self.screen.blit(hand_label, (spacing, hand_y))
-            hand_x = spacing + hand_label.get_width() + spacing
-            for j, card in enumerate(hand):
-                x = hand_x + j * (card_width + spacing)
-                draw_card(self.screen, card, x, hand_y, card_width, card_height)
-            total = self.sum_hand(hand)
-            total_text = font_medium.render(f"Total: {total}", True, text_color)
-            self.screen.blit(total_text, (hand_x, hand_y + card_height + spacing))
+        player_title = pygame.font.SysFont("Arial", 32).render("Player's Hands", True, (255, 255, 255))
+        self.screen.blit(player_title, (10, dealer_y + 100))
+        player_y = dealer_y + 150
 
-        # --- Render Deck Counts on the Right ---
-        card_counts = {i: self.deck.count(i) for i in range(1, 11)}
-        panel_width = 150
-        panel_x = screen_width - panel_width - spacing
-        panel_y = spacing
-        panel_rect = pygame.Rect(panel_x - spacing // 2, panel_y - spacing // 2,
-                                 panel_width + spacing, screen_height - 2 * spacing)
-        pygame.draw.rect(self.screen, (30, 30, 30), panel_rect)
-        pygame.draw.rect(self.screen, border_color, panel_rect, 2)
-        counts_title = font_large.render("Card Counts", True, text_color)
-        self.screen.blit(counts_title, (panel_x + (panel_width - counts_title.get_width()) // 2, panel_y))
-        line_height = font_small.get_height() + 5
-        for idx, rank in enumerate(range(1, 11)):
-            label = "A" if rank == 1 else str(rank)
-            count = card_counts[rank]
-            line_text = font_small.render(f"{label}: {count}", True, text_color)
-            text_x = panel_x + spacing // 2
-            text_y = panel_y + counts_title.get_height() + spacing + idx * line_height
-            self.screen.blit(line_text, (text_x, text_y))
+        # Right side: Render True Count
+        true_count_title = pygame.font.SysFont("Arial", 32).render(f"True Count: {self._get_true_count()}", True, (255, 255, 255))
+        self.screen.blit(true_count_title, (screen_width - 300, 10))
 
+        # Render Running Count below the True Count
+        running_count_title = pygame.font.SysFont("Arial", 32).render(f"Running Count: {self.running_count}", True, (255, 255, 255))
+        self.screen.blit(running_count_title, (screen_width - 300, 40))  # Adjust position below True Count
+
+        # Render player hands with totals
+        for hand in self.player_hands:
+            hand_x = 10
+            hand_total = self.sum_hand(hand)
+            bust = hand_total > 21
+            # Render hand cards
+            for card in hand:
+                suit, rank = get_card_suit_and_rank(card)  # Get the suit and rank for the card
+                draw_card(self.screen, suit, rank, hand_x, player_y, 60, 90)
+                hand_x += 70
+            
+            # Render player total and bust message
+            total_text = pygame.font.SysFont("Arial", 24).render(f"Total: {hand_total}", True, (255, 255, 255))
+            self.screen.blit(total_text, (hand_x + 10, player_y + 20))  # Adjust position of the total
+            if bust:
+                bust_text = pygame.font.SysFont("Arial", 24).render("Busted!", True, (255, 0, 0))
+                self.screen.blit(bust_text, (hand_x + 10, player_y + 50))
+
+            player_y += 120  # Space between player hands
+
+        # Display the screen
         if self.render_mode == "human":
             pygame.display.flip()
             self.clock.tick(30)
-        else:
-            return np.array(pygame.surfarray.array3d(self.screen)).transpose(1, 0, 2)
