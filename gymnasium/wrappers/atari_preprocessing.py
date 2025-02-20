@@ -142,7 +142,7 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         self.game_over = False
 
         _low, _high, _dtype = (0, 1, np.float32) if scale_obs else (0, 255, np.uint8)
-        _shape = self.screen_size + (1 if grayscale_obs else 3,)
+        _shape = (self.screen_size[1], self.screen_size[0], 1 if grayscale_obs else 3)
         if grayscale_obs and not grayscale_newaxis:
             _shape = _shape[:-1]  # Remove channel axis
         self.observation_space = Box(low=_low, high=_high, shape=_shape, dtype=_dtype)

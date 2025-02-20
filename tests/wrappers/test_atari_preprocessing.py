@@ -47,6 +47,17 @@ pytest.importorskip("ale_py")
             ),
             (84, 84, 1),
         ),
+        (
+            AtariPreprocessing(
+                gym.make("ALE/Pong-v5"),
+                screen_size=(160, 210),
+                grayscale_obs=False,
+                frame_skip=1,
+                noop_max=0,
+                grayscale_newaxis=True,
+            ),
+            (210, 160, 3),
+        ),
     ],
 )
 def test_atari_preprocessing_grayscale(env, expected_obs_shape):
