@@ -209,6 +209,24 @@ def test_taxi_encode_decode():
         state, _, _, _, _ = env.step(env.action_space.sample())
 
 
+def test_taxi_is_rainy():
+    env = TaxiEnv(is_rainy=True)
+    for state_dict in env.P.values():
+        for action, transitions in state_dict.items():
+            if action <= 3:
+                assert sum([t[0] for t in transitions]) == 1
+                assert {t[0] for t in transitions} == {0.8, 0.1}
+            else:
+                assert len(transitions) == 1
+                assert transitions[0][0] == 1.0
+
+    env = TaxiEnv(is_rainy=False)
+    for state_dict in env.P.values():
+        for action, transitions in state_dict.items():
+            assert len(transitions) == 1
+            assert transitions[0][0] == 1.0
+
+
 @pytest.mark.parametrize(
     "env_name",
     ["Acrobot-v1", "CartPole-v1", "MountainCar-v0", "MountainCarContinuous-v0"],
