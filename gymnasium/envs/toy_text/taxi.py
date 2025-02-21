@@ -163,7 +163,12 @@ class TaxiEnv(Env):
         "render_fps": 4,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, is_rainy: bool = False, fickle_passenger: bool = False):
+    def __init__(
+        self,
+        render_mode: Optional[str] = None,
+        is_rainy: bool = False,
+        fickle_passenger: bool = False,
+    ):
         self.desc = np.asarray(MAP, dtype="c")
 
         self.locs = locs = [(0, 0), (0, 4), (4, 0), (4, 3)]
@@ -201,18 +206,30 @@ class TaxiEnv(Env):
                             if action == 0:
                                 new_row, new_col = (min(row + 1, max_row), col)
                                 left_pos = (min(row + 1, max_row), max(col - 1, 0))
-                                right_pos = (min(row + 1, max_row), max(col + 1, max_col))
+                                right_pos = (
+                                    min(row + 1, max_row),
+                                    max(col + 1, max_col),
+                                )
                             elif action == 1:
                                 new_row, new_col = (max(row - 1, 0), col)
-                                left_pos = (min(row + 1, max_row), max(col + 1, max_col))
+                                left_pos = (
+                                    min(row + 1, max_row),
+                                    max(col + 1, max_col),
+                                )
                                 right_pos = (min(row + 1, max_row), max(col - 1, 0))
                             if action == 2 and self.desc[1 + row, 2 * col + 2] == b":":
                                 new_row, new_col = (row, min(col + 1, max_col))
-                                left_pos = (min(row + 1, max_row), max(col + 1, max_col))
+                                left_pos = (
+                                    min(row + 1, max_row),
+                                    max(col + 1, max_col),
+                                )
                                 right_pos = (max(row - 1, 0), min(col + 1, max_col))
                             elif action == 3 and self.desc[1 + row, 2 * col] == b":":
                                 new_row, new_col = (row, max(col - 1, 0))
-                                left_pos = (min(row + 1, max_row), max(col + 1, max_col))
+                                left_pos = (
+                                    min(row + 1, max_row),
+                                    max(col + 1, max_col),
+                                )
                                 right_pos = (max(row - 1, 0), min(col + 1, max_col))
                             elif action == 4:  # pickup
                                 if pass_idx < 4 and taxi_loc == locs[pass_idx]:
@@ -238,9 +255,15 @@ class TaxiEnv(Env):
                                 right_state = self.encode(
                                     right_pos[0], right_pos[1], new_pass_idx, dest_idx
                                 )
-                                self.P[state][action].append((0.8, intended_state, reward, terminated))
-                                self.P[state][action].append((0.1, left_state, -1, terminated))
-                                self.P[state][action].append((0.1, right_state, -1, terminated))
+                                self.P[state][action].append(
+                                    (0.8, intended_state, reward, terminated)
+                                )
+                                self.P[state][action].append(
+                                    (0.1, left_state, -1, terminated)
+                                )
+                                self.P[state][action].append(
+                                    (0.1, right_state, -1, terminated)
+                                )
                             else:
                                 self.P[state][action].append(
                                     (1.0, intended_state, reward, terminated)
@@ -323,10 +346,16 @@ class TaxiEnv(Env):
 
         # If we are in the fickle step, the passenger has been in the vehicle for at least a step and this step the
         # position changed
-        if self.fickle_step and shadow_pass_loc == 4 and (taxi_row != shadow_row or taxi_col != shadow_col):
+        if (
+            self.fickle_step
+            and shadow_pass_loc == 4
+            and (taxi_row != shadow_row or taxi_col != shadow_col)
+        ):
             self.fickle_step = False
             if self.fickle_passenger and np.random.rand() < 0.3:
-                possible_destinations = [i for i in range(len(self.locs)) if i != shadow_dest_idx]
+                possible_destinations = [
+                    i for i in range(len(self.locs)) if i != shadow_dest_idx
+                ]
                 dest_idx = np.random.choice(possible_destinations)
                 s = self.encode(taxi_row, taxi_col, pass_loc, dest_idx)
 
