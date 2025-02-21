@@ -4,8 +4,9 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.envs.box2d import BipedalWalker, CarRacing
-from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
+
+# from gymnasium.envs.box2d import BipedalWalker, CarRacing
+# from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
 from gymnasium.envs.toy_text import CliffWalkingEnv, TaxiEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 from gymnasium.error import InvalidAction
