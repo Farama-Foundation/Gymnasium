@@ -229,6 +229,7 @@ def test_multidiscrete_sample_with_mask():
         np.array([1, 0, 1, 0], dtype=np.int8),
     )
     samples = [space.sample(mask=mask) for _ in range(1000)]
+    assert all(sample in space for sample in samples)
     samples = np.array(samples)
 
     # Check that the samples respect the mask
@@ -246,6 +247,7 @@ def test_multidiscrete_sample_probabilities():
         np.array([0.3, 0.3, 0.4], dtype=np.float64),
     )
     samples = [space.sample(probability=probabilities) for _ in range(10000)]
+    assert all(sample in space for sample in samples)
     samples = np.array(samples)
 
     # Check empirical probabilities

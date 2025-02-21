@@ -167,7 +167,7 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
         """
         if mask is not None and probability is not None:
             raise ValueError(
-                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}. "
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
             )
         elif mask is not None:
             assert isinstance(

@@ -84,11 +84,13 @@ class Text(Space[str]):
 
         Args:
             mask: An optional tuples of length and mask for the text.
-                The length is expected to be between the ``min_length`` and ``max_length``. Otherwise, a random integer between ``min_length`` and ``max_length`` is selected.
+                The length is expected to be between the ``min_length`` and ``max_length``.
+                Otherwise, a random integer between ``min_length`` and ``max_length`` is selected.
                 For the mask, we expect a numpy array of length of the charset passed with ``dtype == np.int8``.
                 If the charlist mask is all zero then an empty string is returned no matter the ``min_length``
             probability: An optional tuples of length and probability mask for the text.
-                The length is expected to be between the ``min_length`` and ``max_length``. Otherwise, a random integer between ``min_length`` and ``max_length`` is selected.
+                The length is expected to be between the ``min_length`` and ``max_length``.
+                Otherwise, a random integer between ``min_length`` and ``max_length`` is selected.
                 For the probability mask, we expect a numpy array of length of the charset passed with ``dtype == np.float64``.
                 The sum of the probability mask should be 1, otherwise an exception is raised.
 
@@ -96,8 +98,9 @@ class Text(Space[str]):
             A sampled string from the space
         """
         if mask is not None and probability is not None:
-            raise ValueError("Only one of `mask` or `probability` can be provided.")
-
+            raise ValueError(
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
+            )
         elif mask is not None:
             length, charlist_mask = self._validate_mask(mask, np.int8, "mask")
 
@@ -117,7 +120,7 @@ class Text(Space[str]):
             if charlist_mask is not None:
                 assert np.all(
                     np.logical_and(charlist_mask >= 0, charlist_mask <= 1)
-                ), f"Expects all probability mask values to be within [0,1], actual values: {charlist_mask}"
+                ), f"Expects all probability mask values to be within 0 and 1, actual values: {charlist_mask}"
                 assert np.isclose(
                     np.sum(charlist_mask), 1
                 ), f"Expects the sum of the probability mask to be 1, actual sum: {np.sum(charlist_mask)}"
@@ -135,7 +138,7 @@ class Text(Space[str]):
             else:
                 # Otherwise the string will not be contained in the space
                 raise ValueError(
-                    f"Trying to sample with a minimum length > 0 ({self.min_length}) but the character mask is all zero meaning that no character could be sampled."
+                    f"Trying to sample with a minimum length > 0 (actual minimum length={self.min_length}) but the character mask is all zero meaning that no character could be sampled."
                 )
 
         string = self.np_random.choice(

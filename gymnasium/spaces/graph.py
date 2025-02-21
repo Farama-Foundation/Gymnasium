@@ -213,7 +213,7 @@ class Graph(Space[GraphInstance]):
 
         if mask is not None and probability is not None:
             raise ValueError(
-                f"Only one of `mask` or `probability` can be provided, actual value mask={mask}, probability={probability}"
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
             )
         elif mask is not None:
             node_space_mask, edge_space_mask = mask

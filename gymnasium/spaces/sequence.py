@@ -132,9 +132,10 @@ class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
             A tuple of random length with random samples of elements from the :attr:`feature_space`.
         """
         if mask is not None and probability is not None:
-            raise ValueError("Only one of `mask` or `probability` can be provided.")
-
-        if mask is not None:
+            raise ValueError(
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
+            )
+        elif mask is not None:
             sample_length = self.generate_sample_length(mask[0], "mask")
             sampled_values = tuple(
                 self.feature_space.sample(mask=mask[1]) for _ in range(sample_length)

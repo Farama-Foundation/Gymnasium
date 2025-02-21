@@ -60,7 +60,7 @@ class MultiBinary(Space[NDArray[np.int8]]):
         return True
 
     def sample(
-        self, mask: MaskNDArray | None = None, probability: None = None
+        self, mask: MaskNDArray | None = None, probability: MaskNDArray | None = None
     ) -> NDArray[np.int8]:
         """Generates a single random sample from this space.
 
@@ -71,15 +71,16 @@ class MultiBinary(Space[NDArray[np.int8]]):
                 For ``mask == 0`` then the samples will be ``0``, for a ``mask == 1`` then the samples will be ``1``.
                 For random samples, using a mask value of ``2``.
                 The expected mask shape is the space shape and mask dtype is ``np.int8``.
-            probability: An optional ``np.ndarray`` to mask samples with expected shape of ``space.shape`` where element
-                represent the probability of 1
+            probability: An optional ``np.ndarray`` to mask samples with expected shape of space.shape where each element
+                represents the probability of the corresponding sample element being a 1.
+                The expected mask shape is the space shape and mask dtype is ``np.float64``.
 
         Returns:
             Sampled values from space
         """
         if mask is not None and probability is not None:
             raise ValueError(
-                "Only one of `mask` or `probability` can be provided, and `probability` is currently unsupported"
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
             )
         if mask is not None:
             assert isinstance(

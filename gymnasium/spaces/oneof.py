@@ -122,8 +122,9 @@ class OneOf(Space[Any]):
         subspace = self.spaces[subspace_idx]
 
         if mask is not None and probability is not None:
-            raise ValueError("Only one of `mask` or `probability` can be provided.")
-
+            raise ValueError(
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
+            )
         elif mask is not None:
             assert isinstance(
                 mask, tuple

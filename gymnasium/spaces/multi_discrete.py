@@ -114,7 +114,9 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             An ``np.ndarray`` of :meth:`Space.shape`
         """
         if mask is not None and probability is not None:
-            raise ValueError("Only one of `mask` or `probability` can be provided.")
+            raise ValueError(
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
+            )
         elif mask is not None:
             return np.array(
                 self._apply_mask(mask, self.nvec, self.start, "mask"),

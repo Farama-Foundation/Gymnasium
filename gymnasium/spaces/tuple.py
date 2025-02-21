@@ -106,8 +106,9 @@ class Tuple(Space[typing.Tuple[Any, ...]], typing.Sequence[Any]):
             Tuple of the subspace's samples
         """
         if mask is not None and probability is not None:
-            raise ValueError("Only one of `mask` or `probability` can be provided.")
-
+            raise ValueError(
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
+            )
         elif mask is not None:
             assert isinstance(
                 mask, tuple

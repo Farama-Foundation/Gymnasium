@@ -82,7 +82,7 @@ class Discrete(Space[np.int64]):
         """
         if mask is not None and probability is not None:
             raise ValueError(
-                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}. "
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
             )
         # binary mask sampling
         elif mask is not None:
