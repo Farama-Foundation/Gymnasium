@@ -121,7 +121,7 @@ def test_env_suggestions(
         ("CartPole-v12", "`v0`, `v1`", False),
         ("Blackjack-v10", "`v1`", False),
         ("MountainCarContinuous-v100", "`v0`", False),
-        ("Taxi-v30", "`v3`", False),
+        ("Taxi-v30", "`v4`", False),
         ("MyAwesomeNamespace/MyAwesomeVersionedEnv-v6", "`v1`, `v3`, `v5`", False),
         ("MyAwesomeNamespace/MyAwesomeUnversionedEnv-v6", "", True),
     ],
