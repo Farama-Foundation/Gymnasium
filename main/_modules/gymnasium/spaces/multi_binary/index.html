@@ -429,19 +429,29 @@
 
 <div class="viewcode-block" id="MultiBinary.sample">
 <a class="viewcode-back" href="../../../../api/spaces/fundamental/#gymnasium.spaces.MultiBinary.sample">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">MaskNDArray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">:</span> <span class="n">MaskNDArray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">probability</span><span class="p">:</span> <span class="n">MaskNDArray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a single random sample from this space.</span>
 
 <span class="sd">        A sample is drawn by independent, fair coin tosses (one toss per binary variable of the space).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            mask: An optional np.ndarray to mask samples with expected shape of ``space.shape``.</span>
-<span class="sd">                For ``mask == 0`` then the samples will be ``0`` and ``mask == 1` then random samples will be generated.</span>
+<span class="sd">            mask: An optional ``np.ndarray`` to mask samples with expected shape of ``space.shape``.</span>
+<span class="sd">                For ``mask == 0`` then the samples will be ``0``, for a ``mask == 1`` then the samples will be ``1``.</span>
+<span class="sd">                For random samples, using a mask value of ``2``.</span>
 <span class="sd">                The expected mask shape is the space shape and mask dtype is ``np.int8``.</span>
+<span class="sd">            probability: An optional ``np.ndarray`` to mask samples with expected shape of space.shape where each element</span>
+<span class="sd">                represents the probability of the corresponding sample element being a 1.</span>
+<span class="sd">                The expected mask shape is the space shape and mask dtype is ``np.float64``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Sampled values from space</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Only one of `mask` or `probability` can be provided, actual values: mask=</span><span class="si">{</span><span class="n">mask</span><span class="si">}</span><span class="s2">, probability=</span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
                 <span class="n">mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
@@ -461,8 +471,25 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
                 <span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
             <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">probability</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The expected type of the probability is np.ndarray, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">probability</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The expected dtype of the probability is np.float64, actual dtype: </span><span class="si">{</span><span class="n">probability</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">probability</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The expected shape of the probability is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, actual shape: </span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">probability</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">probability</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;All values of the sample probability should be between 0 and 1, actual values: </span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">probability</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>

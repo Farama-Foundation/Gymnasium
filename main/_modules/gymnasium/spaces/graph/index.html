@@ -556,6 +556,12 @@
                 <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">probability</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="p">(</span>
+            <span class="nb">tuple</span><span class="p">[</span>
+                <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_nodes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">num_edges</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GraphInstance</span><span class="p">:</span>
@@ -564,6 +570,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            mask: An optional tuple of optional node and edge mask that is only possible with Discrete spaces</span>
 <span class="sd">                (Box spaces don&#39;t support sample masks).</span>
+<span class="sd">                If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges</span>
+<span class="sd">            probability: An optional tuple of optional node and edge probability mask that is only possible with Discrete spaces</span>
+<span class="sd">                (Box spaces don&#39;t support sample probability masks).</span>
 <span class="sd">                If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges</span>
 <span class="sd">            num_nodes: The number of nodes that will be sampled, the default is `10` nodes</span>
 <span class="sd">            num_edges: An optional number of edges, otherwise, a random number between `0` and :math:`num_nodes^2`</span>
@@ -575,10 +584,18 @@
             <span class="n">num_nodes</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The number of nodes is expected to be greater than 0, actual value: </span><span class="si">{</span><span class="n">num_nodes</span><span class="si">}</span><span class="s2">&quot;</span>
 
-        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Only one of `mask` or `probability` can be provided, actual values: mask=</span><span class="si">{</span><span class="n">mask</span><span class="si">}</span><span class="s2">, probability=</span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">node_space_mask</span><span class="p">,</span> <span class="n">edge_space_mask</span> <span class="o">=</span> <span class="n">mask</span>
+            <span class="n">mask_type</span> <span class="o">=</span> <span class="s2">&quot;mask&quot;</span>
+        <span class="k">elif</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node_space_mask</span><span class="p">,</span> <span class="n">edge_space_mask</span> <span class="o">=</span> <span class="n">probability</span>
+            <span class="n">mask_type</span> <span class="o">=</span> <span class="s2">&quot;probability&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">node_space_mask</span><span class="p">,</span> <span class="n">edge_space_mask</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="n">node_space_mask</span> <span class="o">=</span> <span class="n">edge_space_mask</span> <span class="o">=</span> <span class="n">mask_type</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># we only have edges when we have at least 2 nodes</span>
         <span class="k">if</span> <span class="n">num_edges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -601,15 +618,19 @@
         <span class="k">assert</span> <span class="n">num_edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
         <span class="n">sampled_node_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_sample_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">sampled_node_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">sampled_edge_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_sample_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">num_edges</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="n">sampled_node_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="n">sampled_nodes</span> <span class="o">=</span> <span class="n">sampled_node_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">node_space_mask</span><span class="p">)</span>
-        <span class="n">sampled_edges</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">sampled_edge_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">edge_space_mask</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">sampled_edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="k">else</span> <span class="kc">None</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">mask_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node_sample_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">mask_type</span><span class="p">:</span> <span class="n">node_space_mask</span><span class="p">}</span>
+            <span class="n">edge_sample_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">mask_type</span><span class="p">:</span> <span class="n">edge_space_mask</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">node_sample_kwargs</span> <span class="o">=</span> <span class="n">edge_sample_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">sampled_nodes</span> <span class="o">=</span> <span class="n">sampled_node_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">**</span><span class="n">node_sample_kwargs</span><span class="p">)</span>
+        <span class="n">sampled_edges</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">sampled_edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sampled_edges</span> <span class="o">=</span> <span class="n">sampled_edge_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">**</span><span class="n">edge_sample_kwargs</span><span class="p">)</span>
 
         <span class="n">sampled_edge_links</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">sampled_edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_edges</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>

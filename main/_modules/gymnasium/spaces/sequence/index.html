@@ -476,7 +476,13 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mask</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="p">(</span>
             <span class="nb">tuple</span><span class="p">[</span>
-                <span class="kc">None</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">],</span>
+                <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">],</span>
+                <span class="n">Any</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">probability</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="p">(</span>
+            <span class="nb">tuple</span><span class="p">[</span>
+                <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">],</span>
                 <span class="n">Any</span><span class="p">,</span>
             <span class="p">]</span>
         <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -487,50 +493,37 @@
 <span class="sd">            mask: An optional mask for (optionally) the length of the sequence and (optionally) the values in the sequence.</span>
 <span class="sd">                If you specify ``mask``, it is expected to be a tuple of the form ``(length_mask, sample_mask)`` where ``length_mask`` is</span>
 
-<span class="sd">                * ``None`` The length will be randomly drawn from a geometric distribution</span>
-<span class="sd">                * ``np.ndarray`` of integers, in which case the length of the sampled sequence is randomly drawn from this array.</span>
-<span class="sd">                * ``int`` for a fixed length sample</span>
+<span class="sd">                * ``None`` - The length will be randomly drawn from a geometric distribution</span>
+<span class="sd">                * ``int`` - Fixed length</span>
+<span class="sd">                * ``np.ndarray`` of integers - Length of the sampled sequence is randomly drawn from this array.</span>
 
-<span class="sd">                The second element of the mask tuple ``sample`` mask specifies a mask that is applied when</span>
-<span class="sd">                sampling elements from the base space. The mask is applied for each feature space sample.</span>
+<span class="sd">                The second element of the tuple ``sample_mask`` specifies how the feature space will be sampled.</span>
+<span class="sd">                Depending on if mask or probability is used will affect what argument is used.</span>
+<span class="sd">            probability: See mask description above, the only difference is on the ``sample_mask`` for the feature space being probability rather than mask.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A tuple of random length with random samples of elements from the :attr:`feature_space`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">length_mask</span><span class="p">,</span> <span class="n">feature_mask</span> <span class="o">=</span> <span class="n">mask</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Only one of `mask` or `probability` can be provided, actual values: mask=</span><span class="si">{</span><span class="n">mask</span><span class="si">}</span><span class="s2">, probability=</span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sample_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_sample_length</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;mask&quot;</span><span class="p">)</span>
+            <span class="n">sampled_values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feature_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sample_length</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sample_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_sample_length</span><span class="p">(</span><span class="n">probability</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;probability&quot;</span><span class="p">)</span>
+            <span class="n">sampled_values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feature_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">probability</span><span class="o">=</span><span class="n">probability</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sample_length</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">length_mask</span><span class="p">,</span> <span class="n">feature_mask</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="n">length_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">length_mask</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="p">(</span>
-                    <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">length_mask</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the length mask to be greater than or equal to zero, actual value: </span><span class="si">{</span><span class="n">length_mask</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="n">length</span> <span class="o">=</span> <span class="n">length_mask</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">length_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="p">(</span>
-                    <span class="nb">len</span><span class="p">(</span><span class="n">length_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the shape of the length mask to be 1-dimensional, actual shape: </span><span class="si">{</span><span class="n">length_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
-                    <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">length_mask</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects all values in the length_mask to be greater than or equal to zero, actual values: </span><span class="si">{</span><span class="n">length_mask</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span>
-                    <span class="n">length_mask</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the length mask array to have dtype to be an numpy integer, actual type: </span><span class="si">{</span><span class="n">length_mask</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="n">length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">length_mask</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Expects the type of length_mask to an integer or a np.ndarray, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">length_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># The choice of 0.25 is arbitrary</span>
-            <span class="n">length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">geometric</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
-
-        <span class="c1"># Generate sample values from feature_space.</span>
-        <span class="n">sampled_values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">feature_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="n">feature_mask</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
-        <span class="p">)</span>
+            <span class="n">sample_length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">geometric</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+            <span class="n">sampled_values</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feature_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sample_length</span><span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">:</span>
             <span class="c1"># Concatenate values if stacked.</span>
@@ -541,6 +534,39 @@
 
         <span class="k">return</span> <span class="n">sampled_values</span></div>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_sample_length</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">length_mask</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">],</span>
+        <span class="n">mask_type</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the sample length for a given length mask and mask type.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">length_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">length_mask</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">length_mask</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the length mask of `</span><span class="si">{</span><span class="n">mask_type</span><span class="si">}</span><span class="s2">` to be greater than or equal to zero, actual value: </span><span class="si">{</span><span class="n">length_mask</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="k">return</span> <span class="n">length_mask</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">length_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">length_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the shape of the length mask of `</span><span class="si">{</span><span class="n">mask_type</span><span class="si">}</span><span class="s2">` to be 1-dimensional, actual shape: </span><span class="si">{</span><span class="n">length_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+                    <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">length_mask</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects all values in the length_mask of `</span><span class="si">{</span><span class="n">mask_type</span><span class="si">}</span><span class="s2">` to be greater than or equal to zero, actual values: </span><span class="si">{</span><span class="n">length_mask</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span>
+                    <span class="n">length_mask</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the length mask array of `</span><span class="si">{</span><span class="n">mask_type</span><span class="si">}</span><span class="s2">` to have dtype of np.integer, actual type: </span><span class="si">{</span><span class="n">length_mask</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">length_mask</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Expects the type of length_mask of `</span><span class="si">{</span><span class="n">mask_type</span><span class="si">}</span><span class="s2">` to be an integer or a np.ndarray, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">length_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># The choice of 0.25 is arbitrary</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">geometric</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return boolean specifying if x is a valid member of this space.&quot;&quot;&quot;</span>

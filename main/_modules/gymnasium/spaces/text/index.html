@@ -448,75 +448,108 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mask</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">])</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">probability</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">])</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a single random sample from this space with by default a random length between ``min_length`` and ``max_length`` and sampled from the ``charset``.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            mask: An optional tuples of length and mask for the text.</span>
-<span class="sd">                The length is expected to be between the ``min_length`` and ``max_length`` otherwise a random integer between ``min_length`` and ``max_length`` is selected.</span>
+<span class="sd">                The length is expected to be between the ``min_length`` and ``max_length``.</span>
+<span class="sd">                Otherwise, a random integer between ``min_length`` and ``max_length`` is selected.</span>
 <span class="sd">                For the mask, we expect a numpy array of length of the charset passed with ``dtype == np.int8``.</span>
 <span class="sd">                If the charlist mask is all zero then an empty string is returned no matter the ``min_length``</span>
+<span class="sd">            probability: An optional tuples of length and probability mask for the text.</span>
+<span class="sd">                The length is expected to be between the ``min_length`` and ``max_length``.</span>
+<span class="sd">                Otherwise, a random integer between ``min_length`` and ``max_length`` is selected.</span>
+<span class="sd">                For the probability mask, we expect a numpy array of length of the charset passed with ``dtype == np.float64``.</span>
+<span class="sd">                The sum of the probability mask should be 1, otherwise an exception is raised.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A sampled string from the space</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">mask</span><span class="p">,</span> <span class="nb">tuple</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the mask type to be a tuple, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the mask length to be two, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">length</span><span class="p">,</span> <span class="n">charlist_mask</span> <span class="o">=</span> <span class="n">mask</span>
-
-            <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span>
-                    <span class="nb">type</span><span class="p">(</span><span class="n">length</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the Text sample length to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">length</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="k">assert</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">min_length</span> <span class="o">&lt;=</span> <span class="n">length</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the Text sample length be between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_length</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="si">}</span><span class="s2">, actual length: </span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Only one of `mask` or `probability` can be provided, actual values: mask=</span><span class="si">{</span><span class="n">mask</span><span class="si">}</span><span class="s2">, probability=</span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">length</span><span class="p">,</span> <span class="n">charlist_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">,</span> <span class="s2">&quot;mask&quot;</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">charlist_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                    <span class="n">charlist_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the Text sample mask to be an np.ndarray, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">charlist_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="k">assert</span> <span class="p">(</span>
-                    <span class="n">charlist_mask</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the Text sample mask to be an np.ndarray, actual dtype: </span><span class="si">{</span><span class="n">charlist_mask</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="k">assert</span> <span class="n">charlist_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span>
-                    <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">character_set</span><span class="p">),</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;expects the Text sample mask to be </span><span class="si">{</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">character_set</span><span class="p">),)</span><span class="si">}</span><span class="s2">, actual shape: </span><span class="si">{</span><span class="n">charlist_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">charlist_mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">charlist_mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
-                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects all masks values to 0 or 1, actual values: </span><span class="si">{</span><span class="n">charlist_mask</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects all mask values to 0 or 1, actual values: </span><span class="si">{</span><span class="n">charlist_mask</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="c1"># normalise the mask to use as a probability</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">charlist_mask</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">charlist_mask</span> <span class="o">=</span> <span class="n">charlist_mask</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">charlist_mask</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">length</span><span class="p">,</span> <span class="n">charlist_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_mask</span><span class="p">(</span>
+                <span class="n">probability</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="s2">&quot;probability&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">charlist_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">charlist_mask</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">charlist_mask</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects all probability mask values to be within 0 and 1, actual values: </span><span class="si">{</span><span class="n">charlist_mask</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">charlist_mask</span><span class="p">),</span> <span class="mi">1</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the sum of the probability mask to be 1, actual sum: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">charlist_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">length</span><span class="p">,</span> <span class="n">charlist_mask</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">charlist_mask</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">charlist_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># uniform sampling</span>
+            <span class="n">charlist_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">character_set</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">character_set</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">charlist_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">character_list</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">length</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">valid_mask</span> <span class="o">=</span> <span class="n">charlist_mask</span> <span class="o">==</span> <span class="mi">1</span>
-            <span class="n">valid_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">valid_mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_indexes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># Otherwise the string will not be contained in the space</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Trying to sample with a minimum length &gt; 0 (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_length</span><span class="si">}</span><span class="s2">) but the character mask is all zero meaning that no character could be sampled.&quot;</span>
-                    <span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">charlist_mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">character_list</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
-                    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">valid_indexes</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">length</span><span class="p">)</span>
+                <span class="c1"># Otherwise the string will not be contained in the space</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Trying to sample with a minimum length &gt; 0 (actual minimum length=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_length</span><span class="si">}</span><span class="s2">) but the character mask is all zero meaning that no character could be sampled.&quot;</span>
                 <span class="p">)</span>
 
+        <span class="n">string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">character_list</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">charlist_mask</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">string</span><span class="p">)</span></div>
 
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_mask</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mask</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">expected_dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="n">mask_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">]</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">mask</span><span class="p">,</span> <span class="nb">tuple</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the `</span><span class="si">{</span><span class="n">mask_type</span><span class="si">}</span><span class="s2">` type to be a tuple, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the `</span><span class="si">{</span><span class="n">mask_type</span><span class="si">}</span><span class="s2">` length to be two, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">length</span><span class="p">,</span> <span class="n">charlist_mask</span> <span class="o">=</span> <span class="n">mask</span>
+
+        <span class="k">if</span> <span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span>
+                <span class="nb">type</span><span class="p">(</span><span class="n">length</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the Text sample length to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">length</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">min_length</span> <span class="o">&lt;=</span> <span class="n">length</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the Text sample length be between </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_length</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="si">}</span><span class="s2">, actual length: </span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">charlist_mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">charlist_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the Text sample `</span><span class="si">{</span><span class="n">mask_type</span><span class="si">}</span><span class="s2">` to be an np.ndarray, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">charlist_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">charlist_mask</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">expected_dtype</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects the Text sample `</span><span class="si">{</span><span class="n">mask_type</span><span class="si">}</span><span class="s2">` to be type </span><span class="si">{</span><span class="n">expected_dtype</span><span class="si">}</span><span class="s2">, actual dtype: </span><span class="si">{</span><span class="n">charlist_mask</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="n">charlist_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">character_set</span><span class="p">),</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;expects the Text sample `</span><span class="si">{</span><span class="n">mask_type</span><span class="si">}</span><span class="s2">` to be </span><span class="si">{</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">character_set</span><span class="p">),)</span><span class="si">}</span><span class="s2">, actual shape: </span><span class="si">{</span><span class="n">charlist_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">length</span><span class="p">,</span> <span class="n">charlist_mask</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return boolean specifying if x is a valid member of this space.&quot;&quot;&quot;</span>
