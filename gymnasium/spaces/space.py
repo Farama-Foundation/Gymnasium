@@ -90,13 +90,16 @@ class Space(Generic[T_cov]):
         """Checks whether this space can be flattened to a :class:`gymnasium.spaces.Box`."""
         raise NotImplementedError
 
-    def sample(self, mask: Any | None = None) -> T_cov:
+    def sample(self, mask: Any | None = None, probability: Any | None = None) -> T_cov:
         """Randomly sample an element of this space.
 
         Can be uniform or non-uniform sampling based on boundedness of space.
 
+        The binary mask and the probability mask can't be used at the same time.
+
         Args:
-            mask: A mask used for sampling, expected ``dtype=np.int8`` and see sample implementation for expected shape.
+            mask: A mask used for random sampling, expected ``dtype=np.int8`` and see sample implementation for expected shape.
+            probability: A probability mask used for sampling according to the given probability distribution, expected ``dtype=np.float64`` and see sample implementation for expected shape.
 
         Returns:
             A sampled actions from the space

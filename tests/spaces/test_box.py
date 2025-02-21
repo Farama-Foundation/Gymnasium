@@ -373,3 +373,15 @@ def test_sample_mask():
         match=re.escape("Box.sample cannot be provided a mask, actual value: "),
     ):
         space.sample(mask=np.array([0, 1, 0], dtype=np.int8))
+
+
+def test_sample_probability_mask():
+    """Box cannot have a probability mask applied."""
+    space = Box(0, 1)
+    with pytest.raises(
+        gym.error.Error,
+        match=re.escape(
+            "Box.sample cannot be provided a probability mask, actual value: "
+        ),
+    ):
+        space.sample(probability=np.array([0, 1, 0], dtype=np.float64))

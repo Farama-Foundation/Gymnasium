@@ -18,9 +18,9 @@ class OneOf(Space[Any]):
     Example:
         >>> from gymnasium.spaces import OneOf, Box, Discrete
         >>> observation_space = OneOf((Discrete(2), Box(-1, 1, shape=(2,))), seed=123)
-        >>> observation_space.sample()  # the first element is the space index (Box in this case) and the second element is the sample from Box
+        >>> observation_space.sample()  # the first element is the space index (Discrete in this case) and the second element is the sample from Discrete
         (np.int64(0), np.int64(0))
-        >>> observation_space.sample()  # this time the Discrete space was sampled as index=0
+        >>> observation_space.sample()  # this time the Box space was sampled as index=1
         (np.int64(1), array([-0.00711833, -0.7257502 ], dtype=float32))
         >>> observation_space[0]
         Discrete(2)
@@ -100,7 +100,11 @@ class OneOf(Space[Any]):
                 f"Expected None, int, or tuple of ints, actual type: {type(seed)}"
             )
 
-    def sample(self, mask: tuple[Any | None, ...] | None = None) -> tuple[int, Any]:
+    def sample(
+        self,
+        mask: tuple[Any | None, ...] | None = None,
+        probability: tuple[Any | None, ...] | None = None,
+    ) -> tuple[int, Any]:
         """Generates a single random sample inside this space.
 
         This method draws independent samples from the subspaces.
@@ -108,23 +112,42 @@ class OneOf(Space[Any]):
         Args:
             mask: An optional tuple of optional masks for each of the subspace's samples,
                 expects the same number of masks as spaces
+            probability: An optional tuple of optional probability masks for each of the subspace's samples,
+                expects the same number of probability masks as spaces
 
         Returns:
             Tuple of the subspace's samples
         """
         subspace_idx = self.np_random.integers(0, len(self.spaces), dtype=np.int64)
         subspace = self.spaces[subspace_idx]
-        if mask is not None:
+
+        if mask is not None and probability is not None:
+            raise ValueError(
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
+            )
+        elif mask is not None:
             assert isinstance(
                 mask, tuple
-            ), f"Expected type of mask is tuple, actual type: {type(mask)}"
+            ), f"Expected type of `mask` is tuple, actual type: {type(mask)}"
             assert len(mask) == len(
                 self.spaces
-            ), f"Expected length of mask is {len(self.spaces)}, actual length: {len(mask)}"
+            ), f"Expected length of `mask` is {len(self.spaces)}, actual length: {len(mask)}"
 
-            mask = mask[subspace_idx]
+            subspace_sample = subspace.sample(mask=mask[subspace_idx])
 
-        return subspace_idx, subspace.sample(mask=mask)
+        elif probability is not None:
+            assert isinstance(
+                probability, tuple
+            ), f"Expected type of `probability` is tuple, actual type: {type(probability)}"
+            assert len(probability) == len(
+                self.spaces
+            ), f"Expected length of `probability` is {len(self.spaces)}, actual length: {len(probability)}"
+
+            subspace_sample = subspace.sample(probability=probability[subspace_idx])
+        else:
+            subspace_sample = subspace.sample()
+
+        return subspace_idx, subspace_sample
 
     def contains(self, x: tuple[int, Any]) -> bool:
         """Return boolean specifying if x is a valid member of this space."""

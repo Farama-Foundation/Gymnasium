@@ -96,70 +96,107 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         return True
 
     def sample(
-        self, mask: tuple[MaskNDArray, ...] | None = None
+        self,
+        mask: tuple[MaskNDArray, ...] | None = None,
+        probability: tuple[MaskNDArray, ...] | None = None,
     ) -> NDArray[np.integer[Any]]:
-        """Generates a single random sample this space.
+        """Generates a single random sample from this space.
 
         Args:
             mask: An optional mask for multi-discrete, expects tuples with a ``np.ndarray`` mask in the position of each
                 action with shape ``(n,)`` where ``n`` is the number of actions and ``dtype=np.int8``.
                 Only ``mask values == 1`` are possible to sample unless all mask values for an action are ``0`` then the default action ``self.start`` (the smallest element) is sampled.
+            probability: An optional probability mask for multi-discrete, expects tuples with a ``np.ndarray`` probability mask in the position of each
+                action with shape ``(n,)`` where ``n`` is the number of actions and ``dtype=np.float64``.
+                Only probability mask values within ``[0,1]`` are possible to sample as long as the sum of all values is ``1``.
 
         Returns:
             An ``np.ndarray`` of :meth:`Space.shape`
         """
-        if mask is not None:
+        if mask is not None and probability is not None:
+            raise ValueError(
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
+            )
+        elif mask is not None:
+            return np.array(
+                self._apply_mask(mask, self.nvec, self.start, "mask"),
+                dtype=self.dtype,
+            )
+        elif probability is not None:
+            return np.array(
+                self._apply_mask(probability, self.nvec, self.start, "probability"),
+                dtype=self.dtype,
+            )
+        else:
+            return (self.np_random.random(self.nvec.shape) * self.nvec).astype(
+                self.dtype
+            ) + self.start
 
-            def _apply_mask(
-                sub_mask: MaskNDArray | tuple[MaskNDArray, ...],
-                sub_nvec: MaskNDArray | np.integer[Any],
-                sub_start: MaskNDArray | np.integer[Any],
-            ) -> int | list[Any]:
-                if isinstance(sub_nvec, np.ndarray):
-                    assert isinstance(
-                        sub_mask, tuple
-                    ), f"Expects the mask to be a tuple for sub_nvec ({sub_nvec}), actual type: {type(sub_mask)}"
-                    assert len(sub_mask) == len(
-                        sub_nvec
-                    ), f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, nvec length: {len(sub_nvec)}"
-                    return [
-                        _apply_mask(new_mask, new_nvec, new_start)
-                        for new_mask, new_nvec, new_start in zip(
-                            sub_mask, sub_nvec, sub_start
-                        )
-                    ]
-                else:
-                    assert np.issubdtype(
-                        type(sub_nvec), np.integer
-                    ), f"Expects the sub_nvec to be an action, actually: {sub_nvec}, {type(sub_nvec)}"
-                    assert isinstance(
-                        sub_mask, np.ndarray
-                    ), f"Expects the sub mask to be np.ndarray, actual type: {type(sub_mask)}"
-                    assert (
-                        len(sub_mask) == sub_nvec
-                    ), f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, action: {sub_nvec}"
-                    assert (
-                        sub_mask.dtype == np.int8
-                    ), f"Expects the mask dtype to be np.int8, actual dtype: {sub_mask.dtype}"
+    def _apply_mask(
+        self,
+        sub_mask: MaskNDArray | tuple[MaskNDArray, ...],
+        sub_nvec: MaskNDArray | np.integer[Any],
+        sub_start: MaskNDArray | np.integer[Any],
+        mask_type: str,
+    ) -> int | list[Any]:
+        """Returns a sample using the provided mask or probability mask."""
+        if isinstance(sub_nvec, np.ndarray):
+            assert isinstance(
+                sub_mask, tuple
+            ), f"Expects the mask to be a tuple for sub_nvec ({sub_nvec}), actual type: {type(sub_mask)}"
+            assert len(sub_mask) == len(
+                sub_nvec
+            ), f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, nvec length: {len(sub_nvec)}"
+            return [
+                self._apply_mask(new_mask, new_nvec, new_start, mask_type)
+                for new_mask, new_nvec, new_start in zip(sub_mask, sub_nvec, sub_start)
+            ]
 
-                    valid_action_mask = sub_mask == 1
-                    assert np.all(
-                        np.logical_or(sub_mask == 0, valid_action_mask)
-                    ), f"Expects all masks values to 0 or 1, actual values: {sub_mask}"
+        assert np.issubdtype(
+            type(sub_nvec), np.integer
+        ), f"Expects the sub_nvec to be an action, actually: {sub_nvec}, {type(sub_nvec)}"
+        assert isinstance(
+            sub_mask, np.ndarray
+        ), f"Expects the sub mask to be np.ndarray, actual type: {type(sub_mask)}"
+        assert (
+            len(sub_mask) == sub_nvec
+        ), f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, action: {sub_nvec}"
 
-                    if np.any(valid_action_mask):
-                        return (
-                            self.np_random.choice(np.where(valid_action_mask)[0])
-                            + sub_start
-                        )
-                    else:
-                        return sub_start
+        if mask_type == "mask":
+            assert (
+                sub_mask.dtype == np.int8
+            ), f"Expects the mask dtype to be np.int8, actual dtype: {sub_mask.dtype}"
 
-            return np.array(_apply_mask(mask, self.nvec, self.start), dtype=self.dtype)
+            valid_action_mask = sub_mask == 1
+            assert np.all(
+                np.logical_or(sub_mask == 0, valid_action_mask)
+            ), f"Expects all masks values to 0 or 1, actual values: {sub_mask}"
 
-        return (self.np_random.random(self.nvec.shape) * self.nvec).astype(
-            self.dtype
-        ) + self.start
+            if np.any(valid_action_mask):
+                return self.np_random.choice(np.where(valid_action_mask)[0]) + sub_start
+            else:
+                return sub_start
+        elif mask_type == "probability":
+            assert (
+                sub_mask.dtype == np.float64
+            ), f"Expects the mask dtype to be np.float64, actual dtype: {sub_mask.dtype}"
+            valid_action_mask = np.logical_and(sub_mask > 0, sub_mask <= 1)
+            assert np.all(
+                np.logical_or(sub_mask == 0, valid_action_mask)
+            ), f"Expects all masks values to be between 0 and 1, actual values: {sub_mask}"
+            assert np.isclose(
+                np.sum(sub_mask), 1
+            ), f"Expects the sum of all mask values to be 1, actual sum: {np.sum(sub_mask)}"
+
+            normalized_sub_mask = sub_mask / np.sum(sub_mask)
+            return (
+                self.np_random.choice(
+                    np.where(valid_action_mask)[0],
+                    p=normalized_sub_mask[valid_action_mask],
+                )
+                + sub_start
+            )
+        raise ValueError(f"Unsupported mask type: {mask_type}")
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""

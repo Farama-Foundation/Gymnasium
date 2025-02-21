@@ -65,3 +65,56 @@ def test_bad_oneof_seed():
         match="Expected None, int, or tuple of ints, actual type: <class 'float'>",
     ):
         space.seed(0.0)
+
+
+def test_oneof_sample():
+    """Tests the sample method with and without masks or probabilities."""
+    space = OneOf([Discrete(2), Box(-1, 1, shape=(2,))])
+
+    # Unmasked sampling
+    sample = space.sample()
+    assert isinstance(sample, tuple)
+    sample_idx, sample_value = sample
+    assert sample_idx in [0, 1]
+    assert sample_value in space.spaces[sample_idx]
+
+    # Masked sampling
+    mask = (np.array([1, 0], dtype=np.int8), None)
+    sample_idx, sample_value = space.sample(mask=mask)
+    assert sample_idx in [0, 1]
+    while sample_idx != 0:
+        sample_idx, sample_value = space.sample(mask=mask)
+        if sample_idx == 0:
+            assert sample_value == 0
+
+    # Probability sampling
+    probability = (np.array([0.8, 0.2], dtype=np.float64), None)
+    sample_idx, sample_value = space.sample(probability=probability)
+    assert sample_idx in [0, 1]
+
+
+def test_invalid_sample_inputs():
+    """Tests that invalid inputs to sample raise appropriate errors."""
+    space = OneOf([Discrete(2), Box(-1, 1, shape=(2,))])
+
+    # Providing both mask and probability
+    with pytest.raises(
+        ValueError, match="Only one of `mask` or `probability` can be provided."
+    ):
+        space.sample(mask=(None, None), probability=(0.5, 0.5))
+
+    # Invalid mask type
+    with pytest.raises(AssertionError, match="Expected type of `mask` is tuple"):
+        space.sample(mask={"low": 0, "high": 1})
+
+    # Invalid mask length
+    with pytest.raises(AssertionError, match="Expected length of `mask` is 2"):
+        space.sample(mask=(None,))
+
+    # Invalid probability length
+    with pytest.raises(AssertionError, match="Expected length of `probability` is 2"):
+        space.sample(probability=(0.5,))
+
+    # Invalid probability type
+    with pytest.raises(AssertionError, match="Expected type of `probability` is tuple"):
+        space.sample(probability=[0.5, 0.5])
