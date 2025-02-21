@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.envs.box2d import BipedalWalker, CarRacing
-from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
+# from gymnasium.envs.box2d import BipedalWalker, CarRacing
+# from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
 from gymnasium.envs.toy_text import CliffWalkingEnv, TaxiEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 from gymnasium.error import InvalidAction
@@ -207,6 +207,23 @@ def test_taxi_encode_decode():
             env.encode(*env.decode(state)) == state
         ), f"state={state}, encode(decode(state))={env.encode(*env.decode(state))}"
         state, _, _, _, _ = env.step(env.action_space.sample())
+
+def test_taxi_is_rainy():
+    env = TaxiEnv(is_rainy=True)
+    for state_dict in env.P.values():
+        for action, transitions in state_dict.items():
+            if action <= 3:
+                assert sum([t[0] for t in transitions]) == 1
+                assert set(t[0] for t in transitions) == {0.8, 0.1}
+            else:
+                assert len(transitions) == 1
+                assert transitions[0][0] == 1.0
+
+    env = TaxiEnv(is_rainy=False)
+    for state_dict in env.P.values():
+        for action, transitions in state_dict.items():
+            assert len(transitions) == 1
+            assert transitions[0][0] == 1.0
 
 
 @pytest.mark.parametrize(
