@@ -352,11 +352,11 @@ class TaxiEnv(Env):
             and (taxi_row != shadow_row or taxi_col != shadow_col)
         ):
             self.fickle_step = False
-            if self.fickle_passenger and np.random.rand() < 0.3:
+            if self.fickle_passenger and self.np_random.random() < 0.3:
                 possible_destinations = [
                     i for i in range(len(self.locs)) if i != shadow_dest_idx
                 ]
-                dest_idx = np.random.choice(possible_destinations)
+                dest_idx = self.np_random.choice(possible_destinations)
                 s = self.encode(taxi_row, taxi_col, pass_loc, dest_idx)
 
         self.s = s

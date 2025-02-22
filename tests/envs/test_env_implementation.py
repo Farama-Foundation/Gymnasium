@@ -220,11 +220,19 @@ def test_taxi_is_rainy():
                 assert len(transitions) == 1
                 assert transitions[0][0] == 1.0
 
+    state, _ = env.reset()
+    _, _, _, _, info = env.step(0)
+    assert info["prob"] in {0.8, 0.1}
+
     env = TaxiEnv(is_rainy=False)
     for state_dict in env.P.values():
         for action, transitions in state_dict.items():
             assert len(transitions) == 1
             assert transitions[0][0] == 1.0
+
+    state, _ = env.reset()
+    _, _, _, _, info = env.step(0)
+    assert info["prob"] == 1.0
 
 
 @pytest.mark.parametrize(
