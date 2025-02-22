@@ -151,7 +151,8 @@ class TaxiEnv(Env):
     Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, doi: 10.1613/jair.639.
 
     ## Version History
-    * v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information, added stochasticity
+    * v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information
+        - In Gymnasium `1.0.0a3` the `is_rainy` and `fickle_passenger` arguments were added to align with Dietterich paper
     * v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.
     * v1: Remove (3,2) from locs, add passidx<4 check
     * v0: Initial version release
