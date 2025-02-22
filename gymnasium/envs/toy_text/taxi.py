@@ -139,11 +139,11 @@ class TaxiEnv(Env):
     gym.make('Taxi-v3')
     ```
 
-    <a id="is_slippy"></a>`is_raining=True`: If true the cab will move in intended direction with
+    <a id="is_raining"></a>`is_raining=True`: If true the cab will move in intended direction with
     probability of 80% else will move in either left or right of target direction with
     equal probability of 10% in both directions.
 
-    <a id="fickle_passenger"></a>`is_raining=True`: If true the passenger has a 30% chance of changing
+    <a id="fickle_passenger"></a>`fickle_passenger=True`: If true the passenger has a 30% chance of changing
     destinations when the cab has moved one square away from the passenger's source location.
 
     ## References
@@ -151,7 +151,7 @@ class TaxiEnv(Env):
     Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, doi: 10.1613/jair.639.
 
     ## Version History
-    * v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information
+    * v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information, added stochasticity
     * v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.
     * v1: Remove (3,2) from locs, add passidx<4 check
     * v0: Initial version release
