@@ -235,6 +235,34 @@ def test_taxi_is_rainy():
     assert info["prob"] == 1.0
 
 
+def test_taxi_disallowed_transitions():
+    disallowed_transitions = [
+        ((0, 1), (0, 3)),
+        ((0, 3), (0, 1)),
+        ((1, 0), (1, 2)),
+        ((1, 2), (1, 0)),
+        ((3, 1), (3, 3)),
+        ((3, 3), (3, 1)),
+        ((3, 3), (3, 5)),
+        ((3, 5), (3, 3)),
+        ((4, 1), (4, 3)),
+        ((4, 3), (4, 1)),
+        ((4, 3), (4, 5)),
+        ((4, 5), (4, 3)),
+    ]
+    for rain in {True, False}:
+        env = TaxiEnv(is_rainy=rain)
+        for state, state_dict in env.P.items():
+            start_row, start_col, _, _ = env.decode(state)
+            for action, transitions in state_dict.items():
+                for transition in transitions:
+                    end_row, end_col, _, _ = env.decode(transition[1])
+                    assert (
+                        (start_row, start_col),
+                        (end_row, end_col),
+                    ) not in disallowed_transitions
+
+
 @pytest.mark.parametrize(
     "env_name",
     ["Acrobot-v1", "CartPole-v1", "MountainCar-v0", "MountainCarContinuous-v0"],

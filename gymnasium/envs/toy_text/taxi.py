@@ -151,7 +151,6 @@ class TaxiEnv(Env):
     Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, doi: 10.1613/jair.639.
 
     ## Version History
-    * v4: is_rainy + fickle_passenger in line with the Dietterich paper.
     * v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information
     * v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.
     * v1: Remove (3,2) from locs, add passidx<4 check
@@ -203,34 +202,50 @@ class TaxiEnv(Env):
                             terminated = False
                             taxi_loc = (row, col)
 
-                            if action == 0:
-                                new_row, new_col = (min(row + 1, max_row), col)
-                                left_pos = (min(row + 1, max_row), max(col - 1, 0))
-                                right_pos = (
-                                    min(row + 1, max_row),
-                                    max(col + 1, max_col),
+                            moves = {
+                                0: ((1, 0), (0, -1), (0, 1)),  # Down
+                                1: ((-1, 0), (0, -1), (0, 1)),  # Up
+                                2: ((0, 1), (1, 0), (-1, 0)),  # Right
+                                3: ((0, -1), (1, 0), (-1, 0)),  # Left
+                            }
+
+                            # Check if movement is allowed
+                            if (
+                                action in {0, 1}
+                                or (
+                                    action == 2
+                                    and self.desc[1 + row, 2 * col + 2] == b":"
                                 )
-                            elif action == 1:
-                                new_row, new_col = (max(row - 1, 0), col)
-                                left_pos = (
-                                    min(row + 1, max_row),
-                                    max(col + 1, max_col),
+                                or (action == 3 and self.desc[1 + row, 2 * col] == b":")
+                            ):
+                                dr, dc = moves[action][0]
+                                new_row, new_col = max(0, min(row + dr, max_row)), max(
+                                    0, min(col + dc, max_col)
                                 )
-                                right_pos = (min(row + 1, max_row), max(col - 1, 0))
-                            if action == 2 and self.desc[1 + row, 2 * col + 2] == b":":
-                                new_row, new_col = (row, min(col + 1, max_col))
-                                left_pos = (
-                                    min(row + 1, max_row),
-                                    max(col + 1, max_col),
-                                )
-                                right_pos = (max(row - 1, 0), min(col + 1, max_col))
-                            elif action == 3 and self.desc[1 + row, 2 * col] == b":":
-                                new_row, new_col = (row, max(col - 1, 0))
-                                left_pos = (
-                                    min(row + 1, max_row),
-                                    max(col + 1, max_col),
-                                )
-                                right_pos = (max(row - 1, 0), min(col + 1, max_col))
+
+                                left_dr, left_dc = moves[action][1]
+                                left_row, left_col = max(
+                                    0, min(row + left_dr, max_row)
+                                ), max(0, min(col + left_dc, max_col))
+                                if self.desc[1 + left_row, 2 * left_col + 2] == b":":
+                                    left_pos = (left_row, left_col)
+                                else:
+                                    left_pos = (
+                                        new_row,
+                                        new_col,
+                                    )  # Default to current position if not traversable
+
+                                right_dr, right_dc = moves[action][2]
+                                right_row, right_col = max(
+                                    0, min(row + right_dr, max_row)
+                                ), max(0, min(col + right_dc, max_col))
+                                if self.desc[1 + right_row, 2 * right_col] == b":":
+                                    right_pos = (right_row, right_col)
+                                else:
+                                    right_pos = (
+                                        new_row,
+                                        new_col,
+                                    )  # Default to current position if not traversable
                             elif action == 4:  # pickup
                                 if pass_idx < 4 and taxi_loc == locs[pass_idx]:
                                     new_pass_idx = 4
