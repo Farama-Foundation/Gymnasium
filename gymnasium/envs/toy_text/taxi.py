@@ -139,7 +139,7 @@ class TaxiEnv(Env):
     gym.make('Taxi-v3')
     ```
 
-    <a id="is_raining"></a>`is_raining=True`: If true the cab will move in intended direction with
+    <a id="is_raining"></a>`is_raining=True`: If True the cab will move in intended direction with
     probability of 80% else will move in either left or right of target direction with
     equal probability of 10% in both directions.
 

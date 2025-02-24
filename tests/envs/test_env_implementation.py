@@ -265,23 +265,23 @@ def test_taxi_disallowed_transitions():
 
 def test_taxi_fickle_passenger():
     env = TaxiEnv(fickle_passenger=True)
-    _, _ = env.reset()
+    env.reset()
     # Force passenger being in a fickle state
     env.fickle_step = True
-    state, reward, done, _, _ = env.step(0)
+    state, *_ = env.step(0)
     taxi_row, taxi_col, pass_idx, orig_dest_idx = env.decode(state)
     # force taxi to passenger location
     env.s = env.encode(
         env.locs[pass_idx][0], env.locs[pass_idx][1], pass_idx, orig_dest_idx
     )
     # pick up the passenger
-    _, _, _, _, _ = env.step(4)
+    env.step(4)
     if env.locs[pass_idx][0] == 0:
         # if we're on the top row, move down
-        state, _, _, _, _ = env.step(0)
+        state, *_ = env.step(0)
     else:
         # otherwise move up
-        state, _, _, _, _ = env.step(1)
+        state, *_ = env.step(1)
     taxi_row, taxi_col, pass_idx, dest_idx = env.decode(state)
     # check that passenger has changed their destination
     assert orig_dest_idx != dest_idx
