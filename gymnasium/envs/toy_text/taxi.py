@@ -152,7 +152,7 @@ class TaxiEnv(Env):
 
     ## Version History
     * v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information
-        - In Gymnasium `1.0.0a3` the `is_rainy` and `fickle_passenger` arguments were added to align with Dietterich paper
+        - In Gymnasium `1.1.0` the `is_rainy` and `fickle_passenger` arguments were added to align with Dietterich paper
     * v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.
     * v1: Remove (3,2) from locs, add passidx<4 check
     * v0: Initial version release
@@ -290,7 +290,7 @@ class TaxiEnv(Env):
 
         self.render_mode = render_mode
         self.fickle_passenger = fickle_passenger
-        self.fickle_step = True
+        self.fickle_step = self.fickle_passenger and self.np_random.random() < 0.3
 
         # pygame utils
         self.window = None
@@ -363,17 +363,17 @@ class TaxiEnv(Env):
         # If we are in the fickle step, the passenger has been in the vehicle for at least a step and this step the
         # position changed
         if (
-            self.fickle_step
+            self.fickle_passenger
+            and self.fickle_step
             and shadow_pass_loc == 4
             and (taxi_row != shadow_row or taxi_col != shadow_col)
         ):
             self.fickle_step = False
-            if self.fickle_passenger and self.np_random.random() < 0.3:
-                possible_destinations = [
-                    i for i in range(len(self.locs)) if i != shadow_dest_idx
-                ]
-                dest_idx = self.np_random.choice(possible_destinations)
-                s = self.encode(taxi_row, taxi_col, pass_loc, dest_idx)
+            possible_destinations = [
+                i for i in range(len(self.locs)) if i != shadow_dest_idx
+            ]
+            dest_idx = self.np_random.choice(possible_destinations)
+            s = self.encode(taxi_row, taxi_col, pass_loc, dest_idx)
 
         self.s = s
 
@@ -391,7 +391,7 @@ class TaxiEnv(Env):
         super().reset(seed=seed)
         self.s = categorical_sample(self.initial_state_distrib, self.np_random)
         self.lastaction = None
-        self.fickle_step = True
+        self.fickle_step = self.fickle_passenger and self.np_random.random() < 0.3
         self.taxi_orientation = 0
 
         if self.render_mode == "human":
