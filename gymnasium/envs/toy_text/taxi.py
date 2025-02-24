@@ -144,7 +144,9 @@ class TaxiEnv(Env):
     equal probability of 10% in both directions.
 
     <a id="fickle_passenger"></a>`fickle_passenger=True`: If true the passenger has a 30% chance of changing
-    destinations when the cab has moved one square away from the passenger's source location.
+    destinations when the cab has moved one square away from the passenger's source location.  Passenger fickleness
+    only happens on the first pickup and successful movement.  If the passenger is dropped off at the source location
+    and picked up again, it is not triggered again.
 
     ## References
     <a id="taxi_ref"></a>[1] T. G. Dietterich, “Hierarchical Reinforcement Learning with the MAXQ Value Function Decomposition,”
@@ -152,7 +154,7 @@ class TaxiEnv(Env):
 
     ## Version History
     * v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information
-        - In Gymnasium `1.1.0` the `is_rainy` and `fickle_passenger` arguments were added to align with Dietterich paper
+        - In Gymnasium `1.1.0` the `is_rainy` and `fickle_passenger` arguments were added to align with Dietterich, 2000
     * v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.
     * v1: Remove (3,2) from locs, add passidx<4 check
     * v0: Initial version release
