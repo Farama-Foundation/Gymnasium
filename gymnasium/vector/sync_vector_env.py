@@ -75,7 +75,7 @@ class SyncVectorEnv(VectorEnv):
             observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
                 'different' defines that there can be multiple observation spaces with the same length but different high/low values batched together. Passing a ``Space`` object
                 allows the user to set some custom observation space mode not covered by 'same' or 'different.'
-            autoreset_mode: The Autoreset Mode used, see todo for more details.
+            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.
 
         Raises:
             RuntimeError: If the observation space of some sub-environment does not match observation_space
