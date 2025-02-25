@@ -139,11 +139,11 @@ class TaxiEnv(Env):
     gym.make('Taxi-v3')
     ```
 
-    <a id="is_raining"></a>`is_raining=True`: If True the cab will move in intended direction with
+    <a id="is_raining"></a>`is_raining=False`: If True the cab will move in intended direction with
     probability of 80% else will move in either left or right of target direction with
     equal probability of 10% in both directions.
 
-    <a id="fickle_passenger"></a>`fickle_passenger=True`: If true the passenger has a 30% chance of changing
+    <a id="fickle_passenger"></a>`fickle_passenger=False`: If true the passenger has a 30% chance of changing
     destinations when the cab has moved one square away from the passenger's source location.  Passenger fickleness
     only happens on the first pickup and successful movement.  If the passenger is dropped off at the source location
     and picked up again, it is not triggered again.

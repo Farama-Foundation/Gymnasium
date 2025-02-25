@@ -265,9 +265,8 @@ def test_taxi_disallowed_transitions():
 
 def test_taxi_fickle_passenger():
     env = TaxiEnv(fickle_passenger=True)
-    env.reset()
-    # Force passenger being in a fickle state
-    env.fickle_step = True
+    # This is a fickle seed, if randomness or the draws from the PRNG were recently updated, find a new seed
+    env.reset(seed=43)
     state, *_ = env.step(0)
     taxi_row, taxi_col, pass_idx, orig_dest_idx = env.decode(state)
     # force taxi to passenger location
