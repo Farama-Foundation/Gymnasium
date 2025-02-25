@@ -121,7 +121,7 @@ class AsyncVectorEnv(VectorEnv):
                 'different' defines that there can be multiple observation spaces with different parameters though requires the same shape and dtype,
                 warning, may raise unexpected errors. Passing a ``Tuple[Space, Space]`` object allows defining a custom ``single_observation_space`` and
                 ``observation_space``, warning, may raise unexpected errors.
-            autoreset_mode: The Autoreset Mode used, see todo for more details.
+            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.
 
         Warnings:
             worker is an advanced mode option. It provides a high degree of flexibility and a high chance
