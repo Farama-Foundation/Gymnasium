@@ -394,6 +394,12 @@ input/outputs. For <cite>info</cite>, the data is kept as a dictionary such that
 <p>For creating environments, <code class="xref py py-func docutils literal notranslate"><span class="pre">make_vec()</span></code> is a vector environment equivalent to <code class="xref py py-func docutils literal notranslate"><span class="pre">make()</span></code> for easily creating
 vector environments that contains several unique arguments for modifying environment qualities, number of environment,
 vectorizer type, vectorizer arguments.</p>
+<p>To avoid having to wait for all sub-environments to terminated before resetting, implementations can autoreset
+sub-environments on episode end (<cite>terminated or truncated is True</cite>). This is crucial for correct implementing training
+algorithms with vector environments. By default, Gymnasium’s implementation uses <cite>next-step</cite> autoreset, with
+<code class="xref py py-class docutils literal notranslate"><span class="pre">AutoresetMode</span></code> enum as the options. The mode used by vector environment should be available in <cite>metadata[“autoreset_mode”]</cite>.
+Warning, some vector implementations or training algorithms will only support particular autoreset modes.
+For more information, read <a class="reference external" href="https://farama.org/Vector-Autoreset-Mode">https://farama.org/Vector-Autoreset-Mode</a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The info parameter of <a class="reference internal" href="#gymnasium.vector.VectorEnv.reset" title="gymnasium.vector.VectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> was originally implemented before v0.25 as a list
@@ -444,11 +450,6 @@ array for each key. To use the old info style, utilise the <code class="xref py 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>To avoid having to wait for all sub-environments to terminated before resetting, implementations will autoreset
-sub-environments on episode end (<cite>terminated or truncated is True</cite>). As a result, when adding observations
-to a replay buffer, this requires knowing when an observation (and info) for each sub-environment are the first
-observation from an autoreset. We recommend using an additional variable to store this information such as
-<code class="docutils literal notranslate"><span class="pre">has_autoreset</span> <span class="pre">=</span> <span class="pre">np.logical_or(terminated,</span> <span class="pre">truncated)</span></code>.</p>
 <p>The Vector Environments have the additional attributes for users to understand the implementation</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#gymnasium.vector.VectorEnv.num_envs" title="gymnasium.vector.VectorEnv.num_envs"><code class="xref py py-attr docutils literal notranslate"><span class="pre">num_envs</span></code></a> - The number of sub-environment in the vector environment</p></li>
