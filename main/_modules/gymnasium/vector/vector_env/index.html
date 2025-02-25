@@ -422,6 +422,13 @@
 <span class="sd">    vector environments that contains several unique arguments for modifying environment qualities, number of environment,</span>
 <span class="sd">    vectorizer type, vectorizer arguments.</span>
 
+<span class="sd">    To avoid having to wait for all sub-environments to terminated before resetting, implementations can autoreset</span>
+<span class="sd">    sub-environments on episode end (`terminated or truncated is True`). This is crucial for correct implementing training</span>
+<span class="sd">    algorithms with vector environments. By default, Gymnasium&#39;s implementation uses `next-step` autoreset, with</span>
+<span class="sd">    :class:`AutoresetMode` enum as the options. The mode used by vector environment should be available in `metadata[&quot;autoreset_mode&quot;]`.</span>
+<span class="sd">    Warning, some vector implementations or training algorithms will only support particular autoreset modes.</span>
+<span class="sd">    For more information, read https://farama.org/Vector-Autoreset-Mode.</span>
+
 <span class="sd">    Note:</span>
 <span class="sd">        The info parameter of :meth:`reset` and :meth:`step` was originally implemented before v0.25 as a list</span>
 <span class="sd">        of dictionary for each sub-environment. However, this was modified in v0.25+ to be a dictionary with a NumPy</span>
@@ -469,12 +476,6 @@
 <span class="sd">        &gt;&gt;&gt; infos</span>
 <span class="sd">        {}</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
-
-<span class="sd">    To avoid having to wait for all sub-environments to terminated before resetting, implementations will autoreset</span>
-<span class="sd">    sub-environments on episode end (`terminated or truncated is True`). As a result, when adding observations</span>
-<span class="sd">    to a replay buffer, this requires knowing when an observation (and info) for each sub-environment are the first</span>
-<span class="sd">    observation from an autoreset. We recommend using an additional variable to store this information such as</span>
-<span class="sd">    ``has_autoreset = np.logical_or(terminated, truncated)``.</span>
 
 <span class="sd">    The Vector Environments have the additional attributes for users to understand the implementation</span>
 
