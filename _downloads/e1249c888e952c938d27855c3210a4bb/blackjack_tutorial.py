@@ -275,7 +275,7 @@ agent = BlackjackAgent(
 #
 
 
-env = gym.wrappers.RecordEpisodeStatistics(env, buffer_length=n_episodes)
+env = gym.wrappers.RecordEpisodeStatistics(env, deque_size=n_episodes)
 for episode in tqdm(range(n_episodes)):
     obs, info = env.reset()
     done = False
