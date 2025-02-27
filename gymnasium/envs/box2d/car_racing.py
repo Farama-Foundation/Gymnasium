@@ -87,20 +87,21 @@ class FrictionDetector(contactListener):
         tile.color[:] = self.env.road_color
         if not obj or "tiles" not in obj.__dict__:
             return
+
+        # Lap is considered completed if enough % of the track was covered
+        if (
+            tile.idx == 0
+            and self.env.tile_visited_count / len(self.env.track)
+            > self.lap_complete_percent
+        ):
+            self.env.new_lap = True
+
         if begin:
             obj.tiles.add(tile)
             if not tile.road_visited:
                 tile.road_visited = True
                 self.env.reward += 1000.0 / len(self.env.track)
                 self.env.tile_visited_count += 1
-
-                # Lap is considered completed if enough % of the track was covered
-                if (
-                    tile.idx == 0
-                    and self.env.tile_visited_count / len(self.env.track)
-                    > self.lap_complete_percent
-                ):
-                    self.env.new_lap = True
         else:
             obj.tiles.remove(tile)
 
