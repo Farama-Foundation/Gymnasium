@@ -149,27 +149,49 @@ class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
                 f"Expected seed type: dict, int or None, actual type: {type(seed)}"
             )
 
-    def sample(self, mask: dict[str, Any] | None = None) -> dict[str, Any]:
+    def sample(
+        self,
+        mask: dict[str, Any] | None = None,
+        probability: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Generates a single random sample from this space.
 
         The sample is an ordered dictionary of independent samples from the constituent spaces.
 
         Args:
             mask: An optional mask for each of the subspaces, expects the same keys as the space
+            probability: An optional probability mask for each of the subspaces, expects the same keys as the space
 
         Returns:
             A dictionary with the same key and sampled values from :attr:`self.spaces`
         """
-        if mask is not None:
+        if mask is not None and probability is not None:
+            raise ValueError(
+                f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
+            )
+        elif mask is not None:
             assert isinstance(
                 mask, dict
-            ), f"Expects mask to be a dict, actual type: {type(mask)}"
+            ), f"Expected sample mask to be a dict, actual type: {type(mask)}"
             assert (
                 mask.keys() == self.spaces.keys()
-            ), f"Expect mask keys to be same as space keys, mask keys: {mask.keys()}, space keys: {self.spaces.keys()}"
-            return {k: space.sample(mask=mask[k]) for k, space in self.spaces.items()}
+            ), f"Expected sample mask keys to be same as space keys, mask keys: {mask.keys()}, space keys: {self.spaces.keys()}"
 
-        return {k: space.sample() for k, space in self.spaces.items()}
+            return {k: space.sample(mask=mask[k]) for k, space in self.spaces.items()}
+        elif probability is not None:
+            assert isinstance(
+                probability, dict
+            ), f"Expected sample probability mask to be a dict, actual type: {type(probability)}"
+            assert (
+                probability.keys() == self.spaces.keys()
+            ), f"Expected sample probability mask keys to be same as space keys, mask keys: {probability.keys()}, space keys: {self.spaces.keys()}"
+
+            return {
+                k: space.sample(probability=probability[k])
+                for k, space in self.spaces.items()
+            }
+        else:
+            return {k: space.sample() for k, space in self.spaces.items()}
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
