@@ -147,7 +147,7 @@ class CarRacing(gym.Env, EzPickle):
     The car starts at rest in the center of the road.
 
     ## Episode Termination
-    The episode finishes when all the tiles are visited. The car can also go outside the playfield -
+    The episode finishes when the car reaches the end of the circuit or the time limit is reached. The car can also go outside the playfield -
      that is, far off the track, in which case it will receive -100 reward and die.
 
     ## Arguments
@@ -191,6 +191,8 @@ class CarRacing(gym.Env, EzPickle):
     ```
 
     ## Version History
+    - v4: The episode will now terminate upon completing the lap, regardless of the number of tiles visited
+    - v3: Improved RNG handling with seed=-1; fixed bugs in environment checking and Box shape inference; minor fixes, including typos and dependency management.
     - v2: Change truncation to termination when finishing the lap (1.0.0)
     - v1: Change track completion logic and add domain randomization (0.24.0)
     - v0: Original version
