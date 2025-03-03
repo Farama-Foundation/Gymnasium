@@ -15,31 +15,26 @@ FrozenLake with Stable-Baselines3
 #
 
 # %%
-# Dependencies
-# -----------
-#
-
-# %%
-# First, let's install the required packages if they aren't already installed.
-#
-
-!pip install gymnasium[toy-text] stable-baselines3 matplotlib numpy
-
-# %%
 # Now let's import the libraries we'll need for our experiment.
 #
 
-import gymnasium as gym
-from gymnasium.envs.toy_text.frozen_lake import generate_random_map
-from stable_baselines3 import A2C  # We'll use the Advantage Actor-Critic algorithm
-from stable_baselines3.common.callbacks import EvalCallback, StopTrainingOnRewardThreshold, BaseCallback
+import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-import matplotlib.pyplot as plt
+import torch
+from stable_baselines3 import A2C  # We'll use the Advantage Actor-Critic algorithm
+from stable_baselines3.common.callbacks import (
+    BaseCallback,
+    EvalCallback,
+    StopTrainingOnRewardThreshold,
+)
 
 # For extracting probabilities from the policy network
 from stable_baselines3.common.utils import obs_as_tensor
-import torch
+
+import gymnasium as gym
+from gymnasium.envs.toy_text.frozen_lake import generate_random_map
+
 
 # %%
 # Environment Setup
@@ -52,10 +47,12 @@ import torch
 #
 
 # Set the parameters needed to generate the FrozenLake environment
-map_size=7                # Size of the square grid
-seed=123                  # Random seed for reproducibility
-is_slippery=False         # If True, the agent will have a chance to slip to a different direction
-proba_frozen=0.9          # Probability that a cell is frozen (walkable) vs a hole
+map_size = 7  # Size of the square grid
+seed = 123  # Random seed for reproducibility
+is_slippery = (
+    False  # If True, the agent will have a chance to slip to a different direction
+)
+proba_frozen = 0.9  # Probability that a cell is frozen (walkable) vs a hole
 
 # %%
 # Now we create the FrozenLake environment with our specified parameters.
@@ -67,7 +64,7 @@ proba_frozen=0.9          # Probability that a cell is frozen (walkable) vs a ho
 env = gym.make(
     "FrozenLake-v1",
     is_slippery=is_slippery,
-    render_mode="rgb_array",          # For visualization purposes
+    render_mode="rgb_array",  # For visualization purposes
     desc=generate_random_map(
         size=map_size, p=proba_frozen, seed=seed  # Generate a random map layout
     ),
@@ -79,8 +76,8 @@ env = gym.make(
 #
 
 # %%
-# In reinforcement learning, we often don't know exactly how many timesteps 
-# are needed to train a good model. Instead of setting a fixed number, we can 
+# In reinforcement learning, we often don't know exactly how many timesteps
+# are needed to train a good model. Instead of setting a fixed number, we can
 # use callbacks to stop training when the model reaches a certain performance level.
 #
 
@@ -91,7 +88,9 @@ env = gym.make(
 # For more thresholds have a look at:
 # https://stable-baselines.readthedocs.io/en/master/guide/callbacks.html#:~:text=A%20callback%20is%20a%20set%20of%20functions%20that,monitoring%2C%20auto%20saving%2C%20model%20manipulation%2C%20progress%20bars%2C%20%E2%80%A6
 callback_on_best = StopTrainingOnRewardThreshold(reward_threshold=0.999, verbose=1)
-eval_callback = EvalCallback(env, callback_on_new_best=callback_on_best, verbose=1, n_eval_episodes=10)
+eval_callback = EvalCallback(
+    env, callback_on_new_best=callback_on_best, verbose=1, n_eval_episodes=10
+)
 
 # %%
 # Model Creation and Training
@@ -107,7 +106,9 @@ eval_callback = EvalCallback(env, callback_on_new_best=callback_on_best, verbose
 # A2C stands for the Advantage Actor-Critic algorithm
 # For more information have a look at the documentation:
 # https://stable-baselines3.readthedocs.io/en/master/modules/a2c.html
-model = A2C("MlpPolicy", env, verbose=1)  # MlpPolicy uses neural networks for both actor and critic
+model = A2C(
+    "MlpPolicy", env, verbose=1
+)  # MlpPolicy uses neural networks for both actor and critic
 model.learn(total_timesteps=20_000, callback=eval_callback, log_interval=100)
 
 # %%
@@ -140,7 +141,7 @@ for i in range(map_size * 50):  # Set a reasonable upper limit on steps
 
 # %%
 # One advantage of using deep RL libraries like Stable-Baselines3 is that
-# we can extract useful information from the trained models. Here, we'll 
+# we can extract useful information from the trained models. Here, we'll
 # extract the action probabilities for each state to understand what our agent learned.
 #
 
@@ -152,7 +153,7 @@ for i in range(env.observation_space.n):
         # Convert state index to tensor format expected by the policy
         obs_as_tensor(np.array([i], dtype=np.float64), model.policy.device),
         # Test all possible actions (0-3) for this state
-        torch.tensor([i for i in list(range(4))])
+        torch.tensor([i for i in list(range(4))]),
     )
     # Convert log probabilities back to normal probabilities and store
     proba_table[i] = np.exp(log_prob.detach().numpy())
@@ -167,6 +168,7 @@ for i in range(env.observation_space.n):
 # functions to display the policy in an intuitive format.
 #
 
+
 # Helper function to convert probability table to directional arrows
 def proba_directions_map(proba_table, map_size):
     """Get the best learned action & map it to arrows."""
@@ -176,8 +178,10 @@ def proba_directions_map(proba_table, map_size):
     proba_table_best_action = np.argmax(proba_table, axis=1).reshape(map_size, map_size)
     # Map action indices to arrow directions for visualization
     directions = {0: "←", 1: "↓", 2: "→", 3: "↑"}
-    proba_table_directions = np.empty(proba_table_best_action.flatten().shape, dtype=str)
-    
+    proba_table_directions = np.empty(
+        proba_table_best_action.flatten().shape, dtype=str
+    )
+
     eps = np.finfo(float).eps  # Minimum float number on the machine
     for idx, val in enumerate(proba_table_best_action.flatten()):
         if np.abs(proba_table_val_max.flatten())[idx] > eps:
@@ -203,14 +207,14 @@ def plot_q_values_map(proba_table, env, map_size):
 
     # Right: Visualize the learned policy as a heatmap with directional arrows
     sns.heatmap(
-        qtable_val_max,               # Color intensity represents probability strength
-        annot=qtable_directions,      # Show arrows for the best action
-        fmt="",                       # No specific format for annotations
+        qtable_val_max,  # Color intensity represents probability strength
+        annot=qtable_directions,  # Show arrows for the best action
+        fmt="",  # No specific format for annotations
         ax=ax[1],
         cmap=sns.color_palette("Blues", as_cmap=True),
-        linewidths=0.7,               # Grid line width
+        linewidths=0.7,  # Grid line width
         linecolor="black",
-        xticklabels=[],               # No tick labels
+        xticklabels=[],  # No tick labels
         yticklabels=[],
         annot_kws={"fontsize": "xx-large"},  # Make arrows larger
     ).set(title="Learned Probabilities\nArrows represent best action")
@@ -220,6 +224,7 @@ def plot_q_values_map(proba_table, env, map_size):
         spine.set_linewidth(0.7)
         spine.set_color("black")
     plt.show()
+
 
 # %%
 # Visualize the Learned Policy
@@ -236,27 +241,29 @@ plot_q_values_map(proba_table, env, map_size=map_size)
 # %%
 # From here on we'll just help to understand how the training progress works.
 
+
 # In order to display the learning progress we need to create another callback
 class CustomLoggingCallback(BaseCallback):
     def __init__(self, interval: int = 100, verbose=0):
-        super(CustomLoggingCallback, self).__init__(verbose)
+        super().__init__(verbose)
         self.rewards = []
         self.interval = interval
         self.num_episodes = 0
 
     def _on_step(self) -> bool:
         # Get the rewards for the current step
-        reward = self.locals['rewards']
-        done = self.locals['dones']
-        
+        reward = self.locals["rewards"]
+        done = self.locals["dones"]
+
         if done[0] == True:
             self.rewards.append(float(reward[0]))
         return True
 
+
 # %%
 # Now that we have defined our custom callback that will track rewards,
 # we can instantiate it to use during our training process.
-# 
+#
 
 # Instantiate the custom callback
 logging_callback = CustomLoggingCallback()
@@ -281,13 +288,15 @@ idx = range(len(logging_callback.rewards))
 # shows the general trend of improvement.
 #
 
+
 def rolling_mean(x, window_size):
     """Calculate the rolling mean of the given data with specified window size."""
     # Create a window of ones with equal weights (1/window_size for each element)
     window = np.ones(window_size) / window_size
     # Use convolution to efficiently calculate the moving average
     # 'valid' mode means we only return output where the window fully overlaps with input
-    return np.convolve(x, window, mode='valid')
+    return np.convolve(x, window, mode="valid")
+
 
 # %%
 # Now we'll compute a rolling average with a window of 20 episodes.
@@ -298,9 +307,9 @@ def rolling_mean(x, window_size):
 # Calculate the rolling mean of rewards with a window of 20 episodes
 rolling_rewards = rolling_mean(logging_callback.rewards, 20)
 # Plot the results to visualize learning progress
-plt.plot(range(len(rolling_rewards)), rolling_rewards, label='Reward')
-plt.xlabel('Episodes')
-plt.ylabel('Average Reward (over 20 episodes)')
-plt.title('Learning Progress: How rewards improve during training')
+plt.plot(range(len(rolling_rewards)), rolling_rewards, label="Reward")
+plt.xlabel("Episodes")
+plt.ylabel("Average Reward (over 20 episodes)")
+plt.title("Learning Progress: How rewards improve during training")
 plt.grid(True, alpha=0.3)
 plt.legend()
