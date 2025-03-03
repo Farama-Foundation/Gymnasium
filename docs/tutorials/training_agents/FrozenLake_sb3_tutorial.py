@@ -102,7 +102,7 @@ eval_callback = EvalCallback(
 # that maintains both a policy (actor) and a value function (critic) network.
 #
 
-# Create the A2C model and specifiy the MlpPolicy
+# Create the A2C model and specify the MlpPolicy
 # A2C stands for the Advantage Actor-Critic algorithm
 # For more information have a look at the documentation:
 # https://stable-baselines3.readthedocs.io/en/master/modules/a2c.html
@@ -255,7 +255,7 @@ class CustomLoggingCallback(BaseCallback):
         reward = self.locals["rewards"]
         done = self.locals["dones"]
 
-        if done[0] == True:
+        if done[0] is True:
             self.rewards.append(float(reward[0]))
         return True
 
