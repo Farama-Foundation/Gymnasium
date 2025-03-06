@@ -6,8 +6,13 @@ import glfw
 import imageio
 import mujoco
 import numpy as np
+from packaging.version import Version
 
 from gymnasium.logger import warn
+
+_MUJOCO_MARKER_MODE = (
+    "legacy" if Version(mujoco.__version__) < Version("3.2.0") else "standard"
+)
 
 
 def _import_egl(width, height):
@@ -88,8 +93,31 @@ class BaseRender:
 
     def _add_marker_to_scene(self, marker: dict):
         if self.scn.ngeom >= self.scn.maxgeom:
-            raise RuntimeError("Ran out of geoms. maxgeom: %d" % self.scn.maxgeom)
+            raise RuntimeError(f"Ran out of geoms. maxgeom: {self.scn.maxgeom}")
 
+        if _MUJOCO_MARKER_MODE == "legacy":
+            self._legacy_add_marker_to_scene(marker)
+        else:
+            self._standard_add_marker_to_scene(marker)
+
+        self.scn.ngeom += 1
+
+    def _standard_add_marker_to_scene(self, marker: dict):
+        geom_type = marker.get("type", mujoco.mjtGeom.mjGEOM_SPHERE)
+        size = marker.get("size", np.array([0.01, 0.01, 0.01]))
+        pos = marker.get("pos", np.array([0.0, 0.0, 0.0]))
+        mat = marker.get("mat", np.eye(3).flatten())
+        rgba = marker.get("rgba", np.array([1.0, 1.0, 1.0, 1.0]))
+        mujoco.mjv_initGeom(
+            self.scn.geoms[self.scn.ngeom],
+            geom_type,
+            size=size,
+            pos=pos,
+            mat=mat,
+            rgba=rgba,
+        )
+
+    def _legacy_add_marker_to_scene(self, marker: dict):
         g = self.scn.geoms[self.scn.ngeom]
         # default values.
         g.dataid = -1
@@ -129,8 +157,6 @@ class BaseRender:
                 )
             else:
                 raise ValueError("mjtGeom doesn't have field %s" % key)
-
-        self.scn.ngeom += 1
 
     def close(self):
         """Override close in your rendering subclass to perform any necessary cleanup
@@ -724,9 +750,9 @@ class MujocoRenderer:
             If render_mode is "rgb_array" or "depth_array" it returns a numpy array in the specified format. "rgbd_tuple" returns a tuple of numpy arrays of the form (rgb, depth). "human" render mode does not return anything.
         """
         if render_mode != "human":
-            assert (
-                self.width is not None and self.height is not None
-            ), f"The width: {self.width} and height: {self.height} cannot be `None` when the render_mode is not `human`."
+            assert self.width is not None and self.height is not None, (
+                f"The width: {self.width} and height: {self.height} cannot be `None` when the render_mode is not `human`."
+            )
 
         viewer = self._get_viewer(render_mode=render_mode)
 

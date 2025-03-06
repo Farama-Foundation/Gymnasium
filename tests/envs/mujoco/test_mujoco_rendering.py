@@ -120,13 +120,11 @@ def test_max_geom_attribute(
 @pytest.mark.parametrize(
     "render_mode", ["human", "rgb_array", "depth_array", "rgbd_tuple"]
 )
-def test_add_markers(
-    model: mujoco.MjModel, data: mujoco.MjData, render_mode: str, max_geom: int
-):
+def test_add_markers(model: mujoco.MjModel, data: mujoco.MjData, render_mode: str):
     """Test that the add_markers function works correctly."""
     # initialize renderer
     renderer = ExposedViewerRenderer(
-        model, data, width=DEFAULT_SIZE, height=DEFAULT_SIZE, max_geom=max_geom
+        model, data, width=DEFAULT_SIZE, height=DEFAULT_SIZE, max_geom=10
     )
     # initialize viewer via render
     viewer = renderer.get_viewer(render_mode)
@@ -135,6 +133,8 @@ def test_add_markers(
         size=np.array([1, 1, 1]),
         rgba=np.array([1, 0, 0, 1]),
     )
+    args = tuple() if render_mode == "human" else (render_mode,)
+    viewer.render(*args)  # We need to render to trigger the marker addition in MuJoCo
     # close viewer after usage
     viewer.close()
 
