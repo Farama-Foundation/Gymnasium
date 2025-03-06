@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: CorelDRAW -->
+
+<svg
+   xml:space="preserve"
+   width="1000px"
+   height="1000px"
+   version="1.1"
+   style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+   viewBox="0 0 1000 1000"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="d4rl-white.svg"
+   id="svg18"
+   inkscape:export-filename="d4rl-white100.png"
+   inkscape:export-xdpi="9.6000004"
+   inkscape:export-ydpi="9.6000004"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+ <defs
+   id="defs4">
+  <style
+   type="text/css"
+   id="style2">
+   <![CDATA[
+    .str0 {stroke:black;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .fil0 {fill:none}
+   ]]>
+  </style>
+ </defs>
+ <g
+   id="Layer_x0020_1"
+   inkscape:label="Layer 1">
+  <metadata
+   id="CorelCorpID_0Corel-Layer" />
+  <sodipodi:namedview
+   id="namedview7"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="px"
+   showgrid="false"
+   inkscape:zoom="0.47584683"
+   inkscape:cx="403.49118"
+   inkscape:cy="460.23213"
+   inkscape:window-width="1538"
+   inkscape:window-height="877"
+   inkscape:window-x="1974"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="layer2"
+   showguides="true">
+   <sodipodi:guide
+   position="0,264.58332"
+   orientation="0,999.99994"
+   id="guide295"
+   inkscape:locked="false" />
+   <sodipodi:guide
+   position="264.58331,264.58332"
+   orientation="1000,0"
+   id="guide297"
+   inkscape:locked="false" />
+   <sodipodi:guide
+   position="264.58331,0"
+   orientation="0,-999.99994"
+   id="guide299"
+   inkscape:locked="false" />
+   <sodipodi:guide
+   position="0,0"
+   orientation="-1000,0"
+   id="guide301"
+   inkscape:locked="false" />
+  </sodipodi:namedview>
+  <g
+   id="layer1"
+   inkscape:label="Layer 1"
+   inkscape:groupmode="layer">
+  </g>
+  <g
+   id="layer2"
+   inkscape:groupmode="layer"
+   inkscape:label="Layer 2">
+   <g
+   id="d4rl"
+   inkscape:label="d4rl"
+   style="stroke:#ffffff">
+    <path
+   id="path1010"
+   class="fil0 str0"
+   d="M519.03 492.09c181,353.11 466.19,418.4 465.41,417.6"
+   sodipodi:nodetypes="cc"
+   style="stroke:#ffffff" />
+    <path
+   id="path1008"
+   class="fil0 str0"
+   d="M517.75 935.83l1.28 -871.66 159.6 0c305.81,0 305.81,427.92 0,427.92l-595.87 0c-37.43,0 -94.04,0 -42.07,58.18l320.41 358.67c33.46,37.46 59.9,34.52 59.9,-9.94l0 -834.83 -334.68 0c-92.03,0 -70.33,64.26 -63.87,89.36"
+   sodipodi:nodetypes="ccccccccccc"
+   style="stroke:#ffffff" />
+   </g>
+  </g>
+ </g>
+</svg>
