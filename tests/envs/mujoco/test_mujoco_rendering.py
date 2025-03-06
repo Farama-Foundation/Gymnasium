@@ -63,31 +63,31 @@ def test_offscreen_viewer_custom_dimensions(
 @pytest.mark.parametrize(
     "env_id",
     [
-        "Ant-v5",
-        "HalfCheetah-v5",
-        "HalfCheetah-v4",
-        "HalfCheetah-v3",
-        "Hopper-v5",
-        "Hopper-v4",
-        "Hopper-v3",
-        "Humanoid-v5",
-        "HumanoidStandup-v5",
-        "Swimmer-v5",
-        "Swimmer-v4",
-        "Swimmer-v3",
-        "Walker2d-v5",
-        "Walker2d-v4",
-        "Walker2d-v3",
+        "Ant",
+        "HalfCheetah",
+        "Hopper",
+        "Humanoid",
+        "HumanoidStandup",
+        "InvertedDoublePendulum",
+        "InvertedPendulum",
+        "Pusher",
+        "Reacher",
+        "Swimmer",
+        "Walker2d",
     ],
 )
-def test_mujoco_metadata_render_modes(env_id):
-    env = gymnasium.make(env_id)
+@pytest.mark.parametrize("version", ["v4", "v5"])
+def test_mujoco_metadata_render_modes(env_id, version):
+    if env_id == "Pusher" and version == "v4":
+        pytest.skip()
+    env = gymnasium.make(f"{env_id}-{version}")
     assert env.metadata["render_modes"] == [
         "human",
         "rgb_array",
         "depth_array",
         "rgbd_tuple",
     ]
+    env.close()
 
 
 @pytest.mark.parametrize(
