@@ -61,6 +61,36 @@ def test_offscreen_viewer_custom_dimensions(
 
 
 @pytest.mark.parametrize(
+    "env_id",
+    [
+        "Ant-v5",
+        "HalfCheetah-v5",
+        "HalfCheetah-v4",
+        "HalfCheetah-v3",
+        "Hopper-v5",
+        "Hopper-v4",
+        "Hopper-v3",
+        "Humanoid-v5",
+        "HumanoidStandup-v5",
+        "Swimmer-v5",
+        "Swimmer-v4",
+        "Swimmer-v3",
+        "Walker2d-v5",
+        "Walker2d-v4",
+        "Walker2d-v3",
+    ],
+)
+def test_mujoco_metadata_render_modes(env_id):
+    env = gymnasium.make(env_id)
+    assert env.metadata["render_modes"] == [
+        "human",
+        "rgb_array",
+        "depth_array",
+        "rgbd_tuple",
+    ]
+
+
+@pytest.mark.parametrize(
     "render_mode", ["human", "rgb_array", "depth_array", "rgbd_tuple"]
 )
 @pytest.mark.parametrize("max_geom", [10, 100, 1000, 10000])
