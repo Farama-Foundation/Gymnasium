@@ -46,6 +46,7 @@ toy-text = ["pygame >=2.1.3"]
 toy_text = ["pygame >=2.1.3"]  # kept for backward compatibility
 jax = ["jax >=0.4.16", "jaxlib >=0.4.16", "flax >=0.5.0"]
 torch = ["torch >=1.13.0"]
+array_api = ["array_api_compat >=1.11.0"]
 other = ["moviepy >=1.0.0", "matplotlib >=3.0", "opencv-python >=3.0", "seaborn >= 0.13"]
 all = [
     # All dependencies above except accept-rom-license
@@ -73,6 +74,8 @@ all = [
     "flax >= 0.5.0",
     # torch
     "torch >=1.13.0",
+    # array_api
+    "array_api_compat >=1.11.0",
     # other
     "opencv-python >=3.0",
     "matplotlib >=3.0",
