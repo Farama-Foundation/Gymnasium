@@ -82,12 +82,6 @@ class MujocoEnv(gym.Env):
 
         self.frame_skip = frame_skip
 
-        assert self.metadata["render_modes"] == [
-            "human",
-            "rgb_array",
-            "depth_array",
-            "rgbd_tuple",
-        ], self.metadata["render_modes"]
         if "render_fps" in self.metadata:
             assert (
                 int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
