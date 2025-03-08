@@ -2,6 +2,8 @@
 
 from typing import NamedTuple
 from itertools import product
+from functools import partial
+from typing import Any
 
 import numpy as np
 import pytest
@@ -11,19 +13,21 @@ jax = pytest.importorskip("jax")
 jnp = pytest.importorskip("jax.numpy")
 array_api_compat = pytest.importorskip("array_api_compat")
 
+from array_api_compat import array_namespace  # noqa: E402
 from gymnasium.utils.env_checker import data_equivalence  # noqa: E402
-from gymnasium.wrappers.to_array import ToArray, array_framework, to_xp  # noqa: E402
+from gymnasium.wrappers.to_array import ToArray, to_xp, module_namespace  # noqa: E402
 from tests.testing_env import GenericTestEnv  # noqa: E402
 
-array_api_frameworks = (np, jax.numpy)
+
+array_api_frameworks = ("jax.numpy", "numpy", "torch", "cupy")
 array_api_frameworks_combinations = [
     (s, t) for s, t in product(array_api_frameworks, repeat=2) if s != t
 ]
 
 
 class ExampleNamedTuple(NamedTuple):
-    a: jax.Array
-    b: jax.Array
+    a: Any
+    b: Any
 
 
 def value_parametrization():
@@ -98,58 +102,68 @@ def test_roundtripping(value, expected_value, source_xp, target_xp):
 
     Warning: Jax doesn't support float64 out of the box, therefore, we only test float32 in this test.
     """
-    source_xp = array_framework(source_xp)
-    target_xp = array_framework(target_xp)
+    source_xp = module_namespace(source_xp)
+    target_xp = module_namespace(target_xp)
     roundtripped_value = to_xp(to_xp(value, xp=target_xp), xp=source_xp)
     assert data_equivalence(roundtripped_value, expected_value)
 
 
-def jax_reset_func(self, seed=None, options=None):
+def reset_func(self, seed=None, options=None, xp=np):
     """A jax-based reset function."""
-    return jnp.array([1.0, 2.0, 3.0]), {"data": jnp.array([1, 2, 3])}
+    return xp.asarray([1.0, 2.0, 3.0]), {"data": xp.asarray([1, 2, 3])}
 
 
-def jax_step_func(self, action):
+def step_func(self, action, xp):
     """A jax-based step function."""
-    assert isinstance(action, jax.Array), type(action)
+    assert type(action) is type(xp.zeros(1))
     return (
-        jnp.array([1, 2, 3]),
-        jnp.array(5.0),
-        jnp.array(True),
-        jnp.array(False),
-        {"data": jnp.array([1.0, 2.0])},
+        xp.asarray([1, 2, 3]),
+        xp.asarray(5.0),
+        xp.asarray(True),
+        xp.asarray(False),
+        {"data": xp.asarray([1.0, 2.0])},
     )
 
 
-def test_jax_to_numpy_wrapper():
-    """Tests the ``JaxToNumpyV0`` wrapper."""
-    jax_env = GenericTestEnv(reset_func=jax_reset_func, step_func=jax_step_func)
+@pytest.mark.parametrize(
+    "env_xp, target_xp",
+    array_api_frameworks_combinations,
+)
+def test_to_array_wrapper(env_xp, target_xp):
+    """Tests the ``ToArray`` wrapper."""
+    _reset_func = partial(reset_func, xp=env_xp)
+    _step_func = partial(step_func, xp=env_xp)
+    env = GenericTestEnv(reset_func=_reset_func, step_func=_step_func)
 
-    # Check that the reset and step for jax environment are as expected
-    obs, info = jax_env.reset()
-    assert isinstance(obs, jax.Array)
-    assert isinstance(info, dict) and isinstance(info["data"], jax.Array)
+    # Check that the reset and step for env_xp environment are as expected
+    obs, info = env.reset()
+    # env_xp is automatically converted to the compatible namespace by array_namespace, so we need
+    # to check against the compatible namespace of env_xp in array_api_compat
+    env_xp_compat = module_namespace(env_xp)
+    assert array_namespace(obs) is env_xp_compat
+    assert isinstance(info, dict) and array_namespace(info["data"]) is env_xp_compat
 
-    obs, reward, terminated, truncated, info = jax_env.step(jnp.array([1, 2]))
-    assert isinstance(obs, jax.Array)
-    assert isinstance(reward, jax.Array)
-    assert isinstance(terminated, jax.Array) and isinstance(truncated, jax.Array)
-    assert isinstance(info, dict) and isinstance(info["data"], jax.Array)
+    obs, reward, terminated, truncated, info = env.step(env_xp_compat.asarray([1, 2]))
+    assert array_namespace(obs) is env_xp_compat
+    assert array_namespace(reward) is env_xp_compat
+    assert array_namespace(terminated) is env_xp_compat
+    assert array_namespace(truncated) is env_xp_compat
+    assert isinstance(info, dict) and array_namespace(info["data"]) is env_xp_compat
 
     # Check that the wrapped version is correct.
-    numpy_env = JaxToNumpy(jax_env)
-    obs, info = numpy_env.reset()
-    assert isinstance(obs, np.ndarray)
-    assert isinstance(info, dict) and isinstance(info["data"], np.ndarray)
+    target_xp_compat = module_namespace(target_xp)
+    wrapped_env = ToArray(env, env_xp=env_xp, target_xp=target_xp)
+    obs, info = wrapped_env.reset()
+    assert array_namespace(obs) is target_xp_compat
+    assert isinstance(info, dict) and array_namespace(info["data"]) is target_xp_compat
 
-    obs, reward, terminated, truncated, info = numpy_env.step(
-        np.array([1, 2], dtype=np.int32)
-    )
-    assert isinstance(obs, np.ndarray)
+    action = target_xp.asarray([1, 2], dtype=np.int32)
+    obs, reward, terminated, truncated, info = wrapped_env.step(action)
+    assert array_namespace(obs) is target_xp_compat
     assert isinstance(reward, float)
     assert isinstance(terminated, bool) and isinstance(truncated, bool)
-    assert isinstance(info, dict) and isinstance(info["data"], np.ndarray)
+    assert isinstance(info, dict) and array_namespace(info["data"]) is target_xp_compat
 
     # Check that the wrapped environment can render. This implicitly returns None and requires  a
     # None -> None conversion
-    numpy_env.render()
+    wrapped_env.render()

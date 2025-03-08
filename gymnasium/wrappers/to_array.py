@@ -36,8 +36,8 @@ Array = Any  # TODO: Switch to ArrayAPI type once https://github.com/data-apis/a
 Device = Any  # TODO: Switch to ArrayAPI type if available
 
 
-def array_framework(module: ModuleType) -> ModuleType:
-    """Determine the Array API framework of the value."""
+def module_namespace(module: ModuleType) -> ModuleType:
+    """Determine the Array API compatible namespace of the given module."""
     if module.__name__ == "numpy":
         return numpy_namespace
     elif module.__name__ == "jax.numpy" or module.__name__ == "jax":
@@ -148,16 +148,13 @@ class ToArray(gym.Wrapper, gym.utils.RecordConstructorArgs):
         """
         gym.utils.RecordConstructorArgs.__init__(
             self,
-            env_xp=env_xp,
-            target_xp=target_xp,
             env_device=env_device,
             target_device=target_device,
         )
         gym.Wrapper.__init__(self, env)
 
-        # Autodetect the env framework via action spaces
-        self._env_xp = env_xp
-        self._target_xp = target_xp
+        self._env_xp = module_namespace(env_xp)
+        self._target_xp = module_namespace(target_xp)
         self._env_device: Device | None = env_device
         self._target_device: Device | None = target_device
 
