@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any
 from types import ModuleType
+from typing import Any
 
 from gymnasium.core import ActType, ObsType
 from gymnasium.vector import VectorEnv, VectorWrapper
 from gymnasium.vector.vector_env import ArrayType
-from gymnasium.wrappers.to_array import to_xp, Device
+from gymnasium.wrappers.to_array import Device, to_xp
 
 
 __all__ = ["ToArray"]
@@ -32,17 +32,25 @@ class ToArray(VectorWrapper):
     def __init__(
         self,
         env: VectorEnv,
-        xp: ModuleType,
+        env_xp: ModuleType | str,
+        target_xp: ModuleType | str,
         env_device: Device | None = None,
         target_device: Device | None = None,
     ):
-        """Wraps an environment such that the input and outputs are from the specified xp module.
+        """Wrapper class to change inputs and outputs of environment to any Array API framework.
 
         Args:
-            env: The vector environment to wrap
-            xp: An Array API compatible module, e.g. ``torch``, ``jax``, ``numpy``, ``cupy``, etc.
+            env: The Array API compatible environment to wrap
+            env_xp: The Array API framework the environment is on
+            target_xp: The Array API framework to convert to
+            env_device: The device the environment is on
+            target_device: The device on which Arrays should be returned
         """
-        super().__init__(env, xp=xp, env_device=env_device, target_device=target_device)
+        super().__init__(env)
+        self._env_xp = env_xp
+        self._target_xp = target_xp
+        self._env_device = env_device
+        self._target_device = target_device
 
     def step(
         self, actions: ActType
@@ -55,15 +63,15 @@ class ToArray(VectorWrapper):
         Returns:
             A tuple containing xp versions of the next observation, reward, termination, truncation, and extra info.
         """
-        actions = to_xp(actions, xp=self.xp, device=self.env_device)
+        actions = to_xp(actions, xp=self._env_xp, device=self.env_device)
         obs, reward, terminated, truncated, info = self.env.step(actions)
 
         return (
-            to_xp(obs, xp=self.xp, device=self.target_device),
-            to_xp(reward, xp=self.xp, device=self.target_device),
-            to_xp(terminated, xp=self.xp, device=self.target_device),
-            to_xp(truncated, xp=self.xp, device=self.target_device),
-            to_xp(info, xp=self.xp, device=self.target_device),
+            to_xp(obs, xp=self._target_xp, device=self._target_device),
+            to_xp(reward, xp=self._target_xp, device=self._target_device),
+            to_xp(terminated, xp=self._target_xp, device=self._target_device),
+            to_xp(truncated, xp=self._target_xp, device=self._target_device),
+            to_xp(info, xp=self._target_xp, device=self._target_device),
         )
 
     def reset(
@@ -82,10 +90,10 @@ class ToArray(VectorWrapper):
             xp-based observations and info
         """
         if options:
-            options = to_xp(options, xp=self.xp, device=self.env_device)
+            options = to_xp(options, xp=self._env_xp, device=self._env_device)
 
         return to_xp(
             self.env.reset(seed=seed, options=options),
-            xp=self.xp,
-            device=self.target_device,
+            xp=self._target_xp,
+            device=self._target_device,
         )

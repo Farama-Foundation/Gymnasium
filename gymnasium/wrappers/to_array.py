@@ -13,14 +13,16 @@ from __future__ import annotations
 import functools
 import numbers
 from collections import abc
-from typing import Any, Iterable, Mapping, SupportsFloat
 from types import ModuleType
+from typing import Any, Iterable, Mapping, SupportsFloat
+
 import gymnasium as gym
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 
+
 try:
-    from array_api_compat import numpy as numpy_namespace, is_array_api_obj
+    from array_api_compat import array_namespace, is_array_api_obj, to_device
 
 except ImportError:
     raise DependencyNotInstalled(
@@ -37,10 +39,18 @@ Device = Any  # TODO: Switch to ArrayAPI type if available
 
 
 def module_namespace(module: ModuleType) -> ModuleType:
-    """Determine the Array API compatible namespace of the given module."""
+    """Determine the Array API compatible namespace of the given module.
+
+    This function is closely linked to the `array_api_compat.array_namespace` function. It returns
+    the compatible namespace for a module directly instead of from an array object of that module.
+
+    See https://github.com/data-apis/array-api-compat/blob/e14754ba0fe4c4cd51b6f45bb11a3c6609be3b5c/array_api_compat/common/_helpers.py#L442
+    """
     if module.__name__ == "numpy":
+        from array_api_compat import numpy as numpy_namespace
+
         return numpy_namespace
-    elif module.__name__ == "jax.numpy" or module.__name__ == "jax":
+    elif module.__name__ in ("jax.numpy", "jax"):
         import jax.numpy
 
         if hasattr(jax.numpy, "__array_api_version__"):
@@ -49,8 +59,22 @@ def module_namespace(module: ModuleType) -> ModuleType:
             import jax.experimental.array_api as jp
 
         return jp
+    elif module.__name__ == "torch":
+        from array_api_compat import torch as torch_namespace
+
+        return torch_namespace
+    elif module.__name__ == "cupy":
+        from array_api_compat import cupy as cupy_namespace
+
+        return cupy_namespace
+    elif module.__name__ == "dask.array":
+        from array_api_compat.dask import array as dask_namespace
+
+        return dask_namespace
+    elif module.__name__ == "sparse":
+        return module  # Sparse is already Array API compatible
     else:
-        raise ValueError(f"Unknown Array API framework: {module.__name__}")
+        raise ValueError(f"Unknown Array API framework: {module.__name__}.")
 
 
 @functools.singledispatch
@@ -82,16 +106,28 @@ def _iterable_to_xp(
     value: Iterable[Any], xp: ModuleType, device: Device | None = None
 ) -> Iterable[Any]:
     """Converts an Iterable from PyTorch Tensors to an iterable of Jax Array."""
+    # There is currently no type for ArrayAPI compatible objects, so they fall through to this
+    # function registered for any Iterable. If they are arrays, we can convert them directly.
+    # We currently cannot pass the device to the from_dlpack function, since it is not supported
+    # for some frameworks (see e.g. https://github.com/data-apis/array-api-compat/issues/204)
     if is_array_api_obj(value):
-        # There is currently no type for ArrayAPI compatible objects, so they fall through to this
-        # function registered for any Iterable. If they are arrays, we can convert them directly.
-        return xp.asarray(value, device=device)
+        try:
+            x = xp.from_dlpack(value)
+            return to_device(x, device) if device is not None else x
+        except (RuntimeError, BufferError):
+            # If dlpack fails (e.g. because the array is read-only for frameworks that do not
+            # support it), we create a copy of the array that we own and then convert it.
+            # TODO: The correct treatment of read-only arrays is currently not fully clear in the
+            # Array API. Once ongoing discussions are resolved, we should update this code to remove
+            # any fallbacks.
+            value_namespace = array_namespace(value)
+            value_copy = value_namespace.asarray(value, copy=True)
+            return xp.asarray(value_copy, device=device)
     if hasattr(value, "_make"):
         # namedtuple - underline used to prevent potential name conflicts
         # noinspection PyProtectedMember
         return type(value)._make(to_xp(v, xp, device) for v in value)
-    else:
-        return type(value)(to_xp(v, xp, device) for v in value)
+    return type(value)(to_xp(v, xp, device) for v in value)
 
 
 @to_xp.register(_NoneType)
@@ -100,7 +136,7 @@ def _none_to_xp(value: None, xp: ModuleType, device: Device | None = None) -> No
     return value
 
 
-class ToArray(gym.Wrapper, gym.utils.RecordConstructorArgs):
+class ToArray(gym.Wrapper):
     """Wraps an Array API compatible environment so that it can be interacted with a specific Array API framework.
 
     Actions must be provided as Array API compatible arrays and observations will be returned as Arrays of the specified xp module.
@@ -108,9 +144,10 @@ class ToArray(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
     Example:
         >>> import torch                                                # doctest: +SKIP
+        >>> import jax.numpy as jnp                                     # doctest: +SKIP
         >>> import gymnasium as gym                                     # doctest: +SKIP
         >>> env = gym.make("JaxEnv-vx")                                 # doctest: +SKIP
-        >>> env = ToArray(env, xp=torch)                                # doctest: +SKIP
+        >>> env = ToArray(env, env_xp=jnp, target_xp=torch)             # doctest: +SKIP
         >>> obs, _ = env.reset(seed=123)                                # doctest: +SKIP
         >>> type(obs)                                                   # doctest: +SKIP
         <class 'torch.Tensor'>
@@ -146,11 +183,6 @@ class ToArray(gym.Wrapper, gym.utils.RecordConstructorArgs):
             env_device: The device the environment is on
             target_device: The device on which Arrays should be returned
         """
-        gym.utils.RecordConstructorArgs.__init__(
-            self,
-            env_device=env_device,
-            target_device=target_device,
-        )
         gym.Wrapper.__init__(self, env)
 
         self._env_xp = module_namespace(env_xp)
