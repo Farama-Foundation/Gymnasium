@@ -82,27 +82,75 @@ LOWER_FD = fixtureDef(
 
 
 class TerrainMetadata:
+    """
+    ## Description
+    This is metadata object handler for the BipedalWalker environment.
+
+    <!-- ## References -->
+
+    ## Credits
+    Created by Arthur Plautz Ventura
+
+    """
+
     def __init__(self, metadata: dict = {}):
-        self._states, self._counters = [], []  # Control parameters
-        self._metadata = {0: [], 1: [], 2: [], 3: []}  # Random values for terrain types
+        self._states = []  # Control parameters
+        self._metadata = {1: [], 2: [], 3: []}  # Random values for terrain types
+        self._variations = True
+        self.__generate = False
 
         if metadata:
             self.__from_dict(metadata)  # Copy values from existing metadata
         else:
             self.__generate = True  # New values should be generated
 
+    @property
+    def grass_variations(self):
+        return self._variations
+
+    def _pit_length(self, metadata=None):
+        return 4
+
+    def _stairs_length(self, metadata):
+        _, stair_width, stair_steps = metadata
+        return stair_width * stair_steps
+
+    def _stump_length(self, metadata):
+        return metadata
+
+    def get_obstacles_length(self):
+        total_length = 0
+        state_length = {
+            1: self._stump_length,
+            2: self._stairs_length,
+            3: self._pit_length,
+        }
+
+        n_states = len(self._states)
+        metadata = deepcopy(self._metadata)
+        for state in self._states:
+            length_map = state_length[state]
+            total_length += length_map(metadata[state].pop(0))
+        return total_length, n_states
+
     def get_dict(self):
         return dict(
             states=deepcopy(self._states),
-            counters=deepcopy(self._counters),
             metadata=deepcopy(self._metadata),
+            variations=self._variations,
         )
 
     def __from_dict(self, metadata: dict):
-        self._states: list = deepcopy(metadata.get("states"))
-        self._counters: list = deepcopy(metadata.get("counters"))
-        self._metadata: list = deepcopy(metadata.get("metadata"))
-        self.__generate = False
+        if metadata.get("designed", False):
+            self._variations = metadata.get("variations", True)
+            for state_obj in metadata.get("states", []):
+                state = state_obj["state"]
+                self._states.append(state)
+                self._metadata[state].append(state_obj["metadata"])
+        else:
+            self._states = metadata.get("states", self._states)
+            self._metadata = metadata.get("metadata", self._metadata)
+            self._variations = metadata.get("variations", self._variations)
 
     def mode(self) -> bool:
         return self.__generate
@@ -118,12 +166,6 @@ class TerrainMetadata:
 
     def add_state(self, state: int):
         self._states.append(state)
-
-    def get_counter(self) -> int:
-        return self._counters.pop(0)
-
-    def add_counter(self, counter: int):
-        self._counters.append(counter)
 
 
 class ContactDetector(contactListener):
@@ -334,6 +376,13 @@ class BipedalWalker(gym.Env, EzPickle):
 
     def _generate_terrain(self, hardcore):
         generate = self._terrain_metadata.mode()
+        if not generate:
+            obstacles_length, n_obstacles = (
+                self._terrain_metadata.get_obstacles_length()
+            )
+            self.terrain_grass = (TERRAIN_LENGTH - obstacles_length) // n_obstacles
+        else:
+            self.terrain_grass = TERRAIN_GRASS
 
         GRASS, STUMP, STAIRS, PIT, _STATES_ = range(5)
         state = GRASS
@@ -352,13 +401,9 @@ class BipedalWalker(gym.Env, EzPickle):
             self.terrain_x.append(x)
 
             if state == GRASS and not oneshot:
-                if generate:
-                    velocity = 0.8 * velocity + 0.01 * np.sign(TERRAIN_HEIGHT - y)
-                    if i > TERRAIN_STARTPAD:
-                        velocity += self.np_random.uniform(-1, 1) / SCALE  # 1
-                    self._terrain_metadata.set_metadata(state=GRASS, value=velocity)
-                else:
-                    velocity = self._terrain_metadata.get_metadata(state=GRASS)
+                velocity = 0.8 * velocity + 0.01 * np.sign(TERRAIN_HEIGHT - y)
+                if self._terrain_metadata.grass_variations and i > TERRAIN_STARTPAD:
+                    velocity += self.np_random.uniform(-1, 1) / SCALE  # 1
                 y += velocity
 
             elif state == PIT and oneshot:
@@ -367,6 +412,8 @@ class BipedalWalker(gym.Env, EzPickle):
                     self._terrain_metadata.set_metadata(state=PIT, value=counter)
                 else:
                     counter = self._terrain_metadata.get_metadata(state=PIT)
+                    if not counter:
+                        counter = self.np_random.integers(3, 5)
 
                 poly = [
                     (x, y),
@@ -459,11 +506,7 @@ class BipedalWalker(gym.Env, EzPickle):
             self.terrain_y.append(y)
             counter -= 1
             if counter == 0:
-                if generate:
-                    counter = self.np_random.integers(TERRAIN_GRASS / 2, TERRAIN_GRASS)
-                    self._terrain_metadata.add_counter(counter)
-                else:
-                    counter = self._terrain_metadata.get_counter()
+                counter = self.terrain_grass
 
                 if state == GRASS and hardcore:
                     if generate:
@@ -691,7 +734,7 @@ class BipedalWalker(gym.Env, EzPickle):
         if self.game_over or pos[0] < 0:
             reward = -100
             terminated = True
-        if pos[0] > (TERRAIN_LENGTH - TERRAIN_GRASS) * TERRAIN_STEP:
+        if pos[0] > (TERRAIN_LENGTH - self.terrain_grass) * TERRAIN_STEP:
             terminated = True
 
         if self.render_mode == "human":
