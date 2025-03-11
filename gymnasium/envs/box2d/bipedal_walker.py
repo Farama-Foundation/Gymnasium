@@ -86,6 +86,41 @@ class TerrainMetadata:
     ## Description
     This is metadata object handler for the BipedalWalker environment.
 
+    ## Raw Example
+    ```python
+    import gymnasium as gym
+
+    env = gym.make("BipedalWalker-v3", hardcore=True, render_mode="human")
+    env.reset()
+
+    bipedal_env = env.unwrapped
+    metadata = bipedal_env.terrain_metadata()
+    options = dict(metadata=metadata)
+    env.reset(options=options)
+    ```
+
+    ## Designed Example
+    ```python
+    import gymnasium as gym
+
+    OBSTACLES = dict(
+        down_stairs=dict(state=2, metadata=(-1, 4, 2)),
+        up_stairs=dict(state=2, metadata=(1, 4, 2)),
+        small_stump=dict(state=1, metadata=1),
+        large_stump=dict(state=1, metadata=3),
+        hole=dict(state=3, metadata=2),
+    )
+
+    env = gym.make("BipedalWalker-v3", hardcore=True, render_mode="human")
+    metadata = dict(
+        designed=True,
+        states=[OBSTACLES["up_stairs"], OBSTACLES["hole"], OBSTACLES["large_stump"]],
+        variations=False,
+    )
+    options = dict(metadata=metadata)
+    env.reset(options=options)
+    ```
+
     <!-- ## References -->
 
     ## Credits
