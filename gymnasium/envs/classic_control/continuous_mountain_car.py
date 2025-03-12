@@ -9,7 +9,7 @@ and then modified by Arnaud de Broissia
 
 * the gymnasium MountainCar environment
 itself from
-http://incompleteideas.net/sutton/MountainCar/MountainCar1.cp
+http://incompleteideas.net/sutton/book/MountainCar/MountainCar1.cp
 permalink: https://perma.cc/6Z2N-PFWC
 """
 
