@@ -96,7 +96,7 @@ class BaseRender:
         if self.scn.ngeom >= self.scn.maxgeom:
             raise RuntimeError(f"Ran out of geoms. maxgeom: {self.scn.maxgeom}")
 
-        if _MUJOCO_MARKER_LEGACY_MODE:
+        if _MUJOCO_MARKER_LEGACY_MODE:  # Old API for markers requires special handling
             self._legacy_add_marker_to_scene(marker)
         else:
             geom_type = marker.get("type", mujoco.mjtGeom.mjGEOM_SPHERE)
@@ -116,6 +116,15 @@ class BaseRender:
         self.scn.ngeom += 1
 
     def _legacy_add_marker_to_scene(self, marker: dict):
+        """Add a marker to the scene compatible with older versions of MuJoCo.
+
+        MuJoCo 3.2 introduced breaking changes to the visual geometries API. To maintain
+        compatibility with older versions, we use the legacy API when an older version of MuJoCo is
+        detected.
+
+        Args:
+            marker: A dictionary containing the marker parameters.
+        """
         g = self.scn.geoms[self.scn.ngeom]
         # default values.
         g.dataid = -1
