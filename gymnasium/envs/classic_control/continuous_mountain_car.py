@@ -9,7 +9,7 @@ and then modified by Arnaud de Broissia
 
 * the gymnasium MountainCar environment
 itself from
-http://incompleteideas.net/sutton/MountainCar/MountainCar1.cp
+http://incompleteideas.net/sutton/book/MountainCar/MountainCar1.cp
 permalink: https://perma.cc/6Z2N-PFWC
 """
 
@@ -64,7 +64,7 @@ class Continuous_MountainCarEnv(gym.Env):
 
     Given an action, the mountain car follows the following transition dynamics:
 
-    *velocity<sub>t+1</sub> = velocity<sub>t+1</sub> + force * self.power - 0.0025 * cos(3 * position<sub>t</sub>)*
+    *velocity<sub>t+1</sub> = velocity<sub>t</sub> + force * self.power - 0.0025 * cos(3 * position<sub>t</sub>)*
 
     *position<sub>t+1</sub> = position<sub>t</sub> + velocity<sub>t+1</sub>*
 
