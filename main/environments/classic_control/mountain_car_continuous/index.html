@@ -447,7 +447,7 @@ The action is clipped in the range <code class="docutils literal notranslate"><s
 <section id="transition-dynamics">
 <h2>Transition Dynamics:<a class="headerlink" href="#transition-dynamics" title="Link to this heading">¶</a></h2>
 <p>Given an action, the mountain car follows the following transition dynamics:</p>
-<p><em>velocity<sub>t+1</sub> = velocity<sub>t+1</sub> + force * self.power - 0.0025 * cos(3 * position<sub>t</sub>)</em></p>
+<p><em>velocity<sub>t+1</sub> = velocity<sub>t</sub> + force * self.power - 0.0025 * cos(3 * position<sub>t</sub>)</em></p>
 <p><em>position<sub>t+1</sub> = position<sub>t</sub> + velocity<sub>t+1</sub></em></p>
 <p>where force is the action clipped to the range <code class="docutils literal notranslate"><span class="pre">[-1,1]</span></code> and power is a constant 0.0015.
 The collisions at either end are inelastic with the velocity set to 0 upon collision with the wall.
