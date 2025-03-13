@@ -120,6 +120,28 @@ def test_max_geom_attribute(
 @pytest.mark.parametrize(
     "render_mode", ["human", "rgb_array", "depth_array", "rgbd_tuple"]
 )
+def test_add_markers(model: mujoco.MjModel, data: mujoco.MjData, render_mode: str):
+    """Test that the add_markers function works correctly."""
+    # initialize renderer
+    renderer = ExposedViewerRenderer(
+        model, data, width=DEFAULT_SIZE, height=DEFAULT_SIZE, max_geom=10
+    )
+    # initialize viewer via render
+    viewer = renderer.get_viewer(render_mode)
+    viewer.add_marker(
+        pos=np.array([0, 0, 0]),
+        size=np.array([1, 1, 1]),
+        rgba=np.array([1, 0, 0, 1]),
+    )
+    args = tuple() if render_mode == "human" else (render_mode,)
+    viewer.render(*args)  # We need to render to trigger the marker addition in MuJoCo
+    # close viewer after usage
+    viewer.close()
+
+
+@pytest.mark.parametrize(
+    "render_mode", ["human", "rgb_array", "depth_array", "rgbd_tuple"]
+)
 def test_camera_id(render_mode: str):
     """Assert that the camera_id parameter works correctly."""
     env_a = gymnasium.make("Ant-v5", camera_id=0, render_mode=render_mode).unwrapped
