@@ -45,3 +45,5 @@ vizdoom.ini
 
 # Data generated from pytest
 save_videos*/
+scripts/
+.vscode
