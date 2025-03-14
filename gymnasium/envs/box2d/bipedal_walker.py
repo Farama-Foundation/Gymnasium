@@ -541,7 +541,12 @@ class BipedalWalker(gym.Env, EzPickle):
             self.terrain_y.append(y)
             counter -= 1
             if counter == 0:
-                counter = self.terrain_grass
+                if self._terrain_metadata.grass_variations:
+                    counter = self.np_random.integers(
+                        self.terrain_grass / 2, self.terrain_grass
+                    )
+                else:
+                    counter = self.terrain_grass
 
                 if state == GRASS and hardcore:
                     if generate:
