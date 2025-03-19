@@ -13,7 +13,7 @@ from gymnasium import spaces
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.vector import VectorEnv
-from gymnasium.vector.utils import batch_space, create_empty_array
+from gymnasium.vector.utils import batch_space
 from gymnasium.vector.vector_env import AutoresetMode
 
 

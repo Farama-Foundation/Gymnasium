@@ -52,7 +52,6 @@ def reset_func(self, seed=None, options=None, num_envs: int = 1, xp=np):
 
 
 def step_func(self, action, num_envs: int = 1, xp=np):
-    print(xp)
     assert isinstance(action, type(xp.zeros(1))), (
         f"Action {type(action)} != {type(xp.zeros(1))}"
     )
@@ -77,7 +76,6 @@ def test_to_array_wrapper(env_xp, target_xp):
     assert array_namespace(obs) is env_xp_compat
     assert isinstance(info, dict) and array_namespace(info["data"]) is env_xp_compat
 
-    print(type(env_xp_compat.asarray([1, 2])))
     obs, reward, terminated, truncated, info = env.step(env_xp_compat.asarray([1, 2]))
     assert array_namespace(obs) is env_xp_compat
     assert array_namespace(reward) is env_xp_compat
