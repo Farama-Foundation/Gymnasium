@@ -63,7 +63,7 @@ class ToArray(VectorWrapper):
         Returns:
             A tuple containing xp versions of the next observation, reward, termination, truncation, and extra info.
         """
-        actions = to_xp(actions, xp=self._env_xp, device=self.env_device)
+        actions = to_xp(actions, xp=self._env_xp, device=self._env_device)
         obs, reward, terminated, truncated, info = self.env.step(actions)
 
         return (

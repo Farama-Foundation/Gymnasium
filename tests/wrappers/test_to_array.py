@@ -189,12 +189,12 @@ def test_roundtripping(source_xp, target_xp, value, expected_value):
 
 
 def reset_func(self, seed=None, options=None, xp=np):
-    """A jax-based reset function."""
+    """A generic array API reset function."""
     return xp.asarray([1.0, 2.0, 3.0]), {"data": xp.asarray([1, 2, 3])}
 
 
 def step_func(self, action, xp):
-    """A jax-based step function."""
+    """A generic array API step function."""
     assert isinstance(action, type(xp.zeros(1)))
     return (
         xp.asarray([1, 2, 3]),
