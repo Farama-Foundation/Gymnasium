@@ -369,6 +369,8 @@
 <span class="sd">* ``RenderCollection`` - Collects rendered frames into a list</span>
 <span class="sd">* ``RecordVideo`` - Records a video of the environments</span>
 <span class="sd">* ``HumanRendering`` - Provides human rendering of environments with ``&quot;rgb_array&quot;``</span>
+<span class="sd">* ``AddWhiteNoise`` - Randomly replaces pixels with white noise</span>
+<span class="sd">* ``ObstructView`` - Randomly places patches of white noise to obstruct the pixel rendering</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
@@ -382,13 +384,15 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">error</span><span class="p">,</span> <span class="n">logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">RenderFrame</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyNotInstalled</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyNotInstalled</span><span class="p">,</span> <span class="n">InvalidProbability</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;RenderCollection&quot;</span><span class="p">,</span>
     <span class="s2">&quot;RecordVideo&quot;</span><span class="p">,</span>
     <span class="s2">&quot;HumanRendering&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AddWhiteNoise&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ObstructView&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -937,6 +941,178 @@
             <span class="n">pygame</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AddWhiteNoise</span><span class="p">(</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Randomly replaces pixels with white noise.</span>
+
+<span class="sd">    If used with ``render_mode=&quot;rgb_array&quot;`` and ``AddRenderObservation``, it will</span>
+<span class="sd">    make observations noisy.</span>
+<span class="sd">    The environment may also become partially-observable, turning the MDP into a POMDP.</span>
+
+<span class="sd">    Example - Every pixel will be replaced by white noise with probability 0.5:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = AddWhiteNoise(env, probability_of_noise_per_pixel=0.5)</span>
+<span class="sd">        &gt;&gt;&gt; env = HumanRendering(env)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=123)</span>
+<span class="sd">        &gt;&gt;&gt; obs, *_ = env.step(env.action_space.sample())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
+        <span class="n">probability_of_noise_per_pixel</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">is_noise_grayscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper replaces random pixels with white noise.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The environment that is being wrapped</span>
+<span class="sd">            probability_of_noise_per_pixel: the probability that a pixel is white noise</span>
+<span class="sd">            is_noise_grayscale: if True, RGB noise is converted to grayscale</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">probability_of_noise_per_pixel</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidProbability</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;probability_of_noise_per_pixel should be in the interval [0,1). Received </span><span class="si">{</span><span class="n">probability_of_noise_per_pixel</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">probability_of_noise_per_pixel</span><span class="o">=</span><span class="n">probability_of_noise_per_pixel</span><span class="p">,</span>
+            <span class="n">is_noise_grayscale</span><span class="o">=</span><span class="n">is_noise_grayscale</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">probability_of_noise_per_pixel</span> <span class="o">=</span> <span class="n">probability_of_noise_per_pixel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_noise_grayscale</span> <span class="o">=</span> <span class="n">is_noise_grayscale</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise.&quot;&quot;&quot;</span>
+        <span class="n">render_out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_noise_grayscale</span><span class="p">:</span>
+            <span class="n">noise</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
+                    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="mi">255</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2989</span><span class="p">,</span> <span class="mf">0.5870</span><span class="p">,</span> <span class="mf">0.1140</span><span class="p">]),</span>
+                    <span class="n">size</span><span class="o">=</span><span class="n">render_out</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="mi">255</span><span class="p">,</span>
+                <span class="n">size</span><span class="o">=</span><span class="n">render_out</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">render_out</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">])</span>
+            <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">probability_of_noise_per_pixel</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">noise</span><span class="p">,</span> <span class="n">render_out</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ObstructView</span><span class="p">(</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Randomly obstructs rendering with white noise patches.</span>
+
+<span class="sd">    If used with ``render_mode=&quot;rgb_array&quot;`` and ``AddRenderObservation``, it will</span>
+<span class="sd">    make observations noisy.</span>
+<span class="sd">    The number of patches depends on how many pixels we want to obstruct.</span>
+<span class="sd">    Depending on the size of the patches, the environment may become</span>
+<span class="sd">    partially-observable, turning the MDP into a POMDP.</span>
+
+<span class="sd">    Example - Obstruct 50% of the pixels with patches of size 50x50 pixels:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = ObstructView(env, obstructed_pixels_ratio=0.5, obstruction_width=50)</span>
+<span class="sd">        &gt;&gt;&gt; env = HumanRendering(env)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=123)</span>
+<span class="sd">        &gt;&gt;&gt; obs, *_ = env.step(env.action_space.sample())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
+        <span class="n">obstructed_pixels_ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">obstruction_width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">is_noise_grayscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper obstructs pixels with white noise patches.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The environment that is being wrapped</span>
+<span class="sd">            obstructed_pixels_ratio: the percentage of pixels obstructed with white noise</span>
+<span class="sd">            obstruction_width: the width of the obstruction patches</span>
+<span class="sd">            is_noise_grayscale: if True, RGB noise is converted to grayscale</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">obstructed_pixels_ratio</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;obstructed_pixels_ratio should be in the interval [0,1). Received </span><span class="si">{</span><span class="n">obstructed_pixels_ratio</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">obstruction_width</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;obstruction_width should be larger or equal than 1. Received </span><span class="si">{</span><span class="n">obstruction_width</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">obstructed_pixels_ratio</span><span class="o">=</span><span class="n">obstructed_pixels_ratio</span><span class="p">,</span>
+            <span class="n">obstruction_width</span><span class="o">=</span><span class="n">obstruction_width</span><span class="p">,</span>
+            <span class="n">is_noise_grayscale</span><span class="o">=</span><span class="n">is_noise_grayscale</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">obstruction_centers_ratio</span> <span class="o">=</span> <span class="n">obstructed_pixels_ratio</span> <span class="o">/</span> <span class="n">obstruction_width</span><span class="o">**</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obstruction_width</span> <span class="o">=</span> <span class="n">obstruction_width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_noise_grayscale</span> <span class="o">=</span> <span class="n">is_noise_grayscale</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise patches.&quot;&quot;&quot;</span>
+        <span class="n">render_out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+
+        <span class="n">render_shape</span> <span class="o">=</span> <span class="n">render_out</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">n_pixels</span> <span class="o">=</span> <span class="n">render_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">render_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">n_obstructions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_pixels</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstruction_centers_ratio</span><span class="p">)</span>
+        <span class="n">centers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_pixels</span><span class="p">,</span> <span class="n">n_obstructions</span><span class="p">)</span>
+        <span class="n">centers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">centers</span><span class="p">,</span> <span class="p">(</span><span class="n">render_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">render_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">render_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">render_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstruction_width</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obstruction_width</span> <span class="o">-</span> <span class="n">low</span>
+        <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">centers</span><span class="p">):</span>
+            <span class="n">mask</span><span class="p">[</span>
+                <span class="nb">max</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">low</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">high</span><span class="p">,</span> <span class="n">render_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="nb">max</span><span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">low</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">high</span><span class="p">,</span> <span class="n">render_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_noise_grayscale</span><span class="p">:</span>
+            <span class="n">noise</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
+                    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="mi">255</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.2989</span><span class="p">,</span> <span class="mf">0.5870</span><span class="p">,</span> <span class="mf">0.1140</span><span class="p">]),</span>
+                    <span class="n">size</span><span class="o">=</span><span class="n">render_out</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                    <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">noise</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="mi">255</span><span class="p">,</span>
+                <span class="n">size</span><span class="o">=</span><span class="n">render_out</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">noise</span><span class="p">,</span> <span class="n">render_out</span><span class="p">)</span>
 </pre></div>
           </article>
         </div>
