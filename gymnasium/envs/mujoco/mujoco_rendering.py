@@ -6,6 +6,14 @@ import glfw
 import imageio
 import mujoco
 import numpy as np
+from packaging.version import Version
+
+from gymnasium.logger import warn
+
+
+# The marker API changed in MuJoCo 3.2.0, so we check the mujoco version and set a flag that
+# determines which function we use when adding markers to the scene.
+_MUJOCO_MARKER_LEGACY_MODE = Version(mujoco.__version__) < Version("3.2.0")
 
 
 def _import_egl(width, height):
@@ -86,8 +94,37 @@ class BaseRender:
 
     def _add_marker_to_scene(self, marker: dict):
         if self.scn.ngeom >= self.scn.maxgeom:
-            raise RuntimeError("Ran out of geoms. maxgeom: %d" % self.scn.maxgeom)
+            raise RuntimeError(f"Ran out of geoms. maxgeom: {self.scn.maxgeom}")
 
+        if _MUJOCO_MARKER_LEGACY_MODE:  # Old API for markers requires special handling
+            self._legacy_add_marker_to_scene(marker)
+        else:
+            geom_type = marker.get("type", mujoco.mjtGeom.mjGEOM_SPHERE)
+            size = marker.get("size", np.array([0.01, 0.01, 0.01]))
+            pos = marker.get("pos", np.array([0.0, 0.0, 0.0]))
+            mat = marker.get("mat", np.eye(3).flatten())
+            rgba = marker.get("rgba", np.array([1.0, 1.0, 1.0, 1.0]))
+            mujoco.mjv_initGeom(
+                self.scn.geoms[self.scn.ngeom],
+                geom_type,
+                size=size,
+                pos=pos,
+                mat=mat,
+                rgba=rgba,
+            )
+
+        self.scn.ngeom += 1
+
+    def _legacy_add_marker_to_scene(self, marker: dict):
+        """Add a marker to the scene compatible with older versions of MuJoCo.
+
+        MuJoCo 3.2 introduced breaking changes to the visual geometries API. To maintain
+        compatibility with older versions, we use the legacy API when an older version of MuJoCo is
+        detected.
+
+        Args:
+            marker: A dictionary containing the marker parameters.
+        """
         g = self.scn.geoms[self.scn.ngeom]
         # default values.
         g.dataid = -1
@@ -127,8 +164,6 @@ class BaseRender:
                 )
             else:
                 raise ValueError("mjtGeom doesn't have field %s" % key)
-
-        self.scn.ngeom += 1
 
     def close(self):
         """Override close in your rendering subclass to perform any necessary cleanup
@@ -356,11 +391,22 @@ class WindowViewer(BaseRender):
         glfw.make_context_current(self.window)
 
     def free(self):
-        if self.window:
-            if glfw.get_current_context() == self.window:
-                glfw.make_context_current(None)
-            glfw.destroy_window(self.window)
-            self.window = None
+        """
+        Safely frees the OpenGL context and destroys the GLFW window,
+        handling potential issues during interpreter shutdown or resource cleanup.
+        """
+        try:
+            if self.window:
+                if glfw.get_current_context() == self.window:
+                    glfw.make_context_current(None)
+                glfw.destroy_window(self.window)
+                self.window = None
+        except AttributeError:
+            # Handle cases where attributes are missing due to improper environment closure
+            warn(
+                "Environment was not properly closed using 'env.close()'. Please ensure to close the environment explicitly. "
+                "GLFW module or dependencies are unloaded. Window cleanup might not have completed."
+            )
 
     def __del__(self):
         """Eliminate all of the OpenGL glfw contexts and windows"""

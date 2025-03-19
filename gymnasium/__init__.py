@@ -66,7 +66,7 @@ __all__ = [
     "logger",
     "experimental",
 ]
-__version__ = "1.0.0"
+__version__ = "1.1.1"
 
 try:
     from farama_notifications import notifications

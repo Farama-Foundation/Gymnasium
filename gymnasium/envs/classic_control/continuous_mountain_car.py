@@ -9,7 +9,7 @@ and then modified by Arnaud de Broissia
 
 * the gymnasium MountainCar environment
 itself from
-http://incompleteideas.net/sutton/MountainCar/MountainCar1.cp
+http://incompleteideas.net/sutton/book/MountainCar/MountainCar1.cp
 permalink: https://perma.cc/6Z2N-PFWC
 """
 
@@ -50,10 +50,10 @@ class Continuous_MountainCarEnv(gym.Env):
 
     The observation is a `ndarray` with shape `(2,)` where the elements correspond to the following:
 
-    | Num | Observation                          | Min  | Max | Unit         |
-    |-----|--------------------------------------|------|-----|--------------|
-    | 0   | position of the car along the x-axis | -Inf | Inf | position (m) |
-    | 1   | velocity of the car                  | -Inf | Inf | position (m) |
+    | Num | Observation                          | Min   | Max  | Unit          |
+    |-----|--------------------------------------|-------|------|---------------|
+    | 0   | position of the car along the x-axis | -1.2  | 0.6  | position (m)  |
+    | 1   | velocity of the car                  | -0.07 | 0.07 | position (m)  |
 
     ## Action Space
 
@@ -64,7 +64,7 @@ class Continuous_MountainCarEnv(gym.Env):
 
     Given an action, the mountain car follows the following transition dynamics:
 
-    *velocity<sub>t+1</sub> = velocity<sub>t+1</sub> + force * self.power - 0.0025 * cos(3 * position<sub>t</sub>)*
+    *velocity<sub>t+1</sub> = velocity<sub>t</sub> + force * self.power - 0.0025 * cos(3 * position<sub>t</sub>)*
 
     *position<sub>t+1</sub> = position<sub>t</sub> + velocity<sub>t+1</sub>*
 
