@@ -3,7 +3,7 @@
 # in framework B, then convert the return observations from framework B back to framework A.
 #
 # More precisely, the wrapper will work for any two frameworks that can be made compatible with the
-# `array_api_compat` package.
+# `array-api-compat` package.
 #
 # See https://data-apis.org/array-api/latest/ for more information on the Array API standard, and
 # https://data-apis.org/array-api-compat/ for more information on the Array API compatibility layer.
