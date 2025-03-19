@@ -52,9 +52,7 @@ def reset_func(self, seed=None, options=None, num_envs: int = 1, xp=np):
 
 
 def step_func(self, action, num_envs: int = 1, xp=np):
-    assert isinstance(action, type(xp.zeros(1))), (
-        f"Action {type(action)} != {type(xp.zeros(1))}"
-    )
+    assert isinstance(action, type(xp.zeros(1)))
     return (
         xp.asarray([[1, 2, 3] * num_envs]),
         xp.asarray([5.0] * num_envs),
