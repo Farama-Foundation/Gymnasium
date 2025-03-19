@@ -58,7 +58,13 @@ from gymnasium.wrappers.common import (
     RecordEpisodeStatistics,
     TimeLimit,
 )
-from gymnasium.wrappers.rendering import HumanRendering, RecordVideo, RenderCollection
+from gymnasium.wrappers.rendering import (
+    AddWhiteNoise,
+    HumanRendering,
+    ObstructView,
+    RecordVideo,
+    RenderCollection,
+)
 from gymnasium.wrappers.stateful_action import StickyAction
 from gymnasium.wrappers.stateful_observation import (
     DelayObservation,
@@ -122,6 +128,8 @@ __all__ = [
     "OrderEnforcing",
     "RecordEpisodeStatistics",
     # --- Rendering ---
+    "AddWhiteNoise",
+    "ObstructView",
     "RenderCollection",
     "RecordVideo",
     "HumanRendering",
