@@ -166,155 +166,127 @@ class TaxiEnv(Env):
     }
 
     def __build_dry_transitions(
-        self, num_rows, num_columns, max_row, max_col, locs, num_actions
+        self, row, col, pass_idx, dest_idx, max_row, max_col, locs, num_actions
     ):
-        for row in range(num_rows):
-            for col in range(num_columns):
-                for pass_idx in range(len(locs) + 1):  # +1 for being inside taxi
-                    for dest_idx in range(len(locs)):
-                        state = self.encode(row, col, pass_idx, dest_idx)
-                        if pass_idx < 4 and pass_idx != dest_idx:
-                            self.initial_state_distrib[state] += 1
-                        for action in range(num_actions):
-                            # defaults
-                            new_row, new_col, new_pass_idx = row, col, pass_idx
-                            reward = (
-                                -1
-                            )  # default reward when there is no pickup/dropoff
-                            terminated = False
-                            taxi_loc = (row, col)
+        state = self.encode(row, col, pass_idx, dest_idx)
+        if pass_idx < 4 and pass_idx != dest_idx:
+            self.initial_state_distrib[state] += 1
+        for action in range(num_actions):
+            # defaults
+            new_row, new_col, new_pass_idx = row, col, pass_idx
+            reward = -1  # default reward when there is no pickup/dropoff
+            terminated = False
+            taxi_loc = (row, col)
 
-                            if action == 0:
-                                new_row = min(row + 1, max_row)
-                            elif action == 1:
-                                new_row = max(row - 1, 0)
-                            if action == 2 and self.desc[1 + row, 2 * col + 2] == b":":
-                                new_col = min(col + 1, max_col)
-                            elif action == 3 and self.desc[1 + row, 2 * col] == b":":
-                                new_col = max(col - 1, 0)
-                            elif action == 4:  # pickup
-                                if pass_idx < 4 and taxi_loc == locs[pass_idx]:
-                                    new_pass_idx = 4
-                                else:  # passenger not at location
-                                    reward = -10
-                            elif action == 5:  # dropoff
-                                if (taxi_loc == locs[dest_idx]) and pass_idx == 4:
-                                    new_pass_idx = dest_idx
-                                    terminated = True
-                                    reward = 20
-                                elif (taxi_loc in locs) and pass_idx == 4:
-                                    new_pass_idx = locs.index(taxi_loc)
-                                else:  # dropoff at wrong location
-                                    reward = -10
-                            new_state = self.encode(
-                                new_row, new_col, new_pass_idx, dest_idx
-                            )
-                            self.P[state][action].append(
-                                (1.0, new_state, reward, terminated)
-                            )
+            if action == 0:
+                new_row = min(row + 1, max_row)
+            elif action == 1:
+                new_row = max(row - 1, 0)
+            if action == 2 and self.desc[1 + row, 2 * col + 2] == b":":
+                new_col = min(col + 1, max_col)
+            elif action == 3 and self.desc[1 + row, 2 * col] == b":":
+                new_col = max(col - 1, 0)
+            elif action == 4:  # pickup
+                if pass_idx < 4 and taxi_loc == locs[pass_idx]:
+                    new_pass_idx = 4
+                else:  # passenger not at location
+                    reward = -10
+            elif action == 5:  # dropoff
+                if (taxi_loc == locs[dest_idx]) and pass_idx == 4:
+                    new_pass_idx = dest_idx
+                    terminated = True
+                    reward = 20
+                elif (taxi_loc in locs) and pass_idx == 4:
+                    new_pass_idx = locs.index(taxi_loc)
+                else:  # dropoff at wrong location
+                    reward = -10
+            new_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
+            self.P[state][action].append((1.0, new_state, reward, terminated))
 
     def __build_rainy_transitions(
-        self, num_rows, num_columns, max_row, max_col, locs, num_actions
+        self, row, col, pass_idx, dest_idx, max_row, max_col, locs, num_actions
     ):
-        for row in range(num_rows):
-            for col in range(num_columns):
-                for pass_idx in range(len(locs) + 1):  # +1 for being inside taxi
-                    for dest_idx in range(len(locs)):
-                        state = self.encode(row, col, pass_idx, dest_idx)
-                        if pass_idx < 4 and pass_idx != dest_idx:
-                            self.initial_state_distrib[state] += 1
-                        for action in range(num_actions):
-                            # defaults
-                            new_row, new_col, new_pass_idx = row, col, pass_idx
-                            left_pos = (new_row, new_col)
-                            right_pos = (new_row, new_col)
-                            reward = (
-                                -1
-                            )  # default reward when there is no pickup/dropoff
-                            terminated = False
-                            taxi_loc = (row, col)
 
-                            moves = {
-                                0: ((1, 0), (0, -1), (0, 1)),  # Down
-                                1: ((-1, 0), (0, -1), (0, 1)),  # Up
-                                2: ((0, 1), (1, 0), (-1, 0)),  # Right
-                                3: ((0, -1), (1, 0), (-1, 0)),  # Left
-                            }
+        state = self.encode(row, col, pass_idx, dest_idx)
+        if pass_idx < 4 and pass_idx != dest_idx:
+            self.initial_state_distrib[state] += 1
+        for action in range(num_actions):
+            # defaults
+            new_row, new_col, new_pass_idx = row, col, pass_idx
+            left_pos = (new_row, new_col)
+            right_pos = (new_row, new_col)
+            reward = -1  # default reward when there is no pickup/dropoff
+            terminated = False
+            taxi_loc = (row, col)
 
-                            # Check if movement is allowed
-                            if (
-                                action in {0, 1}
-                                or (
-                                    action == 2
-                                    and self.desc[1 + row, 2 * col + 2] == b":"
-                                )
-                                or (action == 3 and self.desc[1 + row, 2 * col] == b":")
-                            ):
-                                dr, dc = moves[action][0]
-                                new_row, new_col = max(0, min(row + dr, max_row)), max(
-                                    0, min(col + dc, max_col)
-                                )
+            moves = {
+                0: ((1, 0), (0, -1), (0, 1)),  # Down
+                1: ((-1, 0), (0, -1), (0, 1)),  # Up
+                2: ((0, 1), (1, 0), (-1, 0)),  # Right
+                3: ((0, -1), (1, 0), (-1, 0)),  # Left
+            }
 
-                                left_dr, left_dc = moves[action][1]
-                                left_row, left_col = max(
-                                    0, min(row + left_dr, max_row)
-                                ), max(0, min(col + left_dc, max_col))
-                                if self.desc[1 + left_row, 2 * left_col + 2] == b":":
-                                    left_pos = (left_row, left_col)
-                                else:
-                                    left_pos = (
-                                        new_row,
-                                        new_col,
-                                    )  # Default to current position if not traversable
+            # Check if movement is allowed
+            if (
+                action in {0, 1}
+                or (action == 2 and self.desc[1 + row, 2 * col + 2] == b":")
+                or (action == 3 and self.desc[1 + row, 2 * col] == b":")
+            ):
+                dr, dc = moves[action][0]
+                new_row, new_col = max(0, min(row + dr, max_row)), max(
+                    0, min(col + dc, max_col)
+                )
 
-                                right_dr, right_dc = moves[action][2]
-                                right_row, right_col = max(
-                                    0, min(row + right_dr, max_row)
-                                ), max(0, min(col + right_dc, max_col))
-                                if self.desc[1 + right_row, 2 * right_col] == b":":
-                                    right_pos = (right_row, right_col)
-                                else:
-                                    right_pos = (
-                                        new_row,
-                                        new_col,
-                                    )  # Default to current position if not traversable
-                            elif action == 4:  # pickup
-                                if pass_idx < 4 and taxi_loc == locs[pass_idx]:
-                                    new_pass_idx = 4
-                                else:  # passenger not at location
-                                    reward = -10
-                            elif action == 5:  # dropoff
-                                if (taxi_loc == locs[dest_idx]) and pass_idx == 4:
-                                    new_pass_idx = dest_idx
-                                    terminated = True
-                                    reward = 20
-                                elif (taxi_loc in locs) and pass_idx == 4:
-                                    new_pass_idx = locs.index(taxi_loc)
-                                else:  # dropoff at wrong location
-                                    reward = -10
-                            intended_state = self.encode(
-                                new_row, new_col, new_pass_idx, dest_idx
-                            )
-                            if action <= 3:
-                                left_state = self.encode(
-                                    left_pos[0], left_pos[1], new_pass_idx, dest_idx
-                                )
-                                right_state = self.encode(
-                                    right_pos[0], right_pos[1], new_pass_idx, dest_idx
-                                )
-                                self.P[state][action].append(
-                                    (0.8, intended_state, reward, terminated)
-                                )
-                                self.P[state][action].append(
-                                    (0.1, left_state, -1, terminated)
-                                )
-                                self.P[state][action].append(
-                                    (0.1, right_state, -1, terminated)
-                                )
-                            else:
-                                self.P[state][action].append(
-                                    (1.0, intended_state, reward, terminated)
-                                )
+                left_dr, left_dc = moves[action][1]
+                left_row, left_col = max(0, min(row + left_dr, max_row)), max(
+                    0, min(col + left_dc, max_col)
+                )
+                if self.desc[1 + left_row, 2 * left_col + 2] == b":":
+                    left_pos = (left_row, left_col)
+                else:
+                    left_pos = (
+                        new_row,
+                        new_col,
+                    )  # Default to current position if not traversable
+
+                right_dr, right_dc = moves[action][2]
+                right_row, right_col = max(0, min(row + right_dr, max_row)), max(
+                    0, min(col + right_dc, max_col)
+                )
+                if self.desc[1 + right_row, 2 * right_col] == b":":
+                    right_pos = (right_row, right_col)
+                else:
+                    right_pos = (
+                        new_row,
+                        new_col,
+                    )  # Default to current position if not traversable
+            elif action == 4:  # pickup
+                if pass_idx < 4 and taxi_loc == locs[pass_idx]:
+                    new_pass_idx = 4
+                else:  # passenger not at location
+                    reward = -10
+            elif action == 5:  # dropoff
+                if (taxi_loc == locs[dest_idx]) and pass_idx == 4:
+                    new_pass_idx = dest_idx
+                    terminated = True
+                    reward = 20
+                elif (taxi_loc in locs) and pass_idx == 4:
+                    new_pass_idx = locs.index(taxi_loc)
+                else:  # dropoff at wrong location
+                    reward = -10
+            intended_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
+            if action <= 3:
+                left_state = self.encode(
+                    left_pos[0], left_pos[1], new_pass_idx, dest_idx
+                )
+                right_state = self.encode(
+                    right_pos[0], right_pos[1], new_pass_idx, dest_idx
+                )
+                self.P[state][action].append((0.8, intended_state, reward, terminated))
+                self.P[state][action].append((0.1, left_state, -1, terminated))
+                self.P[state][action].append((0.1, right_state, -1, terminated))
+            else:
+                self.P[state][action].append((1.0, intended_state, reward, terminated))
 
     def __init__(
         self,
@@ -339,14 +311,32 @@ class TaxiEnv(Env):
             for state in range(num_states)
         }
 
-        if is_rainy:
-            self.__build_rainy_transitions(
-                num_rows, num_columns, max_row, max_col, locs, num_actions
-            )
-        else:
-            self.__build_dry_transitions(
-                num_rows, num_columns, max_row, max_col, locs, num_actions
-            )
+        for row in range(num_rows):
+            for col in range(num_columns):
+                for pass_idx in range(len(locs) + 1):  # +1 for being inside taxi
+                    for dest_idx in range(len(locs)):
+                        if is_rainy:
+                            self.__build_rainy_transitions(
+                                row,
+                                col,
+                                pass_idx,
+                                dest_idx,
+                                max_row,
+                                max_col,
+                                locs,
+                                num_actions,
+                            )
+                        else:
+                            self.__build_dry_transitions(
+                                row,
+                                col,
+                                pass_idx,
+                                dest_idx,
+                                max_row,
+                                max_col,
+                                locs,
+                                num_actions,
+                            )
         self.initial_state_distrib /= self.initial_state_distrib.sum()
         self.action_space = spaces.Discrete(num_actions)
         self.observation_space = spaces.Discrete(num_states)
