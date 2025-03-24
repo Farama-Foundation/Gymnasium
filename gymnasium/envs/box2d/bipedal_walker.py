@@ -115,7 +115,8 @@ class TerrainMetadata:
     metadata = dict(
         designed=True,
         states=[OBSTACLES["up_stairs"], OBSTACLES["hole"], OBSTACLES["large_stump"]],
-        variations=False,
+        x_variations=False,
+        y_variations=False
     )
     options = dict(metadata=metadata)
     env.reset(options=options)
@@ -131,7 +132,8 @@ class TerrainMetadata:
     def __init__(self, metadata: dict = {}):
         self._states = []  # Control parameters
         self._metadata = {1: [], 2: [], 3: []}  # Random values for terrain types
-        self._variations = True
+        self._y_variations = True
+        self._x_variations = False
         self.__generate = False
 
         if metadata:
@@ -140,8 +142,12 @@ class TerrainMetadata:
             self.__generate = True  # New values should be generated
 
     @property
-    def grass_variations(self):
-        return self._variations
+    def grass_y_variations(self):
+        return self._y_variations
+
+    @property
+    def grass_x_variations(self):
+        return self._x_variations
 
     def _pit_length(self, metadata=None):
         return 4
@@ -172,12 +178,14 @@ class TerrainMetadata:
         return dict(
             states=deepcopy(self._states),
             metadata=deepcopy(self._metadata),
-            variations=self._variations,
+            x_variations=self._x_variations,
+            y_variations=self._y_variations,
         )
 
     def __from_dict(self, metadata: dict):
         if metadata.get("designed", False):
-            self._variations = metadata.get("variations", True)
+            self._y_variations = metadata.get("y_variations", False)
+            self._x_variations = metadata.get("x_variations", True)
             for state_obj in metadata.get("states", []):
                 state = state_obj["state"]
                 self._states.append(state)
@@ -185,7 +193,8 @@ class TerrainMetadata:
         else:
             self._states = metadata.get("states", self._states)
             self._metadata = metadata.get("metadata", self._metadata)
-            self._variations = metadata.get("variations", self._variations)
+            self._y_variations = metadata.get("y_variations", self._y_variations)
+            self._x_variations = metadata.get("x_variations", self._x_variations)
 
     def mode(self) -> bool:
         return self.__generate
@@ -437,7 +446,7 @@ class BipedalWalker(gym.Env, EzPickle):
 
             if state == GRASS and not oneshot:
                 velocity = 0.8 * velocity + 0.01 * np.sign(TERRAIN_HEIGHT - y)
-                if self._terrain_metadata.grass_variations and i > TERRAIN_STARTPAD:
+                if self._terrain_metadata.grass_y_variations and i > TERRAIN_STARTPAD:
                     velocity += self.np_random.uniform(-1, 1) / SCALE  # 1
                 y += velocity
 
@@ -541,7 +550,7 @@ class BipedalWalker(gym.Env, EzPickle):
             self.terrain_y.append(y)
             counter -= 1
             if counter == 0:
-                if self._terrain_metadata.grass_variations:
+                if self._terrain_metadata.grass_x_variations:
                     counter = self.np_random.integers(
                         self.terrain_grass / 2, self.terrain_grass
                     )
