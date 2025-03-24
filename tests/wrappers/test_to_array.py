@@ -10,6 +10,7 @@ import pytest
 
 
 array_api_compat = pytest.importorskip("array_api_compat")
+array_api_extra = pytest.importorskip("array_api_extra")
 
 from array_api_compat import array_namespace, is_array_api_obj  # noqa: E402
 
@@ -51,12 +52,7 @@ def xp_data_equivalence(data_1, data_2) -> bool:
                 xp_data_equivalence(o_1, o_2) for o_1, o_2 in zip(data_1, data_2)
             )
         elif is_array_api_obj(data_1):
-            # Avoid a dependency on array-api-extra
-            # Otherwise, we could use xpx.isclose(data_1, data_2, atol=0.00001).all()
-            same_device = data_1.device == data_2.device
-            a = np.asarray(data_1)
-            b = np.asarray(data_2)
-            return np.allclose(a, b, atol=0.00001) and same_device
+            return array_api_extra.isclose(data_1, data_2, atol=0.00001).all()
         else:
             return data_1 == data_2
     else:

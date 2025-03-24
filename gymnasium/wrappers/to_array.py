@@ -19,8 +19,11 @@ from __future__ import annotations
 import functools
 import numbers
 from collections import abc
-from types import ModuleType
+from types import ModuleType, NoneType
 from typing import Any, Iterable, Mapping, SupportsFloat
+
+import numpy as np
+from packaging.version import Version
 
 import gymnasium as gym
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
@@ -36,10 +39,12 @@ except ImportError:
     )
 
 
+if Version(np.__version__) < Version("2.1.0"):
+    raise DependencyNotInstalled("Array API functionality requires numpy >= 2.1.0")
+
+
 __all__ = ["ToArray", "to_xp"]
 
-# The NoneType is not defined in Python 3.9. Remove when the minimal version is bumped to >=3.10
-_NoneType = type(None)
 Array = Any  # TODO: Switch to ArrayAPI type once https://github.com/data-apis/array-api/pull/589 is merged
 Device = Any  # TODO: Switch to ArrayAPI type if available
 
@@ -85,7 +90,7 @@ def module_namespace(module: ModuleType) -> ModuleType:
 
 @functools.singledispatch
 def to_xp(value: Any, xp: ModuleType, device: Device | None = None) -> Any:
-    """Converts a value into the specified xp module array type."""
+    """Convert a value into the specified xp module array type."""
     raise Exception(
         f"No known conversion for ({type(value)}) to xp module ({xp}) registered. Report as issue on github."
     )
@@ -103,7 +108,7 @@ def _number_to_xp(
 def _mapping_to_xp(
     value: Mapping[str, Any], xp: ModuleType, device: Device | None = None
 ) -> Mapping[str, Any]:
-    """Converts a mapping of PyTorch Tensors into a Dictionary of Jax Array."""
+    """Convert a mapping of Arrays into a Dictionary of the specified xp module array type."""
     return type(value)(**{k: to_xp(v, xp, device) for k, v in value.items()})
 
 
@@ -111,24 +116,13 @@ def _mapping_to_xp(
 def _iterable_to_xp(
     value: Iterable[Any], xp: ModuleType, device: Device | None = None
 ) -> Iterable[Any]:
-    """Converts an Iterable from PyTorch Tensors to an iterable of Jax Array."""
+    """Convert an Iterable from Arrays to an iterable of the specified xp module array type."""
     # There is currently no type for ArrayAPI compatible objects, so they fall through to this
     # function registered for any Iterable. If they are arrays, we can convert them directly.
     # We currently cannot pass the device to the from_dlpack function, since it is not supported
     # for some frameworks (see e.g. https://github.com/data-apis/array-api-compat/issues/204)
     if is_array_api_obj(value):
-        try:
-            x = xp.from_dlpack(value)
-            return to_device(x, device) if device is not None else x
-        except (RuntimeError, BufferError):
-            # If dlpack fails (e.g. because the array is read-only for frameworks that do not
-            # support it), we create a copy of the array that we own and then convert it.
-            # TODO: The correct treatment of read-only arrays is currently not fully clear in the
-            # Array API. Once ongoing discussions are resolved, we should update this code to remove
-            # any fallbacks.
-            value_namespace = array_namespace(value)
-            value_copy = value_namespace.asarray(value, copy=True)
-            return xp.asarray(value_copy, device=device)
+        return _array_api_to_xp(value, xp, device)
     if hasattr(value, "_make"):
         # namedtuple - underline used to prevent potential name conflicts
         # noinspection PyProtectedMember
@@ -136,7 +130,25 @@ def _iterable_to_xp(
     return type(value)(to_xp(v, xp, device) for v in value)
 
 
-@to_xp.register(_NoneType)
+def _array_api_to_xp(
+    value: Array, xp: ModuleType, device: Device | None = None
+) -> Array:
+    """Convert an Array API compatible array to the specified xp module array type."""
+    try:
+        x = xp.from_dlpack(value)
+        return to_device(x, device) if device is not None else x
+    except (RuntimeError, BufferError):
+        # If dlpack fails (e.g. because the array is read-only for frameworks that do not
+        # support it), we create a copy of the array that we own and then convert it.
+        # TODO: The correct treatment of read-only arrays is currently not fully clear in the
+        # Array API. Once ongoing discussions are resolved, we should update this code to remove
+        # any fallbacks.
+        value_namespace = array_namespace(value)
+        value_copy = value_namespace.asarray(value, copy=True)
+        return xp.asarray(value_copy, device=device)
+
+
+@to_xp.register(NoneType)
 def _none_to_xp(value: None, xp: ModuleType, device: Device | None = None) -> None:
     """Passes through None values."""
     return value
