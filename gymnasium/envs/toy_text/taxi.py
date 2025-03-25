@@ -165,7 +165,7 @@ class TaxiEnv(Env):
         "render_fps": 4,
     }
 
-    def __pickup(self, taxi_loc, pass_idx, reward):
+    def _pickup(self, taxi_loc, pass_idx, reward):
         if pass_idx < 4 and taxi_loc == self.locs[pass_idx]:
             new_pass_idx = 4
             new_reward = reward
@@ -175,7 +175,7 @@ class TaxiEnv(Env):
 
         return new_pass_idx, new_reward
 
-    def __dropoff(self, taxi_loc, pass_idx, dest_idx, reward):
+    def _dropoff(self, taxi_loc, pass_idx, dest_idx, reward):
         if (taxi_loc == self.locs[dest_idx]) and pass_idx == 4:
             new_pass_idx = dest_idx
             new_terminated = True
@@ -191,7 +191,7 @@ class TaxiEnv(Env):
 
         return new_pass_idx, new_reward, new_terminated
 
-    def __build_dry_transitions(self, row, col, pass_idx, dest_idx, action):
+    def _build_dry_transitions(self, row, col, pass_idx, dest_idx, action):
         state = self.encode(row, col, pass_idx, dest_idx)
         # defaults
         new_row, new_col, new_pass_idx = row, col, pass_idx
@@ -208,15 +208,15 @@ class TaxiEnv(Env):
         elif action == 3 and self.desc[1 + row, 2 * col] == b":":
             new_col = max(col - 1, 0)
         elif action == 4:  # pickup
-            new_pass_idx, reward = self.__pickup(taxi_loc, new_pass_idx, reward)
+            new_pass_idx, reward = self._pickup(taxi_loc, new_pass_idx, reward)
         elif action == 5:  # dropoff
-            new_pass_idx, reward, terminated = self.__dropoff(
+            new_pass_idx, reward, terminated = self._dropoff(
                 taxi_loc, new_pass_idx, dest_idx, reward
             )
         new_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
         self.P[state][action].append((1.0, new_state, reward, terminated))
 
-    def __calc_new_position(self, row, col, movement, offset=0):
+    def _calc_new_position(self, row, col, movement, offset=0):
         dr, dc = movement
         new_row, new_col = max(0, min(row + dr, self.max_row)), max(
             0, min(col + dc, self.max_col)
@@ -232,7 +232,7 @@ class TaxiEnv(Env):
 
         return new_pos
 
-    def __build_rainy_transitions(self, row, col, pass_idx, dest_idx, action):
+    def _build_rainy_transitions(self, row, col, pass_idx, dest_idx, action):
         state = self.encode(row, col, pass_idx, dest_idx)
         # defaults
         new_row, new_col, new_pass_idx = row, col, pass_idx
@@ -260,12 +260,12 @@ class TaxiEnv(Env):
                 0, min(col + dc, self.max_col)
             )
 
-            left_pos = self.__calc_new_position(row, col, moves[action][1], offset=2)
-            right_pos = self.__calc_new_position(row, col, moves[action][2])
+            left_pos = self._calc_new_position(row, col, moves[action][1], offset=2)
+            right_pos = self._calc_new_position(row, col, moves[action][2])
         elif action == 4:  # pickup
-            new_pass_idx, reward = self.__pickup(taxi_loc, new_pass_idx, reward)
+            new_pass_idx, reward = self._pickup(taxi_loc, new_pass_idx, reward)
         elif action == 5:  # dropoff
-            new_pass_idx, reward, terminated = self.__dropoff(
+            new_pass_idx, reward, terminated = self._dropoff(
                 taxi_loc, new_pass_idx, dest_idx, reward
             )
         intended_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
@@ -313,7 +313,7 @@ class TaxiEnv(Env):
                             self.initial_state_distrib[state] += 1
                         for action in range(num_actions):
                             if is_rainy:
-                                self.__build_rainy_transitions(
+                                self._build_rainy_transitions(
                                     row,
                                     col,
                                     pass_idx,
@@ -321,7 +321,7 @@ class TaxiEnv(Env):
                                     action,
                                 )
                             else:
-                                self.__build_dry_transitions(
+                                self._build_dry_transitions(
                                     row,
                                     col,
                                     pass_idx,
