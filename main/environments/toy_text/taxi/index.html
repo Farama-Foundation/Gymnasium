@@ -491,12 +491,9 @@ penalty. Noops can be avoided by sampling the <code class="docutils literal notr
 <h2>Information<a class="headerlink" href="#information" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">step()</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> return a dict with the following keys:</p>
 <ul class="simple">
-<li><p>p - transition proability for the state.</p></li>
+<li><p>p - transition probability for the state.</p></li>
 <li><p>action_mask - if actions will cause a transition to a new state.</p></li>
 </ul>
-<p>As taxi is not stochastic, the transition probability is always 1.0. Implementing
-a transitional probability in line with the Dietterich paper (‘The fickle taxi task’)
-is a TODO.</p>
 <p>For some cases, taking an action will have no effect on the state of the episode.
 In v0.25.0, <code class="docutils literal notranslate"><span class="pre">info[&quot;action_mask&quot;]</span></code> contains a np.ndarray for each of the actions specifying
 if the action will change the state.</p>
@@ -509,6 +506,13 @@ Or with a Q-value based algorithm <code class="docutils literal notranslate"><sp
 <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Taxi-v3&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p><a id="is_raining"></a><code class="docutils literal notranslate"><span class="pre">is_raining=False</span></code>: If True the cab will move in intended direction with
+probability of 80% else will move in either left or right of target direction with
+equal probability of 10% in both directions.</p>
+<p><a id="fickle_passenger"></a><code class="docutils literal notranslate"><span class="pre">fickle_passenger=False</span></code>: If true the passenger has a 30% chance of changing
+destinations when the cab has moved one square away from the passenger’s source location.  Passenger fickleness
+only happens on the first pickup and successful movement.  If the passenger is dropped off at the source location
+and picked up again, it is not triggered again.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
@@ -518,7 +522,11 @@ Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, 
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information</p></li>
+<li><p>v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information</p>
+<ul>
+<li><p>In Gymnasium <code class="docutils literal notranslate"><span class="pre">1.2.0</span></code> the <code class="docutils literal notranslate"><span class="pre">is_rainy</span></code> and <code class="docutils literal notranslate"><span class="pre">fickle_passenger</span></code> arguments were added to align with Dietterich, 2000</p></li>
+</ul>
+</li>
 <li><p>v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.</p></li>
 <li><p>v1: Remove (3,2) from locs, add passidx&lt;4 check</p></li>
 <li><p>v0: Initial version release</p></li>
