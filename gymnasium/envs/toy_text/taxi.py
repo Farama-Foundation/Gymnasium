@@ -121,7 +121,7 @@ class TaxiEnv(Env):
     ## Information
 
     `step()` and `reset()` return a dict with the following keys:
-    - p - transition proability for the state.
+    - p - transition probability for the state.
     - action_mask - if actions will cause a transition to a new state.
 
     For some cases, taking an action will have no effect on the state of the episode.
@@ -130,7 +130,6 @@ class TaxiEnv(Env):
 
     To sample a modifying action, use ``action = env.action_space.sample(info["action_mask"])``
     Or with a Q-value based algorithm ``action = np.argmax(q_values[obs, np.where(info["action_mask"] == 1)[0]])``.
-
 
     ## Arguments
 
@@ -166,6 +165,7 @@ class TaxiEnv(Env):
     }
 
     def _pickup(self, taxi_loc, pass_idx, reward):
+        """Computes the new location and reward for pickup action."""
         if pass_idx < 4 and taxi_loc == self.locs[pass_idx]:
             new_pass_idx = 4
             new_reward = reward
@@ -175,7 +175,8 @@ class TaxiEnv(Env):
 
         return new_pass_idx, new_reward
 
-    def _dropoff(self, taxi_loc, pass_idx, dest_idx, reward):
+    def _dropoff(self, taxi_loc, pass_idx, dest_idx, default_reward):
+        """Computes the new location and reward for return dropoff action."""
         if (taxi_loc == self.locs[dest_idx]) and pass_idx == 4:
             new_pass_idx = dest_idx
             new_terminated = True
@@ -183,7 +184,7 @@ class TaxiEnv(Env):
         elif (taxi_loc in self.locs) and pass_idx == 4:
             new_pass_idx = self.locs.index(taxi_loc)
             new_terminated = False
-            new_reward = reward
+            new_reward = default_reward
         else:  # dropoff at wrong location
             new_pass_idx = pass_idx
             new_terminated = False
@@ -192,12 +193,13 @@ class TaxiEnv(Env):
         return new_pass_idx, new_reward, new_terminated
 
     def _build_dry_transitions(self, row, col, pass_idx, dest_idx, action):
+        """Computes the next action for a state (row, col, pass_idx, dest_idx) and action."""
         state = self.encode(row, col, pass_idx, dest_idx)
-        # defaults
+
+        taxi_loc = (row, col)
         new_row, new_col, new_pass_idx = row, col, pass_idx
         reward = -1  # default reward when there is no pickup/dropoff
         terminated = False
-        taxi_loc = (row, col)
 
         if action == 0:
             new_row = min(row + 1, self.max_row)
@@ -213,34 +215,28 @@ class TaxiEnv(Env):
             new_pass_idx, reward, terminated = self._dropoff(
                 taxi_loc, new_pass_idx, dest_idx, reward
             )
+
         new_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
         self.P[state][action].append((1.0, new_state, reward, terminated))
 
     def _calc_new_position(self, row, col, movement, offset=0):
+        """Calculates the new position for a row and col to the movement."""
         dr, dc = movement
-        new_row, new_col = max(0, min(row + dr, self.max_row)), max(
-            0, min(col + dc, self.max_col)
-        )
+        new_row = max(0, min(row + dr, self.max_row))
+        new_col = max(0, min(col + dc, self.max_col))
         if self.desc[1 + new_row, 2 * new_col + offset] == b":":
-            new_pos = (new_row, new_col)
-        else:
-            # Default to current position if not traversable
-            new_pos = (
-                row,
-                col,
-            )
-
-        return new_pos
+            return new_row, new_col
+        else:  # Default to current position if not traversable
+            return row, col
 
     def _build_rainy_transitions(self, row, col, pass_idx, dest_idx, action):
+        """Computes the next action for a state (row, col, pass_idx, dest_idx) and action for `is_rainy`."""
         state = self.encode(row, col, pass_idx, dest_idx)
-        # defaults
+
+        taxi_loc = left_pos = right_pos = (row, col)
         new_row, new_col, new_pass_idx = row, col, pass_idx
-        left_pos = (new_row, new_col)
-        right_pos = (new_row, new_col)
         reward = -1  # default reward when there is no pickup/dropoff
         terminated = False
-        taxi_loc = (row, col)
 
         moves = {
             0: ((1, 0), (0, -1), (0, 1)),  # Down
@@ -256,9 +252,8 @@ class TaxiEnv(Env):
             or (action == 3 and self.desc[1 + row, 2 * col] == b":")
         ):
             dr, dc = moves[action][0]
-            new_row, new_col = max(0, min(row + dr, self.max_row)), max(
-                0, min(col + dc, self.max_col)
-            )
+            new_row = max(0, min(row + dr, self.max_row))
+            new_col = max(0, min(col + dc, self.max_col))
 
             left_pos = self._calc_new_position(row, col, moves[action][1], offset=2)
             right_pos = self._calc_new_position(row, col, moves[action][2])
@@ -275,6 +270,7 @@ class TaxiEnv(Env):
             right_state = self.encode(
                 right_pos[0], right_pos[1], new_pass_idx, dest_idx
             )
+
             self.P[state][action].append((0.8, intended_state, -1, terminated))
             self.P[state][action].append((0.1, left_state, -1, terminated))
             self.P[state][action].append((0.1, right_state, -1, terminated))
