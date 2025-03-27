@@ -56,7 +56,7 @@ There are eleven MuJoCo environments (in roughly increasing complexity):
 | Walker2d               | 2d biped with the goal of walking                                    |
 | **Swimmers**           |                                                                      |
 | Swimmer                | 3d robot with the goal of swimming                                   |
-| **Quarduped**          |                                                                      |
+| **Quadruped**          |                                                                      |
 | Ant                    | 3d quadruped with the goal of running                                |
 | **Humanoid Bipeds**    |                                                                      |
 | Humanoid               | 3d humanoid with the goal of running                                 |
