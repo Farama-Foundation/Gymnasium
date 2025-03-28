@@ -1,6 +1,6 @@
 """
 Load custom quadruped robot environments
-================================
+========================================
 
 In this tutorial we will see how to use the `MuJoCo/Ant-v5` framework to create a quadruped walking environment,
 using a model file (ending in `.xml`) without having to create a new class.
@@ -25,7 +25,7 @@ Steps:
 
 # %%
 # Setup
-# ------
+# -----
 # We will need `gymnasium>=1.0.0`.
 
 import numpy as np
@@ -39,7 +39,7 @@ import gymnasium as gym
 
 # %%
 # Step 0.1 - Download a Robot Model
-# -------------------------
+# ---------------------------------
 # In this tutorial we will load the Unitree Go1 robot from the excellent MuJoCo Menagerie robot model collection.
 # Go1 is a quadruped robot, controlling it to move is a significant learning problem,
 # much harder than the `Gymnasium/MuJoCo/Ant` environment.
@@ -54,7 +54,7 @@ import gymnasium as gym
 
 # %%
 # Step 1 - Load the model
-# -------------------------
+# -----------------------
 # To load the model, all we have to do is use the `xml_file` argument with the `Ant-v5` framework.
 
 # Basic loading (uncomment to use)
@@ -82,14 +82,14 @@ env = gym.make(
 
 # %%
 # Step 2 - Tweaking the Environment Parameters
-# -------------------------
+# --------------------------------------------
 # Tweaking the environment parameters is essential to get the desired behavior for learning.
 # In the following subsections, the reader is encouraged to consult the documentation of
 # the arguments for more detailed information.
 
 # %%
 # Step 2.1 - Tweaking the Environment Simulation Parameters
-# -------------------------
+# ---------------------------------------------------------
 # The arguments of interest are `frame_skip`, `reset_noise_scale` and `max_episode_steps`.
 
 # We want to tweak the `frame_skip` parameter to get `dt` to an acceptable value
@@ -128,7 +128,7 @@ env = gym.make(
 
 # %%
 # Step 2.2 - Tweaking the Environment Termination Parameters
-# -------------------------
+# ----------------------------------------------------------
 # Termination is important for robot environments to avoid sampling "useless" time steps.
 
 # The arguments of interest are `terminate_when_unhealthy` and `healthy_z_range`.
@@ -166,7 +166,7 @@ env = gym.make(
 
 # %%
 # Step 2.3 - Tweaking the Environment Reward Parameters
-# -------------------------
+# -----------------------------------------------------
 # The arguments of interest are `forward_reward_weight`, `ctrl_cost_weight`, `contact_cost_weight`,
 # `healthy_reward`, and `main_body`.
 
@@ -201,7 +201,7 @@ env = gym.make(
 
 # %%
 # Step 2.4 - Tweaking the Environment Observation Parameters
-# -------------------------
+# ----------------------------------------------------------
 # The arguments of interest are `include_cfrc_ext_in_observation` and
 # `exclude_current_positions_from_observation`.
 

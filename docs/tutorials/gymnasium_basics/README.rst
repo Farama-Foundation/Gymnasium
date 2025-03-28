@@ -1,5 +1,10 @@
-Gymnasium Basics Documentation Links
+Gymnasium Basics
 ----------------
 
 .. toctree::
-   :hidden:
+    :hidden:
+
+    environment_creation
+    implementing_custom_wrappers
+    handling_time_limits
+    load_quadruped_model
