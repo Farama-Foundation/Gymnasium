@@ -9,7 +9,7 @@ on:
   pull_request:
     paths:
       - 'docs/tutorials/**/*.py'
-      - '.github/workflows/run-tutorials.yml'
+      - '.github/workflows/test-tutorials.yml'
 
   # Allow manual trigger
   workflow_dispatch:
@@ -159,8 +159,24 @@ jobs:
               echo "- ✅ $file (${time}s)" >> $GITHUB_STEP_SUMMARY
             elif [ "$status" == "timeout" ]; then
               echo "- ⚠️ $file (timeout after ${time}s)" >> $GITHUB_STEP_SUMMARY
+              # Add the last few lines of output to help debug timeout issues
+              echo "  <details><summary>Last output before timeout</summary>" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "  \`\`\`" >> $GITHUB_STEP_SUMMARY
+              tail -n 20 "test-results/$(basename "$file").log" >> $GITHUB_STEP_SUMMARY
+              echo "  \`\`\`" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "  </details>" >> $GITHUB_STEP_SUMMARY
             else
               echo "- ❌ $file (failed after ${time}s)" >> $GITHUB_STEP_SUMMARY
+              # Add the error details to help debug failures
+              echo "  <details><summary>Error details</summary>" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "  \`\`\`" >> $GITHUB_STEP_SUMMARY
+              cat "test-results/$(basename "$file").log" >> $GITHUB_STEP_SUMMARY
+              echo "  \`\`\`" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "  </details>" >> $GITHUB_STEP_SUMMARY
             fi
           done < test-results/summary.csv
         fi
