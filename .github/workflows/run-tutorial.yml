@@ -9,7 +9,7 @@ on:
   pull_request:
     paths:
       - 'docs/tutorials/**/*.py'
-      - '.github/workflows/test-tutorials.yml'
+      - '.github/workflows/run-tutorials.yml'
 
   # Allow manual trigger
   workflow_dispatch:
@@ -172,7 +172,7 @@ jobs:
 
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: tutorial-test-results-${{ matrix.tutorial-group }}
         path: test-results/
