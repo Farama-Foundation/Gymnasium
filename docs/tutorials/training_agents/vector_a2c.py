@@ -180,7 +180,7 @@ class A2C(nn.Module):
         actions = action_pd.sample()
         action_log_probs = action_pd.log_prob(actions)
         entropy = action_pd.entropy()
-        return (actions, action_log_probs, state_values, entropy)
+        return actions, action_log_probs, state_values, entropy
 
     def get_losses(
         self,

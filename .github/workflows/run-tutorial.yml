@@ -40,17 +40,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         # Install Gymnasium and its dependencies
-        pip install -e .
-        # Install additional dependencies for tutorials
-        pip install torch torchvision tqdm matplotlib seaborn pandas pygame
-        # Install MuJoCo dependencies if needed
-        sudo apt-get update
-        sudo apt-get install -y patchelf libosmesa6-dev libgl1-mesa-glx libglfw3 libglew-dev
+        pip install -e .[classic_control]
 
     - name: Install MuJoCo (for MuJoCo tutorials)
       if: matrix.tutorial-group == 'training_agents'
       run: |
-        pip install mujoco gymnasium[mujoco]
+        pip install mujoco .[mujoco] torch seaborn matplotlib pandas
 
     - name: Get changed files
       id: changed-files

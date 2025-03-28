@@ -62,7 +62,7 @@ plt.rcParams["figure.figsize"] = (10, 5)
 # Policy Network
 # ~~~~~~~~~~~~~~
 #
-# .. image:: /_static/img/tutorials/reinforce_invpend_gym_v26_fig2.png
+# .. image:: /_static/img/tutorials/reinforce_invpend_fig2.png
 #
 # We start by building a policy that the agent will learn using REINFORCE.
 # A policy is a mapping from the current environment observation to a probability distribution of the actions to be taken.
@@ -131,7 +131,7 @@ class Policy_Network(nn.Module):
 # Building an agent
 # ~~~~~~~~~~~~~~~~~
 #
-# .. image:: /_static/img/tutorials/reinforce_invpend_gym_v26_fig3.jpeg
+# .. image:: /_static/img/tutorials/reinforce_invpend_fig3.jpeg
 #
 # Now that we are done building the policy, let us develop **REINFORCE** which gives life to the policy network.
 # The algorithm of REINFORCE could be found above. As mentioned before, REINFORCE aims to maximize the Monte-Carlo returns.
@@ -304,7 +304,7 @@ sns.lineplot(x="episodes", y="reward", data=df1).set(
 plt.show()
 
 # %%
-# .. image:: /_static/img/tutorials/reinforce_invpend_gym_v26_fig4.png
+# .. image:: /_static/img/tutorials/reinforce_invpend_fig4.png
 #
 # Author: Siddarth Chandrasekar
 #
