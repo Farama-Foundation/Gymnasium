@@ -10,14 +10,6 @@ Frozenlake benchmark
 # environment from the reinforcement learning
 # `Gymnasium <https://gymnasium.farama.org/>`__ package using the
 # Q-learning algorithm.
-#
-
-
-# %%
-# Dependencies
-# ------------
-#
-
 
 # %%
 # Let's first import a few dependencies we'll need.
@@ -26,8 +18,6 @@ Frozenlake benchmark
 # Author: Andrea Pierré
 # License: MIT License
 
-
-from pathlib import Path
 from typing import NamedTuple
 
 import matplotlib.pyplot as plt

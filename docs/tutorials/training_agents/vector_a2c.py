@@ -425,7 +425,9 @@ agent = A2C(obs_shape, action_shape, device, critic_lr, actor_lr, n_envs)
 #
 
 # create a wrapper environment to save episode returns and episode lengths
-envs_wrapper = gym.wrappers.vector.RecordEpisodeStatistics(envs, buffer_length=n_envs * n_updates)
+envs_wrapper = gym.wrappers.vector.RecordEpisodeStatistics(
+    envs, buffer_length=n_envs * n_updates
+)
 
 critic_losses = []
 actor_losses = []
