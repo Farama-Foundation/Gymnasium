@@ -8,14 +8,14 @@ using a model file (ending in `.xml`) without having to create a new class.
 Steps:
 
 0. Get your **MJCF** (or **URDF**) model file of your robot.
-	- Create your own model (see the MuJoCo Guide) or,
-	- Find a ready-made model (in this tutorial, we will use a model from the MuJoCo Menagerie collection).
+    - Create your own model (see the MuJoCo Guide) or,
+    - Find a ready-made model (in this tutorial, we will use a model from the MuJoCo Menagerie collection).
 1. Load the model with the `xml_file` argument.
 2. Tweak the environment parameters to get the desired behavior.
- 	1. Tweak the environment simulation parameters.
-	2. Tweak the environment termination parameters.
-	3. Tweak the environment reward parameters.
-	4. Tweak the environment observation parameters.
+    1. Tweak the environment simulation parameters.
+    2. Tweak the environment termination parameters.
+    3. Tweak the environment reward parameters.
+    4. Tweak the environment observation parameters.
 3. Train an agent to move your robot.
 """
 
@@ -28,8 +28,10 @@ Steps:
 # ------
 # We will need `gymnasium>=1.0.0`.
 
-import gymnasium as gym
 import numpy as np
+
+import gymnasium as gym
+
 
 # Make sure Gymnasium is properly installed
 # You can run this in your terminal:
@@ -63,8 +65,8 @@ import numpy as np
 # termination, reward and observation arguments, which we will tweak in the next step.
 
 env = gym.make(
-    'Ant-v5',
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
+    "Ant-v5",
+    xml_file="./mujoco_menagerie/unitree_go1/scene.xml",
     forward_reward_weight=0,
     ctrl_cost_weight=0,
     contact_cost_weight=0,
@@ -109,8 +111,8 @@ env = gym.make(
 # but if you need something higher you can set it so.
 
 env = gym.make(
-    'Ant-v5',
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
+    "Ant-v5",
+    xml_file="./mujoco_menagerie/unitree_go1/scene.xml",
     forward_reward_weight=0,
     ctrl_cost_weight=0,
     contact_cost_weight=0,
@@ -141,14 +143,17 @@ env = gym.make(
 # which is not desirable in the case of `Go1`.
 
 env = gym.make(
-    'Ant-v5',
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
+    "Ant-v5",
+    xml_file="./mujoco_menagerie/unitree_go1/scene.xml",
     forward_reward_weight=0,
     ctrl_cost_weight=0,
     contact_cost_weight=0,
     healthy_reward=0,
     main_body=1,
-    healthy_z_range=(0.195, 0.75),  # set to avoid sampling steps where the robot has fallen or jumped too high
+    healthy_z_range=(
+        0.195,
+        0.75,
+    ),  # set to avoid sampling steps where the robot has fallen or jumped too high
     include_cfrc_ext_in_observation=True,
     exclude_current_positions_from_observation=False,
     reset_noise_scale=0.1,
@@ -176,8 +181,8 @@ env = gym.make(
 # (Note: in most cases including this one, it can be left at the default value).
 
 env = gym.make(
-    'Ant-v5',
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
+    "Ant-v5",
+    xml_file="./mujoco_menagerie/unitree_go1/scene.xml",
     forward_reward_weight=1,  # kept the same as the 'Ant' environment
     ctrl_cost_weight=0.05,  # changed because of the stronger motors of `Go1`
     contact_cost_weight=5e-4,  # kept the same as the 'Ant' environment
@@ -203,8 +208,8 @@ env = gym.make(
 # Here for `Go1` we have no particular reason to change them.
 
 env = gym.make(
-    'Ant-v5',
-    xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
+    "Ant-v5",
+    xml_file="./mujoco_menagerie/unitree_go1/scene.xml",
     forward_reward_weight=1,
     ctrl_cost_weight=0.05,
     contact_cost_weight=5e-4,
@@ -218,6 +223,7 @@ env = gym.make(
     max_episode_steps=1000,
 )
 
+
 # Note: If you need additional observation elements (such as additional sensors),
 # you can write your own `ObservationWrapper` (see the documentation).
 
@@ -229,14 +235,15 @@ env = gym.make(
 # during training that some environment parameters were not as desired,
 # feel free to go back to step 2 and change anything as needed.
 
+
 def main():
     """Run the final Go1 environment setup."""
     # Note: The original tutorial includes an image showing the Go1 robot in the environment.
     # The image is available at: https://github.com/Kallinteris-Andreas/Gymnasium-kalli/assets/30759571/bf1797a3-264d-47de-b14c-e3c16072f695
 
     env = gym.make(
-        'Ant-v5',
-        xml_file='./mujoco_menagerie/unitree_go1/scene.xml',
+        "Ant-v5",
+        xml_file="./mujoco_menagerie/unitree_go1/scene.xml",
         forward_reward_weight=1,
         ctrl_cost_weight=0.05,
         contact_cost_weight=5e-4,
@@ -248,7 +255,7 @@ def main():
         reset_noise_scale=0.1,
         frame_skip=25,
         max_episode_steps=1000,
-        render_mode="rgb_array"  # Change to "human" to visualize
+        render_mode="rgb_array",  # Change to "human" to visualize
     )
 
     # Example of running the environment for a few steps
@@ -268,6 +275,7 @@ def main():
     # 1. Set up your RL algorithm
     # 2. Train the agent
     # 3. Evaluate the agent's performance
+
 
 # %%
 # Epilogue

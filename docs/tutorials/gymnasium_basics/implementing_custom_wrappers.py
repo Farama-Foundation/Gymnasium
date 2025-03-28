@@ -32,9 +32,9 @@ Before following this tutorial, make sure to check out the docs of the :mod:`gym
 # observation wrapper like this:
 
 import numpy as np
-from gymnasium import ActionWrapper, ObservationWrapper, RewardWrapper, Wrapper
 
 import gymnasium as gym
+from gymnasium import ActionWrapper, ObservationWrapper, RewardWrapper, Wrapper
 from gymnasium.spaces import Box, Discrete
 
 
