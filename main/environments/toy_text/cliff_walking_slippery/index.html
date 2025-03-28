@@ -7,12 +7,12 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/environments/toy_text/cliff_walking.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Frozen Lake" href="../frozen_lake/" /><link rel="prev" title="Taxi" href="../taxi/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/environments/toy_text/cliff_walking.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/environments/toy_text/cliff_walking_slippery.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/environments/toy_text/cliff_walking_slippery.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
-        <title>Cliff Walking - Gymnasium Documentation</title>
+        <title>Cliff Walking Slippery - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
@@ -253,7 +253,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Classic Control</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../classic_control/acrobot/">Acrobot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../classic_control/cart_pole/">Cart Pole</a></li>
@@ -268,10 +268,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../box2d/lunar_lander/">Lunar Lander</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Toy Text</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Toy Text</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Toy Text</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../blackjack/">Blackjack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../taxi/">Taxi</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../cliff_walking/">Cliff Walking</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../frozen_lake/">Frozen Lake</a></li>
 </ul>
 </li>
@@ -364,10 +364,10 @@
           </div>
           <article role="main">
             
-            <section class="tex2jax_ignore mathjax_ignore" id="cliff-walking">
-<h1>Cliff Walking<a class="headerlink" href="#cliff-walking" title="Link to this heading">¶</a></h1>
+            <section class="tex2jax_ignore mathjax_ignore" id="cliff-walking-slippery">
+<h1>Cliff Walking Slippery<a class="headerlink" href="#cliff-walking-slippery" title="Link to this heading">¶</a></h1>
 <figure class="align-default" id="id1">
-<a class="reference internal image-reference" href="../../../_images/cliff_walking.gif"><img alt="../../../_images/cliff_walking.gif" src="../../../_images/cliff_walking.gif" style="width: 200px;" />
+<a class="reference internal image-reference" href="_static/videos/toy_text/cliff_walking_slippery.gif"><img alt="_static/videos/toy_text/cliff_walking_slippery.gif" src="_static/videos/toy_text/cliff_walking_slippery.gif" style="width: 200px;" />
 </a>
 </figure>
 <p>This environment is part of the Toy Text environments which contains general information about the environment.</p>
@@ -386,7 +386,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">Discrete(48)</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;CliffWalking-v1&quot;)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;CliffWalkingSlippery-v1&quot;)</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -474,30 +474,8 @@ An Introduction” 2020. [Online]. Available: <a class="reference external" href
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../frozen_lake/">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Frozen Lake</div>
-              </div>
-              <svg class="furo-related-icon">
-                <use href="#svg-arrow-right"></use>
-              </svg>
-            </a>
-            <a class="prev-page" href="../taxi/">
-              <svg class="furo-related-icon">
-                <use href="#svg-arrow-right"></use>
-              </svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Taxi</div>
-                
-              </div>
-            </a>
+            
+            
           </div>
           <div class="bottom-of-page">
             <div class="left-details">
@@ -538,7 +516,7 @@ An Introduction” 2020. [Online]. Available: <a class="reference external" href
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Cliff Walking</a><ul>
+<li><a class="reference internal" href="#">Cliff Walking Slippery</a><ul>
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#action-space">Action Space</a></li>
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
