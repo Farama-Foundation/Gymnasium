@@ -147,8 +147,14 @@ register(
 )
 
 register(
-    id="CliffWalking-v0",
+    id="CliffWalking-v1",
     entry_point="gymnasium.envs.toy_text.cliffwalking:CliffWalkingEnv",
+)
+
+register(
+    id="CliffWalkingSlippery-v1",
+    entry_point="gymnasium.envs.toy_text.cliffwalking:CliffWalkingEnv",
+    kwargs={"is_slippery": True},
 )
 
 register(
