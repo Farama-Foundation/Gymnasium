@@ -32,9 +32,9 @@ Before following this tutorial, make sure to check out the docs of the :mod:`gym
 # observation wrapper like this:
 
 import numpy as np
-from gym import ActionWrapper, ObservationWrapper, RewardWrapper, Wrapper
 
 import gymnasium as gym
+from gymnasium import ActionWrapper, ObservationWrapper, RewardWrapper, Wrapper
 from gymnasium.spaces import Box, Discrete
 
 
@@ -69,12 +69,12 @@ class DiscreteActions(ActionWrapper):
         return self.disc_to_cont[act]
 
 
-if __name__ == "__main__":
-    env = gym.make("LunarLanderContinuous-v2")
-    wrapped_env = DiscreteActions(
-        env, [np.array([1, 0]), np.array([-1, 0]), np.array([0, 1]), np.array([0, -1])]
-    )
-    print(wrapped_env.action_space)  # Discrete(4)
+env = gym.make("LunarLanderContinuous-v3")
+# print(env.action_space)  # Box(-1.0, 1.0, (2,), float32)
+wrapped_env = DiscreteActions(
+    env, [np.array([1, 0]), np.array([-1, 0]), np.array([0, 1]), np.array([0, -1])]
+)
+# print(wrapped_env.action_space)  # Discrete(4)
 
 
 # %%

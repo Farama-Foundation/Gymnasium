@@ -1,7 +1,10 @@
-Training Agents links in the Gymnasium Documentation
------------------------------------------------------
-Solving Blackjack with Q-Learning link: https://gymnasium.farama.org/tutorials/training_agents/blackjack_tutorial/
+Training Agents
+---------------
 
-Frozen Lake Benchmark link: https://gymnasium.farama.org/tutorials/training_agents/FrozenLake_tuto/
+.. toctree::
+    :hidden:
 
-Training using REINFORCE for Mujoco link: https://gymnasium.farama.org/tutorials/training_agents/reinforce_invpend_gym_v26/
+    blackjack_q_learning
+    frozenlake_q_learning
+    mujoco_reinforce
+    vector_a2c

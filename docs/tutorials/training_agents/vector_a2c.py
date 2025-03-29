@@ -180,7 +180,7 @@ class A2C(nn.Module):
         actions = action_pd.sample()
         action_log_probs = action_pd.log_prob(actions)
         entropy = action_pd.entropy()
-        return (actions, action_log_probs, state_values, entropy)
+        return actions, action_log_probs, state_values, entropy
 
     def get_losses(
         self,
@@ -268,7 +268,7 @@ class A2C(nn.Module):
 # The simplest way to create vector environments is by calling `gym.vector.make`, which creates multiple instances of the same environment:
 #
 
-envs = gym.vector.make("LunarLander-v3", num_envs=3, max_episode_steps=600)
+envs = gym.make_vec("LunarLander-v3", num_envs=3, max_episode_steps=600)
 
 
 # %%
@@ -281,7 +281,7 @@ envs = gym.vector.make("LunarLander-v3", num_envs=3, max_episode_steps=600)
 # Manually setting up 3 parallel 'LunarLander-v3' envs with different parameters:
 
 
-envs = gym.vector.AsyncVectorEnv(
+envs = gym.vector.SyncVectorEnv(
     [
         lambda: gym.make(
             "LunarLander-v3",
@@ -314,7 +314,7 @@ envs = gym.vector.AsyncVectorEnv(
 #
 
 
-envs = gym.vector.AsyncVectorEnv(
+envs = gym.vector.SyncVectorEnv(
     [
         lambda: gym.make(
             "LunarLander-v3",
@@ -393,7 +393,7 @@ if randomize_domain:
     )
 
 else:
-    envs = gym.vector.make("LunarLander-v3", num_envs=n_envs, max_episode_steps=600)
+    envs = gym.make_vec("LunarLander-v3", num_envs=n_envs, max_episode_steps=600)
 
 
 obs_shape = envs.single_observation_space.shape[0]
@@ -425,7 +425,9 @@ agent = A2C(obs_shape, action_shape, device, critic_lr, actor_lr, n_envs)
 #
 
 # create a wrapper environment to save episode returns and episode lengths
-envs_wrapper = gym.wrappers.RecordEpisodeStatistics(envs, deque_size=n_envs * n_updates)
+envs_wrapper = gym.wrappers.vector.RecordEpisodeStatistics(
+    envs, buffer_length=n_envs * n_updates
+)
 
 critic_losses = []
 actor_losses = []
