@@ -36,16 +36,17 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
 
-    - name: Install dependencies
+    - name: Install Gymnasium basics tutorial requirements
+      if: matrix.tutorial-group == 'gymnasium_basics'
       run: |
-        python -m pip install --upgrade pip
-        # Install Gymnasium and its dependencies
-        pip install -e .[classic_control]
+        sudo apt-get update
+        sudo apt-get swig
+        pip install .[mujoco, box2d]
 
-    - name: Install MuJoCo (for MuJoCo tutorials)
+    - name: Install Training Agents tutorial requirements
       if: matrix.tutorial-group == 'training_agents'
       run: |
-        pip install mujoco .[mujoco] torch seaborn matplotlib pandas
+        pip install .[mujoco, toy_text] torch seaborn matplotlib pandas tqdm
 
     - name: Get changed files
       id: changed-files
@@ -101,7 +102,7 @@ jobs:
 
           # Create log file path
           log_file="test-results/$(basename "$tutorial").log"
-          
+
           # Run the tutorial with timeout and record results
           start_time=$(date +%s)
           # Use set +e so the script continues even if the command fails
@@ -136,58 +137,10 @@ jobs:
             cat "$log_file"
             echo "----------------------------------------"
           fi
-          
+
         done < tutorial_files.txt
 
         echo "::endgroup::"
-
-        # Set output variables
-        echo "total=$total" >> $GITHUB_OUTPUT
-        echo "passed=$passed" >> $GITHUB_OUTPUT
-        echo "failed=$failed" >> $GITHUB_OUTPUT
-
-        # Generate summary
-        echo "### Tutorial Test Results for ${{ matrix.tutorial-group }} 📊" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-
-        echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
-        echo "| ------ | ----- |" >> $GITHUB_STEP_SUMMARY
-        echo "| ✅ Passed | $passed |" >> $GITHUB_STEP_SUMMARY
-        echo "| ❌ Failed | $failed |" >> $GITHUB_STEP_SUMMARY
-        echo "| 📚 Total | $total |" >> $GITHUB_STEP_SUMMARY
-
-        # List all tested tutorials
-        if [ $total -gt 0 ]; then
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Tested Tutorials 📝" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          while IFS=, read -r file status time; do
-            if [ "$status" == "pass" ]; then
-              echo "- ✅ $file (${time}s)" >> $GITHUB_STEP_SUMMARY
-            elif [ "$status" == "timeout" ]; then
-              echo "- ⚠️ $file (timeout after ${time}s)" >> $GITHUB_STEP_SUMMARY
-              # Add the last few lines of output to help debug timeout issues
-              echo "  <details><summary>Last output before timeout</summary>" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "  \`\`\`" >> $GITHUB_STEP_SUMMARY
-              tail -n 20 "test-results/$(basename "$file").log" >> $GITHUB_STEP_SUMMARY
-              echo "  \`\`\`" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "  </details>" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "- ❌ $file (failed after ${time}s)" >> $GITHUB_STEP_SUMMARY
-              # Add the error details to help debug failures
-              echo "  <details><summary>Error details</summary>" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "  \`\`\`" >> $GITHUB_STEP_SUMMARY
-              cat "test-results/$(basename "$file").log" >> $GITHUB_STEP_SUMMARY
-              echo "  \`\`\`" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "  </details>" >> $GITHUB_STEP_SUMMARY
-            fi
-          done < test-results/summary.csv
-        fi
 
     - name: Upload test results
       if: always()
@@ -203,13 +156,11 @@ jobs:
         if [ "${{ steps.run-tutorials.outputs.total }}" -eq 0 ]; then
           echo "::notice::No tutorials were tested in this group."
         elif [ "${{ steps.run-tutorials.outputs.failed }}" -gt 0 ]; then
-          echo "::warning::${{ steps.run-tutorials.outputs.failed }} out of ${{ steps.run-tutorials.outputs.total }} tutorials failed."
-          # Using warning instead of error to not fail the workflow
-          # The actual exit status is set below
+          echo "::warning::${{ steps.run-tutorials.outputs.failed }} out of ${{ steps.run-tutorials.outputs.total }} tutorials failed. Read in Test tutorials and click `Running tutorials...` to see the error messages."
         else
           echo "::notice::All ${{ steps.run-tutorials.outputs.total }} tutorials passed."
         fi
-        
+
         # This ensures the job reports failure if any tutorials failed,
         # but without stopping other jobs in the matrix
         [ "${{ steps.run-tutorials.outputs.failed }}" -eq 0 ]
