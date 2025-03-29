@@ -36,7 +36,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
-      run: apt-get -y update && apt-get install --no-install-recommends -y libglu1-mesa-dev libgl1-mesa-dev libosmesa6-dev xvfb unzip patchelf ffmpeg cmake swig
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y patchelf libosmesa6-dev libgl1-mesa-glx libglfw3 libglew-dev swig
 
     - name: Install Gymnasium basics tutorial requirements
       if: matrix.tutorial-group == 'gymnasium_basics'
