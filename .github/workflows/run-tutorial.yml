@@ -34,19 +34,19 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-        cache: 'pip'
+
+    - name: Install dependencies
+      run: apt-get -y update && apt-get install --no-install-recommends -y libglu1-mesa-dev libgl1-mesa-dev libosmesa6-dev xvfb unzip patchelf ffmpeg cmake swig
 
     - name: Install Gymnasium basics tutorial requirements
       if: matrix.tutorial-group == 'gymnasium_basics'
       run: |
-        sudo apt-get update
-        sudo apt-get swig
-        pip install .[mujoco, box2d]
+        pip install ".[mujoco, box2d]"
 
     - name: Install Training Agents tutorial requirements
       if: matrix.tutorial-group == 'training_agents'
       run: |
-        pip install .[mujoco, toy_text] torch seaborn matplotlib pandas tqdm
+        pip install ".[mujoco, toy_text]" torch seaborn matplotlib pandas tqdm
 
     - name: Get changed files
       id: changed-files
