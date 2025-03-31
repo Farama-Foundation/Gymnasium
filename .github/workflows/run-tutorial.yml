@@ -61,12 +61,25 @@ jobs:
       run: |
         # Patch load_quadruped_model.py to use the built-in ant.xml instead of the missing mujoco_menagerie file
         if [ -f "docs/tutorials/gymnasium_basics/load_quadruped_model.py" ]; then
-          sed -i 's|"./mujoco_menagerie/unitree_go1/scene.xml"|"gymnasium/envs/mujoco/assets/ant.xml"|g' docs/tutorials/gymnasium_basics/load_quadruped_model.py
+          sed -i 's|"./mujoco_menagerie/unitree_go1/scene.xml"|"ant.xml"|g' docs/tutorials/gymnasium_basics/load_quadruped_model.py
         fi
 
         # Patch mujoco_reinforce.py to reduce the number of episodes for CI
         if [ -f "docs/tutorials/training_agents/mujoco_reinforce.py" ]; then
           sed -i 's/total_num_episodes = int(5e3)/total_num_episodes = int(1e2)/g' docs/tutorials/training_agents/mujoco_reinforce.py
+        fi
+
+        # Patch frozenlake_q_learning.py to reduce the number of episodes and runs
+        if [ -f "docs/tutorials/training_agents/frozenlake_q_learning.py" ]; then
+          sed -i 's/total_episodes=2000/total_episodes=200/g' docs/tutorials/training_agents/frozenlake_q_learning.py
+          sed -i 's/n_runs=20/n_runs=3/g' docs/tutorials/training_agents/frozenlake_q_learning.py
+          sed -i 's/map_sizes = \[4, 7, 9, 11\]/map_sizes = \[4, 7\]/g' docs/tutorials/training_agents/frozenlake_q_learning.py
+        fi
+
+        # Patch vector_a2c.py to reduce the number of updates and environments
+        if [ -f "docs/tutorials/training_agents/vector_a2c.py" ]; then
+          sed -i 's/n_envs = 10/n_envs = 4/g' docs/tutorials/training_agents/vector_a2c.py
+          sed -i 's/n_updates = 1000/n_updates = 100/g' docs/tutorials/training_agents/vector_a2c.py
         fi
 
         # Make sure we use 'rgb_array' render mode instead of 'human' everywhere to avoid display issues
