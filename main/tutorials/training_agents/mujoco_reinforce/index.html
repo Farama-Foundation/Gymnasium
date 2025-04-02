@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/tutorials/training_agents/mujoco_reinforce.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Training A2C with Vector Envs and Domain Randomization" href="../vector_a2c/" /><link rel="prev" title="Frozenlake benchmark" href="../frozenlake_q_learning/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Speeding up A2C Training with Vector Envs" href="../vector_a2c/" /><link rel="prev" title="Solving Frozenlake with Tabular Q-Learning" href="../frozenlake_q_learning/" />
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/mujoco_reinforce.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
@@ -296,24 +296,16 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Frozenlake benchmark</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector_a2c/">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Frozenlake benchmark</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector_a2c/">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -382,17 +374,15 @@
           </div>
           <article role="main">
             
-            <section class="sphx-glr-example-title" id="training-using-reinforce-for-mujoco">
+            <div class="sphx-glr-example-title admonition note">
+<p class="admonition-title">Note</p>
+<p>This example is compatible with Gymnasium version 1.1.1.</p>
+</div>
+<section id="training-using-reinforce-for-mujoco">
 <span id="sphx-glr-tutorials-training-agents-mujoco-reinforce-py"></span><h1>Training using REINFORCE for Mujoco<a class="headerlink" href="#training-using-reinforce-for-mujoco" title="Link to this heading">¶</a></h1>
 <a class="reference internal image-reference" href="../../../_images/mujoco_reinforce_fig1.gif"><img alt="agent-environment-diagram" src="../../../_images/mujoco_reinforce_fig1.gif" style="width: 400px;" />
 </a>
-<dl class="simple">
-<dt>This tutorial serves 2 purposes:</dt><dd><ol class="arabic simple">
-<li><p>To understand how to implement REINFORCE [1] from scratch to solve Mujoco’s InvertedPendulum-v4</p></li>
-<li><p>Implementation a deep reinforcement learning algorithm with Gymnasium’s v0.26+ <cite>step()</cite> function</p></li>
-</ol>
-</dd>
-</dl>
+<p>This tutorial implements REINFORCE with neural networks for a MuJoCo environment.</p>
 <p>We will be using <strong>REINFORCE</strong>, one of the earliest policy gradient methods. Unlike going under the burden of learning a value function first and then deriving a policy out of it,
 REINFORCE optimizes the policy directly. In other words, it is trained to maximize the probability of Monte-Carlo returns. More on that later.</p>
 <p><strong>Inverted Pendulum</strong> is Mujoco’s cartpole but now powered by the Mujoco physics simulator -
@@ -697,7 +687,7 @@ algorithms for connectionist reinforcement learning.” Machine Learning 8
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Training A2C with Vector Envs and Domain Randomization</div>
+                <div class="title">Speeding up A2C Training with Vector Envs</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
@@ -712,7 +702,7 @@ algorithms for connectionist reinforcement learning.” Machine Learning 8
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Frozenlake benchmark</div>
+                <div class="title">Solving Frozenlake with Tabular Q-Learning</div>
                 
               </div>
             </a>

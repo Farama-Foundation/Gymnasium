@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/tutorials/training_agents/index.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Solving Blackjack with Q-Learning" href="blackjack_q_learning/" /><link rel="prev" title="Load custom quadruped robot environments" href="../gymnasium_basics/load_quadruped_model/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Solving Blackjack with Tabular Q-Learning" href="blackjack_q_learning/" /><link rel="prev" title="Load custom quadruped robot environments" href="../gymnasium_basics/load_quadruped_model/" />
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/index.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
@@ -195,7 +195,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -296,24 +296,16 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="blackjack_q_learning/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="frozenlake_q_learning/">Frozenlake benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vector_a2c/">Training A2C with Vector Envs and Domain Randomization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="blackjack_q_learning/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="frozenlake_q_learning/">Frozenlake benchmark</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vector_a2c/">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -373,7 +365,7 @@
                 </svg>
               </button>
             </div>
-            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
               <div class="visually-hidden">Toggle table of contents sidebar</div>
               <i class="icon"><svg>
                   <use href="#svg-toc"></use>
@@ -384,20 +376,19 @@
             
             <section id="training-agents">
 <span id="sphx-glr-tutorials-training-agents"></span><h1>Training Agents<a class="headerlink" href="#training-agents" title="Link to this heading">¶</a></h1>
-<div class="toctree-wrapper compound">
-</div>
-<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This tutorial serves 2 purposes:  1. To understand how to implement REINFORCE [1] from scratch ..."><img alt="" src="../../_images/sphx_glr_mujoco_reinforce_thumb.png" />
+<p id="gallery-section-name">The most common application of Gymnasium is for training RL agents. Therefore, these tutorials aim to show a range of example implementations for different environments.</p>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This tutorial trains an agent for BlackJack using tabular Q-learning."><img alt="" src="../../_images/sphx_glr_blackjack_q_learning_thumb.png" />
+<p><a class="reference internal" href="blackjack_q_learning/#sphx-glr-tutorials-training-agents-blackjack-q-learning-py"><span class="std std-ref">Solving Blackjack with Tabular Q-Learning</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Solving Blackjack with Tabular Q-Learning</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This tutorial trains an agent for FrozenLake using tabular Q-learning."><img alt="" src="../../_images/sphx_glr_frozenlake_q_learning_thumb.png" />
+<p><a class="reference internal" href="frozenlake_q_learning/#sphx-glr-tutorials-training-agents-frozenlake-q-learning-py"><span class="std std-ref">Solving Frozenlake with Tabular Q-Learning</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Solving Frozenlake with Tabular Q-Learning</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This tutorial implements REINFORCE with neural networks for a MuJoCo environment."><img alt="" src="../../_images/sphx_glr_mujoco_reinforce_thumb.png" />
 <p><a class="reference internal" href="mujoco_reinforce/#sphx-glr-tutorials-training-agents-mujoco-reinforce-py"><span class="std std-ref">Training using REINFORCE for Mujoco</span></a></p>
   <div class="sphx-glr-thumbnail-title">Training using REINFORCE for Mujoco</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Solving Blackjack with Q-Learning"><img alt="" src="../../_images/sphx_glr_blackjack_q_learning_thumb.png" />
-<p><a class="reference internal" href="blackjack_q_learning/#sphx-glr-tutorials-training-agents-blackjack-q-learning-py"><span class="std std-ref">Solving Blackjack with Q-Learning</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Solving Blackjack with Q-Learning</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Frozenlake benchmark"><img alt="" src="../../_images/sphx_glr_frozenlake_q_learning_thumb.png" />
-<p><a class="reference internal" href="frozenlake_q_learning/#sphx-glr-tutorials-training-agents-frozenlake-q-learning-py"><span class="std std-ref">Frozenlake benchmark</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Frozenlake benchmark</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="Training A2C with Vector Envs and Domain Randomization"><img alt="" src="../../_images/sphx_glr_vector_a2c_thumb.png" />
-<p><a class="reference internal" href="vector_a2c/#sphx-glr-tutorials-training-agents-vector-a2c-py"><span class="std std-ref">Training A2C with Vector Envs and Domain Randomization</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Training A2C with Vector Envs and Domain Randomization</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This tutorial demonstrates training with vector environments to it speed up."><img alt="" src="../../_images/sphx_glr_vector_a2c_thumb.png" />
+<p><a class="reference internal" href="vector_a2c/#sphx-glr-tutorials-training-agents-vector-a2c-py"><span class="std std-ref">Speeding up A2C Training with Vector Envs</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Speeding up A2C Training with Vector Envs</div>
 </div></div><div class="toctree-wrapper compound">
 </div>
 </section>
@@ -412,7 +403,7 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Solving Blackjack with Q-Learning</div>
+                <div class="title">Solving Blackjack with Tabular Q-Learning</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
@@ -459,26 +450,8 @@
           
         </footer>
       </div>
-      <aside class="toc-drawer">
+      <aside class="toc-drawer no-toc">
         
-        
-        <div class="toc-sticky toc-scroll">
-          <div class="toc-title-container">
-            <span class="toc-title">
-              On this page
-            </span>
-          </div>
-          <div class="toc-tree-container">
-            <div class="toc-tree">
-              <ul>
-<li><a class="reference internal" href="#">Training Agents</a><ul>
-</ul>
-</li>
-</ul>
-
-            </div>
-          </div>
-        </div>
         
         
       </aside>

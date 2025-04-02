@@ -3,10 +3,7 @@
 Make your own custom environment
 ================================
 
-This documentation overviews creating new environments and relevant
-useful wrappers, utilities and tests included in Gymnasium designed for
-the creation of new environments.
-
+This tutorial shows how to create new environment and links to relevant useful wrappers, utilities and tests included in Gymnasium.
 
 Setup
 ------

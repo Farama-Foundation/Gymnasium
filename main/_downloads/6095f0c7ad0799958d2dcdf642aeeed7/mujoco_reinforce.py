@@ -7,9 +7,7 @@ Training using REINFORCE for Mujoco
   :width: 400
   :alt: agent-environment-diagram
 
-This tutorial serves 2 purposes:
- 1. To understand how to implement REINFORCE [1] from scratch to solve Mujoco's InvertedPendulum-v4
- 2. Implementation a deep reinforcement learning algorithm with Gymnasium's v0.26+ `step()` function
+This tutorial implements REINFORCE with neural networks for a MuJoCo environment.
 
 We will be using **REINFORCE**, one of the earliest policy gradient methods. Unlike going under the burden of learning a value function first and then deriving a policy out of it,
 REINFORCE optimizes the policy directly. In other words, it is trained to maximize the probability of Monte-Carlo returns. More on that later.

@@ -1,7 +1,8 @@
 """
-Solving Blackjack with Q-Learning
-=================================
+Solving Blackjack with Tabular Q-Learning
+=========================================
 
+This tutorial trains an agent for BlackJack using tabular Q-learning.
 """
 
 # %%

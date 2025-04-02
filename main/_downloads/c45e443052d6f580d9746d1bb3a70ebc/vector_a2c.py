@@ -1,14 +1,15 @@
 """
-Training A2C with Vector Envs and Domain Randomization
-======================================================
+Speeding up A2C Training with Vector Envs
+=========================================
 
+This tutorial demonstrates training with vector environments to it speed up.
 """
 
 # %%
 # Notice
 # ------
 #
-# If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from ``gym.vector.make=`` or ``gym.vector.AsyncVectorEnv`` to the end of the code by ``if__name__ == '__main__'``.
+# If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from ``gym.make_vec=`` or ``gym.vector.AsyncVectorEnv`` to the end of the code by ``if__name__ == '__main__'``.
 #
 # ``An attempt has been made to start a new process before the current process has finished its bootstrapping phase.``
 #

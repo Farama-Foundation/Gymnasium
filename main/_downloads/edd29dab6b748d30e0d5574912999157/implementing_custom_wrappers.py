@@ -3,6 +3,7 @@ Implementing Custom Wrappers
 ============================
 
 In this tutorial we will describe how to implement your own custom wrappers.
+
 Wrappers are a great way to add functionality to your environments in a modular way.
 This will save you a lot of boilerplate code.
 
