@@ -165,8 +165,8 @@ class CarRacing(gym.Env, EzPickle):
     * `domain_randomize=False` enables the domain randomized variant of the environment.
      In this scenario, the background and track colours are different on every reset.
 
-    * `continuous=False` converts the environment to use discrete action space.
-     The discrete action space has 5 actions: [do nothing, left, right, gas, brake].
+    * `continuous=True` specifies if the agent has continuous (true) or discrete (false) actions.
+     See action space section for a description of each.
 
     ## Reset Arguments
 
