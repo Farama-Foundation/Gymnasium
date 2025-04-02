@@ -8,104 +8,41 @@ title: Space Invaders
   <head>
     <title>Redirecting to Space Invaders's documentation</title>
     <style>
-      :root {
-        --background-color: #ffffff;
-        --text-color: #333333;
-        --popup-background: #ffffff;
-        --popup-shadow: rgba(0, 0, 0, 0.5);
-        --button-background: #f0f0f0;
-        --button-text: #333333;
-        --button-hover: #e0e0e0;
-        --button-border: #cccccc;
-        --link-color: #0066cc;
-      }
-
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --background-color: #222222;
-          --text-color: #e0e0e0;
-          --popup-background: #333333;
-          --popup-shadow: rgba(0, 0, 0, 0.7);
-          --button-background: #444444;
-          --button-text: #e0e0e0;
-          --button-hover: #555555;
-          --button-border: #666666;
-          --link-color: #66b0ff;
-        }
-      }
-
-      body {
-        background-color: var(--background-color);
-        color: var(--text-color);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        line-height: 1.5;
-        margin: 20px;
-        transition: background-color 0.3s, color 0.3s;
-      }
-
-      a {
-        color: var(--link-color);
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-
       /* Basic styles for the popup */
       .popup {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: var(--popup-shadow);
-        z-index: 999;
-        justify-content: center;
-        align-items: center;
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5); /* Default background overlay */
+          z-index: 999;
+          justify-content: center;
+          align-items: center;
       }
-
       .popup-content {
-        background-color: var(--popup-background);
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        width: 300px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        transition: background-color 0.3s;
+          background-color: #fff; /* Default light content background */
+          padding: 20px;
+          border-radius: 10px;
+          text-align: center;
+          width: 300px;
       }
-
+      .dark-theme .popup {
+          background-color: rgba(0, 0, 0, 0.7); /* Darker overlay for dark theme */
+      }
+      .dark-theme .popup-content {
+          background-color: #333; /* Dark content background */
+          color: #fff; /* Light text for dark theme */
+      }
       button {
-        margin-top: 10px;
-        padding: 8px 14px;
-        cursor: pointer;
-        background-color: var(--button-background);
-        color: var(--button-text);
-        border: 1px solid var(--button-border);
-        border-radius: 4px;
-        font-size: 14px;
-        transition: background-color 0.2s, color 0.2s;
+          margin-top: 10px;
+          padding: 5px 10px;
+          cursor: pointer;
       }
-
-      button:hover {
-        background-color: var(--button-hover);
-      }
-
-      #atariRedirectBtn {
-        background-color: var(--link-color);
-        color: white;
-        border: none;
-      }
-
-      #atariRedirectBtn:hover {
-        opacity: 0.9;
-      }
-
-      label {
-        display: block;
-        margin: 15px 0;
-        user-select: none;
+      /* Add spacing between checkbox and label text */
+      input[type="checkbox"] {
+          margin-right: 5px;
       }
     </style>
   </head>
@@ -143,8 +80,39 @@ title: Space Invaders
         document.cookie = `${name}=${value}; ${expires}; path=/`;  // environments/atari/
     }
 
+    // Function to apply theme to the popup
+    function applyTheme() {
+        const theme = localStorage.getItem("theme") || "auto";
+        const body = document.body;
+
+        // Remove any existing theme classes
+        body.classList.remove("dark-theme", "light-theme");
+
+        if (theme === "dark") {
+            body.classList.add("dark-theme");
+        } else if (theme === "light") {
+            body.classList.add("light-theme");
+        } else if (theme === "auto") {
+            // Check system preference for dark mode
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                body.classList.add("dark-theme");
+            } else {
+                body.classList.add("light-theme");
+            }
+
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                body.classList.remove("dark-theme", "light-theme");
+                body.classList.add(e.matches ? "dark-theme" : "light-theme");
+            });
+        }
+    }
+
     // Show popup if the cookie doesn't exist
     window.onload = function() {
+        // Apply theme first
+        applyTheme();
+
         const atariAutoRedirect = getCookie('atariAutoRedirect');
         if (atariAutoRedirect) {
             window.location.href = "https://ale.farama.org/environments/space_invaders";
