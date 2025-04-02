@@ -185,14 +185,22 @@ jobs:
     - name: Check test results
       if: always()
       run: |
-        if [ "${{ steps.run-tutorials.outputs.total }}" -eq 0 ]; then
-          echo "::notice::No tutorials were tested in this group."
-        elif [ "${{ steps.run-tutorials.outputs.failed }}" -gt 0 ]; then
-          echo "::warning::${{ steps.run-tutorials.outputs.failed }} out of ${{ steps.run-tutorials.outputs.total }} tutorials failed. Read in Test tutorials and click `Running tutorials...` to see the error messages."
+        # Read the outputs from the test step
+        total="${{ steps.run-tutorials.outputs.total }}"
+        failed="${{ steps.run-tutorials.outputs.failed }}"
+
+        # Default to 0 if empty to avoid bash errors
+        total=${total:-0}
+        failed=${failed:-0}
+
+        if [ "$total" -eq 0 ]; then
+          echo "No tutorials were tested in this group."
+        elif [ "$failed" -gt 0 ]; then
+          echo "Warning: $failed out of $total tutorials failed."
+          echo "Check the test results in the uploaded artifacts to see detailed error messages."
         else
-          echo "::notice::All ${{ steps.run-tutorials.outputs.total }} tutorials passed."
+          echo "Success: All $total tutorials passed."
         fi
 
-        # This ensures the job reports failure if any tutorials failed,
-        # but without stopping other jobs in the matrix
-        [ "${{ steps.run-tutorials.outputs.failed }}" -eq 0 ]
+        # Return exit code based on failures
+        exit $failed
