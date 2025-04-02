@@ -1,10 +1,6 @@
 Gymnasium Basics
-----------------
+================
 
-.. toctree::
-    :hidden:
+.. _gallery_section_name:
 
-    environment_creation
-    implementing_custom_wrappers
-    handling_time_limits
-    load_quadruped_model
+The aim of these tutorials is to showcase the fundamental API of Gymnasium to help users implement it

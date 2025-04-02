@@ -1,10 +1,6 @@
 Training Agents
----------------
+===============
 
-.. toctree::
-    :hidden:
+.. _gallery_section_name:
 
-    blackjack_q_learning
-    frozenlake_q_learning
-    mujoco_reinforce
-    vector_a2c
+The most common application of Gymnasium is for training RL agents. Therefore, these tutorials aim to show a range of example implementations for different environments.

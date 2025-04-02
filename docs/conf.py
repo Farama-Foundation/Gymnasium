@@ -12,11 +12,11 @@
 
 # -- Project information -----------------------------------------------------
 import os
-import re
 import sys
 import time
 
 import sphinx_gallery.gen_rst
+import sphinx_gallery.sorting
 from furo.gen_tutorials import generate_tutorials
 
 
@@ -123,9 +123,29 @@ sphinx_gallery.gen_rst.EXAMPLE_HEADER = """
 
 .. rst-class:: sphx-glr-example-title
 
+.. note::
+    This example is compatible with Gymnasium version |release|.
+
 .. _sphx_glr_{1}:
 
 """
+
+tutorial_sorting = {
+    "tutorials/gymnasium_basics": [
+        "environment_creation",
+        "implementing_custom_wrappers",
+        "handling_time_limits",
+        "load_quadruped_model",
+        "*",
+    ],
+    "tutorials/training_agents": [
+        "blackjack_q_learning",
+        "frozenlake_q_learning",
+        "mujoco_reinforce",
+        "vector_a2c",
+        "*",
+    ],
+}
 
 sphinx_gallery_conf = {
     "ignore_pattern": r"__init__\.py",
@@ -135,10 +155,13 @@ sphinx_gallery_conf = {
     "show_signature": False,
     "show_memory": False,
     "min_reported_time": float("inf"),
-    "filename_pattern": f"{re.escape(os.sep)}run_",
+    # "filename_pattern": f"{re.escape(os.sep)}run_",
     "default_thumb_file": os.path.join(
         os.path.dirname(__file__), "_static/img/gymnasium-github.png"
     ),
+    # order the tutorial presentation order
+    "within_subsection_order": sphinx_gallery.sorting.FileNameSortKey,
+    "subsection_order": lambda folder: tutorial_sorting[folder],
 }
 
 # All tutorials in the tutorials directory will be generated automatically
