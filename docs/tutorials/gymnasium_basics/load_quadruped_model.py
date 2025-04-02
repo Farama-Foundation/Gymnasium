@@ -2,8 +2,7 @@
 Load custom quadruped robot environments
 ========================================
 
-In this tutorial we will see how to use the `MuJoCo/Ant-v5` framework to create a quadruped walking environment,
-using a model file (ending in `.xml`) without having to create a new class.
+In this tutorial create a mujoco quadruped walking environment using a model file (ending in `.xml`) without having to create a new class.
 
 Steps:
 
