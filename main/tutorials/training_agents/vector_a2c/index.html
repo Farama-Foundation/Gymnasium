@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/vector_a2c.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
-        <title>Training A2C with Vector Envs and Domain Randomization - Gymnasium Documentation</title>
+        <title>Speeding up A2C Training with Vector Envs - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
@@ -296,24 +296,16 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Frozenlake benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Training A2C with Vector Envs and Domain Randomization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Frozenlake benchmark</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -382,11 +374,16 @@
           </div>
           <article role="main">
             
-            <section class="sphx-glr-example-title" id="training-a2c-with-vector-envs-and-domain-randomization">
-<span id="sphx-glr-tutorials-training-agents-vector-a2c-py"></span><h1>Training A2C with Vector Envs and Domain Randomization<a class="headerlink" href="#training-a2c-with-vector-envs-and-domain-randomization" title="Link to this heading">¶</a></h1>
+            <div class="sphx-glr-example-title admonition note">
+<p class="admonition-title">Note</p>
+<p>This example is compatible with Gymnasium version 1.1.1.</p>
+</div>
+<section id="speeding-up-a2c-training-with-vector-envs">
+<span id="sphx-glr-tutorials-training-agents-vector-a2c-py"></span><h1>Speeding up A2C Training with Vector Envs<a class="headerlink" href="#speeding-up-a2c-training-with-vector-envs" title="Link to this heading">¶</a></h1>
+<p>This tutorial demonstrates training with vector environments to it speed up.</p>
 <section id="notice">
 <h2>Notice<a class="headerlink" href="#notice" title="Link to this heading">¶</a></h2>
-<p>If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from <code class="docutils literal notranslate"><span class="pre">gym.vector.make=</span></code> or <code class="docutils literal notranslate"><span class="pre">gym.vector.AsyncVectorEnv</span></code> to the end of the code by <code class="docutils literal notranslate"><span class="pre">if__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code>.</p>
+<p>If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from <code class="docutils literal notranslate"><span class="pre">gym.make_vec=</span></code> or <code class="docutils literal notranslate"><span class="pre">gym.vector.AsyncVectorEnv</span></code> to the end of the code by <code class="docutils literal notranslate"><span class="pre">if__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">An</span> <span class="pre">attempt</span> <span class="pre">has</span> <span class="pre">been</span> <span class="pre">made</span> <span class="pre">to</span> <span class="pre">start</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">process</span> <span class="pre">before</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">process</span> <span class="pre">has</span> <span class="pre">finished</span> <span class="pre">its</span> <span class="pre">bootstrapping</span> <span class="pre">phase.</span></code></p>
 <hr class="docutils" />
 </section>
@@ -1076,7 +1073,7 @@ parallel environments to achieve optimal performance.</p>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Training A2C with Vector Envs and Domain Randomization</a><ul>
+<li><a class="reference internal" href="#">Speeding up A2C Training with Vector Envs</a><ul>
 <li><a class="reference internal" href="#notice">Notice</a></li>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#advantage-actor-critic-a2c">Advantage Actor-Critic (A2C)</a></li>

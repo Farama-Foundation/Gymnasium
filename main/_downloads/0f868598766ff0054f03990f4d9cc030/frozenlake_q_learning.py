@@ -1,7 +1,8 @@
 """
-Frozenlake benchmark
-====================
+Solving Frozenlake with Tabular Q-Learning
+==========================================
 
+This tutorial trains an agent for FrozenLake using tabular Q-learning.
 """
 
 # %%

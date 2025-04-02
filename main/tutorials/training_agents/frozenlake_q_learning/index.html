@@ -8,11 +8,11 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/tutorials/training_agents/frozenlake_q_learning.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Training using REINFORCE for Mujoco" href="../mujoco_reinforce/" /><link rel="prev" title="Solving Blackjack with Q-Learning" href="../blackjack_q_learning/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Training using REINFORCE for Mujoco" href="../mujoco_reinforce/" /><link rel="prev" title="Solving Blackjack with Tabular Q-Learning" href="../blackjack_q_learning/" />
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/frozenlake_q_learning.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
-        <title>Frozenlake benchmark - Gymnasium Documentation</title>
+        <title>Solving Frozenlake with Tabular Q-Learning - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
@@ -296,24 +296,16 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Frozenlake benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector_a2c/">Training A2C with Vector Envs and Domain Randomization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Frozenlake benchmark</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../vector_a2c/">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -382,8 +374,13 @@
           </div>
           <article role="main">
             
-            <section class="sphx-glr-example-title" id="frozenlake-benchmark">
-<span id="sphx-glr-tutorials-training-agents-frozenlake-q-learning-py"></span><h1>Frozenlake benchmark<a class="headerlink" href="#frozenlake-benchmark" title="Link to this heading">¶</a></h1>
+            <div class="sphx-glr-example-title admonition note">
+<p class="admonition-title">Note</p>
+<p>This example is compatible with Gymnasium version 1.1.1.</p>
+</div>
+<section id="solving-frozenlake-with-tabular-q-learning">
+<span id="sphx-glr-tutorials-training-agents-frozenlake-q-learning-py"></span><h1>Solving Frozenlake with Tabular Q-Learning<a class="headerlink" href="#solving-frozenlake-with-tabular-q-learning" title="Link to this heading">¶</a></h1>
+<p>This tutorial trains an agent for FrozenLake using tabular Q-learning.</p>
 <p>In this post we’ll compare a bunch of different map sizes on the
 <a class="reference external" href="https://gymnasium.farama.org/environments/toy_text/frozen_lake/">FrozenLake</a>
 environment from the reinforcement learning
@@ -854,7 +851,7 @@ Miller (University of Melbourne)</p></li>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Solving Blackjack with Q-Learning</div>
+                <div class="title">Solving Blackjack with Tabular Q-Learning</div>
                 
               </div>
             </a>
@@ -898,7 +895,7 @@ Miller (University of Melbourne)</p></li>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Frozenlake benchmark</a><ul>
+<li><a class="reference internal" href="#">Solving Frozenlake with Tabular Q-Learning</a><ul>
 <li><a class="reference internal" href="#parameters-we-ll-use">Parameters we’ll use</a></li>
 <li><a class="reference internal" href="#the-frozenlake-environment">The FrozenLake environment</a><ul>
 <li><a class="reference internal" href="#creating-the-q-table">Creating the Q-table</a></li>

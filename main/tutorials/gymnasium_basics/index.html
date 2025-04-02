@@ -195,7 +195,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -296,24 +296,16 @@
 <ul class="current">
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Gymnasium Basics</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="handling_time_limits/">Handling Time Limits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="load_quadruped_model/">Load custom quadruped robot environments</a></li>
 <li class="toctree-l2"><a class="reference internal" href="handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../training_agents/blackjack_q_learning/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../training_agents/frozenlake_q_learning/">Frozenlake benchmark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../training_agents/vector_a2c/">Training A2C with Vector Envs and Domain Randomization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../training_agents/blackjack_q_learning/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../training_agents/frozenlake_q_learning/">Frozenlake benchmark</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../training_agents/vector_a2c/">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../training_agents/vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -373,7 +365,7 @@
                 </svg>
               </button>
             </div>
-            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
               <div class="visually-hidden">Toggle table of contents sidebar</div>
               <i class="icon"><svg>
                   <use href="#svg-toc"></use>
@@ -384,18 +376,17 @@
             
             <section id="gymnasium-basics">
 <span id="sphx-glr-tutorials-gymnasium-basics"></span><h1>Gymnasium Basics<a class="headerlink" href="#gymnasium-basics" title="Link to this heading">¶</a></h1>
-<div class="toctree-wrapper compound">
-</div>
-<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="In using Gymnasium environments with reinforcement learning code, a common problem observed is ..."><img alt="" src="../../_images/sphx_glr_handling_time_limits_thumb.png" />
-<p><a class="reference internal" href="handling_time_limits/#sphx-glr-tutorials-gymnasium-basics-handling-time-limits-py"><span class="std std-ref">Handling Time Limits</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Handling Time Limits</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="In this tutorial we will describe how to implement your own custom wrappers. Wrappers are a gre..."><img alt="" src="../../_images/sphx_glr_implementing_custom_wrappers_thumb.png" />
-<p><a class="reference internal" href="implementing_custom_wrappers/#sphx-glr-tutorials-gymnasium-basics-implementing-custom-wrappers-py"><span class="std std-ref">Implementing Custom Wrappers</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Implementing Custom Wrappers</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="This documentation overviews creating new environments and relevant useful wrappers, utilities ..."><img alt="" src="../../_images/sphx_glr_environment_creation_thumb.png" />
+<p id="gallery-section-name">The aim of these tutorials is to showcase the fundamental API of Gymnasium to help users implement it</p>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This tutorial shows how to create new environment and links to relevant useful wrappers, utilit..."><img alt="" src="../../_images/sphx_glr_environment_creation_thumb.png" />
 <p><a class="reference internal" href="environment_creation/#sphx-glr-tutorials-gymnasium-basics-environment-creation-py"><span class="std std-ref">Make your own custom environment</span></a></p>
   <div class="sphx-glr-thumbnail-title">Make your own custom environment</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="In this tutorial we will see how to use the MuJoCo/Ant-v5 framework to create a quadruped walki..."><img alt="" src="../../_images/sphx_glr_load_quadruped_model_thumb.png" />
+</div><div class="sphx-glr-thumbcontainer" tooltip="This tutorial explains how time limits should be correctly handled with termination and truncat..."><img alt="" src="../../_images/sphx_glr_handling_time_limits_thumb.png" />
+<p><a class="reference internal" href="handling_time_limits/#sphx-glr-tutorials-gymnasium-basics-handling-time-limits-py"><span class="std std-ref">Handling Time Limits</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Handling Time Limits</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="In this tutorial we will describe how to implement your own custom wrappers."><img alt="" src="../../_images/sphx_glr_implementing_custom_wrappers_thumb.png" />
+<p><a class="reference internal" href="implementing_custom_wrappers/#sphx-glr-tutorials-gymnasium-basics-implementing-custom-wrappers-py"><span class="std std-ref">Implementing Custom Wrappers</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Implementing Custom Wrappers</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="In this tutorial create a mujoco quadruped walking environment using a model file (ending in .x..."><img alt="" src="../../_images/sphx_glr_load_quadruped_model_thumb.png" />
 <p><a class="reference internal" href="load_quadruped_model/#sphx-glr-tutorials-gymnasium-basics-load-quadruped-model-py"><span class="std std-ref">Load custom quadruped robot environments</span></a></p>
   <div class="sphx-glr-thumbnail-title">Load custom quadruped robot environments</div>
 </div></div><div class="toctree-wrapper compound">
@@ -459,26 +450,8 @@
           
         </footer>
       </div>
-      <aside class="toc-drawer">
+      <aside class="toc-drawer no-toc">
         
-        
-        <div class="toc-sticky toc-scroll">
-          <div class="toc-title-container">
-            <span class="toc-title">
-              On this page
-            </span>
-          </div>
-          <div class="toc-tree-container">
-            <div class="toc-tree">
-              <ul>
-<li><a class="reference internal" href="#">Gymnasium Basics</a><ul>
-</ul>
-</li>
-</ul>
-
-            </div>
-          </div>
-        </div>
         
         
       </aside>
