@@ -35,7 +35,7 @@ We support and test for Python 3.8, 3.9, 3.10, 3.11 and 3.12 on Linux and macOS.
 
 ## API
 
-The Gymnasium API models environments as simple Python `env` classes. Creating environment instances and interacting with them is very simple- here's an example using the "CartPole-v1" environment:
+The Gymnasium API models environments are simple Python `env` classes. Creating environment instances and interacting with them is very simple- here's an example using the "CartPole-v1" environment:
 
 ```python
 import gymnasium as gym
