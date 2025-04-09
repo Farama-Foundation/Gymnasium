@@ -27,7 +27,7 @@ jax_to_numpy = functools.partial(to_xp, xp=np)
 numpy_to_jax = functools.partial(to_xp, xp=jnp)
 
 
-class JaxToNumpy(ToArray, gym.utils.RecordConstructorArgs, gym.utils.ezpickle.EzPickle):
+class JaxToNumpy(ToArray):
     """Wraps a Jax-based environment such that it can be interacted with NumPy arrays.
 
     Actions must be provided as numpy arrays and observations will be returned as numpy arrays.
@@ -69,6 +69,4 @@ class JaxToNumpy(ToArray, gym.utils.RecordConstructorArgs, gym.utils.ezpickle.Ez
             raise DependencyNotInstalled(
                 'Jax is not installed, run `pip install "gymnasium[jax]"`'
             )
-        gym.utils.RecordConstructorArgs.__init__(self)
-        gym.utils.ezpickle.EzPickle.__init__(self, env)
         super().__init__(env=env, env_xp=jnp, target_xp=np)

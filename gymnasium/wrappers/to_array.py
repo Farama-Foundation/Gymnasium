@@ -57,11 +57,15 @@ def module_namespace(module: ModuleType) -> ModuleType:
 
     See https://github.com/data-apis/array-api-compat/blob/e14754ba0fe4c4cd51b6f45bb11a3c6609be3b5c/array_api_compat/common/_helpers.py#L442
     """
-    if module.__name__ == "numpy":
+    return _module_name_to_namespace(module.__name__)
+
+
+def _module_name_to_namespace(name: str) -> ModuleType:
+    if name == "numpy":
         from array_api_compat import numpy as numpy_namespace
 
         return numpy_namespace
-    elif module.__name__ in ("jax.numpy", "jax"):
+    elif name in ("jax.numpy", "jax"):
         import jax.numpy
 
         if hasattr(jax.numpy, "__array_api_version__"):
@@ -70,22 +74,24 @@ def module_namespace(module: ModuleType) -> ModuleType:
             import jax.experimental.array_api as jp
 
         return jp
-    elif module.__name__ == "torch":
+    elif name == "torch":
         from array_api_compat import torch as torch_namespace
 
         return torch_namespace
-    elif module.__name__ == "cupy":
+    elif name == "cupy":
         from array_api_compat import cupy as cupy_namespace
 
         return cupy_namespace
-    elif module.__name__ == "dask.array":
+    elif name == "dask.array":
         from array_api_compat.dask import array as dask_namespace
 
         return dask_namespace
-    elif module.__name__ == "sparse":
-        return module  # Sparse is already Array API compatible
+    elif name == "sparse":
+        import sparse  # Sparse is already Array API compatible
+
+        return sparse
     else:
-        raise ValueError(f"Unknown Array API framework: {module.__name__}.")
+        raise ValueError(f"Unknown Array API framework: {name}.")
 
 
 @functools.singledispatch
@@ -154,7 +160,7 @@ def _none_to_xp(value: None, xp: ModuleType, device: Device | None = None) -> No
     return value
 
 
-class ToArray(gym.Wrapper):
+class ToArray(gym.Wrapper, gym.utils.RecordConstructorArgs):
     """Wraps an Array API compatible environment so that it can be interacted with a specific Array API framework.
 
     Actions must be provided as Array API compatible arrays and observations will be returned as Arrays of the specified xp module.
@@ -201,6 +207,7 @@ class ToArray(gym.Wrapper):
             env_device: The device the environment is on
             target_device: The device on which Arrays should be returned
         """
+        gym.utils.RecordConstructorArgs.__init__(self)
         gym.Wrapper.__init__(self, env)
 
         self._env_xp = module_namespace(env_xp)
@@ -254,3 +261,25 @@ class ToArray(gym.Wrapper):
     def render(self) -> RenderFrame | list[RenderFrame] | None:
         """Returns the rendered frames as an xp Array."""
         return to_xp(self.env.render(), self._target_xp, self._target_device)
+
+    def __getstate__(self):
+        """Returns the object pickle state with args and kwargs."""
+        env_xp_name = self._env_xp.__name__.replace("array_api_compat.", "")
+        target_xp_name = self._target_xp.__name__.replace("array_api_compat.", "")
+        env_device = self._env_device
+        target_device = self._target_device
+        return {
+            "env_xp_name": env_xp_name,
+            "target_xp_name": target_xp_name,
+            "env_device": env_device,
+            "target_device": target_device,
+            "env": self.env,
+        }
+
+    def __setstate__(self, d):
+        """Sets the object pickle state using d."""
+        self.env = d["env"]
+        self._env_xp = _module_name_to_namespace(d["env_xp_name"])
+        self._target_xp = _module_name_to_namespace(d["target_xp_name"])
+        self._env_device = d["env_device"]
+        self._target_device = d["target_device"]

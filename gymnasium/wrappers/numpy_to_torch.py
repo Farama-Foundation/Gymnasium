@@ -30,9 +30,7 @@ torch_to_numpy = functools.partial(to_xp, xp=np)
 numpy_to_torch = functools.partial(to_xp, xp=torch)
 
 
-class NumpyToTorch(
-    ToArray, gym.utils.RecordConstructorArgs, gym.utils.ezpickle.EzPickle
-):
+class NumpyToTorch(ToArray):
     """Wraps a NumPy-based environment such that it can be interacted with PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
@@ -71,8 +69,6 @@ class NumpyToTorch(
             env: The NumPy-based environment to wrap
             device: The device the torch Tensors should be moved to
         """
-        gym.utils.RecordConstructorArgs.__init__(self)
-        gym.utils.ezpickle.EzPickle.__init__(self, env, device)
         super().__init__(env=env, env_xp=np, target_xp=torch, target_device=device)
 
         self.device: Device | None = device

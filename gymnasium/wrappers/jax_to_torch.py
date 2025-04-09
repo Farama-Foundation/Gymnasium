@@ -7,6 +7,7 @@
 # Under the Apache 2.0 license. Copyright is held by the authors
 
 """Helper functions and wrapper class for converting between PyTorch and Jax."""
+
 from __future__ import annotations
 
 import functools
@@ -43,7 +44,7 @@ torch_to_jax = functools.partial(to_xp, xp=module_namespace(jnp))
 jax_to_torch = functools.partial(to_xp, xp=module_namespace(torch))
 
 
-class JaxToTorch(ToArray, gym.utils.RecordConstructorArgs, gym.utils.ezpickle.EzPickle):
+class JaxToTorch(ToArray):
     """Wraps a Jax-based environment so that it can be interacted with PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
@@ -82,8 +83,6 @@ class JaxToTorch(ToArray, gym.utils.RecordConstructorArgs, gym.utils.ezpickle.Ez
             env: The Jax-based environment to wrap
             device: The device the torch Tensors should be moved to
         """
-        gym.utils.RecordConstructorArgs.__init__(self)
-        gym.utils.ezpickle.EzPickle.__init__(self, env, device)
         super().__init__(env=env, env_xp=jnp, target_xp=torch, target_device=device)
 
         # TODO: Device was part of the public API, but should be removed in favor of _env_device and
