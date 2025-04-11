@@ -1,7 +1,6 @@
 __credits__ = ["Andrea PIERRÉ"]
 
 import math
-from copy import deepcopy
 from typing import TYPE_CHECKING, List, Optional
 
 import numpy as np
@@ -79,137 +78,6 @@ LOWER_FD = fixtureDef(
     categoryBits=0x0020,
     maskBits=0x001,
 )
-
-
-class TerrainMetadata:
-    """
-    ## Description
-    This is metadata object handler for the BipedalWalker environment.
-
-    ## Raw Example
-    ```python
-    import gymnasium as gym
-
-    env = gym.make("BipedalWalker-v3", hardcore=True, render_mode="human")
-    env.reset()
-
-    bipedal_env = env.unwrapped
-    metadata = bipedal_env.terrain_metadata()
-    options = dict(metadata=metadata)
-    env.reset(options=options)
-    ```
-
-    ## Designed Example
-    ```python
-    import gymnasium as gym
-
-    OBSTACLES = dict(
-        down_stairs=dict(state=2, metadata=(-1, 4, 2)),
-        up_stairs=dict(state=2, metadata=(1, 4, 2)),
-        small_stump=dict(state=1, metadata=1),
-        large_stump=dict(state=1, metadata=3),
-        hole=dict(state=3, metadata=2),
-    )
-
-    env = gym.make("BipedalWalker-v3", hardcore=True, render_mode="human")
-    metadata = dict(
-        designed=True,
-        states=[OBSTACLES["up_stairs"], OBSTACLES["hole"], OBSTACLES["large_stump"]],
-        x_variations=False,
-        y_variations=False
-    )
-    options = dict(metadata=metadata)
-    env.reset(options=options)
-    ```
-
-    <!-- ## References -->
-
-    ## Credits
-    Created by Arthur Plautz Ventura
-
-    """
-
-    def __init__(self, metadata: dict = {}):
-        self._states = []  # Control parameters
-        self._metadata = {1: [], 2: [], 3: []}  # Random values for terrain types
-        self._y_variations = True
-        self._x_variations = False
-        self.__generate = False
-
-        if metadata:
-            self.__from_dict(metadata)  # Copy values from existing metadata
-        else:
-            self.__generate = True  # New values should be generated
-
-    @property
-    def grass_y_variations(self):
-        return self._y_variations
-
-    @property
-    def grass_x_variations(self):
-        return self._x_variations
-
-    def _pit_length(self, metadata=None):
-        return 4
-
-    def _stairs_length(self, metadata):
-        _, stair_width, stair_steps = metadata
-        return stair_width * stair_steps
-
-    def _stump_length(self, metadata):
-        return metadata
-
-    def get_obstacles_length(self):
-        total_length = 0
-        state_length = {
-            1: self._stump_length,
-            2: self._stairs_length,
-            3: self._pit_length,
-        }
-
-        n_states = len(self._states)
-        metadata = deepcopy(self._metadata)
-        for state in self._states:
-            length_map = state_length[state]
-            total_length += length_map(metadata[state].pop(0))
-        return total_length, n_states
-
-    def get_dict(self):
-        return dict(
-            states=deepcopy(self._states),
-            metadata=deepcopy(self._metadata),
-            x_variations=self._x_variations,
-            y_variations=self._y_variations,
-        )
-
-    def __from_dict(self, metadata: dict):
-        if metadata.get("designed", False):
-            self._y_variations = metadata.get("y_variations", False)
-            self._x_variations = metadata.get("x_variations", True)
-            for state_obj in metadata.get("states", []):
-                state = state_obj["state"]
-                self._states.append(state)
-                self._metadata[state].append(state_obj["metadata"])
-        else:
-            self._states = metadata.get("states", self._states)
-            self._metadata = metadata.get("metadata", self._metadata)
-            self._y_variations = metadata.get("y_variations", self._y_variations)
-            self._x_variations = metadata.get("x_variations", self._x_variations)
-
-    def mode(self) -> bool:
-        return self.__generate
-
-    def get_metadata(self, state: int) -> any:
-        return self._metadata[state].pop(0)
-
-    def set_metadata(self, state: int, value: any):
-        self._metadata[state].append(value)
-
-    def get_state(self) -> int:
-        return self._states.pop(0)
-
-    def add_state(self, state: int):
-        self._states.append(state)
 
 
 class ContactDetector(contactListener):
@@ -306,9 +174,15 @@ class BipedalWalker(gym.Env, EzPickle):
         "render_fps": FPS,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, hardcore: bool = False):
+    def __init__(
+        self,
+        render_mode: Optional[str] = None,
+        hardcore: bool = False,
+        fall_down_penalty: bool = True,
+    ):
         EzPickle.__init__(self, render_mode, hardcore)
         self.isopen = True
+        self.fall_down_penaly = fall_down_penalty
 
         self.world = Box2D.b2World()
         self.terrain: List[Box2D.b2Body] = []
@@ -398,7 +272,7 @@ class BipedalWalker(gym.Env, EzPickle):
         self.render_mode = render_mode
         self.screen: Optional[pygame.Surface] = None
         self.clock = None
-        self._terrain_metadata = None
+        self._terrain_metadata = {}
 
     def _destroy(self):
         if not self.terrain:
@@ -414,19 +288,79 @@ class BipedalWalker(gym.Env, EzPickle):
         self.legs = []
         self.joints = []
 
-    def terrain_metadata(self):
-        if self._terrain_metadata:
-            return self._terrain_metadata.get_dict()
+    def _process_terrain_metadata(self):
+        STATES = (1, 2, 3)
+        STUMP, STAIRS, PIT = STATES
 
-    def _generate_terrain(self, hardcore):
-        generate = self._terrain_metadata.mode()
-        if not generate:
-            obstacles_length, n_obstacles = (
-                self._terrain_metadata.get_obstacles_length()
+        # Defines if the terrain should be saved or copied
+        self._predefined_terrain = bool(self._terrain_metadata)
+        # Defines if the length of the grass between obstacles should be randomly distributed
+        self._terrain_grass_x_variation = self._terrain_metadata.get(
+            "x_variation", False
+        )
+        # Defines if the grass height should randomly vary
+        self._terrain_grass_y_variation = self._terrain_metadata.get(
+            "y_variation", False
+        )
+
+        if self._predefined_terrain:
+            states = self._terrain_metadata.get("states", [])
+
+            obstacles_length = []
+            for state_object in states:
+                state, metadata = state_object.values()
+                if state in STATES:
+                    if state == STUMP:
+                        obstacle_length = metadata  # Stump metadata is the stump size
+                    elif state == STAIRS:
+                        _, stair_width, stair_steps = metadata
+                        obstacle_length = (
+                            stair_width * stair_steps
+                        )  # Stairs total length
+                    elif state == PIT:
+                        obstacle_length = 4  # Default pit x size
+                    obstacles_length.append(obstacle_length)
+
+            # Total grass portion of the terrain
+            self.terrain_grass = (TERRAIN_LENGTH - sum(obstacles_length)) // len(
+                obstacles_length
             )
-            self.terrain_grass = (TERRAIN_LENGTH - obstacles_length) // n_obstacles
         else:
             self.terrain_grass = TERRAIN_GRASS
+            self._terrain_metadata = dict(states=[])
+
+    def _generate_terrain_state(self, state: int) -> any:
+        GRASS, STUMP, STAIRS, PIT, _STATES_ = range(5)
+
+        if self._predefined_terrain:
+            if state == GRASS:
+                next_state = self._terrain_metadata["states"][0]
+                return next_state["state"]
+            else:
+                next_state = self._terrain_metadata["states"].pop(0)
+                state_metadata = next_state["metadata"]
+
+        else:
+            if state == GRASS:
+                next_state = self.np_random.integers(1, _STATES_)
+                return next_state
+            elif state == STUMP:
+                state_metadata = self.np_random.integers(1, 3)
+            elif state == STAIRS:
+                stair_height = +1 if self.np_random.random() > 0.5 else -1
+                stair_width = self.np_random.integers(4, 5)
+                stair_steps = self.np_random.integers(3, 5)
+                state_metadata = (stair_height, stair_width, stair_steps)
+            elif state == PIT:
+                state_metadata = self.np_random.integers(3, 5)
+
+            state_object = dict(state=state, metadata=state_metadata)
+            self._terrain_metadata["states"].append(state_object)
+
+        return state_metadata
+
+    def _generate_terrain(self, hardcore):
+        self._process_terrain_metadata()
 
         GRASS, STUMP, STAIRS, PIT, _STATES_ = range(5)
         state = GRASS
@@ -446,19 +380,12 @@ class BipedalWalker(gym.Env, EzPickle):
 
             if state == GRASS and not oneshot:
                 velocity = 0.8 * velocity + 0.01 * np.sign(TERRAIN_HEIGHT - y)
-                if self._terrain_metadata.grass_y_variations and i > TERRAIN_STARTPAD:
+                if self._terrain_grass_y_variation and i > TERRAIN_STARTPAD:
                     velocity += self.np_random.uniform(-1, 1) / SCALE  # 1
                 y += velocity
 
             elif state == PIT and oneshot:
-                if generate:
-                    counter = self.np_random.integers(3, 5)
-                    self._terrain_metadata.set_metadata(state=PIT, value=counter)
-                else:
-                    counter = self._terrain_metadata.get_metadata(state=PIT)
-                    if not counter:
-                        counter = self.np_random.integers(3, 5)
-
+                counter = self._generate_terrain_state(state)
                 poly = [
                     (x, y),
                     (x + TERRAIN_STEP, y),
@@ -485,12 +412,7 @@ class BipedalWalker(gym.Env, EzPickle):
                     y -= 4 * TERRAIN_STEP
 
             elif state == STUMP and oneshot:
-                if generate:
-                    counter = self.np_random.integers(1, 3)
-                    self._terrain_metadata.set_metadata(state=STUMP, value=counter)
-                else:
-                    counter = self._terrain_metadata.get_metadata(state=STUMP)
-
+                counter = self._generate_terrain_state(state)
                 poly = [
                     (x, y),
                     (x + counter * TERRAIN_STEP, y),
@@ -503,17 +425,9 @@ class BipedalWalker(gym.Env, EzPickle):
                 self.terrain.append(t)
 
             elif state == STAIRS and oneshot:
-                if generate:
-                    stair_height = +1 if self.np_random.random() > 0.5 else -1
-                    stair_width = self.np_random.integers(4, 5)
-                    stair_steps = self.np_random.integers(3, 5)
-                    self._terrain_metadata.set_metadata(
-                        state=STAIRS, value=(stair_height, stair_width, stair_steps)
-                    )
-                else:
-                    stair_height, stair_width, stair_steps = (
-                        self._terrain_metadata.get_metadata(state=STAIRS)
-                    )
+                stair_height, stair_width, stair_steps = self._generate_terrain_state(
+                    state
+                )
 
                 original_y = y
                 for s in range(stair_steps):
@@ -550,7 +464,7 @@ class BipedalWalker(gym.Env, EzPickle):
             self.terrain_y.append(y)
             counter -= 1
             if counter == 0:
-                if self._terrain_metadata.grass_x_variations:
+                if self._terrain_grass_x_variation:
                     counter = self.np_random.integers(
                         self.terrain_grass / 2, self.terrain_grass
                     )
@@ -558,11 +472,7 @@ class BipedalWalker(gym.Env, EzPickle):
                     counter = self.terrain_grass
 
                 if state == GRASS and hardcore:
-                    if generate:
-                        state = self.np_random.integers(1, _STATES_)
-                        self._terrain_metadata.add_state(state)
-                    else:
-                        state = self._terrain_metadata.get_state()
+                    state = self._generate_terrain_state(state)
                     oneshot = True
                 else:
                     state = GRASS
@@ -616,12 +526,8 @@ class BipedalWalker(gym.Env, EzPickle):
         self.scroll = 0.0
         self.lidar_render = 0
 
-        if options and "metadata" in options.keys():
-            metadata = options.get("metadata")
-            self._terrain_metadata = TerrainMetadata(metadata)
-        else:
-            self._terrain_metadata = TerrainMetadata()
-
+        if options:
+            self._terrain_metadata = options.get("metadata", {})
         self._generate_terrain(self.hardcore)
         self._generate_clouds()
 
@@ -781,7 +687,8 @@ class BipedalWalker(gym.Env, EzPickle):
 
         terminated = False
         if self.game_over or pos[0] < 0:
-            reward = -100
+            if self.fall_down_penaly:
+                reward = -100
             terminated = True
         if pos[0] > (TERRAIN_LENGTH - self.terrain_grass) * TERRAIN_STEP:
             terminated = True
