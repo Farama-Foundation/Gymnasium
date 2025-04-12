@@ -49,7 +49,7 @@ In reinforcement learning, the classic "agent-environment loop" pictured below i
 :class: only-dark
 ```
 
-For Gymnasium, the "agent-environment-loop" is implemented below for a single episode (until the environment ends). See the next section for a line-by-line explanation. Note that running this code requires installing swig (`pip install swig` or [download](https://www.swig.org/download.html)) along with `pip install "gymnasium[box2d]"`.
+For Gymnasium, the "agent-environment-loop" is implemented below for a single episode (until the environment ends). See the next section for a line-by-line explanation. Note that running this code requires installing swig (`pip install swig`, [download](https://www.swig.org/download.html), or via [Homebrew](https://formulae.brew.sh/formula/swig) if you are using macOS) along with `pip install "gymnasium[box2d]"`.
 
 ```python
 import gymnasium as gym
