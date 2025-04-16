@@ -526,8 +526,7 @@ class BipedalWalker(gym.Env, EzPickle):
         self.scroll = 0.0
         self.lidar_render = 0
 
-        if options:
-            self._terrain_metadata = options.get("metadata", {})
+        self._terrain_metadata = options.get("metadata", {}) if options else {}
         self._generate_terrain(self.hardcore)
         self._generate_clouds()
 
