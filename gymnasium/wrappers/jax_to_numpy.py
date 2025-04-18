@@ -104,7 +104,13 @@ def _iterable_jax_to_numpy(
     value: Iterable[np.ndarray | Any],
 ) -> Iterable[jax.Array | Any]:
     """Converts an Iterable from Numpy arrays to an iterable of Jax Array."""
-    if hasattr(value, "_make"):
+    if isinstance(value, jax.Array):
+        # Since the update to jax 0.6.0, calling jax_to_numpy with a <class 'jaxlib.xla_extension.ArrayImpl'>
+        # argument wrongly dispatches to _iterable_jax_to_numpy which fails with:
+        # TypeError: (): incompatible function arguments.
+        # See: https://github.com/Farama-Foundation/Gymnasium/issues/1360
+        return _devicearray_jax_to_numpy(value)
+    elif hasattr(value, "_make"):
         # namedtuple - underline used to prevent potential name conflicts
         # noinspection PyProtectedMember
         return type(value)._make(jax_to_numpy(v) for v in value)
