@@ -124,7 +124,13 @@ def _jax_iterable_to_torch(
     value: Iterable[Any], device: Device | None = None
 ) -> Iterable[Any]:
     """Converts an Iterable from Jax Array to an iterable of PyTorch Tensors."""
-    if hasattr(value, "_make"):
+    if isinstance(value, jax.Array):
+        # Since the update to jax 0.6.0, calling jax_to_torch with a <class 'jaxlib.xla_extension.ArrayImpl'>
+        # argument wrongly dispatches to _iterable_jax_to_torch which fails with:
+        # TypeError: (): incompatible function arguments.
+        # See: https://github.com/Farama-Foundation/Gymnasium/issues/1360
+        return _devicearray_jax_to_torch(value)
+    elif hasattr(value, "_make"):
         # namedtuple - underline used to prevent potential name conflicts
         # noinspection PyProtectedMember
         return type(value)._make(jax_to_torch(v, device) for v in value)
