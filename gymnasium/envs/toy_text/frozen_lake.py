@@ -222,6 +222,11 @@ class FrozenLakeEnv(Env):
     - P(move left)=1/8
     - P(move right)=1/8
 
+    `success_rate=1.0/3.0`: Used to specify the probability of moving in the intended direction when is_slippery=True
+
+    <a id="reward_schedule"></a>`reward_schedule=(1, 0, 0)`: Used to specify reward amounts for reaching certain tiles.
+    Respectively, the indices correspond to: Reach Goal, Reach Hole, Reach Frozen (includes Start)
+
     ## Version History
     * v1: Bug fixes to rewards
     * v0: Initial version release
