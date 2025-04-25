@@ -1,8 +1,10 @@
 """Test suite for TorchToJax wrapper."""
 
 from typing import NamedTuple
+import pickle
 
 import pytest
+import gymnasium
 
 
 jax = pytest.importorskip("jax")
@@ -148,3 +150,9 @@ def test_jax_to_torch_wrapper():
     # Check that the wrapped environment can render. This implicitly returns None and requires  a
     # None -> None conversion
     wrapped_env.render()
+
+    # Test that the wrapped environment can be pickled
+    env = gymnasium.make("CartPole-v1", disable_env_checker=True)
+    wrapped_env = JaxToTorch(env)
+    pkl = pickle.dumps(wrapped_env)
+    pickle.loads(pkl)

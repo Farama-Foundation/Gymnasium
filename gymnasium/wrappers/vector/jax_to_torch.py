@@ -2,18 +2,21 @@
 
 from __future__ import annotations
 
-from typing import Any
+import jax.numpy as jnp
+import torch
 
-from gymnasium.core import ActType, ObsType
-from gymnasium.vector import VectorEnv, VectorWrapper
-from gymnasium.vector.vector_env import ArrayType
-from gymnasium.wrappers.jax_to_torch import Device, jax_to_torch, torch_to_jax
+import gymnasium as gym
+from gymnasium.vector import VectorEnv
+from gymnasium.wrappers.jax_to_torch import Device
+from gymnasium.wrappers.array_conversion import ArrayConversion
 
 
 __all__ = ["JaxToTorch"]
 
 
-class JaxToTorch(VectorWrapper):
+class JaxToTorch(
+    ArrayConversion, gym.utils.RecordConstructorArgs, gym.utils.ezpickle.EzPickle
+):
     """Wraps a Jax-based vector environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations, rewards, terminations and truncations will be returned as PyTorch Tensors.
@@ -31,48 +34,8 @@ class JaxToTorch(VectorWrapper):
             env: The Jax-based vector environment to wrap
             device: The device the torch Tensors should be moved to
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.utils.ezpickle.EzPickle.__init__(self, env, device)
+        super().__init__(env, env_xp=jnp, target_xp=torch, target_device=device)
 
         self.device: Device | None = device
-
-    def step(
-        self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
-        """Performs the given action within the environment.
-
-        Args:
-            actions: The action to perform as a PyTorch Tensor
-
-        Returns:
-            Torch-based Tensors of the next observation, reward, termination, truncation, and extra info
-        """
-        jax_action = torch_to_jax(actions)
-        obs, reward, terminated, truncated, info = self.env.step(jax_action)
-
-        return (
-            jax_to_torch(obs, self.device),
-            jax_to_torch(reward, self.device),
-            jax_to_torch(terminated, self.device),
-            jax_to_torch(truncated, self.device),
-            jax_to_torch(info, self.device),
-        )
-
-    def reset(
-        self,
-        *,
-        seed: int | list[int] | None = None,
-        options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
-        """Resets the environment returning PyTorch-based observation and info.
-
-        Args:
-            seed: The seed for resetting the environment
-            options: The options for resetting the environment, these are converted to jax arrays.
-
-        Returns:
-            PyTorch-based observations and info
-        """
-        if options:
-            options = torch_to_jax(options)
-
-        return jax_to_torch(self.env.reset(seed=seed, options=options), self.device)
