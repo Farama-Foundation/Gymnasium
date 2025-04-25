@@ -126,10 +126,12 @@ class FrozenLakeEnv(Env):
 
     ## Rewards
 
-    Reward schedule:
+    Default reward schedule:
     - Reach goal: +1
     - Reach hole: 0
     - Reach frozen: 0
+
+    See <a href="#reward_schedule">`reward_schedule`</a> for reward customization.
 
     ## Episode End
     The episode ends if the following happens:
@@ -153,7 +155,14 @@ class FrozenLakeEnv(Env):
 
     ```python
     import gymnasium as gym
-    gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
+    gym.make(
+        'FrozenLake-v1', 
+        desc=None, 
+        map_name="4x4",
+        is_slippery=True, 
+        success_rate=1.0/3.0, 
+        reward_schedule=(1, 0, 0)
+    )
     ```
 
     `desc=None`: Used to specify maps non-preloaded maps.
@@ -200,14 +209,18 @@ class FrozenLakeEnv(Env):
     `None` a random 8x8 map with 80% of locations frozen will be generated.
 
     <a id="is_slippy"></a>`is_slippery=True`: If true the player will move in intended direction with
-    probability of 1/3 else will move in either perpendicular direction with
-    equal probability of 1/3 in both directions.
+    probability specified by the `success_rate` else will move in either perpendicular direction with
+    equal probability in both directions.
 
-    For example, if action is left and is_slippery is True, then:
+    For example, if action is left, is_slippery is True, and success_rate is 1/3, then:
     - P(move left)=1/3
     - P(move up)=1/3
     - P(move down)=1/3
 
+    If action is up, is_slippery is True, and success_rate is 3/4, then:
+    - P(move up)=3/4
+    - P(move left)=1/8
+    - P(move right)=1/8
 
     ## Version History
     * v1: Bug fixes to rewards
@@ -226,6 +239,8 @@ class FrozenLakeEnv(Env):
         desc=None,
         map_name="4x4",
         is_slippery=True,
+        success_rate=1.0 / 3.0,
+        reward_schedule=(1, 0, 0),
     ):
         if desc is None and map_name is None:
             desc = generate_random_map()
@@ -233,7 +248,7 @@ class FrozenLakeEnv(Env):
             desc = MAPS[map_name]
         self.desc = desc = np.asarray(desc, dtype="c")
         self.nrow, self.ncol = nrow, ncol = desc.shape
-        self.reward_range = (0, 1)
+        self.reward_range = (min(reward_schedule), max(reward_schedule))
 
         nA = 4
         nS = nrow * ncol
@@ -242,6 +257,8 @@ class FrozenLakeEnv(Env):
         self.initial_state_distrib /= self.initial_state_distrib.sum()
 
         self.P = {s: {a: [] for a in range(nA)} for s in range(nS)}
+
+        fail_rate = (1.0 - success_rate) / 2.0
 
         def to_s(row, col):
             return row * ncol + col
@@ -262,7 +279,9 @@ class FrozenLakeEnv(Env):
             new_state = to_s(new_row, new_col)
             new_letter = desc[new_row, new_col]
             terminated = bytes(new_letter) in b"GH"
-            reward = float(new_letter == b"G")
+            reward = reward_schedule[
+                b"GHF".index(new_letter if new_letter in b"GHF" else b"F")
+            ]
             return new_state, reward, terminated
 
         for row in range(nrow):
@@ -277,7 +296,10 @@ class FrozenLakeEnv(Env):
                         if is_slippery:
                             for b in [(a - 1) % 4, a, (a + 1) % 4]:
                                 li.append(
-                                    (1.0 / 3.0, *update_probability_matrix(row, col, b))
+                                    (
+                                        success_rate if b == a else fail_rate,
+                                        *update_probability_matrix(row, col, b),
+                                    )
                                 )
                         else:
                             li.append((1.0, *update_probability_matrix(row, col, a)))
