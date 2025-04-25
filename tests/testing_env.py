@@ -6,8 +6,9 @@ import types
 from collections.abc import Callable
 from typing import Any
 
-import gymnasium as gym
 import numpy as np
+
+import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
@@ -142,6 +143,7 @@ def basic_vector_render_func(self):
 
 class GenericTestVectorEnv(VectorEnv):
     """A generic testing vector environment similar to GenericTestEnv.
+
     Some tests cannot use SyncVectorEnv, e.g. when returning non-numpy arrays in the observations.
     In these cases, GenericTestVectorEnv can be used to simulate a vector environment.
     """
@@ -166,6 +168,7 @@ class GenericTestVectorEnv(VectorEnv):
         ),
     ):
         """Generic testing vector environment constructor.
+
         Args:
             num_envs: The number of environments to create
             action_space: The environment action space

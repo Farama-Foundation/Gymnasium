@@ -7,8 +7,8 @@ import torch
 
 import gymnasium as gym
 from gymnasium.vector import VectorEnv
-from gymnasium.wrappers.jax_to_torch import Device
 from gymnasium.wrappers.array_conversion import ArrayConversion
+from gymnasium.wrappers.jax_to_torch import Device
 
 
 __all__ = ["JaxToTorch"]

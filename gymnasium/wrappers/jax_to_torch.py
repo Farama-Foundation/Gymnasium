@@ -17,8 +17,8 @@ import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.wrappers.array_conversion import (
     ArrayConversion,
-    module_namespace,
     array_conversion,
+    module_namespace,
 )
 
 

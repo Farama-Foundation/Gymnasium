@@ -1,10 +1,11 @@
 """Test suite for NumPyToTorch wrapper."""
 
-from typing import NamedTuple
 import pickle
+from typing import NamedTuple
 
 import numpy as np
 import pytest
+
 import gymnasium
 
 

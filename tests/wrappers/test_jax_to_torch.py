@@ -1,9 +1,10 @@
 """Test suite for TorchToJax wrapper."""
 
-from typing import NamedTuple
 import pickle
+from typing import NamedTuple
 
 import pytest
+
 import gymnasium
 
 

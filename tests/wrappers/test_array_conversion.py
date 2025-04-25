@@ -1,11 +1,12 @@
 """Test suite for ArrayConversion wrapper."""
 
 import importlib
+import pickle
 from itertools import product
 from typing import Any, NamedTuple
-import pickle
 
 import pytest
+
 import gymnasium
 
 
@@ -16,8 +17,8 @@ from array_api_compat import array_namespace, is_array_api_obj  # noqa: E402
 
 from gymnasium.wrappers.array_conversion import (  # noqa: E402
     ArrayConversion,
-    module_namespace,
     array_conversion,
+    module_namespace,
 )
 from tests.testing_env import GenericTestEnv  # noqa: E402
 
