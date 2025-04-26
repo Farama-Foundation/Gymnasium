@@ -226,6 +226,10 @@ class FrozenLakeEnv(Env):
         desc=None,
         map_name="4x4",
         is_slippery=True,
+        ##### NEW ARGS #####
+        reward_goal=1.0,
+        reward_hole=-1.0,
+        reward_step=-0.001
     ):
         if desc is None and map_name is None:
             desc = generate_random_map()
@@ -234,6 +238,11 @@ class FrozenLakeEnv(Env):
         self.desc = desc = np.asarray(desc, dtype="c")
         self.nrow, self.ncol = nrow, ncol = desc.shape
         self.reward_range = (0, 1)
+        
+        ##### MAKE REWARDS CLASS VARIABLE #####
+        self.reward_goal = reward_goal
+        self.reward_hole = reward_hole
+        self.reward_step = reward_step
 
         nA = 4
         nS = nrow * ncol
@@ -262,7 +271,15 @@ class FrozenLakeEnv(Env):
             new_state = to_s(new_row, new_col)
             new_letter = desc[new_row, new_col]
             terminated = bytes(new_letter) in b"GH"
-            reward = float(new_letter == b"G")
+            ##### CHANGE DEFAULT REWARDS #####
+            # reward = float(new_letter == b"G")
+            if new_letter == b"G":
+                reward = self.reward_goal
+            elif new_letter == b"H":
+                reward = self.reward_hole
+            else:
+                reward = self.reward_step
+
             return new_state, reward, terminated
 
         for row in range(nrow):
