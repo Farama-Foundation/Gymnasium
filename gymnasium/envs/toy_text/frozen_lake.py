@@ -125,11 +125,10 @@ class FrozenLakeEnv(Env):
     The episode starts with the player in state `[0]` (location [0, 0]).
 
     ## Rewards
-
-    Reward schedule:
-    - Reach goal: +1
-    - Reach hole: 0
-    - Reach frozen: 0
+    The rewards given at each state can be overridden by passing into the constructor:
+    - Reach goal default: +1.0
+    - Reach hole default: 0.0
+    - Reach frozen default: 0.0
 
     ## Episode End
     The episode ends if the following happens:
@@ -153,7 +152,7 @@ class FrozenLakeEnv(Env):
 
     ```python
     import gymnasium as gym
-    gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
+    gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True, )
     ```
 
     `desc=None`: Used to specify maps non-preloaded maps.
@@ -172,7 +171,7 @@ class FrozenLakeEnv(Env):
     ```
     from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
-    gym.make('FrozenLake-v1', desc=generate_random_map(size=8))
+    gym.make('FrozenLake-v1', desc=generate_random_map(size=8), reward_goal=1.0, reward_hole=0.0, reward_step=-0.0)
     ```
 
     `map_name="4x4"`: ID to use any of the preloaded maps.
@@ -226,10 +225,9 @@ class FrozenLakeEnv(Env):
         desc=None,
         map_name="4x4",
         is_slippery=True,
-        ##### NEW ARGS #####
         reward_goal=1.0,
-        reward_hole=-1.0,
-        reward_step=-0.001
+        reward_hole=0.0,
+        reward_step=-0.0
     ):
         if desc is None and map_name is None:
             desc = generate_random_map()
@@ -237,9 +235,8 @@ class FrozenLakeEnv(Env):
             desc = MAPS[map_name]
         self.desc = desc = np.asarray(desc, dtype="c")
         self.nrow, self.ncol = nrow, ncol = desc.shape
-        self.reward_range = (0, 1)
         
-        ##### MAKE REWARDS CLASS VARIABLE #####
+        self.reward_range = (min(reward_goal, reward_hole, reward_step), max(reward_goal, reward_hole, reward_step))
         self.reward_goal = reward_goal
         self.reward_hole = reward_hole
         self.reward_step = reward_step
@@ -271,7 +268,6 @@ class FrozenLakeEnv(Env):
             new_state = to_s(new_row, new_col)
             new_letter = desc[new_row, new_col]
             terminated = bytes(new_letter) in b"GH"
-            ##### CHANGE DEFAULT REWARDS #####
             # reward = float(new_letter == b"G")
             if new_letter == b"G":
                 reward = self.reward_goal
