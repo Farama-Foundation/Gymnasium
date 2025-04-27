@@ -174,8 +174,6 @@ def test_pickle_env(env: gym.Env):
     ],
 )
 def test_frozenlake_custom_rewards_and_range(reward_goal, reward_hole, reward_step):
-    # Use a 2x2 map: S F
-    #                  H G
     desc = ["SF", "HG"]
     env = gym.make(
         "FrozenLake-v1",
@@ -196,10 +194,10 @@ def test_frozenlake_custom_rewards_and_range(reward_goal, reward_hole, reward_st
     # 2) From F, move down into G → reward_goal
     state = next_state
     next_state, r, done, *_ = env.step(1)  # action=1 (DOWN)
-    assert next_state == 3 and r == reward_goal and done
+    assert next_state == 3 and r == (reward_goal + reward_step) and done
 
     # 3) Reset and step into hole to verify hole reward
     state, _ = env.reset(seed=0)
     # From S, step down into H
     next_state, r, done, *_ = env.step(1)  # action=1 (DOWN)
-    assert next_state == 2 and r == reward_hole and done
+    assert next_state == 2 and r == (reward_hole + reward_step) and done
