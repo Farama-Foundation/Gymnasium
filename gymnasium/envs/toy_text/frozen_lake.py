@@ -128,7 +128,7 @@ class FrozenLakeEnv(Env):
     The rewards given at each state can be overridden by passing into the constructor:
     - Reach goal default: +1.0
     - Reach hole default: 0.0
-    - Reach frozen default: 0.0
+    - Make step: 0.0
 
     ## Episode End
     The episode ends if the following happens:
@@ -273,9 +273,9 @@ class FrozenLakeEnv(Env):
             terminated = bytes(new_letter) in b"GH"
             # reward = float(new_letter == b"G")
             if new_letter == b"G":
-                reward = self.reward_goal
+                reward = self.reward_goal + self.reward_step
             elif new_letter == b"H":
-                reward = self.reward_hole
+                reward = self.reward_hole + self.reward_step
             else:
                 reward = self.reward_step
 
