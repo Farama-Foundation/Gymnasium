@@ -227,7 +227,7 @@ class FrozenLakeEnv(Env):
         is_slippery=True,
         reward_goal=1.0,
         reward_hole=0.0,
-        reward_step=-0.0
+        reward_step=-0.0,
     ):
         if desc is None and map_name is None:
             desc = generate_random_map()
@@ -235,8 +235,11 @@ class FrozenLakeEnv(Env):
             desc = MAPS[map_name]
         self.desc = desc = np.asarray(desc, dtype="c")
         self.nrow, self.ncol = nrow, ncol = desc.shape
-        
-        self.reward_range = (min(reward_goal, reward_hole, reward_step), max(reward_goal, reward_hole, reward_step))
+
+        self.reward_range = (
+            min(reward_goal, reward_hole, reward_step),
+            max(reward_goal, reward_hole, reward_step),
+        )
         self.reward_goal = reward_goal
         self.reward_hole = reward_hole
         self.reward_step = reward_step

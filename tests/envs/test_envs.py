@@ -163,3 +163,43 @@ def test_pickle_env(env: gym.Env):
 
     env.close()
     pickled_env.close()
+
+
+@pytest.mark.parametrize(
+    "reward_goal,reward_hole,reward_step",
+    [
+        (1.0, 0.0, 0.0),
+        (10.0, -1.0, -0.1),
+        (0.5, -0.5, 0.1),
+    ],
+)
+def test_frozenlake_custom_rewards_and_range(reward_goal, reward_hole, reward_step):
+    # Use a 2x2 map: S F
+    #                  H G
+    desc = ["SF", "HG"]
+    env = gym.make(
+        "FrozenLake-v1",
+        desc=desc,
+        is_slippery=False,
+        reward_goal=reward_goal,
+        reward_hole=reward_hole,
+        reward_step=reward_step,
+    )
+    # Reset to start at state 0
+    state, _ = env.reset(seed=0)
+    assert state == 0
+
+    # 1) Move right onto F → reward_step
+    next_state, r, done, *_ = env.step(2)  # action=2 (RIGHT)
+    assert next_state == 1 and r == reward_step and not done
+
+    # 2) From F, move down into G → reward_goal
+    state = next_state
+    next_state, r, done, *_ = env.step(1)  # action=1 (DOWN)
+    assert next_state == 3 and r == reward_goal and done
+
+    # 3) Reset and step into hole to verify hole reward
+    state, _ = env.reset(seed=0)
+    # From S, step down into H
+    next_state, r, done, *_ = env.step(1)  # action=1 (DOWN)
+    assert next_state == 2 and r == reward_hole and done
