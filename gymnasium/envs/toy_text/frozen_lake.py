@@ -126,9 +126,9 @@ class FrozenLakeEnv(Env):
 
     ## Rewards
     The rewards given at each state can be overridden by passing into the constructor:
-    - Reach goal default: +1.0
-    - Reach hole default: 0.0
-    - Make step: 0.0
+    - 'reward_goal' (default): +1.0
+    - 'reward_hole' (default): 0.0
+    - 'reward_step' (default): 0.0 (always applied to any action)
 
     ## Episode End
     The episode ends if the following happens:
@@ -198,14 +198,19 @@ class FrozenLakeEnv(Env):
     If `desc=None` then `map_name` will be used. If both `desc` and `map_name` are
     `None` a random 8x8 map with 80% of locations frozen will be generated.
 
-    <a id="is_slippy"></a>`is_slippery=True`: If true the player will move in intended direction with
-    probability of 1/3 else will move in either perpendicular direction with
-    equal probability of 1/3 in both directions.
+    <a id="is_slippy"></a>`is_slippery=True`: If true, each move is stochastic according
+    to three user-settable probabilities:
 
-    For example, if action is left and is_slippery is True, then:
-    - P(move left)=1/3
-    - P(move up)=1/3
-    - P(move down)=1/3
+    - 'chance_correct_action': probability of moving in the intended direction
+    - 'chance_slip_l': probability of slipping to the action that is “left” (counter-clockwise) of the intended
+    - 'chance_slip_r': probability of slipping to the action that is “right” (clockwise) of the intended
+
+    These three must sum to 1.0 (the constructor will normalize them if they don’t).
+
+    These parameters are initialized with the following default values when left unspecified:
+    chance_correct_action = 1/3
+    chance_slip_l = 1/3
+    chance_slip_r = 1/3
 
 
     ## Version History
@@ -227,7 +232,10 @@ class FrozenLakeEnv(Env):
         is_slippery=True,
         reward_goal=1.0,
         reward_hole=0.0,
-        reward_step=-0.0,
+        reward_step=0.0,
+        chance_correct_action=1 / 3,
+        chance_slip_l=1 / 3,
+        chance_slip_r=1 / 3,
     ):
         if desc is None and map_name is None:
             desc = generate_random_map()
@@ -243,6 +251,19 @@ class FrozenLakeEnv(Env):
         self.reward_goal = reward_goal
         self.reward_hole = reward_hole
         self.reward_step = reward_step
+
+        probs = [chance_correct_action, chance_slip_l, chance_slip_r]
+        if any(p < 0 for p in probs):
+            raise ValueError("Slip probabilities must be non-negative")
+        total = sum(probs)
+        if not np.isclose(total, 1.0):
+            # Normalize to sum exactly to 1.0
+            chance_correct_action, chance_slip_l, chance_slip_r = (
+                p / total for p in probs
+            )
+        self.chance_correct_action = chance_correct_action
+        self.chance_slip_l = chance_slip_l
+        self.chance_slip_r = chance_slip_r
 
         nA = 4
         nS = nrow * ncol
@@ -271,7 +292,6 @@ class FrozenLakeEnv(Env):
             new_state = to_s(new_row, new_col)
             new_letter = desc[new_row, new_col]
             terminated = bytes(new_letter) in b"GH"
-            # reward = float(new_letter == b"G")
             if new_letter == b"G":
                 reward = self.reward_goal + self.reward_step
             elif new_letter == b"H":
@@ -291,10 +311,13 @@ class FrozenLakeEnv(Env):
                         li.append((1.0, s, 0, True))
                     else:
                         if is_slippery:
-                            for b in [(a - 1) % 4, a, (a + 1) % 4]:
-                                li.append(
-                                    (1.0 / 3.0, *update_probability_matrix(row, col, b))
-                                )
+                            probs = {
+                                (a - 1) % 4: self.chance_slip_l,
+                                a: self.chance_correct_action,
+                                (a + 1) % 4: self.chance_slip_r,
+                            }
+                            for b, p in probs.items():
+                                li.append((p, *update_probability_matrix(row, col, b)))
                         else:
                             li.append((1.0, *update_probability_matrix(row, col, a)))
 
