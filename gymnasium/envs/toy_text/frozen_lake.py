@@ -201,11 +201,11 @@ class FrozenLakeEnv(Env):
     <a id="is_slippy"></a>`is_slippery=True`: If true, each move is stochastic according
     to three user-settable probabilities:
 
-    - 'chance_correct_action': probability of moving in the intended direction  
-    - 'chance_slip_l': probability of slipping to the action that is “left” (counter-clockwise) of the intended  
-    - 'chance_slip_r': probability of slipping to the action that is “right” (clockwise) of the intended  
+    - 'chance_correct_action': probability of moving in the intended direction
+    - 'chance_slip_l': probability of slipping to the action that is “left” (counter-clockwise) of the intended
+    - 'chance_slip_r': probability of slipping to the action that is “right” (clockwise) of the intended
 
-    These three must sum to 1.0 (the constructor will normalize them if they don’t).  
+    These three must sum to 1.0 (the constructor will normalize them if they don’t).
 
     These parameters are initialized with the following default values when left unspecified:
     chance_correct_action = 1/3
@@ -233,9 +233,9 @@ class FrozenLakeEnv(Env):
         reward_goal=1.0,
         reward_hole=0.0,
         reward_step=0.0,
-        chance_correct_action = 1/3,
-        chance_slip_l = 1/3,
-        chance_slip_r = 1/3
+        chance_correct_action=1 / 3,
+        chance_slip_l=1 / 3,
+        chance_slip_r=1 / 3,
     ):
         if desc is None and map_name is None:
             desc = generate_random_map()
@@ -258,7 +258,9 @@ class FrozenLakeEnv(Env):
         total = sum(probs)
         if not np.isclose(total, 1.0):
             # Normalize to sum exactly to 1.0
-            chance_correct_action, chance_slip_l, chance_slip_r = [p/total for p in probs]
+            chance_correct_action, chance_slip_l, chance_slip_r = (
+                p / total for p in probs
+            )
         self.chance_correct_action = chance_correct_action
         self.chance_slip_l = chance_slip_l
         self.chance_slip_r = chance_slip_r
@@ -310,14 +312,12 @@ class FrozenLakeEnv(Env):
                     else:
                         if is_slippery:
                             probs = {
-                                (a - 1) % 4 : self.chance_slip_l,
-                                a           : self.chance_correct_action,
-                                (a + 1) % 4 : self.chance_slip_r
+                                (a - 1) % 4: self.chance_slip_l,
+                                a: self.chance_correct_action,
+                                (a + 1) % 4: self.chance_slip_r,
                             }
                             for b, p in probs.items():
-                                li.append(
-                                    (p, *update_probability_matrix(row, col, b))
-                                )
+                                li.append((p, *update_probability_matrix(row, col, b)))
                         else:
                             li.append((1.0, *update_probability_matrix(row, col, a)))
 
