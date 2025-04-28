@@ -126,9 +126,9 @@ class FrozenLakeEnv(Env):
 
     ## Rewards
     The rewards given at each state can be overridden by passing into the constructor:
-    - Reach goal default: +1.0
-    - Reach hole default: 0.0
-    - Make step: 0.0 (always applied to any action)
+    - 'reward_goal' (default): +1.0
+    - 'reward_hole' (default): 0.0
+    - 'reward_step' (default): 0.0 (always applied to any action)
 
     ## Episode End
     The episode ends if the following happens:
@@ -198,14 +198,19 @@ class FrozenLakeEnv(Env):
     If `desc=None` then `map_name` will be used. If both `desc` and `map_name` are
     `None` a random 8x8 map with 80% of locations frozen will be generated.
 
-    <a id="is_slippy"></a>`is_slippery=True`: If true the player will move in intended direction with
-    probability of 1/3 else will move in either perpendicular direction with
-    equal probability of 1/3 in both directions.
+    <a id="is_slippy"></a>`is_slippery=True`: If true, each move is stochastic according
+    to three user-settable probabilities:
 
-    For example, if action is left and is_slippery is True, then:
-    - P(move left)=1/3
-    - P(move up)=1/3
-    - P(move down)=1/3
+    - 'chance_correct_action': probability of moving in the intended direction  
+    - 'chance_slip_l': probability of slipping to the action that is “left” (counter-clockwise) of the intended  
+    - 'chance_slip_r': probability of slipping to the action that is “right” (clockwise) of the intended  
+
+    These three must sum to 1.0 (the constructor will normalize them if they don’t).  
+
+    These parameters are initialized with the following default values when left unspecified:
+    chance_correct_action = 1/3
+    chance_slip_l = 1/3
+    chance_slip_r = 1/3
 
 
     ## Version History
