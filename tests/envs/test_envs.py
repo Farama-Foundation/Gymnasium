@@ -237,7 +237,7 @@ def test_frozenlake_slip_probabilities(chance_correct, chance_l, chance_r):
     # starting from 3:
     # slip down (left) -> 6,
     # slip down (right) -> 0
-    # correct aciton, right (forward) -> 4
+    # correct action, right (forward) -> 4
 
     n = 20000
     for _ in range(n):
