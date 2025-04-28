@@ -1,6 +1,7 @@
 import pickle
 import re
 import warnings
+import numpy as np
 
 import pytest
 
@@ -201,3 +202,58 @@ def test_frozenlake_custom_rewards_and_range(reward_goal, reward_hole, reward_st
     # From S, step down into H
     next_state, r, done, *_ = env.step(1)  # action=1 (DOWN)
     assert next_state == 2 and r == (reward_hole + reward_step) and done
+
+
+
+@pytest.mark.parametrize("chance_correct, chance_l, chance_r", [
+    (0.6, 0.2, 0.2),
+    (0.8, 0.1, 0.1),
+    (1/3, 1/3, 1/3),
+])
+def test_frozenlake_slip_probabilities(chance_correct, chance_l, chance_r):
+    desc = ["FFF","SFG","FFF"]  # positions 0=S, 1=F, 2=G
+    raw = gym.make(
+        "FrozenLake-v1",
+        desc=desc,
+        is_slippery=True,
+        chance_correct_action=chance_correct,
+        chance_slip_l=chance_l,
+        chance_slip_r=chance_r,
+    )
+    # unwrap the TimeLimit (and any other wrappers) to get at your custom env
+    env = raw.unwrapped
+    # pick the non‐terminal state
+    start, _ = env.reset(seed=0)
+    assert start == 3
+
+    action = 2  # RIGHT
+
+    transitions = env.P[start][action]
+    declared_probs = {next_state: prob for (prob, next_state, *_ ) in transitions}
+
+    # sanity check: they must sum to 1
+    assert np.isclose(sum(declared_probs.values()), 1.0)
+
+    # initialize counts for exactly those next_states
+    counts = {s: 0 for s in declared_probs}
+    # starting from 3:
+        # slip down (left) -> 6,
+        # slip down (right) -> 0
+        # correct aciton, right (forward) -> 4
+    
+    n = 20000
+    for _ in range(n):
+        env.s = start
+        s, *_ = env.step(action)
+        counts[s] += 1
+
+    freqs = {s: counts[s]/n for s in counts}
+
+    # allow a ±3% tolerance
+    tol = 0.03
+    assert abs(freqs[4] - chance_correct) < tol, \
+        f"correct_action freq {freqs[4]:.3f} vs target {chance_correct}"
+    assert abs(freqs[6] - chance_l) < tol, \
+        f"slip_l freq {freqs[6]:.3f} vs target {chance_l}"
+    assert abs(freqs[0] - chance_r) < tol, \
+        f"slip_r freq {freqs[0]:.3f} vs target {chance_r}"
