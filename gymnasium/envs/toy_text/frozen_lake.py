@@ -128,7 +128,7 @@ class FrozenLakeEnv(Env):
     The rewards given at each state can be overridden by passing into the constructor:
     - Reach goal default: +1.0
     - Reach hole default: 0.0
-    - Make step: 0.0
+    - Make step: 0.0 (always applied to any action)
 
     ## Episode End
     The episode ends if the following happens:
@@ -227,7 +227,10 @@ class FrozenLakeEnv(Env):
         is_slippery=True,
         reward_goal=1.0,
         reward_hole=0.0,
-        reward_step=-0.0,
+        reward_step=0.0,
+        chance_correct_action = 1/3,
+        chance_slip_l = 1/3,
+        chance_slip_r = 1/3
     ):
         if desc is None and map_name is None:
             desc = generate_random_map()
@@ -243,6 +246,17 @@ class FrozenLakeEnv(Env):
         self.reward_goal = reward_goal
         self.reward_hole = reward_hole
         self.reward_step = reward_step
+
+        probs = [chance_correct_action, chance_slip_l, chance_slip_r]
+        if any(p < 0 for p in probs):
+            raise ValueError("Slip probabilities must be non-negative")
+        total = sum(probs)
+        if not np.isclose(total, 1.0):
+            # Normalize to sum exactly to 1.0
+            chance_correct_action, chance_slip_l, chance_slip_r = [p/total for p in probs]
+        self.chance_correct_action = chance_correct_action
+        self.chance_slip_l = chance_slip_l
+        self.chance_slip_r = chance_slip_r
 
         nA = 4
         nS = nrow * ncol
@@ -271,7 +285,6 @@ class FrozenLakeEnv(Env):
             new_state = to_s(new_row, new_col)
             new_letter = desc[new_row, new_col]
             terminated = bytes(new_letter) in b"GH"
-            # reward = float(new_letter == b"G")
             if new_letter == b"G":
                 reward = self.reward_goal + self.reward_step
             elif new_letter == b"H":
@@ -291,9 +304,14 @@ class FrozenLakeEnv(Env):
                         li.append((1.0, s, 0, True))
                     else:
                         if is_slippery:
-                            for b in [(a - 1) % 4, a, (a + 1) % 4]:
+                            probs = {
+                                (a - 1) % 4 : self.chance_slip_l,
+                                a           : self.chance_correct_action,
+                                (a + 1) % 4 : self.chance_slip_r
+                            }
+                            for b, p in probs.items():
                                 li.append(
-                                    (1.0 / 3.0, *update_probability_matrix(row, col, b))
+                                    (p, *update_probability_matrix(row, col, b))
                                 )
                         else:
                             li.append((1.0, *update_probability_matrix(row, col, a)))
