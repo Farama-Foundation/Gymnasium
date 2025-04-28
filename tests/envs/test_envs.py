@@ -209,6 +209,7 @@ def test_frozenlake_custom_rewards_and_range(reward_goal, reward_hole, reward_st
     (0.6, 0.2, 0.2),
     (0.8, 0.1, 0.1),
     (1/3, 1/3, 1/3),
+    (.4, .4, .4)
 ])
 def test_frozenlake_slip_probabilities(chance_correct, chance_l, chance_r):
     desc = ["FFF","SFG","FFF"]  # positions 0=S, 1=F, 2=G
@@ -251,9 +252,8 @@ def test_frozenlake_slip_probabilities(chance_correct, chance_l, chance_r):
 
     # allow a ±3% tolerance
     tol = 0.03
-    assert abs(freqs[4] - chance_correct) < tol, \
-        f"correct_action freq {freqs[4]:.3f} vs target {chance_correct}"
-    assert abs(freqs[6] - chance_l) < tol, \
-        f"slip_l freq {freqs[6]:.3f} vs target {chance_l}"
-    assert abs(freqs[0] - chance_r) < tol, \
-        f"slip_r freq {freqs[0]:.3f} vs target {chance_r}"
+    for s, p_declared in declared_probs.items():
+        p_obs = freqs[s]
+        assert abs(p_obs - p_declared) < tol, (
+            f"State {s}: observed {p_obs:.3f}, declared {p_declared:.3f}"
+        )
