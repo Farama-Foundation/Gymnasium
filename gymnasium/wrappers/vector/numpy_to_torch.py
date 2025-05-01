@@ -5,18 +5,15 @@ from __future__ import annotations
 import numpy as np
 import torch
 
-import gymnasium as gym
 from gymnasium.vector import VectorEnv
 from gymnasium.wrappers.numpy_to_torch import Device
-from gymnasium.wrappers.vector.to_array import ToArray
+from gymnasium.wrappers.vector.array_conversion import ArrayConversion
 
 
 __all__ = ["NumpyToTorch"]
 
 
-class NumpyToTorch(
-    ToArray, gym.utils.RecordConstructorArgs, gym.utils.ezpickle.EzPickle
-):
+class NumpyToTorch(ArrayConversion):
     """Wraps a numpy-based environment so that it can be interacted with through PyTorch Tensors.
 
     Example:
@@ -48,8 +45,6 @@ class NumpyToTorch(
             env: The NumPy-based vector environment to wrap
             device: The device the torch Tensors should be moved to
         """
-        gym.utils.RecordConstructorArgs.__init__(self)
-        gym.utils.ezpickle.EzPickle.__init__(self, env, device)
         super().__init__(env, env_xp=np, target_xp=torch, target_device=device)
 
         self.device: Device | None = device

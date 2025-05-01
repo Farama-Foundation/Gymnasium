@@ -5,16 +5,21 @@ from __future__ import annotations
 from types import ModuleType
 from typing import Any
 
+import gymnasium as gym
 from gymnasium.core import ActType, ObsType
 from gymnasium.vector import VectorEnv, VectorWrapper
 from gymnasium.vector.vector_env import ArrayType
-from gymnasium.wrappers.array_conversion import Device, array_conversion
+from gymnasium.wrappers.array_conversion import (
+    Device,
+    array_conversion,
+    module_name_to_namespace,
+)
 
 
 __all__ = ["ArrayConversion"]
 
 
-class ArrayConversion(VectorWrapper):
+class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
     """Wraps a vector environment returning Array API compatible arrays so that it can be interacted with through a specific framework.
 
     Notes:
@@ -26,7 +31,7 @@ class ArrayConversion(VectorWrapper):
     Example:
         >>> import gymnasium as gym                                         # doctest: +SKIP
         >>> envs = gym.make_vec("JaxEnv-vx", 3)                             # doctest: +SKIP
-        >>> envs = ArrayConversion(envs, xp=np)                                     # doctest: +SKIP
+        >>> envs = ArrayConversion(envs, xp=np)                             # doctest: +SKIP
     """
 
     def __init__(
@@ -46,7 +51,8 @@ class ArrayConversion(VectorWrapper):
             env_device: The device the environment is on
             target_device: The device on which Arrays should be returned
         """
-        super().__init__(env)
+        gym.utils.RecordConstructorArgs.__init__(self)
+        VectorWrapper.__init__(self, env)
         self._env_xp = env_xp
         self._target_xp = target_xp
         self._env_device = env_device
@@ -101,3 +107,25 @@ class ArrayConversion(VectorWrapper):
             xp=self._target_xp,
             device=self._target_device,
         )
+
+    def __getstate__(self):
+        """Returns the object pickle state with args and kwargs."""
+        env_xp_name = self._env_xp.__name__.replace("array_api_compat.", "")
+        target_xp_name = self._target_xp.__name__.replace("array_api_compat.", "")
+        env_device = self._env_device
+        target_device = self._target_device
+        return {
+            "env_xp_name": env_xp_name,
+            "target_xp_name": target_xp_name,
+            "env_device": env_device,
+            "target_device": target_device,
+            "env": self.env,
+        }
+
+    def __setstate__(self, d):
+        """Sets the object pickle state using d."""
+        self.env = d["env"]
+        self._env_xp = module_name_to_namespace(d["env_xp_name"])
+        self._target_xp = module_name_to_namespace(d["target_xp_name"])
+        self._env_device = d["env_device"]
+        self._target_device = d["target_device"]

@@ -5,7 +5,6 @@ from __future__ import annotations
 import jax.numpy as jnp
 import numpy as np
 
-import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.vector import VectorEnv
 from gymnasium.wrappers.array_conversion import ArrayConversion
@@ -14,9 +13,7 @@ from gymnasium.wrappers.array_conversion import ArrayConversion
 __all__ = ["JaxToNumpy"]
 
 
-class JaxToNumpy(
-    ArrayConversion, gym.utils.RecordConstructorArgs, gym.utils.ezpickle.EzPickle
-):
+class JaxToNumpy(ArrayConversion):
     """Wraps a jax vector environment so that it can be interacted with through numpy arrays.
 
     Notes:
@@ -40,6 +37,4 @@ class JaxToNumpy(
             raise DependencyNotInstalled(
                 'Jax is not installed, run `pip install "gymnasium[jax]"`'
             )
-        gym.utils.RecordConstructorArgs.__init__(self)
-        gym.utils.ezpickle.EzPickle.__init__(self, env)
         super().__init__(env, env_xp=jnp, target_xp=np)

@@ -35,7 +35,7 @@ try:
 
 except ImportError:
     raise DependencyNotInstalled(
-        'Array API packages are not installed therefore cannot call `to_array`, run `pip install "gymnasium[array-api]"`'
+        'Array API packages are not installed therefore cannot call `array_conversion`, run `pip install "gymnasium[array-api]"`'
     )
 
 
@@ -57,10 +57,10 @@ def module_namespace(module: ModuleType) -> ModuleType:
 
     See https://github.com/data-apis/array-api-compat/blob/e14754ba0fe4c4cd51b6f45bb11a3c6609be3b5c/array_api_compat/common/_helpers.py#L442
     """
-    return _module_name_to_namespace(module.__name__)
+    return module_name_to_namespace(module.__name__)
 
 
-def _module_name_to_namespace(name: str) -> ModuleType:
+def module_name_to_namespace(name: str) -> ModuleType:
     if name == "numpy":
         from array_api_compat import numpy as numpy_namespace
 
@@ -189,7 +189,7 @@ class ArrayConversion(gym.Wrapper, gym.utils.RecordConstructorArgs):
         <class 'bool'>
 
     Change logs:
-     * v1.0.0 - Initially added
+     * v1.2.0 - Initially added
     """
 
     def __init__(
@@ -281,7 +281,7 @@ class ArrayConversion(gym.Wrapper, gym.utils.RecordConstructorArgs):
     def __setstate__(self, d):
         """Sets the object pickle state using d."""
         self.env = d["env"]
-        self._env_xp = _module_name_to_namespace(d["env_xp_name"])
-        self._target_xp = _module_name_to_namespace(d["target_xp_name"])
+        self._env_xp = module_name_to_namespace(d["env_xp_name"])
+        self._target_xp = module_name_to_namespace(d["target_xp_name"])
         self._env_device = d["env_device"]
         self._target_device = d["target_device"]

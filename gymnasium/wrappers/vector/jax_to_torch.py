@@ -5,7 +5,6 @@ from __future__ import annotations
 import jax.numpy as jnp
 import torch
 
-import gymnasium as gym
 from gymnasium.vector import VectorEnv
 from gymnasium.wrappers.array_conversion import ArrayConversion
 from gymnasium.wrappers.jax_to_torch import Device
@@ -14,9 +13,7 @@ from gymnasium.wrappers.jax_to_torch import Device
 __all__ = ["JaxToTorch"]
 
 
-class JaxToTorch(
-    ArrayConversion, gym.utils.RecordConstructorArgs, gym.utils.ezpickle.EzPickle
-):
+class JaxToTorch(ArrayConversion):
     """Wraps a Jax-based vector environment so that it can be interacted with through PyTorch Tensors.
 
     Actions must be provided as PyTorch Tensors and observations, rewards, terminations and truncations will be returned as PyTorch Tensors.
@@ -34,8 +31,6 @@ class JaxToTorch(
             env: The Jax-based vector environment to wrap
             device: The device the torch Tensors should be moved to
         """
-        gym.utils.RecordConstructorArgs.__init__(self)
-        gym.utils.ezpickle.EzPickle.__init__(self, env, device)
         super().__init__(env, env_xp=jnp, target_xp=torch, target_device=device)
 
         self.device: Device | None = device
