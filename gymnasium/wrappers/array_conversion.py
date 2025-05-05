@@ -16,8 +16,8 @@
 
 from __future__ import annotations
 
-import importlib
 import functools
+import importlib
 import numbers
 from collections import abc
 from types import ModuleType, NoneType
