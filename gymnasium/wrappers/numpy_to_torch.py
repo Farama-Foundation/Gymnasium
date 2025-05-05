@@ -9,7 +9,11 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.wrappers.array_conversion import ArrayConversion, array_conversion
+from gymnasium.wrappers.array_conversion import (
+    ArrayConversion,
+    array_conversion,
+    module_namespace,
+)
 
 
 try:
@@ -25,9 +29,9 @@ except ImportError:
 __all__ = ["NumpyToTorch", "torch_to_numpy", "numpy_to_torch", "Device"]
 
 
-torch_to_numpy = functools.partial(array_conversion, xp=np)
+torch_to_numpy = functools.partial(array_conversion, xp=module_namespace(np))
 
-numpy_to_torch = functools.partial(array_conversion, xp=torch)
+numpy_to_torch = functools.partial(array_conversion, xp=module_namespace(torch))
 
 
 class NumpyToTorch(ArrayConversion):

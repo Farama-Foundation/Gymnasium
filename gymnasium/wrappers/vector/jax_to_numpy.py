@@ -7,7 +7,7 @@ import numpy as np
 
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.vector import VectorEnv
-from gymnasium.wrappers.array_conversion import ArrayConversion
+from gymnasium.wrappers.vector.array_conversion import ArrayConversion
 
 
 __all__ = ["JaxToNumpy"]

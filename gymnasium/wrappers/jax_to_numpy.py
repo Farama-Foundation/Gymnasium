@@ -9,7 +9,11 @@ import numpy as np
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.wrappers.array_conversion import ArrayConversion, array_conversion
+from gymnasium.wrappers.array_conversion import (
+    ArrayConversion,
+    array_conversion,
+    module_namespace,
+)
 
 
 try:
@@ -22,9 +26,9 @@ except ImportError:
 __all__ = ["JaxToNumpy", "jax_to_numpy", "numpy_to_jax"]
 
 
-jax_to_numpy = functools.partial(array_conversion, xp=np)
+jax_to_numpy = functools.partial(array_conversion, xp=module_namespace(np))
 
-numpy_to_jax = functools.partial(array_conversion, xp=jnp)
+numpy_to_jax = functools.partial(array_conversion, xp=module_namespace(jnp))
 
 
 class JaxToNumpy(ArrayConversion):

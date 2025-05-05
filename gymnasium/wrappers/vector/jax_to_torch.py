@@ -6,8 +6,8 @@ import jax.numpy as jnp
 import torch
 
 from gymnasium.vector import VectorEnv
-from gymnasium.wrappers.array_conversion import ArrayConversion
 from gymnasium.wrappers.jax_to_torch import Device
+from gymnasium.wrappers.vector.array_conversion import ArrayConversion
 
 
 __all__ = ["JaxToTorch"]

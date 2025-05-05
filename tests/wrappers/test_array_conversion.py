@@ -1,8 +1,8 @@
 """Test suite for ArrayConversion wrapper."""
 
 import importlib
+import itertools
 import pickle
-from itertools import product
 from typing import Any, NamedTuple
 
 import pytest
@@ -40,9 +40,7 @@ for module in array_api_modules:
     except ImportError:
         pass  # Modules that are not installed are skipped
 
-installed_modules_combinations = [
-    (s, t) for s, t in product(installed_modules, repeat=2) if s != t
-]
+installed_modules_combinations = list(itertools.permutations(installed_modules, 2))
 
 
 def xp_data_equivalence(data_1, data_2) -> bool:
