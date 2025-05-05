@@ -16,6 +16,7 @@
 
 from __future__ import annotations
 
+import importlib
 import functools
 import numbers
 from collections import abc
@@ -49,49 +50,22 @@ Array = Any  # TODO: Switch to ArrayAPI type once https://github.com/data-apis/a
 Device = Any  # TODO: Switch to ArrayAPI type if available
 
 
-def module_namespace(module: ModuleType) -> ModuleType:
+def module_namespace(xp: ModuleType) -> ModuleType:
     """Determine the Array API compatible namespace of the given module.
 
     This function is closely linked to the `array_api_compat.array_namespace` function. It returns
     the compatible namespace for a module directly instead of from an array object of that module.
 
-    See https://github.com/data-apis/array-api-compat/blob/e14754ba0fe4c4cd51b6f45bb11a3c6609be3b5c/array_api_compat/common/_helpers.py#L442
+    See https://data-apis.org/array-api-compat/helper-functions.html#array_api_compat.array_namespace
     """
-    return module_name_to_namespace(module.__name__)
+    try:
+        return array_namespace(xp.empty(0))
+    except AttributeError as e:
+        raise ValueError(f"Module {xp} is not an Array API compatible module.") from e
 
 
 def module_name_to_namespace(name: str) -> ModuleType:
-    if name == "numpy":
-        from array_api_compat import numpy as numpy_namespace
-
-        return numpy_namespace
-    elif name in ("jax.numpy", "jax"):
-        import jax.numpy
-
-        if hasattr(jax.numpy, "__array_api_version__"):
-            jp = jax.numpy
-        else:
-            import jax.experimental.array_api as jp
-
-        return jp
-    elif name == "torch":
-        from array_api_compat import torch as torch_namespace
-
-        return torch_namespace
-    elif name == "cupy":
-        from array_api_compat import cupy as cupy_namespace
-
-        return cupy_namespace
-    elif name == "dask.array":
-        from array_api_compat.dask import array as dask_namespace
-
-        return dask_namespace
-    elif name == "sparse":
-        import sparse  # Sparse is already Array API compatible
-
-        return sparse
-    else:
-        raise ValueError(f"Unknown Array API framework: {name}.")
+    return module_namespace(importlib.import_module(name))
 
 
 @functools.singledispatch
@@ -173,7 +147,7 @@ class ArrayConversion(gym.Wrapper, gym.utils.RecordConstructorArgs):
         >>> import jax.numpy as jnp                                     # doctest: +SKIP
         >>> import gymnasium as gym                                     # doctest: +SKIP
         >>> env = gym.make("JaxEnv-vx")                                 # doctest: +SKIP
-        >>> env = ArrayConversion(env, env_xp=jnp, target_xp=torch)             # doctest: +SKIP
+        >>> env = ArrayConversion(env, env_xp=jnp, target_xp=torch)     # doctest: +SKIP
         >>> obs, _ = env.reset(seed=123)                                # doctest: +SKIP
         >>> type(obs)                                                   # doctest: +SKIP
         <class 'torch.Tensor'>
