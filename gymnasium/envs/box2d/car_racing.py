@@ -129,8 +129,8 @@ class CarRacing(gym.Env, EzPickle):
 
     If discrete there are 5 actions:
     - 0: do nothing
-    - 1: steer left
-    - 2: steer right
+    - 1: steer right
+    - 2: steer left
     - 3: gas
     - 4: brake
 
@@ -258,7 +258,7 @@ class CarRacing(gym.Env, EzPickle):
             )  # steer, gas, brake
         else:
             self.action_space = spaces.Discrete(5)
-            # do nothing, left, right, gas, brake
+            # do nothing, right, left, gas, brake
 
         self.observation_space = spaces.Box(
             low=0, high=255, shape=(STATE_H, STATE_W, 3), dtype=np.uint8
