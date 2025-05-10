@@ -2,7 +2,7 @@
 
 import math
 import os
-from typing import NamedTuple, Optional, Tuple, Union
+from typing import NamedTuple
 
 import jax
 import jax.numpy as jnp
@@ -20,7 +20,7 @@ from gymnasium.vector import AutoresetMode
 from gymnasium.wrappers import HumanRendering
 
 
-RenderStateType = Tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
+RenderStateType = tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
 
 
 deck = jnp.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10])
@@ -246,7 +246,7 @@ class BlackjackFunctional(
     def transition(
         self,
         state: EnvState,
-        action: Union[int, jax.Array],
+        action: int | jax.Array,
         key: PRNGKey,
         params: BlackJackParams = BlackJackParams,
     ):
@@ -373,7 +373,7 @@ class BlackjackFunctional(
         state: StateType,
         render_state: RenderStateType,
         params: BlackJackParams = BlackJackParams,
-    ) -> Tuple[RenderStateType, np.ndarray]:
+    ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an image from a state."""
         try:
             import pygame
@@ -502,7 +502,7 @@ class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
-    def __init__(self, render_mode: Optional[str] = None, **kwargs):
+    def __init__(self, render_mode: str | None = None, **kwargs):
         """Initializes Gym wrapper for blackjack functional env."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
         env = BlackjackFunctional(**kwargs)

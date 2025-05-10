@@ -1,5 +1,5 @@
 from os import path
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Union
 
 import numpy as np
 from numpy.typing import NDArray
@@ -48,12 +48,12 @@ class BaseMujocoPyEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         self,
         model_path,
         frame_skip,
-        observation_space: Optional[Space],
-        render_mode: Optional[str] = None,
+        observation_space: Space | None,
+        render_mode: str | None = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
-        camera_id: Optional[int] = None,
-        camera_name: Optional[str] = None,
+        camera_id: int | None = None,
+        camera_name: str | None = None,
     ):
         """Base abstract class for mujoco based environments.
 
@@ -110,7 +110,7 @@ class BaseMujocoPyEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
     # ----------------------------
     def step(
         self, action: NDArray[np.float32]
-    ) -> Tuple[NDArray[np.float64], np.float64, bool, bool, Dict[str, np.float64]]:
+    ) -> tuple[NDArray[np.float64], np.float64, bool, bool, dict[str, np.float64]]:
         raise NotImplementedError
 
     def reset_model(self) -> NDArray[np.float64]:
@@ -120,7 +120,7 @@ class BaseMujocoPyEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         """
         raise NotImplementedError
 
-    def _initialize_simulation(self) -> Tuple[Any, Any]:
+    def _initialize_simulation(self) -> tuple[Any, Any]:
         """
         Initialize MuJoCo simulation data structures mjModel and mjData.
         """
@@ -138,22 +138,22 @@ class BaseMujocoPyEnv(gym.Env[NDArray[np.float64], NDArray[np.float32]]):
         """
         raise NotImplementedError
 
-    def render(self) -> Union[NDArray[np.float64], None]:
+    def render(self) -> NDArray[np.float64] | None:
         """
         Render a frame from the MuJoCo simulation as specified by the render_mode.
         """
         raise NotImplementedError
 
     # -----------------------------
-    def _get_reset_info(self) -> Dict[str, float]:
+    def _get_reset_info(self) -> dict[str, float]:
         """Function that generates the `info` that is returned during a `reset()`."""
         return {}
 
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
 
@@ -206,11 +206,11 @@ class MuJocoPyEnv(BaseMujocoPyEnv):
         model_path: str,
         frame_skip: int,
         observation_space: Space,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
-        camera_id: Optional[int] = None,
-        camera_name: Optional[str] = None,
+        camera_id: int | None = None,
+        camera_name: str | None = None,
     ):
         if MUJOCO_PY_IMPORT_ERROR is not None:
             raise error.DependencyNotInstalled(

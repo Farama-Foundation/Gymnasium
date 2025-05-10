@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas", "Rushiv Arora"]
 
-from typing import Dict, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -156,7 +154,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "swimmer.xml",
         frame_skip: int = 4,
-        default_camera_config: Dict[str, Union[float, int]] = {},
+        default_camera_config: dict[str, float | int] = {},
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 1e-4,
         reset_noise_scale: float = 0.1,

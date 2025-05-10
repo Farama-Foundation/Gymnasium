@@ -1,6 +1,5 @@
 import os
 import time
-from typing import Dict, Optional
 
 import glfw
 import imageio
@@ -49,7 +48,7 @@ class BaseRender:
         width: int,
         height: int,
         max_geom: int = 1000,
-        visual_options: Dict[int, bool] = {},
+        visual_options: dict[int, bool] = {},
     ):
         """Render context superclass for offscreen and window rendering."""
         self.model = model
@@ -182,7 +181,7 @@ class OffScreenViewer(BaseRender):
         width: int,
         height: int,
         max_geom: int = 1000,
-        visual_options: Dict[int, bool] = {},
+        visual_options: dict[int, bool] = {},
     ):
         # We must make GLContext before MjrContext
         self._get_opengl_backend(width, height)
@@ -238,8 +237,8 @@ class OffScreenViewer(BaseRender):
 
     def render(
         self,
-        render_mode: Optional[str],
-        camera_id: Optional[int] = None,
+        render_mode: str | None,
+        camera_id: int | None = None,
         segmentation: bool = False,
     ):
         if camera_id is not None:
@@ -339,10 +338,10 @@ class WindowViewer(BaseRender):
         self,
         model: "mujoco.MjModel",
         data: "mujoco.MjData",
-        width: Optional[int] = None,
-        height: Optional[int] = None,
+        width: int | None = None,
+        height: int | None = None,
         max_geom: int = 1000,
-        visual_options: Dict[int, bool] = {},
+        visual_options: dict[int, bool] = {},
     ):
         glfw.init()
 
@@ -694,13 +693,13 @@ class MujocoRenderer:
         self,
         model: "mujoco.MjModel",
         data: "mujoco.MjData",
-        default_cam_config: Optional[dict] = None,
-        width: Optional[int] = None,
-        height: Optional[int] = None,
+        default_cam_config: dict | None = None,
+        width: int | None = None,
+        height: int | None = None,
         max_geom: int = 1000,
-        camera_id: Optional[int] = None,
-        camera_name: Optional[str] = None,
-        visual_options: Dict[int, bool] = {},
+        camera_id: int | None = None,
+        camera_name: str | None = None,
+        visual_options: dict[int, bool] = {},
     ):
         """A wrapper for clipping continuous actions within the valid bound.
 
@@ -746,7 +745,7 @@ class MujocoRenderer:
 
     def render(
         self,
-        render_mode: Optional[str],
+        render_mode: str | None,
     ):
         """Renders a frame of the simulation in a specific format and camera view.
 
@@ -768,7 +767,7 @@ class MujocoRenderer:
         elif render_mode == "human":
             return viewer.render()
 
-    def _get_viewer(self, render_mode: Optional[str]):
+    def _get_viewer(self, render_mode: str | None):
         """Initializes and returns a viewer class depending on the render_mode
         - `WindowViewer` class for "human" render mode
         - `OffScreenViewer` class for "rgb_array", "depth_array", or "rgbd_tuple" render mode
