@@ -204,9 +204,7 @@ class OffScreenViewer(BaseRender):
                 self.opengl_context = _ALL_RENDERERS[self.backend](width, height)
             except KeyError as e:
                 raise RuntimeError(
-                    "Environment variable {} must be one of {!r}: got {!r}.".format(
-                        "MUJOCO_GL", _ALL_RENDERERS.keys(), self.backend
-                    )
+                    f"Environment variable {'MUJOCO_GL'} must be one of {_ALL_RENDERERS.keys()!r}: got {self.backend!r}."
                 ) from e
 
         else:
@@ -633,7 +631,7 @@ class WindowViewer(BaseRender):
         else:
             self.add_overlay(
                 topleft,
-                "Run speed = %.3f x real time" % self._run_speed,
+                f"Run speed = {self._run_speed:.3f} x real time",
                 "[S]lower, [F]aster",
             )
         self.add_overlay(
@@ -641,8 +639,8 @@ class WindowViewer(BaseRender):
         )
         self.add_overlay(
             topleft,
-            "Switch camera (#cams = %d)" % (self.model.ncam + 1),
-            "[Tab] (camera ID = %d)" % self.cam.fixedcamid,
+            f"Switch camera (#cams = {self.model.ncam + 1:d})",
+            f"[Tab] (camera ID = {self.cam.fixedcamid:d})",
         )
         self.add_overlay(topleft, "[C]ontact forces", "On" if self._contacts else "Off")
         self.add_overlay(topleft, "T[r]ansparent", "On" if self._transparent else "Off")
@@ -660,12 +658,12 @@ class WindowViewer(BaseRender):
         self.add_overlay(topleft, "[H]ide Menu", "")
         if self._image_idx > 0:
             fname = self._image_path % (self._image_idx - 1)
-            self.add_overlay(topleft, "Cap[t]ure frame", "Saved as %s" % fname)
+            self.add_overlay(topleft, "Cap[t]ure frame", f"Saved as {fname}")
         else:
             self.add_overlay(topleft, "Cap[t]ure frame", "")
         self.add_overlay(topleft, "Toggle geomgroup visibility", "0-4")
 
-        self.add_overlay(bottomleft, "FPS", "%d%s" % (1 / self._time_per_render, ""))
+        self.add_overlay(bottomleft, "FPS", f"{1 / self._time_per_render:d}{''}")
         if mujoco.__version__ >= "3.0.0":
             self.add_overlay(
                 bottomleft, "Solver iterations", str(self.data.solver_niter[0] + 1)
@@ -677,7 +675,7 @@ class WindowViewer(BaseRender):
         self.add_overlay(
             bottomleft, "Step", str(round(self.data.time / self.model.opt.timestep))
         )
-        self.add_overlay(bottomleft, "timestep", "%.5f" % self.model.opt.timestep)
+        self.add_overlay(bottomleft, "timestep", f"{self.model.opt.timestep:.5f}")
 
 
 class MujocoRenderer:
