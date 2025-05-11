@@ -418,70 +418,73 @@ wrapper in the page on the wrapper type</p>
 <tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.HumanRendering" title="gymnasium.wrappers.HumanRendering"><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanRendering</span></code></a></p></td>
 <td><p>Allows human like rendering for environments that support “rgb_array” rendering.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.JaxToNumpy" title="gymnasium.wrappers.JaxToNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxToNumpy</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ArrayConversion</span></code></p></td>
+<td><p>Wraps an environment based on any Array API compatible framework, e.g. torch, jax, numpy, such that it can be interacted with any other Array API compatible framework.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.JaxToNumpy" title="gymnasium.wrappers.JaxToNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxToNumpy</span></code></a></p></td>
 <td><p>Wraps a Jax-based environment such that it can be interacted with NumPy arrays.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.JaxToTorch" title="gymnasium.wrappers.JaxToTorch"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxToTorch</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.JaxToTorch" title="gymnasium.wrappers.JaxToTorch"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxToTorch</span></code></a></p></td>
 <td><p>Wraps a Jax-based environment so that it can be interacted with PyTorch Tensors.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.MaxAndSkipObservation" title="gymnasium.wrappers.MaxAndSkipObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaxAndSkipObservation</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.MaxAndSkipObservation" title="gymnasium.wrappers.MaxAndSkipObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaxAndSkipObservation</span></code></a></p></td>
 <td><p>Skips the N-th frame (observation) and return the max values between the two last observations.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.NormalizeObservation" title="gymnasium.wrappers.NormalizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">NormalizeObservation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.NormalizeObservation" title="gymnasium.wrappers.NormalizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">NormalizeObservation</span></code></a></p></td>
 <td><p>Normalizes observations to be centered at the mean with unit variance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../reward_wrappers/#gymnasium.wrappers.NormalizeReward" title="gymnasium.wrappers.NormalizeReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">NormalizeReward</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../reward_wrappers/#gymnasium.wrappers.NormalizeReward" title="gymnasium.wrappers.NormalizeReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">NormalizeReward</span></code></a></p></td>
 <td><p>Normalizes immediate rewards such that their exponential moving average has a fixed variance.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.NumpyToTorch" title="gymnasium.wrappers.NumpyToTorch"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumpyToTorch</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.NumpyToTorch" title="gymnasium.wrappers.NumpyToTorch"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumpyToTorch</span></code></a></p></td>
 <td><p>Wraps a NumPy-based environment such that it can be interacted with PyTorch Tensors.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.OrderEnforcing" title="gymnasium.wrappers.OrderEnforcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrderEnforcing</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.OrderEnforcing" title="gymnasium.wrappers.OrderEnforcing"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrderEnforcing</span></code></a></p></td>
 <td><p>Will produce an error if <code class="docutils literal notranslate"><span class="pre">step</span></code> or <code class="docutils literal notranslate"><span class="pre">render</span></code> is called before <code class="docutils literal notranslate"><span class="pre">reset</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.PassiveEnvChecker" title="gymnasium.wrappers.PassiveEnvChecker"><code class="xref py py-class docutils literal notranslate"><span class="pre">PassiveEnvChecker</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.PassiveEnvChecker" title="gymnasium.wrappers.PassiveEnvChecker"><code class="xref py py-class docutils literal notranslate"><span class="pre">PassiveEnvChecker</span></code></a></p></td>
 <td><p>A passive environment checker wrapper that surrounds the <code class="docutils literal notranslate"><span class="pre">step</span></code>, <code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">render</span></code> functions to check they follows gymnasium’s API.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></p></td>
 <td><p>This wrapper will keep track of cumulative rewards and episode lengths.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a></p></td>
 <td><p>Records videos of environment episodes using the environment’s render function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.RenderCollection" title="gymnasium.wrappers.RenderCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">RenderCollection</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.RenderCollection" title="gymnasium.wrappers.RenderCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">RenderCollection</span></code></a></p></td>
 <td><p>Collect rendered frames of an environment such <code class="docutils literal notranslate"><span class="pre">render</span></code> returns a <code class="docutils literal notranslate"><span class="pre">list[RenderedFrame]</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.AddRenderObservation" title="gymnasium.wrappers.AddRenderObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddRenderObservation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.AddRenderObservation" title="gymnasium.wrappers.AddRenderObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">AddRenderObservation</span></code></a></p></td>
 <td><p>Includes the rendered observations in the environment’s observations.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.RescaleAction" title="gymnasium.wrappers.RescaleAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">RescaleAction</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.RescaleAction" title="gymnasium.wrappers.RescaleAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">RescaleAction</span></code></a></p></td>
 <td><p>Affinely (linearly) rescales a <code class="docutils literal notranslate"><span class="pre">Box</span></code> action space of the environment to within the range of <code class="docutils literal notranslate"><span class="pre">[min_action,</span> <span class="pre">max_action]</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.RescaleObservation" title="gymnasium.wrappers.RescaleObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">RescaleObservation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.RescaleObservation" title="gymnasium.wrappers.RescaleObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">RescaleObservation</span></code></a></p></td>
 <td><p>Affinely (linearly) rescales a <code class="docutils literal notranslate"><span class="pre">Box</span></code> observation space of the environment to within the range of <code class="docutils literal notranslate"><span class="pre">[min_obs,</span> <span class="pre">max_obs]</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.ReshapeObservation" title="gymnasium.wrappers.ReshapeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReshapeObservation</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.ReshapeObservation" title="gymnasium.wrappers.ReshapeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReshapeObservation</span></code></a></p></td>
 <td><p>Reshapes Array based observations to a specified shape.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.ResizeObservation" title="gymnasium.wrappers.ResizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResizeObservation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.ResizeObservation" title="gymnasium.wrappers.ResizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResizeObservation</span></code></a></p></td>
 <td><p>Resizes image observations using OpenCV to a specified shape.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.StickyAction" title="gymnasium.wrappers.StickyAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">StickyAction</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.StickyAction" title="gymnasium.wrappers.StickyAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">StickyAction</span></code></a></p></td>
 <td><p>Adds a probability that the action is repeated for the same <code class="docutils literal notranslate"><span class="pre">step</span></code> function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.TimeAwareObservation" title="gymnasium.wrappers.TimeAwareObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.TimeAwareObservation" title="gymnasium.wrappers.TimeAwareObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></a></p></td>
 <td><p>Augment the observation with the number of time steps taken within an episode.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.TimeLimit" title="gymnasium.wrappers.TimeLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.TimeLimit" title="gymnasium.wrappers.TimeLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code></a></p></td>
 <td><p>Limits the number of steps for an environment through truncating the environment if a maximum number of timesteps is exceeded.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.TransformAction" title="gymnasium.wrappers.TransformAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformAction</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.TransformAction" title="gymnasium.wrappers.TransformAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformAction</span></code></a></p></td>
 <td><p>Applies a function to the <code class="docutils literal notranslate"><span class="pre">action</span></code> before passing the modified value to the environment <code class="docutils literal notranslate"><span class="pre">step</span></code> function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.TransformObservation" title="gymnasium.wrappers.TransformObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformObservation</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.TransformObservation" title="gymnasium.wrappers.TransformObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformObservation</span></code></a></p></td>
 <td><p>Applies a function to the <code class="docutils literal notranslate"><span class="pre">observation</span></code> received from the environment’s <code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> that is passed back to the user.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../reward_wrappers/#gymnasium.wrappers.TransformReward" title="gymnasium.wrappers.TransformReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformReward</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../reward_wrappers/#gymnasium.wrappers.TransformReward" title="gymnasium.wrappers.TransformReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformReward</span></code></a></p></td>
 <td><p>Applies a function to the <code class="docutils literal notranslate"><span class="pre">reward</span></code> received from the environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code>.</p></td>
 </tr>
 </tbody>
