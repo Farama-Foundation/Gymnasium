@@ -15,8 +15,8 @@ array_api_extra = pytest.importorskip("array_api_extra")
 
 from array_api_compat import array_namespace, is_array_api_obj  # noqa: E402
 
+from gymnasium.wrappers import ArrayConversion  # noqa: E402
 from gymnasium.wrappers.array_conversion import (  # noqa: E402
-    ArrayConversion,
     array_conversion,
     module_namespace,
 )

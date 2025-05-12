@@ -22,11 +22,12 @@ __all__ = ["ArrayConversion"]
 class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
     """Wraps a vector environment returning Array API compatible arrays so that it can be interacted with through a specific framework.
 
-    Notes:
-        A vectorized version of ``gymnasium.wrappers.ArrayConversion``
+    Popular Array API frameworks include ``numpy``, ``torch``, ``jax.numpy``, ``cupy`` etc. With this wrapper, you can convert outputs from your environment to
+    any of these frameworks. Conversely, actions are automatically mapped back to the environment framework, if possible without moving the
+    data or device transfers.
 
-    Actions must be provided as Array API compatible arrays and observations, rewards, terminations and truncations will be returned in the desired framework.
-    xp here is a module that is compatible with the Array API standard, e.g. ``numpy``, ``jax`` etc.
+    Notes:
+        A vectorized version of :class:`gymnasium.wrappers.ArrayConversion`
 
     Example:
         >>> import gymnasium as gym                                         # doctest: +SKIP
