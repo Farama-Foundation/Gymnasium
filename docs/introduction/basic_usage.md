@@ -111,7 +111,7 @@ Importantly, :attr:`Env.action_space` and :attr:`Env.observation_space` are inst
 - :class:`Graph`: describes a mathematical graph (network) with interlinking nodes and edges.
 - :class:`Sequence`: describes a variable length of simpler space elements.
 
-For example usage of spaces, see their `documentation <../api/spaces>`_ along with `utility functions <../api/spaces/utils>`_. There are a couple of more niche spaces :class:`Graph`, :class:`Sequence` and :class:`Text`.
+For example usage of spaces, see their `documentation </api/spaces>`_ along with `utility functions </api/spaces/utils>`_. There are a couple of more niche spaces :class:`Graph`, :class:`Sequence` and :class:`Text`.
 ```
 
 ## Modifying the environment
