@@ -17,7 +17,7 @@ class JaxToNumpy(ArrayConversion):
     """Wraps a jax vector environment so that it can be interacted with through numpy arrays.
 
     Notes:
-        A vectorized version of ``gymnasium.wrappers.JaxToNumpy``
+        A vectorized version of :class:`gymnasium.wrappers.JaxToNumpy`
 
     Actions must be provided as numpy arrays and observations, rewards, terminations and truncations will be returned as numpy arrays.
 

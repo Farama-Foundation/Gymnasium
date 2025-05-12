@@ -12,6 +12,8 @@ wrapper in the page on the wrapper type
 
     * - Name
       - Description
+    * - :class:`ArrayConversion`
+      - Wraps an environment based on any Array API compatible framework, e.g. ``numpy``, ``torch``, ``jax.numpy``, such that it can be interacted with any other Array API compatible framework.
     * - :class:`AtariPreprocessing`
       - Implements the common preprocessing techniques for Atari environments (excluding frame stacking).
     * - :class:`Autoreset`
@@ -34,8 +36,6 @@ wrapper in the page on the wrapper type
       - Converts an image observation computed by ``reset`` and ``step`` from RGB to Grayscale.
     * - :class:`HumanRendering`
       - Allows human like rendering for environments that support "rgb_array" rendering.
-    * - :class:`ArrayConversion`
-      - Wraps an environment based on any Array API compatible framework, e.g. torch, jax, numpy, such that it can be interacted with any other Array API compatible framework.
     * - :class:`JaxToNumpy`
       - Wraps a Jax-based environment such that it can be interacted with NumPy arrays.
     * - :class:`JaxToTorch`
