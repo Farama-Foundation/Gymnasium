@@ -122,33 +122,30 @@
         });
 
         const sortVersions = (a, b) => {
-            const innerA = a.replace("v", "");
-            const innerB = b.replace("v", "");
+            // Remove 'v' prefix if present
+            const innerA = a.replace(/^v/i, "");
+            const innerB = b.replace(/^v/i, "");
 
+            // Handle alphabetic versions (like 'alpha', 'beta', etc.)
             if (innerA.match(/[a-z]/) && !innerB.match(/[a-z]/)) return 1;
             if (!innerA.match(/[a-z]/) && innerB.match(/[a-z]/)) return -1;
 
-            const splittedInnerA = innerA.split("");
-            const splittedInnerB = innerB.split("");
+            // Split versions into components (e.g., "2.1.0" -> ["2", "1", "0"])
+            const partsA = innerA.split(".");
+            const partsB = innerB.split(".");
 
-            while (splittedInnerA.length && splittedInnerB.length) {
-                const charA = splittedInnerA.shift();
-                const charB = splittedInnerB.shift();
+            // Compare each version component numerically
+            for (let i = 0; i < Math.max(partsA.length, partsB.length); i++) {
+                // Missing parts are treated as 0
+                const numA = parseInt(partsA[i] || "0", 10);
+                const numB = parseInt(partsB[i] || "0", 10);
 
-                if (charA === charB) continue;
-                else if (charA === ".") return 1;
-                else if (charB === ".") return -1;
-                else if (charA.match(/[0-9]/) && charB.match(/[0-9]/)) {
-                    return Number(charB) - Number(charA);
-                } else {
-                    if (charA < charB) return 1;
-                    else if (charA > charB) return -1;
-                    else return 0;
-                }
+                if (numA > numB) return -1; // Higher version comes first
+                if (numA < numB) return 1;  // Lower version comes later
             }
-            if (innerA < innerB) return 1;
-            else if (innerA > innerB) return -1;
-            else return 0;
+
+            // Versions are identical
+            return 0;
         }
 
         if ((githubUser !== null && githubUser !== "") || (repo !== null && repo !== "")) {

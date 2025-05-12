@@ -385,41 +385,41 @@ wrapper in the page on the wrapper type</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.AtariPreprocessing" title="gymnasium.wrappers.AtariPreprocessing"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtariPreprocessing</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.ArrayConversion" title="gymnasium.wrappers.ArrayConversion"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArrayConversion</span></code></a></p></td>
+<td><p>Wraps an environment based on any Array API compatible framework, e.g. <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">torch</span></code>, <code class="docutils literal notranslate"><span class="pre">jax.numpy</span></code>, such that it can be interacted with any other Array API compatible framework.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.AtariPreprocessing" title="gymnasium.wrappers.AtariPreprocessing"><code class="xref py py-class docutils literal notranslate"><span class="pre">AtariPreprocessing</span></code></a></p></td>
 <td><p>Implements the common preprocessing techniques for Atari environments (excluding frame stacking).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.Autoreset" title="gymnasium.wrappers.Autoreset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Autoreset</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.Autoreset" title="gymnasium.wrappers.Autoreset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Autoreset</span></code></a></p></td>
 <td><p>The wrapped environment is automatically reset when an terminated or truncated state is reached.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.ClipAction" title="gymnasium.wrappers.ClipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClipAction</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.ClipAction" title="gymnasium.wrappers.ClipAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClipAction</span></code></a></p></td>
 <td><p>Clips the <code class="docutils literal notranslate"><span class="pre">action</span></code> pass to <code class="docutils literal notranslate"><span class="pre">step</span></code> to be within the environment’s <cite>action_space</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../reward_wrappers/#gymnasium.wrappers.ClipReward" title="gymnasium.wrappers.ClipReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClipReward</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../reward_wrappers/#gymnasium.wrappers.ClipReward" title="gymnasium.wrappers.ClipReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClipReward</span></code></a></p></td>
 <td><p>Clips the rewards for an environment between an upper and lower bound.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.DelayObservation" title="gymnasium.wrappers.DelayObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DelayObservation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.DelayObservation" title="gymnasium.wrappers.DelayObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DelayObservation</span></code></a></p></td>
 <td><p>Adds a delay to the returned observation from the environment.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.DtypeObservation" title="gymnasium.wrappers.DtypeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DtypeObservation</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.DtypeObservation" title="gymnasium.wrappers.DtypeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DtypeObservation</span></code></a></p></td>
 <td><p>Modifies the dtype of an observation array to a specified dtype.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.FilterObservation" title="gymnasium.wrappers.FilterObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterObservation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.FilterObservation" title="gymnasium.wrappers.FilterObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterObservation</span></code></a></p></td>
 <td><p>Filters a Dict or Tuple observation spaces by a set of keys or indexes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.FlattenObservation" title="gymnasium.wrappers.FlattenObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlattenObservation</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.FlattenObservation" title="gymnasium.wrappers.FlattenObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlattenObservation</span></code></a></p></td>
 <td><p>Flattens the environment’s observation space and each observation from <code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> functions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.FrameStackObservation" title="gymnasium.wrappers.FrameStackObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameStackObservation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.FrameStackObservation" title="gymnasium.wrappers.FrameStackObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrameStackObservation</span></code></a></p></td>
 <td><p>Stacks the observations from the last <code class="docutils literal notranslate"><span class="pre">N</span></code> time steps in a rolling manner.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.GrayscaleObservation" title="gymnasium.wrappers.GrayscaleObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">GrayscaleObservation</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.GrayscaleObservation" title="gymnasium.wrappers.GrayscaleObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">GrayscaleObservation</span></code></a></p></td>
 <td><p>Converts an image observation computed by <code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> from RGB to Grayscale.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.HumanRendering" title="gymnasium.wrappers.HumanRendering"><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanRendering</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.HumanRendering" title="gymnasium.wrappers.HumanRendering"><code class="xref py py-class docutils literal notranslate"><span class="pre">HumanRendering</span></code></a></p></td>
 <td><p>Allows human like rendering for environments that support “rgb_array” rendering.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ArrayConversion</span></code></p></td>
-<td><p>Wraps an environment based on any Array API compatible framework, e.g. torch, jax, numpy, such that it can be interacted with any other Array API compatible framework.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.JaxToNumpy" title="gymnasium.wrappers.JaxToNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">JaxToNumpy</span></code></a></p></td>
 <td><p>Wraps a Jax-based environment such that it can be interacted with NumPy arrays.</p></td>

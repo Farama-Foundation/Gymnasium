@@ -871,6 +871,54 @@ will always return an empty list:</p>
 <section id="data-conversion-wrappers">
 <h2>Data Conversion Wrappers<a class="headerlink" href="#data-conversion-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.ArrayConversion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">ArrayConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_xp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModuleType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_xp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModuleType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/array_conversion/#ArrayConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.ArrayConversion" title="Link to this definition">¶</a></dt>
+<dd><p>Wraps an Array API compatible environment so that it can be interacted with with another Array API framework.</p>
+<p>Popular Array API frameworks include <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">torch</span></code>, <code class="docutils literal notranslate"><span class="pre">jax.numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">cupy</span></code> etc. With this wrapper, you can convert outputs from your environment to
+any of these frameworks. Conversely, actions are automatically mapped back to the environment framework, if possible without moving the
+data or device transfers.</p>
+<p>A vector version of the wrapper exists, <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.ArrayConversion" title="gymnasium.wrappers.vector.ArrayConversion"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.ArrayConversion</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>                                                
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>                                     
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>                                     
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;JaxEnv-vx&quot;</span><span class="p">)</span>                                 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">ArrayConversion</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">env_xp</span><span class="o">=</span><span class="n">jnp</span><span class="p">,</span> <span class="n">target_xp</span><span class="o">=</span><span class="n">torch</span><span class="p">)</span>     
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>                                
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>                                                   
+<span class="go">&lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">action</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>            
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>                                                   
+<span class="go">&lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>                                                
+<span class="go">&lt;class &#39;float&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">terminated</span><span class="p">)</span>                                            
+<span class="go">&lt;class &#39;bool&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">truncated</span><span class="p">)</span>                                             
+<span class="go">&lt;class &#39;bool&#39;&gt;</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.2.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The Array API compatible environment to wrap</p></li>
+<li><p><strong>env_xp</strong> – The Array API framework the environment is on</p></li>
+<li><p><strong>target_xp</strong> – The Array API framework to convert to</p></li>
+<li><p><strong>env_device</strong> – The device the environment is on</p></li>
+<li><p><strong>target_device</strong> – The device on which Arrays should be returned</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.JaxToNumpy">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">JaxToNumpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/jax_to_numpy/#JaxToNumpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.JaxToNumpy" title="Link to this definition">¶</a></dt>
 <dd><p>Wraps a Jax-based environment such that it can be interacted with NumPy arrays.</p>
@@ -1092,6 +1140,7 @@ A vector version of the wrapper exists, <a class="reference internal" href="../.
 </ul>
 </li>
 <li><a class="reference internal" href="#data-conversion-wrappers">Data Conversion Wrappers</a><ul>
+<li><a class="reference internal" href="#gymnasium.wrappers.ArrayConversion"><code class="docutils literal notranslate"><span class="pre">ArrayConversion</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.JaxToNumpy"><code class="docutils literal notranslate"><span class="pre">JaxToNumpy</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.JaxToTorch"><code class="docutils literal notranslate"><span class="pre">JaxToTorch</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.NumpyToTorch"><code class="docutils literal notranslate"><span class="pre">NumpyToTorch</span></code></a></li>
