@@ -14,10 +14,10 @@ array_api_compat = pytest.importorskip("array_api_compat")
 from array_api_compat import array_namespace  # noqa: E402
 
 from gymnasium.wrappers.array_conversion import module_namespace  # noqa: E402
-from gymnasium.wrappers.vector.array_conversion import ArrayConversion  # noqa: E402
-from gymnasium.wrappers.vector.jax_to_numpy import JaxToNumpy  # noqa: E402
-from gymnasium.wrappers.vector.jax_to_torch import JaxToTorch  # noqa: E402
-from gymnasium.wrappers.vector.numpy_to_torch import NumpyToTorch  # noqa: E402
+from gymnasium.wrappers.vector import ArrayConversion  # noqa: E402
+from gymnasium.wrappers.vector import JaxToNumpy  # noqa: E402
+from gymnasium.wrappers.vector import JaxToTorch  # noqa: E402
+from gymnasium.wrappers.vector import NumpyToTorch  # noqa: E402
 
 
 # Define available modules

@@ -137,9 +137,12 @@ def _none_array_conversion(
 
 
 class ArrayConversion(gym.Wrapper, gym.utils.RecordConstructorArgs):
-    """Wraps an Array API compatible environment so that it can be interacted with a specific Array API framework.
+    """Wraps an Array API compatible environment so that it can be interacted with with another Array API framework.
 
-    Actions must be provided as Array API compatible arrays and observations will be returned as Arrays of the specified xp module.
+    Popular Array API frameworks include ``numpy``, ``torch``, ``jax.numpy``, ``cupy`` etc. With this wrapper, you can convert outputs from your environment to
+    any of these frameworks. Conversely, actions are automatically mapped back to the environment framework, if possible without moving the
+    data or device transfers.
+
     A vector version of the wrapper exists, :class:`gymnasium.wrappers.vector.ArrayConversion`.
 
     Example:

@@ -74,6 +74,7 @@ title: Vector Wrappers
 ## Implemented Data Conversion wrappers
 
 ```{eval-rst}
+.. autoclass:: gymnasium.wrappers.vector.ArrayConversion
 .. autoclass:: gymnasium.wrappers.vector.JaxToNumpy
 .. autoclass:: gymnasium.wrappers.vector.JaxToTorch
 .. autoclass:: gymnasium.wrappers.vector.NumpyToTorch
