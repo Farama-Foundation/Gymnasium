@@ -7,11 +7,11 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/wrappers/vector/jax_to_numpy.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../search/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/wrappers/vector/jax_to_numpy.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/wrappers/vector/array_conversion.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../search/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/wrappers/vector/array_conversion.html" />
 
     <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
-        <title>gymnasium.wrappers.vector.jax_to_numpy - Gymnasium Documentation</title>
+        <title>gymnasium.wrappers.vector.array_conversion - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=61a4c737" />
@@ -363,49 +363,141 @@
           </div>
           <article role="main">
             
-            <h1>Source code for gymnasium.wrappers.vector.jax_to_numpy</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Vector wrapper for converting between NumPy and Jax.&quot;&quot;&quot;</span>
+            <h1>Source code for gymnasium.wrappers.vector.array_conversion</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Vector wrapper for converting between Array API compatible frameworks.&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyNotInstalled</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorEnv</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.vector.array_conversion</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayConversion</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">VectorWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.vector_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.array_conversion</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Device</span><span class="p">,</span>
+    <span class="n">array_conversion</span><span class="p">,</span>
+    <span class="n">module_name_to_namespace</span><span class="p">,</span>
+<span class="p">)</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;JaxToNumpy&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ArrayConversion&quot;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="JaxToNumpy">
-<a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.JaxToNumpy">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">JaxToNumpy</span><span class="p">(</span><span class="n">ArrayConversion</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps a jax vector environment so that it can be interacted with through numpy arrays.</span>
+<div class="viewcode-block" id="ArrayConversion">
+<a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.ArrayConversion">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArrayConversion</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps a vector environment returning Array API compatible arrays so that it can be interacted with through a specific framework.</span>
+
+<span class="sd">    Popular Array API frameworks include ``numpy``, ``torch``, ``jax.numpy``, ``cupy`` etc. With this wrapper, you can convert outputs from your environment to</span>
+<span class="sd">    any of these frameworks. Conversely, actions are automatically mapped back to the environment framework, if possible without moving the</span>
+<span class="sd">    data or device transfers.</span>
 
 <span class="sd">    Notes:</span>
-<span class="sd">        A vectorized version of :class:`gymnasium.wrappers.JaxToNumpy`</span>
-
-<span class="sd">    Actions must be provided as numpy arrays and observations, rewards, terminations and truncations will be returned as numpy arrays.</span>
+<span class="sd">        A vectorized version of :class:`gymnasium.wrappers.ArrayConversion`</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym                                         # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;JaxEnv-vx&quot;, 3)                             # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; envs = JaxToNumpy(envs)                                         # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; envs = ArrayConversion(envs, xp=np)                             # doctest: +SKIP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wraps an environment such that the input and outputs are numpy arrays.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
+        <span class="n">env_xp</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">target_xp</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">env_device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">target_device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper class to change inputs and outputs of environment to any Array API framework.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            env: the vector jax environment to wrap</span>
+<span class="sd">            env: The Array API compatible environment to wrap</span>
+<span class="sd">            env_xp: The Array API framework the environment is on</span>
+<span class="sd">            target_xp: The Array API framework to convert to</span>
+<span class="sd">            env_device: The device the environment is on</span>
+<span class="sd">            target_device: The device on which Arrays should be returned</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">jnp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-                <span class="s1">&#39;Jax is not installed, run `pip install &quot;gymnasium[jax]&quot;`&#39;</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">VectorWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span> <span class="o">=</span> <span class="n">env_xp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span> <span class="o">=</span> <span class="n">target_xp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_device</span> <span class="o">=</span> <span class="n">env_device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span> <span class="o">=</span> <span class="n">target_device</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transforms the action to the specified xp module array type.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            actions: The action to perform</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A tuple containing xp versions of the next observation, reward, termination, truncation, and extra info.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">actions</span> <span class="o">=</span> <span class="n">array_conversion</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_device</span><span class="p">)</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">array_conversion</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span><span class="p">),</span>
+            <span class="n">array_conversion</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span><span class="p">),</span>
+            <span class="n">array_conversion</span><span class="p">(</span>
+                <span class="n">terminated</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span>
+            <span class="p">),</span>
+            <span class="n">array_conversion</span><span class="p">(</span><span class="n">truncated</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span><span class="p">),</span>
+            <span class="n">array_conversion</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment returning xp-based observation and info.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seed: The seed for resetting the environment</span>
+<span class="sd">            options: The options for resetting the environment, these are converted to xp arrays.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            xp-based observations and info</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
+            <span class="n">options</span> <span class="o">=</span> <span class="n">array_conversion</span><span class="p">(</span>
+                <span class="n">options</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_device</span>
             <span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">env_xp</span><span class="o">=</span><span class="n">jnp</span><span class="p">,</span> <span class="n">target_xp</span><span class="o">=</span><span class="n">np</span><span class="p">)</span></div>
+
+        <span class="k">return</span> <span class="n">array_conversion</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">),</span>
+            <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the object pickle state with args and kwargs.&quot;&quot;&quot;</span>
+        <span class="n">env_xp_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;array_api_compat.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">target_xp_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;array_api_compat.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">env_device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_device</span>
+        <span class="n">target_device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;env_xp_name&quot;</span><span class="p">:</span> <span class="n">env_xp_name</span><span class="p">,</span>
+            <span class="s2">&quot;target_xp_name&quot;</span><span class="p">:</span> <span class="n">target_xp_name</span><span class="p">,</span>
+            <span class="s2">&quot;env_device&quot;</span><span class="p">:</span> <span class="n">env_device</span><span class="p">,</span>
+            <span class="s2">&quot;target_device&quot;</span><span class="p">:</span> <span class="n">target_device</span><span class="p">,</span>
+            <span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the object pickle state using d.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;env&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span> <span class="o">=</span> <span class="n">module_name_to_namespace</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;env_xp_name&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span> <span class="o">=</span> <span class="n">module_name_to_namespace</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;target_xp_name&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_device</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;env_device&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;target_device&quot;</span><span class="p">]</span></div>
 
 </pre></div>
           </article>
