@@ -9,7 +9,7 @@ from __future__ import annotations
 import operator as op
 import typing
 from functools import reduce, singledispatch
-from typing import Any, TypeVar, Union, cast
+from typing import Any, TypeVar, Union
 
 import numpy as np
 from numpy.typing import NDArray
@@ -329,7 +329,7 @@ def _unflatten_multidiscrete(
             f"{x} is not a concatenation of one-hot encoded vectors and can not be unflattened to space {space}. "
             "Not all valid samples in a flattened space can be unflattened."
         )
-    (indices,) = cast(type(offsets[:-1]), nonzero)
+    (indices,) = nonzero
     return (
         np.asarray(indices - offsets[:-1], dtype=space.dtype).reshape(space.shape)
         + space.start

@@ -6,6 +6,7 @@ from collections import deque
 from typing import Callable, List
 
 import numpy as np
+from matplotlib.axes import Axes
 
 import gymnasium as gym
 from gymnasium import Env, logger
@@ -369,7 +370,7 @@ class PlayPlot:
         for axis, name in zip(self.ax, plot_names):
             axis.set_title(name)
         self.t = 0
-        self.cur_plot: list[plt.Axes | None] = [None for _ in range(num_plots)]
+        self.cur_plot: list[Axes | None] = [None for _ in range(num_plots)]
         self.data = [deque(maxlen=horizon_timesteps) for _ in range(num_plots)]
 
     def callback(
