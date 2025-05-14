@@ -3,15 +3,18 @@
 from __future__ import annotations
 
 from collections import deque
-from typing import Callable, List
+from typing import TYPE_CHECKING, Callable, List
 
 import numpy as np
-from matplotlib.axes import Axes
 
 import gymnasium as gym
 from gymnasium import Env, logger
 from gymnasium.core import ActType, ObsType
 from gymnasium.error import DependencyNotInstalled
+
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
 
 
 try:
