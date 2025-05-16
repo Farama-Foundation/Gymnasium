@@ -323,13 +323,12 @@ def _unflatten_multidiscrete(
 ) -> NDArray[np.integer[Any]]:
     offsets = np.zeros((space.nvec.size + 1,), dtype=space.dtype)
     offsets[1:] = np.cumsum(space.nvec.flatten())
-    nonzero = np.nonzero(x)
-    if len(nonzero[0]) == 0:
+    (indices,) = np.nonzero(x)
+    if len(indices) == 0:
         raise ValueError(
             f"{x} is not a concatenation of one-hot encoded vectors and can not be unflattened to space {space}. "
             "Not all valid samples in a flattened space can be unflattened."
         )
-    (indices,) = nonzero
     return (
         np.asarray(indices - offsets[:-1], dtype=space.dtype).reshape(space.shape)
         + space.start
