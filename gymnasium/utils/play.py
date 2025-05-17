@@ -263,7 +263,7 @@ def play(
         else:
             assert isinstance(key, (str, int))
 
-        assert action in env.action_space
+        assert int(action) in env.action_space
 
     key_code_to_action = {}
     for key_combination, action in keys_to_action.items():
