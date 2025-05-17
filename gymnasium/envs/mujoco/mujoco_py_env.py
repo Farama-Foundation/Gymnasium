@@ -1,3 +1,5 @@
+# type: ignore
+
 from os import path
 from typing import Any, Dict, Optional, Tuple, Union
 

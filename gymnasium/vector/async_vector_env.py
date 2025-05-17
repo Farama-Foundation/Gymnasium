@@ -10,6 +10,7 @@ from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
+from multiprocessing.sharedctypes import SynchronizedArray
 from typing import Any, Callable, Sequence
 
 import numpy as np
@@ -721,7 +722,7 @@ def _async_worker(
     env_fn: callable,
     pipe: Connection,
     parent_pipe: Connection,
-    shared_memory: multiprocessing.Array | dict[str, Any] | tuple[Any, ...],
+    shared_memory: SynchronizedArray | dict[str, Any] | tuple[Any, ...],
     error_queue: Queue,
     autoreset_mode: AutoresetMode,
 ):
