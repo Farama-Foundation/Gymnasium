@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import deque
-from typing import Callable, List
+from typing import TYPE_CHECKING, Callable, List
 
 import numpy as np
 
@@ -11,6 +11,10 @@ import gymnasium as gym
 from gymnasium import Env, logger
 from gymnasium.core import ActType, ObsType
 from gymnasium.error import DependencyNotInstalled
+
+
+if TYPE_CHECKING:
+    from matplotlib.axes import Axes
 
 
 try:
@@ -369,7 +373,7 @@ class PlayPlot:
         for axis, name in zip(self.ax, plot_names):
             axis.set_title(name)
         self.t = 0
-        self.cur_plot: list[plt.Axes | None] = [None for _ in range(num_plots)]
+        self.cur_plot: list[Axes | None] = [None for _ in range(num_plots)]
         self.data = [deque(maxlen=horizon_timesteps) for _ in range(num_plots)]
 
     def callback(
