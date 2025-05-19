@@ -169,7 +169,6 @@ reportIndexIssue = "none"           # TODO fix one by one
 reportReturnType = "none"           # TODO fix one by one
 reportCallIssue = "none"            # TODO fix one by one
 reportOperatorIssue = "none"        # TODO fix one by one
-reportInvalidTypeForm = "none"      # TODO fix one by one
 reportOptionalMemberAccess = "none" # TODO fix one by one
 reportAssignmentType = "none"       # TODO fix one by one
 
