@@ -4,6 +4,7 @@ Demonstrates that Gymnasium code examples require Python 3.10+ and the latest Gy
 
 import gymnasium as gym
 
+
 env = gym.make("CartPole-v1")
 observation, info = env.reset(seed=123)
 
@@ -14,4 +15,3 @@ while not done:
     done = terminated or truncated
 
 env.close()
-

@@ -20,7 +20,6 @@ while not done:
     done = terminated or truncated
 ```
 
-Fo
 
 # Create a Custom Environment
 
