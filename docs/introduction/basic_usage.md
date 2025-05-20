@@ -3,8 +3,9 @@ layout: "contents"
 title: Basic Usage
 firstpage:
 ---
+<!-- See docs/tutorials/run_python310_example.py for an executable version of this code. -->
 
-> **Note:** The code and tools used in this page are compatible with **Python 3.10+**. Earlier versions (e.g., 3.8, 3.9) are not supported and may fail because some required libraries and features are only available in Python 3.10 or newer.
+> **Note:** The code and tools used in this page require **Python 3.10+** and are only guaranteed to work with the latest version of Gymnasium. Earlier Python versions or older Gymnasium releases may not be compatible.
 
 # Basic Usage
 
