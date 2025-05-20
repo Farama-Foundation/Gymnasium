@@ -3,6 +3,8 @@ layout: "contents"
 title: Create custom env
 ---
 
+> **Note:** The code and tools used in this page are compatible with **Python 3.10+**. Earlier versions (e.g., 3.8, 3.9) are not supported and may fail.
+
 # Create a Custom Environment
 
 This page provides a short outline of how to create custom environments with Gymnasium, for a more [complete tutorial](../tutorials/gymnasium_basics/environment_creation) with rendering, please read [basic usage](basic_usage)  before reading this page.

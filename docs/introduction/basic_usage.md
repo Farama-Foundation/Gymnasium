@@ -4,6 +4,8 @@ title: Basic Usage
 firstpage:
 ---
 
+> **Note:** The code and tools used in this page are compatible with **Python 3.10+**. Earlier versions (e.g., 3.8, 3.9) are not supported and may fail because some required libraries and features are only available in Python 3.10 or newer.
+
 # Basic Usage
 
 ```{eval-rst}
