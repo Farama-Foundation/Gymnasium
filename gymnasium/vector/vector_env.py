@@ -33,9 +33,9 @@ __all__ = [
 class AutoresetMode(Enum):
     """Enum representing the different autoreset modes, next step, same step and disabled."""
 
-    NEXT_STEP: str = "NextStep"
-    SAME_STEP: str = "SameStep"
-    DISABLED: str = "Disabled"
+    NEXT_STEP = "NextStep"
+    SAME_STEP = "SameStep"
+    DISABLED = "Disabled"
 
 
 class VectorEnv(Generic[ObsType, ActType, ArrayType]):
