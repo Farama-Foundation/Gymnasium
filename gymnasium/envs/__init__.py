@@ -184,7 +184,17 @@ register(
 # Mujoco
 # ----------------------------------------
 
+
+def _raise_mujoco_py_error(*args: Any, **kwargs: Any):
+    raise ImportError(
+        "The mujoco v2 and v3 based environments have been moved to the gymnasium-robotics project (https://github.com/Farama-Foundation/gymnasium-robotics)."
+    )
+
+
 # manipulation
+
+
+register(id="Reacher-v2", entry_point=_raise_mujoco_py_error)
 
 register(
     id="Reacher-v4",
@@ -199,6 +209,8 @@ register(
     max_episode_steps=50,
     reward_threshold=-3.75,
 )
+
+register(id="Pusher-v2", entry_point=_raise_mujoco_py_error)
 
 register(
     id="Pusher-v4",
@@ -216,6 +228,8 @@ register(
 
 # balance
 
+register(id="InvertedPendulum-v2", entry_point=_raise_mujoco_py_error)
+
 register(
     id="InvertedPendulum-v4",
     entry_point="gymnasium.envs.mujoco.inverted_pendulum_v4:InvertedPendulumEnv",
@@ -229,6 +243,8 @@ register(
     max_episode_steps=1000,
     reward_threshold=950.0,
 )
+
+register(id="InvertedDoublePendulum-v2", entry_point=_raise_mujoco_py_error)
 
 register(
     id="InvertedDoublePendulum-v4",
@@ -246,6 +262,10 @@ register(
 
 # runners
 
+register(id="HalfCheetah-v2", entry_point=_raise_mujoco_py_error)
+
+register(id="HalfCheetah-v3", entry_point=_raise_mujoco_py_error)
+
 register(
     id="HalfCheetah-v4",
     entry_point="gymnasium.envs.mujoco.half_cheetah_v4:HalfCheetahEnv",
@@ -259,6 +279,10 @@ register(
     max_episode_steps=1000,
     reward_threshold=4800.0,
 )
+
+register(id="Hopper-v2", entry_point=_raise_mujoco_py_error)
+
+register(id="Hopper-v3", entry_point=_raise_mujoco_py_error)
 
 register(
     id="Hopper-v4",
@@ -274,6 +298,10 @@ register(
     reward_threshold=3800.0,
 )
 
+register(id="Swimmer-v2", entry_point=_raise_mujoco_py_error)
+
+register(id="Swimmer-v3", entry_point=_raise_mujoco_py_error)
+
 register(
     id="Swimmer-v4",
     entry_point="gymnasium.envs.mujoco.swimmer_v4:SwimmerEnv",
@@ -288,17 +316,25 @@ register(
     reward_threshold=360.0,
 )
 
+register(id="Walker2d-v2", entry_point=_raise_mujoco_py_error)
+
+register(id="Walker2d-v3", entry_point=_raise_mujoco_py_error)
+
 register(
     id="Walker2d-v4",
-    max_episode_steps=1000,
     entry_point="gymnasium.envs.mujoco.walker2d_v4:Walker2dEnv",
+    max_episode_steps=1000,
 )
 
 register(
     id="Walker2d-v5",
-    max_episode_steps=1000,
     entry_point="gymnasium.envs.mujoco.walker2d_v5:Walker2dEnv",
+    max_episode_steps=1000,
 )
+
+register(id="Ant-v2", entry_point=_raise_mujoco_py_error)
+
+register(id="Ant-v3", entry_point=_raise_mujoco_py_error)
 
 register(
     id="Ant-v4",
@@ -314,6 +350,10 @@ register(
     reward_threshold=6000.0,
 )
 
+register(id="Humanoid-v2", entry_point=_raise_mujoco_py_error)
+
+register(id="Humanoid-v3", entry_point=_raise_mujoco_py_error)
+
 register(
     id="Humanoid-v4",
     entry_point="gymnasium.envs.mujoco.humanoid_v4:HumanoidEnv",
@@ -325,6 +365,8 @@ register(
     entry_point="gymnasium.envs.mujoco.humanoid_v5:HumanoidEnv",
     max_episode_steps=1000,
 )
+
+register(id="HumanoidStandup-v2", entry_point=_raise_mujoco_py_error)
 
 register(
     id="HumanoidStandup-v4",

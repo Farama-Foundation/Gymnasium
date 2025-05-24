@@ -146,8 +146,8 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         - Added individual reward terms in `info` (`info["reward_forward"]`, `info["reward_ctrl"]`, `info["reward_survive"]`).
         - Added `info["z_distance_from_origin"]` which is equal to the vertical distance of the "torso" body from its initial position.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
-    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
-    * v2: All continuous control environments now use mujoco-py >= 1.50.
+    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen). Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release.
     """

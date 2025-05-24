@@ -29,7 +29,7 @@ ALL_MUJOCO_ENVS = [
 
 
 # Note: "HumnanoidStandup-v4" does not have `info`
-# Note: "Humnanoid-v4/3" & "Ant-v4/3" fail this test
+# Note: "Humnanoid-v4" & "Ant-v4" fail this test
 @pytest.mark.parametrize(
     "env_id",
     [
@@ -57,7 +57,7 @@ def test_verify_info_x_position(env_id: str):
 
 
 # Note: "HumnanoidStandup-v4" does not have `info`
-# Note: "Humnanoid-v4/3" & "Ant-v4/3" fail this test
+# Note: "Humnanoid-v4" & "Ant-v4" fail this test
 @pytest.mark.parametrize(
     "env_id",
     [
@@ -153,10 +153,10 @@ def test_verify_info_xy_velocity_com(env_id: str):
     assert vel_y == info["y_velocity"]
 
 
-# Note: Hopper-v4/3/2 does not have `info['reward_survive']`, but it is still affected
-# Note: Walker2d-v4/3/2 does not have `info['reward_survive']`, but it is still affected
-# Note: Inverted(Double)Pendulum-v4/2 does not have `info['reward_survive']`, but it is still affected
-# Note: all `v4/v3/v2` environments with a heathly reward are fail this test
+# Note: Hopper-v4 does not have `info['reward_survive']`, but it is still affected
+# Note: Walker2d-v4 does not have `info['reward_survive']`, but it is still affected
+# Note: Inverted(Double)Pendulum-v4 does not have `info['reward_survive']`, but it is still affected
+# Note: all `v4` environments with a heathly reward are fail this test
 @pytest.mark.parametrize(
     "env_name",
     [
@@ -389,10 +389,9 @@ def test_set_state(version: str):
     assert (env.data.qvel == new_qvel).all()
 
 
-# Note: HumanoidStandup-v4/v3 does not have `info`
-# Note: Ant-v4/v3 fails this test
-# Note: Humanoid-v4/v3 fails this test
-# Note: v2 does not have `info`
+# Note: HumanoidStandup-v4 does not have `info`
+# Note: Ant-v4 fails this test
+# Note: Humanoid-v4 fails this test
 @pytest.mark.parametrize(
     "env_id", ["Ant-v5", "Humanoid-v5", "Swimmer-v5", "Swimmer-v4"]
 )

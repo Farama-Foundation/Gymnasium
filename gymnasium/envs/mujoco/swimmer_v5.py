@@ -135,8 +135,8 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         - Added `exclude_current_positions_from_observation` argument.
         - Replaced `info["reward_fwd"]` and `info["forward_reward"]` with `info["reward_forward"]` to be consistent with the other environments.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
-    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen).
-    * v2: All continuous control environments now use mujoco-py >= 1.50.
+    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen). Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release.
     """
