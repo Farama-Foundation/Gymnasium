@@ -230,7 +230,12 @@ register(
 
 register(id="InvertedPendulum-v2", entry_point=_raise_mujoco_py_error)
 
-register(id="InvertedPendulum-v4", entry_point=_raise_mujoco_py_error)
+register(
+    id="InvertedPendulum-v4",
+    entry_point="gymnasium.envs.mujoco.inverted_pendulum_v4:InvertedPendulumEnv",
+    max_episode_steps=1000,
+    reward_threshold=950.0,
+)
 
 register(
     id="InvertedPendulum-v5",
