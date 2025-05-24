@@ -3,12 +3,11 @@
 from __future__ import annotations
 
 from os import path
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING, NamedTuple, TypeAlias
 
 import jax
 import jax.numpy as jnp
 import numpy as np
-from jax.random import PRNGKey
 
 from gymnasium import spaces
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
@@ -26,7 +25,7 @@ if TYPE_CHECKING:
 class RenderStateType(NamedTuple):
     """A named tuple which contains the full render state of the Cliffwalking Env. This is static during the episode."""
 
-    screen: pygame.surface
+    screen: pygame.Surface
     shape: tuple[int, int]
     nS: int
     cell_size: tuple[int, int]
@@ -47,9 +46,12 @@ class RenderStateType(NamedTuple):
 class EnvState(NamedTuple):
     """A named tuple which contains the full state of the Cliffwalking game."""
 
-    player_position: jnp.array
+    player_position: jax.Array
     last_action: int
     fallen: bool
+
+
+PRNGKeyType: TypeAlias = jax.Array
 
 
 def fell_off(player_position):
@@ -144,9 +146,9 @@ class CliffWalkingFunctional(
         self,
         state: EnvState,
         action: int | jax.Array,
-        key: PRNGKey,
+        key: PRNGKeyType,
         params: None = None,
-    ):
+    ) -> EnvState:
         """The Cliffwalking environment's state transition function."""
         new_position = state.player_position
 
@@ -182,14 +184,14 @@ class CliffWalkingFunctional(
 
         return new_state
 
-    def initial(self, rng: PRNGKey, params: None = None) -> EnvState:
+    def initial(self, rng: PRNGKeyType, params: None = None) -> EnvState:
         """Cliffwalking initial observation function."""
         player_position = jnp.array([3, 0])
 
         state = EnvState(player_position=player_position, last_action=-1, fallen=False)
         return state
 
-    def observation(self, state: EnvState, params: None = None) -> int:
+    def observation(self, state: EnvState, params: None = None) -> jax.Array:
         """Cliffwalking observation."""
         return jnp.array(
             state.player_position[0] * 12 + state.player_position[1]
@@ -203,7 +205,7 @@ class CliffWalkingFunctional(
         self,
         state: EnvState,
         action: ActType,
-        next_state: StateType,
+        next_state: EnvState,
         params: None = None,
     ) -> jax.Array:
         """Calculates reward from a state."""
