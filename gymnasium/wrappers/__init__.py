@@ -134,6 +134,7 @@ __all__ = [
     "RecordVideo",
     "HumanRendering",
     # --- Conversion ---
+    "ArrayConversion",
     "JaxToNumpy",
     "JaxToTorch",
     "NumpyToTorch",
@@ -143,6 +144,7 @@ __all__ = [
 #   to avoid `import jax` or `import torch` on `import gymnasium`.
 _wrapper_to_class = {
     # data converters
+    "ArrayConversion": "array_conversion",
     "JaxToNumpy": "jax_to_numpy",
     "JaxToTorch": "jax_to_torch",
     "NumpyToTorch": "numpy_to_torch",
