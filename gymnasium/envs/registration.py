@@ -599,7 +599,6 @@ def register(
     assert (
         entry_point is not None or vector_entry_point is not None
     ), "Either `entry_point` or `vector_entry_point` (or both) must be provided"
-    global registry, current_namespace
     ns, name, version = parse_env_id(id)
 
     if kwargs is None:
