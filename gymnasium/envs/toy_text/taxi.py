@@ -1,7 +1,6 @@
 from contextlib import closing
 from io import StringIO
 from os import path
-from typing import Optional
 
 import numpy as np
 
@@ -279,7 +278,7 @@ class TaxiEnv(Env):
 
     def __init__(
         self,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         is_rainy: bool = False,
         fickle_passenger: bool = False,
     ):
@@ -425,8 +424,8 @@ class TaxiEnv(Env):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
         self.s = categorical_sample(self.initial_state_distrib, self.np_random)

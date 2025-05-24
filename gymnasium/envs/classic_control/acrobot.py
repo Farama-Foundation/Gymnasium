@@ -1,7 +1,5 @@
 """classic Acrobot task"""
 
-from typing import Optional
-
 import numpy as np
 from numpy import cos, pi, sin
 
@@ -172,7 +170,7 @@ class AcrobotEnv(Env):
     domain_fig = None
     actions_num = 3
 
-    def __init__(self, render_mode: Optional[str] = None):
+    def __init__(self, render_mode: str | None = None):
         self.render_mode = render_mode
         self.screen = None
         self.clock = None
@@ -185,7 +183,7 @@ class AcrobotEnv(Env):
         self.action_space = spaces.Discrete(3)
         self.state = None
 
-    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    def reset(self, *, seed: int | None = None, options: dict | None = None):
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.

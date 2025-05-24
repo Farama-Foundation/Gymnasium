@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -105,8 +103,8 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
         - Added `reset_noise_scale` argument to set the range of initial states.
         - Added `info["reward_survive"]` which contains the reward.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
-    * v3: This environment does not have a v3 release.
-    * v2: All continuous control environments now use mujoco-py >= 1.5.
+    * v3: This environment does not have a v3 release. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.5. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum).
     * v0: Initial versions release.
     """
@@ -124,7 +122,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "inverted_pendulum.xml",
         frame_skip: int = 2,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
         reset_noise_scale: float = 0.01,
         **kwargs,
     ):

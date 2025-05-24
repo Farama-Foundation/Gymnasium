@@ -4,7 +4,6 @@ permalink: https://perma.cc/6Z2N-PFWC
 """
 
 import math
-from typing import Optional
 
 import numpy as np
 
@@ -106,7 +105,7 @@ class MountainCarEnv(gym.Env):
         "render_fps": 30,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, goal_velocity=0):
+    def __init__(self, render_mode: str | None = None, goal_velocity=0):
         self.min_position = -1.2
         self.max_position = 0.6
         self.max_speed = 0.07
@@ -157,8 +156,8 @@ class MountainCarEnv(gym.Env):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound

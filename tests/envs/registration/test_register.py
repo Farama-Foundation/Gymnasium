@@ -1,7 +1,6 @@
 """Tests that `gymnasium.register` works as expected."""
 
 import re
-from typing import Optional
 
 import pytest
 
@@ -61,9 +60,7 @@ def register_registration_testing_envs():
         ("MyAwesomeEnv-v", None, "MyAwesomeEnv-v", None),
     ],
 )
-def test_register(
-    env_id: str, namespace: Optional[str], name: str, version: Optional[int]
-):
+def test_register(env_id: str, namespace: str | None, name: str, version: int | None):
     gym.register(env_id, "no-entry-point")
     assert gym.spec(env_id).id == env_id
 

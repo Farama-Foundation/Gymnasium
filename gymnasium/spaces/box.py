@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Iterable, Mapping, Sequence, SupportsFloat
+from collections.abc import Iterable, Mapping, Sequence
+from typing import Any, SupportsFloat
 
 import numpy as np
 from numpy.typing import NDArray

@@ -1,7 +1,5 @@
 """Test suite for vector NormalizeReward wrapper."""
 
-from typing import Optional
-
 import numpy as np
 
 from gymnasium import wrappers
@@ -10,7 +8,7 @@ from gymnasium.vector import SyncVectorEnv
 from tests.testing_env import GenericTestEnv
 
 
-def reset_func(self, seed: Optional[int] = None, options: Optional[dict] = None):
+def reset_func(self, seed: int | None = None, options: dict | None = None):
     self.step_id = 0
     return self.observation_space.sample(), {}
 

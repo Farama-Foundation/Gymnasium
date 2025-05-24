@@ -1,5 +1,4 @@
 from itertools import zip_longest
-from typing import Optional
 
 import numpy as np
 import pytest
@@ -77,7 +76,7 @@ assert len(TESTING_SPACES) == len(TESTING_SPACES_EXPECTED_FLATDIMS)
     zip_longest(TESTING_SPACES, TESTING_SPACES_EXPECTED_FLATDIMS),
     ids=TESTING_SPACES_IDS,
 )
-def test_flatdim(space: gym.spaces.Space, flatdim: Optional[int]):
+def test_flatdim(space: gym.spaces.Space, flatdim: int | None):
     """Checks that the flattened dims of the space is equal to an expected value."""
     if space.is_np_flattenable:
         dim = utils.flatdim(space)

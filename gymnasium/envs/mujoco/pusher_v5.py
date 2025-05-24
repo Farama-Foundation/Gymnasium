@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -153,8 +151,8 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         - Added `info["reward_near"]` which is equal to the reward term `reward_near`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
         - Warning: This version of the environment is not compatible with `mujoco>=3.0.0` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
-    * v3: This environment does not have a v3 release.
-    * v2: All continuous control environments now use mujoco-py >= 1.50.
+    * v3: This environment does not have a v3 release. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks (not including pusher, which has a max_time_steps of 100). Added reward_threshold to environments.
     * v0: Initial versions release.
     """
@@ -172,7 +170,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "pusher_v5.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
         reward_near_weight: float = 0.5,
         reward_dist_weight: float = 1,
         reward_control_weight: float = 0.1,
