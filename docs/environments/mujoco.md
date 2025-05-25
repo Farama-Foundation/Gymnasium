@@ -40,6 +40,11 @@ Instructions for installing the MuJoCo engine can be found on their [website](ht
 
 MuJoCo `v3` environments and older, which relied on the `mujoco-py` framework, were migrated to the `gymnasium-robotics` package starting with `gymnasium` v1.2. For information on using these older versions, please refer to the `gymnasium-robotics` documentation. The original `mujoco-py` framework can be found in its [GitHub repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py).
 
+The dependencies for the old environment versions can be installed via:
+````bash
+pip install gymnasium_robotics[mujoco-py]
+````
+
 There are eleven MuJoCo environments (in roughly increasing complexity):
 
 | Robot                  | Short Description                                                    |
