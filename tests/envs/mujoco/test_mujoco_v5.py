@@ -7,12 +7,13 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.envs.mujoco.mujoco_env import MujocoEnv
-from gymnasium.envs.mujoco.mujoco_py_env import BaseMujocoPyEnv
 from gymnasium.envs.mujoco.utils import check_mujoco_reset_state
 from gymnasium.error import Error
 from gymnasium.utils.env_checker import check_env
 from gymnasium.utils.env_match import check_environments_match
 
+
+BaseMujocoPyEnv = None
 
 ALL_MUJOCO_ENVS = [
     "Ant",
