@@ -37,18 +37,14 @@ ALL_MUJOCO_ENVS = [
         "Ant-v5",
         "HalfCheetah-v5",
         "HalfCheetah-v4",
-        "HalfCheetah-v3",
         "Hopper-v5",
         "Hopper-v4",
-        "Hopper-v3",
         "Humanoid-v5",
         "HumanoidStandup-v5",
         "Swimmer-v5",
         "Swimmer-v4",
-        "Swimmer-v3",
         "Walker2d-v5",
         "Walker2d-v4",
-        "Walker2d-v3",
     ],
 )
 def test_verify_info_x_position(env_id: str):
@@ -71,7 +67,6 @@ def test_verify_info_x_position(env_id: str):
         "HumanoidStandup-v5",
         "Swimmer-v5",
         "Swimmer-v4",
-        "Swimmer-v3",
     ],
 )
 def test_verify_info_y_position(env_id: str):
@@ -86,7 +81,7 @@ def test_verify_info_y_position(env_id: str):
 
 # Note: "HumnanoidStandup-v4" does not have `info`
 @pytest.mark.parametrize("env_name", ["HalfCheetah", "Hopper", "Swimmer", "Walker2d"])
-@pytest.mark.parametrize("version", ["v5", "v4", "v3"])
+@pytest.mark.parametrize("version", ["v5", "v4"])
 def test_verify_info_x_velocity(env_name: str, version: str):
     """Asserts that the environment `info['x_velocity']` is properly assigned."""
     env = gym.make(f"{env_name}-{version}").unwrapped
@@ -103,7 +98,7 @@ def test_verify_info_x_velocity(env_name: str, version: str):
 
 
 # Note: "HumnanoidStandup-v4" does not have `info`
-@pytest.mark.parametrize("env_id", ["Swimmer-v5", "Swimmer-v4", "Swimmer-v3"])
+@pytest.mark.parametrize("env_id", ["Swimmer-v5", "Swimmer-v4"])
 def test_verify_info_y_velocity(env_id: str):
     """Asserts that the environment `info['y_velocity']` is properly assigned."""
     env = gym.make(env_id).unwrapped
@@ -119,7 +114,7 @@ def test_verify_info_y_velocity(env_id: str):
     assert vel_y == info["y_velocity"]
 
 
-@pytest.mark.parametrize("env_id", ["Ant-v5", "Ant-v4", "Ant-v3"])
+@pytest.mark.parametrize("env_id", ["Ant-v5", "Ant-v4"])
 def test_verify_info_xy_velocity_xpos(env_id: str):
     """Asserts that the environment `info['x/y_velocity']` is properly assigned, for the ant environment which uses kinmatics for the velocity."""
     env = gym.make(env_id).unwrapped
@@ -136,7 +131,7 @@ def test_verify_info_xy_velocity_xpos(env_id: str):
     assert vel_y == info["y_velocity"]
 
 
-@pytest.mark.parametrize("env_id", ["Humanoid-v5", "Humanoid-v4", "Humanoid-v3"])
+@pytest.mark.parametrize("env_id", ["Humanoid-v5", "Humanoid-v4"])
 def test_verify_info_xy_velocity_com(env_id: str):
     """Asserts that the environment `info['x/y_velocity']` is properly assigned, for the humanoid environment which uses kinmatics of Center Of Mass for the velocity."""
 
@@ -378,7 +373,7 @@ def test_ant_com(version: str):
     assert x_position_after == x_position_after_com, "after failed"  # This succeeds
 
 
-@pytest.mark.parametrize("version", ["v5", "v4", "v3", "v2"])
+@pytest.mark.parametrize("version", ["v5", "v4"])
 def test_set_state(version: str):
     """Simple Test to verify that `mujocoEnv.set_state()` works correctly."""
     env = gym.make(f"Hopper-{version}").unwrapped
@@ -400,7 +395,7 @@ def test_set_state(version: str):
 # Note: Humanoid-v4/v3 fails this test
 # Note: v2 does not have `info`
 @pytest.mark.parametrize(
-    "env_id", ["Ant-v5", "Humanoid-v5", "Swimmer-v5", "Swimmer-v4", "Swimmer-v3"]
+    "env_id", ["Ant-v5", "Humanoid-v5", "Swimmer-v5", "Swimmer-v4"]
 )
 def test_distance_from_origin_info(env_id: str):
     """Verify that `info"distance_from_origin"` is correct."""
@@ -643,7 +638,7 @@ def test_model_object_count(version: str):
 
 
 # note: fails with `mujoco-mjx==3.0.1`
-@pytest.mark.parametrize("version", ["v5", "v4", "v3", "v2"])
+@pytest.mark.parametrize("version", ["v5", "v4"])
 def test_model_sensors(version: str):
     """Verify that all the sensors of the model are loaded."""
     env = gym.make(f"Ant-{version}").unwrapped
@@ -682,25 +677,19 @@ def test_dt():
     [
         "Ant-v5",
         "Ant-v4",
-        "Ant-v3",
         "HalfCheetah-v5",
         "HalfCheetah-v4",
-        "HalfCheetah-v3",
         "Hopper-v5",
         "Hopper-v4",
-        "Hopper-v3",
         "Humanoid-v5",
         "Humanoid-v4",
-        "Humanoid-v3",
         "HumanoidStandup-v5",
         "InvertedDoublePendulum-v5",
         "InvertedPendulum-v5",
         "Swimmer-v5",
         "Swimmer-v4",
-        "Swimmer-v3",
         "Walker2d-v5",
         "Walker2d-v4",
-        "Walker2d-v3",
     ],
 )
 def test_reset_noise_scale(env_id):
