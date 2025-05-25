@@ -1,8 +1,5 @@
-import numpy as np
 import pytest
 
-import gymnasium as gym
-from gymnasium import envs
 from gymnasium.envs.registration import EnvSpec
 from tests.envs.utils import mujoco_testing_env_specs
 
