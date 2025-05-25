@@ -38,7 +38,7 @@ As of October 2021, DeepMind has acquired MuJoCo and has open-sourced it in 2022
 Using MuJoCo with Gymnasium requires the framework `mujoco` be installed (this dependency is installed with the above command).
 Instructions for installing the MuJoCo engine can be found on their [website](https://mujoco.org) and [GitHub repository](https://github.com/deepmind/mujoco).
 
-For MuJoCo `v3` environments and older the `mujoco-py` framework is required (`pip install gymnasium[mujoco-py]`) which can be found in the [GitHub repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py).
+MuJoCo `v3` environments and older, which relied on the `mujoco-py` framework, were migrated to the `gymnasium-robotics` package starting with `gymnasium` v1.2. For information on using these older versions, please refer to the `gymnasium-robotics` documentation. The original `mujoco-py` framework can be found in its [GitHub repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py).
 
 There are eleven MuJoCo environments (in roughly increasing complexity):
 
@@ -76,12 +76,12 @@ Environments can be configured by changing the `xml_file` argument and/or by twe
 ## Versions
 Gymnasium includes the following versions of the environments:
 
-| Version | Simulator       | Notes                                                  |
-|---------|-----------------|--------------------------------------------------------|
-| `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)            |
-| `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                         |
-| `v3`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
-| `v2`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
+| Version | Simulator       | Notes                                                                                                |
+|---------|-----------------|------------------------------------------------------------------------------------------------------|
+| `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)                                                          |
+| `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                                                                       |
+| `v3`    | `mujoco-py`     | Migrated to `gymnasium-robotics` (from `gymnasium` v1.2). Deprecated, Kept for reproducibility.        |
+| `v2`    | `mujoco-py`     | Migrated to `gymnasium-robotics` (from `gymnasium` v1.2). Deprecated, Kept for reproducibility.        |
 
 For more information, see the section "Version History" for each environment.
 
