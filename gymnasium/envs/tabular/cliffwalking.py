@@ -12,7 +12,7 @@ import numpy as np
 from gymnasium import spaces
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional import ActType, FuncEnv
 from gymnasium.utils import EzPickle
 from gymnasium.vector import AutoresetMode
 from gymnasium.wrappers import HumanRendering
@@ -64,7 +64,7 @@ def fell_off(player_position):
 
 
 class CliffWalkingFunctional(
-    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType, None]
+    FuncEnv[EnvState, jax.Array, int, float, bool, RenderStateType, None]
 ):
     """Cliff walking involves crossing a gridworld from start to goal while avoiding falling off a cliff.
 
@@ -298,7 +298,7 @@ class CliffWalkingFunctional(
         )
 
     def render_image(
-        self, state: StateType, render_state: RenderStateType, params: None = None
+        self, state: EnvState, render_state: RenderStateType, params: None = None
     ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an image from a state."""
         try:
