@@ -106,13 +106,14 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
             and len(screen_size) == 2
             and all(isinstance(size, int) and size > 0 for size in screen_size)
         ), f"Expect the `screen_size` to be positive, actually: {screen_size}"
-        assert noop_max >= 0
         if frame_skip > 1 and getattr(env.unwrapped, "_frameskip", None) != 1:
             raise ValueError(
                 "Disable frame-skipping in the original env. Otherwise, more than one frame-skip will happen as through this wrapper"
             )
+        assert noop_max >= 0
         self.noop_max = noop_max
-        assert env.unwrapped.get_action_meanings()[0] == "NOOP"
+        if noop_max > 0:
+            assert env.unwrapped.get_action_meanings()[0] == "NOOP"
 
         self.frame_skip = frame_skip
         self.screen_size: tuple[int, int] = (
