@@ -1,7 +1,6 @@
 __credits__ = ["Carlos Luis"]
 
 from os import path
-from typing import Optional
 
 import numpy as np
 
@@ -101,7 +100,7 @@ class PendulumEnv(gym.Env):
         "render_fps": 30,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, g=10.0):
+    def __init__(self, render_mode: str | None = None, g=10.0):
         self.max_speed = 8
         self.max_torque = 2.0
         self.dt = 0.05
@@ -148,7 +147,7 @@ class PendulumEnv(gym.Env):
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return self._get_obs(), -costs, False, False, {}
 
-    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    def reset(self, *, seed: int | None = None, options: dict | None = None):
         super().reset(seed=seed)
         if options is None:
             high = np.array([DEFAULT_X, DEFAULT_Y])

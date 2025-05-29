@@ -1,6 +1,6 @@
 import re
 import warnings
-from typing import Callable, Dict, Union
+from collections.abc import Callable
 
 import numpy as np
 import pytest
@@ -143,7 +143,7 @@ def test_check_observation_space(test, space, message: str):
     ],
 )
 def test_check_action_space(
-    test: Union[UserWarning, type], space: spaces.Space, message: str
+    test: UserWarning | type, space: spaces.Space, message: str
 ):
     """Tests the check action space function."""
     if test is UserWarning:
@@ -267,7 +267,7 @@ def _make_reset_results(results):
         ],
     ],
 )
-def test_passive_env_reset_checker(test, func: Callable, message: str, kwargs: Dict):
+def test_passive_env_reset_checker(test, func: Callable, message: str, kwargs: dict):
     """Tests the passive env reset check"""
     if test is UserWarning:
         with pytest.warns(
@@ -352,7 +352,7 @@ def _modified_step(
     ],
 )
 def test_passive_env_step_checker(
-    test: Union[UserWarning, type], func: Callable, message: str
+    test: UserWarning | type, func: Callable, message: str
 ):
     """Tests the passive env step checker."""
     if test is UserWarning:

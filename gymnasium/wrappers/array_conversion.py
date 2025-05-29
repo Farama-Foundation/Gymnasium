@@ -20,8 +20,9 @@ import functools
 import importlib
 import numbers
 from collections import abc
+from collections.abc import Iterable, Mapping
 from types import ModuleType, NoneType
-from typing import Any, Iterable, Mapping, SupportsFloat
+from typing import Any, SupportsFloat
 
 import numpy as np
 from packaging.version import Version

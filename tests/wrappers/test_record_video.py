@@ -2,7 +2,6 @@
 
 import os
 import shutil
-from typing import List
 
 import numpy as np
 import pytest
@@ -151,13 +150,13 @@ def test_with_rgb_array_list(n_steps: int = 10):
         env.step(env.action_space.sample())
 
     render_out = env.render()
-    assert isinstance(render_out, List)
+    assert isinstance(render_out, list)
     assert len(render_out) == n_steps + 1
     assert all(isinstance(render, np.ndarray) for render in render_out)
     assert all(render.ndim == 3 for render in render_out)
 
     render_out = env.render()
-    assert isinstance(render_out, List)
+    assert isinstance(render_out, list)
     assert len(render_out) == 0
 
     env.close()
@@ -173,13 +172,13 @@ def test_with_rgb_array_list(n_steps: int = 10):
         env.step(env.action_space.sample())
 
     render_out = env.render()
-    assert isinstance(render_out, List)
+    assert isinstance(render_out, list)
     assert len(render_out) == n_steps + 1
     assert all(isinstance(render, np.ndarray) for render in render_out)
     assert all(render.ndim == 3 for render in render_out)
 
     render_out = env.render()
-    assert isinstance(render_out, List)
+    assert isinstance(render_out, list)
     assert len(render_out) == 0
 
     env.close()

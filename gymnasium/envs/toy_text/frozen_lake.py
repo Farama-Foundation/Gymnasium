@@ -1,7 +1,6 @@
 from contextlib import closing
 from io import StringIO
 from os import path
-from typing import List, Optional
 
 import numpy as np
 
@@ -33,7 +32,7 @@ MAPS = {
 
 
 # DFS to check that it's a valid path.
-def is_valid(board: List[List[str]], max_size: int) -> bool:
+def is_valid(board: list[list[str]], max_size: int) -> bool:
     frontier, discovered = [], set()
     frontier.append((0, 0))
     while frontier:
@@ -54,8 +53,8 @@ def is_valid(board: List[List[str]], max_size: int) -> bool:
 
 
 def generate_random_map(
-    size: int = 8, p: float = 0.8, seed: Optional[int] = None
-) -> List[str]:
+    size: int = 8, p: float = 0.8, seed: int | None = None
+) -> list[str]:
     """Generates a random valid map (one that has a path from start to goal)
 
     Args:
@@ -222,7 +221,7 @@ class FrozenLakeEnv(Env):
 
     def __init__(
         self,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         desc=None,
         map_name="4x4",
         is_slippery=True,
@@ -317,8 +316,8 @@ class FrozenLakeEnv(Env):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
         self.s = categorical_sample(self.initial_state_distrib, self.np_random)

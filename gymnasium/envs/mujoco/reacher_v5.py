@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -130,8 +128,8 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         - Added `reward_dist_weight`, `reward_control_weight` arguments to configure the reward function (defaults are effectively the same as in `v4`).
         - Fixed `info["reward_ctrl"]`  not being multiplied by the reward weight.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
-    * v3: This environment does not have a v3 release.
-    * v2: All continuous control environments now use mujoco-py >= 1.50
+    * v3: This environment does not have a v3 release. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks (not including reacher, which has a max_time_steps of 50). Added reward_threshold to environments.
     * v0: Initial versions release
     """
@@ -149,7 +147,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "reacher.xml",
         frame_skip: int = 2,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
         reward_dist_weight: float = 1,
         reward_control_weight: float = 1,
         **kwargs,
