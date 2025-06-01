@@ -46,7 +46,6 @@ def check_rendered(rendered_frame, mode: str):
 render_mode_env_specs = [
     spec
     for spec in all_testing_env_specs
-    if "mujoco" not in spec.entry_point or spec.version >= 4
 ]
 
 
@@ -54,10 +53,6 @@ render_mode_env_specs = [
     "spec", render_mode_env_specs, ids=[spec.id for spec in render_mode_env_specs]
 )
 def test_render_modes(spec):
-    """There is a known issue where rendering a mujoco environment then mujoco-py will cause an error on non-mac based systems.
-
-    Therefore, we are only testing with mujoco environments.
-    """
     env = spec.make()
 
     assert "rgb_array" in env.metadata["render_modes"]
