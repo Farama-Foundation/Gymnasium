@@ -11,7 +11,7 @@ RUN apt-get -y update \
     xvfb unzip patchelf ffmpeg cmake swig \
     && apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
