@@ -43,10 +43,7 @@ def check_rendered(rendered_frame, mode: str):
 
 
 # We do not check render_mode for some mujoco envs and any old Gym environment wrapped by `GymEnvironment`
-render_mode_env_specs = [
-    spec
-    for spec in all_testing_env_specs
-]
+render_mode_env_specs = [spec for spec in all_testing_env_specs]
 
 
 @pytest.mark.parametrize(
