@@ -151,7 +151,6 @@ reportMissingTypeStubs = false
 # For warning and error, will raise an error when
 reportInvalidTypeVarUse = "none"
 
-reportGeneralTypeIssues = "none"    # -> commented out raises 489 errors
 reportAttributeAccessIssue = "none" # pyright provides false positives
 reportArgumentType = "none"         # pyright provides false positives
 

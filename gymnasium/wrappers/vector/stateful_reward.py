@@ -82,7 +82,7 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         VectorWrapper.__init__(self, env)
 
         self.return_rms = RunningMeanStd(shape=())
-        self.accumulated_reward: np.array = np.zeros((self.num_envs,), dtype=np.float32)
+        self.accumulated_reward = np.zeros((self.num_envs,), dtype=np.float32)
         self.gamma = gamma
         self.epsilon = epsilon
         self._update_running_mean = True

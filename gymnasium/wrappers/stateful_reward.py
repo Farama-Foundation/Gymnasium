@@ -91,7 +91,7 @@ class NormalizeReward(
         gym.Wrapper.__init__(self, env)
 
         self.return_rms = RunningMeanStd(shape=())
-        self.discounted_reward: np.array = np.array([0.0])
+        self.discounted_reward = np.array([0.0])
         self.gamma = gamma
         self.epsilon = epsilon
         self._update_running_mean = True
