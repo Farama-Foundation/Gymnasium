@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -148,8 +146,8 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         - Added individual reward terms in `info` (`info["reward_forward"]`, `info["reward_ctrl"]`, `info["reward_survive"]`).
         - Added `info["z_distance_from_origin"]` which is equal to the vertical distance of the "torso" body from its initial position.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
-    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
-    * v2: All continuous control environments now use mujoco-py >= 1.50.
+    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen). Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release.
     """
@@ -167,14 +165,14 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "hopper.xml",
         frame_skip: int = 4,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 1e-3,
         healthy_reward: float = 1.0,
         terminate_when_unhealthy: bool = True,
-        healthy_state_range: Tuple[float, float] = (-100.0, 100.0),
-        healthy_z_range: Tuple[float, float] = (0.7, float("inf")),
-        healthy_angle_range: Tuple[float, float] = (-0.2, 0.2),
+        healthy_state_range: tuple[float, float] = (-100.0, 100.0),
+        healthy_z_range: tuple[float, float] = (0.7, float("inf")),
+        healthy_angle_range: tuple[float, float] = (-0.2, 0.2),
         reset_noise_scale: float = 5e-3,
         exclude_current_positions_from_observation: bool = True,
         **kwargs,
