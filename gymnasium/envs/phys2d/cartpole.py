@@ -2,23 +2,24 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Tuple, TypeAlias
 
 import jax
 import jax.numpy as jnp
 import numpy as np
 from flax import struct
-from jax.random import PRNGKey
 
 import gymnasium as gym
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv, FunctionalJaxVectorEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional import ActType, FuncEnv
 from gymnasium.utils import EzPickle
 from gymnasium.vector import AutoresetMode
 
 
-RenderStateType = tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
+PRNGKeyType: TypeAlias = jax.Array
+StateType: TypeAlias = jax.Array
+RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
 
 
 @struct.dataclass
@@ -43,14 +44,16 @@ class CartPoleParams:
 
 
 class CartPoleFunctional(
-    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType, CartPoleParams]
+    FuncEnv[StateType, jax.Array, int, float, bool, RenderStateType, CartPoleParams]
 ):
     """Cartpole but in jax and functional."""
 
     observation_space = gym.spaces.Box(-np.inf, np.inf, shape=(4,), dtype=np.float32)
     action_space = gym.spaces.Discrete(2)
 
-    def initial(self, rng: PRNGKey, params: CartPoleParams = CartPoleParams):
+    def initial(
+        self, rng: PRNGKeyType, params: CartPoleParams = CartPoleParams
+    ) -> StateType:
         """Initial state generation."""
         return jax.random.uniform(
             key=rng, minval=-params.x_init, maxval=params.x_init, shape=(4,)
@@ -58,7 +61,7 @@ class CartPoleFunctional(
 
     def transition(
         self,
-        state: jax.Array,
+        state: StateType,
         action: int | jax.Array,
         rng: None = None,
         params: CartPoleParams = CartPoleParams,
@@ -90,13 +93,13 @@ class CartPoleFunctional(
         return state
 
     def observation(
-        self, state: jax.Array, rng: Any, params: CartPoleParams = CartPoleParams
+        self, state: StateType, rng: Any, params: CartPoleParams = CartPoleParams
     ) -> jax.Array:
         """Cartpole observation."""
         return state
 
     def terminal(
-        self, state: jax.Array, rng: Any, params: CartPoleParams = CartPoleParams
+        self, state: StateType, rng: Any, params: CartPoleParams = CartPoleParams
     ) -> jax.Array:
         """Checks if the state is terminal."""
         x, _, theta, _ = state

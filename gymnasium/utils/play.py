@@ -272,6 +272,8 @@ def play(
 
     key_code_to_action = {}
     for key_combination, action in keys_to_action.items():
+        if isinstance(key_combination, int):
+            key_combination = (key_combination,)
         key_code = tuple(
             sorted(ord(key) if isinstance(key, str) else key for key in key_combination)
         )

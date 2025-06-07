@@ -11,9 +11,8 @@ from __future__ import annotations
 
 import gc
 import os
-from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, SupportsFloat
+from typing import Any, Callable, Generic, List, SupportsFloat
 
 import numpy as np
 
@@ -33,7 +32,9 @@ __all__ = [
 
 
 class RenderCollection(
-    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+    gym.Wrapper[ObsType, ActType, ObsType, ActType],
+    Generic[ObsType, ActType, RenderFrame],
+    gym.utils.RecordConstructorArgs,
 ):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
 
@@ -160,7 +161,9 @@ class RenderCollection(
 
 
 class RecordVideo(
-    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+    gym.Wrapper[ObsType, ActType, ObsType, ActType],
+    Generic[ObsType, ActType, RenderFrame],
+    gym.utils.RecordConstructorArgs,
 ):
     """Records videos of environment episodes using the environment's render function.
 
@@ -319,7 +322,7 @@ class RecordVideo(
         assert self.recording, "Cannot capture a frame, recording wasn't started."
 
         frame = self.env.render()
-        if isinstance(frame, list):
+        if isinstance(frame, List):
             if len(frame) == 0:  # render was called
                 return
             self.render_history += frame
@@ -372,7 +375,7 @@ class RecordVideo(
     def render(self) -> RenderFrame | list[RenderFrame]:
         """Compute the render frames as specified by render_mode attribute during initialization of the environment."""
         render_out = super().render()
-        if self.recording and isinstance(render_out, list):
+        if self.recording and isinstance(render_out, List):
             self.recorded_frames += render_out
 
         if len(self.render_history) > 0:
