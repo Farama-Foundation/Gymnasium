@@ -368,7 +368,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeAlias</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
@@ -376,19 +376,22 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvSpec</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.experimental.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">FuncEnv</span><span class="p">,</span> <span class="n">StateType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.experimental.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">FuncEnv</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">StateType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">seeding</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoresetMode</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">batch_space</span>
 
 
+<span class="n">PRNGKeyType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">Array</span>
+
+
 <div class="viewcode-block" id="FunctionalJaxEnv">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxEnv">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">FunctionalJaxEnv</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FunctionalJaxEnv</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">StateType</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A conversion layer for jax-based environments.&quot;&quot;&quot;</span>
 
     <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span>
-    <span class="n">rng</span><span class="p">:</span> <span class="n">jrng</span><span class="o">.</span><span class="n">PRNGKey</span>
+    <span class="n">rng</span><span class="p">:</span> <span class="n">PRNGKeyType</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -476,15 +479,17 @@
 
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">FunctionalJaxVectorEnv</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">VectorEnv</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FunctionalJaxVectorEnv</span><span class="p">(</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">StateType</span><span class="p">]</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A vector env implementation for functional Jax envs.&quot;&quot;&quot;</span>
 
     <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span>
-    <span class="n">rng</span><span class="p">:</span> <span class="n">jrng</span><span class="o">.</span><span class="n">PRNGKey</span>
+    <span class="n">rng</span><span class="p">:</span> <span class="n">PRNGKeyType</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">func_env</span><span class="p">:</span> <span class="n">FuncEnv</span><span class="p">,</span>
+        <span class="n">func_env</span><span class="p">:</span> <span class="n">FuncEnv</span><span class="p">[</span><span class="n">StateType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">num_envs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">max_episode_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

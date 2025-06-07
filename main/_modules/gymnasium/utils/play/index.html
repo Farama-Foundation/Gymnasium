@@ -645,6 +645,8 @@
 
     <span class="n">key_code_to_action</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">key_combination</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">keys_to_action</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key_combination</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">key_combination</span> <span class="o">=</span> <span class="p">(</span><span class="n">key_combination</span><span class="p">,)</span>
         <span class="n">key_code</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
             <span class="nb">sorted</span><span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">key_combination</span><span class="p">)</span>
         <span class="p">)</span>
