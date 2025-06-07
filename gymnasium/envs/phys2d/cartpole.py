@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Tuple, TypeAlias
+from typing import Any, TypeAlias
 
 import jax
 import jax.numpy as jnp
@@ -19,7 +19,7 @@ from gymnasium.vector import AutoresetMode
 
 PRNGKeyType: TypeAlias = jax.Array
 StateType: TypeAlias = jax.Array
-RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
+RenderStateType = tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821
 
 
 @struct.dataclass

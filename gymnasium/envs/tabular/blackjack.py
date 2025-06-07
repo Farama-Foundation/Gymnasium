@@ -2,8 +2,7 @@
 
 import math
 import os
-from typing import NamedTuple
-from typing import NamedTuple, Optional, Tuple, TypeAlias, Union
+from typing import NamedTuple, TypeAlias
 
 import jax
 import jax.numpy as jnp
@@ -21,7 +20,7 @@ from gymnasium.wrappers import HumanRendering
 
 
 PRNGKeyType: TypeAlias = jax.Array
-RenderStateType = Tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
+RenderStateType = tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
 
 
 deck = jnp.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10])
@@ -247,7 +246,7 @@ class BlackjackFunctional(
     def transition(
         self,
         state: EnvState,
-        action: Union[int, jax.Array],
+        action: int | jax.Array,
         key: PRNGKeyType,
         params: BlackJackParams = BlackJackParams,
     ) -> EnvState:
