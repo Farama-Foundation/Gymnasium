@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from collections import deque
-from typing import TYPE_CHECKING, Callable, List
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -89,7 +90,7 @@ class PlayableGame:
 
     def _get_video_size(self, zoom: float | None = None) -> tuple[int, int]:
         rendered = self.env.render()
-        if isinstance(rendered, List):
+        if isinstance(rendered, list):
             rendered = rendered[-1]
         assert rendered is not None and isinstance(rendered, np.ndarray)
         video_size = (rendered.shape[1], rendered.shape[0])
@@ -299,7 +300,7 @@ def play(
                 callback(prev_obs, obs, action, rew, terminated, truncated, info)
         if obs is not None:
             rendered = env.render()
-            if isinstance(rendered, List):
+            if isinstance(rendered, list):
                 rendered = rendered[-1]
             assert rendered is not None and isinstance(rendered, np.ndarray)
             display_arr(

@@ -5,14 +5,15 @@ from __future__ import annotations
 import collections.abc
 import typing
 from collections import OrderedDict
-from typing import Any, KeysView, Sequence
+from collections.abc import KeysView, Sequence
+from typing import Any
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
 
-class Dict(Space[typing.Dict[str, Any]], typing.Mapping[str, Space[Any]]):
+class Dict(Space[dict[str, Any]], typing.Mapping[str, Space[Any]]):
     """A dictionary of :class:`Space` instances.
 
     Elements of this space are (ordered) dictionaries of elements from the constituent spaces.
