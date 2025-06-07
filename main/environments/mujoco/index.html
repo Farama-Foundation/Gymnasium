@@ -522,7 +522,11 @@ There is physical contact between the robots and their environment - and MuJoCo 
 <p>As of October 2021, DeepMind has acquired MuJoCo and has open-sourced it in 2022, making it free for everyone.
 Using MuJoCo with Gymnasium requires the framework <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> be installed (this dependency is installed with the above command).
 Instructions for installing the MuJoCo engine can be found on their <a class="reference external" href="https://mujoco.org">website</a> and <a class="reference external" href="https://github.com/deepmind/mujoco">GitHub repository</a>.</p>
-<p>For MuJoCo <code class="docutils literal notranslate"><span class="pre">v3</span></code> environments and older the <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> framework is required (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[mujoco-py]</span></code>) which can be found in the <a class="reference external" href="https://github.com/openai/mujoco-py/tree/master/mujoco_py">GitHub repository</a>.</p>
+<p>MuJoCo <code class="docutils literal notranslate"><span class="pre">v3</span></code> environments and older, which relied on the <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> framework, were migrated to the <code class="docutils literal notranslate"><span class="pre">gymnasium-robotics</span></code> package starting with <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code> v1.2. For information on using these older versions, please refer to the <code class="docutils literal notranslate"><span class="pre">gymnasium-robotics</span></code> documentation. The original <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> framework can be found in its <a class="reference external" href="https://github.com/openai/mujoco-py/tree/master/mujoco_py">GitHub repository</a>.</p>
+<p>The dependencies for the old environment versions can be installed via:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>gymnasium_robotics<span class="o">[</span>mujoco-py<span class="o">]</span>
+</pre></div>
+</div>
 <p>There are eleven MuJoCo environments (in roughly increasing complexity):</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -615,11 +619,11 @@ Often some of the first positional elements are omitted from the state space sin
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">v3</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
-<td><p>Deprecated, Kept for reproducibility (limited support)</p></td>
+<td><p>Migrated to <code class="docutils literal notranslate"><span class="pre">gymnasium-robotics</span></code> (from <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code> v1.2). Deprecated, Kept for reproducibility.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">v2</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
-<td><p>Deprecated, Kept for reproducibility (limited support)</p></td>
+<td><p>Migrated to <code class="docutils literal notranslate"><span class="pre">gymnasium-robotics</span></code> (from <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code> v1.2). Deprecated, Kept for reproducibility.</p></td>
 </tr>
 </tbody>
 </table>
