@@ -32,31 +32,19 @@ CHECK_ENV_IGNORE_WARNINGS = [
 ]
 
 
-@pytest.mark.parametrize(
-    "env",
-    [
-        gym.make("CartPole-v1", disable_env_checker=True).unwrapped,
-        gym.make("MountainCar-v0", disable_env_checker=True).unwrapped,
-        GenericTestEnv(
-            observation_space=spaces.Dict(
-                a=spaces.Discrete(10), b=spaces.Box(np.zeros(2), np.ones(2))
-            )
-        ),
-        GenericTestEnv(
-            observation_space=spaces.Tuple(
-                [spaces.Discrete(10), spaces.Box(np.zeros(2), np.ones(2))]
-            )
-        ),
-        GenericTestEnv(
-            observation_space=spaces.Dict(
-                a=spaces.Tuple(
-                    [spaces.Discrete(10), spaces.Box(np.zeros(2), np.ones(2))]
-                ),
-                b=spaces.Box(np.zeros(2), np.ones(2)),
-            )
-        ),
-    ],
-)
+def _no_error_warnings_envs():
+    yield gym.make("CartPole-v1", disable_env_checker=True).unwrapped
+    yield gym.make("MountainCar-v0", disable_env_checker=True).unwrapped
+    space_a = spaces.Discrete(10)
+    space_b = spaces.Box(np.zeros(2, np.float32), np.ones(2, np.float32))
+    yield GenericTestEnv(observation_space=spaces.Dict(a=space_a, b=space_b))
+    yield GenericTestEnv(observation_space=spaces.Tuple([space_a, space_b]))
+    yield GenericTestEnv(
+        observation_space=spaces.Dict(a=spaces.Tuple([space_a, space_b]), b=space_b)
+    )
+
+
+@pytest.mark.parametrize("env", _no_error_warnings_envs())
 def test_no_error_warnings(env):
     """A full version of this test with all gymnasium envs is run in tests/envs/test_envs.py."""
     with warnings.catch_warnings(record=True) as caught_warnings:
