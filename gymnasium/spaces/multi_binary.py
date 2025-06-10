@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -39,13 +40,17 @@ class MultiBinary(Space[NDArray[np.int8]]):
                 or some sort of sequence (tuple, list or np.ndarray) if there are multiple axes.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
         """
-        if isinstance(n, (Sequence, np.ndarray)):
-            self.n = input_n = tuple(int(i) for i in n)
-            assert (np.asarray(input_n) > 0).all()  # n (counts) have to be positive
-        else:
+        if isinstance(n, int):
             self.n = n = int(n)
             input_n = (n,)
             assert (np.asarray(input_n) > 0).all()  # n (counts) have to be positive
+        elif isinstance(n, (Sequence, np.ndarray)):
+            self.n = input_n = tuple(int(i) for i in n)
+            assert (np.asarray(input_n) > 0).all()  # n (counts) have to be positive
+        else:
+            raise ValueError(
+                f"Expected n to be an int or a sequence of ints, actual type: {type(n)}"
+            )
 
         super().__init__(input_n, np.int8, seed)
 

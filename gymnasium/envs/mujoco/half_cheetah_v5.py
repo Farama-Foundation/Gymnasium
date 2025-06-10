@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas", "Rushiv Arora"]
 
-from typing import Dict, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -138,8 +136,8 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
         - Restored the `xml_file` argument (was removed in `v4`).
         - Renamed `info["reward_run"]` to `info["reward_forward"]` to be consistent with the other environments.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
-    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen).
-    * v2: All continuous control environments now use mujoco-py >= 1.50.
+    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen). Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release.
     """
@@ -157,7 +155,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "half_cheetah.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 0.1,
         reset_noise_scale: float = 0.1,

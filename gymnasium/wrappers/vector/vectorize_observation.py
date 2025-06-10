@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import Any, Callable, Sequence
+from typing import Any
 
 import numpy as np
 

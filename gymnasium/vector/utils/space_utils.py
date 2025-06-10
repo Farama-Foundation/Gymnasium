@@ -10,9 +10,10 @@
 from __future__ import annotations
 
 import typing
+from collections.abc import Callable, Iterable, Iterator
 from copy import deepcopy
 from functools import singledispatch
-from typing import Any, Iterable, Iterator
+from typing import Any
 
 import numpy as np
 
@@ -428,7 +429,7 @@ def _concatenate_custom(space: Space, items: Iterable, out: None) -> tuple[Any, 
 
 @singledispatch
 def create_empty_array(
-    space: Space, n: int = 1, fn: callable = np.zeros
+    space: Space, n: int = 1, fn: Callable = np.zeros
 ) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
     """Create an empty (possibly nested and normally numpy-based) array, used in conjunction with ``concatenate(..., out=array)``.
 

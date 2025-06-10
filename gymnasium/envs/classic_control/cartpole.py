@@ -5,7 +5,7 @@ permalink: https://perma.cc/C9ZM-652R
 """
 
 import math
-from typing import Optional, Tuple, Union
+from typing import Union
 
 import numpy as np
 
@@ -117,7 +117,7 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     }
 
     def __init__(
-        self, sutton_barto_reward: bool = False, render_mode: Optional[str] = None
+        self, sutton_barto_reward: bool = False, render_mode: str | None = None
     ):
         self._sutton_barto_reward = sutton_barto_reward
 
@@ -228,8 +228,8 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
@@ -362,7 +362,7 @@ class CartPoleVectorEnv(VectorEnv):
         self,
         num_envs: int = 1,
         max_episode_steps: int = 500,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         sutton_barto_reward: bool = False,
     ):
         self._sutton_barto_reward = sutton_barto_reward
@@ -419,7 +419,7 @@ class CartPoleVectorEnv(VectorEnv):
 
     def step(
         self, action: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
         assert self.action_space.contains(
             action
         ), f"{action!r} ({type(action)}) invalid"
@@ -486,8 +486,8 @@ class CartPoleVectorEnv(VectorEnv):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
