@@ -112,6 +112,12 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 ### Game environments
 *Board Games, Video Games and all other interactive entrainment mediums.*
 
+- [Advanced Minesweeper Environment](https://github.com/markov-labs/RL-Minesweeper)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.1.1-blue)
+  ![Gymnasium stars](https://img.shields.io/github/stars/markov-labs/RL-Minesweeper)
+
+  This is a custom minesweeper gymnasium environment that allows for an optional custom mask for added complexity. Fully customizable with board size, mine density and custom masks.
 - [Craftium: an extensible framework for creating RL environments](https://github.com/mikelma/craftium)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
