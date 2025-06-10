@@ -93,11 +93,13 @@ def test_sample(space: Space, n_trials: int = 1_000):
     assert len(samples) == n_trials
 
     if isinstance(space, Box):
-        if space.dtype.kind == "f":
+        if np.isdtype(space.dtype, kind="real floating"):
             test_function = ks_test
-        elif space.dtype.kind in ["i", "u"]:
+        elif np.isdtype(space.dtype, kind="signed integer") or np.isdtype(
+            space.dtype, kind="unsigned integer"
+        ):
             test_function = chi2_test
-        elif space.dtype.kind == "b":
+        elif np.isdtype(space.dtype, kind="bool"):
             test_function = binary_chi2_test
         else:
             raise NotImplementedError(f"Unknown test for Box(dtype={space.dtype})")

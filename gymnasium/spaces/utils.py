@@ -337,18 +337,18 @@ def _unflatten_tuple(
     space: Tuple, x: NDArray[Any] | tuple[Any, ...]
 ) -> tuple[Any, ...]:
     if space.is_np_flattenable:
-        assert isinstance(
-            x, np.ndarray
-        ), f"{space} is numpy-flattenable. Thus, you should only unflatten numpy arrays for this space. Got a {type(x)}"
+        assert isinstance(x, np.ndarray), (
+            f"{space} is numpy-flattenable. Thus, you should only unflatten numpy arrays for this space. Got a {type(x)}"
+        )
         dims = np.asarray([flatdim(s) for s in space.spaces], dtype=np.int_)
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
         return tuple(
             unflatten(s, flattened)
             for flattened, s in zip(list_flattened, space.spaces)
         )
-    assert isinstance(
-        x, tuple
-    ), f"{space} is not numpy-flattenable. Thus, you should only unflatten tuples for this space. Got a {type(x)}"
+    assert isinstance(x, tuple), (
+        f"{space} is not numpy-flattenable. Thus, you should only unflatten tuples for this space. Got a {type(x)}"
+    )
     return tuple(unflatten(s, flattened) for flattened, s in zip(x, space.spaces))
 
 
@@ -362,9 +362,9 @@ def _unflatten_dict(space: Dict, x: NDArray[Any] | dict[str, Any]) -> dict[str, 
             for flattened, (key, s) in zip(list_flattened, space.spaces.items())
         }
 
-    assert isinstance(
-        x, dict
-    ), f"{space} is not numpy-flattenable. Thus, you should only unflatten dictionary for this space. Got a {type(x)}"
+    assert isinstance(x, dict), (
+        f"{space} is not numpy-flattenable. Thus, you should only unflatten dictionary for this space. Got a {type(x)}"
+    )
     return {key: unflatten(s, x[key]) for key, s in space.spaces.items()}
 
 
@@ -460,9 +460,9 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> from gymnasium.spaces import Box
         >>> box = Box(0.0, 1.0, shape=(3, 4, 5))
         >>> box
-        Box(0.0, 1.0, (3, 4, 5), float32)
+        Box(0.0, 1.0, (3, 4, 5), float32, cpu)
         >>> flatten_space(box)
-        Box(0.0, 1.0, (60,), float32)
+        Box(0.0, 1.0, (60,), float32, cpu)
         >>> flatten(box, box.sample()) in flatten_space(box)
         True
 
@@ -470,7 +470,7 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> from gymnasium.spaces import Discrete
         >>> discrete = Discrete(5)
         >>> flatten_space(discrete)
-        Box(0, 1, (5,), int64)
+        Box(0, 1, (5,), int64, cpu)
         >>> flatten(discrete, discrete.sample()) in flatten_space(discrete)
         True
 
@@ -478,7 +478,7 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> from gymnasium.spaces import Dict, Discrete, Box
         >>> space = Dict({"position": Discrete(2), "velocity": Box(0, 1, shape=(2, 2))})
         >>> flatten_space(space)
-        Box(0.0, 1.0, (6,), float64)
+        Box(0.0, 1.0, (6,), float64, cpu)
         >>> flatten(space, space.sample()) in flatten_space(space)
         True
 
@@ -486,7 +486,7 @@ def flatten_space(space: Space[Any]) -> Box | Dict | Sequence | Tuple | Graph:
         >>> from gymnasium.spaces import Graph, Discrete, Box
         >>> space = Graph(node_space=Box(low=-100, high=100, shape=(3, 4)), edge_space=Discrete(5))
         >>> flatten_space(space)
-        Graph(Box(-100.0, 100.0, (12,), float32), Box(0, 1, (5,), int64))
+        Graph(Box(-100.0, 100.0, (12,), float32, cpu), Box(0, 1, (5,), int64, cpu))
         >>> flatten(space, space.sample()) in flatten_space(space)
         True
     """

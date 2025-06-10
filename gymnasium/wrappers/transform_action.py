@@ -89,7 +89,7 @@ class ClipAction(
         >>> env = gym.make("Hopper-v4", disable_env_checker=True)
         >>> env = ClipAction(env)
         >>> env.action_space
-        Box(-inf, inf, (3,), float32)
+        Box(-inf, inf, (3,), float32, cpu)
         >>> _ = env.reset(seed=42)
         >>> _ = env.step(np.array([5.0, -2.0, 0.0], dtype=np.float32))
         ... # Executes the action np.array([1.0, -1.0, 0]) in the base environment

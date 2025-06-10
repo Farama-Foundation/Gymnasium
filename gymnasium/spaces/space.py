@@ -57,7 +57,7 @@ class Space(Generic[T_cov]):
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space
         """
         self._shape = None if shape is None else tuple(shape)
-        self.dtype = None if dtype is None else np.dtype(dtype)
+        self.dtype = dtype
         self._np_random = None
         if seed is not None:
             if isinstance(seed, np.random.Generator):

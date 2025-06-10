@@ -110,7 +110,7 @@ class FilterObservation(
         >>> env = gym.make("CartPole-v1")
         >>> env = gym.wrappers.TimeAwareObservation(env, flatten=False)
         >>> env.observation_space
-        Dict('obs': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), 'time': Box(0, 500, (1,), int32))
+        Dict('obs': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32, cpu), 'time': Box(0, 500, (1,), int32, cpu))
         >>> env.reset(seed=42)
         ({'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}, {})
         >>> env = FilterObservation(env, filter_keys=['time'])
@@ -175,9 +175,9 @@ class FilterObservation(
             # Filter for tuple observation
         elif isinstance(env.observation_space, spaces.Tuple):
             assert all(isinstance(key, int) for key in filter_keys)
-            assert len(set(filter_keys)) == len(
-                filter_keys
-            ), f"Duplicate keys exist, filter_keys: {filter_keys}"
+            assert len(set(filter_keys)) == len(filter_keys), (
+                f"Duplicate keys exist, filter_keys: {filter_keys}"
+            )
 
             if any(
                 0 < key and key >= len(env.observation_space) for key in filter_keys
@@ -474,10 +474,10 @@ class RescaleObservation(
         >>> from gymnasium.wrappers import RescaleObservation
         >>> env = gym.make("Pendulum-v1")
         >>> env.observation_space
-        Box([-1. -1. -8.], [1. 1. 8.], (3,), float32)
+        Box([-1. -1. -8.], [1. 1. 8.], (3,), float32, cpu)
         >>> env = RescaleObservation(env, np.array([-2, -1, -10], dtype=np.float32), np.array([1, 0, 1], dtype=np.float32))
         >>> env.observation_space
-        Box([ -2.  -1. -10.], [1. 0. 1.], (3,), float32)
+        Box([ -2.  -1. -10.], [1. 0. 1.], (3,), float32, cpu)
 
     Change logs:
      * v1.0.0 - Initially added
@@ -591,7 +591,7 @@ class AddRenderObservation(
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = AddRenderObservation(env, render_only=True)
         >>> env.observation_space
-        Box(0, 255, (400, 600, 3), uint8)
+        Box(0, 255, (400, 600, 3), uint8, cpu)
         >>> obs, _ = env.reset(seed=123)
         >>> image = env.render()
         >>> np.all(obs == image)
@@ -605,7 +605,7 @@ class AddRenderObservation(
         >>> env = gym.make("CartPole-v1", render_mode="rgb_array")
         >>> env = AddRenderObservation(env, render_only=False)
         >>> env.observation_space
-        Dict('pixels': Box(0, 255, (400, 600, 3), uint8), 'state': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32))
+        Dict('pixels': Box(0, 255, (400, 600, 3), uint8, cpu), 'state': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32, cpu))
         >>> obs, info = env.reset(seed=123)
         >>> obs.keys()
         dict_keys(['state', 'pixels'])

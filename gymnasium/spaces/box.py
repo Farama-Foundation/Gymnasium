@@ -2,17 +2,26 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Iterable, Sequence
+from types import ModuleType
 from typing import Any, SupportsFloat
 
+import array_api_extra as xpx
 import numpy as np
+from array_api_compat import array_namespace, device, is_array_api_obj
 from numpy.typing import NDArray
 
 import gymnasium as gym
 from gymnasium.spaces.space import Space
 
 
-def array_short_repr(arr: NDArray[Any]) -> str:
+# See also https://github.com/data-apis/array-api-typing/
+Array = Any  # TODO: Switch to ArrayAPI type once https://github.com/data-apis/array-api/pull/589 is merged
+Device = Any  # TODO: Switch to ArrayAPI type if available
+DType = Any  # TODO: Switch to ArrayAPI DTypes
+
+
+def array_short_repr(arr: Array) -> str:
     """Create a shortened string representation of a numpy array.
 
     If arr is a multiple of the all-ones vector, return a string representation of the multiplier.
@@ -24,8 +33,9 @@ def array_short_repr(arr: NDArray[Any]) -> str:
     Returns:
         A short representation of the array
     """
-    if arr.size != 0 and np.min(arr) == np.max(arr):
-        return str(np.min(arr))
+    xp = array_namespace(arr)
+    if arr.size != 0 and xp.min(arr) == xp.max(arr):
+        return str(xp.min(arr))
     return str(arr)
 
 
@@ -46,20 +56,22 @@ class Box(Space[NDArray[Any]]):
     * Identical bound for each dimension::
 
         >>> Box(low=-1.0, high=2.0, shape=(3, 4), dtype=np.float32)
-        Box(-1.0, 2.0, (3, 4), float32)
+        Box(-1.0, 2.0, (3, 4), float32, cpu)
 
     * Independent bound for each dimension::
 
         >>> Box(low=np.array([-1.0, -2.0]), high=np.array([2.0, 4.0]), dtype=np.float32)
-        Box([-1. -2.], [2. 4.], (2,), float32)
+        Box([-1. -2.], [2. 4.], (2,), float32, cpu)
     """
+
+    _dtype_kinds = ("real floating", "integral", "bool")
 
     def __init__(
         self,
-        low: SupportsFloat | NDArray[Any],
-        high: SupportsFloat | NDArray[Any],
+        low: SupportsFloat | Array,
+        high: SupportsFloat | Array,
         shape: Sequence[int] | None = None,
-        dtype: type[np.floating[Any]] | type[np.integer[Any]] = np.float32,
+        dtype: DType | str = "float32",
         seed: int | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Box`.
@@ -82,231 +94,93 @@ class Box(Space[NDArray[Any]]):
             ValueError: If no shape information is provided (shape is None, low is None and high is None) then a
                 value error is raised.
         """
-        # determine dtype
-        if dtype is None:
-            raise ValueError("Box dtype must be explicitly provided, cannot be None.")
-        self.dtype = np.dtype(dtype)
+        # determine the Array API framework we are dealing with
+        try:
+            xp = array_namespace(low, high)
+        except TypeError:
+            xp = array_namespace(np.empty(0))
+        self.dtype = self._determine_dtype(dtype, xp)
+        self._check_low_high(low, high, xp)
+        self.device = self._determine_device(low, high, xp)
+        self._shape: tuple[int, ...] = self._determine_shape(low, high, shape, xp)
 
-        #  * check that dtype is an accepted dtype
-        if not (
-            np.issubdtype(self.dtype, np.integer)
-            or np.issubdtype(self.dtype, np.floating)
-            or self.dtype == np.bool_
-        ):
-            raise ValueError(
-                f"Invalid Box dtype ({self.dtype}), must be an integer, floating, or bool dtype"
-            )
+        # Cast scalar values to `xp.Array` and capture the boundedness information
+        self.low, self.bounded_below, _ = self._to_array(low, xp)
+        self.high, _, self.bounded_above = self._to_array(high, xp)
 
-        # determine shape
-        if shape is not None:
-            if not isinstance(shape, Iterable):
-                raise TypeError(
-                    f"Expected Box shape to be an iterable, actual type={type(shape)}"
-                )
-            elif not all(np.issubdtype(type(dim), np.integer) for dim in shape):
-                raise TypeError(
-                    f"Expected all Box shape elements to be integer, actual type={tuple(type(dim) for dim in shape)}"
-                )
-
-            # Casts the `shape` argument to tuple[int, ...] (otherwise dim can `np.int64`)
-            shape = tuple(int(dim) for dim in shape)
-        elif isinstance(low, np.ndarray) and isinstance(high, np.ndarray):
-            if low.shape != high.shape:
-                raise ValueError(
-                    f"Box low.shape and high.shape don't match, low.shape={low.shape}, high.shape={high.shape}"
-                )
-            shape = low.shape
-        elif isinstance(low, np.ndarray):
-            shape = low.shape
-        elif isinstance(high, np.ndarray):
-            shape = high.shape
-        elif is_float_integer(low) and is_float_integer(high):
-            shape = (1,)  # low and high are scalars
-        else:
-            raise ValueError(
-                "Box shape is not specified, therefore inferred from low and high. Expected low and high to be np.ndarray, integer, or float."
-                f"Actual types low={type(low)}, high={type(high)}"
-            )
-        self._shape: tuple[int, ...] = shape
-
-        # Cast scalar values to `np.ndarray` and capture the boundedness information
-        # disallowed cases
-        #  * out of range - this must be done before casting to low and high otherwise, the value is within dtype and cannot be out of range
-        #  * nan - must be done beforehand as int dtype can cast `nan` to another value
-        #  * unsign int inf and -inf - special case that is disallowed
-
-        if self.dtype == np.bool_:
-            dtype_min, dtype_max = 0, 1
-        elif np.issubdtype(self.dtype, np.floating):
-            dtype_min = float(np.finfo(self.dtype).min)
-            dtype_max = float(np.finfo(self.dtype).max)
-        else:
-            dtype_min = int(np.iinfo(self.dtype).min)
-            dtype_max = int(np.iinfo(self.dtype).max)
-
-        # Cast `low` and `high` to ndarray for the dtype min and max for out of range tests
-        self.low, self.bounded_below = self._cast_low(low, dtype_min)
-        self.high, self.bounded_above = self._cast_high(high, dtype_max)
-
-        # recheck shape for case where shape and (low or high) are provided
-        if self.low.shape != shape:
-            raise ValueError(
-                f"Box low.shape doesn't match provided shape, low.shape={self.low.shape}, shape={self.shape}"
-            )
-        if self.high.shape != shape:
-            raise ValueError(
-                f"Box high.shape doesn't match provided shape, high.shape={self.high.shape}, shape={self.shape}"
-            )
-
-        # check that low <= high
-        if np.any(self.low > self.high):
+        if xp.any(self.low > self.high):  # Make sure that low <= high
             raise ValueError(
                 f"Box all low values must be less than or equal to high (some values break this), low={self.low}, high={self.high}"
             )
 
-        self.low_repr = array_short_repr(self.low)
-        self.high_repr = array_short_repr(self.high)
-
         super().__init__(self.shape, self.dtype, seed)
 
-    def _cast_low(self, low, dtype_min) -> tuple[np.ndarray, np.ndarray]:
-        """Casts the input Box low value to ndarray with provided dtype.
+    def _to_array(
+        self, x: SupportsFloat | Array, xp: ModuleType
+    ) -> tuple[Array, np.ndarray, np.ndarray]:
+        """Cast the input x to an Array with provided dtype and bounds."""
+        # Disallowed cases:
+        #  * nan - must be done beforehand as int dtype can cast `nan` to another value
+        #  * out of range - this must be done before casting to low and high otherwise, the value is
+        #    within dtype and cannot be out of range
+        #  * unsign int inf and -inf - special case that is disallowed
+        is_array = is_array_api_obj(x)
+        if xp.any(xp.isnan(x)):
+            raise ValueError(f"No value can be equal to `np.nan`, x={x}")
+        x = xp.asarray(x)
 
-        Args:
-            low: The input box low value
-            dtype_min: The dtype's minimum value
-
-        Returns:
-            The updated low value and for what values the input is bounded (below)
-        """
-        if is_float_integer(low):
-            bounded_below = -np.inf < np.full(self.shape, low, dtype=float)
-
-            if np.isnan(low):
-                raise ValueError(f"No low value can be equal to `np.nan`, low={low}")
-            elif np.isneginf(low):
-                if self.dtype.kind == "i":  # signed int
-                    low = dtype_min
-                elif self.dtype.kind in {"u", "b"}:  # unsigned int and bool
-                    raise ValueError(
-                        f"Box unsigned int dtype don't support `-np.inf`, low={low}"
-                    )
-            elif low < dtype_min:
-                raise ValueError(
-                    f"Box low is out of bounds of the dtype range, low={low}, min dtype={dtype_min}"
-                )
-
-            low = np.full(self.shape, low, dtype=self.dtype)
-            return low, bounded_below
-        else:  # cast for low - array
-            if not isinstance(low, np.ndarray):
-                raise ValueError(
-                    f"Box low must be a np.ndarray, integer, or float, actual type={type(low)}"
-                )
-            elif not (
-                np.issubdtype(low.dtype, np.floating)
-                or np.issubdtype(low.dtype, np.integer)
-                or low.dtype == np.bool_
-            ):
-                raise ValueError(
-                    f"Box low must be a floating, integer, or bool dtype, actual dtype={low.dtype}"
-                )
-            elif np.any(np.isnan(low)):
-                raise ValueError(f"No low value can be equal to `np.nan`, low={low}")
-
-            bounded_below = -np.inf < low
-
-            if np.any(np.isneginf(low)):
-                if self.dtype.kind == "i":  # signed int
-                    low[np.isneginf(low)] = dtype_min
-                elif self.dtype.kind in {"u", "b"}:  # unsigned int and bool
-                    raise ValueError(
-                        f"Box unsigned int dtype don't support `-np.inf`, low={low}"
-                    )
-            elif low.dtype != self.dtype and np.any(low < dtype_min):
-                raise ValueError(
-                    f"Box low is out of bounds of the dtype range, low={low}, min dtype={dtype_min}"
-                )
-
-            if (
-                np.issubdtype(low.dtype, np.floating)
-                and np.issubdtype(self.dtype, np.floating)
-                and np.finfo(self.dtype).precision < np.finfo(low.dtype).precision
-            ):
-                gym.logger.warn(
-                    f"Box low's precision lowered by casting to {self.dtype}, current low.dtype={low.dtype}"
-                )
-            return low.astype(self.dtype), bounded_below
-
-    def _cast_high(self, high, dtype_max) -> tuple[np.ndarray, np.ndarray]:
-        """Casts the input Box high value to ndarray with provided dtype.
-
-        Args:
-            high: The input box high value
-            dtype_max: The dtype's maximum value
-
-        Returns:
-            The updated high value and for what values the input is bounded (above)
-        """
-        if is_float_integer(high):
-            bounded_above = np.full(self.shape, high, dtype=float) < np.inf
-
-            if np.isnan(high):
-                raise ValueError(f"No high value can be equal to `np.nan`, high={high}")
-            elif np.isposinf(high):
-                if self.dtype.kind == "i":  # signed int
-                    high = dtype_max
-                elif self.dtype.kind in {"u", "b"}:  # unsigned int
-                    raise ValueError(
-                        f"Box unsigned int dtype don't support `np.inf`, high={high}"
-                    )
-            elif high > dtype_max:
-                raise ValueError(
-                    f"Box high is out of bounds of the dtype range, high={high}, max dtype={dtype_max}"
-                )
-
-            high = np.full(self.shape, high, dtype=self.dtype)
-            return high, bounded_above
+        # Check for out of range values
+        if xp.isdtype(self.dtype, "integral"):
+            dtype_min, dtype_max = xp.iinfo(self.dtype).min, xp.iinfo(self.dtype).max
+        elif xp.isdtype(self.dtype, "real floating"):
+            dtype_min, dtype_max = xp.finfo(self.dtype).min, xp.finfo(self.dtype).max
+        elif xp.isdtype(self.dtype, "bool"):
+            dtype_min, dtype_max = 0, 1
         else:
-            if not isinstance(high, np.ndarray):
-                raise ValueError(
-                    f"Box high must be a np.ndarray, integer, or float, actual type={type(high)}"
-                )
-            elif not (
-                np.issubdtype(high.dtype, np.floating)
-                or np.issubdtype(high.dtype, np.integer)
-                or high.dtype == np.bool_
-            ):
-                raise ValueError(
-                    f"Box high must be a floating or integer dtype, actual dtype={high.dtype}"
-                )
-            elif np.any(np.isnan(high)):
-                raise ValueError(f"No high value can be equal to `np.nan`, high={high}")
+            raise ValueError(f"Unsupported dtype: {self.dtype}")
+        if xp.any((x < dtype_min)[~xp.isinf(x)]):
+            raise ValueError(
+                f"Box is out of bounds of the dtype range, {x}, max dtype={dtype_max}"
+            )
+        if xp.any((x > dtype_max)[~xp.isinf(x)]):
+            raise ValueError(
+                f"Box is out of bounds of the dtype range, {x}, min dtype={dtype_min}"
+            )
 
-            bounded_above = high < np.inf
-
-            posinf = np.isposinf(high)
-            if np.any(posinf):
-                if self.dtype.kind == "i":  # signed int
-                    high[posinf] = dtype_max
-                elif self.dtype.kind in {"u", "b"}:  # unsigned int
-                    raise ValueError(
-                        f"Box unsigned int dtype don't support `np.inf`, high={high}"
-                    )
-            elif high.dtype != self.dtype and np.any(dtype_max < high):
+        # Check for inf values in bool or unsigned int
+        if xp.isdtype(self.dtype, "unsigned integer") or xp.isdtype(self.dtype, "bool"):
+            if xp.any(xp.isinf(x)):
                 raise ValueError(
-                    f"Box high is out of bounds of the dtype range, high={high}, max dtype={dtype_max}"
+                    f"Box unsigned int dtype don't support `np.inf`, x={x}"
                 )
 
-            if (
-                np.issubdtype(high.dtype, np.floating)
-                and np.issubdtype(self.dtype, np.floating)
-                and np.finfo(self.dtype).precision < np.finfo(high.dtype).precision
-            ):
-                gym.logger.warn(
-                    f"Box high's precision lowered by casting to {self.dtype}, current high.dtype={high.dtype}"
-                )
-            return high.astype(self.dtype), bounded_above
+        # Cast integer infs to min and max of dtype
+        arr = xp.zeros(self.shape, dtype=self.dtype, device=self.device)
+        if xp.isdtype(self.dtype, "integral"):
+            neg_inf, pos_inf = (xp.isinf(x)) & (x < 0), (xp.isinf(x)) & (x > 0)
+            non_inf = ~neg_inf & ~pos_inf
+            x = xpx.atleast_nd(x, ndim=arr.ndim, xp=xp)
+            arr = xpx.at(arr, non_inf).set(x[non_inf])
+            arr = xpx.at(arr, neg_inf).set(dtype_min)
+            arr = xpx.at(arr, pos_inf).set(dtype_max)
+        else:
+            arr = xpx.at(arr, ...).set(x)
+
+        if (
+            is_array
+            and xp.isdtype(self.dtype, "real floating")
+            and xp.isdtype(x.dtype, "real floating")
+            and xp.finfo(self.dtype).eps > xp.finfo(x.dtype).eps
+        ):
+            gym.logger.warn(
+                f"Box low's precision lowered by casting to {self.dtype}, current dtype={x.dtype}"
+            )
+
+        # At this point, arr must have shape self.shape
+        assert arr.shape == self.shape, f"Shape mismatch {arr.shape} != {self.shape}"
+        bounded_below = ~xp.broadcast_to((xp.isinf(x)) & (x < 0), self.shape)
+        bounded_above = ~xp.broadcast_to((xp.isinf(x)) & (x > 0), self.shape)
+        return arr, bounded_below, bounded_above
 
     @property
     def shape(self) -> tuple[int, ...]:
@@ -330,8 +204,9 @@ class Box(Space[NDArray[Any]]):
         Raises:
             ValueError: If `manner` is neither ``"both"`` nor ``"below"`` or ``"above"``
         """
-        below = bool(np.all(self.bounded_below))
-        above = bool(np.all(self.bounded_above))
+        xp = array_namespace(self.low)
+        below = bool(xp.all(self.bounded_below))
+        above = bool(xp.all(self.bounded_above))
         if manner == "both":
             return below and above
         elif manner == "below":
@@ -370,7 +245,9 @@ class Box(Space[NDArray[Any]]):
                 f"Box.sample cannot be provided a probability mask, actual value: {probability}"
             )
 
-        high = self.high if self.dtype.kind == "f" else self.high.astype("int64") + 1
+        xp = array_namespace(self.low)
+        is_float = xp.isdtype(self.dtype, "real floating")
+        high = self.high if is_float else self.high.astype(xp.int64) + 1
         sample = np.empty(self.shape)
 
         # Masking arrays which classify the coordinates according to interval type
@@ -396,51 +273,57 @@ class Box(Space[NDArray[Any]]):
             low=self.low[bounded], high=high[bounded], size=bounded[bounded].shape
         )
 
-        if self.dtype.kind in ["i", "u", "b"]:
-            sample = np.floor(sample)
+        if not is_float:
+            sample = xp.floor(sample)
 
         # clip values that would underflow/overflow
-        if np.issubdtype(self.dtype, np.signedinteger):
-            dtype_min = np.iinfo(self.dtype).min + 2
-            dtype_max = np.iinfo(self.dtype).max - 2
-            sample = sample.clip(min=dtype_min, max=dtype_max)
-        elif np.issubdtype(self.dtype, np.unsignedinteger):
-            dtype_min = np.iinfo(self.dtype).min
-            dtype_max = np.iinfo(self.dtype).max
-            sample = sample.clip(min=dtype_min, max=dtype_max)
+        if xp.isdtype(self.dtype, "signed integer"):
+            dtype_min = xp.asarray(xp.iinfo(self.dtype).min + 2, dtype=sample.dtype)
+            dtype_max = xp.asarray(xp.iinfo(self.dtype).max - 2, dtype=sample.dtype)
+            sample = xp.clip(sample, min=dtype_min, max=dtype_max)
+        elif xp.isdtype(self.dtype, "unsigned integer"):
+            dtype_min = xp.asarray(xp.iinfo(self.dtype).min, dtype=sample.dtype)
+            dtype_max = xp.asarray(xp.iinfo(self.dtype).max, dtype=sample.dtype)
+            sample = xp.clip(sample, min=dtype_min, max=dtype_max)
 
-        sample = sample.astype(self.dtype)
+        sample = xp.astype(sample, self.dtype)
 
         # float64 values have lower than integer precision near int64 min/max, so clip
         # again in case something has been cast to an out-of-bounds value
-        if self.dtype == np.int64:
-            sample = sample.clip(min=self.low, max=self.high)
+        if self.dtype == xp.int64:
+            sample = xp.clip(sample, min=self.low, max=self.high)
 
         return sample
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
-        if not isinstance(x, np.ndarray):
-            gym.logger.warn("Casting input x to numpy array.")
+        xp = array_namespace(self.low)
+        if not isinstance(x, type(xp.empty(0))):
+            gym.logger.warn("Casting input x to Array.")
             try:
-                x = np.asarray(x, dtype=self.dtype)
+                x = xp.asarray(x, dtype=self.dtype, device=self.device)
             except (ValueError, TypeError):
                 return False
 
         return bool(
-            np.can_cast(x.dtype, self.dtype)
+            xp.can_cast(x.dtype, self.dtype)
             and x.shape == self.shape
-            and np.all(x >= self.low)
-            and np.all(x <= self.high)
+            and device(x) == self.device
+            and xp.all(x >= self.low)
+            and xp.all(x <= self.high)
         )
 
-    def to_jsonable(self, sample_n: Sequence[NDArray[Any]]) -> list[list]:
+    def to_jsonable(self, sample_n: Sequence[Array]) -> list[list]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [sample.tolist() for sample in sample_n]
 
-    def from_jsonable(self, sample_n: Sequence[float | int]) -> list[NDArray[Any]]:
+    def from_jsonable(self, sample_n: Sequence[float | int]) -> list[Array]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        return [np.asarray(sample, dtype=self.dtype) for sample in sample_n]
+        xp = array_namespace(self.low)
+        return [
+            xp.asarray(sample, dtype=self.dtype, device=self.device)
+            for sample in sample_n
+        ]
 
     def __repr__(self) -> str:
         """A string representation of this space.
@@ -451,25 +334,136 @@ class Box(Space[NDArray[Any]]):
         Returns:
             A representation of the space
         """
-        return f"Box({self.low_repr}, {self.high_repr}, {self.shape}, {self.dtype})"
+        if not hasattr(self, "low"):
+            return "Box(uninitialized)"
+        return f"Box({array_short_repr(self.low)}, {array_short_repr(self.high)}, {self.shape}, {self.dtype}, {self.device})"
 
     def __eq__(self, other: Any) -> bool:
         """Check whether `other` is equivalent to this instance. Doesn't check dtype equivalence."""
+        xp = array_namespace(self.low)
         return (
             isinstance(other, Box)
             and (self.shape == other.shape)
             and (self.dtype == other.dtype)
-            and np.allclose(self.low, other.low)
-            and np.allclose(self.high, other.high)
+            and xp.allclose(self.low, other.low)
+            and xp.allclose(self.high, other.high)
         )
 
-    def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
-        """Sets the state of the box for unpickling a box with legacy support."""
-        super().__setstate__(state)
+    def _determine_dtype(
+        self, dtype: DType | str | type | None, xp: ModuleType
+    ) -> DType:
+        if dtype is None:
+            raise ValueError("Box dtype must be explicitly provided, cannot be None.")
+        # The array API does not define something similar to np.dtype("float32"). We need to
+        # implement this ourselves here.
+        if isinstance(dtype, str):
+            try:
+                dtype = getattr(xp, dtype)
+            except AttributeError:
+                raise TypeError(f"data type '{dtype}' not understood")
+        # Similarly, there is no xp.dtype(float) option, because some frameworks define the default
+        # float dtype differently. We use the default float and integer dtypes for the framework.
+        elif isinstance(dtype, type):
+            if issubclass(dtype, float):
+                dtype = xp.__array_namespace_info__().default_dtypes()["real floating"]
+            elif issubclass(dtype, np.floating):
+                ...  # Nothing to do here, dtype is passed through
+            elif issubclass(dtype, bool) or issubclass(dtype, np.bool_):
+                dtype = xp.bool
+            elif issubclass(dtype, int):
+                dtype = xp.__array_namespace_info__().default_dtypes()["integral"]
+            elif issubclass(dtype, np.integer):
+                ...  # Nothing to do here, dtype is passed through
+        # If none of the above, it must already be a dtype
 
-        # legacy support through re-adding "low_repr" and "high_repr" if missing from pickled state
-        if not hasattr(self, "low_repr"):
-            self.low_repr = array_short_repr(self.low)
+        #  * check that dtype is an accepted dtype
+        try:
+            if not any(xp.isdtype(dtype, kind=kind) for kind in self._dtype_kinds):
+                raise ValueError(
+                    f"Invalid Box dtype ({dtype}), must be an integer, floating, or bool dtype"
+                )
+        except TypeError:
+            raise TypeError(f"Cannot interpret '{dtype}' as a data type")
+        return xp.empty(0, dtype=dtype).dtype  # Array API doesn't have xp.dtype()
 
-        if not hasattr(self, "high_repr"):
-            self.high_repr = array_short_repr(self.high)
+    def _determine_shape(
+        self,
+        low: SupportsFloat | Array,
+        high: SupportsFloat | Array,
+        shape: Sequence[int] | None,
+        xp: ModuleType,
+    ) -> tuple[int, ...]:
+        # We can convert low and high because we already checked that they are convertible to Arrays
+        low, high = xp.asarray(low), xp.asarray(high)
+        if shape is None:
+            try:
+                low, high = xp.broadcast_arrays(low, high)
+            except ValueError as e:
+                raise ValueError(
+                    f"Box low.shape and high.shape don't match, low.shape={low.shape}, high.shape={high.shape}"
+                ) from e
+            if low.shape == ():  # Single values
+                return (1,)
+            return low.shape
+        if not isinstance(shape, Iterable):
+            raise TypeError(
+                f"Expected Box shape to be an iterable, actual type={type(shape)}"
+            )
+        if not all(isinstance(d, int) or isinstance(d, np.integer) for d in shape):
+            raise TypeError(
+                f"Expected all Box shape elements to be integer, actual type={tuple(type(dim) for dim in shape)}"
+            )
+        # Casts the `shape` argument to tuple[int, ...] (otherwise dim can `xp.int64`)
+        shape = tuple(int(dim) for dim in shape)
+        try:
+            low = xp.broadcast_to(low, shape)
+        except ValueError as e:
+            raise ValueError(
+                f"Box low.shape doesn't match provided shape, low.shape={low.shape}, shape={shape}"
+            ) from e
+        try:
+            high = xp.broadcast_to(high, shape)
+        except ValueError as e:
+            raise ValueError(
+                f"Box high.shape doesn't match provided shape, high.shape={high.shape}, shape={shape}"
+            ) from e
+        return shape
+
+    def _determine_device(
+        self, low: SupportsFloat | Array, high: SupportsFloat | Array, xp: ModuleType
+    ) -> Device:
+        """Determine the device of the space."""
+        device1 = device(low) if is_array_api_obj(low) else None
+        device2 = device(high) if is_array_api_obj(high) else None
+        if device1 is not None and device2 is not None and device1 != device2:
+            raise ValueError(
+                f"Box low and high must be on the same device, got {device1} and {device2}"
+            )
+        if device1 is None and device2 is None:
+            return device(xp.empty(0))  # Default device
+        return device1 if device1 is not None else device2
+
+    def _check_low_high(
+        self, low: SupportsFloat | Array, high: SupportsFloat | Array, xp: ModuleType
+    ) -> None:
+        """Check if low and high are convertible to Arrays."""
+        try:
+            low = xp.asarray(low)
+        except ValueError as e:
+            raise ValueError(
+                f"Box low must be an Array, integer, or float, actual type={type(low)}"
+            ) from e
+        try:
+            high = xp.asarray(high)
+        except ValueError as e:
+            raise ValueError(
+                f"Box high must be an Array, integer, or float, actual type={type(high)}"
+            ) from e
+        if not any(xp.isdtype(low.dtype, kind=kind) for kind in self._dtype_kinds):
+            raise ValueError(
+                f"Box low must be a floating, integer, or bool dtype, actual dtype={low.dtype}"
+            )
+        if not any(xp.isdtype(high.dtype, kind=kind) for kind in self._dtype_kinds):
+            raise ValueError(
+                f"Box high must be a floating, integer, or bool dtype, actual dtype={high.dtype}"
+            )

@@ -26,7 +26,7 @@ class OneOf(Space[Any]):
         >>> observation_space[0]
         Discrete(2)
         >>> observation_space[1]
-        Box(-1.0, 1.0, (2,), float32)
+        Box(-1.0, 1.0, (2,), float32, cpu)
         >>> len(observation_space)
         2
     """
@@ -48,9 +48,9 @@ class OneOf(Space[Any]):
         self.spaces = tuple(spaces)
         assert len(self.spaces) > 0, "Empty `OneOf` spaces are not supported."
         for space in self.spaces:
-            assert isinstance(
-                space, Space
-            ), f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
+            assert isinstance(space, Space), (
+                f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
+            )
         super().__init__(None, None, seed)
 
     @property
@@ -127,22 +127,22 @@ class OneOf(Space[Any]):
                 f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
             )
         elif mask is not None:
-            assert isinstance(
-                mask, tuple
-            ), f"Expected type of `mask` is tuple, actual type: {type(mask)}"
-            assert len(mask) == len(
-                self.spaces
-            ), f"Expected length of `mask` is {len(self.spaces)}, actual length: {len(mask)}"
+            assert isinstance(mask, tuple), (
+                f"Expected type of `mask` is tuple, actual type: {type(mask)}"
+            )
+            assert len(mask) == len(self.spaces), (
+                f"Expected length of `mask` is {len(self.spaces)}, actual length: {len(mask)}"
+            )
 
             subspace_sample = subspace.sample(mask=mask[subspace_idx])
 
         elif probability is not None:
-            assert isinstance(
-                probability, tuple
-            ), f"Expected type of `probability` is tuple, actual type: {type(probability)}"
-            assert len(probability) == len(
-                self.spaces
-            ), f"Expected length of `probability` is {len(self.spaces)}, actual length: {len(probability)}"
+            assert isinstance(probability, tuple), (
+                f"Expected type of `probability` is tuple, actual type: {type(probability)}"
+            )
+            assert len(probability) == len(self.spaces), (
+                f"Expected length of `probability` is {len(self.spaces)}, actual length: {len(probability)}"
+            )
 
             subspace_sample = subspace.sample(probability=probability[subspace_idx])
         else:
