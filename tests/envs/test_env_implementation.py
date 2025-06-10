@@ -1,5 +1,3 @@
-from typing import Optional
-
 import numpy as np
 import pytest
 
@@ -293,7 +291,7 @@ def test_taxi_fickle_passenger():
 @pytest.mark.parametrize(
     "low_high", [None, (-0.4, 0.4), (np.array(-0.4), np.array(0.4))]
 )
-def test_customizable_resets(env_name: str, low_high: Optional[list]):
+def test_customizable_resets(env_name: str, low_high: list | None):
     env = gym.make(env_name)
     env.action_space.seed(0)
     # First ensure we can do a reset.
@@ -316,7 +314,7 @@ def test_customizable_resets(env_name: str, low_high: Optional[list]):
         (np.array(1.2), np.array(1.0)),
     ],
 )
-def test_customizable_pendulum_resets(low_high: Optional[list]):
+def test_customizable_pendulum_resets(low_high: list | None):
     env = gym.make("Pendulum-v1")
     env.action_space.seed(0)
     # First ensure we can do a reset and the values are within expected ranges.

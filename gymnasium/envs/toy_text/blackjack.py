@@ -1,5 +1,4 @@
 import os
-from typing import Optional
 
 import numpy as np
 
@@ -149,7 +148,7 @@ class BlackjackEnv(gym.Env):
         "render_fps": 4,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, natural=False, sab=False):
+    def __init__(self, render_mode: str | None = None, natural=False, sab=False):
         self.action_space = spaces.Discrete(2)
         self.observation_space = spaces.Tuple(
             (spaces.Discrete(32), spaces.Discrete(11), spaces.Discrete(2))
@@ -201,8 +200,8 @@ class BlackjackEnv(gym.Env):
 
     def reset(
         self,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
         self.dealer = draw_hand(self.np_random)

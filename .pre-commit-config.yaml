@@ -18,13 +18,13 @@ repos:
       - id: detect-private-key
       - id: debug-statements
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
+    rev: v2.4.1
     hooks:
       - id: codespell
         args:
           - --ignore-words-list=reacher,ure,referenc,wile,ontact,manuel
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
+    rev: 7.2.0
     hooks:
       - id: flake8
         args:
@@ -35,16 +35,16 @@ repos:
           - --show-source
           - --statistics
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.19.1
+    rev: v3.20.0
     hooks:
       - id: pyupgrade
-        args: ["--py38-plus"]
+        args: ["--py310-plus"]
   - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
+    rev: 6.0.1
     hooks:
       - id: isort
   - repo: https://github.com/python/black
-    rev: 24.10.0
+    rev: 25.1.0
     hooks:
       - id: black
   - repo: https://github.com/pycqa/pydocstyle
