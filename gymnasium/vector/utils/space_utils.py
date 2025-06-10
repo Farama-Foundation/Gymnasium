@@ -165,27 +165,27 @@ def batch_differing_spaces(spaces: typing.Sequence[Space]) -> Space:
         MultiDiscrete([3 5 4 8])
     """
     assert len(spaces) > 0, "Expects a non-empty list of spaces"
-    assert all(isinstance(space, type(spaces[0])) for space in spaces), (
-        f"Expects all spaces to be the same shape, actual types: {[type(space) for space in spaces]}"
-    )
-    assert type(spaces[0]) in batch_differing_spaces.registry, (
-        f"Requires the Space type to have a registered `batch_differing_space`, current list: {batch_differing_spaces.registry}"
-    )
+    assert all(
+        isinstance(space, type(spaces[0])) for space in spaces
+    ), f"Expects all spaces to be the same shape, actual types: {[type(space) for space in spaces]}"
+    assert (
+        type(spaces[0]) in batch_differing_spaces.registry
+    ), f"Requires the Space type to have a registered `batch_differing_space`, current list: {batch_differing_spaces.registry}"
 
     return batch_differing_spaces.dispatch(type(spaces[0]))(spaces)
 
 
 @batch_differing_spaces.register(Box)
 def _batch_differing_spaces_box(spaces: list[Box]):
-    assert all(spaces[0].dtype == space.dtype for space in spaces), (
-        f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
-    )
-    assert all(spaces[0].low.shape == space.low.shape for space in spaces), (
-        f"Expected all Box.low shape to be equal, actually {[space.low.shape for space in spaces]}"
-    )
-    assert all(spaces[0].high.shape == space.high.shape for space in spaces), (
-        f"Expected all Box.high shape to be equal, actually {[space.high.shape for space in spaces]}"
-    )
+    assert all(
+        spaces[0].dtype == space.dtype for space in spaces
+    ), f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
+    assert all(
+        spaces[0].low.shape == space.low.shape for space in spaces
+    ), f"Expected all Box.low shape to be equal, actually {[space.low.shape for space in spaces]}"
+    assert all(
+        spaces[0].high.shape == space.high.shape for space in spaces
+    ), f"Expected all Box.high shape to be equal, actually {[space.high.shape for space in spaces]}"
 
     return Box(
         low=np.array([space.low for space in spaces]),
@@ -206,15 +206,15 @@ def _batch_differing_spaces_discrete(spaces: list[Discrete]):
 
 @batch_differing_spaces.register(MultiDiscrete)
 def _batch_differing_spaces_multi_discrete(spaces: list[MultiDiscrete]):
-    assert all(spaces[0].dtype == space.dtype for space in spaces), (
-        f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
-    )
-    assert all(spaces[0].nvec.shape == space.nvec.shape for space in spaces), (
-        f"Expects all MultiDiscrete.nvec shape, actually {[space.nvec.shape for space in spaces]}"
-    )
-    assert all(spaces[0].start.shape == space.start.shape for space in spaces), (
-        f"Expects all MultiDiscrete.start shape, actually {[space.start.shape for space in spaces]}"
-    )
+    assert all(
+        spaces[0].dtype == space.dtype for space in spaces
+    ), f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
+    assert all(
+        spaces[0].nvec.shape == space.nvec.shape for space in spaces
+    ), f"Expects all MultiDiscrete.nvec shape, actually {[space.nvec.shape for space in spaces]}"
+    assert all(
+        spaces[0].start.shape == space.start.shape for space in spaces
+    ), f"Expects all MultiDiscrete.start shape, actually {[space.start.shape for space in spaces]}"
 
     return Box(
         low=np.array([space.start for space in spaces]),

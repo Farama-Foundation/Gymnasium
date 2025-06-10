@@ -175,9 +175,9 @@ class FilterObservation(
             # Filter for tuple observation
         elif isinstance(env.observation_space, spaces.Tuple):
             assert all(isinstance(key, int) for key in filter_keys)
-            assert len(set(filter_keys)) == len(filter_keys), (
-                f"Duplicate keys exist, filter_keys: {filter_keys}"
-            )
+            assert len(set(filter_keys)) == len(
+                filter_keys
+            ), f"Duplicate keys exist, filter_keys: {filter_keys}"
 
             if any(
                 0 < key and key >= len(env.observation_space) for key in filter_keys
