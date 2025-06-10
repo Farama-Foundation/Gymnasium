@@ -130,7 +130,7 @@ class TimeAwareObservation(
         >>> env = TimeAwareObservation(env)
         >>> env.observation_space
         Box([-4.80000019        -inf -0.41887903        -inf  0.        ], [4.80000019e+00            inf 4.18879032e-01            inf
-         5.00000000e+02], (5,), float64)
+         5.00000000e+02], (5,), float64, cpu)
         >>> env.reset(seed=42)[0]
         array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ])
         >>> _ = env.action_space.seed(42)
@@ -141,7 +141,7 @@ class TimeAwareObservation(
         >>> env = gym.make('CartPole-v1')
         >>> env = TimeAwareObservation(env, normalize_time=True)
         >>> env.observation_space
-        Box([-4.8               -inf -0.41887903        -inf  0.        ], [4.8               inf 0.41887903        inf 1.        ], (5,), float32)
+        Box([-4.8               -inf -0.41887903        -inf  0.        ], [4.8               inf 0.41887903        inf 1.        ], (5,), float32, cpu)
         >>> env.reset(seed=42)[0]
         array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ],
               dtype=float32)
@@ -154,7 +154,7 @@ class TimeAwareObservation(
         >>> env = gym.make("CartPole-v1")
         >>> env = TimeAwareObservation(env, flatten=False)
         >>> env.observation_space
-        Dict('obs': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), 'time': Box(0, 500, (1,), int32))
+        Dict('obs': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32, cpu), 'time': Box(0, 500, (1,), int32, cpu))
         >>> env.reset(seed=42)[0]
         {'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}
         >>> _ = env.action_space.seed(42)
@@ -321,7 +321,7 @@ class FrameStackObservation(
         >>> env = gym.make("CarRacing-v3")
         >>> env = FrameStackObservation(env, stack_size=4)
         >>> env.observation_space
-        Box(0, 255, (4, 96, 96, 3), uint8)
+        Box(0, 255, (4, 96, 96, 3), uint8, cpu)
         >>> obs, _ = env.reset()
         >>> obs.shape
         (4, 96, 96, 3)

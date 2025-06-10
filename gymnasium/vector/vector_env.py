@@ -84,7 +84,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
          [4.80000019e+00            inf 4.18879032e-01            inf
           5.00000000e+02]
          [4.80000019e+00            inf 4.18879032e-01            inf
-          5.00000000e+02]], (3, 5), float64)
+          5.00000000e+02]], (3, 5), float64, cpu)
         >>> observations, infos = envs.reset(seed=123)
         >>> observations
         array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282,  0.        ],

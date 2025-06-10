@@ -67,7 +67,7 @@ def batch_space(space: Space[Any], n: int = 1) -> Space[Any]:
         ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)
         ... })
         >>> batch_space(space, n=5)
-        Dict('position': Box(0.0, 1.0, (5, 3), float32), 'velocity': Box(0.0, 1.0, (5, 2), float32))
+        Dict('position': Box(0.0, 1.0, (5, 3), float32, cpu), 'velocity': Box(0.0, 1.0, (5, 2), float32, cpu))
     """
     raise TypeError(
         f"The space provided to `batch_space` is not a gymnasium Space instance, type: {type(space)}, {space}"

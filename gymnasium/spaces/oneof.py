@@ -26,7 +26,7 @@ class OneOf(Space[Any]):
         >>> observation_space[0]
         Discrete(2)
         >>> observation_space[1]
-        Box(-1.0, 1.0, (2,), float32)
+        Box(-1.0, 1.0, (2,), float32, cpu)
         >>> len(observation_space)
         2
     """
