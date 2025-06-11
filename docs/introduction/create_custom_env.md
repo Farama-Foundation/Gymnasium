@@ -2,8 +2,27 @@
 layout: "contents"
 title: Create custom env
 ---
+<!-- See docs/tutorials/run_python310_example.py for an executable version of this code. -->
+> **Note:** The code and tools used in this page require **Python 3.10+** and are only guaranteed to work with the latest version of Gymnasium. Earlier Python versions or older Gymnasium releases may not be compatible.
+
+
+## Testing Your Custom Environment
+
+To ensure your environment works as expected, you can run a simple test loop:
+
+```python
+env = GridWorldEnv(size=5)
+obs, info = env.reset()
+done = False
+while not done:
+    action = env.action_space.sample()
+    obs, reward, terminated, truncated, info = env.step(action)
+    done = terminated or truncated
+```
+
 
 # Create a Custom Environment
+
 
 This page provides a short outline of how to create custom environments with Gymnasium, for a more [complete tutorial](../tutorials/gymnasium_basics/environment_creation) with rendering, please read [basic usage](basic_usage)  before reading this page.
 
