@@ -272,7 +272,7 @@ class BipedalWalker(gym.Env, EzPickle):
         self.render_mode = render_mode
         self.screen: Optional[pygame.Surface] = None
         self.clock = None
-        self._terrain_metadata = {}
+        self._terrain_metadata: dict = {}
 
     def _destroy(self):
         if not self.terrain:
@@ -289,6 +289,14 @@ class BipedalWalker(gym.Env, EzPickle):
         self.joints = []
 
     def _process_terrain_metadata(self):
+        """Process terrain metadata to determine terrain generation parameters.
+
+        This method sets up the terrain generation configuration based on metadata:
+        - Determines if terrain should be predefined or randomly generated
+        - Sets up grass variation parameters for x (distance) and y (height) coordinates
+        - Calculates grass length between obstacles for predefined terrain
+        - Initializes empty metadata if no predefined terrain exists
+        """
         STATES = (1, 2, 3)
         STUMP, STAIRS, PIT = STATES
 
@@ -330,13 +338,31 @@ class BipedalWalker(gym.Env, EzPickle):
             self._terrain_metadata = dict(states=[])
 
     def _generate_terrain_state(self, state: int) -> any:
+        """Generate terrain state metadata for the given terrain type.
+
+        Args:
+            state (int): The current terrain state (GRASS, STUMP, STAIRS, or PIT)
+
+        Returns:
+            any: Metadata for the terrain state:
+                - For GRASS: Returns next state number
+                - For STUMP: Returns stump size (1-2)
+                - For STAIRS: Returns tuple of (stair_height, stair_width, stair_steps)
+                - For PIT: Returns pit depth (3-4)
+
+        Note:
+            If using predefined terrain, returns the next state from metadata.
+            Otherwise generates random parameters for the terrain feature.
+        """
         GRASS, STUMP, STAIRS, PIT, _STATES_ = range(5)
 
         if self._predefined_terrain:
             if state == GRASS:
+                # Obstacles are always generated from the grass state, thus serving as a transition state
                 next_state = self._terrain_metadata["states"][0]
                 return next_state["state"]
             else:
+                # Within an obstacle state, retrieve obstacle metadata
                 next_state = self._terrain_metadata["states"].pop(0)
                 state_metadata = next_state["metadata"]
 
