@@ -5,7 +5,7 @@ title: Compatibility With Gym
 
 # Compatibility with Gym
 
-Gymnasium provides a number of compatibility methods for a range of Environment implementations.
+Gymnasium provides a number of compatibility methods for using older Gym Environment implementations.
 
 ## Loading OpenAI Gym environments
 
