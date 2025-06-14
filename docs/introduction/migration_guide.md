@@ -396,7 +396,7 @@ After migrating, verify that:
 - [ ] **Random seeding** uses the `seed` parameter in `reset()`
 - [ ] **Training algorithms** properly distinguish termination types
 
-Use the `from gymnasium.utils.env_checker import check_env` to verify their implementation. 
+Use the `from gymnasium.utils.env_checker import check_env` to verify their implementation.
 
 ## Getting Help
 

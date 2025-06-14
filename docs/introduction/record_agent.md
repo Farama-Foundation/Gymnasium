@@ -101,7 +101,7 @@ print(f'Episode lengths: {list(env.length_queue)}')
 
 # Calculate some useful metrics
 avg_reward = np.sum(env.return_queue)
-avg_length = np.sum(env.length_queue) 
+avg_length = np.sum(env.length_queue)
 std_reward = np.std(env.return_queue)
 
 print(f'\nAverage reward: {avg_reward:.2f} ± {std_reward:.2f}')
