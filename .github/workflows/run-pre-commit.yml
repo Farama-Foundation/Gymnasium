@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install .[all]
+      - run: pip install numpy==1.26
       - run: pipx install pre-commit
       - run: pre-commit --version
       - run: pre-commit run --all-files
