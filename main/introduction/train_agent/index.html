@@ -375,25 +375,96 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="training-an-agent">
 <h1>Training an Agent<a class="headerlink" href="#training-an-agent" title="Link to this heading">¶</a></h1>
-<p>This page provides a short outline of how to train an agent for a Gymnasium environment, in particular, we will use a tabular based Q-learning to solve the Blackjack v1 environment. For a full complete version of this tutorial and more training tutorials for other environments and algorithm, see <a class="reference internal" href="#../tutorials/training_agents"><span class="xref myst">this</span></a>. Please read <a class="reference internal" href="../basic_usage/"><span class="doc std std-doc">basic usage</span></a> before reading this page. Before we implement any code, here is an overview of Blackjack and Q-learning.</p>
-<p>Blackjack is one of the most popular casino card games that is also infamous for being beatable under certain conditions. This version of the game uses an infinite deck (we draw the cards with replacement), so counting cards won’t be a viable strategy in our simulated game. The observation is a tuple of the player’s current sum, the value of the dealers face-up card and a boolean value on whether the player holds a usable case. The agent can pick between two actions: stand (0) such that the player takes no more cards and hit (1) such that the player will take another card. To win, your card sum should be greater than the dealers without exceeding 21. The game ends if the player selects stand or if the card sum is greater than 21. Full documentation can be found at <a class="reference external" href="https://gymnasium.farama.org/environments/toy_text/blackjack">https://gymnasium.farama.org/environments/toy_text/blackjack</a>.</p>
-<p>Q-learning is a model-free off-policy learning algorithm by Watkins, 1989 for environments with discrete action spaces and was famous for being the first reinforcement learning algorithm to prove convergence to an optimal policy under certain conditions.</p>
+<p>When we talk about training an RL agent, we’re teaching it to make good decisions through experience. Unlike supervised learning where we show examples of correct answers, RL agents learn by trying different actions and observing the results. It’s like learning to ride a bike - you try different movements, fall down a few times, and gradually learn what works.</p>
+<p>The goal is to develop a <strong>policy</strong> - a strategy that tells the agent what action to take in each situation to maximize long-term rewards.</p>
+<section id="understanding-q-learning-intuitively">
+<h2>Understanding Q-Learning Intuitively<a class="headerlink" href="#understanding-q-learning-intuitively" title="Link to this heading">¶</a></h2>
+<p>For this tutorial, we’ll use Q-learning to solve the Blackjack environment. But first, let’s understand how Q-learning works conceptually.</p>
+<p>Q-learning builds a giant “cheat sheet” called a Q-table that tells the agent how good each action is in each situation:</p>
+<ul class="simple">
+<li><p><strong>Rows</strong> = different situations (states) the agent can encounter</p></li>
+<li><p><strong>Columns</strong> = different actions the agent can take</p></li>
+<li><p><strong>Values</strong> = how good that action is in that situation (expected future reward)</p></li>
+</ul>
+<p>For Blackjack:</p>
+<ul class="simple">
+<li><p><strong>States</strong>: Your hand value, dealer’s showing card, whether you have a usable ace</p></li>
+<li><p><strong>Actions</strong>: Hit (take another card) or Stand (keep current hand)</p></li>
+<li><p><strong>Q-values</strong>: Expected reward for each action in each state</p></li>
+</ul>
+<section id="the-learning-process">
+<h3>The Learning Process<a class="headerlink" href="#the-learning-process" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Try an action</strong> and see what happens (reward + new state)</p></li>
+<li><p><strong>Update your cheat sheet</strong>: “That action was better/worse than I thought”</p></li>
+<li><p><strong>Gradually improve</strong> by trying actions and updating estimates</p></li>
+<li><p><strong>Balance exploration vs exploitation</strong>: Try new things vs use what you know works</p></li>
+</ol>
+<p><strong>Why it works</strong>: Over time, good actions get higher Q-values, bad actions get lower Q-values. The agent learns to pick actions with the highest expected rewards.</p>
+<hr class="docutils" />
+<p>This page provides a short outline of how to train an agent for a Gymnasium environment. We’ll use tabular Q-learning to solve Blackjack-v1. For complete tutorials with other environments and algorithms, see <a class="reference internal" href="#../tutorials/training_agents"><span class="xref myst">training tutorials</span></a>. Please read <a class="reference internal" href="../basic_usage/"><span class="doc std std-doc">basic usage</span></a> before this page.</p>
+</section>
+</section>
+<section id="about-the-environment-blackjack">
+<h2>About the Environment: Blackjack<a class="headerlink" href="#about-the-environment-blackjack" title="Link to this heading">¶</a></h2>
+<p>Blackjack is one of the most popular casino card games and is perfect for learning RL because it has:</p>
+<ul class="simple">
+<li><p><strong>Clear rules</strong>: Get closer to 21 than the dealer without going over</p></li>
+<li><p><strong>Simple observations</strong>: Your hand value, dealer’s showing card, usable ace</p></li>
+<li><p><strong>Discrete actions</strong>: Hit (take card) or Stand (keep current hand)</p></li>
+<li><p><strong>Immediate feedback</strong>: Win, lose, or draw after each hand</p></li>
+</ul>
+<p>This version uses infinite deck (cards drawn with replacement), so card counting won’t work - the agent must learn optimal basic strategy through trial and error.</p>
+<p><strong>Environment Details</strong>:</p>
+<ul class="simple">
+<li><p><strong>Observation</strong>: (player_sum, dealer_card, usable_ace)</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">player_sum</span></code>: Current hand value (4-21)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dealer_card</span></code>: Dealer’s face-up card (1-10)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">usable_ace</span></code>: Whether player has usable ace (True/False)</p></li>
+</ul>
+</li>
+<li><p><strong>Actions</strong>: 0 = Stand, 1 = Hit</p></li>
+<li><p><strong>Rewards</strong>: +1 for win, -1 for loss, 0 for draw</p></li>
+<li><p><strong>Episode ends</strong>: When player stands or busts (goes over 21)</p></li>
+</ul>
+</section>
 <section id="executing-an-action">
 <h2>Executing an action<a class="headerlink" href="#executing-an-action" title="Link to this heading">¶</a></h2>
-<p>After receiving our first observation, we are only going to use the<code class="docutils literal notranslate"><span class="pre">env.step(action)</span></code> function to interact with the environment. This function takes an action as input and executes it in the environment. Because that action changes the state of the environment, it returns four useful variables to us. These are:</p>
+<p>After receiving our first observation from <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code>, we use <code class="docutils literal notranslate"><span class="pre">env.step(action)</span></code> to interact with the environment. This function takes an action and returns five important values:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+</pre></div>
+</div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">next</span> <span class="pre">observation</span></code>: This is the observation that the agent will receive after taking the action.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">reward</span></code>: This is the reward that the agent will receive after taking the action.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">terminated</span></code>: This is a boolean variable that indicates whether or not the environment has terminated, i.e., ended due to an internal condition.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">truncated</span></code>: This is a boolean variable that also indicates whether the episode ended by early truncation, i.e., a time limit is reached.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">info</span></code>: This is a dictionary that might contain additional information about the environment.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">observation</span></code></strong>: What the agent sees after taking the action (new game state)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">reward</span></code></strong>: Immediate feedback for that action (+1, -1, or 0 in Blackjack)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">terminated</span></code></strong>: Whether the episode ended naturally (hand finished)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">truncated</span></code></strong>: Whether episode was cut short (time limits - not used in Blackjack)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">info</span></code></strong>: Additional debugging information (can usually be ignored)</p></li>
 </ul>
-<p>The <code class="docutils literal notranslate"><span class="pre">next</span> <span class="pre">observation</span></code>, <code class="docutils literal notranslate"><span class="pre">reward</span></code>, <code class="docutils literal notranslate"><span class="pre">terminated</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated</span></code> variables are self-explanatory, but the <code class="docutils literal notranslate"><span class="pre">info</span></code> variable requires some additional explanation. This variable contains a dictionary that might have some extra information about the environment, but in the Blackjack-v1 environment you can ignore it. For example in Atari environments the info dictionary has a <code class="docutils literal notranslate"><span class="pre">ale.lives</span></code> key that tells us how many lives the agent has left. If the agent has 0 lives, then the episode is over.</p>
-<p>Note that it is not a good idea to call <code class="docutils literal notranslate"><span class="pre">env.render()</span></code> in your training loop because rendering slows down training by a lot. Rather try to build an extra loop to evaluate and showcase the agent after training.</p>
+<p>The key insight is that <code class="docutils literal notranslate"><span class="pre">reward</span></code> tells us how good our <em>immediate</em> action was, but the agent needs to learn about <em>long-term</em> consequences. Q-learning handles this by estimating the total future reward, not just the immediate reward.</p>
 </section>
-<section id="building-an-agent">
-<h2>Building an agent<a class="headerlink" href="#building-an-agent" title="Link to this heading">¶</a></h2>
-<p>Let’s build a Q-learning agent to solve Blackjack! We’ll need some functions for picking an action and updating the agents action values. To ensure that the agents explores the environment, one possible solution is the epsilon-greedy strategy, where we pick a random action with the percentage <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> and the greedy action (currently valued as the best) <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">epsilon</span></code>.</p>
+<section id="building-a-q-learning-agent">
+<h2>Building a Q-Learning Agent<a class="headerlink" href="#building-a-q-learning-agent" title="Link to this heading">¶</a></h2>
+<p>Let’s build our agent step by step. We need functions for:</p>
+<ol class="arabic simple">
+<li><p><strong>Choosing actions</strong> (with exploration vs exploitation)</p></li>
+<li><p><strong>Learning from experience</strong> (updating Q-values)</p></li>
+<li><p><strong>Managing exploration</strong> (reducing randomness over time)</p></li>
+</ol>
+<section id="exploration-vs-exploitation">
+<h3>Exploration vs Exploitation<a class="headerlink" href="#exploration-vs-exploitation" title="Link to this heading">¶</a></h3>
+<p>This is a fundamental challenge in RL:</p>
+<ul class="simple">
+<li><p><strong>Exploration</strong>: Try new actions to learn about the environment</p></li>
+<li><p><strong>Exploitation</strong>: Use current knowledge to get the best rewards</p></li>
+</ul>
+<p>We use <strong>epsilon-greedy</strong> strategy:</p>
+<ul class="simple">
+<li><p>With probability <code class="docutils literal notranslate"><span class="pre">epsilon</span></code>: choose a random action (explore)</p></li>
+<li><p>With probability <code class="docutils literal notranslate"><span class="pre">1-epsilon</span></code>: choose the best known action (exploit)</p></li>
+</ul>
+<p>Starting with high epsilon (lots of exploration) and gradually reducing it (more exploitation as we learn) works well in practice.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -409,38 +480,44 @@
         <span class="n">final_epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Reinforcement Learning agent with an empty dictionary</span>
-<span class="sd">        of state-action values (q_values), a learning rate and an epsilon.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Q-Learning agent.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The training environment</span>
-<span class="sd">            learning_rate: The learning rate</span>
-<span class="sd">            initial_epsilon: The initial epsilon value</span>
-<span class="sd">            epsilon_decay: The decay for epsilon</span>
-<span class="sd">            final_epsilon: The final epsilon value</span>
-<span class="sd">            discount_factor: The discount factor for computing the Q-value</span>
+<span class="sd">            learning_rate: How quickly to update Q-values (0-1)</span>
+<span class="sd">            initial_epsilon: Starting exploration rate (usually 1.0)</span>
+<span class="sd">            epsilon_decay: How much to reduce epsilon each episode</span>
+<span class="sd">            final_epsilon: Minimum exploration rate (usually 0.1)</span>
+<span class="sd">            discount_factor: How much to value future rewards (0-1)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+
+        <span class="c1"># Q-table: maps (state, action) to expected reward</span>
+        <span class="c1"># defaultdict automatically creates entries with zeros for new states</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">=</span> <span class="n">discount_factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">=</span> <span class="n">discount_factor</span>  <span class="c1"># How much we care about future rewards</span>
 
+        <span class="c1"># Exploration parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">initial_epsilon</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">epsilon_decay</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">final_epsilon</span> <span class="o">=</span> <span class="n">final_epsilon</span>
 
+        <span class="c1"># Track learning progress</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">training_error</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the best action with probability (1 - epsilon)</span>
-<span class="sd">        otherwise a random action with probability epsilon to ensure exploration.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Choose an action using epsilon-greedy strategy.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            action: 0 (stand) or 1 (hit)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># with probability epsilon return a random action to explore the environment</span>
+        <span class="c1"># With probability epsilon: explore (random action)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-        <span class="c1"># with probability (1 - epsilon) act greedily (exploit)</span>
+
+        <span class="c1"># With probability (1-epsilon): exploit (best known action)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">]))</span>
 
@@ -452,32 +529,71 @@
         <span class="n">terminated</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">next_obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the Q-value of an action.&quot;&quot;&quot;</span>
-        <span class="n">future_q_value</span> <span class="o">=</span> <span class="p">(</span><span class="ow">not</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
-        <span class="n">temporal_difference</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">future_q_value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span>
-        <span class="p">)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update Q-value based on experience.</span>
 
+<span class="sd">        This is the heart of Q-learning: learn from (state, action, reward, next_state)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># What&#39;s the best we could do from the next state?</span>
+        <span class="c1"># (Zero if episode terminated - no future rewards possible)</span>
+        <span class="n">future_q_value</span> <span class="o">=</span> <span class="p">(</span><span class="ow">not</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
+
+        <span class="c1"># What should the Q-value be? (Bellman equation)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">future_q_value</span>
+
+        <span class="c1"># How wrong was our current estimate?</span>
+        <span class="n">temporal_difference</span> <span class="o">=</span> <span class="n">target</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span>
+
+        <span class="c1"># Update our estimate in the direction of the error</span>
+        <span class="c1"># Learning rate controls how big steps we take</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">temporal_difference</span>
         <span class="p">)</span>
+
+        <span class="c1"># Track learning progress (useful for debugging)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">training_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temporal_difference</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">decay_epsilon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reduce exploration rate after each episode.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_decay</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="training-the-agent">
-<h2>Training the agent<a class="headerlink" href="#training-the-agent" title="Link to this heading">¶</a></h2>
-<p>To train the agent, we will let the agent play one episode (one complete game is called an episode) at a time and update it’s Q-values after each action taken during the episode. The agent will have to experience a lot of episodes to explore the environment sufficiently.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># hyperparameters</span>
-<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span>
-<span class="n">n_episodes</span> <span class="o">=</span> <span class="mi">100_000</span>
-<span class="n">start_epsilon</span> <span class="o">=</span> <span class="mf">1.0</span>
-<span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">start_epsilon</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_episodes</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># reduce the exploration over time</span>
-<span class="n">final_epsilon</span> <span class="o">=</span> <span class="mf">0.1</span>
+<section id="understanding-the-q-learning-update">
+<h3>Understanding the Q-Learning Update<a class="headerlink" href="#understanding-the-q-learning-update" title="Link to this heading">¶</a></h3>
+<p>The core learning happens in the <code class="docutils literal notranslate"><span class="pre">update</span></code> method. Let’s break down the math:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Current estimate: Q(state, action)</span>
+<span class="n">current_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span>
 
+<span class="c1"># What we actually experienced: reward + discounted future value</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
+
+<span class="c1"># How wrong were we?</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">target</span> <span class="o">-</span> <span class="n">current_q</span>
+
+<span class="c1"># Update estimate: move toward the target</span>
+<span class="n">new_q</span> <span class="o">=</span> <span class="n">current_q</span> <span class="o">+</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">error</span>
+</pre></div>
+</div>
+<p>This is the famous <strong>Bellman equation</strong> in action - it says the value of a state-action pair should equal the immediate reward plus the discounted value of the best next action.</p>
+</section>
+</section>
+<section id="training-the-agent">
+<h2>Training the Agent<a class="headerlink" href="#training-the-agent" title="Link to this heading">¶</a></h2>
+<p>Now let’s train our agent. The process is:</p>
+<ol class="arabic simple">
+<li><p><strong>Reset environment</strong> to start a new episode</p></li>
+<li><p><strong>Play one complete hand</strong> (episode), choosing actions and learning from each step</p></li>
+<li><p><strong>Update exploration rate</strong> (reduce epsilon)</p></li>
+<li><p><strong>Repeat</strong> for many episodes until the agent learns good strategy</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Training hyperparameters</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span>        <span class="c1"># How fast to learn (higher = faster but less stable)</span>
+<span class="n">n_episodes</span> <span class="o">=</span> <span class="mi">100_000</span>        <span class="c1"># Number of hands to practice</span>
+<span class="n">start_epsilon</span> <span class="o">=</span> <span class="mf">1.0</span>         <span class="c1"># Start with 100% random actions</span>
+<span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">start_epsilon</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_episodes</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Reduce exploration over time</span>
+<span class="n">final_epsilon</span> <span class="o">=</span> <span class="mf">0.1</span>         <span class="c1"># Always keep some exploration</span>
+
+<span class="c1"># Create environment and agent</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Blackjack-v1&quot;</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">buffer_length</span><span class="o">=</span><span class="n">n_episodes</span><span class="p">)</span>
 
@@ -490,42 +606,75 @@
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Info: The current hyperparameters are set to quickly train a decent agent. If you want to converge to the optimal policy, try increasing the <code class="docutils literal notranslate"><span class="pre">n_episodes</span></code> by 10x and lower the learning_rate (e.g. to 0.001).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+<section id="the-training-loop">
+<h3>The Training Loop<a class="headerlink" href="#the-training-loop" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>  <span class="c1"># Progress bar</span>
 
 <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">)):</span>
+    <span class="c1"># Start a new hand</span>
     <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
     <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="c1"># play one episode</span>
+    <span class="c1"># Play one complete hand</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+        <span class="c1"># Agent chooses action (initially random, gradually more intelligent)</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+
+        <span class="c1"># Take action and observe result</span>
         <span class="n">next_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
-        <span class="c1"># update the agent</span>
+        <span class="c1"># Learn from this experience</span>
         <span class="n">agent</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">)</span>
 
-        <span class="c1"># update if the environment is done and the current obs</span>
+        <span class="c1"># Move to next state</span>
         <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
         <span class="n">obs</span> <span class="o">=</span> <span class="n">next_obs</span>
 
+    <span class="c1"># Reduce exploration rate (agent becomes less random over time)</span>
     <span class="n">agent</span><span class="o">.</span><span class="n">decay_epsilon</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>You can use <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> to visualize the training reward and length.</p>
+</section>
+<section id="what-to-expect-during-training">
+<h3>What to Expect During Training<a class="headerlink" href="#what-to-expect-during-training" title="Link to this heading">¶</a></h3>
+<p><strong>Early episodes (0-10,000)</strong>:</p>
+<ul class="simple">
+<li><p>Agent acts mostly randomly (high epsilon)</p></li>
+<li><p>Wins about 43% of hands (slightly worse than random due to poor strategy)</p></li>
+<li><p>Large learning errors as Q-values are very inaccurate</p></li>
+</ul>
+<p><strong>Middle episodes (10,000-50,000)</strong>:</p>
+<ul class="simple">
+<li><p>Agent starts finding good strategies</p></li>
+<li><p>Win rate improves to 45-48%</p></li>
+<li><p>Learning errors decrease as estimates get better</p></li>
+</ul>
+<p><strong>Later episodes (50,000+)</strong>:</p>
+<ul class="simple">
+<li><p>Agent converges to near-optimal strategy</p></li>
+<li><p>Win rate plateaus around 49% (theoretical maximum for this game)</p></li>
+<li><p>Small learning errors as Q-values stabilize</p></li>
+</ul>
+</section>
+</section>
+<section id="analyzing-training-results">
+<h2>Analyzing Training Results<a class="headerlink" href="#analyzing-training-results" title="Link to this heading">¶</a></h2>
+<p>Let’s visualize the training progress:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_moving_avgs</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">convolution_mode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute moving average to smooth noisy data.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
         <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">window</span><span class="p">),</span>
         <span class="n">mode</span><span class="o">=</span><span class="n">convolution_mode</span>
     <span class="p">)</span> <span class="o">/</span> <span class="n">window</span>
 
-<span class="c1"># Smooth over a 500 episode window</span>
+<span class="c1"># Smooth over a 500-episode window</span>
 <span class="n">rolling_length</span> <span class="o">=</span> <span class="mi">500</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 
+<span class="c1"># Episode rewards (win/loss performance)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Episode rewards&quot;</span><span class="p">)</span>
 <span class="n">reward_moving_average</span> <span class="o">=</span> <span class="n">get_moving_avgs</span><span class="p">(</span>
     <span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">,</span>
@@ -533,7 +682,10 @@
     <span class="s2">&quot;valid&quot;</span>
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">reward_moving_average</span><span class="p">)),</span> <span class="n">reward_moving_average</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Average Reward&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
 
+<span class="c1"># Episode lengths (how many actions per hand)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Episode lengths&quot;</span><span class="p">)</span>
 <span class="n">length_moving_average</span> <span class="o">=</span> <span class="n">get_moving_avgs</span><span class="p">(</span>
     <span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">,</span>
@@ -541,7 +693,10 @@
     <span class="s2">&quot;valid&quot;</span>
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">length_moving_average</span><span class="p">)),</span> <span class="n">length_moving_average</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Average Episode Length&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
 
+<span class="c1"># Training error (how much we&#39;re still learning)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Training Error&quot;</span><span class="p">)</span>
 <span class="n">training_error_moving_average</span> <span class="o">=</span> <span class="n">get_moving_avgs</span><span class="p">(</span>
     <span class="n">agent</span><span class="o">.</span><span class="n">training_error</span><span class="p">,</span>
@@ -549,16 +704,133 @@
     <span class="s2">&quot;same&quot;</span>
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">training_error_moving_average</span><span class="p">)),</span> <span class="n">training_error_moving_average</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Temporal Difference Error&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Step&quot;</span><span class="p">)</span>
+
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-
 </pre></div>
 </div>
-<p><img alt="" src="../../_images/blackjack_training_plots.png" /></p>
-<p>Hopefully this tutorial helped you get a grip of how to interact with Gymnasium environments and sets you on a journey to solve many more RL challenges.</p>
-<p>It is recommended that you solve this environment by yourself (project based learning is really effective!). You can apply your favorite discrete RL algorithm or give Monte Carlo ES a try (covered in <code class="docutils literal notranslate"><span class="pre">Sutton</span> <span class="pre">&amp;</span> <span class="pre">Barto</span> <span class="pre">&lt;http://incompleteideas.net/book/the-book-2nd.html&gt;</span></code>_, section 5.3) - this way you can compare your results directly to the book.</p>
-<p>Best of luck!</p>
+<section id="interpreting-the-results">
+<h3>Interpreting the Results<a class="headerlink" href="#interpreting-the-results" title="Link to this heading">¶</a></h3>
+<p><strong>Reward Plot</strong>: Should show gradual improvement from ~-0.05 (slightly negative) to ~-0.01 (near optimal). Blackjack is a difficult game - even perfect play loses slightly due to the house edge.</p>
+<p><strong>Episode Length</strong>: Should stabilize around 2-3 actions per episode. Very short episodes suggest the agent is standing too early; very long episodes suggest hitting too often.</p>
+<p><strong>Training Error</strong>: Should decrease over time, indicating the agent’s predictions are getting more accurate. Large spikes early in training are normal as the agent encounters new situations.</p>
+</section>
+</section>
+<section id="common-training-issues-and-solutions">
+<h2>Common Training Issues and Solutions<a class="headerlink" href="#common-training-issues-and-solutions" title="Link to this heading">¶</a></h2>
+<section id="agent-never-improves">
+<h3>🚨 <strong>Agent Never Improves</strong><a class="headerlink" href="#agent-never-improves" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Reward stays constant, large training errors
+<strong>Causes</strong>: Learning rate too high/low, poor reward design, bugs in update logic
+<strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Try learning rates between 0.001 and 0.1</p></li>
+<li><p>Check that rewards are meaningful (-1, 0, +1 for Blackjack)</p></li>
+<li><p>Verify Q-table is actually being updated</p></li>
+</ul>
+</section>
+<section id="unstable-training">
+<h3>🚨 <strong>Unstable Training</strong><a class="headerlink" href="#unstable-training" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Rewards fluctuate wildly, never converge
+<strong>Causes</strong>: Learning rate too high, insufficient exploration
+<strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Reduce learning rate (try 0.01 instead of 0.1)</p></li>
+<li><p>Ensure minimum exploration (final_epsilon ≥ 0.05)</p></li>
+<li><p>Train for more episodes</p></li>
+</ul>
+</section>
+<section id="agent-gets-stuck-in-poor-strategy">
+<h3>🚨 <strong>Agent Gets Stuck in Poor Strategy</strong><a class="headerlink" href="#agent-gets-stuck-in-poor-strategy" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Improvement stops early, suboptimal final performance
+<strong>Causes</strong>: Too little exploration, learning rate too low
+<strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Increase exploration time (slower epsilon decay)</p></li>
+<li><p>Try higher learning rate initially</p></li>
+<li><p>Use different exploration strategies (optimistic initialization)</p></li>
+</ul>
+</section>
+<section id="learning-too-slow">
+<h3>🚨 <strong>Learning Too Slow</strong><a class="headerlink" href="#learning-too-slow" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Agent improves but very gradually
+<strong>Causes</strong>: Learning rate too low, too much exploration
+<strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Increase learning rate (but watch for instability)</p></li>
+<li><p>Faster epsilon decay (less random exploration)</p></li>
+<li><p>More focused training on difficult states</p></li>
+</ul>
+</section>
+</section>
+<section id="testing-your-trained-agent">
+<h2>Testing Your Trained Agent<a class="headerlink" href="#testing-your-trained-agent" title="Link to this heading">¶</a></h2>
+<p>Once training is complete, test your agent’s performance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Test the trained agent</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">num_episodes</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test agent performance without learning or exploration.&quot;&quot;&quot;</span>
+    <span class="n">total_rewards</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Temporarily disable exploration for testing</span>
+    <span class="n">old_epsilon</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">epsilon</span>
+    <span class="n">agent</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Pure exploitation</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="n">episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+            <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="n">episode_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+
+        <span class="n">total_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">episode_reward</span><span class="p">)</span>
+
+    <span class="c1"># Restore original epsilon</span>
+    <span class="n">agent</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">old_epsilon</span>
+
+    <span class="n">win_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">total_rewards</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">average_reward</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">total_rewards</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test Results over </span><span class="si">{</span><span class="n">num_episodes</span><span class="si">}</span><span class="s2"> episodes:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Win Rate: </span><span class="si">{</span><span class="n">win_rate</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average Reward: </span><span class="si">{</span><span class="n">average_reward</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Deviation: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">total_rewards</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Test your agent</span>
+<span class="n">test_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Good Blackjack performance:</p>
+<ul class="simple">
+<li><p><strong>Win rate</strong>: 42-45% (house edge makes &gt;50% impossible)</p></li>
+<li><p><strong>Average reward</strong>: -0.02 to +0.01</p></li>
+<li><p><strong>Consistency</strong>: Low standard deviation indicates reliable strategy</p></li>
+</ul>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
+<p>Congratulations! You’ve successfully trained your first RL agent. Here’s what to explore next:</p>
+<ol class="arabic simple">
+<li><p><strong>Try other environments</strong>: CartPole, MountainCar, LunarLander</p></li>
+<li><p><strong>Experiment with hyperparameters</strong>: Learning rates, exploration strategies</p></li>
+<li><p><strong>Implement other algorithms</strong>: SARSA, Expected SARSA, Monte Carlo methods</p></li>
+<li><p><strong>Add function approximation</strong>: Neural networks for larger state spaces</p></li>
+<li><p><strong>Create custom environments</strong>: Design your own RL problems</p></li>
+</ol>
+<p>For more information, see:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../basic_usage/"><span class="doc std std-doc">Basic Usage</span></a> - Understanding Gymnasium fundamentals</p></li>
+<li><p><a class="reference internal" href="../create_custom_env/"><span class="doc std std-doc">Custom Environments</span></a> - Building your own RL problems</p></li>
+<li><p><a class="reference internal" href="#../tutorials/training_agents"><span class="xref myst">Complete Training Tutorials</span></a> - More algorithms and environments</p></li>
+<li><p><a class="reference internal" href="../record_agent/"><span class="doc std std-doc">Recording Agent Behavior</span></a> - Saving videos and performance data</p></li>
+</ul>
+<p>The key insight from this tutorial is that RL agents learn through trial and error, gradually building up knowledge about what actions work best in different situations. Q-learning provides a systematic way to learn this knowledge, balancing exploration of new possibilities with exploitation of current knowledge.</p>
+<p>Keep experimenting, and remember that RL is as much art as science - finding the right hyperparameters and environment design often requires patience and intuition!</p>
 </section>
 </section>
 
@@ -632,9 +904,35 @@
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Training an Agent</a><ul>
+<li><a class="reference internal" href="#understanding-q-learning-intuitively">Understanding Q-Learning Intuitively</a><ul>
+<li><a class="reference internal" href="#the-learning-process">The Learning Process</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#about-the-environment-blackjack">About the Environment: Blackjack</a></li>
 <li><a class="reference internal" href="#executing-an-action">Executing an action</a></li>
-<li><a class="reference internal" href="#building-an-agent">Building an agent</a></li>
-<li><a class="reference internal" href="#training-the-agent">Training the agent</a></li>
+<li><a class="reference internal" href="#building-a-q-learning-agent">Building a Q-Learning Agent</a><ul>
+<li><a class="reference internal" href="#exploration-vs-exploitation">Exploration vs Exploitation</a></li>
+<li><a class="reference internal" href="#understanding-the-q-learning-update">Understanding the Q-Learning Update</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#training-the-agent">Training the Agent</a><ul>
+<li><a class="reference internal" href="#the-training-loop">The Training Loop</a></li>
+<li><a class="reference internal" href="#what-to-expect-during-training">What to Expect During Training</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#analyzing-training-results">Analyzing Training Results</a><ul>
+<li><a class="reference internal" href="#interpreting-the-results">Interpreting the Results</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#common-training-issues-and-solutions">Common Training Issues and Solutions</a><ul>
+<li><a class="reference internal" href="#agent-never-improves">🚨 <strong>Agent Never Improves</strong></a></li>
+<li><a class="reference internal" href="#unstable-training">🚨 <strong>Unstable Training</strong></a></li>
+<li><a class="reference internal" href="#agent-gets-stuck-in-poor-strategy">🚨 <strong>Agent Gets Stuck in Poor Strategy</strong></a></li>
+<li><a class="reference internal" href="#learning-too-slow">🚨 <strong>Learning Too Slow</strong></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-your-trained-agent">Testing Your Trained Agent</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
 </ul>
