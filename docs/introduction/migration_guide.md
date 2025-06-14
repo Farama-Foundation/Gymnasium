@@ -383,7 +383,6 @@ env = gym.make("GymV21Environment-v0", env_id="OldEnv-v0")
 ```
 
 For more details, see the `compatibility guide <gym_compatibility>`_.
-```
 
 ## Testing Your Migration
 

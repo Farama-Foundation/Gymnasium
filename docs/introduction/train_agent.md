@@ -5,8 +5,6 @@ title: Train an Agent
 
 # Training an Agent
 
-## What Does "Training an Agent" Mean?
-
 When we talk about training an RL agent, we're teaching it to make good decisions through experience. Unlike supervised learning where we show examples of correct answers, RL agents learn by trying different actions and observing the results. It's like learning to ride a bike - you try different movements, fall down a few times, and gradually learn what works.
 
 The goal is to develop a **policy** - a strategy that tells the agent what action to take in each situation to maximize long-term rewards.
@@ -14,8 +12,6 @@ The goal is to develop a **policy** - a strategy that tells the agent what actio
 ## Understanding Q-Learning Intuitively
 
 For this tutorial, we'll use Q-learning to solve the Blackjack environment. But first, let's understand how Q-learning works conceptually.
-
-### The Q-Table: Your Agent's "Cheat Sheet"
 
 Q-learning builds a giant "cheat sheet" called a Q-table that tells the agent how good each action is in each situation:
 
@@ -381,67 +377,6 @@ plt.show()
 - Faster epsilon decay (less random exploration)
 - More focused training on difficult states
 
-## Understanding Your Trained Agent
-
-After training, you can examine what your agent learned:
-
-```python
-# Look at Q-values for some example states
-def print_strategy(agent, states_to_check):
-    """Print the agent's strategy for specific states."""
-    print("Agent's learned strategy:")
-    print("State (player, dealer, usable_ace) -> [Stand, Hit] -> Best Action")
-
-    for state in states_to_check:
-        q_values = agent.q_values[state]
-        best_action = np.argmax(q_values)
-        action_names = ["Stand", "Hit"]
-
-        print(f"{state} -> {q_values} -> {action_names[best_action]}")
-
-# Check some interesting states
-interesting_states = [
-    (20, 10, False),  # Strong hand vs strong dealer
-    (12, 6, False),   # Weak hand vs weak dealer
-    (16, 10, False),  # Difficult decision
-    (11, 5, False),   # Good doubling opportunity (but we only have hit/stand)
-]
-
-print_strategy(agent, interesting_states)
-```
-
-Expected good strategy:
-- Stand on 20 (almost always correct)
-- Stand on 12 vs 6 (let dealer bust)
-- Hit on 16 vs 10 (dealer likely has strong hand)
-- Hit on 11 (can't bust, likely to improve)
-
-## Advanced Tips for Better Training
-
-### Hyperparameter Tuning
-```python
-# Conservative: Stable but slow learning
-learning_rate = 0.001
-epsilon_decay = start_epsilon / (n_episodes * 0.8)  # Explore longer
-
-# Aggressive: Fast but potentially unstable
-learning_rate = 0.1
-epsilon_decay = start_epsilon / (n_episodes * 0.3)  # Exploit sooner
-```
-
-### Optimistic Initialization
-```python
-# Start with optimistic Q-values to encourage exploration
-self.q_values = defaultdict(lambda: np.ones(env.action_space.n) * 0.1)
-```
-
-### Learning Rate Schedules
-```python
-def update_learning_rate(self, episode):
-    """Decay learning rate over time."""
-    self.lr = max(0.001, self.initial_lr * (0.995 ** episode))
-```
-
 ## Testing Your Trained Agent
 
 Once training is complete, test your agent's performance:
@@ -499,7 +434,7 @@ Congratulations! You've successfully trained your first RL agent. Here's what to
 4. **Add function approximation**: Neural networks for larger state spaces
 5. **Create custom environments**: Design your own RL problems
 
-## More Information
+For more information, see:
 
 * [Basic Usage](basic_usage) - Understanding Gymnasium fundamentals
 * [Custom Environments](create_custom_env) - Building your own RL problems

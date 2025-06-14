@@ -259,7 +259,7 @@ For GridWorld, we need to:
 
 Now that you've seen the basic structure, let's discuss common mistakes beginners make:
 
-### ❌ **Reward Design Issues**
+### Reward Design Issues
 
 **Problem**: Only rewarding at the very end (sparse rewards)
 ```python
@@ -277,7 +277,7 @@ distance = np.linalg.norm(self._agent_location - self._target_location)
 reward = 1 if terminated else -0.1 * distance
 ```
 
-### ❌ **State Representation Problems**
+### State Representation Problems
 
 **Problem**: Including irrelevant information or missing crucial details
 ```python
@@ -294,7 +294,7 @@ obs = {"distance": distance}  # Missing actual positions!
 obs = {"agent": self._agent_location, "target": self._target_location}
 ```
 
-### ❌ **Action Space Issues**
+### Action Space Issues
 
 **Problem**: Actions that don't make sense or are impossible to execute
 ```python
@@ -305,7 +305,7 @@ self.action_space = gym.spaces.Discrete(8)  # 8 directions including diagonals
 self.action_space = gym.spaces.Box(-1, 1, shape=(2,))  # Continuous x,y movement
 ```
 
-### ❌ **Boundary Handling Errors**
+### Boundary Handling Errors
 
 **Problem**: Allowing invalid states or unclear boundary behavior
 ```python
@@ -367,59 +367,6 @@ import gymnasium as gym
 SyncVectorEnv(gymnasium_env/GridWorld-v0, num_envs=3)
 ```
 
-## Testing Your Environment
-
-Before using your environment for training, it's important to test that it works correctly:
-
-```python
-# Basic functionality test
-env = gym.make("gymnasium_env/GridWorld-v0")
-
-# Test reset
-obs, info = env.reset(seed=42)
-print(f"Initial observation: {obs}")
-print(f"Initial info: {info}")
-
-# Test a few steps
-for step in range(5):
-    action = env.action_space.sample()
-    obs, reward, terminated, truncated, info = env.step(action)
-    print(f"Step {step}: action={action}, reward={reward}, terminated={terminated}")
-
-    if terminated or truncated:
-        obs, info = env.reset()
-        print("Episode finished, resetting...")
-
-env.close()
-```
-
-## Using Wrappers
-
-Sometimes you want to modify your environment's behavior without changing the core implementation. Wrappers are perfect for this - they let you add functionality like changing observation formats, adding time limits, or modifying rewards without touching your original environment code.
-
-```python
->>> from gymnasium.wrappers import FlattenObservation
-
->>> # Original observation is a dictionary
->>> env = gym.make('gymnasium_env/GridWorld-v0')
->>> env.observation_space
-Dict('agent': Box(0, 4, (2,), int64), 'target': Box(0, 4, (2,), int64))
-
->>> obs, info = env.reset()
->>> obs
-{'agent': array([4, 1]), 'target': array([2, 4])}
-
->>> # Wrap it to flatten observations into a single array
->>> wrapped_env = FlattenObservation(env)
->>> wrapped_env.observation_space
-Box(0, 4, (4,), int64)
-
->>> obs, info = wrapped_env.reset()
->>> obs
-array([3, 0, 2, 1])  # [agent_x, agent_y, target_x, target_y]
-```
-
-This is particularly useful when working with algorithms that expect specific input formats (like neural networks that need 1D arrays instead of dictionaries).
 
 ## Debugging Your Environment
 
@@ -459,7 +406,7 @@ for action in actions:
 # Issue 1: Forgot to call super().reset()
 def reset(self, seed=None, options=None):
     # super().reset(seed=seed)  # ❌ Missing this line
-    # Results in: same random positions every episode
+    # Results in: possibly incorrect seeding
 
 # Issue 2: Wrong action mapping
 self._action_to_direction = {
@@ -473,6 +420,34 @@ self._action_to_direction = {
 # This allows agent to go outside the grid!
 self._agent_location = self._agent_location + direction  # ❌ No bounds checking
 ```
+
+## Using Wrappers
+
+Sometimes you want to modify your environment's behavior without changing the core implementation. Wrappers are perfect for this - they let you add functionality like changing observation formats, adding time limits, or modifying rewards without touching your original environment code.
+
+```python
+>>> from gymnasium.wrappers import FlattenObservation
+
+>>> # Original observation is a dictionary
+>>> env = gym.make('gymnasium_env/GridWorld-v0')
+>>> env.observation_space
+Dict('agent': Box(0, 4, (2,), int64), 'target': Box(0, 4, (2,), int64))
+
+>>> obs, info = env.reset()
+>>> obs
+{'agent': array([4, 1]), 'target': array([2, 4])}
+
+>>> # Wrap it to flatten observations into a single array
+>>> wrapped_env = FlattenObservation(env)
+>>> wrapped_env.observation_space
+Box(0, 4, (4,), int64)
+
+>>> obs, info = wrapped_env.reset()
+>>> obs
+array([3, 0, 2, 1])  # [agent_x, agent_y, target_x, target_y]
+```
+
+This is particularly useful when working with algorithms that expect specific input formats (like neural networks that need 1D arrays instead of dictionaries).
 
 ## Advanced Environment Features
 
