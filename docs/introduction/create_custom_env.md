@@ -5,28 +5,78 @@ title: Create custom env
 
 # Create a Custom Environment
 
-This page provides a short outline of how to create custom environments with Gymnasium, for a more [complete tutorial](../tutorials/gymnasium_basics/environment_creation) with rendering, please read [basic usage](basic_usage)  before reading this page.
+## Before You Code: Environment Design
 
-We will implement a very simplistic game, called ``GridWorldEnv``, consisting of a 2-dimensional square grid of fixed size. The agent can move vertically or horizontally between grid cells in each timestep and the goal of the agent is to navigate to a target on the grid that has been placed randomly at the beginning of the episode.
+Creating an RL environment is like designing a video game or simulation. Before writing any code, you need to think through the learning problem you want to solve. This design phase is crucial - a poorly designed environment will make learning difficult or impossible, no matter how good your algorithm is.
 
-Basic information about the game
--  Observations provide the location of the target and agent.
--  There are 4 discrete actions in our environment, corresponding to the movements "right", "up", "left", and "down".
--  The environment ends (terminates) when the agent has navigated to the grid cell where the target is located.
--  The agent is only rewarded when it reaches the target, i.e., the reward is one when the agent reaches the target and zero otherwise.
+### Key Design Questions
+
+Ask yourself these fundamental questions:
+
+**🎯 What skill should the agent learn?**
+- Navigate through a maze?
+- Balance and control a system?
+- Optimize resource allocation?
+- Play a strategic game?
+
+**👀 What information does the agent need?**
+- Position and velocity?
+- Current state of the system?
+- Historical data?
+- Partial or full observability?
+
+**🎮 What actions can the agent take?**
+- Discrete choices (move up/down/left/right)?
+- Continuous control (steering angle, throttle)?
+- Multiple simultaneous actions?
+
+**🏆 How do we measure success?**
+- Reaching a specific goal?
+- Minimizing time or energy?
+- Maximizing a score?
+- Avoiding failures?
+
+**⏰ When should episodes end?**
+- Task completion (success/failure)?
+- Time limits?
+- Safety constraints?
+
+### GridWorld Example Design
+
+For our tutorial example, we'll create a simple GridWorld environment:
+
+- **🎯 Skill**: Navigate efficiently to a target location
+- **👀 Information**: Agent position and target position on a grid
+- **🎮 Actions**: Move up, down, left, or right
+- **🏆 Success**: Reach the target in minimum steps
+- **⏰ End**: When agent reaches target (or optional time limit)
+
+This provides a clear learning problem that's simple enough to understand but non-trivial to solve optimally.
+
+---
+
+This page provides a complete implementation of creating custom environments with Gymnasium. For a more [complete tutorial](../tutorials/gymnasium_basics/environment_creation) with rendering.
+
+We recommend that you familiarise yourself with the [basic usage](basic_usage) before reading this page!
+
+We will implement our GridWorld game as a 2-dimensional square grid of fixed size. The agent can move vertically or horizontally between grid cells in each timestep, and the goal is to navigate to a target that has been placed randomly at the beginning of the episode.
 
 ## Environment `__init__`
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-Like all environments, our custom environment will inherit from :class:`gymnasium.Env` that defines the structure of environment. One of the requirements for an environment is defining the observation and action space, which declare the general set of possible inputs (actions) and outputs (observations) of the environment. As outlined in our basic information about the game, our agent has four discrete actions, therefore we will use the ``Discrete(4)`` space with four options.
+Like all environments, our custom environment will inherit from :class:`gymnasium.Env` that defines the structure all environments must follow. One of the requirements is defining the observation and action spaces, which declare what inputs (actions) and outputs (observations) are valid for this environment.
+
+As outlined in our design, our agent has four discrete actions (move in cardinal directions), so we'll use ``Discrete(4)`` space.
 ```
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.spaces
 
-For our observation, there are a couple options, for this tutorial we will imagine our observation looks like ``{"agent": array([1, 0]), "target": array([0, 3])}`` where the array elements represent the x and y positions of the agent or target. Alternative options for representing the observation is as a 2d grid  with values representing the agent and target on the grid or a 3d grid with each "layer" containing only the agent or target information. Therefore, we will declare the observation space as :class:`Dict` with the agent and target spaces being a :class:`Box` allowing an array output of an int type.
+For our observation, we have several options. We could represent the full grid as a 2D array, or use coordinate positions, or even a 3D array with separate "layers" for agent and target. For this tutorial, we'll use a simple dictionary format like ``{"agent": array([1, 0]), "target": array([0, 3])}`` where the arrays represent x,y coordinates.
+
+This choice makes the observation human-readable and easy to debug. We'll declare this as a :class:`Dict` space with the agent and target spaces being :class:`Box` spaces that contain integer coordinates.
 ```
 
 For a full list of possible spaces to use with an environment, see [spaces](../api/spaces)
@@ -40,30 +90,33 @@ import gymnasium as gym
 class GridWorldEnv(gym.Env):
 
     def __init__(self, size: int = 5):
-        # The size of the square grid
+        # The size of the square grid (5x5 by default)
         self.size = size
 
-        # Define the agent and target location; randomly chosen in `reset` and updated in `step`
+        # Initialize positions - will be set randomly in reset()
+        # Using -1,-1 as "uninitialized" state
         self._agent_location = np.array([-1, -1], dtype=np.int32)
         self._target_location = np.array([-1, -1], dtype=np.int32)
 
-        # Observations are dictionaries with the agent's and the target's location.
-        # Each location is encoded as an element of {0, ..., `size`-1}^2
+        # Define what the agent can observe
+        # Dict space gives us structured, human-readable observations
         self.observation_space = gym.spaces.Dict(
             {
-                "agent": gym.spaces.Box(0, size - 1, shape=(2,), dtype=int),
-                "target": gym.spaces.Box(0, size - 1, shape=(2,), dtype=int),
+                "agent": gym.spaces.Box(0, size - 1, shape=(2,), dtype=int),   # [x, y] coordinates
+                "target": gym.spaces.Box(0, size - 1, shape=(2,), dtype=int),  # [x, y] coordinates
             }
         )
 
-        # We have 4 actions, corresponding to "right", "up", "left", "down"
+        # Define what actions are available (4 directions)
         self.action_space = gym.spaces.Discrete(4)
-        # Dictionary maps the abstract actions to the directions on the grid
+
+        # Map action numbers to actual movements on the grid
+        # This makes the code more readable than using raw numbers
         self._action_to_direction = {
-            0: np.array([1, 0]),  # right
-            1: np.array([0, 1]),  # up
-            2: np.array([-1, 0]),  # left
-            3: np.array([0, -1]),  # down
+            0: np.array([1, 0]),   # Move right (positive x)
+            1: np.array([0, 1]),   # Move up (positive y)
+            2: np.array([-1, 0]),  # Move left (negative x)
+            3: np.array([0, -1]),  # Move down (negative y)
         }
 ```
 
@@ -72,22 +125,32 @@ class GridWorldEnv(gym.Env):
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-Since we will need to compute observations both in :meth:`Env.reset` and :meth:`Env.step`, it is often convenient to have a method ``_get_obs`` that translates the environment's state into an observation. However, this is not mandatory and you can compute the observations in :meth:`Env.reset` and :meth:`Env.step` separately.
+Since we need to compute observations in both :meth:`Env.reset` and :meth:`Env.step`, it's convenient to have a helper method ``_get_obs`` that translates the environment's internal state into the observation format. This keeps our code DRY (Don't Repeat Yourself) and makes it easier to modify the observation format later.
 ```
 
 ```python
     def _get_obs(self):
+        """Convert internal state to observation format.
+
+        Returns:
+            dict: Observation with agent and target positions
+        """
         return {"agent": self._agent_location, "target": self._target_location}
 ```
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-We can also implement a similar method for the auxiliary information that is returned by :meth:`Env.reset` and :meth:`Env.step`. In our case, we would like to provide the manhattan distance between the agent and the target:
+We can also implement a similar method for auxiliary information returned by :meth:`Env.reset` and :meth:`Env.step`. In our case, we'll provide the Manhattan distance between agent and target - this can be useful for debugging and understanding agent progress, but shouldn't be used by the learning algorithm itself.
 ```
 
 ```python
     def _get_info(self):
+        """Compute auxiliary information for debugging.
+
+        Returns:
+            dict: Info with distance between agent and target
+        """
         return {
             "distance": np.linalg.norm(
                 self._agent_location - self._target_location, ord=1
@@ -98,7 +161,7 @@ We can also implement a similar method for the auxiliary information that is ret
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-Oftentimes, info will also contain some data that is only available inside the :meth:`Env.step` method (e.g., individual reward terms). In that case, we would have to update the dictionary that is returned by ``_get_info`` in :meth:`Env.step`.
+Sometimes info will contain data that's only available inside :meth:`Env.step` (like individual reward components, action success/failure, etc.). In those cases, we'd update the dictionary returned by ``_get_info`` directly in the step method.
 ```
 
 ## Reset function
@@ -106,20 +169,29 @@ Oftentimes, info will also contain some data that is only available inside the :
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.Env
 
-The purpose of :meth:`reset` is to initiate a new episode for an environment and has two parameters: ``seed`` and ``options``. The seed can be used to initialize the random number generator to a deterministic state and options can be used to specify values used within reset. On the first line of the reset, you need to call ``super().reset(seed=seed)`` which will initialize the random number generate (:attr:`np_random`) to use through the rest of the :meth:`reset`.
+The :meth:`reset` method starts a new episode. It takes two optional parameters: ``seed`` for reproducible random generation and ``options`` for additional configuration. On the first line, you must call ``super().reset(seed=seed)`` to properly initialize the random number generator.
 
-Within our custom environment, the :meth:`reset` needs to randomly choose the agent and target's positions (we repeat this if they have the same position). The return type of :meth:`reset` is a tuple of the initial observation and any auxiliary information. Therefore, we can use the methods ``_get_obs`` and ``_get_info`` that we implemented earlier for that:
+In our GridWorld environment, :meth:`reset` randomly places the agent and target on the grid, ensuring they don't start in the same location. We return both the initial observation and info as a tuple.
 ```
 
 ```python
     def reset(self, seed: Optional[int] = None, options: Optional[dict] = None):
-        # We need the following line to seed self.np_random
+        """Start a new episode.
+
+        Args:
+            seed: Random seed for reproducible episodes
+            options: Additional configuration (unused in this example)
+
+        Returns:
+            tuple: (observation, info) for the initial state
+        """
+        # IMPORTANT: Must call this first to seed the random number generator
         super().reset(seed=seed)
 
-        # Choose the agent's location uniformly at random
+        # Randomly place the agent anywhere on the grid
         self._agent_location = self.np_random.integers(0, self.size, size=2, dtype=int)
 
-        # We will sample the target's location randomly until it does not coincide with the agent's location
+        # Randomly place target, ensuring it's different from agent position
         self._target_location = self._agent_location
         while np.array_equal(self._target_location, self._agent_location):
             self._target_location = self.np_random.integers(
@@ -137,91 +209,339 @@ Within our custom environment, the :meth:`reset` needs to randomly choose the ag
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.Env
 
-The :meth:`step` method usually contains most of the logic for your environment, it accepts an ``action`` and computes the state of the environment after the applying the action, returning a tuple of the next observation, the resulting reward, if the environment has terminated, if the environment has truncated and auxiliary information.
-```
-```{eval-rst}
-.. py:currentmodule:: gymnasium
+The :meth:`step` method contains the core environment logic. It takes an action, updates the environment state, and returns the results. This is where the physics, game rules, and reward logic live.
 
-For our environment, several things need to happen during the step function:
-
- - We use the self._action_to_direction to convert the discrete action (e.g., 2) to a grid direction with our agent location. To prevent the agent from going out of bounds of the grid, we clip the agent's location to stay within bounds.
- - We compute the agent's reward by checking if the agent's current position is equal to the target's location.
- - Since the environment doesn't truncate internally (we can apply a time limit wrapper to the environment during :meth:`make`), we permanently set truncated to False.
- - We once again use _get_obs and _get_info to obtain the agent's observation and auxiliary information.
+For GridWorld, we need to:
+1. Convert the discrete action to a movement direction
+2. Update the agent's position (with boundary checking)
+3. Calculate the reward based on whether the target was reached
+4. Determine if the episode should end
+5. Return all the required information
 ```
 
 ```python
     def step(self, action):
-        # Map the action (element of {0,1,2,3}) to the direction we walk in
+        """Execute one timestep within the environment.
+
+        Args:
+            action: The action to take (0-3 for directions)
+
+        Returns:
+            tuple: (observation, reward, terminated, truncated, info)
+        """
+        # Map the discrete action (0-3) to a movement direction
         direction = self._action_to_direction[action]
-        # We use `np.clip` to make sure we don't leave the grid bounds
+
+        # Update agent position, ensuring it stays within grid bounds
+        # np.clip prevents the agent from walking off the edge
         self._agent_location = np.clip(
             self._agent_location + direction, 0, self.size - 1
         )
 
-        # An environment is completed if and only if the agent has reached the target
+        # Check if agent reached the target
         terminated = np.array_equal(self._agent_location, self._target_location)
+
+        # We don't use truncation in this simple environment
+        # (could add a step limit here if desired)
         truncated = False
-        reward = 1 if terminated else 0  # the agent is only reached at the end of the episode
+
+        # Simple reward structure: +1 for reaching target, 0 otherwise
+        # Alternative: could give small negative rewards for each step to encourage efficiency
+        reward = 1 if terminated else 0
+
         observation = self._get_obs()
         info = self._get_info()
 
         return observation, reward, terminated, truncated, info
 ```
 
-## Registering and making the environment
+## Common Environment Design Pitfalls
 
-```{eval-rst}
-While it is possible to use your new custom environment now immediately, it is more common for environments to be initialized using :meth:`gymnasium.make`. In this section, we explain how to register a custom environment then initialize it.
+Now that you've seen the basic structure, let's discuss common mistakes beginners make:
 
-The environment ID consists of three components, two of which are  optional: an optional namespace (here: ``gymnasium_env``), a mandatory  name (here: ``GridWorld``) and an optional but recommended version (here: v0). It may have also be registered as ``GridWorld-v0`` (the  recommended approach), ``GridWorld`` or ``gymnasium_env/GridWorld``, and  the appropriate ID should then be used during environment creation.
+### ❌ **Reward Design Issues**
 
-The entry point can be a string or function, as this tutorial isn't part of a python project, we cannot use a string but for most environments, this is the normal way of specifying the entry point.
-
-Register has additionally parameters that can be used to specify keyword arguments to the environment, e.g., if to apply a time limit wrapper, etc. See :meth:`gymnasium.register` for more information.
+**Problem**: Only rewarding at the very end (sparse rewards)
+```python
+# This makes learning very difficult!
+reward = 1 if terminated else 0
 ```
 
+**Better**: Provide intermediate feedback
 ```python
-gym.register(
-    id="gymnasium_env/GridWorld-v0",
-    entry_point=GridWorldEnv,
+# Option 1: Small step penalty to encourage efficiency
+reward = 1 if terminated else -0.01
+
+# Option 2: Distance-based reward shaping
+distance = np.linalg.norm(self._agent_location - self._target_location)
+reward = 1 if terminated else -0.1 * distance
+```
+
+### ❌ **State Representation Problems**
+
+**Problem**: Including irrelevant information or missing crucial details
+```python
+# Too much info - agent doesn't need grid size in every observation
+obs = {"agent": self._agent_location, "target": self._target_location, "size": self.size}
+
+# Too little info - agent can't distinguish different positions
+obs = {"distance": distance}  # Missing actual positions!
+```
+
+**Better**: Include exactly what's needed for optimal decisions
+```python
+# Just right - positions are sufficient for navigation
+obs = {"agent": self._agent_location, "target": self._target_location}
+```
+
+### ❌ **Action Space Issues**
+
+**Problem**: Actions that don't make sense or are impossible to execute
+```python
+# Bad: Agent can move diagonally but environment doesn't support it
+self.action_space = gym.spaces.Discrete(8)  # 8 directions including diagonals
+
+# Bad: Continuous actions for discrete movement
+self.action_space = gym.spaces.Box(-1, 1, shape=(2,))  # Continuous x,y movement
+```
+
+### ❌ **Boundary Handling Errors**
+
+**Problem**: Allowing invalid states or unclear boundary behavior
+```python
+# Bad: Agent can go outside the grid
+self._agent_location = self._agent_location + direction  # No bounds checking!
+
+# Unclear: What happens when agent hits wall?
+if np.any(self._agent_location < 0) or np.any(self._agent_location >= self.size):
+    # Do nothing? Reset episode? Give penalty? Unclear!
+```
+
+**Better**: Clear, consistent boundary handling
+```python
+# Clear: Agent stays in place when hitting boundaries
+self._agent_location = np.clip(
+    self._agent_location + direction, 0, self.size - 1
 )
 ```
 
-For a more complete guide on registering a custom environment (including with a string entry point), please read the full [create environment](../tutorials/gymnasium_basics/environment_creation) tutorial.
+## Registering and making the environment
 
 ```{eval-rst}
-Once the environment is registered, you can check via :meth:`gymnasium.pprint_registry` which will output all registered environment, and the environment can then be initialized using :meth:`gymnasium.make`. A vectorized version of the environment with multiple instances of the same environment running in parallel can be instantiated with :meth:`gymnasium.make_vec`.
+While you can use your custom environment immediately, it's more convenient to register it with Gymnasium so you can create it with :meth:`gymnasium.make` just like built-in environments.
+
+The environment ID has three components: an optional namespace (here: ``gymnasium_env``), a mandatory name (here: ``GridWorld``), and an optional but recommended version (here: v0). You could register it as ``GridWorld-v0``, ``GridWorld``, or ``gymnasium_env/GridWorld``, but the full format is recommended for clarity.
+
+Since this tutorial isn't part of a Python package, we pass the class directly as the entry point. In real projects, you'd typically use a string like ``"my_package.envs:GridWorldEnv"``.
+```
+
+```python
+# Register the environment so we can create it with gym.make()
+gym.register(
+    id="gymnasium_env/GridWorld-v0",
+    entry_point=GridWorldEnv,
+    max_episode_steps=300,  # Prevent infinite episodes
+)
+```
+
+For a more complete guide on registering custom environments (including with string entry points), please read the full [create environment](../tutorials/gymnasium_basics/environment_creation) tutorial.
+
+```{eval-rst}
+Once registered, you can check all available environments with :meth:`gymnasium.pprint_registry` and create instances with :meth:`gymnasium.make`. You can also create vectorized versions with :meth:`gymnasium.make_vec`.
 ```
 
 ```python
 import gymnasium as gym
->>> gym.make("gymnasium_env/GridWorld-v0")
+
+# Create the environment like any built-in environment
+>>> env = gym.make("gymnasium_env/GridWorld-v0")
 <OrderEnforcing<PassiveEnvChecker<GridWorld<gymnasium_env/GridWorld-v0>>>>
->>> gym.make("gymnasium_env/GridWorld-v0", max_episode_steps=100)
-<TimeLimit<OrderEnforcing<PassiveEnvChecker<GridWorld<gymnasium_env/GridWorld-v0>>>>>
+
+# Customize environment parameters
 >>> env = gym.make("gymnasium_env/GridWorld-v0", size=10)
 >>> env.unwrapped.size
 10
->>> gym.make_vec("gymnasium_env/GridWorld-v0", num_envs=3)
+
+# Create multiple environments for parallel training
+>>> vec_env = gym.make_vec("gymnasium_env/GridWorld-v0", num_envs=3)
 SyncVectorEnv(gymnasium_env/GridWorld-v0, num_envs=3)
+```
+
+## Testing Your Environment
+
+Before using your environment for training, it's important to test that it works correctly:
+
+```python
+# Basic functionality test
+env = gym.make("gymnasium_env/GridWorld-v0")
+
+# Test reset
+obs, info = env.reset(seed=42)
+print(f"Initial observation: {obs}")
+print(f"Initial info: {info}")
+
+# Test a few steps
+for step in range(5):
+    action = env.action_space.sample()
+    obs, reward, terminated, truncated, info = env.step(action)
+    print(f"Step {step}: action={action}, reward={reward}, terminated={terminated}")
+
+    if terminated or truncated:
+        obs, info = env.reset()
+        print("Episode finished, resetting...")
+
+env.close()
 ```
 
 ## Using Wrappers
 
-Oftentimes, we want to use different variants of a custom environment, or we want to modify the behavior of an environment that is provided by Gymnasium or some other party. Wrappers allow us to do this without changing the environment implementation or adding any boilerplate code. Check out the [wrapper documentation](../api/wrappers) for details on how to use wrappers and instructions for implementing your own. In our example, observations cannot be used directly in learning code because they are dictionaries. However, we don't actually need to touch our environment implementation to fix this! We can simply add a wrapper on top of environment instances to flatten observations into a single array:
+Sometimes you want to modify your environment's behavior without changing the core implementation. Wrappers are perfect for this - they let you add functionality like changing observation formats, adding time limits, or modifying rewards without touching your original environment code.
 
 ```python
 >>> from gymnasium.wrappers import FlattenObservation
 
+>>> # Original observation is a dictionary
 >>> env = gym.make('gymnasium_env/GridWorld-v0')
 >>> env.observation_space
 Dict('agent': Box(0, 4, (2,), int64), 'target': Box(0, 4, (2,), int64))
->>> env.reset()
-({'agent': array([4, 1]), 'target': array([2, 4])}, {'distance': 5.0})
+
+>>> obs, info = env.reset()
+>>> obs
+{'agent': array([4, 1]), 'target': array([2, 4])}
+
+>>> # Wrap it to flatten observations into a single array
 >>> wrapped_env = FlattenObservation(env)
 >>> wrapped_env.observation_space
 Box(0, 4, (4,), int64)
->>> wrapped_env.reset()
-(array([3, 0, 2, 1]), {'distance': 2.0})
+
+>>> obs, info = wrapped_env.reset()
+>>> obs
+array([3, 0, 2, 1])  # [agent_x, agent_y, target_x, target_y]
 ```
+
+This is particularly useful when working with algorithms that expect specific input formats (like neural networks that need 1D arrays instead of dictionaries).
+
+## Debugging Your Environment
+
+When your environment doesn't work as expected, here are common debugging strategies:
+
+### Check Environment Validity
+```python
+from gymnasium.utils.env_checker import check_env
+
+# This will catch many common issues
+try:
+    check_env(env)
+    print("Environment passes all checks!")
+except Exception as e:
+    print(f"Environment has issues: {e}")
+```
+
+### Manual Testing with Known Actions
+```python
+# Test specific action sequences to verify behavior
+env = gym.make("gymnasium_env/GridWorld-v0")
+obs, info = env.reset(seed=42)  # Use seed for reproducible testing
+
+print(f"Starting position - Agent: {obs['agent']}, Target: {obs['target']}")
+
+# Test each action type
+actions = [0, 1, 2, 3]  # right, up, left, down
+for action in actions:
+    old_pos = obs['agent'].copy()
+    obs, reward, terminated, truncated, info = env.step(action)
+    new_pos = obs['agent']
+    print(f"Action {action}: {old_pos} -> {new_pos}, reward={reward}")
+```
+
+### Common Debug Issues
+```python
+# Issue 1: Forgot to call super().reset()
+def reset(self, seed=None, options=None):
+    # super().reset(seed=seed)  # ❌ Missing this line
+    # Results in: same random positions every episode
+
+# Issue 2: Wrong action mapping
+self._action_to_direction = {
+    0: np.array([1, 0]),   # right
+    1: np.array([0, 1]),   # up - but is this really "up" in your coordinate system?
+    2: np.array([-1, 0]),  # left
+    3: np.array([0, -1]),  # down
+}
+
+# Issue 3: Not handling boundaries properly
+# This allows agent to go outside the grid!
+self._agent_location = self._agent_location + direction  # ❌ No bounds checking
+```
+
+## Advanced Environment Features
+
+Once you have the basics working, you might want to add more sophisticated features:
+
+### Adding Rendering
+```python
+def render(self):
+    """Render the environment for human viewing."""
+    if self.render_mode == "human":
+        # Print a simple ASCII representation
+        for y in range(self.size - 1, -1, -1):  # Top to bottom
+            row = ""
+            for x in range(self.size):
+                if np.array_equal([x, y], self._agent_location):
+                    row += "A "  # Agent
+                elif np.array_equal([x, y], self._target_location):
+                    row += "T "  # Target
+                else:
+                    row += ". "  # Empty
+            print(row)
+        print()
+```
+
+### Parameterized Environments
+```python
+def __init__(self, size: int = 5, reward_scale: float = 1.0, step_penalty: float = 0.0):
+    self.size = size
+    self.reward_scale = reward_scale
+    self.step_penalty = step_penalty
+    # ... rest of init ...
+
+def step(self, action):
+    # ... movement logic ...
+
+    # Flexible reward calculation
+    if terminated:
+        reward = self.reward_scale  # Success reward
+    else:
+        reward = -self.step_penalty  # Step penalty (0 by default)
+```
+
+## Real-World Environment Design Tips
+
+### Start Simple, Add Complexity Gradually
+1. **First**: Get basic movement and goal-reaching working
+2. **Then**: Add obstacles, multiple goals, or time pressure
+3. **Finally**: Add complex dynamics, partial observability, or multi-agent interactions
+
+### Design for Learning
+- **Clear Success Criteria**: Agent should know when it's doing well
+- **Reasonable Difficulty**: Not too easy (trivial) or too hard (impossible)
+- **Consistent Rules**: Same action in same state should have same effect
+- **Informative Observations**: Include everything needed for optimal decisions
+
+### Think About Your Research Question
+- **Navigation**: Focus on spatial reasoning and path planning
+- **Control**: Emphasize dynamics, stability, and continuous actions
+- **Strategy**: Include partial information, opponent modeling, or long-term planning
+- **Optimization**: Design clear trade-offs and resource constraints
+
+## Next Steps
+
+Congratulations! You now know how to create custom RL environments. Here's what to explore next:
+
+1. **Add rendering** to visualize your environment ([complete tutorial](../tutorials/gymnasium_basics/environment_creation))
+2. **Train an agent** on your custom environment ([training guide](train_agent))
+3. **Experiment with different reward functions** to see how they affect learning
+4. **Try wrapper combinations** to modify your environment's behavior
+5. **Create more complex environments** with obstacles, multiple agents, or continuous actions
+
+The key to good environment design is iteration - start simple, test thoroughly, and gradually add complexity as needed for your research or application goals.
