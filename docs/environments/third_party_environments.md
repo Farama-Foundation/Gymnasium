@@ -314,6 +314,15 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   The default class implements a "go-to goal", but it can be easily customized for different tasks, with a variety of grids, rewards, dynamics, and tasks. It supports different observation types (discrete, coordinates, binary, pixels, partial). Useful for quickly testing and prototyping RL algorithms, both tabular and with function approximation.
 
+- [Gym4ReaL](https://github.com/Daveonwave/gym4ReaL)
+
+   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.1.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/Daveonwave/gym4ReaL)
+
+
+  Gym4ReaL is a comprehensive suite of realistic environments designed to support the development and evaluation of RL algorithms that can operate in real-world scenarios.
+The suite includes a diverse set of tasks exposing RL algorithms to a variety of practical challenges, such as water management, energy management in microgrids, financial trading, and more.
+
 - [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.2-blue)
