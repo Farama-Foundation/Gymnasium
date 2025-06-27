@@ -7,12 +7,12 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/tutorials/gymnasium_basics/vector_envs_tutorial.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Training Agents links in the Gymnasium Documentation" href="../../training_agents/" /><link rel="prev" title="Make your own custom environment" href="../environment_creation/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/tutorials/gymnasium_basics/vector_envs_tutorial.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/tutorials/training_agents/vector_a2c.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Third-Party Tutorials" href="../../third-party-tutorials/" /><link rel="prev" title="Training using REINFORCE for Mujoco" href="../mujoco_reinforce/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/vector_a2c.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
-        <title>Training A2C with Vector Envs and Domain Randomization - Gymnasium Documentation</title>
+        <title>Speeding up A2C Training with Vector Envs - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
@@ -294,18 +294,18 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Gymnasium Basics Documentation Links</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics Documentation Links</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../load_quadruped_model/">Load custom quadruped robot environments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../handling_time_limits/">Handling Time Limits</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../training_agents/">Training Agents links in the Gymnasium Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents links in the Gymnasium Documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/FrozenLake_tuto/">Frozenlake benchmark</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -343,7 +343,7 @@
           </a>
           <div class="content-icon-container">
       <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/tutorials/gymnasium_basics/vector_envs_tutorial.py" title="Edit this page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/tutorials/training_agents/vector_a2c.py" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -374,11 +374,16 @@
           </div>
           <article role="main">
             
-            <section class="sphx-glr-example-title" id="training-a2c-with-vector-envs-and-domain-randomization">
-<span id="sphx-glr-tutorials-gymnasium-basics-vector-envs-tutorial-py"></span><h1>Training A2C with Vector Envs and Domain Randomization<a class="headerlink" href="#training-a2c-with-vector-envs-and-domain-randomization" title="Link to this heading">¶</a></h1>
+            <div class="sphx-glr-example-title admonition note">
+<p class="admonition-title">Note</p>
+<p>This example is compatible with Gymnasium version 1.2.0.</p>
+</div>
+<section id="speeding-up-a2c-training-with-vector-envs">
+<span id="sphx-glr-tutorials-training-agents-vector-a2c-py"></span><h1>Speeding up A2C Training with Vector Envs<a class="headerlink" href="#speeding-up-a2c-training-with-vector-envs" title="Link to this heading">¶</a></h1>
+<p>This tutorial demonstrates training with vector environments to it speed up.</p>
 <section id="notice">
 <h2>Notice<a class="headerlink" href="#notice" title="Link to this heading">¶</a></h2>
-<p>If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from <code class="docutils literal notranslate"><span class="pre">gym.vector.make=</span></code> or <code class="docutils literal notranslate"><span class="pre">gym.vector.AsyncVectorEnv</span></code> to the end of the code by <code class="docutils literal notranslate"><span class="pre">if__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code>.</p>
+<p>If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from <code class="docutils literal notranslate"><span class="pre">gym.make_vec=</span></code> or <code class="docutils literal notranslate"><span class="pre">gym.vector.AsyncVectorEnv</span></code> to the end of the code by <code class="docutils literal notranslate"><span class="pre">if__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">An</span> <span class="pre">attempt</span> <span class="pre">has</span> <span class="pre">been</span> <span class="pre">made</span> <span class="pre">to</span> <span class="pre">start</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">process</span> <span class="pre">before</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">process</span> <span class="pre">has</span> <span class="pre">finished</span> <span class="pre">its</span> <span class="pre">bootstrapping</span> <span class="pre">phase.</span></code></p>
 <hr class="docutils" />
 </section>
@@ -520,7 +525,7 @@ and domain randomization to accelerate the training process for A2C (and other r
         <span class="n">actions</span> <span class="o">=</span> <span class="n">action_pd</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
         <span class="n">action_log_probs</span> <span class="o">=</span> <span class="n">action_pd</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
         <span class="n">entropy</span> <span class="o">=</span> <span class="n">action_pd</span><span class="o">.</span><span class="n">entropy</span><span class="p">()</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">action_log_probs</span><span class="p">,</span> <span class="n">state_values</span><span class="p">,</span> <span class="n">entropy</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">actions</span><span class="p">,</span> <span class="n">action_log_probs</span><span class="p">,</span> <span class="n">state_values</span><span class="p">,</span> <span class="n">entropy</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_losses</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -603,7 +608,7 @@ it will have a lower variance and theirfore leads to quicker learning.</p>
 <p>A2C is a synchronous method, meaning that the parameter updates to Networks take place deterministically (after each sampling phase),
 but we can still make use of asynchronous vector envs to spawn multiple processes for parallel environment execution.</p>
 <p>The simplest way to create vector environments is by calling <cite>gym.vector.make</cite>, which creates multiple instances of the same environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -612,7 +617,7 @@ but we can still make use of asynchronous vector envs to spawn multiple processe
 <p>If we want to randomize the environment for training to get more robust agents (that can deal with different parameterizations of an environment
 and theirfore might have a higher degree of generalization), we can set the desired parameters manually or use a pseudo-random number generator to generate them.</p>
 <p>Manually setting up 3 parallel ‘LunarLander-v3’ envs with different parameters:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">AsyncVectorEnv</span><span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">SyncVectorEnv</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
             <span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span>
@@ -639,7 +644,7 @@ and theirfore might have a higher degree of generalization), we can set the desi
 </div>
 <hr class="docutils" />
 <p>Randomly generating the parameters for 3 parallel ‘LunarLander-v3’ envs, using <cite>np.clip</cite> to stay in the recommended parameter space:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">AsyncVectorEnv</span><span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">SyncVectorEnv</span><span class="p">(</span>
     <span class="p">[</span>
         <span class="k">lambda</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
             <span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span>
@@ -709,7 +714,7 @@ to generate a new set of pseudo-random parameters.</p>
     <span class="p">)</span>
 
 <span class="k">else</span><span class="p">:</span>
-    <span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="n">n_envs</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+    <span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="n">n_envs</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
 
 
 <span class="n">obs_shape</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">single_observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -737,7 +742,9 @@ an episode because of the random seeds). As a result, we are also not collecting
 (<cite>n_steps_per_update</cite>) in each environment (as an example, this could mean that we play 20 timesteps to finish an episode and then
 use the rest of the timesteps to begin a new one).</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a wrapper environment to save episode returns and episode lengths</span>
-<span class="n">envs_wrapper</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">envs</span><span class="p">,</span> <span class="n">deque_size</span><span class="o">=</span><span class="n">n_envs</span> <span class="o">*</span> <span class="n">n_updates</span><span class="p">)</span>
+<span class="n">envs_wrapper</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span>
+    <span class="n">envs</span><span class="p">,</span> <span class="n">buffer_length</span><span class="o">=</span><span class="n">n_envs</span> <span class="o">*</span> <span class="n">n_updates</span>
+<span class="p">)</span>
 
 <span class="n">critic_losses</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">actor_losses</span> <span class="o">=</span> <span class="p">[]</span>
@@ -986,12 +993,12 @@ parallel environments to achieve optimal performance.</p>
 <p>[1] V. Mnih, A. P. Badia, M. Mirza, A. Graves, T. P. Lillicrap, T. Harley, D. Silver, K. Kavukcuoglu. “Asynchronous Methods for Deep Reinforcement Learning” ICML (2016).</p>
 <p>[2] J. Schulman, P. Moritz, S. Levine, M. Jordan and P. Abbeel. “High-dimensional continuous control using generalized advantage estimation.” ICLR (2016).</p>
 <p>[3] Gymnasium Documentation: Vector environments. (URL: <a class="reference external" href="https://gymnasium.farama.org/api/vector/">https://gymnasium.farama.org/api/vector/</a>)</p>
-<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-gymnasium-basics-vector-envs-tutorial-py">
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-training-agents-vector-a2c-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../../_downloads/e688a889564af5a98daa8accfbca806e/vector_envs_tutorial.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">vector_envs_tutorial.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../../_downloads/c45e443052d6f580d9746d1bb3a70ebc/vector_a2c.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">vector_a2c.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../../_downloads/50e7c09c20b787d0a5bd70c4aeb0a515/vector_envs_tutorial.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">vector_envs_tutorial.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../../_downloads/fedb802640e3ee4762d570997604c039/vector_a2c.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">vector_a2c.ipynb</span></code></a></p>
 </div>
 </div>
 </section>
@@ -1002,18 +1009,18 @@ parallel environments to achieve optimal performance.</p>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../../training_agents/">
+            <a class="next-page" href="../../third-party-tutorials/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Training Agents links in the Gymnasium Documentation</div>
+                <div class="title">Third-Party Tutorials</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../environment_creation/">
+            <a class="prev-page" href="../mujoco_reinforce/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -1022,7 +1029,7 @@ parallel environments to achieve optimal performance.</p>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Make your own custom environment</div>
+                <div class="title">Training using REINFORCE for Mujoco</div>
                 
               </div>
             </a>
@@ -1066,7 +1073,7 @@ parallel environments to achieve optimal performance.</p>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Training A2C with Vector Envs and Domain Randomization</a><ul>
+<li><a class="reference internal" href="#">Speeding up A2C Training with Vector Envs</a><ul>
 <li><a class="reference internal" href="#notice">Notice</a></li>
 <li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#advantage-actor-critic-a2c">Advantage Actor-Critic (A2C)</a></li>
@@ -1166,7 +1173,7 @@ parallel environments to achieve optimal performance.</p>
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=25d39d6f"></script>
+    <script src="../../../_static/documentation_options.js?v=151cd43d"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>

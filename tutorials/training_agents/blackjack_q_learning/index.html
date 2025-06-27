@@ -7,12 +7,12 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/tutorials/training_agents/blackjack_tutorial.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Frozenlake benchmark" href="../FrozenLake_tuto/" /><link rel="prev" title="Training using REINFORCE for Mujoco" href="../reinforce_invpend_gym_v26/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/blackjack_tutorial.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/tutorials/training_agents/blackjack_q_learning.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Solving Frozenlake with Tabular Q-Learning" href="../frozenlake_q_learning/" /><link rel="prev" title="Training Agents" href="../" />
+        <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/blackjack_q_learning.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
-        <title>Solving Blackjack with Q-Learning - Gymnasium Documentation</title>
+        <title>Solving Blackjack with Tabular Q-Learning - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
@@ -294,18 +294,18 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../gymnasium_basics/">Gymnasium Basics Documentation Links</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics Documentation Links</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/vector_envs_tutorial/">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents links in the Gymnasium Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents links in the Gymnasium Documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../FrozenLake_tuto/">Frozenlake benchmark</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -343,7 +343,7 @@
           </a>
           <div class="content-icon-container">
       <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/tutorials/training_agents/blackjack_tutorial.py" title="Edit this page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/tutorials/training_agents/blackjack_q_learning.py" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -374,8 +374,13 @@
           </div>
           <article role="main">
             
-            <section class="sphx-glr-example-title" id="solving-blackjack-with-q-learning">
-<span id="sphx-glr-tutorials-training-agents-blackjack-tutorial-py"></span><h1>Solving Blackjack with Q-Learning<a class="headerlink" href="#solving-blackjack-with-q-learning" title="Link to this heading">¶</a></h1>
+            <div class="sphx-glr-example-title admonition note">
+<p class="admonition-title">Note</p>
+<p>This example is compatible with Gymnasium version 1.2.0.</p>
+</div>
+<section id="solving-blackjack-with-tabular-q-learning">
+<span id="sphx-glr-tutorials-training-agents-blackjack-q-learning-py"></span><h1>Solving Blackjack with Tabular Q-Learning<a class="headerlink" href="#solving-blackjack-with-tabular-q-learning" title="Link to this heading">¶</a></h1>
+<p>This tutorial trains an agent for BlackJack using tabular Q-learning.</p>
 <a class="only-light reference internal image-reference" href="../../../_images/blackjack_AE_loop.jpg"><img alt="agent-environment-diagram" class="only-light" src="../../../_images/blackjack_AE_loop.jpg" style="width: 650px;" />
 </a>
 <a class="only-dark reference internal image-reference" href="../../../_images/blackjack_AE_loop_dark.png"><img alt="agent-environment-diagram" class="only-dark" src="../../../_images/blackjack_AE_loop_dark.png" style="width: 650px;" />
@@ -605,7 +610,7 @@ environment sufficiently.</p>
 <p>Info: The current hyperparameters are set to quickly train a decent agent.
 If you want to converge to the optimal policy, try increasing
 the n_episodes by 10x and lower the learning_rate (e.g. to 0.001).</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">deque_size</span><span class="o">=</span><span class="n">n_episodes</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">buffer_length</span><span class="o">=</span><span class="n">n_episodes</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">)):</span>
     <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
     <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
@@ -771,12 +776,12 @@ discrete RL algorithm or give Monte Carlo ES a try (covered in <a class="referen
 Barto</a>, section
 5.3) - this way you can compare your results directly to the book.</p>
 <p>Best of fun!</p>
-<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-training-agents-blackjack-tutorial-py">
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-training-agents-blackjack-q-learning-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../../_downloads/e1249c888e952c938d27855c3210a4bb/blackjack_tutorial.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">blackjack_tutorial.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../../_downloads/65db6bc51fbce1e59e34e9c76ebd6433/blackjack_q_learning.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">blackjack_q_learning.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../../_downloads/d1980709c80836b9d7e8f9131878afbb/blackjack_tutorial.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">blackjack_tutorial.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../../_downloads/e28b5f09e7a318b73abe9bfdad36324d/blackjack_q_learning.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">blackjack_q_learning.ipynb</span></code></a></p>
 </div>
 </div>
 </section>
@@ -787,18 +792,18 @@ Barto</a>, section
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../FrozenLake_tuto/">
+            <a class="next-page" href="../frozenlake_q_learning/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Frozenlake benchmark</div>
+                <div class="title">Solving Frozenlake with Tabular Q-Learning</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../reinforce_invpend_gym_v26/">
+            <a class="prev-page" href="../">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -807,7 +812,7 @@ Barto</a>, section
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Training using REINFORCE for Mujoco</div>
+                <div class="title">Training Agents</div>
                 
               </div>
             </a>
@@ -851,7 +856,7 @@ Barto</a>, section
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Solving Blackjack with Q-Learning</a><ul>
+<li><a class="reference internal" href="#">Solving Blackjack with Tabular Q-Learning</a><ul>
 <li><a class="reference internal" href="#imports-and-environment-setup">Imports and Environment Setup</a></li>
 <li><a class="reference internal" href="#observing-the-environment">Observing the environment</a></li>
 <li><a class="reference internal" href="#executing-an-action">Executing an action</a></li>
@@ -945,7 +950,7 @@ Barto</a>, section
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=25d39d6f"></script>
+    <script src="../../../_static/documentation_options.js?v=151cd43d"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>

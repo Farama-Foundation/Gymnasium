@@ -2,7 +2,10 @@
 Handling Time Limits
 ====================
 
-In using Gymnasium environments with reinforcement learning code, a common problem observed is how time limits are incorrectly handled. The ``done`` signal received (in previous versions of OpenAI Gym < 0.26) from ``env.step`` indicated whether an episode has ended. However, this signal did not distinguish whether the episode ended due to ``termination`` or ``truncation``.
+This tutorial explains how time limits should be correctly handled with `termination` and `truncation` signals.
+
+The ``done`` signal received (in previous versions of OpenAI Gym < 0.26) from ``env.step`` indicated whether an episode has ended.
+However, this signal did not distinguish whether the episode ended due to ``termination`` or ``truncation``.
 
 Termination
 -----------

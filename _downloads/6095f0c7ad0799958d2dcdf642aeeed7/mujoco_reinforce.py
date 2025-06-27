@@ -3,13 +3,11 @@
 Training using REINFORCE for Mujoco
 ===================================
 
-.. image:: /_static/img/tutorials/reinforce_invpend_gym_v26_fig1.gif
+.. image:: /_static/img/tutorials/mujoco_reinforce_fig1.gif
   :width: 400
   :alt: agent-environment-diagram
 
-This tutorial serves 2 purposes:
- 1. To understand how to implement REINFORCE [1] from scratch to solve Mujoco's InvertedPendulum-v4
- 2. Implementation a deep reinforcement learning algorithm with Gymnasium's v0.26+ `step()` function
+This tutorial implements REINFORCE with neural networks for a MuJoCo environment.
 
 We will be using **REINFORCE**, one of the earliest policy gradient methods. Unlike going under the burden of learning a value function first and then deriving a policy out of it,
 REINFORCE optimizes the policy directly. In other words, it is trained to maximize the probability of Monte-Carlo returns. More on that later.
@@ -62,7 +60,7 @@ plt.rcParams["figure.figsize"] = (10, 5)
 # Policy Network
 # ~~~~~~~~~~~~~~
 #
-# .. image:: /_static/img/tutorials/reinforce_invpend_gym_v26_fig2.png
+# .. image:: /_static/img/tutorials/mujoco_reinforce_fig2.png
 #
 # We start by building a policy that the agent will learn using REINFORCE.
 # A policy is a mapping from the current environment observation to a probability distribution of the actions to be taken.
@@ -131,7 +129,7 @@ class Policy_Network(nn.Module):
 # Building an agent
 # ~~~~~~~~~~~~~~~~~
 #
-# .. image:: /_static/img/tutorials/reinforce_invpend_gym_v26_fig3.jpeg
+# .. image:: /_static/img/tutorials/mujoco_reinforce_fig3.jpeg
 #
 # Now that we are done building the policy, let us develop **REINFORCE** which gives life to the policy network.
 # The algorithm of REINFORCE could be found above. As mentioned before, REINFORCE aims to maximize the Monte-Carlo returns.
@@ -202,14 +200,11 @@ class REINFORCE:
 
         deltas = torch.tensor(gs)
 
-        log_probs = torch.stack(self.probs)
-
-        # Calculate the mean of log probabilities for all actions in the episode
-        log_prob_mean = log_probs.mean()
+        log_probs = torch.stack(self.probs).squeeze()
 
         # Update the loss with the mean log probability and deltas
         # Now, we compute the correct total loss by taking the sum of the element-wise products.
-        loss = -torch.sum(log_prob_mean * deltas)
+        loss = -torch.sum(log_probs * deltas)
 
         # Update the policy network
         self.optimizer.zero_grad()
@@ -281,6 +276,7 @@ for seed in [1, 2, 3, 5, 8]:  # Fibonacci seeds
             # End the episode when either truncated or terminated is true
             #  - truncated: The episode duration reaches max number of timesteps
             #  - terminated: Any of the state space values is no longer finite.
+            #
             done = terminated or truncated
 
         reward_over_episodes.append(wrapped_env.return_queue[-1])
@@ -298,8 +294,7 @@ for seed in [1, 2, 3, 5, 8]:  # Fibonacci seeds
 # ~~~~~~~~~~~~~~~~~~~
 #
 
-rewards_to_plot = [[reward[0] for reward in rewards] for rewards in rewards_over_seeds]
-df1 = pd.DataFrame(rewards_to_plot).melt()
+df1 = pd.DataFrame(rewards_over_seeds).melt()
 df1.rename(columns={"variable": "episodes", "value": "reward"}, inplace=True)
 sns.set(style="darkgrid", context="talk", palette="rainbow")
 sns.lineplot(x="episodes", y="reward", data=df1).set(
@@ -308,7 +303,7 @@ sns.lineplot(x="episodes", y="reward", data=df1).set(
 plt.show()
 
 # %%
-# .. image:: /_static/img/tutorials/reinforce_invpend_gym_v26_fig4.png
+# .. image:: /_static/img/tutorials/mujoco_reinforce_fig4.png
 #
 # Author: Siddarth Chandrasekar
 #

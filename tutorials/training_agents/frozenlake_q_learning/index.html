@@ -7,12 +7,12 @@
     <meta property="og:title" content="Gymnasium Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
-    <meta property="og:url" content="https://gymnasium.farama.org/tutorials/training_agents/FrozenLake_tuto.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Third-Party Tutorials" href="../../third-party-tutorials/" /><link rel="prev" title="Solving Blackjack with Q-Learning" href="../blackjack_tutorial/" />
-        <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/FrozenLake_tuto.html" />
+    <meta property="og:url" content="https://gymnasium.farama.org/tutorials/training_agents/frozenlake_q_learning.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Training using REINFORCE for Mujoco" href="../mujoco_reinforce/" /><link rel="prev" title="Solving Blackjack with Tabular Q-Learning" href="../blackjack_q_learning/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/frozenlake_q_learning.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
-        <title>Frozenlake benchmark - Gymnasium Documentation</title>
+        <title>Solving Frozenlake with Tabular Q-Learning - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
@@ -294,18 +294,18 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../gymnasium_basics/">Gymnasium Basics Documentation Links</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics Documentation Links</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/vector_envs_tutorial/">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents links in the Gymnasium Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents links in the Gymnasium Documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Frozenlake benchmark</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Solving Frozenlake with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -343,7 +343,7 @@
           </a>
           <div class="content-icon-container">
       <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/tutorials/training_agents/FrozenLake_tuto.py" title="Edit this page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/tutorials/training_agents/frozenlake_q_learning.py" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -374,21 +374,22 @@
           </div>
           <article role="main">
             
-            <section class="sphx-glr-example-title" id="frozenlake-benchmark">
-<span id="sphx-glr-tutorials-training-agents-frozenlake-tuto-py"></span><h1>Frozenlake benchmark<a class="headerlink" href="#frozenlake-benchmark" title="Link to this heading">¶</a></h1>
+            <div class="sphx-glr-example-title admonition note">
+<p class="admonition-title">Note</p>
+<p>This example is compatible with Gymnasium version 1.2.0.</p>
+</div>
+<section id="solving-frozenlake-with-tabular-q-learning">
+<span id="sphx-glr-tutorials-training-agents-frozenlake-q-learning-py"></span><h1>Solving Frozenlake with Tabular Q-Learning<a class="headerlink" href="#solving-frozenlake-with-tabular-q-learning" title="Link to this heading">¶</a></h1>
+<p>This tutorial trains an agent for FrozenLake using tabular Q-learning.</p>
 <p>In this post we’ll compare a bunch of different map sizes on the
 <a class="reference external" href="https://gymnasium.farama.org/environments/toy_text/frozen_lake/">FrozenLake</a>
 environment from the reinforcement learning
 <a class="reference external" href="https://gymnasium.farama.org/">Gymnasium</a> package using the
 Q-learning algorithm.</p>
-<section id="dependencies">
-<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">¶</a></h2>
 <p>Let’s first import a few dependencies we’ll need.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Author: Andrea Pierré</span>
 <span class="c1"># License: MIT License</span>
 
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -406,7 +407,6 @@ Q-learning algorithm.</p>
 <span class="c1"># %load_ext lab_black</span>
 </pre></div>
 </div>
-</section>
 <section id="parameters-we-ll-use">
 <h2>Parameters we’ll use<a class="headerlink" href="#parameters-we-ll-use" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Params</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
@@ -421,7 +421,6 @@ Q-learning algorithm.</p>
     <span class="n">action_size</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># Number of possible actions</span>
     <span class="n">state_size</span><span class="p">:</span> <span class="nb">int</span>  <span class="c1"># Number of possible states</span>
     <span class="n">proba_frozen</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># Probability that a tile is frozen</span>
-    <span class="n">savefig_folder</span><span class="p">:</span> <span class="n">Path</span>  <span class="c1"># Root folder where plots are saved</span>
 
 
 <span class="n">params</span> <span class="o">=</span> <span class="n">Params</span><span class="p">(</span>
@@ -436,15 +435,11 @@ Q-learning algorithm.</p>
     <span class="n">action_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">state_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">proba_frozen</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
-    <span class="n">savefig_folder</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;../../_static/img/tutorials/&quot;</span><span class="p">),</span>
 <span class="p">)</span>
 <span class="n">params</span>
 
 <span class="c1"># Set the seed</span>
 <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
-
-<span class="c1"># Create the figure folder if it doesn&#39;t exist</span>
-<span class="n">params</span><span class="o">.</span><span class="n">savefig_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -663,8 +658,6 @@ arrow will represent the best action to choose for each tile/state.</p>
         <span class="n">spine</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">spine</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mf">0.7</span><span class="p">)</span>
         <span class="n">spine</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
-    <span class="n">img_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;frozenlake_q_values_</span><span class="si">{</span><span class="n">map_size</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">map_size</span><span class="si">}</span><span class="s2">.png&quot;</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">savefig_folder</span> <span class="o">/</span> <span class="n">img_title</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -681,8 +674,6 @@ with the following function:</p>
     <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Actions&quot;</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="n">img_title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;frozenlake_states_actions_distrib_</span><span class="si">{</span><span class="n">map_size</span><span class="si">}</span><span class="s2">x</span><span class="si">{</span><span class="n">map_size</span><span class="si">}</span><span class="s2">.png&quot;</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">savefig_folder</span> <span class="o">/</span> <span class="n">img_title</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -774,8 +765,6 @@ decrease.</p>
     <span class="k">for</span> <span class="n">axi</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
         <span class="n">axi</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;map size&quot;</span><span class="p">)</span>
     <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="n">img_title</span> <span class="o">=</span> <span class="s2">&quot;frozenlake_steps_and_rewards.png&quot;</span>
-    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">savefig_folder</span> <span class="o">/</span> <span class="n">img_title</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 
@@ -826,12 +815,12 @@ Q-learning</a></p></li>
 Learning</a> by Tim
 Miller (University of Melbourne)</p></li>
 </ul>
-<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-training-agents-frozenlake-tuto-py">
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-training-agents-frozenlake-q-learning-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
-<p><a class="reference download internal" download="" href="../../../_downloads/7720e20eb2c7f37162a67699a7b0ba23/FrozenLake_tuto.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">FrozenLake_tuto.py</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../../_downloads/0f868598766ff0054f03990f4d9cc030/frozenlake_q_learning.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">frozenlake_q_learning.py</span></code></a></p>
 </div>
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../../_downloads/6ae5209ec80e231987d889c490d131a9/FrozenLake_tuto.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">FrozenLake_tuto.ipynb</span></code></a></p>
+<p><a class="reference download internal" download="" href="../../../_downloads/3aa6758d27fbb0c299155d828b155b9d/frozenlake_q_learning.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">frozenlake_q_learning.ipynb</span></code></a></p>
 </div>
 </div>
 </section>
@@ -842,18 +831,18 @@ Miller (University of Melbourne)</p></li>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../../third-party-tutorials/">
+            <a class="next-page" href="../mujoco_reinforce/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Third-Party Tutorials</div>
+                <div class="title">Training using REINFORCE for Mujoco</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../blackjack_tutorial/">
+            <a class="prev-page" href="../blackjack_q_learning/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -862,7 +851,7 @@ Miller (University of Melbourne)</p></li>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Solving Blackjack with Q-Learning</div>
+                <div class="title">Solving Blackjack with Tabular Q-Learning</div>
                 
               </div>
             </a>
@@ -906,8 +895,7 @@ Miller (University of Melbourne)</p></li>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Frozenlake benchmark</a><ul>
-<li><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li><a class="reference internal" href="#">Solving Frozenlake with Tabular Q-Learning</a><ul>
 <li><a class="reference internal" href="#parameters-we-ll-use">Parameters we’ll use</a></li>
 <li><a class="reference internal" href="#the-frozenlake-environment">The FrozenLake environment</a><ul>
 <li><a class="reference internal" href="#creating-the-q-table">Creating the Q-table</a></li>
@@ -1008,7 +996,7 @@ Miller (University of Melbourne)</p></li>
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=25d39d6f"></script>
+    <script src="../../../_static/documentation_options.js?v=151cd43d"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
