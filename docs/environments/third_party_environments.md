@@ -267,7 +267,12 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Highly scalable and customizable Safe Reinforcement Learning library.
 
+- [deformable_gym: RL environments for grasping deformable objects](https://github.com/dfki-ric/deformable_gym)
 
+  A collection of gymnasium environments for learning to grasp 3D deformable objects built with PyBullet and Mujoco.
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.0.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/dfki-ric/deformable_gym)
 ### Telecommunication Systems environments
 *Interact and/or manage wireless and/or wired telecommunication systems.*
 - [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
