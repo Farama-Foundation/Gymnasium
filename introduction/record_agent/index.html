@@ -294,18 +294,18 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/gymnasium_basics/">Gymnasium Basics Documentation Links</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics Documentation Links</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/vector_envs_tutorial/">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/training_agents/">Training Agents links in the Gymnasium Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents links in the Gymnasium Documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/FrozenLake_tuto/">Frozenlake benchmark</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -375,78 +375,289 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="recording-agents">
 <h1>Recording Agents<a class="headerlink" href="#recording-agents" title="Link to this heading">¶</a></h1>
-<p>During training or when evaluating an agent, it may be interesting to record agent behaviour over an episode and log the total reward accumulated. This can be achieved through two wrappers: <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code>, the first tracks episode data such as the total rewards, episode length and time taken and the second generates mp4 videos of the agents using the environment renderings.</p>
-<p>We show how to apply these wrappers for two types of problems; the first for recording data for every episode (normally evaluation) and second for recording data periodically (for normal training).</p>
-<section id="recording-every-episode">
-<h2>Recording Every Episode<a class="headerlink" href="#recording-every-episode" title="Link to this heading">¶</a></h2>
-<p>Given a trained agent, you may wish to record several episodes during evaluation to see how the agent acts. Below we provide an example script to do this with the <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code>.</p>
+<section id="why-record-your-agent">
+<h2>Why Record Your Agent?<a class="headerlink" href="#why-record-your-agent" title="Link to this heading">¶</a></h2>
+<p>Recording agent behavior serves several important purposes in RL development:</p>
+<p><strong>🎥 Visual Understanding</strong>: See exactly what your agent is doing - sometimes a 10-second video reveals issues that hours of staring at reward plots miss.</p>
+<p><strong>📊 Performance Tracking</strong>: Collect systematic data about episode rewards, lengths, and timing to understand training progress.</p>
+<p><strong>🐛 Debugging</strong>: Identify specific failure modes, unusual behaviors, or environments where your agent struggles.</p>
+<p><strong>📈 Evaluation</strong>: Compare different training runs, algorithms, or hyperparameters objectively.</p>
+<p><strong>🎓 Communication</strong>: Share results with collaborators, include in papers, or create educational content.</p>
+</section>
+<section id="when-to-record">
+<h2>When to Record<a class="headerlink" href="#when-to-record" title="Link to this heading">¶</a></h2>
+<p><strong>During Evaluation</strong> (Record Every Episode):</p>
+<ul class="simple">
+<li><p>Testing a trained agent’s final performance</p></li>
+<li><p>Creating demonstration videos</p></li>
+<li><p>Detailed analysis of specific behaviors</p></li>
+</ul>
+<p><strong>During Training</strong> (Record Periodically):</p>
+<ul class="simple">
+<li><p>Monitor learning progress over time</p></li>
+<li><p>Catch training issues early</p></li>
+<li><p>Create timelapse videos of learning</p></li>
+</ul>
+<p>Gymnasium provides two essential wrappers for recording: <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> for numerical data and <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code> for visual recordings. The first tracks episode metrics like total rewards, episode length, and time taken. The second generates MP4 videos of agent behavior using environment renderings.</p>
+<p>We’ll show how to use these wrappers for two common scenarios: recording data for every episode (typically during evaluation) and recording data periodically (during training).</p>
+</section>
+<section id="recording-every-episode-evaluation">
+<h2>Recording Every Episode (Evaluation)<a class="headerlink" href="#recording-every-episode-evaluation" title="Link to this heading">¶</a></h2>
+<p>When evaluating a trained agent, you typically want to record several episodes to understand average performance and consistency. Here’s how to set this up with <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span><span class="p">,</span> <span class="n">RecordVideo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
+<span class="c1"># Configuration</span>
 <span class="n">num_eval_episodes</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">env_name</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1&quot;</span>  <span class="c1"># Replace with your environment</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>  <span class="c1"># replace with your environment</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;cartpole-agent&quot;</span><span class="p">,</span> <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;eval&quot;</span><span class="p">,</span>
-                  <span class="n">episode_trigger</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Create environment with recording capabilities</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>  <span class="c1"># rgb_array needed for video recording</span>
+
+<span class="c1"># Add video recording for every episode</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span>
+    <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;cartpole-agent&quot;</span><span class="p">,</span>    <span class="c1"># Folder to save videos</span>
+    <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;eval&quot;</span><span class="p">,</span>               <span class="c1"># Prefix for video filenames</span>
+    <span class="n">episode_trigger</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">True</span>    <span class="c1"># Record every episode</span>
+<span class="p">)</span>
+
+<span class="c1"># Add episode statistics tracking</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">buffer_length</span><span class="o">=</span><span class="n">num_eval_episodes</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting evaluation for </span><span class="si">{</span><span class="n">num_eval_episodes</span><span class="si">}</span><span class="s2"> episodes...&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Videos will be saved to: cartpole-agent/&quot;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">episode_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_eval_episodes</span><span class="p">):</span>
     <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">step_count</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="n">episode_over</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">episode_over</span><span class="p">:</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># replace with actual agent</span>
+        <span class="c1"># Replace this with your trained agent&#39;s policy</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># Random policy for demonstration</span>
+
         <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">episode_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+        <span class="n">step_count</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">episode_over</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Episode </span><span class="si">{</span><span class="n">episode_num</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">step_count</span><span class="si">}</span><span class="s2"> steps, reward = </span><span class="si">{</span><span class="n">episode_reward</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
 <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Episode time taken: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">time_queue</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Episode total rewards: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Episode lengths: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="c1"># Print summary statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Evaluation Summary:&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Episode durations: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">time_queue</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Episode rewards: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Episode lengths: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># Calculate some useful metrics</span>
+<span class="n">avg_reward</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span>
+<span class="n">avg_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">)</span>
+<span class="n">std_reward</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Average reward: </span><span class="si">{</span><span class="n">avg_reward</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> ± </span><span class="si">{</span><span class="n">std_reward</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Average episode length: </span><span class="si">{</span><span class="n">avg_length</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> steps&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Success rate: </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span><span class="si">:</span><span class="s1">.1%</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In the script above, for the <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code> wrapper, we specify three different variables: <code class="docutils literal notranslate"><span class="pre">video_folder</span></code> to specify the folder that the videos should be saved (change for your problem), <code class="docutils literal notranslate"><span class="pre">name_prefix</span></code> for the prefix of videos themselves and finally an <code class="docutils literal notranslate"><span class="pre">episode_trigger</span></code> such that every episode is recorded. This means that for every episode of the environment, a video will be recorded and saved in the style “cartpole-agent/eval-episode-x.mp4”.</p>
-<p>For the <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code>, we only need to specify the buffer lengths, this is the max length of the internal <code class="docutils literal notranslate"><span class="pre">time_queue</span></code>, <code class="docutils literal notranslate"><span class="pre">return_queue</span></code> and <code class="docutils literal notranslate"><span class="pre">length_queue</span></code>. Rather than collect the data for each episode individually, we can use the data queues to print the information at the end of the evaluation.</p>
-<p>For speed ups in evaluating environments, it is possible to implement this with vector environments in order to evaluate <code class="docutils literal notranslate"><span class="pre">N</span></code> episodes at the same time in parallel rather than series.</p>
-</section>
-<section id="recording-the-agent-during-training">
-<h2>Recording the Agent during Training<a class="headerlink" href="#recording-the-agent-during-training" title="Link to this heading">¶</a></h2>
-<p>During training, an agent will act in hundreds or thousands of episodes, therefore, you can’t record a video for each episode, but developers might still want to know how the agent acts at different points in the training, recording episodes periodically during training. While for the episode statistics, it is more helpful to know this data for every episode. The following script provides an example of how to periodically record episodes of an agent while recording every episode’s statistics (we use the python’s logger but <a class="reference external" href="https://www.tensorflow.org/tensorboard">tensorboard</a>, <a class="reference external" href="https://docs.wandb.ai/guides/track">wandb</a> and other modules are available).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<section id="understanding-the-output">
+<h3>Understanding the Output<a class="headerlink" href="#understanding-the-output" title="Link to this heading">¶</a></h3>
+<p>After running this code, you’ll find:</p>
+<p><strong>Video Files</strong>: <code class="docutils literal notranslate"><span class="pre">cartpole-agent/eval-episode-0.mp4</span></code>, <code class="docutils literal notranslate"><span class="pre">eval-episode-1.mp4</span></code>, etc.</p>
+<ul class="simple">
+<li><p>Each file shows one complete episode from start to finish</p></li>
+<li><p>Useful for seeing exactly how your agent behaves</p></li>
+<li><p>Can be shared, embedded in presentations, or analyzed frame-by-frame</p></li>
+</ul>
+<p><strong>Console Output</strong>: Episode-by-episode performance plus summary statistics</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Episode 1: 23 steps, reward = 23.0
+Episode 2: 15 steps, reward = 15.0
+Episode 3: 200 steps, reward = 200.0
+Episode 4: 67 steps, reward = 67.0
 
+Average reward: 76.25 ± 78.29
+Average episode length: 76.2 steps
+Success rate: 100.0%
+</pre></div>
+</div>
+<p><strong>Statistics Queues</strong>: Time, reward, and length data for each episode</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">env.time_queue</span></code>: How long each episode took (wall-clock time)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">env.return_queue</span></code>: Total reward for each episode</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">env.length_queue</span></code>: Number of steps in each episode</p></li>
+</ul>
+<p>In the script above, the <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code> wrapper saves videos with filenames like “eval-episode-0.mp4” in the specified folder. The <code class="docutils literal notranslate"><span class="pre">episode_trigger=lambda</span> <span class="pre">x:</span> <span class="pre">True</span></code> ensures every episode is recorded.</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> wrapper tracks performance metrics in internal queues that we access after evaluation to compute averages and other statistics.</p>
+<p>For computational efficiency during evaluation, it’s possible to implement this with vector environments to evaluate N episodes in parallel rather than sequentially.</p>
+</section>
+</section>
+<section id="recording-during-training-periodic">
+<h2>Recording During Training (Periodic)<a class="headerlink" href="#recording-during-training-periodic" title="Link to this heading">¶</a></h2>
+<p>During training, you’ll run hundreds or thousands of episodes, so recording every one isn’t practical. Instead, record periodically to track learning progress:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span><span class="p">,</span> <span class="n">RecordVideo</span>
 
-<span class="n">training_period</span> <span class="o">=</span> <span class="mi">250</span>  <span class="c1"># record the agent&#39;s episode every 250</span>
-<span class="n">num_training_episodes</span> <span class="o">=</span> <span class="mi">10_000</span>  <span class="c1"># total number of training episodes</span>
+<span class="c1"># Training configuration</span>
+<span class="n">training_period</span> <span class="o">=</span> <span class="mi">250</span>           <span class="c1"># Record video every 250 episodes</span>
+<span class="n">num_training_episodes</span> <span class="o">=</span> <span class="mi">10_000</span>  <span class="c1"># Total training episodes</span>
+<span class="n">env_name</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1&quot;</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>  <span class="c1"># replace with your environment</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;cartpole-agent&quot;</span><span class="p">,</span> <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">,</span>
-                  <span class="n">episode_trigger</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="n">training_period</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+<span class="c1"># Set up logging for episode statistics</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create environment with periodic video recording</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+
+<span class="c1"># Record videos periodically (every 250 episodes)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span>
+    <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;cartpole-training&quot;</span><span class="p">,</span>
+    <span class="n">name_prefix</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">,</span>
+    <span class="n">episode_trigger</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="n">training_period</span> <span class="o">==</span> <span class="mi">0</span>  <span class="c1"># Only record every 250th episode</span>
+<span class="p">)</span>
+
+<span class="c1"># Track statistics for every episode (lightweight)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting training for </span><span class="si">{</span><span class="n">num_training_episodes</span><span class="si">}</span><span class="s2"> episodes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Videos will be recorded every </span><span class="si">{</span><span class="n">training_period</span><span class="si">}</span><span class="s2"> episodes&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Videos saved to: cartpole-training/&quot;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">episode_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_training_episodes</span><span class="p">):</span>
     <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-
     <span class="n">episode_over</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">while</span> <span class="ow">not</span> <span class="n">episode_over</span><span class="p">:</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># replace with actual agent</span>
-        <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">episode_over</span><span class="p">:</span>
+        <span class="c1"># Replace with your actual training agent</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># Random policy for demonstration</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="n">episode_over</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
 
-    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;episode-</span><span class="si">{</span><span class="n">episode_num</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">])</span>
+    <span class="c1"># Log episode statistics (available in info after episode ends)</span>
+    <span class="k">if</span> <span class="s2">&quot;episode&quot;</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>
+        <span class="n">episode_data</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">]</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Episode </span><span class="si">{</span><span class="n">episode_num</span><span class="si">}</span><span class="s2">: &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;reward=</span><span class="si">{</span><span class="n">episode_data</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;length=</span><span class="si">{</span><span class="n">episode_data</span><span class="p">[</span><span class="s1">&#39;l&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;time=</span><span class="si">{</span><span class="n">episode_data</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Additional analysis for milestone episodes</span>
+        <span class="k">if</span> <span class="n">episode_num</span> <span class="o">%</span> <span class="mi">1000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Look at recent performance (last 100 episodes)</span>
+            <span class="n">recent_rewards</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)[</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="n">recent_rewards</span><span class="p">:</span>
+                <span class="n">avg_recent</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">recent_rewards</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">recent_rewards</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  -&gt; Average reward over last 100 episodes: </span><span class="si">{</span><span class="n">avg_recent</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
 <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
+<section id="training-recording-benefits">
+<h3>Training Recording Benefits<a class="headerlink" href="#training-recording-benefits" title="Link to this heading">¶</a></h3>
+<p><strong>Progress Videos</strong>: Watch your agent improve over time</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">training-episode-0.mp4</span></code>: Random initial behavior</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">training-episode-250.mp4</span></code>: Some patterns emerging</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">training-episode-500.mp4</span></code>: Clear improvement</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">training-episode-1000.mp4</span></code>: Competent performance</p></li>
+</ul>
+<p><strong>Learning Curves</strong>: Plot episode statistics over time</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Plot learning progress</span>
+<span class="n">episodes</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">))</span>
+<span class="n">rewards</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">episodes</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Episode Rewards&#39;</span><span class="p">)</span>
+
+<span class="c1"># Add moving average for clearer trend</span>
+<span class="n">window</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">window</span><span class="p">:</span>
+    <span class="n">moving_avg</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sum</span><span class="p">(</span><span class="n">rewards</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">window</span><span class="p">])</span><span class="o">/</span><span class="n">window</span>
+                  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span><span class="o">-</span><span class="n">window</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">window</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rewards</span><span class="p">)),</span> <span class="n">moving_avg</span><span class="p">,</span>
+             <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">window</span><span class="si">}</span><span class="s1">-Episode Moving Average&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Episode&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Reward&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Learning Progress&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="integration-with-experiment-tracking">
+<h2>Integration with Experiment Tracking<a class="headerlink" href="#integration-with-experiment-tracking" title="Link to this heading">¶</a></h2>
+<p>For more sophisticated projects, integrate with experiment tracking tools:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example with Weights &amp; Biases (wandb)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">wandb</span>
+
+<span class="c1"># Initialize experiment tracking</span>
+<span class="n">wandb</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="s2">&quot;cartpole-training&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;q-learning-run-1&quot;</span><span class="p">)</span>
+
+<span class="c1"># Log episode statistics</span>
+<span class="k">for</span> <span class="n">episode_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_training_episodes</span><span class="p">):</span>
+    <span class="c1"># ... training code ...</span>
+
+    <span class="k">if</span> <span class="s2">&quot;episode&quot;</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>
+        <span class="n">episode_data</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">]</span>
+        <span class="n">wandb</span><span class="o">.</span><span class="n">log</span><span class="p">({</span>
+            <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="n">episode_num</span><span class="p">,</span>
+            <span class="s2">&quot;reward&quot;</span><span class="p">:</span> <span class="n">episode_data</span><span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;length&quot;</span><span class="p">:</span> <span class="n">episode_data</span><span class="p">[</span><span class="s1">&#39;l&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;episode_time&quot;</span><span class="p">:</span> <span class="n">episode_data</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>
+        <span class="p">})</span>
+
+        <span class="c1"># Upload videos periodically</span>
+        <span class="k">if</span> <span class="n">episode_num</span> <span class="o">%</span> <span class="n">training_period</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">video_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cartpole-training/training-episode-</span><span class="si">{</span><span class="n">episode_num</span><span class="si">}</span><span class="s2">.mp4&quot;</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">video_path</span><span class="p">):</span>
+                <span class="n">wandb</span><span class="o">.</span><span class="n">log</span><span class="p">({</span><span class="s2">&quot;training_video&quot;</span><span class="p">:</span> <span class="n">wandb</span><span class="o">.</span><span class="n">Video</span><span class="p">(</span><span class="n">video_path</span><span class="p">)})</span>
+</pre></div>
+</div>
+</section>
+<section id="best-practices-summary">
+<h2>Best Practices Summary<a class="headerlink" href="#best-practices-summary" title="Link to this heading">¶</a></h2>
+<p><strong>For Evaluation</strong>:</p>
+<ul class="simple">
+<li><p>Record every episode to get complete performance picture</p></li>
+<li><p>Use multiple seeds for statistical significance</p></li>
+<li><p>Save both videos and numerical data</p></li>
+<li><p>Calculate confidence intervals for metrics</p></li>
+</ul>
+<p><strong>For Training</strong>:</p>
+<ul class="simple">
+<li><p>Record periodically (every 100-1000 episodes)</p></li>
+<li><p>Focus on episode statistics over videos during training</p></li>
+<li><p>Use adaptive recording triggers for interesting episodes</p></li>
+<li><p>Monitor memory usage for long training runs</p></li>
+</ul>
+<p><strong>For Analysis</strong>:</p>
+<ul class="simple">
+<li><p>Create moving averages to smooth noisy learning curves</p></li>
+<li><p>Look for patterns in both success and failure episodes</p></li>
+<li><p>Compare agent behavior at different stages of training</p></li>
+<li><p>Save raw data for later analysis and comparison</p></li>
+</ul>
 </section>
 <section id="more-information">
-<h2>More information<a class="headerlink" href="#more-information" title="Link to this heading">¶</a></h2>
+<h2>More Information<a class="headerlink" href="#more-information" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../train_agent/"><span class="std std-doc">Training an agent</span></a></p></li>
-<li><p><a class="reference internal" href="#../tutorials/training_agents"><span class="xref myst">More training tutorials</span></a></p></li>
+<li><p><a class="reference internal" href="../train_agent/"><span class="doc std std-doc">Training an agent</span></a> - Learn how to build the agents you’re recording</p></li>
+<li><p><a class="reference internal" href="../basic_usage/"><span class="doc std std-doc">Basic usage</span></a> - Understand Gymnasium fundamentals</p></li>
+<li><p><a class="reference internal" href="#../tutorials/training_agents"><span class="xref myst">More training tutorials</span></a> - Advanced training techniques</p></li>
+<li><p><a class="reference internal" href="../create_custom_env/"><span class="doc std std-doc">Custom environments</span></a> - Create your own environments to record</p></li>
 </ul>
+<p>Recording agent behavior is an essential skill for RL practitioners. It helps you understand what your agent is actually learning, debug training issues, and communicate results effectively. Start with simple recording setups and gradually add more sophisticated analysis as your projects grow in complexity!</p>
 </section>
 </section>
 
@@ -520,9 +731,19 @@
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Recording Agents</a><ul>
-<li><a class="reference internal" href="#recording-every-episode">Recording Every Episode</a></li>
-<li><a class="reference internal" href="#recording-the-agent-during-training">Recording the Agent during Training</a></li>
-<li><a class="reference internal" href="#more-information">More information</a></li>
+<li><a class="reference internal" href="#why-record-your-agent">Why Record Your Agent?</a></li>
+<li><a class="reference internal" href="#when-to-record">When to Record</a></li>
+<li><a class="reference internal" href="#recording-every-episode-evaluation">Recording Every Episode (Evaluation)</a><ul>
+<li><a class="reference internal" href="#understanding-the-output">Understanding the Output</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#recording-during-training-periodic">Recording During Training (Periodic)</a><ul>
+<li><a class="reference internal" href="#training-recording-benefits">Training Recording Benefits</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#integration-with-experiment-tracking">Integration with Experiment Tracking</a></li>
+<li><a class="reference internal" href="#best-practices-summary">Best Practices Summary</a></li>
+<li><a class="reference internal" href="#more-information">More Information</a></li>
 </ul>
 </li>
 </ul>
@@ -609,7 +830,7 @@
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=25d39d6f"></script>
+    <script src="../../_static/documentation_options.js?v=151cd43d"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>

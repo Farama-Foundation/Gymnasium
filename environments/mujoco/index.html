@@ -294,18 +294,18 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/gymnasium_basics/">Gymnasium Basics Documentation Links</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics Documentation Links</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/vector_envs_tutorial/">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/training_agents/">Training Agents links in the Gymnasium Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents links in the Gymnasium Documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/FrozenLake_tuto/">Frozenlake benchmark</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -522,7 +522,11 @@ There is physical contact between the robots and their environment - and MuJoCo 
 <p>As of October 2021, DeepMind has acquired MuJoCo and has open-sourced it in 2022, making it free for everyone.
 Using MuJoCo with Gymnasium requires the framework <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> be installed (this dependency is installed with the above command).
 Instructions for installing the MuJoCo engine can be found on their <a class="reference external" href="https://mujoco.org">website</a> and <a class="reference external" href="https://github.com/deepmind/mujoco">GitHub repository</a>.</p>
-<p>For MuJoCo <code class="docutils literal notranslate"><span class="pre">v3</span></code> environments and older the <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> framework is required (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">gymnasium[mujoco-py]</span></code>) which can be found in the <a class="reference external" href="https://github.com/openai/mujoco-py/tree/master/mujoco_py">GitHub repository</a>.</p>
+<p>MuJoCo <code class="docutils literal notranslate"><span class="pre">v3</span></code> environments and older, which relied on the <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> framework, were migrated to the <code class="docutils literal notranslate"><span class="pre">gymnasium-robotics</span></code> package starting with <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code> v1.2. For information on using these older versions, please refer to the <code class="docutils literal notranslate"><span class="pre">gymnasium-robotics</span></code> documentation. The original <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> framework can be found in its <a class="reference external" href="https://github.com/openai/mujoco-py/tree/master/mujoco_py">GitHub repository</a>.</p>
+<p>The dependencies for the old environment versions can be installed via:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>gymnasium_robotics<span class="o">[</span>mujoco-py<span class="o">]</span>
+</pre></div>
+</div>
 <p>There are eleven MuJoCo environments (in roughly increasing complexity):</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -568,7 +572,7 @@ Instructions for installing the MuJoCo engine can be found on their <a class="re
 <tr class="row-odd"><td><p>Swimmer</p></td>
 <td><p>3d robot with the goal of swimming</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>Quarduped</strong></p></td>
+<tr class="row-even"><td><p><strong>Quadruped</strong></p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>Ant</p></td>
@@ -615,11 +619,11 @@ Often some of the first positional elements are omitted from the state space sin
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">v3</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
-<td><p>Deprecated, Kept for reproducibility (limited support)</p></td>
+<td><p>Migrated to <code class="docutils literal notranslate"><span class="pre">gymnasium-robotics</span></code> (from <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code> v1.2). Deprecated, Kept for reproducibility.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">v2</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code></p></td>
-<td><p>Deprecated, Kept for reproducibility (limited support)</p></td>
+<td><p>Migrated to <code class="docutils literal notranslate"><span class="pre">gymnasium-robotics</span></code> (from <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code> v1.2). Deprecated, Kept for reproducibility.</p></td>
 </tr>
 </tbody>
 </table>
@@ -875,7 +879,7 @@ For more complex locomotion robot environments you can use third party models wi
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=25d39d6f"></script>
+    <script src="../../_static/documentation_options.js?v=151cd43d"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>

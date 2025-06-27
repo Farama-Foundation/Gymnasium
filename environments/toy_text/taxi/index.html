@@ -294,18 +294,18 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/gymnasium_basics/">Gymnasium Basics Documentation Links</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics Documentation Links</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/vector_envs_tutorial/">Training A2C with Vector Envs and Domain Randomization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/training_agents/">Training Agents links in the Gymnasium Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents links in the Gymnasium Documentation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/reinforce_invpend_gym_v26/">Training using REINFORCE for Mujoco</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/blackjack_tutorial/">Solving Blackjack with Q-Learning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/FrozenLake_tuto/">Frozenlake benchmark</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/third-party-tutorials/">Third-Party Tutorials</a></li>
@@ -491,12 +491,9 @@ penalty. Noops can be avoided by sampling the <code class="docutils literal notr
 <h2>Information<a class="headerlink" href="#information" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">step()</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> return a dict with the following keys:</p>
 <ul class="simple">
-<li><p>p - transition proability for the state.</p></li>
+<li><p>p - transition probability for the state.</p></li>
 <li><p>action_mask - if actions will cause a transition to a new state.</p></li>
 </ul>
-<p>As taxi is not stochastic, the transition probability is always 1.0. Implementing
-a transitional probability in line with the Dietterich paper (‘The fickle taxi task’)
-is a TODO.</p>
 <p>For some cases, taking an action will have no effect on the state of the episode.
 In v0.25.0, <code class="docutils literal notranslate"><span class="pre">info[&quot;action_mask&quot;]</span></code> contains a np.ndarray for each of the actions specifying
 if the action will change the state.</p>
@@ -509,6 +506,13 @@ Or with a Q-value based algorithm <code class="docutils literal notranslate"><sp
 <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Taxi-v3&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p><a id="is_raining"></a><code class="docutils literal notranslate"><span class="pre">is_raining=False</span></code>: If True the cab will move in intended direction with
+probability of 80% else will move in either left or right of target direction with
+equal probability of 10% in both directions.</p>
+<p><a id="fickle_passenger"></a><code class="docutils literal notranslate"><span class="pre">fickle_passenger=False</span></code>: If true the passenger has a 30% chance of changing
+destinations when the cab has moved one square away from the passenger’s source location.  Passenger fickleness
+only happens on the first pickup and successful movement.  If the passenger is dropped off at the source location
+and picked up again, it is not triggered again.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
@@ -518,7 +522,11 @@ Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, 
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information</p></li>
+<li><p>v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information</p>
+<ul>
+<li><p>In Gymnasium <code class="docutils literal notranslate"><span class="pre">1.2.0</span></code> the <code class="docutils literal notranslate"><span class="pre">is_rainy</span></code> and <code class="docutils literal notranslate"><span class="pre">fickle_passenger</span></code> arguments were added to align with Dietterich, 2000</p></li>
+</ul>
+</li>
 <li><p>v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.</p></li>
 <li><p>v1: Remove (3,2) from locs, add passidx&lt;4 check</p></li>
 <li><p>v0: Initial version release</p></li>
@@ -682,7 +690,7 @@ Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, 
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=25d39d6f"></script>
+    <script src="../../../_static/documentation_options.js?v=151cd43d"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
