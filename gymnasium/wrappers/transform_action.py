@@ -233,7 +233,6 @@ class DiscretizeAction(
             env: The environment to wrap.
             bins: int or list of ints (number of bins per dimension).
         """
-
         if not isinstance(env.action_space, Box):
             raise TypeError(
                 "DiscretizeAction is only compatible with Box continuous actions."
@@ -259,14 +258,18 @@ class DiscretizeAction(
             self.bins = np.array(bins)
 
         self.bin_centers = [
-            0.5 * (np.linspace(self.low[i], self.high[i], self.bins[i] + 1)[:-1] +
-                   np.linspace(self.low[i], self.high[i], self.bins[i] + 1)[1:])
+            0.5
+            * (
+                np.linspace(self.low[i], self.high[i], self.bins[i] + 1)[:-1]
+                + np.linspace(self.low[i], self.high[i], self.bins[i] + 1)[1:]
+            )
             for i in range(self.n_dims)
         ]
 
         self.action_space = Discrete(np.prod(self.bins))
 
     def action(self, flat_index):
+        """Discretize the action."""
         indices = self._unflatten_index(flat_index)
         centers = [
             self.bin_centers[i][min(max(idx, 0), self.bins[i] - 1)]

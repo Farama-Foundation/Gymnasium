@@ -718,7 +718,6 @@ class DiscretizeObservation(
             env: The environment to wrap.
             bins: int or list of ints (number of bins per dimension).
         """
-
         if not isinstance(env.observation_space, spaces.Box):
             raise TypeError(
                 "DiscretizeObservation is only compatible with Box continuous observations."
@@ -751,6 +750,11 @@ class DiscretizeObservation(
         self.observation_space = spaces.Discrete(np.prod(self.bins))
 
     def observation(self, observation):
+        """Discretize the observation."""
+        # np.digitize returns len(bins) if the input exceeds the last edge.
+        # If an observation is exactly equal to the high bound, the resulting
+        # index could be out of range for the number of bins.
+        # Solution: clip to ensure 0 <= index < bins[i].
         indices = [
             min(max(int(np.digitize(obs_i, self.bin_edges[i])), 0), self.bins[i] - 1)
             for i, obs_i in enumerate(observation)
