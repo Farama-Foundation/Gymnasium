@@ -2,24 +2,25 @@
 
 import math
 import os
-from typing import NamedTuple, Optional, Tuple, Union
+from typing import NamedTuple, TypeAlias
 
 import jax
 import jax.numpy as jnp
 import numpy as np
 from flax import struct
 from jax import random
-from jax.random import PRNGKey
 
 from gymnasium import spaces
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle, seeding
+from gymnasium.vector import AutoresetMode
 from gymnasium.wrappers import HumanRendering
 
 
-RenderStateType = Tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
+PRNGKeyType: TypeAlias = jax.Array
+RenderStateType = tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
 
 
 deck = jnp.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10])
@@ -167,7 +168,7 @@ class BlackJackParams:
 
 
 class BlackjackFunctional(
-    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType, BlackJackParams]
+    FuncEnv[EnvState, jax.Array, int, float, bool, RenderStateType, BlackJackParams]
 ):
     """Blackjack is a card game where the goal is to beat the dealer by obtaining cards that sum to closer to 21 (without going over 21) than the dealers cards.
 
@@ -239,15 +240,16 @@ class BlackjackFunctional(
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 4,
+        "autoreseet-mode": AutoresetMode.NEXT_STEP,
     }
 
     def transition(
         self,
         state: EnvState,
-        action: Union[int, jax.Array],
-        key: PRNGKey,
+        action: int | jax.Array,
+        key: PRNGKeyType,
         params: BlackJackParams = BlackJackParams,
-    ):
+    ) -> EnvState:
         """The blackjack environment's state transition function."""
         env_state = jax.lax.cond(action, take, notake, (state, key))
 
@@ -271,7 +273,9 @@ class BlackjackFunctional(
 
         return new_state
 
-    def initial(self, rng: PRNGKey, params: BlackJackParams = BlackJackParams):
+    def initial(
+        self, rng: PRNGKeyType, params: BlackJackParams = BlackJackParams
+    ) -> EnvState:
         """Blackjack initial observataion function."""
         player_hand = jnp.zeros(21)
         dealer_hand = jnp.zeros(21)
@@ -291,7 +295,10 @@ class BlackjackFunctional(
         return state
 
     def observation(
-        self, state: EnvState, rng: PRNGKey, params: BlackJackParams = BlackJackParams
+        self,
+        state: EnvState,
+        rng: PRNGKeyType,
+        params: BlackJackParams = BlackJackParams,
     ) -> jax.Array:
         """Blackjack observation."""
         return jnp.array(
@@ -304,7 +311,10 @@ class BlackjackFunctional(
         )
 
     def terminal(
-        self, state: EnvState, rng: PRNGKey, params: BlackJackParams = BlackJackParams
+        self,
+        state: EnvState,
+        rng: PRNGKeyType,
+        params: BlackJackParams = BlackJackParams,
     ) -> jax.Array:
         """Determines if a particular Blackjack observation is terminal."""
         return (state.done) > 0
@@ -313,8 +323,8 @@ class BlackjackFunctional(
         self,
         state: EnvState,
         action: ActType,
-        next_state: StateType,
-        rng: PRNGKey,
+        next_state: EnvState,
+        rng: PRNGKeyType,
         params: BlackJackParams = BlackJackParams,
     ) -> jax.Array:
         """Calculates reward from a state."""
@@ -371,7 +381,7 @@ class BlackjackFunctional(
         state: StateType,
         render_state: RenderStateType,
         params: BlackJackParams = BlackJackParams,
-    ) -> Tuple[RenderStateType, np.ndarray]:
+    ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an image from a state."""
         try:
             import pygame
@@ -500,7 +510,7 @@ class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
-    def __init__(self, render_mode: Optional[str] = None, **kwargs):
+    def __init__(self, render_mode: str | None = None, **kwargs):
         """Initializes Gym wrapper for blackjack functional env."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
         env = BlackjackFunctional(**kwargs)

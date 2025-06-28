@@ -9,12 +9,11 @@ and then modified by Arnaud de Broissia
 
 * the gymnasium MountainCar environment
 itself from
-http://incompleteideas.net/sutton/MountainCar/MountainCar1.cp
+http://incompleteideas.net/sutton/book/MountainCar/MountainCar1.cp
 permalink: https://perma.cc/6Z2N-PFWC
 """
 
 import math
-from typing import Optional
 
 import numpy as np
 
@@ -50,10 +49,10 @@ class Continuous_MountainCarEnv(gym.Env):
 
     The observation is a `ndarray` with shape `(2,)` where the elements correspond to the following:
 
-    | Num | Observation                          | Min  | Max | Unit         |
-    |-----|--------------------------------------|------|-----|--------------|
-    | 0   | position of the car along the x-axis | -Inf | Inf | position (m) |
-    | 1   | velocity of the car                  | -Inf | Inf | position (m) |
+    | Num | Observation                          | Min   | Max  | Unit          |
+    |-----|--------------------------------------|-------|------|---------------|
+    | 0   | position of the car along the x-axis | -1.2  | 0.6  | position (m)  |
+    | 1   | velocity of the car                  | -0.07 | 0.07 | velocity (v)  |
 
     ## Action Space
 
@@ -64,7 +63,7 @@ class Continuous_MountainCarEnv(gym.Env):
 
     Given an action, the mountain car follows the following transition dynamics:
 
-    *velocity<sub>t+1</sub> = velocity<sub>t+1</sub> + force * self.power - 0.0025 * cos(3 * position<sub>t</sub>)*
+    *velocity<sub>t+1</sub> = velocity<sub>t</sub> + force * self.power - 0.0025 * cos(3 * position<sub>t</sub>)*
 
     *position<sub>t+1</sub> = position<sub>t</sub> + velocity<sub>t+1</sub>*
 
@@ -114,7 +113,7 @@ class Continuous_MountainCarEnv(gym.Env):
         "render_fps": 30,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, goal_velocity=0):
+    def __init__(self, render_mode: str | None = None, goal_velocity=0):
         self.min_action = -1.0
         self.max_action = 1.0
         self.min_position = -1.2
@@ -183,7 +182,7 @@ class Continuous_MountainCarEnv(gym.Env):
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return self.state, reward, terminated, False, {}
 
-    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    def reset(self, *, seed: int | None = None, options: dict | None = None):
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.

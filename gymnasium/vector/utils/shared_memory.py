@@ -5,6 +5,7 @@ from __future__ import annotations
 import multiprocessing as mp
 from ctypes import c_bool
 from functools import singledispatch
+from multiprocessing.sharedctypes import SynchronizedArray
 from typing import Any
 
 import numpy as np
@@ -32,7 +33,7 @@ __all__ = ["create_shared_memory", "read_from_shared_memory", "write_to_shared_m
 @singledispatch
 def create_shared_memory(
     space: Space[Any], n: int = 1, ctx=mp
-) -> dict[str, Any] | tuple[Any, ...] | mp.Array:
+) -> dict[str, Any] | tuple[Any, ...] | SynchronizedArray:
     """Create a shared memory object, to be shared across processes.
 
     This eventually contains the observations from the vectorized environment.
@@ -109,7 +110,7 @@ def _create_dynamic_shared_memory(space: Graph | Sequence, n: int = 1, ctx=mp):
 
 @singledispatch
 def read_from_shared_memory(
-    space: Space, shared_memory: dict | tuple | mp.Array, n: int = 1
+    space: Space, shared_memory: dict | tuple | SynchronizedArray, n: int = 1
 ) -> dict[str, Any] | tuple[Any, ...] | np.ndarray:
     """Read the batch of observations from shared memory as a numpy array.
 
@@ -209,7 +210,7 @@ def write_to_shared_memory(
     space: Space,
     index: int,
     value: np.ndarray,
-    shared_memory: dict[str, Any] | tuple[Any, ...] | mp.Array,
+    shared_memory: dict[str, Any] | tuple[Any, ...] | SynchronizedArray,
 ):
     """Write the observation of a single environment into shared memory.
 

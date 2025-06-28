@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Generic, TypeAlias
 
 import jax
 import jax.numpy as jnp
@@ -10,16 +10,20 @@ import jax.random as jrng
 
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional import ActType, FuncEnv, ObsType, StateType
 from gymnasium.utils import seeding
+from gymnasium.vector import AutoresetMode
 from gymnasium.vector.utils import batch_space
 
 
-class FunctionalJaxEnv(gym.Env):
+PRNGKeyType: TypeAlias = jax.Array
+
+
+class FunctionalJaxEnv(gym.Env, Generic[StateType]):
     """A conversion layer for jax-based environments."""
 
     state: StateType
-    rng: jrng.PRNGKey
+    rng: PRNGKeyType
 
     def __init__(
         self,
@@ -97,15 +101,17 @@ class FunctionalJaxEnv(gym.Env):
             self.render_state = None
 
 
-class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
+class FunctionalJaxVectorEnv(
+    gym.vector.VectorEnv[ObsType, ActType, Any], Generic[ObsType, ActType, StateType]
+):
     """A vector env implementation for functional Jax envs."""
 
     state: StateType
-    rng: jrng.PRNGKey
+    rng: PRNGKeyType
 
     def __init__(
         self,
-        func_env: FuncEnv,
+        func_env: FuncEnv[StateType, ObsType, ActType, Any, Any, Any, Any],
         num_envs: int,
         max_episode_steps: int = 0,
         metadata: dict[str, Any] | None = None,
@@ -115,7 +121,7 @@ class FunctionalJaxVectorEnv(gym.vector.VectorEnv):
         """Initialize the environment from a FuncEnv."""
         super().__init__()
         if metadata is None:
-            metadata = {}
+            metadata = {"autoreset_mode": AutoresetMode.NEXT_STEP}
         self.func_env = func_env
         self.num_envs = num_envs
 

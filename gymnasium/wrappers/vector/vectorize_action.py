@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 
 from gymnasium import Space
 from gymnasium.core import ActType, Env
+from gymnasium.logger import warn
 from gymnasium.vector import VectorActionWrapper, VectorEnv
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.wrappers import transform_action
@@ -61,18 +63,31 @@ class TransformAction(VectorActionWrapper):
         env: VectorEnv,
         func: Callable[[ActType], Any],
         action_space: Space | None = None,
+        single_action_space: Space | None = None,
     ):
         """Constructor for the lambda action wrapper.
 
         Args:
             env: The vector environment to wrap
             func: A function that will transform an action. If this transformed action is outside the action space of ``env.action_space`` then provide an ``action_space``.
-            action_space: The action spaces of the wrapper, if None, then it is assumed the same as ``env.action_space``.
+            action_space: The action spaces of the wrapper. If None, then it is computed from ``single_action_space``. If ``single_action_space`` is not provided either, then it is assumed to be the same as ``env.action_space``.
+            single_action_space: The action space of the non-vectorized environment. If None, then it is assumed the same as ``env.single_action_space``.
         """
         super().__init__(env)
 
-        if action_space is not None:
+        if action_space is None:
+            if single_action_space is not None:
+                self.single_action_space = single_action_space
+                self.action_space = batch_space(single_action_space, self.num_envs)
+        else:
             self.action_space = action_space
+            if single_action_space is not None:
+                self.single_action_space = single_action_space
+            # TODO: We could compute single_action_space from the action_space if only the latter is provided and avoid the warning below.
+        if self.action_space != batch_space(self.single_action_space, self.num_envs):
+            warn(
+                f"For {env}, the action space and the batched single action space don't match as expected, action_space={env.action_space}, batched single_action_space={batch_space(self.single_action_space, self.num_envs)}"
+            )
 
         self.func = func
 

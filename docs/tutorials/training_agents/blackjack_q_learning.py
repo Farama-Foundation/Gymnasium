@@ -1,7 +1,8 @@
 """
-Solving Blackjack with Q-Learning
-=================================
+Solving Blackjack with Tabular Q-Learning
+=========================================
 
+This tutorial trains an agent for BlackJack using tabular Q-learning.
 """
 
 # %%
@@ -275,7 +276,7 @@ agent = BlackjackAgent(
 #
 
 
-env = gym.wrappers.RecordEpisodeStatistics(env, deque_size=n_episodes)
+env = gym.wrappers.RecordEpisodeStatistics(env, buffer_length=n_episodes)
 for episode in tqdm(range(n_episodes)):
     obs, info = env.reset()
     done = False

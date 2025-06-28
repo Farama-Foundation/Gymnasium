@@ -1,7 +1,6 @@
 from contextlib import closing
 from io import StringIO
 from os import path
-from typing import Optional
 
 import numpy as np
 
@@ -121,12 +120,8 @@ class TaxiEnv(Env):
     ## Information
 
     `step()` and `reset()` return a dict with the following keys:
-    - p - transition proability for the state.
+    - p - transition probability for the state.
     - action_mask - if actions will cause a transition to a new state.
-
-    As taxi is not stochastic, the transition probability is always 1.0. Implementing
-    a transitional probability in line with the Dietterich paper ('The fickle taxi task')
-    is a TODO.
 
     For some cases, taking an action will have no effect on the state of the episode.
     In v0.25.0, ``info["action_mask"]`` contains a np.ndarray for each of the actions specifying
@@ -135,7 +130,6 @@ class TaxiEnv(Env):
     To sample a modifying action, use ``action = env.action_space.sample(info["action_mask"])``
     Or with a Q-value based algorithm ``action = np.argmax(q_values[obs, np.where(info["action_mask"] == 1)[0]])``.
 
-
     ## Arguments
 
     ```python
@@ -143,12 +137,22 @@ class TaxiEnv(Env):
     gym.make('Taxi-v3')
     ```
 
+    <a id="is_raining"></a>`is_raining=False`: If True the cab will move in intended direction with
+    probability of 80% else will move in either left or right of target direction with
+    equal probability of 10% in both directions.
+
+    <a id="fickle_passenger"></a>`fickle_passenger=False`: If true the passenger has a 30% chance of changing
+    destinations when the cab has moved one square away from the passenger's source location.  Passenger fickleness
+    only happens on the first pickup and successful movement.  If the passenger is dropped off at the source location
+    and picked up again, it is not triggered again.
+
     ## References
     <a id="taxi_ref"></a>[1] T. G. Dietterich, “Hierarchical Reinforcement Learning with the MAXQ Value Function Decomposition,”
     Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, doi: 10.1613/jair.639.
 
     ## Version History
     * v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information
+        - In Gymnasium `1.2.0` the `is_rainy` and `fickle_passenger` arguments were added to align with Dietterich, 2000
     * v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.
     * v1: Remove (3,2) from locs, add passidx<4 check
     * v0: Initial version release
@@ -159,7 +163,125 @@ class TaxiEnv(Env):
         "render_fps": 4,
     }
 
-    def __init__(self, render_mode: Optional[str] = None):
+    def _pickup(self, taxi_loc, pass_idx, reward):
+        """Computes the new location and reward for pickup action."""
+        if pass_idx < 4 and taxi_loc == self.locs[pass_idx]:
+            new_pass_idx = 4
+            new_reward = reward
+        else:  # passenger not at location
+            new_pass_idx = pass_idx
+            new_reward = -10
+
+        return new_pass_idx, new_reward
+
+    def _dropoff(self, taxi_loc, pass_idx, dest_idx, default_reward):
+        """Computes the new location and reward for return dropoff action."""
+        if (taxi_loc == self.locs[dest_idx]) and pass_idx == 4:
+            new_pass_idx = dest_idx
+            new_terminated = True
+            new_reward = 20
+        elif (taxi_loc in self.locs) and pass_idx == 4:
+            new_pass_idx = self.locs.index(taxi_loc)
+            new_terminated = False
+            new_reward = default_reward
+        else:  # dropoff at wrong location
+            new_pass_idx = pass_idx
+            new_terminated = False
+            new_reward = -10
+
+        return new_pass_idx, new_reward, new_terminated
+
+    def _build_dry_transitions(self, row, col, pass_idx, dest_idx, action):
+        """Computes the next action for a state (row, col, pass_idx, dest_idx) and action."""
+        state = self.encode(row, col, pass_idx, dest_idx)
+
+        taxi_loc = (row, col)
+        new_row, new_col, new_pass_idx = row, col, pass_idx
+        reward = -1  # default reward when there is no pickup/dropoff
+        terminated = False
+
+        if action == 0:
+            new_row = min(row + 1, self.max_row)
+        elif action == 1:
+            new_row = max(row - 1, 0)
+        if action == 2 and self.desc[1 + row, 2 * col + 2] == b":":
+            new_col = min(col + 1, self.max_col)
+        elif action == 3 and self.desc[1 + row, 2 * col] == b":":
+            new_col = max(col - 1, 0)
+        elif action == 4:  # pickup
+            new_pass_idx, reward = self._pickup(taxi_loc, new_pass_idx, reward)
+        elif action == 5:  # dropoff
+            new_pass_idx, reward, terminated = self._dropoff(
+                taxi_loc, new_pass_idx, dest_idx, reward
+            )
+
+        new_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
+        self.P[state][action].append((1.0, new_state, reward, terminated))
+
+    def _calc_new_position(self, row, col, movement, offset=0):
+        """Calculates the new position for a row and col to the movement."""
+        dr, dc = movement
+        new_row = max(0, min(row + dr, self.max_row))
+        new_col = max(0, min(col + dc, self.max_col))
+        if self.desc[1 + new_row, 2 * new_col + offset] == b":":
+            return new_row, new_col
+        else:  # Default to current position if not traversable
+            return row, col
+
+    def _build_rainy_transitions(self, row, col, pass_idx, dest_idx, action):
+        """Computes the next action for a state (row, col, pass_idx, dest_idx) and action for `is_rainy`."""
+        state = self.encode(row, col, pass_idx, dest_idx)
+
+        taxi_loc = left_pos = right_pos = (row, col)
+        new_row, new_col, new_pass_idx = row, col, pass_idx
+        reward = -1  # default reward when there is no pickup/dropoff
+        terminated = False
+
+        moves = {
+            0: ((1, 0), (0, -1), (0, 1)),  # Down
+            1: ((-1, 0), (0, -1), (0, 1)),  # Up
+            2: ((0, 1), (1, 0), (-1, 0)),  # Right
+            3: ((0, -1), (1, 0), (-1, 0)),  # Left
+        }
+
+        # Check if movement is allowed
+        if (
+            action in {0, 1}
+            or (action == 2 and self.desc[1 + row, 2 * col + 2] == b":")
+            or (action == 3 and self.desc[1 + row, 2 * col] == b":")
+        ):
+            dr, dc = moves[action][0]
+            new_row = max(0, min(row + dr, self.max_row))
+            new_col = max(0, min(col + dc, self.max_col))
+
+            left_pos = self._calc_new_position(row, col, moves[action][1], offset=2)
+            right_pos = self._calc_new_position(row, col, moves[action][2])
+        elif action == 4:  # pickup
+            new_pass_idx, reward = self._pickup(taxi_loc, new_pass_idx, reward)
+        elif action == 5:  # dropoff
+            new_pass_idx, reward, terminated = self._dropoff(
+                taxi_loc, new_pass_idx, dest_idx, reward
+            )
+        intended_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
+
+        if action <= 3:
+            left_state = self.encode(left_pos[0], left_pos[1], new_pass_idx, dest_idx)
+            right_state = self.encode(
+                right_pos[0], right_pos[1], new_pass_idx, dest_idx
+            )
+
+            self.P[state][action].append((0.8, intended_state, -1, terminated))
+            self.P[state][action].append((0.1, left_state, -1, terminated))
+            self.P[state][action].append((0.1, right_state, -1, terminated))
+        else:
+            self.P[state][action].append((1.0, intended_state, reward, terminated))
+
+    def __init__(
+        self,
+        render_mode: str | None = None,
+        is_rainy: bool = False,
+        fickle_passenger: bool = False,
+    ):
         self.desc = np.asarray(MAP, dtype="c")
 
         self.locs = locs = [(0, 0), (0, 4), (4, 0), (4, 3)]
@@ -168,14 +290,15 @@ class TaxiEnv(Env):
         num_states = 500
         num_rows = 5
         num_columns = 5
-        max_row = num_rows - 1
-        max_col = num_columns - 1
+        self.max_row = num_rows - 1
+        self.max_col = num_columns - 1
         self.initial_state_distrib = np.zeros(num_states)
         num_actions = 6
         self.P = {
             state: {action: [] for action in range(num_actions)}
             for state in range(num_states)
         }
+
         for row in range(num_rows):
             for col in range(num_columns):
                 for pass_idx in range(len(locs) + 1):  # +1 for being inside taxi
@@ -184,47 +307,29 @@ class TaxiEnv(Env):
                         if pass_idx < 4 and pass_idx != dest_idx:
                             self.initial_state_distrib[state] += 1
                         for action in range(num_actions):
-                            # defaults
-                            new_row, new_col, new_pass_idx = row, col, pass_idx
-                            reward = (
-                                -1
-                            )  # default reward when there is no pickup/dropoff
-                            terminated = False
-                            taxi_loc = (row, col)
-
-                            if action == 0:
-                                new_row = min(row + 1, max_row)
-                            elif action == 1:
-                                new_row = max(row - 1, 0)
-                            if action == 2 and self.desc[1 + row, 2 * col + 2] == b":":
-                                new_col = min(col + 1, max_col)
-                            elif action == 3 and self.desc[1 + row, 2 * col] == b":":
-                                new_col = max(col - 1, 0)
-                            elif action == 4:  # pickup
-                                if pass_idx < 4 and taxi_loc == locs[pass_idx]:
-                                    new_pass_idx = 4
-                                else:  # passenger not at location
-                                    reward = -10
-                            elif action == 5:  # dropoff
-                                if (taxi_loc == locs[dest_idx]) and pass_idx == 4:
-                                    new_pass_idx = dest_idx
-                                    terminated = True
-                                    reward = 20
-                                elif (taxi_loc in locs) and pass_idx == 4:
-                                    new_pass_idx = locs.index(taxi_loc)
-                                else:  # dropoff at wrong location
-                                    reward = -10
-                            new_state = self.encode(
-                                new_row, new_col, new_pass_idx, dest_idx
-                            )
-                            self.P[state][action].append(
-                                (1.0, new_state, reward, terminated)
-                            )
+                            if is_rainy:
+                                self._build_rainy_transitions(
+                                    row,
+                                    col,
+                                    pass_idx,
+                                    dest_idx,
+                                    action,
+                                )
+                            else:
+                                self._build_dry_transitions(
+                                    row,
+                                    col,
+                                    pass_idx,
+                                    dest_idx,
+                                    action,
+                                )
         self.initial_state_distrib /= self.initial_state_distrib.sum()
         self.action_space = spaces.Discrete(num_actions)
         self.observation_space = spaces.Discrete(num_states)
 
         self.render_mode = render_mode
+        self.fickle_passenger = fickle_passenger
+        self.fickle_step = self.fickle_passenger and self.np_random.random() < 0.3
 
         # pygame utils
         self.window = None
@@ -289,8 +394,27 @@ class TaxiEnv(Env):
         transitions = self.P[self.s][a]
         i = categorical_sample([t[0] for t in transitions], self.np_random)
         p, s, r, t = transitions[i]
-        self.s = s
         self.lastaction = a
+
+        shadow_row, shadow_col, shadow_pass_loc, shadow_dest_idx = self.decode(self.s)
+        taxi_row, taxi_col, pass_loc, _ = self.decode(s)
+
+        # If we are in the fickle step, the passenger has been in the vehicle for at least a step and this step the
+        # position changed
+        if (
+            self.fickle_passenger
+            and self.fickle_step
+            and shadow_pass_loc == 4
+            and (taxi_row != shadow_row or taxi_col != shadow_col)
+        ):
+            self.fickle_step = False
+            possible_destinations = [
+                i for i in range(len(self.locs)) if i != shadow_dest_idx
+            ]
+            dest_idx = self.np_random.choice(possible_destinations)
+            s = self.encode(taxi_row, taxi_col, pass_loc, dest_idx)
+
+        self.s = s
 
         if self.render_mode == "human":
             self.render()
@@ -300,12 +424,13 @@ class TaxiEnv(Env):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
         self.s = categorical_sample(self.initial_state_distrib, self.np_random)
         self.lastaction = None
+        self.fickle_step = self.fickle_passenger and self.np_random.random() < 0.3
         self.taxi_orientation = 0
 
         if self.render_mode == "human":

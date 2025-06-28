@@ -27,6 +27,7 @@ title: Misc Wrappers
 ## Data Conversion Wrappers
 
 ```{eval-rst}
+.. autoclass:: gymnasium.wrappers.ArrayConversion
 .. autoclass:: gymnasium.wrappers.JaxToNumpy
 .. autoclass:: gymnasium.wrappers.JaxToTorch
 .. autoclass:: gymnasium.wrappers.NumpyToTorch

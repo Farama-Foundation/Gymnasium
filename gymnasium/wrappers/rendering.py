@@ -3,31 +3,39 @@
 * ``RenderCollection`` - Collects rendered frames into a list
 * ``RecordVideo`` - Records a video of the environments
 * ``HumanRendering`` - Provides human rendering of environments with ``"rgb_array"``
+* ``AddWhiteNoise`` - Randomly replaces pixels with white noise
+* ``ObstructView`` - Randomly places patches of white noise to obstruct the pixel rendering
 """
 
 from __future__ import annotations
 
+import gc
 import os
+from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, Callable, List, SupportsFloat
+from typing import Any, Generic, SupportsFloat
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import error, logger
 from gymnasium.core import ActType, ObsType, RenderFrame
-from gymnasium.error import DependencyNotInstalled
+from gymnasium.error import DependencyNotInstalled, InvalidProbability
 
 
 __all__ = [
     "RenderCollection",
     "RecordVideo",
     "HumanRendering",
+    "AddWhiteNoise",
+    "ObstructView",
 ]
 
 
 class RenderCollection(
-    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+    gym.Wrapper[ObsType, ActType, ObsType, ActType],
+    Generic[ObsType, ActType, RenderFrame],
+    gym.utils.RecordConstructorArgs,
 ):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
 
@@ -154,7 +162,9 @@ class RenderCollection(
 
 
 class RecordVideo(
-    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+    gym.Wrapper[ObsType, ActType, ObsType, ActType],
+    Generic[ObsType, ActType, RenderFrame],
+    gym.utils.RecordConstructorArgs,
 ):
     """Records videos of environment episodes using the environment's render function.
 
@@ -237,6 +247,7 @@ class RecordVideo(
         name_prefix: str = "rl-video",
         fps: int | None = None,
         disable_logger: bool = True,
+        gc_trigger: Callable[[int], bool] | None = lambda episode: True,
     ):
         """Wrapper records videos of rollouts.
 
@@ -251,6 +262,7 @@ class RecordVideo(
             fps (int): The frame per second in the video. Provides a custom video fps for environment, if ``None`` then
                 the environment metadata ``render_fps`` key is used if it exists, otherwise a default value of 30 is used.
             disable_logger (bool): Whether to disable moviepy logger or not, default it is disabled
+            gc_trigger: Function that accepts an integer and returns ``True`` iff garbage collection should be performed after this episode
         """
         gym.utils.RecordConstructorArgs.__init__(
             self,
@@ -277,6 +289,7 @@ class RecordVideo(
         self.episode_trigger = episode_trigger
         self.step_trigger = step_trigger
         self.disable_logger = disable_logger
+        self.gc_trigger = gc_trigger
 
         self.video_folder = os.path.abspath(video_folder)
         if os.path.isdir(self.video_folder):
@@ -310,7 +323,7 @@ class RecordVideo(
         assert self.recording, "Cannot capture a frame, recording wasn't started."
 
         frame = self.env.render()
-        if isinstance(frame, List):
+        if isinstance(frame, list):
             if len(frame) == 0:  # render was called
                 return
             self.render_history += frame
@@ -363,7 +376,7 @@ class RecordVideo(
     def render(self) -> RenderFrame | list[RenderFrame]:
         """Compute the render frames as specified by render_mode attribute during initialization of the environment."""
         render_out = super().render()
-        if self.recording and isinstance(render_out, List):
+        if self.recording and isinstance(render_out, list):
             self.recorded_frames += render_out
 
         if len(self.render_history) > 0:
@@ -409,6 +422,9 @@ class RecordVideo(
         self.recorded_frames = []
         self.recording = False
         self._video_name = None
+
+        if self.gc_trigger and self.gc_trigger(self.episode_id):
+            gc.collect()
 
     def __del__(self):
         """Warn the user in case last video wasn't saved."""
@@ -562,3 +578,175 @@ class HumanRendering(
             pygame.display.quit()
             pygame.quit()
         super().close()
+
+
+class AddWhiteNoise(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
+    """Randomly replaces pixels with white noise.
+
+    If used with ``render_mode="rgb_array"`` and ``AddRenderObservation``, it will
+    make observations noisy.
+    The environment may also become partially-observable, turning the MDP into a POMDP.
+
+    Example - Every pixel will be replaced by white noise with probability 0.5:
+        >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
+        >>> env = AddWhiteNoise(env, probability_of_noise_per_pixel=0.5)
+        >>> env = HumanRendering(env)
+        >>> obs, _ = env.reset(seed=123)
+        >>> obs, *_ = env.step(env.action_space.sample())
+    """
+
+    def __init__(
+        self,
+        env: gym.Env[ObsType, ActType],
+        probability_of_noise_per_pixel: float,
+        is_noise_grayscale: bool = False,
+    ):
+        """Wrapper replaces random pixels with white noise.
+
+        Args:
+            env: The environment that is being wrapped
+            probability_of_noise_per_pixel: the probability that a pixel is white noise
+            is_noise_grayscale: if True, RGB noise is converted to grayscale
+        """
+        if not 0 <= probability_of_noise_per_pixel < 1:
+            raise InvalidProbability(
+                f"probability_of_noise_per_pixel should be in the interval [0,1). Received {probability_of_noise_per_pixel}"
+            )
+
+        gym.utils.RecordConstructorArgs.__init__(
+            self,
+            probability_of_noise_per_pixel=probability_of_noise_per_pixel,
+            is_noise_grayscale=is_noise_grayscale,
+        )
+        gym.Wrapper.__init__(self, env)
+
+        self.probability_of_noise_per_pixel = probability_of_noise_per_pixel
+        self.is_noise_grayscale = is_noise_grayscale
+
+    def render(self) -> RenderFrame:
+        """Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise."""
+        render_out = super().render()
+
+        if self.is_noise_grayscale:
+            noise = (
+                self.np_random.integers(
+                    (0, 0, 0),
+                    255 * np.array([0.2989, 0.5870, 0.1140]),
+                    size=render_out.shape,
+                    dtype=np.uint8,
+                )
+                .sum(-1, keepdims=True)
+                .repeat(3, -1)
+            )
+        else:
+            noise = self.np_random.integers(
+                0,
+                255,
+                size=render_out.shape,
+                dtype=np.uint8,
+            )
+
+        mask = (
+            self.np_random.random(render_out.shape[0:2])
+            < self.probability_of_noise_per_pixel
+        )
+
+        return np.where(mask[..., None], noise, render_out)
+
+
+class ObstructView(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
+    """Randomly obstructs rendering with white noise patches.
+
+    If used with ``render_mode="rgb_array"`` and ``AddRenderObservation``, it will
+    make observations noisy.
+    The number of patches depends on how many pixels we want to obstruct.
+    Depending on the size of the patches, the environment may become
+    partially-observable, turning the MDP into a POMDP.
+
+    Example - Obstruct 50% of the pixels with patches of size 50x50 pixels:
+        >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
+        >>> env = ObstructView(env, obstructed_pixels_ratio=0.5, obstruction_width=50)
+        >>> env = HumanRendering(env)
+        >>> obs, _ = env.reset(seed=123)
+        >>> obs, *_ = env.step(env.action_space.sample())
+    """
+
+    def __init__(
+        self,
+        env: gym.Env[ObsType, ActType],
+        obstructed_pixels_ratio: float,
+        obstruction_width: int,
+        is_noise_grayscale: bool = False,
+    ):
+        """Wrapper obstructs pixels with white noise patches.
+
+        Args:
+            env: The environment that is being wrapped
+            obstructed_pixels_ratio: the percentage of pixels obstructed with white noise
+            obstruction_width: the width of the obstruction patches
+            is_noise_grayscale: if True, RGB noise is converted to grayscale
+        """
+        if not 0 <= obstructed_pixels_ratio < 1:
+            raise ValueError(
+                f"obstructed_pixels_ratio should be in the interval [0,1). Received {obstructed_pixels_ratio}"
+            )
+
+        if obstruction_width < 1:
+            raise ValueError(
+                f"obstruction_width should be larger or equal than 1. Received {obstruction_width}"
+            )
+
+        gym.utils.RecordConstructorArgs.__init__(
+            self,
+            obstructed_pixels_ratio=obstructed_pixels_ratio,
+            obstruction_width=obstruction_width,
+            is_noise_grayscale=is_noise_grayscale,
+        )
+        gym.Wrapper.__init__(self, env)
+
+        self.obstruction_centers_ratio = obstructed_pixels_ratio / obstruction_width**2
+        self.obstruction_width = obstruction_width
+        self.is_noise_grayscale = is_noise_grayscale
+
+    def render(self) -> RenderFrame:
+        """Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise patches."""
+        render_out = super().render()
+
+        render_shape = render_out.shape
+        n_pixels = render_shape[0] * render_shape[1]
+        n_obstructions = int(n_pixels * self.obstruction_centers_ratio)
+        centers = self.np_random.integers(0, n_pixels, n_obstructions)
+        centers = np.unravel_index(centers, (render_shape[0], render_shape[1]))
+        mask = np.zeros((render_shape[0], render_shape[1]), dtype=bool)
+        low = self.obstruction_width // 2
+        high = self.obstruction_width - low
+        for x, y in zip(*centers):
+            mask[
+                max(x - low, 0) : min(x + high, render_shape[0]),
+                max(y - low, 0) : min(y + high, render_shape[1]),
+            ] = True
+
+        if self.is_noise_grayscale:
+            noise = (
+                self.np_random.integers(
+                    (0, 0, 0),
+                    255 * np.array([0.2989, 0.5870, 0.1140]),
+                    size=render_out.shape,
+                    dtype=np.uint8,
+                )
+                .sum(-1, keepdims=True)
+                .repeat(3, -1)
+            )
+        else:
+            noise = self.np_random.integers(
+                0,
+                255,
+                size=render_out.shape,
+                dtype=np.uint8,
+            )
+
+        return np.where(mask[..., None], noise, render_out)

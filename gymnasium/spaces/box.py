@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Iterable, Mapping, Sequence, SupportsFloat
+from collections.abc import Iterable, Mapping, Sequence
+from typing import Any, SupportsFloat
 
 import numpy as np
 from numpy.typing import NDArray
@@ -342,7 +343,7 @@ class Box(Space[NDArray[Any]]):
                 f"manner is not in {{'below', 'above', 'both'}}, actual value: {manner}"
             )
 
-    def sample(self, mask: None = None) -> NDArray[Any]:
+    def sample(self, mask: None = None, probability: None = None) -> NDArray[Any]:
         r"""Generates a single random sample inside the Box.
 
         In creating a sample of the box, each coordinate is sampled (independently) from a distribution
@@ -355,6 +356,7 @@ class Box(Space[NDArray[Any]]):
 
         Args:
             mask: A mask for sampling values from the Box space, currently unsupported.
+            probability: A probability mask for sampling values from the Box space, currently unsupported.
 
         Returns:
             A sampled value from the Box
@@ -362,6 +364,10 @@ class Box(Space[NDArray[Any]]):
         if mask is not None:
             raise gym.error.Error(
                 f"Box.sample cannot be provided a mask, actual value: {mask}"
+            )
+        elif probability is not None:
+            raise gym.error.Error(
+                f"Box.sample cannot be provided a probability mask, actual value: {probability}"
             )
 
         high = self.high if self.dtype.kind == "f" else self.high.astype("int64") + 1

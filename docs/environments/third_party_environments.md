@@ -48,6 +48,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 ### Autonomous Driving environments
 *Autonomous Vehicle and traffic management.*
 
+- [BlueSky-Gym: Reinforcement Learning Environments for Air Traffic Applications](https://github.com/TUDelft-CNS-ATM/bluesky-gym)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/TUDelft-CNS-ATM/bluesky-gym)
+
+  A collection of Gymnasium environments for air traffic management tasks, allowing for both civil and urban aviation applications. Build on the open-source air traffic simulator [BlueSky](https://github.com/TUDelft-CNS-ATM/bluesky).
+
 - [gym-electric-motor: Gym environments for electric motor simulations](https://github.com/upb-lea/gym-electric-motor)
 
   An environment for simulating a wide variety of electric drives taking into account different types of electric motors and converters.
@@ -104,6 +111,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
 ### Game environments
 *Board Games, Video Games and all other interactive entrainment mediums.*
+
+- [Advanced Minesweeper Environment](https://github.com/markov-labs/RL-Minesweeper)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.1.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/markov-labs/RL-Minesweeper)
+
+  This is a custom minesweeper gymnasium environment that allows for an optional custom mask for added complexity. Fully customizable with board size, mine density and custom masks.
 
 - [Craftium: an extensible framework for creating RL environments](https://github.com/mikelma/craftium)
 
@@ -253,7 +267,12 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Highly scalable and customizable Safe Reinforcement Learning library.
 
+- [deformable_gym: RL environments for grasping deformable objects](https://github.com/dfki-ric/deformable_gym)
 
+  A collection of gymnasium environments for learning to grasp 3D deformable objects built with PyBullet and Mujoco.
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.0.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/dfki-ric/deformable_gym)
 ### Telecommunication Systems environments
 *Interact and/or manage wireless and/or wired telecommunication systems.*
 - [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
@@ -299,6 +318,15 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![GitHub stars](https://img.shields.io/github/stars/sparisi/gym_gridworlds)
 
   The default class implements a "go-to goal", but it can be easily customized for different tasks, with a variety of grids, rewards, dynamics, and tasks. It supports different observation types (discrete, coordinates, binary, pixels, partial). Useful for quickly testing and prototyping RL algorithms, both tabular and with function approximation.
+
+- [Gym4ReaL](https://github.com/Daveonwave/gym4ReaL)
+
+   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.1.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/Daveonwave/gym4ReaL)
+
+
+  Gym4ReaL is a comprehensive suite of realistic environments designed to support the development and evaluation of RL algorithms that can operate in real-world scenarios.
+The suite includes a diverse set of tasks exposing RL algorithms to a variety of practical challenges, such as water management, energy management in microgrids, financial trading, and more.
 
 - [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
 

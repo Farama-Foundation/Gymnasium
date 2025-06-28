@@ -2,15 +2,18 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import Any, Callable, Sequence
+from typing import Any
 
 import numpy as np
 
 from gymnasium import Space
-from gymnasium.core import Env, ObsType
+from gymnasium.core import ActType, Env, ObsType
+from gymnasium.logger import warn
 from gymnasium.vector import VectorEnv, VectorObservationWrapper
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
+from gymnasium.vector.vector_env import ArrayType, AutoresetMode
 from gymnasium.wrappers import transform_observation
 
 
@@ -55,18 +58,35 @@ class TransformObservation(VectorObservationWrapper):
         env: VectorEnv,
         func: Callable[[ObsType], Any],
         observation_space: Space | None = None,
+        single_observation_space: Space | None = None,
     ):
         """Constructor for the transform observation wrapper.
 
         Args:
             env: The vector environment to wrap
             func: A function that will transform the vector observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an ``observation_space``.
-            observation_space: The observation spaces of the wrapper, if None, then it is assumed the same as ``env.observation_space``.
+            observation_space: The observation spaces of the wrapper. If None, then it is computed from ``single_observation_space``. If ``single_observation_space`` is not provided either, then it is assumed to be the same as ``env.observation_space``.
+            single_observation_space: The observation space of the non-vectorized environment. If None, then it is assumed the same as ``env.single_observation_space``.
         """
         super().__init__(env)
 
-        if observation_space is not None:
+        if observation_space is None:
+            if single_observation_space is not None:
+                self.single_observation_space = single_observation_space
+                self.observation_space = batch_space(
+                    single_observation_space, self.num_envs
+                )
+        else:
             self.observation_space = observation_space
+            if single_observation_space is not None:
+                self._single_observation_space = single_observation_space
+            # TODO: We could compute single_observation_space from the observation_space if only the latter is provided and avoid the warning below.
+        if self.observation_space != batch_space(
+            self.single_observation_space, self.num_envs
+        ):
+            warn(
+                f"For {env}, the observation space and the batched single observation space don't match as expected, observation_space={env.observation_space}, batched single_observation_space={batch_space(self.single_observation_space, self.num_envs)}"
+            )
 
         self.func = func
 
@@ -138,6 +158,15 @@ class VectorizeTransformObservation(VectorObservationWrapper):
         """
         super().__init__(env)
 
+        if "autoreset_mode" not in env.metadata:
+            warn(
+                f"Vector environment ({env}) is missing `autoreset_mode` metadata key."
+            )
+            self.autoreset_mode = AutoresetMode.NEXT_STEP
+        else:
+            assert isinstance(env.metadata["autoreset_mode"], AutoresetMode)
+            self.autoreset_mode = env.metadata["autoreset_mode"]
+
         self.wrapper = wrapper(
             self._SingleEnv(self.env.single_observation_space), **kwargs
         )
@@ -148,6 +177,24 @@ class VectorizeTransformObservation(VectorObservationWrapper):
 
         self.same_out = self.observation_space == self.env.observation_space
         self.out = create_empty_array(self.single_observation_space, self.num_envs)
+
+    def step(
+        self, actions: ActType
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        """Steps through the vector environments, transforming the observation and for final obs individually transformed."""
+        obs, rewards, terminations, truncations, infos = self.env.step(actions)
+        obs = self.observations(obs)
+
+        if self.autoreset_mode == AutoresetMode.SAME_STEP and "final_obs" in infos:
+            final_obs = infos["final_obs"]
+
+            for i, (sub_obs, has_final_obs) in enumerate(
+                zip(final_obs, infos["_final_obs"])
+            ):
+                if has_final_obs:
+                    final_obs[i] = self.wrapper.observation(sub_obs)
+
+        return obs, rewards, terminations, truncations, infos
 
     def observations(self, observations: ObsType) -> ObsType:
         """Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again."""

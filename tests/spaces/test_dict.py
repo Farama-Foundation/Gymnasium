@@ -37,8 +37,22 @@ def test_dict_init():
         assert a == b == c == d
     assert len(caught_warnings) == 0
 
+    # test sorting
     with warnings.catch_warnings(record=True) as caught_warnings:
-        Dict({1: Discrete(2), "a": Discrete(3)})
+        # Sorting is applied to the keys
+        a = Dict({"b": Box(low=0.0, high=1.0), "a": Discrete(2)})
+        assert a.keys() == {"a", "b"}
+
+        # Sorting is not applied to the keys
+        b = Dict(OrderedDict(b=Box(low=0.0, high=1.0), a=Discrete(2)))
+        c = Dict((("b", Box(low=0.0, high=1.0)), ("a", Discrete(2))))
+        d = Dict(b=Box(low=0.0, high=1.0), a=Discrete(2))
+        assert b.keys() == c.keys() == d.keys() == {"b", "a"}
+    assert len(caught_warnings) == 0
+
+    # test sorting with different classes
+    with warnings.catch_warnings(record=True) as caught_warnings:
+        assert Dict({1: Discrete(2), "a": Discrete(3)}).keys() == {1, "a"}
     assert len(caught_warnings) == 0
 
 
@@ -156,3 +170,146 @@ def test_keys_contains():
     assert "a" in space.keys()
 
     assert "c" not in space.keys()
+
+
+def test_sample_with_mask():
+    """Test the sample method with valid masks."""
+    space = Dict(
+        {
+            "a": Discrete(5),
+            "b": Box(low=0, high=1, shape=(2,)),
+        }
+    )
+
+    mask = {
+        "a": np.array(
+            [0, 1, 0, 0, 0], dtype=np.int8
+        ),  # Only allow sampling the value 1
+        "b": None,  # No mask for Box space
+    }
+
+    for _ in range(10):
+        sample = space.sample(mask=mask)
+        assert sample["a"] == 1  # Discrete space should only return 1
+        assert space["b"].contains(sample["b"])
+
+
+def test_sample_with_probability():
+    """Test the sample method with valid probabilities."""
+    space = Dict(
+        {
+            "a": Discrete(3),
+            "b": Box(low=0, high=1, shape=(2,)),
+        }
+    )
+
+    probability = {
+        "a": np.array(
+            [0.1, 0.7, 0.2], dtype=np.float64
+        ),  # Sampling probabilities for Discrete space
+        "b": None,  # No probability for Box space
+    }
+
+    samples = [space.sample(probability=probability)["a"] for _ in range(1000)]
+
+    # Check that the sampling roughly follows the probability distribution
+    counts = np.bincount(samples, minlength=3) / len(samples)
+    np.testing.assert_almost_equal(counts, probability["a"], decimal=1)
+
+
+def test_sample_with_invalid_mask():
+    """Test the sample method with an invalid mask."""
+    space = Dict(
+        {
+            "a": Discrete(5),
+            "b": Box(low=0, high=1, shape=(2,)),
+        }
+    )
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The expected shape of the sample mask is (5,), actual shape: (3,)"
+        ),
+    ):
+        space.sample(
+            mask={
+                "a": np.array([1, 0, 0], dtype=np.int8),  # Length mismatch
+                "b": None,
+            }
+        )
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The expected dtype of the sample mask is np.int8, actual dtype: float32"
+        ),
+    ):
+        space.sample(
+            mask={
+                "a": np.array([1, 0, 0, 1, 1], dtype=np.float32),  # dtype mismatch
+                "b": None,
+            }
+        )
+
+
+def test_sample_with_invalid_probability():
+    """Test the sample method with an invalid probability."""
+    space = Dict(
+        {
+            "a": Discrete(5),
+            "b": Box(low=0, high=1, shape=(2,)),
+        }
+    )
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The expected shape of the sample probability is (5,), actual shape: (2,)"
+        ),
+    ):
+        space.sample(
+            probability={
+                "a": np.array([0.5, 0.5], dtype=np.float64),  # Length mismatch
+                "b": None,
+            }
+        )
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The expected dtype of the sample probability is np.float64, actual dtype: int8"
+        ),
+    ):
+        space.sample(
+            probability={
+                "a": np.array([0.5, 0.5], dtype=np.int8),  # dtype mismatch
+                "b": None,
+            }
+        )
+
+
+def test_sample_with_mask_and_probability():
+    """Ensure an error is raised when both mask and probability are provided."""
+    space = Dict(
+        {
+            "a": Discrete(3),
+            "b": Box(low=0, high=1, shape=(2,)),
+        }
+    )
+
+    mask = {
+        "a": np.array([1, 0, 1], dtype=np.int8),
+        "b": None,
+    }
+
+    probability = {
+        "a": np.array([0.5, 0.2, 0.3], dtype=np.float64),
+        "b": None,
+    }
+
+    with pytest.raises(
+        ValueError,
+        match=re.escape("Only one of `mask` or `probability` can be provided"),
+    ):
+        space.sample(mask=mask, probability=probability)

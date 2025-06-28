@@ -58,7 +58,13 @@ from gymnasium.wrappers.common import (
     RecordEpisodeStatistics,
     TimeLimit,
 )
-from gymnasium.wrappers.rendering import HumanRendering, RecordVideo, RenderCollection
+from gymnasium.wrappers.rendering import (
+    AddWhiteNoise,
+    HumanRendering,
+    ObstructView,
+    RecordVideo,
+    RenderCollection,
+)
 from gymnasium.wrappers.stateful_action import StickyAction
 from gymnasium.wrappers.stateful_observation import (
     DelayObservation,
@@ -122,10 +128,13 @@ __all__ = [
     "OrderEnforcing",
     "RecordEpisodeStatistics",
     # --- Rendering ---
+    "AddWhiteNoise",
+    "ObstructView",
     "RenderCollection",
     "RecordVideo",
     "HumanRendering",
     # --- Conversion ---
+    "ArrayConversion",
     "JaxToNumpy",
     "JaxToTorch",
     "NumpyToTorch",
@@ -135,6 +144,7 @@ __all__ = [
 #   to avoid `import jax` or `import torch` on `import gymnasium`.
 _wrapper_to_class = {
     # data converters
+    "ArrayConversion": "array_conversion",
     "JaxToNumpy": "jax_to_numpy",
     "JaxToTorch": "jax_to_torch",
     "NumpyToTorch": "numpy_to_torch",
