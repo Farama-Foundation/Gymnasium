@@ -9,6 +9,7 @@
 * ``RescaleObservation`` - Rescales an observation to between a minimum and maximum value
 * ``DtypeObservation`` - Convert an observation to a dtype
 * ``RenderObservation`` - Allows the observation to the rendered frame
+* ``DiscretizeObservation`` - Discretize a continuous Box observation space into a single Discrete space
 """
 
 from __future__ import annotations
@@ -34,6 +35,7 @@ __all__ = [
     "RescaleObservation",
     "DtypeObservation",
     "AddRenderObservation",
+    "DiscretizeObservation",
 ]
 
 from gymnasium.wrappers.utils import rescale_box
@@ -682,3 +684,83 @@ class AddRenderObservation(
                 func=lambda obs: {obs_key: obs, render_key: self.render()},
                 observation_space=obs_space,
             )
+
+
+class DiscretizeObservation(
+    TransformObservation[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
+    """Discretizes a continuous Box observation space into a single Discrete space.
+
+    Example - Discretize MountainCar observation space:
+        >>> env = gym.make("MountainCar-v0")
+        >>> env.observation_space
+        Box([-1.2  -0.07], [0.6  0.07], (2,), float32)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs
+        array([-0.4452088,  0.       ], dtype=float32)
+        >>> env = DiscretizeObservation(env, bins=10)
+        >>> env.observation_space
+        Discrete(100)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs
+        45
+    """
+
+    def __init__(
+        self,
+        env: gym.Env[ObsType, ActType],
+        bins: int | tuple[int, ...],
+    ):
+        """Constructor for the discretize observation wrapper.
+
+        Args:
+            env: The environment to wrap.
+            bins: int or list of ints (number of bins per dimension).
+        """
+
+        if not isinstance(env.observation_space, spaces.Box):
+            raise TypeError(
+                "DiscretizeObservation is only compatible with Box continuous observations."
+            )
+
+        self.low = env.observation_space.low
+        self.high = env.observation_space.high
+        self.n_dims = self.low.shape[0]
+
+        if not (np.all(np.isfinite(self.low)) and np.all(np.isfinite(self.high))):
+            raise ValueError(
+                "Discretization requires observation space to be finite. "
+                f"Found: low={self.low}, high={self.high}"
+            )
+
+        gym.utils.RecordConstructorArgs.__init__(self, bins=bins)
+        gym.ObservationWrapper.__init__(self, env)
+
+        if isinstance(bins, int):
+            self.bins = np.array([bins] * self.n_dims)
+        else:
+            assert len(bins) == self.n_dims, "bins must match observation dimensions"
+            self.bins = np.array(bins)
+
+        self.bin_edges = [
+            np.linspace(self.low[i], self.high[i], self.bins[i] + 1)[1:-1]
+            for i in range(self.n_dims)
+        ]
+
+        self.observation_space = spaces.Discrete(np.prod(self.bins))
+
+    def observation(self, observation):
+        indices = [
+            min(max(int(np.digitize(obs_i, self.bin_edges[i])), 0), self.bins[i] - 1)
+            for i, obs_i in enumerate(observation)
+        ]
+        flat_index = self._flatten_indices(indices)
+        return flat_index
+
+    def _flatten_indices(self, indices):
+        flat_index = 0
+        for i in range(self.n_dims):
+            flat_index *= self.bins[i]
+            flat_index += indices[i]
+        return flat_index

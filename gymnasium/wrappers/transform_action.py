@@ -2,6 +2,7 @@
 
 * ``TransformAction`` - Transforms the actions based on a function
 * ``ClipAction`` - Clips the action within a bounds
+* ``DiscretizeAction`` - Discretizes a continuous Box action space into a single Discrete space
 * ``RescaleAction`` - Rescales the action within a minimum and maximum actions
 """
 
@@ -13,7 +14,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType, WrapperActType
-from gymnasium.spaces import Box, Space
+from gymnasium.spaces import Box, Discrete, Space
 
 
 __all__ = ["TransformAction", "ClipAction", "RescaleAction"]
@@ -178,3 +179,104 @@ class RescaleAction(
             func=func,
             action_space=act_space,
         )
+
+
+class DiscretizeAction(
+    TransformAction[ObsType, WrapperActType, ActType],
+    gym.utils.RecordConstructorArgs,
+):
+    """Discretizes a continuous Box action space into a single Discrete space.
+
+    Example 1 - Discretize Pendulum action space:
+        >>> env = gym.make("Pendulum-v1")
+        >>> env.action_space
+        Box(-2.0, 2.0, (1,), float32)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs, *_ = env.step([-0.6])
+        >>> obs
+        array([-0.17606162,  0.9843792 ,  0.5292768 ], dtype=float32)
+        >>> env = DiscretizeAction(env, bins=10)
+        >>> env.action_space
+        Discrete(10)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs, *_ = env.step(3)
+        >>> obs
+        array([-0.17606162,  0.9843792 ,  0.5292768 ], dtype=float32)
+
+    Example 2 - Discretize Reacher action space:
+        >>> env = gym.make("Reacher-v5")
+        >>> env.action_space
+        Box(-1.0, 1.0, (2,), float32)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs, *_ = env.step([-0.3, -0.5])
+        >>> obs
+        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
+        0.11442572, -1.18958125, -1.97979484,  0.1054461 , -0.10896341])
+        >>> env = DiscretizeAction(env, bins=10)
+        >>> env.action_space
+        Discrete(100)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs, *_ = env.step(32)
+        >>> obs
+        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
+        0.11442572, -1.1895813 , -1.97979484,  0.1054461 , -0.10896341])
+    """
+
+    def __init__(
+        self,
+        env: gym.Env[ObsType, ActType],
+        bins: int | tuple[int, ...],
+    ):
+        """Constructor for the discretize action wrapper.
+
+        Args:
+            env: The environment to wrap.
+            bins: int or list of ints (number of bins per dimension).
+        """
+
+        if not isinstance(env.action_space, Box):
+            raise TypeError(
+                "DiscretizeAction is only compatible with Box continuous actions."
+            )
+
+        self.low = env.action_space.low
+        self.high = env.action_space.high
+        self.n_dims = self.low.shape[0]
+
+        if not (np.all(np.isfinite(self.low)) and np.all(np.isfinite(self.high))):
+            raise ValueError(
+                "Discretization requires action space to be finite. "
+                f"Found: low={self.low}, high={self.high}"
+            )
+
+        gym.utils.RecordConstructorArgs.__init__(self, bins=bins)
+        gym.ActionWrapper.__init__(self, env)
+
+        if isinstance(bins, int):
+            self.bins = np.array([bins] * self.n_dims)
+        else:
+            assert len(bins) == self.n_dims, "bins must match action dimensions"
+            self.bins = np.array(bins)
+
+        self.bin_centers = [
+            0.5 * (np.linspace(self.low[i], self.high[i], self.bins[i] + 1)[:-1] +
+                   np.linspace(self.low[i], self.high[i], self.bins[i] + 1)[1:])
+            for i in range(self.n_dims)
+        ]
+
+        self.action_space = Discrete(np.prod(self.bins))
+
+    def action(self, flat_index):
+        indices = self._unflatten_index(flat_index)
+        centers = [
+            self.bin_centers[i][min(max(idx, 0), self.bins[i] - 1)]
+            for i, idx in enumerate(indices)
+        ]
+        return np.array(centers, dtype=np.float32)
+
+    def _unflatten_index(self, flat_index):
+        indices = []
+        for b in reversed(self.bins):
+            indices.append(flat_index % b)
+            flat_index //= b
+        return list(reversed(indices))
