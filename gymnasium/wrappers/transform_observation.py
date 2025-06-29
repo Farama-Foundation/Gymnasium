@@ -731,7 +731,7 @@ class DiscretizeObservation(
 
         Args:
             env: The environment to wrap.
-            bins: int or list of ints (number of bins per dimension).
+            bins: int or tuple of ints (number of bins per dimension).
         """
         if not isinstance(env.observation_space, spaces.Box):
             raise TypeError(
@@ -765,17 +765,28 @@ class DiscretizeObservation(
         self.observation_space = spaces.Discrete(np.prod(self.bins))
 
     def observation(self, observation):
-        """Discretize the observation."""
+        """Discretizes the observation."""
         # np.digitize returns len(bins) if the input exceeds the last edge.
         # If an observation is exactly equal to the high bound, the resulting
         # index could be out of range for the number of bins.
-        # Solution: clip to ensure 0 <= index < bins[i].
+        # Solution: clip to ensure 0 <= index < bins[i], and add a small margin
+        # to prevent precision issues.
+        clipped = np.clip(observation, self.low, self.high - 1e-8)
         indices = [
-            min(max(int(np.digitize(obs_i, self.bin_edges[i])), 0), self.bins[i] - 1)
-            for i, obs_i in enumerate(observation)
+            int(np.digitize(clipped[i], self.bin_edges[i])) for i in range(self.n_dims)
         ]
-        flat_index = self._flatten_indices(indices)
-        return flat_index
+        return self._flatten_indices(indices)
+
+    def revert_observation(self, flat_index):
+        """Reverts discretization. It returns the edges of the bin the discretized observation belongs to."""
+        indices = self._unflatten_index(flat_index)
+        lows = []
+        highs = []
+        for i, idx in enumerate(indices):
+            edges = np.linspace(self.low[i], self.high[i], self.bins[i] + 1)
+            lows.append(edges[idx])
+            highs.append(edges[idx + 1])
+        return np.array(lows, dtype=np.float32), np.array(highs, dtype=np.float32)
 
     def _flatten_indices(self, indices):
         flat_index = 0
@@ -783,3 +794,10 @@ class DiscretizeObservation(
             flat_index *= self.bins[i]
             flat_index += indices[i]
         return flat_index
+
+    def _unflatten_index(self, flat_index):
+        indices = []
+        for b in reversed(self.bins):
+            indices.insert(0, flat_index % b)
+            flat_index //= b
+        return indices
