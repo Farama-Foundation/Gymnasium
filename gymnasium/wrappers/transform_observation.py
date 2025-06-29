@@ -742,7 +742,7 @@ class DiscretizeObservation(
         self.high = env.observation_space.high
         self.n_dims = self.low.shape[0]
 
-        if not (np.all(np.isfinite(self.low)) and np.all(np.isfinite(self.high))):
+        if np.any(np.isinf(self.low)) or np.any(np.isinf(self.high)):
             raise ValueError(
                 "Discretization requires observation space to be finite. "
                 f"Found: low={self.low}, high={self.high}"
