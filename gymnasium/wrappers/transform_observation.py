@@ -9,6 +9,7 @@
 * ``RescaleObservation`` - Rescales an observation to between a minimum and maximum value
 * ``DtypeObservation`` - Convert an observation to a dtype
 * ``RenderObservation`` - Allows the observation to the rendered frame
+* ``DiscretizeObservation`` - Discretize a continuous Box observation space into a single Discrete space
 """
 
 from __future__ import annotations
@@ -34,6 +35,7 @@ __all__ = [
     "RescaleObservation",
     "DtypeObservation",
     "AddRenderObservation",
+    "DiscretizeObservation",
 ]
 
 from gymnasium.wrappers.utils import rescale_box
@@ -682,3 +684,120 @@ class AddRenderObservation(
                 func=lambda obs: {obs_key: obs, render_key: self.render()},
                 observation_space=obs_space,
             )
+
+
+class DiscretizeObservation(
+    TransformObservation[WrapperObsType, ActType, ObsType],
+    gym.utils.RecordConstructorArgs,
+):
+    """Discretizes a continuous Box observation space into a single Discrete space.
+
+    Example 1 - Discretize MountainCar observation space:
+        >>> env = gym.make("MountainCar-v0")
+        >>> env.observation_space
+        Box([-1.2  -0.07], [0.6  0.07], (2,), float32)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs
+        array([-0.4452088,  0.       ], dtype=float32)
+        >>> env = DiscretizeObservation(env, bins=10)
+        >>> env.observation_space
+        Discrete(100)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs
+        45
+
+    Example 2 - Discretize LunarLander observation space:
+        >>> env = gym.make("LunarLander-v3")
+        >>> env.observation_space
+        Box([ -2.5  -2.5  -10.  -10.  -6.2831855 -10.  -0.  -0. ],
+            [  2.5   2.5   10.   10.   6.2831855  10.   1.   1. ], (8,), float32)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs
+        array([ 0.00229702, 1.4181306, 0.2326471, 0.3204666 , -0.00265488, -0.05269805, 0., 0. ], dtype=float32)
+        >>> env = DiscretizeObservation(env, bins=10)
+        >>> env.observation_space
+        Discrete(6561)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs
+        4005
+    """
+
+    def __init__(
+        self,
+        env: gym.Env[ObsType, ActType],
+        bins: int | tuple[int, ...],
+    ):
+        """Constructor for the discretize observation wrapper.
+
+        Args:
+            env: The environment to wrap.
+            bins: int or tuple of ints (number of bins per dimension).
+        """
+        if not isinstance(env.observation_space, spaces.Box):
+            raise TypeError(
+                "DiscretizeObservation is only compatible with Box continuous observations."
+            )
+
+        self.low = env.observation_space.low
+        self.high = env.observation_space.high
+        self.n_dims = self.low.shape[0]
+
+        if np.any(np.isinf(self.low)) or np.any(np.isinf(self.high)):
+            raise ValueError(
+                "Discretization requires observation space to be finite. "
+                f"Found: low={self.low}, high={self.high}"
+            )
+
+        gym.utils.RecordConstructorArgs.__init__(self, bins=bins)
+        gym.ObservationWrapper.__init__(self, env)
+
+        if isinstance(bins, int):
+            self.bins = np.array([bins] * self.n_dims)
+        else:
+            assert len(bins) == self.n_dims, "bins must match observation dimensions"
+            self.bins = np.array(bins)
+
+        self.bin_edges = [
+            np.linspace(self.low[i], self.high[i], self.bins[i] + 1)[1:-1]
+            for i in range(self.n_dims)
+        ]
+
+        self.observation_space = spaces.Discrete(np.prod(self.bins))
+
+    def observation(self, observation):
+        """Discretizes the observation."""
+        # np.digitize returns len(bins) if the input exceeds the last edge.
+        # If an observation is exactly equal to the high bound, the resulting
+        # index could be out of range for the number of bins.
+        # Solution: clip to ensure 0 <= index < bins[i], and add a small margin
+        # to prevent precision issues.
+        clipped = np.clip(observation, self.low, self.high - 1e-8)
+        indices = [
+            int(np.digitize(clipped[i], self.bin_edges[i])) for i in range(self.n_dims)
+        ]
+        return self._flatten_indices(indices)
+
+    def revert_observation(self, flat_index):
+        """Reverts discretization. It returns the edges of the bin the discretized observation belongs to."""
+        indices = self._unflatten_index(flat_index)
+        lows = []
+        highs = []
+        for i, idx in enumerate(indices):
+            edges = np.linspace(self.low[i], self.high[i], self.bins[i] + 1)
+            lows.append(edges[idx])
+            highs.append(edges[idx + 1])
+        return np.array(lows, dtype=np.float32), np.array(highs, dtype=np.float32)
+
+    def _flatten_indices(self, indices):
+        flat_index = 0
+        for i in range(self.n_dims):
+            flat_index *= self.bins[i]
+            flat_index += indices[i]
+        return flat_index
+
+    def _unflatten_index(self, flat_index):
+        indices = []
+        for b in reversed(self.bins):
+            indices.insert(0, flat_index % b)
+            flat_index //= b
+        return indices
