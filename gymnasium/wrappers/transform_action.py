@@ -231,7 +231,7 @@ class DiscretizeAction(
 
         Args:
             env: The environment to wrap.
-            bins: int or list of ints (number of bins per dimension).
+            bins: int or tuple of ints (number of bins per dimension).
         """
         if not isinstance(env.action_space, Box):
             raise TypeError(
@@ -269,13 +269,21 @@ class DiscretizeAction(
         self.action_space = Discrete(np.prod(self.bins))
 
     def action(self, flat_index):
-        """Discretize the action."""
+        """Discretizes the action."""
         indices = self._unflatten_index(flat_index)
         centers = [
             self.bin_centers[i][min(max(idx, 0), self.bins[i] - 1)]
             for i, idx in enumerate(indices)
         ]
         return np.array(centers, dtype=np.float32)
+
+    def revert_action(self, action):
+        """Converts a continuous action to nearest discrete bin."""
+        indices = [
+            np.argmin(np.abs(self.bin_centers[i] - action[i]))
+            for i in range(self.n_dims)
+        ]
+        return np.ravel_multi_index(indices, self.bins)
 
     def _unflatten_index(self, flat_index):
         indices = []
