@@ -1,3 +1,5 @@
+"""Test suite for DiscretizeObservation wrapper."""
+
 import numpy as np
 import pytest
 
