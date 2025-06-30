@@ -709,11 +709,13 @@ class DiscretizeObservation(
     Example 2 - Discretize LunarLander observation space:
         >>> env = gym.make("LunarLander-v3")
         >>> env.observation_space
-        Box([ -2.5  -2.5  -10.  -10.  -6.2831855 -10.  -0.  -0. ],
-            [  2.5   2.5   10.   10.   6.2831855  10.   1.   1. ], (8,), float32)
+        Box([ -2.5        -2.5       -10.        -10.         -6.2831855 -10.
+          -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.
+          1.         1.       ], (8,), float32)
         >>> obs, _ = env.reset(seed=42)
         >>> obs
-        array([ 0.00229702, 1.4181306, 0.2326471, 0.3204666 , -0.00265488, -0.05269805, 0., 0. ], dtype=float32)
+        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,
+               -0.05269805,  0.        ,  0.        ], dtype=float32)
         >>> env = DiscretizeObservation(env, bins=10)
         >>> env.observation_space
         Discrete(6561)
