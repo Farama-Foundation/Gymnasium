@@ -777,7 +777,7 @@ class DiscretizeObservation(
         indices = [
             int(np.digitize(clipped[i], self.bin_edges[i])) for i in range(self.n_dims)
         ]
-        return self._flatten_indices(indices)
+        return int(self._flatten_indices(indices))
 
     def revert_observation(self, flat_index):
         """Reverts discretization. It returns the edges of the bin the discretized observation belongs to."""
@@ -788,7 +788,9 @@ class DiscretizeObservation(
             edges = np.linspace(self.low[i], self.high[i], self.bins[i] + 1)
             lows.append(edges[idx])
             highs.append(edges[idx + 1])
-        return np.array(lows, dtype=np.float32), np.array(highs, dtype=np.float32)
+        return np.array(lows, dtype=self.env.observation_space.dtype), np.array(
+            highs, dtype=self.env.observation_space.dtype
+        )
 
     def _flatten_indices(self, indices):
         flat_index = 0
