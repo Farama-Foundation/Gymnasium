@@ -254,7 +254,9 @@ class DiscretizeAction(
         if isinstance(bins, int):
             self.bins = np.array([bins] * self.n_dims)
         else:
-            assert len(bins) == self.n_dims, "bins must match action dimensions"
+            assert (
+                len(bins) == self.n_dims
+            ), f"bins must match action dimensions: expected {self.n_dims}, got {len(bins)}"
             self.bins = np.array(bins)
 
         self.bin_centers = [
