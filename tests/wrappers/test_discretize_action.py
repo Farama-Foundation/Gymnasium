@@ -20,6 +20,7 @@ def test_discretize_action_space_uniformity(dimensions):
     assert env_act.shape[0] == env.action_space.n
     assert np.all(env_act_discretized == np.arange(env.action_space.n))
 
+
 @pytest.mark.parametrize(
     "dimensions, bins",
     [
