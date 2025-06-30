@@ -12,12 +12,13 @@ from tests.testing_env import GenericTestEnv
 def test_discretize_observation_space_uniformity(dimensions):
     """Tests that the Box observation space is discretized uniformly."""
     env = GenericTestEnv(observation_space=Box(0, 99, shape=(dimensions,)))
-    env = DiscretizeObservation(env, 13)
-    env_obs = np.meshgrid(np.linspace(0, 99, 100), np.linspace(0, 99, 100))
-    env_obs = np.concatenate([o.flatten(order="F")[None] for o in env_obs], 0).T
+    n_bins = 7
+    env = DiscretizeObservation(env, n_bins)
+    env_obs = np.meshgrid(*(np.linspace(0, 99, n_bins) for _ in range(dimensions)))
+    env_obs = np.concatenate([o.flatten()[None] for o in env_obs], 0).T
+    env_obs_discretized = np.sort([env.observation(e) for e in env_obs])
     assert env_obs.shape[0] == env.observation_space.n
-    for i in range():
-        assert i == env.observation(env_obs[i])
+    assert np.all(env_obs_discretized == np.arange(env.observation_space.n))
 
 
 @pytest.mark.parametrize(
