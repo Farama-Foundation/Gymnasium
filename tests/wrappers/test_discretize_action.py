@@ -9,7 +9,7 @@ from tests.testing_env import GenericTestEnv
 
 
 @pytest.mark.parametrize("dimensions", [1, 2, 3, 5])
-def test_discretize_action_space(dimensions):
+def test_discretize_action_space_uniformity(dimensions):
     """Tests that the Box action space is discretized uniformly."""
     env = GenericTestEnv(action_space=Box(0, 99, shape=(dimensions,)))
     env = DiscretizeAction(env, 13)
@@ -29,7 +29,7 @@ def test_discretize_action_space(dimensions):
         (4, (3, 4, 5, 6)),
     ],
 )
-def test_discretize_action_space(dimensions, bins):
+def test_revert_discretize_action_space(dimensions, bins):
     """Tests that the action is discretized correctly within the bins."""
     env = GenericTestEnv(action_space=Box(0, 99, shape=(dimensions,)))
     env_discrete = DiscretizeAction(env, bins)
