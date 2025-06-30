@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 
-import gymnasium as gym
 from gymnasium.spaces import Box, Discrete
 from gymnasium.wrappers import DiscretizeObservation
 from tests.testing_env import GenericTestEnv
