@@ -211,7 +211,7 @@ class DiscretizeAction(
         >>> obs, *_ = env.step([-0.3, -0.5])
         >>> obs
         array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
-        0.11442572, -1.18958125, -1.97979484,  0.1054461 , -0.10896341])
+                0.11442572, -1.18958125, -1.97979484,  0.1054461 , -0.10896341])
         >>> env = DiscretizeAction(env, bins=10)
         >>> env.action_space
         Discrete(100)
@@ -219,7 +219,7 @@ class DiscretizeAction(
         >>> obs, *_ = env.step(32)
         >>> obs
         array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
-        0.11442572, -1.1895813 , -1.97979484,  0.1054461 , -0.10896341])
+                0.11442572, -1.1895813 , -1.97979484,  0.1054461 , -0.10896341])
     """
 
     def __init__(
@@ -277,7 +277,7 @@ class DiscretizeAction(
             self.bin_centers[i][min(max(idx, 0), self.bins[i] - 1)]
             for i, idx in enumerate(indices)
         ]
-        return np.array(centers, dtype=np.float32)
+        return np.array(centers, dtype=self.env.action_space.dtype)
 
     def revert_action(self, action):
         """Converts a continuous action to nearest discrete bin."""
