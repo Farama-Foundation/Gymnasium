@@ -1,3 +1,5 @@
+"""Test suite for DiscretizeAction wrapper."""
+
 import numpy as np
 import pytest
 
