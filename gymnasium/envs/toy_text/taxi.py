@@ -574,6 +574,7 @@ class TaxiEnv(Env):
             )
 
         if mode == "human":
+            pygame.event.pump()
             pygame.display.update()
             self.clock.tick(self.metadata["render_fps"])
         elif mode == "rgb_array":
