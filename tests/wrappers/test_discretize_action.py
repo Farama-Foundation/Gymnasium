@@ -12,13 +12,13 @@ from tests.testing_env import GenericTestEnv
 def test_discretize_action_space_uniformity(dimensions):
     """Tests that the Box action space is discretized uniformly."""
     env = GenericTestEnv(action_space=Box(0, 99, shape=(dimensions,)))
-    env = DiscretizeAction(env, 13)
-    env_act = np.meshgrid(np.linspace(0, 99, 100), np.linspace(0, 99, 100))
-    env_act = np.concatenate([o.flatten(order="F")[None] for o in env_act], 0).T
+    n_bins = 7
+    env = DiscretizeAction(env, n_bins)
+    env_act = np.meshgrid(*(np.linspace(0, 99, n_bins) for _ in range(dimensions)))
+    env_act = np.concatenate([o.flatten()[None] for o in env_act], 0).T
+    env_act_discretized = np.sort([env.revert_action(a) for a in env_act])
     assert env_act.shape[0] == env.action_space.n
-    for i in range():
-        assert i == env.action(env_act[i])
-
+    assert np.all(env_act_discretized == np.arange(env.action_space.n))
 
 @pytest.mark.parametrize(
     "dimensions, bins",
