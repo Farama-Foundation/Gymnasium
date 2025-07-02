@@ -3,7 +3,7 @@ layout: "contents"
 title: Migration Guide
 ---
 
-# Migration Guide from v0.21+
+# Gym Migration Guide
 
 ## Who Should Read This Guide?
 
@@ -27,7 +27,7 @@ The main issues with the old API were:
 - **Rendering complexity**: Switching between visual modes was unnecessarily complicated
 - **Reproducibility problems**: Subtle bugs made it difficult to reproduce research results
 
-For environments still using the v0.21 API, see the `compatibility guide <gym_compatibility>`_.
+For environments that can't be updated, see the compatibility guide section below.
 ```
 
 ## Quick Reference: Complete Changes Table
@@ -278,70 +278,6 @@ if terminated:
 
 This makes time limit detection much cleaner and more explicit.
 
-## Updating Your Training Code
-
-### Basic Training Loop Migration
-
-**Old v0.21 pattern**:
-```python
-for episode in range(num_episodes):
-    obs = env.reset()
-    done = False
-
-    while not done:
-        action = agent.get_action(obs)
-        next_obs, reward, done, info = env.step(action)
-
-        # Train agent (this may have bugs due to ambiguous 'done')
-        agent.learn(obs, action, reward, next_obs, done)
-        obs = next_obs
-```
-
-**New v0.26+ pattern**:
-```python
-for episode in range(num_episodes):
-    obs, info = env.reset(seed=episode)  # Optional: unique seed per episode
-    terminated, truncated = False, False
-
-    while not (terminated or truncated):
-        action = agent.get_action(obs)
-        next_obs, reward, terminated, truncated, info = env.step(action)
-
-        # Train agent with proper termination handling
-        agent.learn(obs, action, reward, next_obs, terminated)
-        obs = next_obs
-```
-
-### Q-Learning Update Migration
-
-**Old v0.21 (potentially incorrect)**:
-```python
-def update_q_value(obs, action, reward, next_obs, done):
-    if done:
-        target = reward  # Assumes all episode endings are natural terminations
-    else:
-        target = reward + gamma * max(q_table[next_obs])
-
-    q_table[obs][action] += lr * (target - q_table[obs][action])
-```
-
-**New v0.26+ (correct)**:
-```python
-def update_q_value(obs, action, reward, next_obs, terminated):
-    if terminated:
-        # Natural termination - no future value
-        target = reward
-    else:
-        # Episode continues - truncation has no impact on the possible future value
-        target = reward + gamma * max(q_table[next_obs])
-
-    q_table[obs][action] += lr * (target - q_table[obs][action])
-```
-
-### Deep RL Framework Migration
-
-Most libraries have already updated, see their documentation for more information.
-
 ## Environment-Specific Changes
 
 ### Removed Environments
@@ -392,7 +328,9 @@ env = gymnasium.make("GymV26Environment-v0", env=OldV26Env())
 ### Step API Compatibility
 
 ```{eval-rst}
-If environments implement the (old) done step API, Gymnasium provides functions (:meth:`gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api` and :meth:`gymnasium.utils.step_api_compatibility.convert_to_done_step_api`) that will convert an environment with the old step API (using ``done``) to the new step API (using ``termination`` and ``truncation``), and vice versa.
+.. py:currentmodule:: gymnasium.utils.step_api_compatibility
+
+If environments implement the (old) done step API, Gymnasium provides functions (:meth:`convert_to_terminated_truncated_step_api` and :meth:`convert_to_done_step_api`) that will convert an environment with the old step API (using ``done``) to the new step API (using ``termination`` and ``truncation``), and vice versa.
 ```
 
 ## Testing Your Migration
@@ -406,7 +344,11 @@ After migrating, verify that:
 - [ ] **Random seeding** uses the `seed` parameter in `reset()`
 - [ ] **Training algorithms** properly distinguish termination types
 
-Use the `from gymnasium.utils.env_checker import check_env` to verify their implementation.
+```{eval-rst}
+.. py:currentmodule:: gymnasium.utils.env_checker
+
+Use the :meth:`check_env` to verify their implementation.
+```
 
 ## Getting Help
 
