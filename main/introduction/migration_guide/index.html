@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://gymnasium.farama.org/introduction/migration_guide.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
-        <title>Migration Guide from v0.21+ - Gymnasium Documentation</title>
+        <title>Gym Migration Guide - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
@@ -221,7 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../create_custom_env/">Create a Custom Environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../record_agent/">Recording Agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../speed_up_env/">Speeding Up Training</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Migration Guide from v0.21+</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Gym Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -376,8 +376,8 @@
           </div>
           <article role="main">
             
-            <section class="tex2jax_ignore mathjax_ignore" id="migration-guide-from-v0-21">
-<h1>Migration Guide from v0.21+<a class="headerlink" href="#migration-guide-from-v0-21" title="Link to this heading">¶</a></h1>
+            <section class="tex2jax_ignore mathjax_ignore" id="gym-migration-guide">
+<h1>Gym Migration Guide<a class="headerlink" href="#gym-migration-guide" title="Link to this heading">¶</a></h1>
 <section id="who-should-read-this-guide">
 <h2>Who Should Read This Guide?<a class="headerlink" href="#who-should-read-this-guide" title="Link to this heading">¶</a></h2>
 <p><strong>If you’re new to Gymnasium</strong>: You can probably skip this page! This guide is for users migrating from older versions of OpenAI Gym. If you’re just starting with RL, head to <a class="reference internal" href="../basic_usage/"><span class="doc std std-doc">Basic Usage</span></a> instead.</p>
@@ -394,7 +394,7 @@
 <li><p><strong>Rendering complexity</strong>: Switching between visual modes was unnecessarily complicated</p></li>
 <li><p><strong>Reproducibility problems</strong>: Subtle bugs made it difficult to reproduce research results</p></li>
 </ul>
-<p>For environments still using the v0.21 API, see the <a class="reference external" href="gym_compatibility">compatibility guide</a>.</p>
+<p>For environments that can’t be updated, see the compatibility guide section below.</p>
 </section>
 <section id="quick-reference-complete-changes-table">
 <h2>Quick Reference: Complete Changes Table<a class="headerlink" href="#quick-reference-complete-changes-table" title="Link to this heading">¶</a></h2>
@@ -671,69 +671,6 @@ pass</p>
 </div>
 <p>This makes time limit detection much cleaner and more explicit.</p>
 </section>
-<section id="updating-your-training-code">
-<h2>Updating Your Training Code<a class="headerlink" href="#updating-your-training-code" title="Link to this heading">¶</a></h2>
-<section id="basic-training-loop-migration">
-<h3>Basic Training Loop Migration<a class="headerlink" href="#basic-training-loop-migration" title="Link to this heading">¶</a></h3>
-<p><strong>Old v0.21 pattern</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
-    <span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
-
-    <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-        <span class="n">next_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-
-        <span class="c1"># Train agent (this may have bugs due to ambiguous &#39;done&#39;)</span>
-        <span class="n">agent</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">,</span> <span class="n">done</span><span class="p">)</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="n">next_obs</span>
-</pre></div>
-</div>
-<p><strong>New v0.26+ pattern</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
-    <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">episode</span><span class="p">)</span>  <span class="c1"># Optional: unique seed per episode</span>
-    <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
-
-    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">):</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-        <span class="n">next_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-
-        <span class="c1"># Train agent with proper termination handling</span>
-        <span class="n">agent</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">,</span> <span class="n">terminated</span><span class="p">)</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="n">next_obs</span>
-</pre></div>
-</div>
-</section>
-<section id="q-learning-update-migration">
-<h3>Q-Learning Update Migration<a class="headerlink" href="#q-learning-update-migration" title="Link to this heading">¶</a></h3>
-<p><strong>Old v0.21 (potentially incorrect)</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_q_value</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">,</span> <span class="n">done</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span>  <span class="c1"># Assumes all episode endings are natural terminations</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">q_table</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
-
-    <span class="n">q_table</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lr</span> <span class="o">*</span> <span class="p">(</span><span class="n">target</span> <span class="o">-</span> <span class="n">q_table</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">])</span>
-</pre></div>
-</div>
-<p><strong>New v0.26+ (correct)</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_q_value</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">,</span> <span class="n">terminated</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">terminated</span><span class="p">:</span>
-        <span class="c1"># Natural termination - no future value</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Episode continues - truncation has no impact on the possible future value</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">q_table</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
-
-    <span class="n">q_table</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lr</span> <span class="o">*</span> <span class="p">(</span><span class="n">target</span> <span class="o">-</span> <span class="n">q_table</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">])</span>
-</pre></div>
-</div>
-</section>
-<section id="deep-rl-framework-migration">
-<h3>Deep RL Framework Migration<a class="headerlink" href="#deep-rl-framework-migration" title="Link to this heading">¶</a></h3>
-<p>Most libraries have already updated, see their documentation for more information.</p>
-</section>
-</section>
 <section id="environment-specific-changes">
 <h2>Environment-Specific Changes<a class="headerlink" href="#environment-specific-changes" title="Link to this heading">¶</a></h2>
 <section id="removed-environments">
@@ -782,7 +719,7 @@ pass</p>
 </section>
 <section id="step-api-compatibility">
 <h3>Step API Compatibility<a class="headerlink" href="#step-api-compatibility" title="Link to this heading">¶</a></h3>
-<p>If environments implement the (old) done step API, Gymnasium provides functions (<a class="reference internal" href="../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api" title="gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api()</span></code></a> and <a class="reference internal" href="../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_done_step_api" title="gymnasium.utils.step_api_compatibility.convert_to_done_step_api"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.utils.step_api_compatibility.convert_to_done_step_api()</span></code></a>) that will convert an environment with the old step API (using <code class="docutils literal notranslate"><span class="pre">done</span></code>) to the new step API (using <code class="docutils literal notranslate"><span class="pre">termination</span></code> and <code class="docutils literal notranslate"><span class="pre">truncation</span></code>), and vice versa.</p>
+<p>If environments implement the (old) done step API, Gymnasium provides functions (<a class="reference internal" href="../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api" title="gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convert_to_terminated_truncated_step_api()</span></code></a> and <a class="reference internal" href="../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_done_step_api" title="gymnasium.utils.step_api_compatibility.convert_to_done_step_api"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convert_to_done_step_api()</span></code></a>) that will convert an environment with the old step API (using <code class="docutils literal notranslate"><span class="pre">done</span></code>) to the new step API (using <code class="docutils literal notranslate"><span class="pre">termination</span></code> and <code class="docutils literal notranslate"><span class="pre">truncation</span></code>), and vice versa.</p>
 </section>
 </section>
 <section id="testing-your-migration">
@@ -796,7 +733,7 @@ pass</p>
 <li><p>[ ] <strong>Random seeding</strong> uses the <code class="docutils literal notranslate"><span class="pre">seed</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">reset()</span></code></p></li>
 <li><p>[ ] <strong>Training algorithms</strong> properly distinguish termination types</p></li>
 </ul>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">gymnasium.utils.env_checker</span> <span class="pre">import</span> <span class="pre">check_env</span></code> to verify their implementation.</p>
+<p>Use the <a class="reference internal" href="../../api/utils/#gymnasium.utils.env_checker.check_env" title="gymnasium.utils.env_checker.check_env"><code class="xref py py-meth docutils literal notranslate"><span class="pre">check_env()</span></code></a> to verify their implementation.</p>
 </section>
 <section id="getting-help">
 <h2>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading">¶</a></h2>
@@ -885,7 +822,7 @@ pass</p>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Migration Guide from v0.21+</a><ul>
+<li><a class="reference internal" href="#">Gym Migration Guide</a><ul>
 <li><a class="reference internal" href="#who-should-read-this-guide">Who Should Read This Guide?</a></li>
 <li><a class="reference internal" href="#why-did-the-api-change">Why Did the API Change?</a></li>
 <li><a class="reference internal" href="#quick-reference-complete-changes-table">Quick Reference: Complete Changes Table</a></li>
@@ -903,12 +840,6 @@ pass</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#timelimit-wrapper-changes">TimeLimit Wrapper Changes</a></li>
-<li><a class="reference internal" href="#updating-your-training-code">Updating Your Training Code</a><ul>
-<li><a class="reference internal" href="#basic-training-loop-migration">Basic Training Loop Migration</a></li>
-<li><a class="reference internal" href="#q-learning-update-migration">Q-Learning Update Migration</a></li>
-<li><a class="reference internal" href="#deep-rl-framework-migration">Deep RL Framework Migration</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#environment-specific-changes">Environment-Specific Changes</a><ul>
 <li><a class="reference internal" href="#removed-environments">Removed Environments</a></li>
 </ul>
