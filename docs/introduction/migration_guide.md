@@ -3,7 +3,7 @@ layout: "contents"
 title: Migration Guide
 ---
 
-# Migration Guide - v0.21 to v1.0.0
+# Migration Guide from v0.21+
 
 ## Who Should Read This Guide?
 
@@ -21,6 +21,7 @@ title: Migration Guide
 Gymnasium is a fork of `OpenAI Gym v0.26 <https://github.com/openai/gym/releases/tag/0.26.2>`_, which introduced breaking changes from `Gym v0.21 <https://github.com/openai/gym/releases/tag/v0.21.0>`_. These changes weren't made lightly - they solved important problems that made RL research and development more difficult.
 
 The main issues with the old API were:
+
 - **Ambiguous episode endings**: The single ``done`` flag couldn't distinguish between "task completed" and "time limit reached"
 - **Inconsistent seeding**: Random number generation was unreliable and hard to reproduce
 - **Rendering complexity**: Switching between visual modes was unnecessarily complicated
@@ -95,7 +96,6 @@ env.close()
 Why: Gymnasium is a separate project that maintains and improves upon the original Gym codebase.
 
 ```python
-# Update your imports
 # OLD
 import gym
 
@@ -277,7 +277,6 @@ if terminated:
 ```
 
 This makes time limit detection much cleaner and more explicit.
-```
 
 ## Updating Your Training Code
 
@@ -368,21 +367,33 @@ env = gymnasium.make("ALE/Pong-v5")
 
 ## Compatibility Helpers
 
-### Using Old Environments
+### Loading OpenAI Gym environments
 
-```{eval-rst}
-.. py:currentmodule:: gymnasium
-
-If you need to use an environment that hasn't been updated to the new API:
+For environments that can't be updated to Gymnasium, we provide compatibility wrappers either for v21 and v26 style environments, where either the environment name or the environment itself can be passed.
 
 ```python
-# For environments still using old gym
-env = gym.make("GymV21Environment-v0", env_id="OldEnv-v0")
+import gymnasium
+import shimmy  # install shimmy with `pip install shimmy`
 
-# This wrapper converts old API to new API automatically
+gymnasium.register_envs(shimmy)
+
+
+# Gym v0.21 style environments
+env = gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
+# or
+env = gymnasium.make("GymV21Environment-v0", env=OldV21Env())
+
+# Gym v0.26 style environments
+env = gymnasium.make("GymV26Environment-v0", env_id="Cartpole-v1")
+# or
+env = gymnasium.make("GymV26Environment-v0", env=OldV26Env())
 ```
 
-For more details, see the `compatibility guide <gym_compatibility>`_.
+### Step API Compatibility
+
+```{eval-rst}
+If environments implement the (old) done step API, Gymnasium provides functions (:meth:`gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api` and :meth:`gymnasium.utils.step_api_compatibility.convert_to_done_step_api`) that will convert an environment with the old step API (using ``done``) to the new step API (using ``termination`` and ``truncation``), and vice versa.
+```
 
 ## Testing Your Migration
 
@@ -407,6 +418,6 @@ Use the `from gymnasium.utils.env_checker import check_env` to verify their impl
 4. **Compare old vs new behavior**: Run the same code with both APIs to understand differences
 
 **Common resources**:
-- [Gymnasium documentation](https://gymnasium.farama.org/)
+- [Gymnasium API documentation](https://gymnasium.farama.org/api/env)
 - [GitHub issues](https://github.com/Farama-Foundation/Gymnasium/issues) for bug reports
 - [Discord community](https://discord.gg/bnJ6kubTg6) for questions
