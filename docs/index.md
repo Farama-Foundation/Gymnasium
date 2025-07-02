@@ -17,7 +17,7 @@ An API standard for reinforcement learning with a diverse collection of referenc
    :width: 500
 ```
 
-**Gymnasium is a maintained fork of OpenAI’s Gym library.** The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [compatibility wrapper](introduction/gym_compatibility) for old Gym environments:
+**Gymnasium is a maintained fork of OpenAI’s Gym library.** The Gymnasium interface is simple, pythonic, and capable of representing general RL problems, and has a [migration guide](introduction/migration_guide) for old Gym environments:
 
 ```{code-block} python
 import gymnasium as gym
@@ -51,7 +51,6 @@ introduction/train_agent
 introduction/create_custom_env
 introduction/record_agent
 introduction/speed_up_env
-introduction/gym_compatibility
 introduction/migration_guide
 ```
 
