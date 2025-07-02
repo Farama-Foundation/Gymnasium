@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/introduction/speed_up_env.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Compatibility with Gym" href="../gym_compatibility/" /><link rel="prev" title="Recording Agents" href="../record_agent/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Gym Migration Guide" href="../migration_guide/" /><link rel="prev" title="Recording Agents" href="../record_agent/" />
         <link rel="canonical" href="https://gymnasium.farama.org/introduction/speed_up_env.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
@@ -221,8 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../create_custom_env/">Create a Custom Environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../record_agent/">Recording Agents</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Speeding Up Training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../migration_guide/">Migration Guide - v0.21 to v1.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration_guide/">Gym Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -302,6 +301,10 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -400,12 +403,12 @@ As the field is consistently improving, we refer readers to find to survey paper
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../gym_compatibility/">
+            <a class="next-page" href="../migration_guide/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Compatibility with Gym</div>
+                <div class="title">Gym Migration Guide</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
