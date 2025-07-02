@@ -124,7 +124,7 @@ sphinx_gallery.gen_rst.EXAMPLE_HEADER = """
 .. rst-class:: sphx-glr-example-title
 
 .. note::
-    This example is compatible with Gymnasium version |release|.
+    This tutorial is compatible with Gymnasium version |release|.
 
 .. _sphx_glr_{1}:
 
