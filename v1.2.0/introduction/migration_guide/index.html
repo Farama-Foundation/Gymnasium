@@ -8,11 +8,11 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/introduction/migration_guide.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Env" href="../../api/env/" /><link rel="prev" title="Compatibility with Gym" href="../gym_compatibility/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Env" href="../../api/env/" /><link rel="prev" title="Speeding Up Training" href="../speed_up_env/" />
         <link rel="canonical" href="https://gymnasium.farama.org/introduction/migration_guide.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
-        <title>Migration Guide - v0.21 to v1.0.0 - Gymnasium Documentation</title>
+        <title>Gym Migration Guide - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
@@ -221,8 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../create_custom_env/">Create a Custom Environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../record_agent/">Recording Agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../speed_up_env/">Speeding Up Training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Migration Guide - v0.21 to v1.0.0</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Gym Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -302,6 +301,10 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -373,8 +376,8 @@
           </div>
           <article role="main">
             
-            <section class="tex2jax_ignore mathjax_ignore" id="migration-guide-v0-21-to-v1-0-0">
-<h1>Migration Guide - v0.21 to v1.0.0<a class="headerlink" href="#migration-guide-v0-21-to-v1-0-0" title="Link to this heading">¶</a></h1>
+            <section class="tex2jax_ignore mathjax_ignore" id="gym-migration-guide">
+<h1>Gym Migration Guide<a class="headerlink" href="#gym-migration-guide" title="Link to this heading">¶</a></h1>
 <section id="who-should-read-this-guide">
 <h2>Who Should Read This Guide?<a class="headerlink" href="#who-should-read-this-guide" title="Link to this heading">¶</a></h2>
 <p><strong>If you’re new to Gymnasium</strong>: You can probably skip this page! This guide is for users migrating from older versions of OpenAI Gym. If you’re just starting with RL, head to <a class="reference internal" href="../basic_usage/"><span class="doc std std-doc">Basic Usage</span></a> instead.</p>
@@ -384,12 +387,14 @@
 <section id="why-did-the-api-change">
 <h2>Why Did the API Change?<a class="headerlink" href="#why-did-the-api-change" title="Link to this heading">¶</a></h2>
 <p>Gymnasium is a fork of <a class="reference external" href="https://github.com/openai/gym/releases/tag/0.26.2">OpenAI Gym v0.26</a>, which introduced breaking changes from <a class="reference external" href="https://github.com/openai/gym/releases/tag/v0.21.0">Gym v0.21</a>. These changes weren’t made lightly - they solved important problems that made RL research and development more difficult.</p>
-<p>The main issues with the old API were:
-- <strong>Ambiguous episode endings</strong>: The single <code class="docutils literal notranslate"><span class="pre">done</span></code> flag couldn’t distinguish between “task completed” and “time limit reached”
-- <strong>Inconsistent seeding</strong>: Random number generation was unreliable and hard to reproduce
-- <strong>Rendering complexity</strong>: Switching between visual modes was unnecessarily complicated
-- <strong>Reproducibility problems</strong>: Subtle bugs made it difficult to reproduce research results</p>
-<p>For environments still using the v0.21 API, see the <a class="reference external" href="gym_compatibility">compatibility guide</a>.</p>
+<p>The main issues with the old API were:</p>
+<ul class="simple">
+<li><p><strong>Ambiguous episode endings</strong>: The single <code class="docutils literal notranslate"><span class="pre">done</span></code> flag couldn’t distinguish between “task completed” and “time limit reached”</p></li>
+<li><p><strong>Inconsistent seeding</strong>: Random number generation was unreliable and hard to reproduce</p></li>
+<li><p><strong>Rendering complexity</strong>: Switching between visual modes was unnecessarily complicated</p></li>
+<li><p><strong>Reproducibility problems</strong>: Subtle bugs made it difficult to reproduce research results</p></li>
+</ul>
+<p>For environments that can’t be updated, see the compatibility guide section below.</p>
 </section>
 <section id="quick-reference-complete-changes-table">
 <h2>Quick Reference: Complete Changes Table<a class="headerlink" href="#quick-reference-complete-changes-table" title="Link to this heading">¶</a></h2>
@@ -500,8 +505,7 @@
 <p><strong>Old</strong>: <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gym</span></code>
 <strong>New</strong>: <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gymnasium</span> <span class="pre">as</span> <span class="pre">gym</span></code></p>
 <p>Why: Gymnasium is a separate project that maintains and improves upon the original Gym codebase.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Update your imports</span>
-<span class="c1"># OLD</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gym</span>
 
 <span class="c1"># NEW</span>
@@ -666,69 +670,6 @@ pass</p>
 </pre></div>
 </div>
 <p>This makes time limit detection much cleaner and more explicit.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-## Updating Your Training Code
-
-### Basic Training Loop Migration
-
-**Old v0.21 pattern**:
-```python
-for episode in range(num_episodes):
-    obs = env.reset()
-    done = False
-
-    while not done:
-        action = agent.get_action(obs)
-        next_obs, reward, done, info = env.step(action)
-
-        # Train agent (this may have bugs due to ambiguous &#39;done&#39;)
-        agent.learn(obs, action, reward, next_obs, done)
-        obs = next_obs
-</pre></div>
-</div>
-<p><strong>New v0.26+ pattern</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
-    <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">episode</span><span class="p">)</span>  <span class="c1"># Optional: unique seed per episode</span>
-    <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
-
-    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">):</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-        <span class="n">next_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-
-        <span class="c1"># Train agent with proper termination handling</span>
-        <span class="n">agent</span><span class="o">.</span><span class="n">learn</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">,</span> <span class="n">terminated</span><span class="p">)</span>
-        <span class="n">obs</span> <span class="o">=</span> <span class="n">next_obs</span>
-</pre></div>
-</div>
-<section id="q-learning-update-migration">
-<h3>Q-Learning Update Migration<a class="headerlink" href="#q-learning-update-migration" title="Link to this heading">¶</a></h3>
-<p><strong>Old v0.21 (potentially incorrect)</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_q_value</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">,</span> <span class="n">done</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span>  <span class="c1"># Assumes all episode endings are natural terminations</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">q_table</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
-
-    <span class="n">q_table</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lr</span> <span class="o">*</span> <span class="p">(</span><span class="n">target</span> <span class="o">-</span> <span class="n">q_table</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">])</span>
-</pre></div>
-</div>
-<p><strong>New v0.26+ (correct)</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">update_q_value</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">,</span> <span class="n">terminated</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">terminated</span><span class="p">:</span>
-        <span class="c1"># Natural termination - no future value</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Episode continues - truncation has no impact on the possible future value</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">q_table</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
-
-    <span class="n">q_table</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">+=</span> <span class="n">lr</span> <span class="o">*</span> <span class="p">(</span><span class="n">target</span> <span class="o">-</span> <span class="n">q_table</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">])</span>
-</pre></div>
-</div>
-</section>
-<section id="deep-rl-framework-migration">
-<h3>Deep RL Framework Migration<a class="headerlink" href="#deep-rl-framework-migration" title="Link to this heading">¶</a></h3>
-<p>Most libraries have already updated, see their documentation for more information.</p>
-</section>
 </section>
 <section id="environment-specific-changes">
 <h2>Environment-Specific Changes<a class="headerlink" href="#environment-specific-changes" title="Link to this heading">¶</a></h2>
@@ -755,14 +696,30 @@ for episode in range(num_episodes):
 </section>
 <section id="compatibility-helpers">
 <h2>Compatibility Helpers<a class="headerlink" href="#compatibility-helpers" title="Link to this heading">¶</a></h2>
-<section id="using-old-environments">
-<h3>Using Old Environments<a class="headerlink" href="#using-old-environments" title="Link to this heading">¶</a></h3>
-<p>If you need to use an environment that hasn’t been updated to the new API:</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
-# For environments still using old gym
-env = gym.make(“GymV21Environment-v0”, env_id=”OldEnv-v0”)</p>
-<p># This wrapper converts old API to new API automatically</p>
-<p>For more details, see the <code class="docutils literal notranslate"><span class="pre">compatibility</span> <span class="pre">guide</span> <span class="pre">&lt;gym_compatibility&gt;</span></code>_.</p>
+<section id="loading-openai-gym-environments">
+<h3>Loading OpenAI Gym environments<a class="headerlink" href="#loading-openai-gym-environments" title="Link to this heading">¶</a></h3>
+<p>For environments that can’t be updated to Gymnasium, we provide compatibility wrappers either for v21 and v26 style environments, where either the environment name or the environment itself can be passed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shimmy</span>  <span class="c1"># install shimmy with `pip install shimmy`</span>
+
+<span class="n">gymnasium</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">shimmy</span><span class="p">)</span>
+
+
+<span class="c1"># Gym v0.21 style environments</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV21Environment-v0&quot;</span><span class="p">,</span> <span class="n">env_id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="c1"># or</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV21Environment-v0&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">OldV21Env</span><span class="p">())</span>
+
+<span class="c1"># Gym v0.26 style environments</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV26Environment-v0&quot;</span><span class="p">,</span> <span class="n">env_id</span><span class="o">=</span><span class="s2">&quot;Cartpole-v1&quot;</span><span class="p">)</span>
+<span class="c1"># or</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV26Environment-v0&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">OldV26Env</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="step-api-compatibility">
+<h3>Step API Compatibility<a class="headerlink" href="#step-api-compatibility" title="Link to this heading">¶</a></h3>
+<p>If environments implement the (old) done step API, Gymnasium provides functions (<a class="reference internal" href="../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api" title="gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convert_to_terminated_truncated_step_api()</span></code></a> and <a class="reference internal" href="../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_done_step_api" title="gymnasium.utils.step_api_compatibility.convert_to_done_step_api"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convert_to_done_step_api()</span></code></a>) that will convert an environment with the old step API (using <code class="docutils literal notranslate"><span class="pre">done</span></code>) to the new step API (using <code class="docutils literal notranslate"><span class="pre">termination</span></code> and <code class="docutils literal notranslate"><span class="pre">truncation</span></code>), and vice versa.</p>
 </section>
 </section>
 <section id="testing-your-migration">
@@ -776,7 +733,7 @@ env = gym.make(“GymV21Environment-v0”, env_id=”OldEnv-v0”)</p>
 <li><p>[ ] <strong>Random seeding</strong> uses the <code class="docutils literal notranslate"><span class="pre">seed</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">reset()</span></code></p></li>
 <li><p>[ ] <strong>Training algorithms</strong> properly distinguish termination types</p></li>
 </ul>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">gymnasium.utils.env_checker</span> <span class="pre">import</span> <span class="pre">check_env</span></code> to verify their implementation.</p>
+<p>Use the <a class="reference internal" href="../../api/utils/#gymnasium.utils.env_checker.check_env" title="gymnasium.utils.env_checker.check_env"><code class="xref py py-meth docutils literal notranslate"><span class="pre">check_env()</span></code></a> to verify their implementation.</p>
 </section>
 <section id="getting-help">
 <h2>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading">¶</a></h2>
@@ -789,7 +746,7 @@ env = gym.make(“GymV21Environment-v0”, env_id=”OldEnv-v0”)</p>
 </ol>
 <p><strong>Common resources</strong>:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="https://gymnasium.farama.org/">Gymnasium documentation</a></p></li>
+<li><p><a class="reference external" href="https://gymnasium.farama.org/api/env">Gymnasium API documentation</a></p></li>
 <li><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues">GitHub issues</a> for bug reports</p></li>
 <li><p><a class="reference external" href="https://discord.gg/bnJ6kubTg6">Discord community</a> for questions</p></li>
 </ul>
@@ -812,7 +769,7 @@ env = gym.make(“GymV21Environment-v0”, env_id=”OldEnv-v0”)</p>
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../gym_compatibility/">
+            <a class="prev-page" href="../speed_up_env/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -821,7 +778,7 @@ env = gym.make(“GymV21Environment-v0”, env_id=”OldEnv-v0”)</p>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Compatibility with Gym</div>
+                <div class="title">Speeding Up Training</div>
                 
               </div>
             </a>
@@ -865,7 +822,7 @@ env = gym.make(“GymV21Environment-v0”, env_id=”OldEnv-v0”)</p>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Migration Guide - v0.21 to v1.0.0</a><ul>
+<li><a class="reference internal" href="#">Gym Migration Guide</a><ul>
 <li><a class="reference internal" href="#who-should-read-this-guide">Who Should Read This Guide?</a></li>
 <li><a class="reference internal" href="#why-did-the-api-change">Why Did the API Change?</a></li>
 <li><a class="reference internal" href="#quick-reference-complete-changes-table">Quick Reference: Complete Changes Table</a></li>
@@ -882,17 +839,14 @@ env = gym.make(“GymV21Environment-v0”, env_id=”OldEnv-v0”)</p>
 <li><a class="reference internal" href="#render-mode-changes">5. Render Mode Changes</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#timelimit-wrapper-changes">TimeLimit Wrapper Changes</a><ul>
-<li><a class="reference internal" href="#q-learning-update-migration">Q-Learning Update Migration</a></li>
-<li><a class="reference internal" href="#deep-rl-framework-migration">Deep RL Framework Migration</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#timelimit-wrapper-changes">TimeLimit Wrapper Changes</a></li>
 <li><a class="reference internal" href="#environment-specific-changes">Environment-Specific Changes</a><ul>
 <li><a class="reference internal" href="#removed-environments">Removed Environments</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#compatibility-helpers">Compatibility Helpers</a><ul>
-<li><a class="reference internal" href="#using-old-environments">Using Old Environments</a></li>
+<li><a class="reference internal" href="#loading-openai-gym-environments">Loading OpenAI Gym environments</a></li>
+<li><a class="reference internal" href="#step-api-compatibility">Step API Compatibility</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#testing-your-migration">Testing Your Migration</a></li>
