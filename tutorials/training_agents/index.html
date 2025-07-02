@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/tutorials/training_agents/index.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Solving Blackjack with Tabular Q-Learning" href="blackjack_q_learning/" /><link rel="prev" title="Load custom quadruped robot environments" href="../gymnasium_basics/load_quadruped_model/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Action Masking in the Taxi Environment" href="action_masking_taxi/" /><link rel="prev" title="Load custom quadruped robot environments" href="../gymnasium_basics/load_quadruped_model/" />
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/training_agents/index.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
@@ -221,8 +221,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/create_custom_env/">Create a Custom Environment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/record_agent/">Recording Agents</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction/speed_up_env/">Speeding Up Training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction/gym_compatibility/">Compatibility with Gym</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction/migration_guide/">Migration Guide - v0.21 to v1.0.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/migration_guide/">Gym Migration Guide</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -302,6 +301,10 @@
 </ul>
 </li>
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -377,7 +380,10 @@
             <section id="training-agents">
 <span id="sphx-glr-tutorials-training-agents"></span><h1>Training Agents<a class="headerlink" href="#training-agents" title="Link to this heading">¶</a></h1>
 <p id="gallery-section-name">The most common application of Gymnasium is for training RL agents. Therefore, these tutorials aim to show a range of example implementations for different environments.</p>
-<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This tutorial trains an agent for BlackJack using tabular Q-learning."><img alt="" src="../../_images/sphx_glr_blackjack_q_learning_thumb.png" />
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This tutorial demonstrates how to use action masking in the Taxi environment to improve reinfor..."><img alt="" src="../../_images/sphx_glr_action_masking_taxi_thumb.png" />
+<p><a class="reference internal" href="action_masking_taxi/#sphx-glr-tutorials-training-agents-action-masking-taxi-py"><span class="std std-ref">Action Masking in the Taxi Environment</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Action Masking in the Taxi Environment</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This tutorial trains an agent for BlackJack using tabular Q-learning."><img alt="" src="../../_images/sphx_glr_blackjack_q_learning_thumb.png" />
 <p><a class="reference internal" href="blackjack_q_learning/#sphx-glr-tutorials-training-agents-blackjack-q-learning-py"><span class="std std-ref">Solving Blackjack with Tabular Q-Learning</span></a></p>
   <div class="sphx-glr-thumbnail-title">Solving Blackjack with Tabular Q-Learning</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="This tutorial trains an agent for FrozenLake using tabular Q-learning."><img alt="" src="../../_images/sphx_glr_frozenlake_q_learning_thumb.png" />
@@ -398,12 +404,12 @@
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="blackjack_q_learning/">
+            <a class="next-page" href="action_masking_taxi/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Solving Blackjack with Tabular Q-Learning</div>
+                <div class="title">Action Masking in the Taxi Environment</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
