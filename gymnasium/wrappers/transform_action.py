@@ -14,7 +14,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType, WrapperActType
-from gymnasium.spaces import Box, Discrete, Space
+from gymnasium.spaces import Box, Discrete, MultiDiscrete, Space
 
 
 __all__ = ["TransformAction", "ClipAction", "RescaleAction"]
@@ -185,7 +185,7 @@ class DiscretizeAction(
     TransformAction[ObsType, WrapperActType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Discretizes a continuous Box action space into a single Discrete space.
+    """Uniformly discretizes a continuous Box action space into a single Discrete space.
 
     Example 1 - Discretize Pendulum action space:
         >>> env = gym.make("Pendulum-v1")
@@ -220,18 +220,38 @@ class DiscretizeAction(
         >>> obs
         array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
                 0.11442572, -1.18958118, -1.97979484,  0.1054461 , -0.10896341])
+
+    Example 2 - Discretize Reacher action space with MultiDiscrete:
+        >>> env = gym.make("Reacher-v5")
+        >>> env.action_space
+        Box(-1.0, 1.0, (2,), float32)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs, *_ = env.step([-0.3, -0.5])
+        >>> obs
+        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
+                0.11442572, -1.18958125, -1.97979484,  0.1054461 , -0.10896341])
+        >>> env = DiscretizeAction(env, bins=10, multidiscrete=True)
+        >>> env.action_space
+        MultiDiscrete([10 10])
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs, *_ = env.step([3, 2])
+        >>> obs
+        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
+                0.11442572, -1.18958118, -1.97979484,  0.1054461 , -0.10896341])
     """
 
     def __init__(
         self,
         env: gym.Env[ObsType, ActType],
         bins: int | tuple[int, ...],
+        multidiscrete: bool = False,
     ):
         """Constructor for the discretize action wrapper.
 
         Args:
             env: The environment to wrap.
             bins: int or tuple of ints (number of bins per dimension).
+            multidiscrete: If True, use MultiDiscrete action space instead of flattening to Discrete.
         """
         if not isinstance(env.action_space, Box):
             raise TypeError(
@@ -248,6 +268,7 @@ class DiscretizeAction(
                 f"Found: low={self.low}, high={self.high}"
             )
 
+        self.multidiscrete = multidiscrete
         gym.utils.RecordConstructorArgs.__init__(self, bins=bins)
         gym.ActionWrapper.__init__(self, env)
 
@@ -268,11 +289,17 @@ class DiscretizeAction(
             for i in range(self.n_dims)
         ]
 
-        self.action_space = Discrete(np.prod(self.bins))
+        if self.multidiscrete:
+            self.action_space = MultiDiscrete(self.bins)
+        else:
+            self.action_space = Discrete(np.prod(self.bins))
 
-    def action(self, flat_index):
+    def action(self, act):
         """Discretizes the action."""
-        indices = self._unflatten_index(flat_index)
+        if self.multidiscrete:
+            indices = np.asarray(act, dtype=int)
+        else:
+            indices = self._unflatten_index(act)
         centers = [
             self.bin_centers[i][min(max(idx, 0), self.bins[i] - 1)]
             for i, idx in enumerate(indices)
@@ -280,12 +307,15 @@ class DiscretizeAction(
         return np.array(centers, dtype=self.env.action_space.dtype)
 
     def revert_action(self, action):
-        """Converts a continuous action to nearest discrete bin."""
+        """Converts a discretized action to a possible continuous action (the center of the closest bin)."""
         indices = [
             np.argmin(np.abs(self.bin_centers[i] - action[i]))
             for i in range(self.n_dims)
         ]
-        return np.ravel_multi_index(indices, self.bins)
+        if self.multidiscrete:
+            return np.array(indices, dtype=int)
+        else:
+            return np.ravel_multi_index(indices, self.bins)
 
     def _unflatten_index(self, flat_index):
         indices = []

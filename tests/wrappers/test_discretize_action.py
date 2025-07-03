@@ -22,23 +22,25 @@ def test_discretize_action_space_uniformity(dimensions):
 
 
 @pytest.mark.parametrize(
-    "dimensions, bins",
+    "dimensions, bins, multidiscrete",
     [
-        (1, 3),
-        (2, (3, 4)),
-        (3, (3, 4, 5)),
-        (4, (3, 4, 5, 6)),
+        (1, 3, False),
+        (2, (3, 4), False),
+        (3, (3, 4, 5), False),
+        (1, 3, True),
+        (2, (3, 4), True),
+        (3, (3, 4, 5), True),
     ],
 )
-def test_revert_discretize_action_space(dimensions, bins):
+def test_revert_discretize_action_space(dimensions, bins, multidiscrete):
     """Tests that the action is discretized correctly within the bins."""
     env = GenericTestEnv(action_space=Box(0, 99, shape=(dimensions,)))
-    env_discrete = DiscretizeAction(env, bins)
+    env_discrete = DiscretizeAction(env, bins, multidiscrete)
     for i in range(1000):
         act_discrete = env_discrete.action_space.sample()
         act_continuous = env_discrete.action(act_discrete)
         assert env.action_space.contains(act_continuous)
-        assert env_discrete.revert_action(act_continuous) == act_discrete
+        assert np.all(env_discrete.revert_action(act_continuous) == act_discrete)
 
 
 @pytest.mark.parametrize("high, low", [(0, np.inf), (-np.inf, np.inf), (-np.inf, 0)])

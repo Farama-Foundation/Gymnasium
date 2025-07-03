@@ -690,7 +690,7 @@ class DiscretizeObservation(
     TransformObservation[WrapperObsType, ActType, ObsType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Discretizes a continuous Box observation space into a single Discrete space.
+    """Uniformly discretizes a continuous Box observation space into a single Discrete space.
 
     Example 1 - Discretize MountainCar observation space:
         >>> env = gym.make("MountainCar-v0")
@@ -722,18 +722,37 @@ class DiscretizeObservation(
         >>> obs, _ = env.reset(seed=42)
         >>> obs
         4005
+
+    Example 3 - Discretize LunarLander observation space with MultiDiscrete:
+        >>> env = gym.make("LunarLander-v3")
+        >>> env.observation_space
+        Box([ -2.5        -2.5       -10.        -10.         -6.2831855 -10.
+          -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.
+          1.         1.       ], (8,), float32)
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs
+        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,
+               -0.05269805,  0.        ,  0.        ], dtype=float32)
+        >>> env = DiscretizeObservation(env, bins=3, multidiscrete=True)
+        >>> env.observation_space
+        MultiDiscrete([3 3 3 3 3 3 3 3])
+        >>> obs, _ = env.reset(seed=42)
+        >>> obs
+        array([1, 2, 1, 1, 1, 1, 0, 0])
     """
 
     def __init__(
         self,
         env: gym.Env[ObsType, ActType],
         bins: int | tuple[int, ...],
+        multidiscrete: bool = False,
     ):
         """Constructor for the discretize observation wrapper.
 
         Args:
             env: The environment to wrap.
             bins: int or tuple of ints (number of bins per dimension).
+            multidiscrete: If True, use MultiDiscrete space instead of flattening to Discrete.
         """
         if not isinstance(env.observation_space, spaces.Box):
             raise TypeError(
@@ -750,6 +769,7 @@ class DiscretizeObservation(
                 f"Found: low={self.low}, high={self.high}"
             )
 
+        self.multidiscrete = multidiscrete
         gym.utils.RecordConstructorArgs.__init__(self, bins=bins)
         gym.ObservationWrapper.__init__(self, env)
 
@@ -766,7 +786,10 @@ class DiscretizeObservation(
             for i in range(self.n_dims)
         ]
 
-        self.observation_space = spaces.Discrete(np.prod(self.bins))
+        if self.multidiscrete:
+            self.observation_space = spaces.MultiDiscrete(self.bins)
+        else:
+            self.observation_space = spaces.Discrete(np.prod(self.bins))
 
     def observation(self, observation):
         """Discretizes the observation."""
@@ -779,11 +802,17 @@ class DiscretizeObservation(
         indices = [
             int(np.digitize(clipped[i], self.bin_edges[i])) for i in range(self.n_dims)
         ]
-        return int(self._flatten_indices(indices))
+        if self.multidiscrete:
+            return np.array(indices, dtype=np.int64)
+        else:
+            return int(self._flatten_indices(indices))
 
-    def revert_observation(self, flat_index):
+    def revert_observation(self, obs):
         """Reverts discretization. It returns the edges of the bin the discretized observation belongs to."""
-        indices = self._unflatten_index(flat_index)
+        if self.multidiscrete:
+            indices = np.asarray(obs, dtype=int)
+        else:
+            indices = self._unflatten_index(obs)
         lows = []
         highs = []
         for i, idx in enumerate(indices):

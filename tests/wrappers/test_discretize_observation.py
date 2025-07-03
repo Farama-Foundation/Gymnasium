@@ -22,23 +22,25 @@ def test_discretize_observation_space_uniformity(dimensions):
 
 
 @pytest.mark.parametrize(
-    "dimensions, bins",
+    "dimensions, bins, multidiscrete",
     [
-        (1, 3),
-        (2, (3, 4)),
-        (3, (3, 4, 5)),
-        (4, (3, 4, 5, 6)),
+        (1, 3, False),
+        (2, (3, 4), False),
+        (3, (3, 4, 5), False),
+        (1, 3, True),
+        (2, (3, 4), True),
+        (3, (3, 4, 5), True),
     ],
 )
-def test_revert_discretize_observation_space(dimensions, bins):
+def test_revert_discretize_observation_space(dimensions, bins, multidiscrete):
     """Tests that the observation is discretized correctly within the bins."""
     env = GenericTestEnv(observation_space=Box(0, 99, shape=(dimensions,)))
-    env_discrete = DiscretizeObservation(env, bins)
+    env_discrete = DiscretizeObservation(env, bins, multidiscrete)
     for i in range(1000):
         obs, _ = env.reset(seed=i)
         obs_discrete, _ = env_discrete.reset(seed=i)
         obs_reverted_min, obs_reverted_max = env_discrete.revert_observation(
-            obs_discrete
+            obs_discrete,
         )
         assert np.all(obs >= obs_reverted_min) and np.all(obs <= obs_reverted_max)
 
