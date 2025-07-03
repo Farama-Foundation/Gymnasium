@@ -76,11 +76,13 @@ from gymnasium.wrappers.stateful_observation import (
 from gymnasium.wrappers.stateful_reward import NormalizeReward
 from gymnasium.wrappers.transform_action import (
     ClipAction,
+    DiscretizeAction,
     RescaleAction,
     TransformAction,
 )
 from gymnasium.wrappers.transform_observation import (
     AddRenderObservation,
+    DiscretizeObservation,
     DtypeObservation,
     FilterObservation,
     FlattenObservation,
@@ -99,6 +101,7 @@ __all__ = [
     "AtariPreprocessing",
     "DelayObservation",
     "DtypeObservation",
+    "DiscretizeObservation",
     "FilterObservation",
     "FlattenObservation",
     "FrameStackObservation",
@@ -113,6 +116,7 @@ __all__ = [
     "TimeAwareObservation",
     # --- Action Wrappers ---
     "ClipAction",
+    "DiscretizeAction",
     "TransformAction",
     "RescaleAction",
     # "NanAction",
