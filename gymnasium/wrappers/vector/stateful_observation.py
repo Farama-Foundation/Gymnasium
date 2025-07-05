@@ -74,7 +74,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
 
         if "autoreset_mode" not in self.env.metadata:
             warn(
-                f"{self} is missing `autoreset_mode` data. Assuming that the vector environment it follows the `NextStep` autoreset api or autoreset is disabled. Read todo for more details."
+                f"{self} is missing `autoreset_mode` data. Assuming that the vector environment it follows the `NextStep` autoreset api or autoreset is disabled. Read https://farama.org/Vector-Autoreset-Mode for more details."
             )
         else:
             assert self.env.metadata["autoreset_mode"] in {AutoresetMode.NEXT_STEP}
