@@ -387,7 +387,7 @@ class ResizeObservation(
             ) from e
 
         self.shape: Final[tuple[int, int]] = tuple(shape)
-        # for some reason, cv2.resize will return the shape in reverse, todo confirm implementation
+        # for some reason, cv2.resize will return the shape in reverse
         self.cv2_shape: Final[tuple[int, int]] = (shape[1], shape[0])
 
         new_observation_space = spaces.Box(
