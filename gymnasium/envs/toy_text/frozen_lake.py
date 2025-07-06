@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from contextlib import closing
 from io import StringIO
 from os import path
@@ -81,136 +83,145 @@ def generate_random_map(
 
 class FrozenLakeEnv(Env):
     """
-    Frozen lake involves crossing a frozen lake from start to goal without falling into any holes
-    by walking over the frozen lake.
-    The player may not always move in the intended direction due to the slippery nature of the frozen lake.
+     Frozen lake involves crossing a frozen lake from start to goal without falling into any holes
+     by walking over the frozen lake.
+     The player may not always move in the intended direction due to the slippery nature of the frozen lake.
 
-    ## Description
-    The game starts with the player at location [0,0] of the frozen lake grid world with the
-    goal located at far extent of the world e.g. [3,3] for the 4x4 environment.
+     ## Description
+     The game starts with the player at location `[0,0]` of the frozen lake grid world with the
+     goal located at far extent of the world e.g. `[3,3]` for the 4x4 environment.
 
-    Holes in the ice are distributed in set locations when using a pre-determined map
-    or in random locations when a random map is generated.
+     Holes in the ice are distributed in set locations when using a pre-determined map
+     or in random locations when a random map is generated.
+     Randomly generated worlds will always have a path to the goal.
 
-    The player makes moves until they reach the goal or fall in a hole.
+     The player makes moves until they reach the goal or fall in a hole.
 
-    The lake is slippery (unless disabled) so the player may move perpendicular
-    to the intended direction sometimes (see <a href="#is_slippy">`is_slippery`</a>).
+     The lake is slippery (unless disabled) so the player may move perpendicular
+     to the intended direction sometimes (see `is_slippery` in Argument section).
 
-    Randomly generated worlds will always have a path to the goal.
+     Elf and stool from [https://franuka.itch.io/rpg-snow-tileset](https://franuka.itch.io/rpg-snow-tileset).
+     All other assets by Mel Tillery [http://www.cyaneus.com/](http://www.cyaneus.com/).
 
-    Elf and stool from [https://franuka.itch.io/rpg-snow-tileset](https://franuka.itch.io/rpg-snow-tileset).
-    All other assets by Mel Tillery [http://www.cyaneus.com/](http://www.cyaneus.com/).
+     ## Action Space
+     The action shape is `(1,)` in the range `{0, 3}` indicating
+     which direction to move the player.
 
-    ## Action Space
-    The action shape is `(1,)` in the range `{0, 3}` indicating
-    which direction to move the player.
+     - 0: Move left
+     - 1: Move down
+     - 2: Move right
+     - 3: Move up
 
-    - 0: Move left
-    - 1: Move down
-    - 2: Move right
-    - 3: Move up
+     ## Observation Space
+     The observation is a value representing the player's current position as
+     `current_row * ncols + current_col` (where both the row and col start at 0).
+     Therefore, the observation is returned as an integer.
 
-    ## Observation Space
-    The observation is a value representing the player's current position as
-    current_row * ncols + current_col (where both the row and col start at 0).
+     For example, the goal position in the 4x4 map can be calculated as follows: 3 * 4 + 3 = 15.
+     The number of possible observations is dependent on the size of the map.
 
-    For example, the goal position in the 4x4 map can be calculated as follows: 3 * 4 + 3 = 15.
-    The number of possible observations is dependent on the size of the map.
+     ## Starting State
+     The episode starts with the player in state `[0]` (location [0, 0]).
 
-    The observation is returned as an `int()`.
+     ## Rewards
 
-    ## Starting State
-    The episode starts with the player in state `[0]` (location [0, 0]).
+     Default reward schedule:
+     - Reach goal: +1
+     - Reach hole: 0
+     - Reach frozen: 0
 
-    ## Rewards
+     See `reward_schedule` for reward customization in the Argument section.
 
-    Reward schedule:
-    - Reach goal: +1
-    - Reach hole: 0
-    - Reach frozen: 0
+     ## Episode End
+     The episode ends if the following happens:
 
-    ## Episode End
-    The episode ends if the following happens:
+     - Termination:
+         1. The player moves into a hole.
+         2. The player reaches the goal at `max(nrow) * max(ncol) - 1` (location `[max(nrow)-1, max(ncol)-1]`).
 
-    - Termination:
-        1. The player moves into a hole.
-        2. The player reaches the goal at `max(nrow) * max(ncol) - 1` (location `[max(nrow)-1, max(ncol)-1]`).
+     - Truncation (using the time_limit wrapper):
+         1. The length of the episode is 100 for FrozenLake4x4, 200 for FrozenLake8x8.
 
-    - Truncation (when using the time_limit wrapper):
-        1. The length of the episode is 100 for 4x4 environment, 200 for FrozenLake8x8-v1 environment.
+     ## Information
 
-    ## Information
+     `step()` and `reset()` return a dict with the following keys:
+     - `p`: transition probability for the state which will be impacted by the `is_slippery` parameter.
 
-    `step()` and `reset()` return a dict with the following keys:
-    - p - transition probability for the state.
+     ## Arguments
 
-    See <a href="#is_slippy">`is_slippery`</a> for transition probability information.
+     FrozenLake has five parameters:
+     ```python
+     import gymnasium as gym
+     gym.make(
+         'FrozenLake-v1',
+         desc=None,
+         map_name="4x4",
+         is_slippery=True,
+         success_rate=1.0/3.0,
+         reward_schedule=(1, 0, 0)
+     )
+     ```
 
+     * `desc=None`: Used to specify maps non-preloaded maps.
+         If `desc=None` then `map_name` will be used. If both `desc` and `map_name` are
+         `None` a random 8x8 map with 80% of locations frozen will be generated.
 
-    ## Arguments
+         To Specify a custom map - `desc=["SFFF", "FHFH", "FFFH", "HFFG"]`
+         The tile letters denote:
+         - "S" for Start tile
+         - "G" for Goal tile
+         - "F" for frozen tile
+         - "H" for a tile with a hole
 
-    ```python
-    import gymnasium as gym
-    gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=True)
-    ```
+         A random generated map can be specified by calling the function `generate_random_map`.
+         ```
+         from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
-    `desc=None`: Used to specify maps non-preloaded maps.
+         gym.make('FrozenLake-v1', desc=generate_random_map(size=8))
+         ```
 
-    Specify a custom map.
-    ```
-        desc=["SFFF", "FHFH", "FFFH", "HFFG"].
-    ```
-    The tile letters denote:
-    - "S" for Start tile
-    - "G" for Goal tile
-    - "F" for frozen tile
-    - "H" for a tile with a hole
+     * `map_name="4x4"` - Helps load two predefined map names (`4x4` and `8x8`)
+         ```
+         "4x4":[
+             "SFFF",
+             "FHFH",
+             "FFFH",
+             "HFFG"
+         ]
 
-    A random generated map can be specified by calling the function `generate_random_map`.
-    ```
-    from gymnasium.envs.toy_text.frozen_lake import generate_random_map
+         "8x8": [
+             "SFFFFFFF",
+             "FFFFFFFF",
+             "FFFHFFFF",
+             "FFFFFHFF",
+             "FFFHFFFF",
+             "FHHFFFHF",
+             "FHFFHFHF",
+             "FFFHFFFG",
+         ]
+         ```
 
-    gym.make('FrozenLake-v1', desc=generate_random_map(size=8))
-    ```
+    * `is_slippery=True`: If true the player will move in intended direction with probability specified by the
+         `success_rate` else will move in either perpendicular direction with equal probability in both directions.
 
-    `map_name="4x4"`: ID to use any of the preloaded maps.
-    ```
-        "4x4":[
-            "SFFF",
-            "FHFH",
-            "FFFH",
-            "HFFG"
-            ]
+         For example, if action is left, `is_slippery` is True, and `success_rate` is 1/3, then:
+         - P(move left)=1/3
+         - P(move up)=1/3
+         - P(move down)=1/3
 
-        "8x8": [
-            "SFFFFFFF",
-            "FFFFFFFF",
-            "FFFHFFFF",
-            "FFFFFHFF",
-            "FFFHFFFF",
-            "FHHFFFHF",
-            "FHFFHFHF",
-            "FFFHFFFG",
-        ]
-    ```
+         If action is up, `is_slippery` is True, and `success_rate` is 3/4, then:
+         - P(move up)=3/4
+         - P(move left)=1/8
+         - P(move right)=1/8
 
-    If `desc=None` then `map_name` will be used. If both `desc` and `map_name` are
-    `None` a random 8x8 map with 80% of locations frozen will be generated.
+    * `success_rate=1.0/3.0`: Used to specify the probability of moving in the intended direction when is_slippery=True
 
-    <a id="is_slippy"></a>`is_slippery=True`: If true the player will move in intended direction with
-    probability of 1/3 else will move in either perpendicular direction with
-    equal probability of 1/3 in both directions.
+    * `reward_schedule=(1, 0, 0)`: Used to specify reward amounts for reaching certain tiles.
+         The indices correspond to: Reach Goal, Reach Hole, Reach Frozen (includes Start), Respectively
 
-    For example, if action is left and is_slippery is True, then:
-    - P(move left)=1/3
-    - P(move up)=1/3
-    - P(move down)=1/3
-
-
-    ## Version History
-    * v1: Bug fixes to rewards
-    * v0: Initial version release
+     ## Version History
+     * v1: Bug fixes to rewards (v1.3, added reward customization)
+     * v0: Initial version release
 
     """
 
@@ -222,9 +233,11 @@ class FrozenLakeEnv(Env):
     def __init__(
         self,
         render_mode: str | None = None,
-        desc=None,
-        map_name="4x4",
-        is_slippery=True,
+        desc: list[str] = None,
+        map_name: str = "4x4",
+        is_slippery: bool = True,
+        success_rate: float = 1.0 / 3.0,
+        reward_schedule: tuple[int, int, int] = (1, 0, 0),
     ):
         if desc is None and map_name is None:
             desc = generate_random_map()
@@ -232,7 +245,7 @@ class FrozenLakeEnv(Env):
             desc = MAPS[map_name]
         self.desc = desc = np.asarray(desc, dtype="c")
         self.nrow, self.ncol = nrow, ncol = desc.shape
-        self.reward_range = (0, 1)
+        self.reward_range = (min(reward_schedule), max(reward_schedule))
 
         nA = 4
         nS = nrow * ncol
@@ -241,6 +254,8 @@ class FrozenLakeEnv(Env):
         self.initial_state_distrib /= self.initial_state_distrib.sum()
 
         self.P = {s: {a: [] for a in range(nA)} for s in range(nS)}
+
+        fail_rate = (1.0 - success_rate) / 2.0
 
         def to_s(row, col):
             return row * ncol + col
@@ -261,7 +276,9 @@ class FrozenLakeEnv(Env):
             new_state = to_s(new_row, new_col)
             new_letter = desc[new_row, new_col]
             terminated = bytes(new_letter) in b"GH"
-            reward = float(new_letter == b"G")
+            reward = reward_schedule[
+                b"GHF".index(new_letter if new_letter in b"GHF" else b"F")
+            ]
             return new_state, reward, terminated
 
         for row in range(nrow):
@@ -276,7 +293,10 @@ class FrozenLakeEnv(Env):
                         if is_slippery:
                             for b in [(a - 1) % 4, a, (a + 1) % 4]:
                                 li.append(
-                                    (1.0 / 3.0, *update_probability_matrix(row, col, b))
+                                    (
+                                        success_rate if b == a else fail_rate,
+                                        *update_probability_matrix(row, col, b),
+                                    )
                                 )
                         else:
                             li.append((1.0, *update_probability_matrix(row, col, a)))
