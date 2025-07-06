@@ -9,9 +9,11 @@
 
 from __future__ import annotations
 
+import gc
 import os
+from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, Callable, List, SupportsFloat
+from typing import Any, Generic, SupportsFloat
 
 import numpy as np
 
@@ -31,7 +33,9 @@ __all__ = [
 
 
 class RenderCollection(
-    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+    gym.Wrapper[ObsType, ActType, ObsType, ActType],
+    Generic[ObsType, ActType, RenderFrame],
+    gym.utils.RecordConstructorArgs,
 ):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
 
@@ -158,7 +162,9 @@ class RenderCollection(
 
 
 class RecordVideo(
-    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+    gym.Wrapper[ObsType, ActType, ObsType, ActType],
+    Generic[ObsType, ActType, RenderFrame],
+    gym.utils.RecordConstructorArgs,
 ):
     """Records videos of environment episodes using the environment's render function.
 
@@ -241,6 +247,7 @@ class RecordVideo(
         name_prefix: str = "rl-video",
         fps: int | None = None,
         disable_logger: bool = True,
+        gc_trigger: Callable[[int], bool] | None = lambda episode: True,
     ):
         """Wrapper records videos of rollouts.
 
@@ -255,6 +262,7 @@ class RecordVideo(
             fps (int): The frame per second in the video. Provides a custom video fps for environment, if ``None`` then
                 the environment metadata ``render_fps`` key is used if it exists, otherwise a default value of 30 is used.
             disable_logger (bool): Whether to disable moviepy logger or not, default it is disabled
+            gc_trigger: Function that accepts an integer and returns ``True`` iff garbage collection should be performed after this episode
         """
         gym.utils.RecordConstructorArgs.__init__(
             self,
@@ -281,6 +289,7 @@ class RecordVideo(
         self.episode_trigger = episode_trigger
         self.step_trigger = step_trigger
         self.disable_logger = disable_logger
+        self.gc_trigger = gc_trigger
 
         self.video_folder = os.path.abspath(video_folder)
         if os.path.isdir(self.video_folder):
@@ -314,7 +323,7 @@ class RecordVideo(
         assert self.recording, "Cannot capture a frame, recording wasn't started."
 
         frame = self.env.render()
-        if isinstance(frame, List):
+        if isinstance(frame, list):
             if len(frame) == 0:  # render was called
                 return
             self.render_history += frame
@@ -367,7 +376,7 @@ class RecordVideo(
     def render(self) -> RenderFrame | list[RenderFrame]:
         """Compute the render frames as specified by render_mode attribute during initialization of the environment."""
         render_out = super().render()
-        if self.recording and isinstance(render_out, List):
+        if self.recording and isinstance(render_out, list):
             self.recorded_frames += render_out
 
         if len(self.render_history) > 0:
@@ -413,6 +422,9 @@ class RecordVideo(
         self.recorded_frames = []
         self.recording = False
         self._video_name = None
+
+        if self.gc_trigger and self.gc_trigger(self.episode_id):
+            gc.collect()
 
     def __del__(self):
         """Warn the user in case last video wasn't saved."""

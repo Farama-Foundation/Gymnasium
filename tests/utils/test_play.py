@@ -1,6 +1,6 @@
+from collections.abc import Callable
 from functools import partial
 from itertools import product
-from typing import Callable
 
 import numpy as np
 import pygame
@@ -48,11 +48,15 @@ class PlayStatus:
         self.last_observation = obs_tp1
 
 
-def dummy_keys_to_action():
+def dummy_keys_to_action() -> dict[tuple[int], int]:
     return {(RELEVANT_KEY_1,): 0, (RELEVANT_KEY_2,): 1}
 
 
-def dummy_keys_to_action_str():
+def dummy_keys_to_action_int() -> dict[int, int]:
+    return {RELEVANT_KEY_1: 0, RELEVANT_KEY_2: 1}
+
+
+def dummy_keys_to_action_str() -> dict[str, int]:
     """{'a': 0, 'd': 1}"""
     return {chr(RELEVANT_KEY_1): 0, chr(RELEVANT_KEY_2): 1}
 
@@ -147,7 +151,7 @@ def test_play_loop_real_env():
 
     # If apply_wrapper is true, we provide keys_to_action through the environment. If str_keys is true, the
     # keys_to_action dictionary will have strings as keys
-    for apply_wrapper, str_keys in product([False, True], [False, True]):
+    for apply_wrapper, key_type in product([False, True], ["str", "int", "tuple"]):
         # set of key events to inject into the play loop as callback
         callback_events = [
             Event(KEYDOWN, {"key": RELEVANT_KEY_1}),
@@ -178,15 +182,28 @@ def test_play_loop_real_env():
 
         env = gym.make(ENV, render_mode="rgb_array", disable_env_checker=True)
         env.reset(seed=SEED)
-        keys_to_action = (
-            dummy_keys_to_action_str() if str_keys else dummy_keys_to_action()
-        )
+
+        if key_type == "tuple":
+            keys_to_action = dummy_keys_to_action()
+        elif key_type == "str":
+            keys_to_action = dummy_keys_to_action_str()
+        elif key_type == "int":
+            keys_to_action = dummy_keys_to_action_int()
+        else:
+            assert False
 
         # first action is 0 because at the first iteration
         # we can not inject a callback event into play()
         obs, _, _, _, _ = env.step(0)
         for e in keydown_events:
-            action = keys_to_action[chr(e.key) if str_keys else (e.key,)]
+            if key_type == "tuple":
+                action = keys_to_action[(e.key,)]
+            elif key_type == "str":
+                action = keys_to_action[chr(e.key)]
+            elif key_type == "int":
+                action = keys_to_action[e.key]
+            else:
+                assert False
             obs, _, _, _, _ = env.step(action)
 
         env_play = gym.make(ENV, render_mode="rgb_array", disable_env_checker=True)

@@ -2,7 +2,7 @@
 Utility functions used for classic control environments.
 """
 
-from typing import Optional, SupportsFloat, Tuple
+from typing import SupportsFloat
 
 
 def verify_number_and_cast(x: SupportsFloat) -> float:
@@ -15,8 +15,8 @@ def verify_number_and_cast(x: SupportsFloat) -> float:
 
 
 def maybe_parse_reset_bounds(
-    options: Optional[dict], default_low: float, default_high: float
-) -> Tuple[float, float]:
+    options: dict | None, default_low: float, default_high: float
+) -> tuple[float, float]:
     """
     This function can be called during a reset() to customize the sampling
     ranges for setting the initial state distributions.

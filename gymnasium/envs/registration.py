@@ -7,28 +7,21 @@ import copy
 import dataclasses
 import difflib
 import importlib
+import importlib.metadata as metadata
 import importlib.util
 import json
 import re
-import sys
 from collections import defaultdict
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from types import ModuleType
-from typing import Any, Callable, Iterable, Sequence
+from typing import Any, Protocol
 
 import gymnasium as gym
 from gymnasium import Env, Wrapper, error, logger
 from gymnasium.logger import warn
 from gymnasium.vector import AutoresetMode
-
-
-if sys.version_info < (3, 10):
-    import importlib_metadata as metadata  # type: ignore
-else:
-    import importlib.metadata as metadata
-
-from typing import Protocol
 
 
 ENV_ID_RE = re.compile(
@@ -606,7 +599,6 @@ def register(
     assert (
         entry_point is not None or vector_entry_point is not None
     ), "Either `entry_point` or `vector_entry_point` (or both) must be provided"
-    global registry, current_namespace
     ns, name, version = parse_env_id(id)
 
     if kwargs is None:

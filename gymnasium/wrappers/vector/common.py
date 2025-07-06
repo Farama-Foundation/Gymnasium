@@ -85,7 +85,9 @@ class RecordEpisodeStatistics(VectorWrapper):
         super().__init__(env)
         self._stats_key = stats_key
         if "autoreset_mode" not in self.env.metadata:
-            warn("todo")
+            warn(
+                f"{self} is missing `autoreset_mode` tag in its metadata, therefore, `RecordEpisodeStatistics` is assuming that the environment uses `AutoresetMode.NEXT_STEP`. See `https://farama.org/Vector-Autoreset-Mode` for more information on autoreset modes."
+            )
             self._autoreset_mode = AutoresetMode.NEXT_STEP
         else:
             assert isinstance(self.env.metadata["autoreset_mode"], AutoresetMode)

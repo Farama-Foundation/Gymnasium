@@ -12,7 +12,7 @@ import gymnasium as gym
 from gymnasium.spaces.space import Space
 
 
-class Sequence(Space[Union[typing.Tuple[Any, ...], Any]]):
+class Sequence(Space[Union[tuple[Any, ...], Any]]):
     r"""This space represent sets of finite-length sequences.
 
     This space represents the set of tuples of the form :math:`(a_0, \dots, a_n)` where the :math:`a_i` belong

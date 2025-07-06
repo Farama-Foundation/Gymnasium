@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Generic, Iterable, Mapping, Sequence, TypeVar
+from collections.abc import Iterable, Mapping, Sequence
+from typing import Any, Generic, TypeAlias, TypeVar
 
 import numpy as np
 import numpy.typing as npt
@@ -13,7 +14,7 @@ from gymnasium.utils import seeding
 T_cov = TypeVar("T_cov", covariant=True)
 
 
-MaskNDArray = npt.NDArray[np.int8]
+MaskNDArray: TypeAlias = npt.NDArray[np.int8]
 
 
 class Space(Generic[T_cov]):

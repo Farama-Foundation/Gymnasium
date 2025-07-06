@@ -6,11 +6,13 @@ import multiprocessing
 import sys
 import time
 import traceback
+from collections.abc import Callable, Sequence
 from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
-from typing import Any, Callable, Sequence
+from multiprocessing.sharedctypes import SynchronizedArray
+from typing import Any
 
 import numpy as np
 
@@ -249,7 +251,7 @@ class AsyncVectorEnv(VectorEnv):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | list[int | None] | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Resets all sub-environments in parallel and return a batch of concatenated observations and info.
@@ -266,7 +268,7 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_async(
         self,
-        seed: int | list[int] | None = None,
+        seed: int | list[int | None] | None = None,
         options: dict | None = None,
     ):
         """Send calls to the :obj:`reset` methods of the sub-environments.
@@ -718,10 +720,10 @@ class AsyncVectorEnv(VectorEnv):
 
 def _async_worker(
     index: int,
-    env_fn: callable,
+    env_fn: Callable,
     pipe: Connection,
     parent_pipe: Connection,
-    shared_memory: multiprocessing.Array | dict[str, Any] | tuple[Any, ...],
+    shared_memory: SynchronizedArray | dict[str, Any] | tuple[Any, ...],
     error_queue: Queue,
     autoreset_mode: AutoresetMode,
 ):

@@ -6,12 +6,21 @@ firstpage:
 
 # Basic Usage
 
+## What is Reinforcement Learning?
+
+Before diving into Gymnasium, let's understand what we're trying to achieve. Reinforcement learning is like teaching through trial and error - an agent learns by trying actions, receiving feedback (rewards), and gradually improving its behavior. Think of training a pet with treats, learning to ride a bike through practice, or mastering a video game by playing it repeatedly.
+
+The key insight is that we don't tell the agent exactly what to do. Instead, we create an environment where it can experiment safely and learn from the consequences of its actions.
+
+## Why Gymnasium?
+
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-Gymnasium is a project that provides an API (application programming interface) for all single agent reinforcement learning environments, with implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more. This page will outline the basics of how to use Gymnasium including its four key functions: :meth:`make`, :meth:`Env.reset`, :meth:`Env.step` and :meth:`Env.render`.
+Whether you want to train an agent to play games, control robots, or optimize trading strategies, Gymnasium gives you the tools to build and test your ideas.
+At its heart, Gymnasium provides an API (application programming interface) for all single agent reinforcement learning environments, with implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more. This page will outline the basics of how to use Gymnasium including its four key functions: :meth:`make`, :meth:`Env.reset`, :meth:`Env.step` and :meth:`Env.render`.
 
-At the core of Gymnasium is :class:`Env`, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (note: this is not a perfect reconstruction, missing several components of MDPs). The class provides users the ability generate an initial state, transition / move to new states given an action and visualize the environment. Alongside :class:`Env`, :class:`Wrapper` are provided to help augment / modify the environment, in particular, the agent observations, rewards and actions taken.
+At the core of Gymnasium is :class:`Env`, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (note: this is not a perfect reconstruction, missing several components of MDPs). The class provides users the ability start new episodes, take actions and visualize the agent's current state. Alongside :class:`Env`, :class:`Wrapper` are provided to help augment / modify the environment, in particular, the agent observations, rewards and actions taken.
 ```
 
 ## Initializing Environments
@@ -24,7 +33,14 @@ Initializing environments is very easy in Gymnasium and can be done via the :met
 
 ```python
 import gymnasium as gym
+
+# Create a simple environment perfect for beginners
 env = gym.make('CartPole-v1')
+
+# The CartPole environment: balance a pole on a moving cart
+# - Simple but not trivial
+# - Fast training
+# - Clear success/failure criteria
 ```
 
 ```{eval-rst}
@@ -33,9 +49,16 @@ env = gym.make('CartPole-v1')
 This function will return an :class:`Env` for users to interact with. To see all environments you can create, use :meth:`pprint_registry`. Furthermore, :meth:`make` provides a number of additional arguments for specifying keywords to the environment, adding more or less wrappers, etc. See :meth:`make` for more information.
 ```
 
-## Interacting with the Environment
+## Understanding the Agent-Environment Loop
 
-In reinforcement learning, the classic "agent-environment loop" pictured below is a simplified representation of how an agent and environment interact with each other. The agent receives an observation about the environment, the agent then selects an action, which the environment uses to determine the reward and the next observation. The cycle then repeats itself until the environment ends (terminates).
+In reinforcement learning, the classic "agent-environment loop" pictured below represents how learning happens in RL. It's simpler than it might first appear:
+
+1. **Agent observes** the current situation (like looking at a game screen)
+2. **Agent chooses an action** based on what it sees (like pressing a button)
+3. **Environment responds** with a new situation and a reward (game state changes, score updates)
+4. **Repeat** until the episode ends
+
+This might seem simple, but it's how agents learn everything from playing chess to controlling robots to optimizing business processes.
 
 ```{image} /_static/diagrams/AE_loop.png
 :width: 50%
@@ -49,45 +72,63 @@ In reinforcement learning, the classic "agent-environment loop" pictured below i
 :class: only-dark
 ```
 
-For Gymnasium, the "agent-environment-loop" is implemented below for a single episode (until the environment ends). See the next section for a line-by-line explanation. Note that running this code requires installing swig (`pip install swig`, [download](https://www.swig.org/download.html), or via [Homebrew](https://formulae.brew.sh/formula/swig) if you are using macOS) along with `pip install "gymnasium[box2d]"`.
+## Your First RL Program
+
+Let's start with a simple example using CartPole - perfect for understanding the basics:
 
 ```python
+# Run `pip install "gymnasium[classic-control]"` for this example.
 import gymnasium as gym
 
-env = gym.make("LunarLander-v3", render_mode="human")
+# Create our training environment - a cart with a pole that needs balancing
+env = gym.make("CartPole-v1", render_mode="human")
+
+# Reset environment to start a new episode
 observation, info = env.reset()
+# observation: what the agent can "see" - cart position, velocity, pole angle, etc.
+# info: extra debugging information (usually not needed for basic learning)
+
+print(f"Starting observation: {observation}")
+# Example output: [ 0.01234567 -0.00987654  0.02345678  0.01456789]
+# [cart_position, cart_velocity, pole_angle, pole_angular_velocity]
 
 episode_over = False
+total_reward = 0
+
 while not episode_over:
-    action = env.action_space.sample()  # agent policy that uses the observation and info
+    # Choose an action: 0 = push cart left, 1 = push cart right
+    action = env.action_space.sample()  # Random action for now - real agents will be smarter!
+
+    # Take the action and see what happens
     observation, reward, terminated, truncated, info = env.step(action)
 
+    # reward: +1 for each step the pole stays upright
+    # terminated: True if pole falls too far (agent failed)
+    # truncated: True if we hit the time limit (500 steps)
+
+    total_reward += reward
     episode_over = terminated or truncated
 
+print(f"Episode finished! Total reward: {total_reward}")
 env.close()
 ```
 
-The output should look something like this:
+**What you should see**: A window opens showing a cart with a pole. The cart moves randomly left and right, and the pole eventually falls over. This is expected - the agent is acting randomly!
 
-```{figure} https://user-images.githubusercontent.com/15806078/153222406-af5ce6f0-4696-4a24-a683-46ad4939170c.gif
-:width: 50%
-:align: center
-```
-
-### Explaining the code
+### Explaining the Code Step by Step
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-First, an environment is created using :meth:`make` with an additional keyword ``"render_mode"`` that specifies how the environment should be visualized. See :meth:`Env.render` for details on the default meaning of different render modes. In this example, we use the ``"LunarLander"`` environment where the agent controls a spaceship that needs to land safely.
+First, an environment is created using :meth:`make` with an optional ``"render_mode"`` parameter that specifies how the environment should be visualized. See :meth:`Env.render` for details on different render modes. The render mode determines whether you see a visual window ("human"), get image arrays ("rgb_array"), or run without visuals (None - fastest for training).
 
-After initializing the environment, we :meth:`Env.reset` the environment to get the first observation of the environment along with an additional information. For initializing the environment with a particular random seed or options (see the environment documentation for possible values) use the ``seed`` or ``options`` parameters with :meth:`reset`.
+After initializing the environment, we :meth:`Env.reset` the environment to get the first observation along with additional information. This is like starting a new game or episode. For initializing the environment with a particular random seed or options (see the environment documentation for possible values) use the ``seed`` or ``options`` parameters with :meth:`reset`.
 
-As we wish to continue the agent-environment loop until the environment ends, which is in an unknown number of timesteps, we define ``episode_over`` as a variable to know when to stop interacting with the environment along with a while loop that uses it.
+As we want to continue the agent-environment loop until the environment ends (which happens in an unknown number of timesteps), we define ``episode_over`` as a variable to control our while loop.
 
-Next, the agent performs an action in the environment, :meth:`Env.step` executes the selected action (in this case random with ``env.action_space.sample()``) to update the environment. This action can be imagined as moving a robot or pressing a button on a games' controller that causes a change within the environment. As a result, the agent receives a new observation from the updated environment along with a reward for taking the action. This reward could be for instance positive for destroying an enemy or a negative reward for moving into lava. One such action-observation exchange is referred to as a **timestep**.
+Next, the agent performs an action in the environment. :meth:`Env.step` executes the selected action (in our example, random with ``env.action_space.sample()``) to update the environment. This action can be imagined as moving a robot, pressing a button on a game controller, or making a trading decision. As a result, the agent receives a new observation from the updated environment along with a reward for taking the action. This reward could be positive for good actions (like successfully balancing the pole) or negative for bad actions (like letting the pole fall). One such action-observation exchange is called a **timestep**.
 
-However, after some timesteps, the environment may end, this is called the terminal state. For instance, the robot may have crashed, or may have succeeded in completing a task, the environment will need to stop as the agent cannot continue. In Gymnasium, if the environment has terminated, this is returned by :meth:`step` as the third variable, ``terminated``. Similarly, we may also want the environment to end after a fixed number of timesteps, in this case, the environment issues a truncated signal. If either of ``terminated`` or ``truncated`` are ``True`` then we end the episode but in most cases users might wish to restart the environment, this can be done with ``env.reset()``.
+However, after some timesteps, the environment may end - this is called the terminal state. For instance, the robot may have crashed, or succeeded in completing a task, or we may want to stop after a fixed number of timesteps. In Gymnasium, if the environment has terminated due to the task being completed or failed, this is returned by :meth:`step` as ``terminated=True``. If we want the environment to end after a fixed number of timesteps (like a time limit), the environment issues a ``truncated=True`` signal. If either ``terminated`` or ``truncated`` are ``True``, we end the episode. In most cases, you'll want to restart the environment with ``env.reset()`` to begin a new episode.
 ```
 
 ## Action and observation spaces
@@ -95,23 +136,43 @@ However, after some timesteps, the environment may end, this is called the termi
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.Env
 
-Every environment specifies the format of valid actions and observations with the :attr:`action_space` and :attr:`observation_space` attributes. This is helpful for knowing both the expected input and output of the environment, as all valid actions and observations should be contained with their respective spaces. In the example above, we sampled random actions via ``env.action_space.sample()`` instead of using an agent policy, mapping observations to actions which users will want to make.
+Every environment specifies the format of valid actions and observations with the :attr:`action_space` and :attr:`observation_space` attributes. This is helpful for knowing both the expected input and output of the environment, as all valid actions and observations should be contained within their respective spaces. In the example above, we sampled random actions via ``env.action_space.sample()`` instead of using an intelligent agent policy that maps observations to actions (which is what you'll learn to build).
 
-Importantly, :attr:`Env.action_space` and :attr:`Env.observation_space` are instances of :class:`Space`, a high-level python class that provides the key functions: :meth:`Space.contains` and :meth:`Space.sample`. Gymnasium has support for a wide range of spaces that users might need:
+Understanding these spaces is crucial for building agents:
+- **Action Space**: What can your agent do? (discrete choices, continuous values, etc.)
+- **Observation Space**: What can your agent see? (images, numbers, structured data, etc.)
+
+Importantly, :attr:`Env.action_space` and :attr:`Env.observation_space` are instances of :class:`Space`, a high-level python class that provides key functions: :meth:`Space.contains` and :meth:`Space.sample`. Gymnasium supports a wide range of spaces:
 
 .. py:currentmodule:: gymnasium.spaces
 
-- :class:`Box`: describes bounded space with upper and lower limits of any n-dimensional shape.
-- :class:`Discrete`: describes a discrete space where ``{0, 1, ..., n-1}`` are the possible values our observation or action can take.
-- :class:`MultiBinary`: describes a binary space of any n-dimensional shape.
-- :class:`MultiDiscrete`: consists of a series of :class:`Discrete` action spaces with a different number of actions in each element.
-- :class:`Text`: describes a string space with a minimum and maximum length.
-- :class:`Dict`: describes a dictionary of simpler spaces.
+- :class:`Box`: describes bounded space with upper and lower limits of any n-dimensional shape (like continuous control or image pixels).
+- :class:`Discrete`: describes a discrete space where ``{0, 1, ..., n-1}`` are the possible values (like button presses or menu choices).
+- :class:`MultiBinary`: describes a binary space of any n-dimensional shape (like multiple on/off switches).
+- :class:`MultiDiscrete`: consists of a series of :class:`Discrete` action spaces with different numbers of actions in each element.
+- :class:`Text`: describes a string space with minimum and maximum length.
+- :class:`Dict`: describes a dictionary of simpler spaces (like our GridWorld example you'll see later).
 - :class:`Tuple`: describes a tuple of simple spaces.
 - :class:`Graph`: describes a mathematical graph (network) with interlinking nodes and edges.
 - :class:`Sequence`: describes a variable length of simpler space elements.
 
-For example usage of spaces, see their `documentation <../api/spaces>`_ along with `utility functions <../api/spaces/utils>`_. There are a couple of more niche spaces :class:`Graph`, :class:`Sequence` and :class:`Text`.
+For example usage of spaces, see their `documentation </api/spaces>`_ along with `utility functions </api/spaces/utils>`_.
+```
+
+Let's look at some examples:
+
+```python
+import gymnasium as gym
+
+# Discrete action space (button presses)
+env = gym.make("CartPole-v1")
+print(f"Action space: {env.action_space}")  # Discrete(2) - left or right
+print(f"Sample action: {env.action_space.sample()}")  # 0 or 1
+
+# Box observation space (continuous values)
+print(f"Observation space: {env.observation_space}")  # Box with 4 values
+# Box([-4.8, -inf, -0.418, -inf], [4.8, inf, 0.418, inf])
+print(f"Sample observation: {env.observation_space.sample()}")  # Random valid observation
 ```
 
 ## Modifying the environment
@@ -119,31 +180,39 @@ For example usage of spaces, see their `documentation <../api/spaces>`_ along wi
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.wrappers
 
-Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly. Using wrappers will allow you to avoid a lot of boilerplate code and make your environment more modular. Wrappers can also be chained to combine their effects. Most environments that are generated via :meth:`gymnasium.make` will already be wrapped by default using the :class:`TimeLimit`, :class:`OrderEnforcing` and :class:`PassiveEnvChecker`.
+Wrappers are a convenient way to modify an existing environment without having to alter the underlying code directly. Think of wrappers like filters or modifiers that change how you interact with an environment. Using wrappers allows you to avoid boilerplate code and make your environment more modular. Wrappers can also be chained to combine their effects.
 
-In order to wrap an environment, you must first initialize a base environment. Then you can pass this environment along with (possibly optional) parameters to the wrapper's constructor:
+Most environments created via :meth:`gymnasium.make` will already be wrapped by default using :class:`TimeLimit` (stops episodes after a maximum number of steps), :class:`OrderEnforcing` (ensures proper reset/step order), and :class:`PassiveEnvChecker` (validates your environment usage).
+
+To wrap an environment, you first initialize a base environment, then pass it along with optional parameters to the wrapper's constructor:
 ```
 
 ```python
 >>> import gymnasium as gym
 >>> from gymnasium.wrappers import FlattenObservation
+
+>>> # Start with a complex observation space
 >>> env = gym.make("CarRacing-v3")
 >>> env.observation_space.shape
-(96, 96, 3)
+(96, 96, 3)  # 96x96 RGB image
+
+>>> # Wrap it to flatten the observation into a 1D array
 >>> wrapped_env = FlattenObservation(env)
 >>> wrapped_env.observation_space.shape
-(27648,)
+(27648,)  # All pixels in a single array
+
+>>> # This makes it easier to use with some algorithms that expect 1D input
 ```
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.wrappers
 
-Gymnasium already provides many commonly used wrappers for you. Some examples:
+Common wrappers that beginners find useful:
 
-- :class:`TimeLimit`: Issues a truncated signal if a maximum number of timesteps has been exceeded (or the base environment has issued a truncated signal).
-- :class:`ClipAction`: Clips any action passed to ``step`` such that it lies in the base environment's action space.
-- :class:`RescaleAction`: Applies an affine transformation to the action to linearly scale for a new low and high bound on the environment.
-- :class:`TimeAwareObservation`: Add information about the index of timestep to observation. In some cases helpful to ensure that transitions are Markov.
+- :class:`TimeLimit`: Issues a truncated signal if a maximum number of timesteps has been exceeded (preventing infinite episodes).
+- :class:`ClipAction`: Clips any action passed to ``step`` to ensure it's within the valid action space.
+- :class:`RescaleAction`: Rescales actions to a different range (useful for algorithms that output actions in [-1, 1] but environment expects [0, 10]).
+- :class:`TimeAwareObservation`: Adds information about the current timestep to the observation (sometimes helps with learning).
 ```
 
 For a full list of implemented wrappers in Gymnasium, see [wrappers](/api/wrappers).
@@ -151,7 +220,7 @@ For a full list of implemented wrappers in Gymnasium, see [wrappers](/api/wrappe
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.Env
 
-If you have a wrapped environment, and you want to get the unwrapped environment underneath all the layers of wrappers (so that you can manually call a function or change some underlying aspect of the environment), you can use the :attr:`unwrapped` attribute. If the environment is already a base environment, the :attr:`unwrapped` attribute will just return itself.
+If you have a wrapped environment and want to access the original environment underneath all the layers of wrappers (to manually call a function or change some underlying aspect), you can use the :attr:`unwrapped` attribute. If the environment is already a base environment, :attr:`unwrapped` just returns itself.
 ```
 
 ```python
@@ -161,11 +230,29 @@ If you have a wrapped environment, and you want to get the unwrapped environment
 <gymnasium.envs.box2d.car_racing.CarRacing object at 0x7f04efcb8850>
 ```
 
-## More information
+## Common Issues for Beginners
 
-* [Training an agent](train_agent)
-* [Making a Custom Environment](create_custom_env)
-* [Recording an agent's behaviour](record_agent)
-* [Speeding up an Environment](speed_up_env)
-* [Compatibility with OpenAI Gym](gym_compatibility)
-* [Migration Guide for Gym v0.21 to v0.26 and for v1.0.0](migration_guide)
+**Agent Behavior:**
+- Agent performs randomly: That's expected when using `env.action_space.sample()`! Real learning happens when you replace this with an intelligent policy
+- Episodes end immediately: Check if you're properly handling the reset between episodes
+
+**Common Code Mistakes:**
+```python
+# ❌ Wrong - forgetting to reset
+env = gym.make("CartPole-v1")
+obs, reward, terminated, truncated, info = env.step(action)  # Error!
+
+# ✅ Correct - always reset first
+env = gym.make("CartPole-v1")
+obs, info = env.reset()  # Start properly
+obs, reward, terminated, truncated, info = env.step(action)  # Now this works
+```
+
+## Next Steps
+
+Now that you understand the basics, you're ready to:
+
+1. **[Train an actual agent](train_agent)** - Replace random actions with intelligence
+2. **[Create custom environments](create_custom_env)** - Build your own RL problems
+3. **[Record agent behavior](record_agent)** - Save videos and data from training
+4. **[Speed up training](speed_up_env)** - Use vectorized environments and other optimizations

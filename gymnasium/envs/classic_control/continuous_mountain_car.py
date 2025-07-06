@@ -14,7 +14,6 @@ permalink: https://perma.cc/6Z2N-PFWC
 """
 
 import math
-from typing import Optional
 
 import numpy as np
 
@@ -53,7 +52,7 @@ class Continuous_MountainCarEnv(gym.Env):
     | Num | Observation                          | Min   | Max  | Unit          |
     |-----|--------------------------------------|-------|------|---------------|
     | 0   | position of the car along the x-axis | -1.2  | 0.6  | position (m)  |
-    | 1   | velocity of the car                  | -0.07 | 0.07 | position (m)  |
+    | 1   | velocity of the car                  | -0.07 | 0.07 | velocity (v)  |
 
     ## Action Space
 
@@ -114,7 +113,7 @@ class Continuous_MountainCarEnv(gym.Env):
         "render_fps": 30,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, goal_velocity=0):
+    def __init__(self, render_mode: str | None = None, goal_velocity=0):
         self.min_action = -1.0
         self.max_action = 1.0
         self.min_position = -1.2
@@ -183,7 +182,7 @@ class Continuous_MountainCarEnv(gym.Env):
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return self.state, reward, terminated, False, {}
 
-    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    def reset(self, *, seed: int | None = None, options: dict | None = None):
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.

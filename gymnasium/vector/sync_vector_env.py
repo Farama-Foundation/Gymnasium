@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterator, Sequence
 from copy import deepcopy
-from typing import Any, Callable, Iterator, Sequence
+from typing import Any
 
 import numpy as np
 
@@ -164,7 +165,7 @@ class SyncVectorEnv(VectorEnv):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | list[int | None] | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Resets each of the sub-environments and concatenate the results together.
