@@ -386,6 +386,9 @@ class AsyncVectorEnv(VectorEnv):
         Returns:
             Batch of (observations, rewards, terminations, truncations, infos)
         """
+        assert self.action_space.contains(actions), (
+            f"Expected action to be in {self.action_space}, got {actions}"
+        )
         self.step_async(actions)
         return self.step_wait()
 
