@@ -183,8 +183,6 @@ class RecordVideo(
     However, you can also create recordings of fixed length (possibly spanning several episodes)
     by passing a strictly positive value for ``video_length``.
 
-    No vector version of the wrapper exists.
-
     Examples - Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:
         >>> import os
         >>> import gymnasium as gym
