@@ -385,10 +385,13 @@ class AsyncVectorEnv(VectorEnv):
 
         Returns:
             Batch of (observations, rewards, terminations, truncations, infos)
+
+        Raises:
+            AssertionError: If the action is not in the action space.
         """
-        assert self.action_space.contains(actions), (
-            f"Expected action to be in {self.action_space}, got {actions}"
-        )
+        assert self.action_space.contains(
+            actions
+        ), f"Expected action to be in {self.action_space}, got {actions}"
         self.step_async(actions)
         return self.step_wait()
 
