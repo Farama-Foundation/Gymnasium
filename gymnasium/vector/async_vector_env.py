@@ -385,13 +385,7 @@ class AsyncVectorEnv(VectorEnv):
 
         Returns:
             Batch of (observations, rewards, terminations, truncations, infos)
-
-        Raises:
-            AssertionError: If the action is not in the action space.
         """
-        assert self.action_space.contains(
-            actions
-        ), f"Expected action to be in {self.action_space}, got {actions}"
         self.step_async(actions)
         return self.step_wait()
 
@@ -416,7 +410,7 @@ class AsyncVectorEnv(VectorEnv):
             )
 
         iter_actions = iterate(self.action_space, actions)
-        for pipe, action in zip(self.parent_pipes, iter_actions):
+        for pipe, action in zip(self.parent_pipes, iter_actions, strict=True):
             pipe.send(("step", action))
         self._state = AsyncState.WAITING_STEP
 
