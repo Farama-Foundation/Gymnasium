@@ -243,25 +243,11 @@ class SyncVectorEnv(VectorEnv):
 
         Returns:
             The batched environment step results
-
-        Raises:
-            ValueError: If the number of actions does not match the number of environments.
         """
-        try:
-            actions = np.asarray(actions)
-            if actions.shape[0] != self.num_envs:
-                raise ValueError(
-                    f"Expected {self.num_envs} actions, got {actions.shape[0]}"
-                )
-        except Exception as e:
-            raise ValueError(
-                f"Actions must be convertible to a numpy array with shape ({self.num_envs}, ...), got {type(actions)} with error: {e}"
-            ) from e
-
         actions = iterate(self.action_space, actions)
 
         infos = {}
-        for i, action in enumerate(actions):
+        for i, (action, _) in enumerate(zip(actions, self.envs, strict=True)):
             if self.autoreset_mode == AutoresetMode.NEXT_STEP:
                 if self._autoreset_envs[i]:
                     self._env_obs[i], env_info = self.envs[i].reset()
