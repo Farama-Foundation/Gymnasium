@@ -282,9 +282,9 @@ class RecordVideo(
         self.disable_logger = disable_logger
         self.gc_trigger = gc_trigger
 
-        self.frame_cols = None
-        self.frame_rows = None
         self.video_aspect_ratio = video_aspect_ratio
+        self.frame_cols = -1
+        self.frame_rows = -1
 
         self.video_folder = os.path.abspath(video_folder)
         if os.path.isdir(self.video_folder):
@@ -357,7 +357,7 @@ class RecordVideo(
             frame = frame[-1]
 
         if isinstance(frame, tuple):
-            if self.frame_cols is None or self.frame_rows is None:
+            if self.frame_cols == -1 or self.frame_rows == -1:
                 n_frames = len(frame)
                 h, w, c = frame[0].shape
                 self._get_concat_frame_shape(n_frames, h, w)
