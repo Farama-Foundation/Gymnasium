@@ -211,7 +211,7 @@ class RecordVideo(
     >>> n_envs = 9
     >>> env = gym.vector.SyncVectorEnv([make_env for _ in range(n_envs)])
     >>> trigger = lambda t: t % 10 == 0
-    >>> env = RecordVideo(env, video_folder="./save_videos1", aspect_ratio=(1,1), episode_trigger=trigger, disable_logger=True)
+    >>> env = RecordVideo(env, video_folder="./save_videos1", video_aspect_ratio=(1,1), episode_trigger=trigger, disable_logger=True)
     >>> rng_generator = np.random.default_rng(seed=42)
     >>> n_episodes = 50
     >>> episodes_length = rng_generator.integers(100, 200, n_episodes)
@@ -229,7 +229,7 @@ class RecordVideo(
         self,
         env: gym.VectorEnv[ObsType, ActType],
         video_folder: str,
-        aspect_ratio: tuple[int, int],
+        video_aspect_ratio: tuple[int, int] = (1, 1),
         episode_trigger: Callable[[int], bool] | None = None,
         step_trigger: Callable[[int], bool] | None = None,
         video_length: int = 0,
@@ -243,7 +243,7 @@ class RecordVideo(
         Args:
             env: The environment that will be wrapped
             video_folder (str): The folder where the recordings will be stored
-            aspect_ratio (tuple): the desired aspect ratio of the video concatenating all environments. For example, (1, 1) means an
+            video_aspect_ratio (tuple): the desired aspect ratio of the video concatenating all environments. For example, (1, 1) means an
                 aspect ratio of 1:1, while (16, 9) means 16:9.
             episode_trigger: Function that accepts an integer and returns ``True`` iff a recording should be started at this episode
             step_trigger: Function that accepts an integer and returns ``True`` iff a recording should be started at this step
@@ -282,9 +282,9 @@ class RecordVideo(
         self.disable_logger = disable_logger
         self.gc_trigger = gc_trigger
 
-        self.aspect_ratio = aspect_ratio
         self.frame_cols = None
         self.frame_rows = None
+        self.video_aspect_ratio = video_aspect_ratio
 
         self.video_folder = os.path.abspath(video_folder)
         if os.path.isdir(self.video_folder):
@@ -316,7 +316,7 @@ class RecordVideo(
 
     def _get_concat_frame_shape(self, n_frames, h, w):
         """Finds the right shape to concatenate frames from all environments into one frame."""
-        target_aspect_ratio = self.aspect_ratio[0] / self.aspect_ratio[1]
+        target_video_aspect_ratio = self.video_aspect_ratio[0] / self.video_aspect_ratio[1]
         best_rows, best_cols = 1, n_frames
         min_diff = np.inf
         for rows in range(1, int(n_frames**0.5) + 1):
@@ -325,7 +325,7 @@ class RecordVideo(
                 total_height = rows * h
                 total_width = cols * w
                 aspect = total_width / total_height
-                diff = abs(aspect - target_aspect_ratio)
+                diff = abs(aspect - target_video_aspect_ratio)
                 if diff < min_diff:
                     min_diff = diff
                     best_rows, best_cols = rows, cols
