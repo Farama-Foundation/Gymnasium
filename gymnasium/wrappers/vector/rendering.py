@@ -314,6 +314,11 @@ class RecordVideo(
                 'MoviePy is not installed, run `pip install "gymnasium[other]"`'
             ) from e
 
+        if env.metadata["autoreset_mode"] == AutoresetMode.SAME_STEP:
+            logger.warn(
+                f"AutoresetMode is SameStep. Recorded episodes will not contain the last frame of the episode."
+            )
+
     def _get_concat_frame_shape(self, n_frames, h, w):
         """Finds the right shape to concatenate frames from all environments into one frame."""
         target_video_aspect_ratio = self.video_aspect_ratio[0] / self.video_aspect_ratio[1]
