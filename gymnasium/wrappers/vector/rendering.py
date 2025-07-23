@@ -314,14 +314,16 @@ class RecordVideo(
                 'MoviePy is not installed, run `pip install "gymnasium[other]"`'
             ) from e
 
-        if env.metadata["autoreset_mode"] == AutoresetMode.SAME_STEP:
+        if env.metadata["autoreset_mode"] == gym.vector.AutoresetMode.SAME_STEP:
             logger.warn(
-                f"AutoresetMode is SameStep. Recorded episodes will not contain the last frame of the episode."
+                "AutoresetMode is SameStep. Recorded episodes will not contain the last frame of the episode."
             )
 
     def _get_concat_frame_shape(self, n_frames, h, w):
         """Finds the right shape to concatenate frames from all environments into one frame."""
-        target_video_aspect_ratio = self.video_aspect_ratio[0] / self.video_aspect_ratio[1]
+        target_video_aspect_ratio = (
+            self.video_aspect_ratio[0] / self.video_aspect_ratio[1]
+        )
         best_rows, best_cols = 1, n_frames
         min_diff = np.inf
         for rows in range(1, int(n_frames**0.5) + 1):
@@ -358,7 +360,7 @@ class RecordVideo(
         if isinstance(frame, list):
             if len(frame) == 0:
                 logger.warn(
-                    f"Trying to capture render frame but 'env.render()' has just been called. The frame cannot be captured."
+                    "Trying to capture render frame but 'env.render()' has just been called. The frame cannot be captured."
                 )
                 return
             self.render_history += frame

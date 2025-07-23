@@ -24,7 +24,7 @@ def test_video_folder_and_filenames(
         name_prefix=name_prefix,
         episode_trigger=lambda x: x in [1, 4],
         step_trigger=lambda x: x in [0, 25],
-        aspect_ratio=(1, 1),
+        video_aspect_ratio=(1, 1),
     )
 
     env.reset(seed=123)
@@ -60,7 +60,7 @@ def test_episodic_trigger(episodic_trigger):
         env,
         "videos",
         episode_trigger=episodic_trigger,
-        aspect_ratio=(1, 1),
+        video_aspect_ratio=(1, 1),
     )
     env.reset()
     episode_count = 0
@@ -93,7 +93,7 @@ def test_step_trigger():
         env,
         "videos",
         step_trigger=lambda x: x % 100 == 0,
-        aspect_ratio=(1, 1),
+        video_aspect_ratio=(1, 1),
     )
     env.reset()
     for _ in range(199):
@@ -121,7 +121,7 @@ def test_both_episodic_and_step_trigger():
         "videos",
         step_trigger=lambda x: x == 100,
         episode_trigger=lambda x: x == 0 or x == 3,
-        aspect_ratio=(1, 1),
+        video_aspect_ratio=(1, 1),
     )
 
     env.reset(seed=123)
@@ -152,7 +152,7 @@ def test_video_length(video_length: int = 10):
         "videos",
         step_trigger=lambda x: x == 0,
         video_length=video_length,
-        aspect_ratio=(1, 1),
+        video_aspect_ratio=(1, 1),
     )
 
     env.reset(seed=123)

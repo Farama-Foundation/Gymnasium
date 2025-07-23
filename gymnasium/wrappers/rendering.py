@@ -324,7 +324,7 @@ class RecordVideo(
         if isinstance(frame, list):
             if len(frame) == 0:
                 logger.warn(
-                    f"Trying to capture render frame but 'env.render()' has just been called. The frame cannot be captured."
+                    "Trying to capture render frame but 'env.render()' has just been called. The frame cannot be captured."
                 )
                 return
             self.render_history += frame
