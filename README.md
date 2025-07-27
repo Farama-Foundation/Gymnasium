@@ -16,6 +16,7 @@ Gymnasium is an open source Python library for developing and comparing reinforc
 
 The owner of this project is "Causa"
 The end of the project is in December 2025
+Adding line to check if we can set a Commit name
 
 The documentation website is at [gymnasium.farama.org](https://gymnasium.farama.org), and we have a public discord server (which we also use to coordinate development work) that you can join here: https://discord.gg/bnJ6kubTg6
 
