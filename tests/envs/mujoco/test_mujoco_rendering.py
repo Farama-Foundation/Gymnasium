@@ -136,6 +136,7 @@ def test_add_markers(model: mujoco.MjModel, data: mujoco.MjData, render_mode: st
     args = tuple() if render_mode == "human" else (render_mode,)
     viewer.render(*args)  # We need to render to trigger the marker addition in MuJoCo
     # close viewer after usage
+    assert len(viewer._markers) == 0, "Markers should be cleared after rendering."
     viewer.close()
 
 

@@ -316,6 +316,7 @@ class OffScreenViewer(BaseRender):
                         seg_ids[geom.segid + 1, 1] = geom.objid
                 rgb_img = seg_ids[seg_img]
 
+        self._markers.clear()
         # Return processed images based on render_mode
         if render_mode == "rgb_array":
             return rgb_img
