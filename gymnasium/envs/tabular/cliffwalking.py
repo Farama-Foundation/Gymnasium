@@ -193,9 +193,9 @@ class CliffWalkingFunctional(
 
     def observation(self, state: EnvState, params: None = None) -> jax.Array:
         """Cliffwalking observation."""
-        return jnp.array(
-            state.player_position[0] * 12 + state.player_position[1]
-        ).reshape((1,))
+        return jnp.expand_dims(
+            state.player_position[0] * 12 + state.player_position[1], 0
+        )
 
     def terminal(self, state: EnvState, params: None = None) -> jax.Array:
         """Determines if a particular Cliffwalking observation is terminal."""
