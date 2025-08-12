@@ -67,7 +67,7 @@ def draw_card(key, hand, index):
 
 def usable_ace(hand):
     """Checks to se if a hand has a usable ace."""
-    return jnp.logical_and((jnp.count_nonzero(hand == 1) > 0), (sum(hand) + 10 <= 21))
+    return jnp.logical_and(jnp.any(hand == 1), jnp.sum(hand) + 10 <= 21)
 
 
 def take(env_state):
@@ -136,7 +136,7 @@ def notake(env_state):
 
 def sum_hand(hand):
     """Returns the total points in a hand."""
-    return sum(hand) + (10 * usable_ace(hand))
+    return jnp.sum(hand) + (10 * usable_ace(hand))
 
 
 def is_bust(hand):
