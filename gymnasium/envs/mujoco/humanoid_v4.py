@@ -14,7 +14,6 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 def mass_center(model, data):
-    # Use einsum for efficient weighted sum
     num = np.einsum('b,bj->j', model.body_mass, data.xipos)
     denom = model.body_mass.sum()
     return (num / denom)[0:2].copy()
