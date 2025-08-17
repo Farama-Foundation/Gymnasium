@@ -202,28 +202,26 @@ class RecordVideo(
     environment of the VectorEnv). Frames are concatenated into one frame such
     that its aspect ratio is as close as possible to the desired one.
 
-    Examples - Run 9 environments for 50 episodes of random length, and save the video every 10 episodes starting from the 0th:
+    Examples - Run 5 environments for 200 timesteps, and save the video every 5 episodes:
     >>> import os
-    >>> import numpy as np
     >>> import gymnasium as gym
-    >>> def make_env():
-    ...     return gym.make("LunarLander-v3", render_mode="rgb_array")
-    ...
-    >>> n_envs = 9
-    >>> env = gym.vector.SyncVectorEnv([make_env for _ in range(n_envs)])
-    >>> trigger = lambda t: t % 10 == 0
-    >>> env = RecordVideo(env, video_folder="./save_videos1", video_aspect_ratio=(1,1), episode_trigger=trigger, disable_logger=True)
-    >>> rng_generator = np.random.default_rng(seed=42)
-    >>> n_episodes = 50
-    >>> episodes_length = rng_generator.integers(100, 200, n_episodes)
-    >>> for i in range(n_episodes):
-    ...     _ = env.reset(seed=123)
-    ...     for _ in range(episodes_length[i]):
-    ...         _ = env.step(env.action_space.sample())
-    ...
-    >>> env.close()
-    >>> len(os.listdir("./save_videos1"))
-    5
+    >>> from gymnasium.wrappers.vector import RecordVideo
+    >>>
+    >>> envs = gym.make_vec("CartPole-v1", num_envs=5, render_mode="rgb_array")
+    >>> envs = RecordVideo(
+    >>>     envs,
+    >>>     video_folder="save_videos1",
+    >>>     video_aspect_ratio=(1,1),
+    >>>     episode_trigger=lambda t: t % 5 == 0,
+    >>> )
+    >>> envs.reset(seed=123)
+    >>> envs.action_space.seed(123)
+    >>> for i in range(200):
+    >>>     actions = envs.action_space.sample()
+    >>>     envs.step(actions)
+    >>> envs.close()
+    >>> len(os.listdir("save_videos1"))
+    2
     """
 
     def __init__(
