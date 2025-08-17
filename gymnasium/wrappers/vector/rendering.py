@@ -6,7 +6,7 @@ import gc
 import os
 from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, Generic, SupportsFloat
+from typing import Any, SupportsFloat
 
 import numpy as np
 
@@ -14,11 +14,12 @@ import gymnasium as gym
 from gymnasium import error, logger
 from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled
+from gymnasium.logger import warn
 from gymnasium.vector import VectorEnv, VectorWrapper
 from gymnasium.vector.vector_env import ArrayType
 
 
-class HumanRendering(VectorWrapper):
+class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
     """Adds support for Human-based Rendering for Vector-based environments."""
 
     ACCEPTED_RENDER_MODES = [
@@ -36,6 +37,7 @@ class HumanRendering(VectorWrapper):
             screen_size: The rendering screen size otherwise the environment sub-env render size is used
         """
         VectorWrapper.__init__(self, env)
+        gym.utils.RecordConstructorArgs.__init__(self, screen_size=screen_size)
 
         self.screen_size = screen_size
         self.scaled_subenv_size, self.num_rows, self.num_cols = None, None, None
@@ -191,7 +193,6 @@ class HumanRendering(VectorWrapper):
 
 class RecordVideo(
     gym.vector.VectorWrapper,
-    Generic[ObsType, ActType, RenderFrame],
     gym.utils.RecordConstructorArgs,
 ):
     """Adds support for video recording for Vector-based environments.
@@ -227,7 +228,7 @@ class RecordVideo(
 
     def __init__(
         self,
-        env: gym.VectorEnv[ObsType, ActType],
+        env: gym.vector.VectorEnv,
         video_folder: str,
         video_aspect_ratio: tuple[int, int] = (1, 1),
         episode_trigger: Callable[[int], bool] | None = None,
@@ -238,7 +239,7 @@ class RecordVideo(
         disable_logger: bool = True,
         gc_trigger: Callable[[int], bool] | None = lambda episode: True,
     ):
-        """Wrapper records videos of rollouts.
+        """Wrapper records videos of environment rollouts.
 
         Args:
             env: The environment that will be wrapped
@@ -254,7 +255,12 @@ class RecordVideo(
                 the environment metadata ``render_fps`` key is used if it exists, otherwise a default value of 30 is used.
             disable_logger (bool): Whether to disable moviepy logger or not, default it is disabled
             gc_trigger: Function that accepts an integer and returns ``True`` iff garbage collection should be performed after this episode
+
+        Note:
+            For vector environments that use same-step autoreset (see https://farama.org/Vector-Autoreset-Mode for more details)
+            then the final frame of the episode will not be included in the video.
         """
+        VectorWrapper.__init__(self, env)
         gym.utils.RecordConstructorArgs.__init__(
             self,
             video_folder=video_folder,
@@ -264,7 +270,6 @@ class RecordVideo(
             name_prefix=name_prefix,
             disable_logger=disable_logger,
         )
-        gym.vector.VectorWrapper.__init__(self, env)
 
         if env.render_mode in {None, "human", "ansi"}:
             raise ValueError(
@@ -276,6 +281,20 @@ class RecordVideo(
             from gymnasium.utils.save_video import capped_cubic_video_schedule
 
             episode_trigger = capped_cubic_video_schedule
+
+        autoreset_mode = env.metadata.get("autoreset_mode", None)
+        if autoreset_mode is not None:
+            self.autoreset_mode = autoreset_mode
+        else:
+            warn(
+                f"{env} metadata doesn't specify its autoreset mode ({env.metadata!r}), therefore, defaulting to next step."
+            )
+            self.autoreset_mode = gym.vector.AutoresetMode.NEXT_STEP
+        if self.autoreset_mode == gym.vector.AutoresetMode.SAME_STEP:
+            logger.warn(
+                "Vector environment's autoreset mode is same-step (https://farama.org/Vector-Autoreset-Mode). Recorded episodes will not contain the last frame of the episode."
+            )
+        self.has_autoreset = False
 
         self.episode_trigger = episode_trigger
         self.step_trigger = step_trigger
@@ -301,8 +320,8 @@ class RecordVideo(
         self._video_name: str | None = None
         self.video_length: int = video_length if video_length != 0 else float("inf")
         self.recording: bool = False
-        self.recorded_frames: list[RenderFrame] = []
-        self.render_history: list[RenderFrame] = []
+        self.recorded_frames: list[np.ndarray] = []
+        self.render_history: list[np.ndarray] = []
 
         self.step_id = -1
         self.episode_id = -1
@@ -313,11 +332,6 @@ class RecordVideo(
             raise error.DependencyNotInstalled(
                 'MoviePy is not installed, run `pip install "gymnasium[other]"`'
             ) from e
-
-        if env.metadata["autoreset_mode"] == gym.vector.AutoresetMode.SAME_STEP:
-            logger.warn(
-                "AutoresetMode is SameStep. Recorded episodes will not contain the last frame of the episode."
-            )
 
     def _get_concat_frame_shape(self, n_frames, h, w):
         """Finds the right shape to concatenate frames from all environments into one frame."""
@@ -355,65 +369,80 @@ class RecordVideo(
     def _capture_frame(self):
         assert self.recording, "Cannot capture a frame, recording wasn't started."
 
-        frame = self.env.render()
+        envs_frame = self.env.render()
+        assert isinstance(envs_frame, list)
+        assert len(envs_frame) == self.num_envs
 
-        if isinstance(frame, list):
-            if len(frame) == 0:
-                logger.warn(
-                    "Trying to capture render frame but 'env.render()' has just been called. The frame cannot be captured."
-                )
-                return
-            self.render_history += frame
-            frame = frame[-1]
+        if self.frame_cols == -1 or self.frame_rows == -1:
+            n_frames = len(envs_frame)
+            h, w, c = envs_frame[0].shape
+            self._get_concat_frame_shape(n_frames, h, w)
 
-        if isinstance(frame, tuple):
-            if self.frame_cols == -1 or self.frame_rows == -1:
-                n_frames = len(frame)
-                h, w, c = frame[0].shape
-                self._get_concat_frame_shape(n_frames, h, w)
-
-            self.recorded_frames.append(self._concat_frames(frame))
-        else:
-            self.stop_recording()
-            logger.warn(
-                f"Recording stopped: expected type of frame returned by render to be a list, got instead {type(frame)}."
-            )
+        concatenated_envs_frame = self._concat_frames(envs_frame)
+        self.recorded_frames.append(concatenated_envs_frame)
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[ObsType, dict[str, Any]]:
         """Reset the environment and eventually starts a new recording."""
+        if options is None or "reset_mask" not in options or options["reset_mask"][0]:
+            self.episode_id += 1
+
+            if self.recording and self.video_length == float("inf"):
+                self.stop_recording()
+
+            if self.episode_trigger and self.episode_trigger(self.episode_id):
+                self.start_recording(f"{self.name_prefix}-episode-{self.episode_id}")
+
         obs, info = super().reset(seed=seed, options=options)
-        self.episode_id += 1
 
-        if self.recording and self.video_length == float("inf"):
-            self.stop_recording()
-
-        if self.episode_trigger and self.episode_trigger(self.episode_id):
-            self.start_recording(f"{self.name_prefix}-episode-{self.episode_id}")
         if self.recording:
             self._capture_frame()
             if len(self.recorded_frames) > self.video_length:
                 self.stop_recording()
+
+        self.has_autoreset = False
 
         return obs, info
 
     def step(
-        self, action: ActType
+        self, actions: ActType
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Steps through the environment using action, recording observations if :attr:`self.recording`."""
-        obs, rew, terminated, truncated, info = self.env.step(action)
+        obs, rewards, terminations, truncations, info = self.env.step(actions)
         self.step_id += 1
+
+        if self.autoreset_mode == gym.vector.AutoresetMode.NEXT_STEP:
+            if self.has_autoreset:
+                self.episode_id += 1
+                if self.recording and self.video_length == float("inf"):
+                    self.stop_recording()
+
+                if self.episode_trigger and self.episode_trigger(self.episode_id):
+                    self.start_recording(
+                        f"{self.name_prefix}-episode-{self.episode_id}"
+                    )
+            self.has_autoreset = terminations[0] or truncations[0]
+        elif self.autoreset_mode == gym.vector.AutoresetMode.SAME_STEP and (
+            terminations[0] or truncations[0]
+        ):
+            self.episode_id += 1
+            if self.recording and self.video_length == float("inf"):
+                self.stop_recording()
+
+            if self.episode_trigger and self.episode_trigger(self.episode_id):
+                self.start_recording(f"{self.name_prefix}-episode-{self.episode_id}")
 
         if self.step_trigger and self.step_trigger(self.step_id):
             self.start_recording(f"{self.name_prefix}-step-{self.step_id}")
+
         if self.recording:
             self._capture_frame()
 
             if len(self.recorded_frames) > self.video_length:
                 self.stop_recording()
 
-        return obs, rew, terminated, truncated, info
+        return obs, rewards, terminations, truncations, info
 
     def render(self) -> RenderFrame | list[RenderFrame]:
         """Compute the render frames as specified by render_mode attribute during initialization of the environment."""
@@ -445,7 +474,6 @@ class RecordVideo(
     def stop_recording(self):
         """Stop current recording and saves the video."""
         assert self.recording, "stop_recording was called, but no recording was started"
-
         if len(self.recorded_frames) == 0:
             logger.warn("Ignored saving a video as there were zero frames to save.")
         else:
