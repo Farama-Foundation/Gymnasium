@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import gc
 import os
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from copy import deepcopy
 from typing import Any, SupportsFloat
 
@@ -370,7 +370,7 @@ class RecordVideo(
         assert self.recording, "Cannot capture a frame, recording wasn't started."
 
         envs_frame = self.env.render()
-        assert isinstance(envs_frame, list)
+        assert isinstance(envs_frame, Sequence), type(envs_frame)
         assert len(envs_frame) == self.num_envs
 
         if self.frame_cols == -1 or self.frame_rows == -1:
