@@ -412,8 +412,7 @@
 
 <span class="sd">    No vector version of the wrapper exists.</span>
 
-<span class="sd">    Example:</span>
-<span class="sd">        Return the list of frames for the number of steps ``render`` wasn&#39;t called.</span>
+<span class="sd">    Example - Return the list of frames for the number of steps ``render`` wasn&#39;t called.</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env)</span>
@@ -429,7 +428,7 @@
 <span class="sd">        &gt;&gt;&gt; len(frames)</span>
 <span class="sd">        0</span>
 
-<span class="sd">        Return the list of frames for the number of steps the episode was running.</span>
+<span class="sd">    Example - Return the list of frames for the number of steps the episode was running.</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env, pop_frames=False)</span>
@@ -445,7 +444,7 @@
 <span class="sd">        &gt;&gt;&gt; len(frames)</span>
 <span class="sd">        6</span>
 
-<span class="sd">        Collect all frames for all episodes, without clearing them when render is called</span>
+<span class="sd">    Example - Collect all frames for all episodes, without clearing them when render is called</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env, pop_frames=False, reset_clean=False)</span>
