@@ -214,8 +214,8 @@ class RecordVideo(
     ...     video_aspect_ratio=(1,1),
     ...     episode_trigger=lambda t: t % 5 == 0,
     ... )
-    >>> envs.reset(seed=123)
-    >>> envs.action_space.seed(123)
+    >>> _ = envs.reset(seed=123)
+    >>> _ = envs.action_space.seed(123)
     >>> for i in range(200):
     ...     actions = envs.action_space.sample()
     ...     envs.step(actions)
