@@ -23,10 +23,10 @@ jobs:
     env:
       SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: inputs.commit == ''
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: inputs.commit != ''
         with:
           ref: ${{ inputs.commit }}
