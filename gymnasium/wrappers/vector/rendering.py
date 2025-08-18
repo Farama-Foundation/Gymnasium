@@ -218,7 +218,7 @@ class RecordVideo(
     >>> _ = envs.action_space.seed(123)
     >>> for i in range(200):
     ...     actions = envs.action_space.sample()
-    ...     envs.step(actions)
+    ...     _ = envs.step(actions)
     >>> envs.close()
     >>> len(os.listdir("save_videos1"))
     2
