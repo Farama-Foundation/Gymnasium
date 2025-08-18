@@ -41,8 +41,7 @@ class RenderCollection(
 
     No vector version of the wrapper exists.
 
-    Example:
-        Return the list of frames for the number of steps ``render`` wasn't called.
+    Example - Return the list of frames for the number of steps ``render`` wasn't called.
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
         >>> env = RenderCollection(env)
@@ -58,7 +57,7 @@ class RenderCollection(
         >>> len(frames)
         0
 
-        Return the list of frames for the number of steps the episode was running.
+    Example - Return the list of frames for the number of steps the episode was running.
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
         >>> env = RenderCollection(env, pop_frames=False)
@@ -74,7 +73,7 @@ class RenderCollection(
         >>> len(frames)
         6
 
-        Collect all frames for all episodes, without clearing them when render is called
+    Example - Collect all frames for all episodes, without clearing them when render is called
         >>> import gymnasium as gym
         >>> env = gym.make("LunarLander-v3", render_mode="rgb_array")
         >>> env = RenderCollection(env, pop_frames=False, reset_clean=False)
