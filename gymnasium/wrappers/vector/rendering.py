@@ -210,7 +210,7 @@ class RecordVideo(
     >>> envs = gym.make_vec("CartPole-v1", num_envs=5, render_mode="rgb_array")
     >>> envs = RecordVideo(
     ...     envs,
-    ...     video_folder="save_videos1",
+    ...     video_folder="save_videos4",
     ...     video_aspect_ratio=(1,1),
     ...     episode_trigger=lambda t: t % 5 == 0,
     ... )
