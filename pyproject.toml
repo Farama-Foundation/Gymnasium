@@ -48,7 +48,7 @@ jax = [
     "numpy>=2.1",
 ]
 torch = ["torch >=1.13.0", "array-api-compat >=1.11.0", "numpy>=2.1"]
-array-api = ["array-api-compat >=1.11.0", "numpy>=2.1"]
+array-api = ["array-api-compat >=1.11.0", "numpy>=2.1", "packaging >=23.0"]
 other = [
     "moviepy >=1.0.0",
     "matplotlib >=3.0",
