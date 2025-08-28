@@ -394,6 +394,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">SupportsFloat</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">array_api_compat</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_numpy_namespace</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">packaging.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">Version</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
@@ -484,18 +485,34 @@
     <span class="n">value</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an Array API compatible array to the specified xp module array type.&quot;&quot;&quot;</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">device</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_numpy_namespace</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">to_device</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">x</span>
-    <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">BufferError</span><span class="p">):</span>
-        <span class="c1"># If dlpack fails (e.g. because the array is read-only for frameworks that do not</span>
-        <span class="c1"># support it), we create a copy of the array that we own and then convert it.</span>
-        <span class="c1"># TODO: The correct treatment of read-only arrays is currently not fully clear in the</span>
-        <span class="c1"># Array API. Once ongoing discussions are resolved, we should update this code to remove</span>
-        <span class="c1"># any fallbacks.</span>
-        <span class="n">value_namespace</span> <span class="o">=</span> <span class="n">array_namespace</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="n">value_copy</span> <span class="o">=</span> <span class="n">value_namespace</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value_copy</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xp</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="c1"># PyTorch does not have support for device or copy in __dlpack__ yet</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">to_device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">value</span>
+        <span class="k">except</span> <span class="ne">BufferError</span><span class="p">:</span>
+            <span class="c1"># Case 1: Tried to convert to torch from a readonly buffer. This is not yet</span>
+            <span class="c1"># supported by torch because copy semantics in from_dlpack are missing. We</span>
+            <span class="c1"># copy the array ourselves to make it writable and then use dlpack</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">array_namespace</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">to_device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">value</span>
+        <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+            <span class="c1"># Case 2: Tried to convert to a different framework from a torch tensor</span>
+            <span class="c1"># without compatible devices. We first move the tensor to the cpu and then</span>
+            <span class="c1"># call from_dlpack</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">to_device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;cpu&quot;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">to_device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">value</span>
+    <span class="k">except</span> <span class="ne">BufferError</span><span class="p">:</span>
+        <span class="c1"># Buffer was readonly. In the future, this should be handled automatically by</span>
+        <span class="c1"># other frameworks, or we should retry with</span>
+        <span class="c1"># from_dlpack(value, device=device, copy=True) instead. This is currently not</span>
+        <span class="c1"># supported by jax. We first make the array writable and then call from_dlpack</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">array_namespace</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xp</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
 
 <span class="nd">@array_conversion</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">NoneType</span><span class="p">)</span>
