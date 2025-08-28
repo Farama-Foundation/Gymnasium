@@ -25,8 +25,8 @@ from types import ModuleType, NoneType
 from typing import Any, SupportsFloat
 
 import numpy as np
-from packaging.version import Version
 from array_api_compat import is_numpy_namespace
+from packaging.version import Version
 
 import gymnasium as gym
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
