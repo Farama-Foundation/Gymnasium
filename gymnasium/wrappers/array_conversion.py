@@ -26,6 +26,7 @@ from typing import Any, SupportsFloat
 
 import numpy as np
 from packaging.version import Version
+from array_api_compat import is_numpy_namespace
 
 import gymnasium as gym
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
@@ -115,18 +116,34 @@ def _array_api_array_conversion(
     value: Array, xp: ModuleType, device: Device | None = None
 ) -> Array:
     """Convert an Array API compatible array to the specified xp module array type."""
+    device = device if not is_numpy_namespace(xp) else "cpu"
     try:
-        x = xp.from_dlpack(value)
-        return to_device(x, device) if device is not None else x
-    except (RuntimeError, BufferError):
-        # If dlpack fails (e.g. because the array is read-only for frameworks that do not
-        # support it), we create a copy of the array that we own and then convert it.
-        # TODO: The correct treatment of read-only arrays is currently not fully clear in the
-        # Array API. Once ongoing discussions are resolved, we should update this code to remove
-        # any fallbacks.
-        value_namespace = array_namespace(value)
-        value_copy = value_namespace.asarray(value, copy=True)
-        return xp.asarray(value_copy, device=device)
+        return xp.from_dlpack(value, device=device)
+    except TypeError:
+        # PyTorch does not have support for device or copy in __dlpack__ yet
+        try:
+            value = xp.from_dlpack(value)
+            return to_device(value, device) if device is not None else value
+        except BufferError:
+            # Case 1: Tried to convert to torch from a readonly buffer. This is not yet
+            # supported by torch because copy semantics in from_dlpack are missing. We
+            # copy the array ourselves to make it writable and then use dlpack
+            value = array_namespace(value).asarray(value, copy=True)
+            value = xp.from_dlpack(value)
+            return to_device(value, device) if device is not None else value
+        except RuntimeError:
+            # Case 2: Tried to convert to a different framework from a torch tensor
+            # without compatible devices. We first move the tensor to the cpu and then
+            # call from_dlpack
+            value = xp.from_dlpack(to_device(value, "cpu"))
+            return to_device(value, device) if device is not None else value
+    except BufferError:
+        # Buffer was readonly. In the future, this should be handled automatically by
+        # other frameworks, or we should retry with
+        # from_dlpack(value, device=device, copy=True) instead. This is currently not
+        # supported by jax. We first make the array writable and then call from_dlpack
+        value = array_namespace(value).asarray(value, copy=True)
+        return xp.from_dlpack(value, device=device)
 
 
 @array_conversion.register(NoneType)
