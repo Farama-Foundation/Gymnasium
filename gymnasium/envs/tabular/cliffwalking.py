@@ -209,9 +209,8 @@ class CliffWalkingFunctional(
         params: None = None,
     ) -> jax.Array:
         """Calculates reward from a state."""
-        state = next_state
-        reward = -1 + (-99 * state.fallen[0])
-        return jax.lax.convert_element_type(reward, jnp.float32)
+        reward = jnp.where(next_state.fallen[0], -100.0, -1.0)
+        return reward
 
     def render_init(
         self, screen_width: int = 600, screen_height: int = 500
