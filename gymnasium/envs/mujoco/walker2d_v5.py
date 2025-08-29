@@ -112,7 +112,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     The Walker2d is unhealthy if any of the following happens:
 
     1. Any of the state space values is no longer finite
-    2. The z-coordinate of the torso (the height) is **not** in the closed interval given by the `healthy_z_range` argument (default to $[0.8, 1.0]$).
+    2. The z-coordinate of the torso (the height) is **not** in the closed interval given by the `healthy_z_range` argument (default to $[0.8, 2.0]$).
     3. The absolute value of the angle (`observation[1]` if `exclude_current_positions_from_observation=False`, else `observation[2]`) is ***not*** in the closed interval specified by the `healthy_angle_range` argument (default is $[-1, 1]$).
 
     ### Truncation
