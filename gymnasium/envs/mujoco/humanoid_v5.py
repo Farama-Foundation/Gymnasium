@@ -16,9 +16,9 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 def mass_center(model, data):
-    mass = np.expand_dims(model.body_mass, axis=1)
-    xpos = data.xipos
-    return (np.sum(mass * xpos, axis=0) / np.sum(mass))[0:2].copy()
+    num = np.einsum("b,bj->j", model.body_mass, data.xipos)
+    denom = model.body_mass.sum()
+    return (num / denom)[0:2].copy()
 
 
 class HumanoidEnv(MujocoEnv, utils.EzPickle):
