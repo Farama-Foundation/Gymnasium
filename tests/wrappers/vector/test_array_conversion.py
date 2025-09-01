@@ -13,6 +13,9 @@ from tests.testing_env import GenericTestVectorEnv
 array_api_compat = pytest.importorskip("array_api_compat")
 from array_api_compat import array_namespace  # noqa: E402
 
+
+jax = pytest.importorskip("jax")
+torch = pytest.importorskip("torch")
 from gymnasium.wrappers.array_conversion import module_namespace  # noqa: E402
 from gymnasium.wrappers.vector import ArrayConversion  # noqa: E402
 from gymnasium.wrappers.vector import JaxToNumpy  # noqa: E402
@@ -107,14 +110,10 @@ def test_array_conversion_wrapper(env_xp, target_xp):
 @pytest.mark.parametrize("wrapper", [JaxToNumpy, JaxToTorch, NumpyToTorch])
 def test_specialized_wrappers(wrapper: type[JaxToNumpy | JaxToTorch | NumpyToTorch]):
     if wrapper is JaxToNumpy:
-        jax = pytest.importorskip("jax")
         env_xp, target_xp = jax.numpy, np
     elif wrapper is JaxToTorch:
-        jax = pytest.importorskip("jax")
-        torch = pytest.importorskip("torch")
         env_xp, target_xp = jax.numpy, torch
     elif wrapper is NumpyToTorch:
-        torch = pytest.importorskip("torch")
         env_xp, target_xp = np, torch
     else:
         raise TypeError(f"Unknown specialized conversion wrapper {type(wrapper)}")
