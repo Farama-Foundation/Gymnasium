@@ -14,6 +14,7 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 def mass_center(model, data):
+    """Calculate center of mass as weighted average: (model.body_mass.T * data.xipos) / sum(model.body_mass)."""
     num = np.einsum("b,bj->j", model.body_mass, data.xipos)
     denom = model.body_mass.sum()
     return (num / denom)[0:2].copy()
