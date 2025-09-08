@@ -754,7 +754,7 @@ def _async_worker(
                 if autoreset_mode == AutoresetMode.NEXT_STEP:
                     if autoreset:
                         observation, info = env.reset()
-                        reward, terminated, truncated = 0, False, False
+                        reward, terminated, truncated = np.array([0.0]), np.array([False]), np.array([False])
                     else:
                         (
                             observation,
