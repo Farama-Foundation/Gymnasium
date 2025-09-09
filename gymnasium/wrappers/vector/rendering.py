@@ -206,11 +206,10 @@ class RecordVideo(
     >>> import os
     >>> import gymnasium as gym
     >>> from gymnasium.wrappers.vector import RecordVideo
-
     >>> envs = gym.make_vec("CartPole-v1", num_envs=5, render_mode="rgb_array")
     >>> envs = RecordVideo(
     ...     envs,
-    ...     video_folder="save_videos4",
+    ...     video_folder="save_videos_5envs",
     ...     video_aspect_ratio=(1,1),
     ...     episode_trigger=lambda t: t % 5 == 0,
     ... )
@@ -220,7 +219,7 @@ class RecordVideo(
     ...     actions = envs.action_space.sample()
     ...     _ = envs.step(actions)
     >>> envs.close()
-    >>> len(os.listdir("save_videos1"))
+    >>> len(os.listdir("save_videos_5envs"))
     2
     """
 
