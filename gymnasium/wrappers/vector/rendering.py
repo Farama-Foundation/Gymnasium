@@ -228,6 +228,7 @@ class RecordVideo(
         env: gym.vector.VectorEnv,
         video_folder: str,
         video_aspect_ratio: tuple[int, int] = (1, 1),
+        record_first_only: bool = False,
         episode_trigger: Callable[[int], bool] | None = None,
         step_trigger: Callable[[int], bool] | None = None,
         video_length: int = 0,
@@ -243,6 +244,7 @@ class RecordVideo(
             video_folder (str): The folder where the recordings will be stored
             video_aspect_ratio (tuple): the desired aspect ratio of the video concatenating all environments. For example, (1, 1) means an
                 aspect ratio of 1:1, while (16, 9) means 16:9.
+            record_first_only (bool): if True, only the first environment is recorded.
             episode_trigger: Function that accepts an integer and returns ``True`` iff a recording should be started at this episode
             step_trigger: Function that accepts an integer and returns ``True`` iff a recording should be started at this step
             video_length (int): The length of recorded episodes. If 0, entire episodes are recorded.
@@ -298,6 +300,7 @@ class RecordVideo(
         self.disable_logger = disable_logger
         self.gc_trigger = gc_trigger
 
+        self.record_first_only = record_first_only
         self.video_aspect_ratio = video_aspect_ratio
         self.frame_cols = -1
         self.frame_rows = -1
@@ -369,6 +372,9 @@ class RecordVideo(
         envs_frame = self.env.render()
         assert isinstance(envs_frame, Sequence), type(envs_frame)
         assert len(envs_frame) == self.num_envs
+
+        if self.record_first_only:
+            envs_frame = [envs_frame[0]]
 
         if self.frame_cols == -1 or self.frame_rows == -1:
             n_frames = len(envs_frame)
