@@ -556,8 +556,6 @@
 <span class="sd">    However, you can also create recordings of fixed length (possibly spanning several episodes)</span>
 <span class="sd">    by passing a strictly positive value for ``video_length``.</span>
 
-<span class="sd">    No vector version of the wrapper exists.</span>
-
 <span class="sd">    Examples - Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:</span>
 <span class="sd">        &gt;&gt;&gt; import os</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
@@ -697,7 +695,10 @@
 
         <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># render was called</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Trying to capture render frame but &#39;env.render()&#39; has just been called. The frame cannot be captured.&quot;</span>
+                <span class="p">)</span>
                 <span class="k">return</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_history</span> <span class="o">+=</span> <span class="n">frame</span>
             <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
