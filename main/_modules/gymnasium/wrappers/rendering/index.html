@@ -792,7 +792,9 @@
             <span class="n">moviepy_logger</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_logger</span> <span class="k">else</span> <span class="s2">&quot;bar&quot;</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_video_name</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">)</span>
             <span class="n">clip</span><span class="o">.</span><span class="n">write_videofile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">moviepy_logger</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">clip</span>
 
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_video_name</span> <span class="o">=</span> <span class="kc">None</span>
