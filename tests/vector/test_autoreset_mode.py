@@ -7,7 +7,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import VectorizeMode
-from gymnasium.spaces import Box, Discrete
+from gymnasium.spaces import Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.vector.vector_env import AutoresetMode
@@ -30,36 +30,39 @@ def count_step(self: GenericTestEnv, action):
     return self.count, action, self.count == self.max_count, False, {}
 
 
+def np_count_step(self: GenericTestEnv, action):
+    self.count += 1
+
+    return self.count, np.array([action]), self.count == self.max_count, False, {}
+
+
 @pytest.mark.parametrize(
-    "vectoriser,obs_space",
+    "vectoriser,step_func",
     [
-        (SyncVectorEnv, Discrete(5)),
-        (AsyncVectorEnv, Discrete(5)),
-        (partial(AsyncVectorEnv, shared_memory=False), Discrete(5)),
-        (SyncVectorEnv, Box(shape=(5, 5), low=-np.inf, high=np.inf, dtype=np.float32)),
-        (AsyncVectorEnv, Box(shape=(5, 5), low=-np.inf, high=np.inf, dtype=np.float32)),
-        (
-            partial(AsyncVectorEnv, shared_memory=False),
-            Box(shape=(5, 5), low=-np.inf, high=np.inf, dtype=np.float32),
-        ),
+        (SyncVectorEnv, count_step),
+        (AsyncVectorEnv, count_step),
+        (partial(AsyncVectorEnv, shared_memory=False), count_step),
+        (SyncVectorEnv, np_count_step),
+        (AsyncVectorEnv, np_count_step),
+        (partial(AsyncVectorEnv, shared_memory=False), np_count_step),
     ],
     ids=[
-        "Sync,Discrete",
-        "Async(shared_memory=True),Discrete",
-        "Async(shared_memory=False),Discrete",
-        "Sync,Box",
-        "Async(shared_memory=True),Box",
-        "Async(shared_memory=False),Box",
+        "Sync,reward float",
+        "Async(shared_memory=True),reward float",
+        "Async(shared_memory=False),reward float",
+        "Sync,reward numpy",
+        "Async(shared_memory=True),reward numpy",
+        "Async(shared_memory=False),reward numpy",
     ],
 )
-def test_autoreset_next_step(vectoriser, obs_space):
+def test_autoreset_next_step(vectoriser, step_func):
     envs = vectoriser(
         [
             lambda: GenericTestEnv(
                 action_space=Discrete(5),
-                observation_space=obs_space,
+                observation_space=Discrete(5),
                 reset_func=count_reset,
-                step_func=count_step,
+                step_func=step_func,
             )
             for _ in range(3)
         ],
