@@ -7,7 +7,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import VectorizeMode
-from gymnasium.spaces import Discrete
+from gymnasium.spaces import Box, Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.vector.vector_env import AutoresetMode
@@ -31,20 +31,33 @@ def count_step(self: GenericTestEnv, action):
 
 
 @pytest.mark.parametrize(
-    "vectoriser",
+    "vectoriser,obs_space",
     [
-        SyncVectorEnv,
-        AsyncVectorEnv,
-        partial(AsyncVectorEnv, shared_memory=False),
+        (SyncVectorEnv, Discrete(5)),
+        (AsyncVectorEnv, Discrete(5)),
+        (partial(AsyncVectorEnv, shared_memory=False), Discrete(5)),
+        (SyncVectorEnv, Box(shape=(5, 5), low=-np.inf, high=np.inf, dtype=np.float32)),
+        (AsyncVectorEnv, Box(shape=(5, 5), low=-np.inf, high=np.inf, dtype=np.float32)),
+        (
+            partial(AsyncVectorEnv, shared_memory=False),
+            Box(shape=(5, 5), low=-np.inf, high=np.inf, dtype=np.float32),
+        ),
     ],
-    ids=["Sync", "Async(shared_memory=True)", "Async(shared_memory=False)"],
+    ids=[
+        "Sync,Discrete",
+        "Async(shared_memory=True),Discrete",
+        "Async(shared_memory=False),Discrete",
+        "Sync,Box",
+        "Async(shared_memory=True),Box",
+        "Async(shared_memory=False),Box",
+    ],
 )
-def test_autoreset_next_step(vectoriser):
+def test_autoreset_next_step(vectoriser, obs_space):
     envs = vectoriser(
         [
             lambda: GenericTestEnv(
                 action_space=Discrete(5),
-                observation_space=Discrete(5),
+                observation_space=obs_space,
                 reset_func=count_reset,
                 step_func=count_step,
             )
@@ -52,6 +65,7 @@ def test_autoreset_next_step(vectoriser):
         ],
         autoreset_mode=AutoresetMode.NEXT_STEP,
     )
+
     assert envs.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP
     envs.set_attr("max_count", [2, 3, 3])
 
