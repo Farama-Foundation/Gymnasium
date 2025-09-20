@@ -28,7 +28,7 @@ mujoco/walker2d
 MuJoCo stands for Multi-Joint dynamics with Contact. It is a physics engine for facilitating research and development in robotics, biomechanics, graphics and animation, and other areas where fast and accurate simulation is needed.
 There is physical contact between the robots and their environment - and MuJoCo attempts at getting realistic physics simulations for the possible physical contact dynamics by aiming for physical accuracy and computational efficiency.
 
-The unique dependencies including the MuJoCo simlator for this set of environments can be installed via:
+The unique dependencies including the MuJoCo simulator for this set of environments can be installed via:
 
 ````bash
 pip install gymnasium[mujoco]
