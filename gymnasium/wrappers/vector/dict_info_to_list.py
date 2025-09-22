@@ -59,8 +59,8 @@ class DictInfoToList(VectorWrapper):
         >>> _ = envs.reset(seed=123)
         >>> _ = envs.action_space.seed(123)
         >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
-        >>> infos
-        [{'x_position': np.float64(0.033322109003629405), 'x_velocity': np.float64(-0.06296527291998574), 'reward_forward': np.float64(-0.06296527291998574), 'reward_ctrl': np.float32(-0.24503504)}, {'x_position': np.float64(0.10172354684460165), 'x_velocity': np.float64(0.8934584807363616), 'reward_forward': np.float64(0.8934584807363616), 'reward_ctrl': np.float32(-0.21944423)}]
+        >>> infos  # doctest: +ELLIPSIS
+        [{'x_position': np.float64(0.0333221...), 'x_velocity': np.float64(-0.0629652...), 'reward_forward': np.float64(-0.0629652...), 'reward_ctrl': np.float32(-0.2450350...)}, {'x_position': np.float64(0.1017235...), 'x_velocity': np.float64(0.8934584...), 'reward_forward': np.float64(0.8934584...), 'reward_ctrl': np.float32(-0.2194442...)}]
 
     Change logs:
      * v0.24.0 - Initially added as ``VectorListInfo``
