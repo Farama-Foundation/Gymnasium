@@ -1,0 +1,1416 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)">
+    <meta property="og:title" content="Gymnasium Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
+    <meta property="og:url" content="https://gymnasium.farama.org/api/wrappers/observation_wrappers.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Reward Wrappers" href="../reward_wrappers/" /><link rel="prev" title="Action Wrappers" href="../action_wrappers/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/api/wrappers/observation_wrappers.html" />
+
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+        <title>Observation Wrappers - Gymnasium Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header" aria-label="Farama header">
+      <div class="farama-header__container">
+        <div class="farama-header__left--mobile">
+          <label class="nav-overlay-icon" for="__navigation">
+            <div class="visually-hidden">Toggle site navigation sidebar</div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <defs></defs>
+              <line x1="0.5" y1="4" x2="23.5" y2="4"></line>
+              <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
+              <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
+            </svg>
+          </label>
+        </div>
+        <div class="farama-header__left farama-header__center--mobile">
+          <a href="../../../">
+              <img class="farama-header__logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+            <span class="farama-header__title">Gymnasium Documentation</span>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
+              <img class="farama-black-logo-invert" src="../../../_static/img/farama-logo-header.svg">
+              <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
+              </svg>
+            </button>
+            <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
+                  <span>Farama Foundation</span>
+                </a>
+                <div class="farama-header-menu-header__right">
+                  <button id="farama-close-menu">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                      <line x1="3" y1="21" x2="21" y2="3"></line>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="farama-header-menu__body">
+                <!-- Response from farama.org/api/projects.json -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="page">
+  <!--<header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../"><div class="brand">Gymnasium Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>-->
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../../">
+      <img class="farama-header__logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+    <span class="farama-header__title">Gymnasium Documentation</span>
+  </a><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/train_agent/">Training an Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/create_custom_env/">Create a Custom Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/record_agent/">Recording Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/speed_up_env/">Speeding Up Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/migration_guide/">Gym Migration Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../registry/">Make and register</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spaces/utils/">Spaces Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Wrappers</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../table/">List of Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reward_wrappers/">Reward Wrappers</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/utils/">Utility functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../functional/">Functional Env</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Classic Control</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Box2D</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Toy Text</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of MuJoCo</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/inverted_pendulum/">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/pusher/">Pusher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments/atari/">Atari</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/">External Environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/action_masking_taxi/#results-analysis">Results Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/third-party-tutorials/">Third-Party Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arxiv.org/abs/2407.17032">Paper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gymnasium_release_notes/">Gymnasium Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gym_release_notes/">Gym Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main-container">
+
+    
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container"><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/api/wrappers/observation_wrappers.md" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
+          </div>
+          <article role="main">
+            
+            <section class="tex2jax_ignore mathjax_ignore" id="observation-wrappers">
+<h1>Observation Wrappers<a class="headerlink" href="#observation-wrappers" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.ObservationWrapper">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">ObservationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/core/#ObservationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.ObservationWrapper" title="Link to this definition">¶</a></dt>
+<dd><p>Modify observations from <a class="reference internal" href="../../env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code></a> and <a class="reference internal" href="../../env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code></a> using <a class="reference internal" href="#gymnasium.ObservationWrapper.observation" title="gymnasium.ObservationWrapper.observation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">observation()</span></code></a> function.</p>
+<p>If you would like to apply a function to only the observation before
+passing it to the learning code, you can simply inherit from <a class="reference internal" href="#gymnasium.ObservationWrapper" title="gymnasium.ObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservationWrapper</span></code></a> and overwrite the method
+<a class="reference internal" href="#gymnasium.ObservationWrapper.observation" title="gymnasium.ObservationWrapper.observation"><code class="xref py py-meth docutils literal notranslate"><span class="pre">observation()</span></code></a> to implement that transformation. The transformation defined in that method must be
+reflected by the <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code> observation space. Otherwise, you need to specify the new observation space of the
+wrapper by setting <code class="xref py py-attr docutils literal notranslate"><span class="pre">self.observation_space</span></code> in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> method of your wrapper.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> – Environment to be wrapped.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.ObservationWrapper.observation">
+<span class="sig-name descname"><span class="pre">observation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ObsType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">WrapperObsType</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/core/#ObservationWrapper.observation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.ObservationWrapper.observation" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a modified observation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>observation</strong> – The <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code> observation</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>The modified observation</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<section id="implemented-wrappers">
+<h2>Implemented Wrappers<a class="headerlink" href="#implemented-wrappers" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.TransformObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">TransformObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">WrapperObsType</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#TransformObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.TransformObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Applies a function to the <code class="docutils literal notranslate"><span class="pre">observation</span></code> received from the environment’s <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code> that is passed back to the user.</p>
+<p>The function <code class="xref py py-attr docutils literal notranslate"><span class="pre">func</span></code> will be applied to all observations.
+If the observations from <code class="xref py py-attr docutils literal notranslate"><span class="pre">func</span></code> are outside the bounds of the <code class="docutils literal notranslate"><span class="pre">env</span></code>’s observation space, provide an updated <code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code>.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.TransformObservation" title="gymnasium.wrappers.vector.TransformObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.TransformObservation</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformObservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="go">(array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), {})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">TransformObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">obs</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="go">(array([0.08227695, 0.06540678, 0.09613613, 0.07422512]), {})</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.15.4 - Initially added</p></li>
+<li><p>v1.0.0 - Add requirement of <code class="docutils literal notranslate"><span class="pre">observation_space</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap</p></li>
+<li><p><strong>func</strong> – A function that will transform an observation. If this transformed observation is outside the observation space of <code class="docutils literal notranslate"><span class="pre">env.observation_space</span></code> then provide an <cite>observation_space</cite>.</p></li>
+<li><p><strong>observation_space</strong> – The observation spaces of the wrapper, if None, then it is assumed the same as <code class="docutils literal notranslate"><span class="pre">env.observation_space</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.DelayObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">DelayObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_observation/#DelayObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.DelayObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Adds a delay to the returned observation from the environment.</p>
+<p>Before reaching the <code class="xref py py-attr docutils literal notranslate"><span class="pre">delay</span></code> number of timesteps, returned observations is an array of zeros with
+the same shape as the observation space.</p>
+<p>No vector version of the wrapper exists.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This does not support random delay values, if users are interested, please raise an issue or pull request to add this feature.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="go">(array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">DelayObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="go">(array([0., 0., 0., 0.], dtype=float32), {})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="go">(array([0., 0., 0., 0.], dtype=float32), 1.0, False, False, {})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="go">(array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), 1.0, False, False, {})</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.0.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap</p></li>
+<li><p><strong>delay</strong> – The number of timesteps to delay observations</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.DtypeObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">DtypeObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#DtypeObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.DtypeObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Modifies the dtype of an observation array to a specified dtype.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is only compatible with <code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Discrete</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">MultiDiscrete</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">MultiBinary</span></code> observation spaces</p>
+</div>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.DtypeObservation" title="gymnasium.wrappers.vector.DtypeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.DtypeObservation</span></code></a>.</p>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.0.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap</p></li>
+<li><p><strong>dtype</strong> – The new dtype of the observation</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.FilterObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">FilterObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#FilterObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.FilterObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Filters a Dict or Tuple observation spaces by a set of keys or indexes.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.FilterObservation" title="gymnasium.wrappers.vector.FilterObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.FilterObservation</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterObservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeAwareObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Dict(&#39;obs&#39;: Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), &#39;time&#39;: Box(0, 500, (1,), int32))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="go">({&#39;obs&#39;: array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), &#39;time&#39;: array([0], dtype=int32)}, {})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">FilterObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">filter_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="go">({&#39;time&#39;: array([0], dtype=int32)}, {})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">({&#39;time&#39;: array([1], dtype=int32)}, 1.0, False, False, {})</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.12.3 - Initially added, originally called <cite>FilterObservationWrapper</cite></p></li>
+<li><p>v1.0.0 - Rename to <cite>FilterObservation</cite> and add support for tuple observation spaces with integer <code class="docutils literal notranslate"><span class="pre">filter_keys</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap</p></li>
+<li><p><strong>filter_keys</strong> – The set of subspaces to be <em>included</em>, use a list of strings for <code class="docutils literal notranslate"><span class="pre">Dict</span></code> and integers for <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> spaces</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.FlattenObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">FlattenObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#FlattenObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.FlattenObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Flattens the environment’s observation space and each observation from <code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> functions.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.FlattenObservation" title="gymnasium.wrappers.vector.FlattenObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.FlattenObservation</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlattenObservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(96, 96, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">FlattenObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(27648,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(27648,)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.15.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> – The environment to wrap</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.FrameStackObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">FrameStackObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stack_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ObsType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'reset'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_observation/#FrameStackObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.FrameStackObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Stacks the observations from the last <code class="docutils literal notranslate"><span class="pre">N</span></code> time steps in a rolling manner.</p>
+<p>For example, if the number of stacks is 4, then the returned observation contains
+the most recent 4 observations. For environment ‘Pendulum-v1’, the original observation
+is an array with shape [3], so if we stack 4 observations, the processed observation
+has shape [4, 3].</p>
+<p>Users have options for the padded observation used:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“reset” (default) - The reset value is repeated</p></li>
+<li><p>“zero” - A “zero”-like instance of the observation space</p></li>
+<li><p>custom - An instance of the observation space</p></li>
+</ul>
+</div></blockquote>
+<p>No vector version of the wrapper exists.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">FrameStackObservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">FrameStackObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">stack_size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box(0, 255, (4, 96, 96, 3), uint8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(4, 96, 96, 3)</span>
+</pre></div>
+</div>
+<dl>
+<dt>Example with different padding observations:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="go">(array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span> <span class="o">=</span> <span class="n">FrameStackObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>   <span class="c1"># the default is padding_type=&quot;reset&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="go">(array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
+<span class="go">       [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
+<span class="go">       [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],</span>
+<span class="go">      dtype=float32), {})</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span> <span class="o">=</span> <span class="n">FrameStackObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding_type</span><span class="o">=</span><span class="s2">&quot;zero&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="go">(array([[ 0.        ,  0.        ,  0.        ,  0.        ],</span>
+<span class="go">       [ 0.        ,  0.        ,  0.        ,  0.        ],</span>
+<span class="go">       [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],</span>
+<span class="go">      dtype=float32), {})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span> <span class="o">=</span> <span class="n">FrameStackObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">padding_type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stacked_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="go">(array([[ 1.        , -1.        ,  0.        ,  2.        ],</span>
+<span class="go">       [ 1.        , -1.        ,  0.        ,  2.        ],</span>
+<span class="go">       [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],</span>
+<span class="go">      dtype=float32), {})</span>
+</pre></div>
+</div>
+</dd>
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.15.0 - Initially add as <code class="docutils literal notranslate"><span class="pre">FrameStack</span></code> with support for lz4</p></li>
+<li><dl class="simple">
+<dt>v1.0.0 - Rename to <code class="docutils literal notranslate"><span class="pre">FrameStackObservation</span></code> and remove lz4 and <code class="docutils literal notranslate"><span class="pre">LazyFrame</span></code> support</dt><dd><p>along with adding the <code class="docutils literal notranslate"><span class="pre">padding_type</span></code> parameter</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to apply the wrapper</p></li>
+<li><p><strong>stack_size</strong> – The number of frames to stack.</p></li>
+<li><p><strong>padding_type</strong> – The padding type to use when stacking the observations, options: “reset”, “zero”, custom obs</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.GrayscaleObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">GrayscaleObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#GrayscaleObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.GrayscaleObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Converts an image observation computed by <code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> from RGB to Grayscale.</p>
+<p>The <code class="xref py py-attr docutils literal notranslate"><span class="pre">keep_dim</span></code> will keep the channel dimension.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.GrayscaleObservation" title="gymnasium.wrappers.vector.GrayscaleObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.GrayscaleObservation</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">GrayscaleObservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(96, 96, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grayscale_env</span> <span class="o">=</span> <span class="n">GrayscaleObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grayscale_env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(96, 96)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grayscale_env</span> <span class="o">=</span> <span class="n">GrayscaleObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">keep_dim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">grayscale_env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(96, 96, 1)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.15.0 - Initially added, originally called <code class="docutils literal notranslate"><span class="pre">GrayScaleObservation</span></code></p></li>
+<li><p>v1.0.0 - Renamed to <code class="docutils literal notranslate"><span class="pre">GrayscaleObservation</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap</p></li>
+<li><p><strong>keep_dim</strong> – If to keep the channel in the observation, if <code class="docutils literal notranslate"><span class="pre">True</span></code>, <code class="docutils literal notranslate"><span class="pre">obs.shape</span> <span class="pre">==</span> <span class="pre">3</span></code> else <code class="docutils literal notranslate"><span class="pre">obs.shape</span> <span class="pre">==</span> <span class="pre">2</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.MaxAndSkipObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">MaxAndSkipObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_observation/#MaxAndSkipObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.MaxAndSkipObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Skips the N-th frame (observation) and return the max values between the two last observations.</p>
+<p>No vector version of the wrapper exists.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This wrapper is based on the wrapper from [stable-baselines3](<a class="reference external" href="https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#MaxAndSkipEnv">https://stable-baselines3.readthedocs.io/en/master/_modules/stable_baselines3/common/atari_wrappers.html#MaxAndSkipEnv</a>)</p>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs0</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs1</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs2</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs3</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs4</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">skip_and_max_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">obs3</span><span class="p">,</span> <span class="n">obs4</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">MaxAndSkipObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_obs0</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_obs1</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">wrapped_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">obs0</span> <span class="o">==</span> <span class="n">wrapped_obs0</span><span class="p">)</span>
+<span class="go">np.True_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">wrapped_obs1</span> <span class="o">==</span> <span class="n">skip_and_max_obs</span><span class="p">)</span>
+<span class="go">np.True_</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.0.0 - Initially add</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the wrapper</p></li>
+<li><p><strong>skip</strong> – The number of frames to skip</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.NormalizeObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">NormalizeObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1e-8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_observation/#NormalizeObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.NormalizeObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Normalizes observations to be centered at the mean with unit variance.</p>
+<p>The property <code class="xref py py-attr docutils literal notranslate"><span class="pre">update_running_mean</span></code> allows to freeze/continue the running mean calculation of the observation
+statistics. If <code class="docutils literal notranslate"><span class="pre">True</span></code> (default), the <code class="docutils literal notranslate"><span class="pre">RunningMeanStd</span></code> will get updated every time <code class="docutils literal notranslate"><span class="pre">step</span></code> or <code class="docutils literal notranslate"><span class="pre">reset</span></code> is called.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the calculated statistics are used but not updated anymore; this may be used during evaluation.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.NormalizeObservation" title="gymnasium.wrappers.vector.NormalizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.NormalizeObservation</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
+newly instantiated or the policy was changed recently.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">term</span><span class="p">,</span> <span class="n">trunc</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">term</span> <span class="ow">or</span> <span class="n">trunc</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">term</span><span class="p">,</span> <span class="n">trunc</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([ 0.1511158 ,  1.7183299 , -0.25533703, -2.8914354 ], dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">NormalizeObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">term</span><span class="p">,</span> <span class="n">trunc</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">term</span> <span class="ow">or</span> <span class="n">trunc</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">term</span><span class="p">,</span> <span class="n">trunc</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([ 2.0059888,  1.5676788, -1.9944268, -1.6120394], dtype=float32)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.21.0 - Initially add</p></li>
+<li><dl class="simple">
+<dt>v1.0.0 - Add <cite>update_running_mean</cite> attribute to allow disabling of updating the running mean / standard, particularly useful for evaluation time.</dt><dd><p>Casts all observations to <cite>np.float32</cite> and sets the observation space with low/high of <cite>-np.inf</cite> and <cite>np.inf</cite> and dtype as <cite>np.float32</cite></p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the wrapper</p></li>
+<li><p><strong>epsilon</strong> – A stability parameter that is used when scaling the observations.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.AddRenderObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">AddRenderObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">render_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'pixels'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'state'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#AddRenderObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.AddRenderObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Includes the rendered observations in the environment’s observations.</p>
+<p class="rubric">Notes</p>
+<p>This was previously called <code class="docutils literal notranslate"><span class="pre">PixelObservationWrapper</span></code>.</p>
+<p>No vector version of the wrapper exists.</p>
+<dl>
+<dt>Example - Replace the observation with the rendered image:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">AddRenderObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">render_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box(0, 255, (400, 600, 3), uint8)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">obs</span> <span class="o">==</span> <span class="n">image</span><span class="p">)</span>
+<span class="go">np.True_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">obs</span> <span class="o">==</span> <span class="n">image</span><span class="p">)</span>
+<span class="go">np.True_</span>
+</pre></div>
+</div>
+</dd>
+<dt>Example - Add the rendered image to the original observation as a dictionary item:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">AddRenderObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">render_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Dict(&#39;pixels&#39;: Box(0, 255, (400, 600, 3), uint8), &#39;state&#39;: Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+<span class="go">dict_keys([&#39;state&#39;, &#39;pixels&#39;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span>
+<span class="go">array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s2">&quot;pixels&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
+<span class="go">np.True_</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminates</span><span class="p">,</span> <span class="n">truncates</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s2">&quot;pixels&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">image</span><span class="p">)</span>
+<span class="go">np.True_</span>
+</pre></div>
+</div>
+</dd>
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.15.0 - Initially added as <code class="docutils literal notranslate"><span class="pre">PixelObservationWrapper</span></code></p></li>
+<li><p>v1.0.0 - Renamed to <code class="docutils literal notranslate"><span class="pre">AddRenderObservation</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap.</p></li>
+<li><p><strong>render_only</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> (default), the original observation returned
+by the wrapped environment will be discarded, and a dictionary
+observation will only include pixels. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, the
+observation dictionary will contain both the original
+observations and the pixel observations.</p></li>
+<li><p><strong>render_key</strong> – Optional custom string specifying the pixel key. Defaults to “pixels”</p></li>
+<li><p><strong>obs_key</strong> – Optional custom string specifying the obs key. Defaults to “state”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.ResizeObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">ResizeObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#ResizeObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.ResizeObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Resizes image observations using OpenCV to a specified shape.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.ResizeObservation" title="gymnasium.wrappers.vector.ResizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.ResizeObservation</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResizeObservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(96, 96, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resized_env</span> <span class="o">=</span> <span class="n">ResizeObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resized_env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(32, 32, 3)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.12.6 - Initially added</p></li>
+<li><p>v1.0.0 - Requires <code class="docutils literal notranslate"><span class="pre">shape</span></code> with a tuple of two integers</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap</p></li>
+<li><p><strong>shape</strong> – The resized observation shape</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.ReshapeObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">ReshapeObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#ReshapeObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.ReshapeObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Reshapes Array based observations to a specified shape.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.RescaleObservation" title="gymnasium.wrappers.vector.RescaleObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.RescaleObservation</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReshapeObservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CarRacing-v3&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(96, 96, 3)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reshape_env</span> <span class="o">=</span> <span class="n">ReshapeObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">96</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reshape_env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(24, 4, 96, 1, 3)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.0.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap</p></li>
+<li><p><strong>shape</strong> – The reshaped observation space</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.RescaleObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">RescaleObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">floating</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">integer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">floating</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">integer</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#RescaleObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.RescaleObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Affinely (linearly) rescales a <code class="docutils literal notranslate"><span class="pre">Box</span></code> observation space of the environment to within the range of <code class="docutils literal notranslate"><span class="pre">[min_obs,</span> <span class="pre">max_obs]</span></code>.</p>
+<p>For unbounded components in the original observation space, the corresponding target bounds must also be infinite and vice versa.</p>
+<p>A vector version of the wrapper exists <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.RescaleObservation" title="gymnasium.wrappers.vector.RescaleObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.RescaleObservation</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RescaleObservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Pendulum-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box([-1. -1. -8.], [1. 1. 8.], (3,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">RescaleObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box([ -2.  -1. -10.], [1. 0. 1.], (3,), float32)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.0.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap</p></li>
+<li><p><strong>min_obs</strong> – The new minimum observation bound</p></li>
+<li><p><strong>max_obs</strong> – The new maximum observation bound</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.TimeAwareObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">TimeAwareObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_time_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_observation/#TimeAwareObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.TimeAwareObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Augment the observation with the number of time steps taken within an episode.</p>
+<p>The <code class="xref py py-attr docutils literal notranslate"><span class="pre">normalize_time</span></code> if <code class="docutils literal notranslate"><span class="pre">True</span></code> represents time as a normalized value between [0,1]
+otherwise if <code class="docutils literal notranslate"><span class="pre">False</span></code>, the current timestep is an integer.</p>
+<p>For environments with <code class="docutils literal notranslate"><span class="pre">Dict</span></code> observation spaces, the time information is automatically
+added in the key <cite>“time”</cite> (can be changed through <code class="xref py py-attr docutils literal notranslate"><span class="pre">dict_time_key</span></code>) and for environments with <code class="docutils literal notranslate"><span class="pre">Tuple</span></code>
+observation space, the time information is added as the final element in the tuple.
+Otherwise, the observation space is transformed into a <code class="docutils literal notranslate"><span class="pre">Dict</span></code> observation space with two keys,
+<cite>“obs”</cite> for the base environment’s observation and <cite>“time”</cite> for the time information.</p>
+<p>To flatten the observation, use the <code class="xref py py-attr docutils literal notranslate"><span class="pre">flatten</span></code> parameter which will use the
+<a class="reference internal" href="../../spaces/utils/#gymnasium.spaces.utils.flatten" title="gymnasium.spaces.utils.flatten"><code class="xref py py-func docutils literal notranslate"><span class="pre">gymnasium.spaces.utils.flatten()</span></code></a> function.</p>
+<p>No vector version of the wrapper exists.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeAwareObservation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">TimeAwareObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box([-4.80000019        -inf -0.41887903        -inf  0.        ], [4.80000019e+00            inf 4.18879032e-01            inf</span>
+<span class="go"> 5.00000000e+02], (5,), float64)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476,  1.        ])</span>
+</pre></div>
+</div>
+<dl>
+<dt>Normalize time observation space example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CartPole-v1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">TimeAwareObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">normalize_time</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box([-4.8               -inf -0.41887903        -inf  0.        ], [4.8               inf 0.41887903        inf 1.        ], (5,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ,  0.        ],</span>
+<span class="go">      dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476,  0.002     ],</span>
+<span class="go">      dtype=float32)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Flatten observation space example:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">TimeAwareObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Dict(&#39;obs&#39;: Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), &#39;time&#39;: Box(0, 500, (1,), int32))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">{&#39;obs&#39;: array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), &#39;time&#39;: array([0], dtype=int32)}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+<span class="go">{&#39;obs&#39;: array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), &#39;time&#39;: array([1], dtype=int32)}</span>
+</pre></div>
+</div>
+</dd>
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.18.0 - Initially added</p></li>
+<li><p>v1.0.0 - Remove vector environment support, add <code class="docutils literal notranslate"><span class="pre">flatten</span></code> and <code class="docutils literal notranslate"><span class="pre">normalize_time</span></code> parameters</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to apply the wrapper</p></li>
+<li><p><strong>flatten</strong> – Flatten the observation to a <cite>Box</cite> of a single dimension</p></li>
+<li><p><strong>normalize_time</strong> – if <cite>True</cite> return time in the range [0,1]
+otherwise return time as remaining timesteps before truncation</p></li>
+<li><p><strong>dict_time_key</strong> – For environment with a <code class="docutils literal notranslate"><span class="pre">Dict</span></code> observation space, the key for the time space. By default, <cite>“time”</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+          </article>
+        </div>
+        <footer>
+          
+          <div class="related-pages">
+            <a class="next-page" href="../reward_wrappers/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Reward Wrappers</div>
+              </div>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+            </a>
+            <a class="prev-page" href="../action_wrappers/">
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Action Wrappers</div>
+                
+              </div>
+            </a>
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
+                Copyright &#169; 2025 Farama Foundation
+              </div>
+              <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/"
+                  aria-label="On GitHub">
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer">
+        
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">Observation Wrappers</a><ul>
+<li><a class="reference internal" href="#gymnasium.ObservationWrapper"><code class="docutils literal notranslate"><span class="pre">ObservationWrapper</span></code></a><ul>
+<li><a class="reference internal" href="#gymnasium.ObservationWrapper.observation"><code class="docutils literal notranslate"><span class="pre">ObservationWrapper.observation()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#implemented-wrappers">Implemented Wrappers</a><ul>
+<li><a class="reference internal" href="#gymnasium.wrappers.TransformObservation"><code class="docutils literal notranslate"><span class="pre">TransformObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.DelayObservation"><code class="docutils literal notranslate"><span class="pre">DelayObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.DtypeObservation"><code class="docutils literal notranslate"><span class="pre">DtypeObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.FilterObservation"><code class="docutils literal notranslate"><span class="pre">FilterObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.FlattenObservation"><code class="docutils literal notranslate"><span class="pre">FlattenObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.FrameStackObservation"><code class="docutils literal notranslate"><span class="pre">FrameStackObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.GrayscaleObservation"><code class="docutils literal notranslate"><span class="pre">GrayscaleObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.MaxAndSkipObservation"><code class="docutils literal notranslate"><span class="pre">MaxAndSkipObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.NormalizeObservation"><code class="docutils literal notranslate"><span class="pre">NormalizeObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.AddRenderObservation"><code class="docutils literal notranslate"><span class="pre">AddRenderObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.ResizeObservation"><code class="docutils literal notranslate"><span class="pre">ResizeObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.ReshapeObservation"><code class="docutils literal notranslate"><span class="pre">ReshapeObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.RescaleObservation"><code class="docutils literal notranslate"><span class="pre">RescaleObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.TimeAwareObservation"><code class="docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+        
+        
+      </aside>
+    </div>
+  </div>
+</div>
+    <script>
+      const toggleMenu = () => {
+        const menuBtn = document.querySelector(".farama-header-menu__btn");
+        const menuContainer = document.querySelector(".farama-header-menu-container");
+        if (document.querySelector(".farama-header-menu").classList.contains("active")) {
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuContainer.setAttribute("aria-hidden", "true");
+        } else {
+          menuBtn.setAttribute("aria-expanded", "true");
+          menuContainer.setAttribute("aria-hidden", "false");
+        }
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+    </script>
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
+      <script>
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6H9C8TWXZ8');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
+
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
+      </script>
+
+    <script src="../../../_static/documentation_options.js?v=e86ceb7b"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    
+    <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
+      // Create menu with Farama projects by using the API at farama.org/api/projects.json
+      const createCORSRequest = (method, url) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          // IE8 & IE9
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          // CORS not supported.
+          xhr = null;
+        }
+        return xhr;
+      };
+
+      const url = 'https://farama.org/api/projects.json';
+      const imagesBasepath = "https://farama.org/assets/images"
+      const method = 'GET';
+      let xhr = createCORSRequest(method, url);
+
+      xhr.onload = () => {
+        const jsonResponse = xhr.response;
+        const sections = {
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Foundation": [
+            {
+              name: "About",
+              link: "https://farama.org/about"
+            },
+            {
+              name: "Standards",
+              link: "https://farama.org/project_standards",
+            },
+            {
+              name: "Donate",
+              link: "https://farama.org/donations"
+            }
+          ]
+        }
+
+        // Categorize projects
+        Object.keys(jsonResponse).forEach(key => {
+          projectJson = jsonResponse[key];
+          if (projectJson.website !== null) {
+            projectJson.link = projectJson.website;
+          } else {
+            projectJson.link = projectJson.github;
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
+          }
+        })
+
+        const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        Object.keys(sections).forEach((key, i) => {
+          const sectionElem = Object.assign(
+            document.createElement('div'), {
+              className:'farama-header-menu__section',
+            }
+          )
+          sectionElem.appendChild(Object.assign(document.createElement('span'),
+            {
+              className:'farama-header-menu__section-title' ,
+              innerText: key
+            }
+          ))
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: 'display: flex'
+                }
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
+          }
+          menuContainer.appendChild(sectionElem)
+        });
+      }
+
+      xhr.onerror = function() {
+        console.error("Unable to load projects");
+      };
+
+      xhr.send();
+    </script>
+
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Gymnasium',
+      };
+      fetch('/main/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script>
+
+    </body>
+</html>

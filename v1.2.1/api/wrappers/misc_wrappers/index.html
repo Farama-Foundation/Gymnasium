@@ -1,0 +1,1438 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)">
+    <meta property="og:title" content="Gymnasium Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
+    <meta property="og:url" content="https://gymnasium.farama.org/api/wrappers/misc_wrappers.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Action Wrappers" href="../action_wrappers/" /><link rel="prev" title="List of Wrappers" href="../table/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/api/wrappers/misc_wrappers.html" />
+
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+        <title>Misc Wrappers - Gymnasium Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header" aria-label="Farama header">
+      <div class="farama-header__container">
+        <div class="farama-header__left--mobile">
+          <label class="nav-overlay-icon" for="__navigation">
+            <div class="visually-hidden">Toggle site navigation sidebar</div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <defs></defs>
+              <line x1="0.5" y1="4" x2="23.5" y2="4"></line>
+              <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
+              <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
+            </svg>
+          </label>
+        </div>
+        <div class="farama-header__left farama-header__center--mobile">
+          <a href="../../../">
+              <img class="farama-header__logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+            <span class="farama-header__title">Gymnasium Documentation</span>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
+              <img class="farama-black-logo-invert" src="../../../_static/img/farama-logo-header.svg">
+              <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
+              </svg>
+            </button>
+            <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
+                  <span>Farama Foundation</span>
+                </a>
+                <div class="farama-header-menu-header__right">
+                  <button id="farama-close-menu">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                      <line x1="3" y1="21" x2="21" y2="3"></line>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="farama-header-menu__body">
+                <!-- Response from farama.org/api/projects.json -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="page">
+  <!--<header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../"><div class="brand">Gymnasium Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>-->
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../../">
+      <img class="farama-header__logo only-light" src="../../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+    <span class="farama-header__title">Gymnasium Documentation</span>
+  </a><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/train_agent/">Training an Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/create_custom_env/">Create a Custom Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/record_agent/">Recording Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/speed_up_env/">Speeding Up Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction/migration_guide/">Gym Migration Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../registry/">Make and register</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../spaces/utils/">Spaces Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Wrappers</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../table/">List of Wrappers</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reward_wrappers/">Reward Wrappers</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../vector/utils/">Utility functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../functional/">Functional Env</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Classic Control</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Box2D</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Toy Text</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of MuJoCo</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/inverted_pendulum/">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/pusher/">Pusher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../environments/mujoco/walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments/atari/">Atari</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../environments/third_party_environments/">External Environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/action_masking_taxi/#results-analysis">Results Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/training_agents/vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/third-party-tutorials/">Third-Party Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arxiv.org/abs/2407.17032">Paper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gymnasium_release_notes/">Gymnasium Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../gym_release_notes/">Gym Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main-container">
+
+    
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container"><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/api/wrappers/misc_wrappers.md" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
+          </div>
+          <article role="main">
+            
+            <section class="tex2jax_ignore mathjax_ignore" id="misc-wrappers">
+<h1>Misc Wrappers<a class="headerlink" href="#misc-wrappers" title="Link to this heading">¶</a></h1>
+<section id="common-wrappers">
+<h2>Common Wrappers<a class="headerlink" href="#common-wrappers" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.TimeLimit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">TimeLimit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_episode_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/common/#TimeLimit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.TimeLimit" title="Link to this definition">¶</a></dt>
+<dd><p>Limits the number of steps for an environment through truncating the environment if a maximum number of timesteps is exceeded.</p>
+<p>If a truncation is not defined inside the environment itself, this is the only place that the truncation signal is issued.
+Critically, this is different from the <cite>terminated</cite> signal that originates from the underlying environment as part of the MDP.
+No vector wrapper exists.</p>
+<dl>
+<dt>Example using the TimeLimit wrapper:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeLimit</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.classic_control</span><span class="w"> </span><span class="kn">import</span> <span class="n">CartPoleEnv</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">spec</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spec</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
+<span class="go">500</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>  <span class="c1"># TimeLimit is included within the environment stack</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v1&gt;&gt;&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>  
+<span class="go">EnvSpec(id=&#39;CartPole-v1&#39;, ..., max_episode_steps=500, ...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>  
+<span class="go">EnvSpec(id=&#39;CartPole-v1&#39;, ..., max_episode_steps=3, ...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">TimeLimit</span><span class="p">(</span><span class="n">CartPoleEnv</span><span class="p">(),</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
+<span class="go">&lt;TimeLimit&lt;CartPoleEnv instance&gt;&gt;</span>
+</pre></div>
+</div>
+</dd>
+<dt>Example of <cite>TimeLimit</cite> determining the episode step</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span>
+<span class="go">(False, False)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span>
+<span class="go">(False, False)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span>
+<span class="go">(False, True)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.10.6 - Initially added</p></li>
+<li><p>v0.25.0 - With the step API update, the termination and truncation signal is returned separately.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to apply the wrapper</p></li>
+<li><p><strong>max_episode_steps</strong> – the environment step after which the episode is truncated (<code class="docutils literal notranslate"><span class="pre">elapsed</span> <span class="pre">&gt;=</span> <span class="pre">max_episode_steps</span></code>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.RecordVideo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">RecordVideo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rl-video'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gc_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">lambda</span> <span class="pre">episode:</span> <span class="pre">...</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/rendering/#RecordVideo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.RecordVideo" title="Link to this definition">¶</a></dt>
+<dd><p>Records videos of environment episodes using the environment’s render function.</p>
+<p>Usually, you only want to record episodes intermittently, say every hundredth episode or at every thousandth environment step.
+To do this, you can specify <code class="docutils literal notranslate"><span class="pre">episode_trigger</span></code> or <code class="docutils literal notranslate"><span class="pre">step_trigger</span></code>.
+They should be functions returning a boolean that indicates whether a recording should be started at the
+current episode or step, respectively.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">episode_trigger</span></code> should return <code class="docutils literal notranslate"><span class="pre">True</span></code> on the episode when recording should start.
+The <code class="docutils literal notranslate"><span class="pre">step_trigger</span></code> should return <code class="docutils literal notranslate"><span class="pre">True</span></code> on the n-th environment step that the recording should be started, where n sums over all previous episodes.
+If neither <code class="xref py py-attr docutils literal notranslate"><span class="pre">episode_trigger</span></code> nor <code class="docutils literal notranslate"><span class="pre">step_trigger</span></code> is passed, a default <code class="docutils literal notranslate"><span class="pre">episode_trigger</span></code> will be employed, i.e. <a class="reference internal" href="../../utils/#gymnasium.utils.save_video.capped_cubic_video_schedule" title="gymnasium.utils.save_video.capped_cubic_video_schedule"><code class="xref py py-func docutils literal notranslate"><span class="pre">capped_cubic_video_schedule()</span></code></a>.
+This function starts a video at every episode that is a power of 3 until 1000 and then every 1000 episodes.
+By default, the recording will be stopped once reset is called.
+However, you can also create recordings of fixed length (possibly spanning several episodes)
+by passing a strictly positive value for <code class="docutils literal notranslate"><span class="pre">video_length</span></code>.</p>
+<dl>
+<dt>Examples - Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trigger</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;./save_videos1&quot;</span><span class="p">,</span> <span class="n">episode_trigger</span><span class="o">=</span><span class="n">trigger</span><span class="p">,</span> <span class="n">disable_logger</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">termination</span> <span class="ow">or</span> <span class="n">truncation</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;./save_videos1&quot;</span><span class="p">))</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+</dd>
+<dt>Examples - Run the environment for 5 episodes, start a recording every 200th step, making sure each video is 100 frames long:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trigger</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">%</span> <span class="mi">200</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;./save_videos2&quot;</span><span class="p">,</span> <span class="n">step_trigger</span><span class="o">=</span><span class="n">trigger</span><span class="p">,</span> <span class="n">video_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">disable_logger</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">termination</span> <span class="ow">or</span> <span class="n">truncation</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;./save_videos2&quot;</span><span class="p">))</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+</dd>
+<dt>Examples - Run 3 episodes, record everything, but in chunks of 1000 frames:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">RecordVideo</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;./save_videos3&quot;</span><span class="p">,</span> <span class="n">video_length</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">disable_logger</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">termination</span> <span class="ow">or</span> <span class="n">truncation</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">termination</span><span class="p">,</span> <span class="n">truncation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;./save_videos3&quot;</span><span class="p">))</span>
+<span class="go">2</span>
+</pre></div>
+</div>
+</dd>
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.25.0 - Initially added to replace <code class="docutils literal notranslate"><span class="pre">wrappers.monitoring.VideoRecorder</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment that will be wrapped</p></li>
+<li><p><strong>video_folder</strong> (<em>str</em>) – The folder where the recordings will be stored</p></li>
+<li><p><strong>episode_trigger</strong> – Function that accepts an integer and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff a recording should be started at this episode</p></li>
+<li><p><strong>step_trigger</strong> – Function that accepts an integer and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff a recording should be started at this step</p></li>
+<li><p><strong>video_length</strong> (<em>int</em>) – The length of recorded episodes. If 0, entire episodes are recorded.
+Otherwise, snippets of the specified length are captured</p></li>
+<li><p><strong>name_prefix</strong> (<em>str</em>) – Will be prepended to the filename of the recordings</p></li>
+<li><p><strong>fps</strong> (<em>int</em>) – The frame per second in the video. Provides a custom video fps for environment, if <code class="docutils literal notranslate"><span class="pre">None</span></code> then
+the environment metadata <code class="docutils literal notranslate"><span class="pre">render_fps</span></code> key is used if it exists, otherwise a default value of 30 is used.</p></li>
+<li><p><strong>disable_logger</strong> (<em>bool</em>) – Whether to disable moviepy logger or not, default it is disabled</p></li>
+<li><p><strong>gc_trigger</strong> – Function that accepts an integer and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff garbage collection should be performed after this episode</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.RecordEpisodeStatistics">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">RecordEpisodeStatistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'episode'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/common/#RecordEpisodeStatistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.RecordEpisodeStatistics" title="Link to this definition">¶</a></dt>
+<dd><p>This wrapper will keep track of cumulative rewards and episode lengths.</p>
+<p>At the end of an episode, the statistics of the episode will be added to <code class="docutils literal notranslate"><span class="pre">info</span></code>
+using the key <code class="docutils literal notranslate"><span class="pre">episode</span></code>. If using a vectorized environment also the key
+<code class="docutils literal notranslate"><span class="pre">_episode</span></code> is used which indicates whether the env at the respective index has
+the episode statistics.
+A vector version of the wrapper exists, <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.RecordEpisodeStatistics" title="gymnasium.wrappers.vector.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.RecordEpisodeStatistics</span></code></a>.</p>
+<p>After the completion of an episode, <code class="docutils literal notranslate"><span class="pre">info</span></code> will look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;cumulative reward&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;episode length&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;elapsed time since beginning of episode&gt;&quot;</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>For a vectorized environments the output will be in the form of:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of cumulative reward&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of episode length&gt;&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;array of elapsed time since beginning of episode&gt;&quot;</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;_episode&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;boolean array of length num-envs&gt;&quot;</span>
+<span class="gp">... </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.length_queue</span></code> respectively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_queue</strong> (<em>*</em>) – The time length of the last <code class="docutils literal notranslate"><span class="pre">deque_size</span></code>-many episodes</p></li>
+<li><p><strong>return_queue</strong> (<em>*</em>) – The cumulative rewards of the last <code class="docutils literal notranslate"><span class="pre">deque_size</span></code>-many episodes</p></li>
+<li><p><strong>length_queue</strong> (<em>*</em>) – The lengths of the last <code class="docutils literal notranslate"><span class="pre">deque_size</span></code>-many episodes</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.15.4 - Initially added</p></li>
+<li><p>v1.0.0 - Removed vector environment support (see <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.RecordEpisodeStatistics" title="gymnasium.wrappers.vector.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.RecordEpisodeStatistics</span></code></a>) and add attribute <code class="docutils literal notranslate"><span class="pre">time_queue</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the wrapper</p></li>
+<li><p><strong>buffer_length</strong> – The size of the buffers <code class="xref py py-attr docutils literal notranslate"><span class="pre">return_queue</span></code>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">length_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">time_queue</span></code></p></li>
+<li><p><strong>stats_key</strong> – The info key for the episode statistics</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.AtariPreprocessing">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">AtariPreprocessing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">noop_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">84</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminal_on_life_loss</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grayscale_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grayscale_newaxis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/atari_preprocessing/#AtariPreprocessing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.AtariPreprocessing" title="Link to this definition">¶</a></dt>
+<dd><p>Implements the common preprocessing techniques for Atari environments (excluding frame stacking).</p>
+<p>For frame stacking use <a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.FrameStackObservation" title="gymnasium.wrappers.FrameStackObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.FrameStackObservation</span></code></a>.
+No vector version of the wrapper exists</p>
+<p>This class follows the guidelines in Machado et al. (2018),
+“Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents”.</p>
+<p>Specifically, the following preprocess stages applies to the atari environment:</p>
+<ul class="simple">
+<li><p>Noop Reset: Obtains the initial state by taking a random number of no-ops on reset, default max 30 no-ops.</p></li>
+<li><p>Frame skipping: The number of frames skipped between steps, 4 by default.</p></li>
+<li><p>Max-pooling: Pools over the most recent two observations from the frame skips.</p></li>
+<li><dl class="simple">
+<dt>Termination signal when a life is lost: When the agent losses a life during the environment, then the environment is terminated.</dt><dd><p>Turned off by default. Not recommended by Machado et al. (2018).</p>
+</dd>
+</dl>
+</li>
+<li><p>Resize to a square image: Resizes the atari environment original observation shape from 210x180 to 84x84 by default.</p></li>
+<li><p>Grayscale observation: Makes the observation greyscale, enabled by default.</p></li>
+<li><p>Grayscale new axis: Extends the last channel of the observation such that the image is 3-dimensional, not enabled by default.</p></li>
+<li><p>Scale observation: Whether to scale the observation between [0, 1) or [0, 255), not scaled by default.</p></li>
+</ul>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">ale_py</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gym</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">ale_py</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;ALE/Pong-v5&quot;</span><span class="p">,</span> <span class="n">frameskip</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">AtariPreprocessing</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">env</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">noop_max</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">frame_skip</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">terminal_on_life_loss</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">screen_size</span><span class="o">=</span><span class="mi">84</span><span class="p">,</span> <span class="n">grayscale_obs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">grayscale_newaxis</span><span class="o">=</span><span class="kc">False</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>Added in gym v0.12.2 (gym #1455)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The environment to apply the preprocessing</p></li>
+<li><p><strong>noop_max</strong> (<em>int</em>) – For No-op reset, the max number no-ops actions are taken at reset, to turn off, set to 0.</p></li>
+<li><p><strong>frame_skip</strong> (<em>int</em>) – The number of frames between new observation the agents observations effecting the frequency at which the agent experiences the game.</p></li>
+<li><p><strong>screen_size</strong> (<em>int</em><em> | </em><em>tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – resize Atari frame.</p></li>
+<li><p><strong>terminal_on_life_loss</strong> (<em>bool</em>) – <cite>if True</cite>, then <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> returns <cite>terminated=True</cite> whenever a
+life is lost.</p></li>
+<li><p><strong>grayscale_obs</strong> (<em>bool</em>) – if True, then gray scale observation is returned, otherwise, RGB observation
+is returned.</p></li>
+<li><p><strong>grayscale_newaxis</strong> (<em>bool</em>) – <cite>if True and grayscale_obs=True</cite>, then a channel axis is added to
+grayscale observations to make them 3-dimensional.</p></li>
+<li><p><strong>scale_obs</strong> (<em>bool</em>) – if True, then observation normalized in range [0,1) is returned. It also limits memory
+optimization benefits of FrameStack Wrapper.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>DependencyNotInstalled</strong> – opencv-python package not installed</p></li>
+<li><p><strong>ValueError</strong> – Disable frame-skipping in the original env</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="uncommon-wrappers">
+<h2>Uncommon Wrappers<a class="headerlink" href="#uncommon-wrappers" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.Autoreset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">Autoreset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/common/#Autoreset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.Autoreset" title="Link to this definition">¶</a></dt>
+<dd><p>The wrapped environment is automatically reset when a terminated or truncated state is reached.</p>
+<p>This follows the vector autoreset api where on the step after an episode terminates or truncated then the environment is reset.</p>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.24.0 - Initially added as <cite>AutoResetWrapper</cite></p></li>
+<li><p>v1.0.0 - renamed to <cite>Autoreset</cite> and autoreset order was changed to reset on the step after the environment terminates or truncates. As a result, <cite>“final_observation”</cite> and <cite>“final_info”</cite> is removed.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> (<em>gym.Env</em>) – The environment to apply the wrapper</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.PassiveEnvChecker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">PassiveEnvChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/common/#PassiveEnvChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.PassiveEnvChecker" title="Link to this definition">¶</a></dt>
+<dd><p>A passive wrapper that surrounds the <code class="docutils literal notranslate"><span class="pre">step</span></code>, <code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">render</span></code> functions to check they follow Gymnasium’s API.</p>
+<p>This wrapper is automatically applied during make and can be disabled with <cite>disable_env_checker</cite>.
+No vector version of the wrapper exists.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v1&gt;&gt;&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">disable_env_checker</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;CartPoleEnv&lt;CartPole-v1&gt;&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.24.1 - Initially added however broken in several ways</p></li>
+<li><p>v0.25.0 - Bugs was all fixed</p></li>
+<li><p>v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and inregular bound shapes</p></li>
+</ul>
+</dd>
+</dl>
+<p>Initialises the wrapper with the environments, run the observation and action space tests.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.HumanRendering">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">HumanRendering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/rendering/#HumanRendering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.HumanRendering" title="Link to this definition">¶</a></dt>
+<dd><p>Allows human like rendering for environments that support “rgb_array” rendering.</p>
+<p>This wrapper is particularly useful when you have implemented an environment that can produce
+RGB images but haven’t implemented any code to render the images to the screen.
+If you want to use this wrapper with your environments, remember to specify <code class="docutils literal notranslate"><span class="pre">&quot;render_fps&quot;</span></code>
+in the metadata of your environment.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> of the wrapped environment must be either <code class="docutils literal notranslate"><span class="pre">'rgb_array'</span></code> or <code class="docutils literal notranslate"><span class="pre">'rgb_array_list'</span></code>.</p>
+<p>No vector version of the wrapper exists.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">HumanRendering</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped</span> <span class="o">=</span> <span class="n">HumanRendering</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">wrapped</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>     <span class="c1"># This will start rendering to the screen</span>
+</pre></div>
+</div>
+<p>The wrapper can also be applied directly when the environment is instantiated, simply by passing
+<code class="docutils literal notranslate"><span class="pre">render_mode=&quot;human&quot;</span></code> to <code class="docutils literal notranslate"><span class="pre">make</span></code>. The wrapper will only be applied if the environment does not
+implement human-rendering natively (i.e. <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> does not contain <code class="docutils literal notranslate"><span class="pre">&quot;human&quot;</span></code>).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;phys2d/CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>      <span class="c1"># CartPoleJax-v1 doesn&#39;t implement human-rendering natively</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>     <span class="c1"># This will start rendering to the screen</span>
+</pre></div>
+</div>
+<p>Warning: If the base environment uses <code class="docutils literal notranslate"><span class="pre">render_mode=&quot;rgb_array_list&quot;</span></code>, its (i.e. the <em>base environment’s</em>) render method
+will always return an empty list:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array_list&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped</span> <span class="o">=</span> <span class="n">HumanRendering</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">wrapped</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span> <span class="c1"># env.render() will always return an empty list!</span>
+<span class="go">[]</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.25.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> – The environment that is being wrapped</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.OrderEnforcing">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">OrderEnforcing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_render_order_enforcing</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/common/#OrderEnforcing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.OrderEnforcing" title="Link to this definition">¶</a></dt>
+<dd><p>Will produce an error if <code class="docutils literal notranslate"><span class="pre">step</span></code> or <code class="docutils literal notranslate"><span class="pre">render</span></code> is called before <code class="docutils literal notranslate"><span class="pre">reset</span></code>.</p>
+<p>No vector version of the wrapper exists.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderEnforcing</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">OrderEnforcing</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">gymnasium.error.ResetNeeded</span>: <span class="n">Cannot call env.step() before calling env.reset()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">gymnasium.error.ResetNeeded</span>: <span class="n">Cannot call `env.render()` before calling `env.reset()`, if this is an intended action, set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.22.0 - Initially added</p></li>
+<li><p>v0.24.0 - Added order enforcing for the render function</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap</p></li>
+<li><p><strong>disable_render_order_enforcing</strong> – If to disable render order enforcing</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.RenderCollection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">RenderCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pop_frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_clean</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/rendering/#RenderCollection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.RenderCollection" title="Link to this definition">¶</a></dt>
+<dd><p>Collect rendered frames of an environment such <code class="docutils literal notranslate"><span class="pre">render</span></code> returns a <code class="docutils literal notranslate"><span class="pre">list[RenderedFrame]</span></code>.</p>
+<p>No vector version of the wrapper exists.</p>
+<dl>
+<dt>Example - Return the list of frames for the number of steps <code class="docutils literal notranslate"><span class="pre">render</span></code> wasn’t called.</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">RenderCollection</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+</dd>
+<dt>Example - Return the list of frames for the number of steps the episode was running.</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">RenderCollection</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pop_frames</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+<span class="go">6</span>
+</pre></div>
+</div>
+</dd>
+<dt>Example - Collect all frames for all episodes, without clearing them when render is called</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">RenderCollection</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">pop_frames</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">reset_clean</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+<span class="go">12</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">frames</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+<span class="go">12</span>
+</pre></div>
+</div>
+</dd>
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v0.26.2 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment that is being wrapped</p></li>
+<li><p><strong>pop_frames</strong> (<em>bool</em>) – If true, clear the collection frames after <code class="docutils literal notranslate"><span class="pre">meth:render</span></code> is called. Default value is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>reset_clean</strong> (<em>bool</em>) – If true, clear the collection frames when <code class="docutils literal notranslate"><span class="pre">meth:reset</span></code> is called. Default value is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="data-conversion-wrappers">
+<h2>Data Conversion Wrappers<a class="headerlink" href="#data-conversion-wrappers" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.ArrayConversion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">ArrayConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_xp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModuleType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_xp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModuleType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/array_conversion/#ArrayConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.ArrayConversion" title="Link to this definition">¶</a></dt>
+<dd><p>Wraps an Array API compatible environment so that it can be interacted with with another Array API framework.</p>
+<p>Popular Array API frameworks include <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">torch</span></code>, <code class="docutils literal notranslate"><span class="pre">jax.numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">cupy</span></code> etc. With this wrapper, you can convert outputs from your environment to
+any of these frameworks. Conversely, actions are automatically mapped back to the environment framework, if possible without moving the
+data or device transfers.</p>
+<p>A vector version of the wrapper exists, <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.ArrayConversion" title="gymnasium.wrappers.vector.ArrayConversion"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.ArrayConversion</span></code></a>.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>                                                
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>                                     
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>                                     
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;JaxEnv-vx&quot;</span><span class="p">)</span>                                 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">ArrayConversion</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">env_xp</span><span class="o">=</span><span class="n">jnp</span><span class="p">,</span> <span class="n">target_xp</span><span class="o">=</span><span class="n">torch</span><span class="p">)</span>     
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>                                
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>                                                   
+<span class="go">&lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">action</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>            
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>                                                   
+<span class="go">&lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>                                                
+<span class="go">&lt;class &#39;float&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">terminated</span><span class="p">)</span>                                            
+<span class="go">&lt;class &#39;bool&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">truncated</span><span class="p">)</span>                                             
+<span class="go">&lt;class &#39;bool&#39;&gt;</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.2.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The Array API compatible environment to wrap</p></li>
+<li><p><strong>env_xp</strong> – The Array API framework the environment is on</p></li>
+<li><p><strong>target_xp</strong> – The Array API framework to convert to</p></li>
+<li><p><strong>env_device</strong> – The device the environment is on</p></li>
+<li><p><strong>target_device</strong> – The device on which Arrays should be returned</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.JaxToNumpy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">JaxToNumpy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/jax_to_numpy/#JaxToNumpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.JaxToNumpy" title="Link to this definition">¶</a></dt>
+<dd><p>Wraps a Jax-based environment such that it can be interacted with NumPy arrays.</p>
+<p>Actions must be provided as numpy arrays and observations will be returned as numpy arrays.
+A vector version of the wrapper exists, <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.JaxToNumpy" title="gymnasium.wrappers.vector.JaxToNumpy"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.JaxToNumpy</span></code></a>.</p>
+<p class="rubric">Notes</p>
+<p>The Jax To Numpy and Numpy to Jax conversion does not guarantee a roundtrip (jax -&gt; numpy -&gt; jax) and vice versa.
+The reason for this is jax does not support non-array values, therefore numpy <code class="docutils literal notranslate"><span class="pre">int_32(5)</span> <span class="pre">-&gt;</span> <span class="pre">DeviceArray([5],</span> <span class="pre">dtype=jnp.int23)</span></code></p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>                                     
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;JaxEnv-vx&quot;</span><span class="p">)</span>                                 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">JaxToNumpy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>                                       
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>                                
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>                                                   
+<span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>                          
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>                                                   
+<span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>                                                
+<span class="go">&lt;class &#39;float&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">terminated</span><span class="p">)</span>                                            
+<span class="go">&lt;class &#39;bool&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">truncated</span><span class="p">)</span>                                             
+<span class="go">&lt;class &#39;bool&#39;&gt;</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.0.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> – the jax environment to wrap</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.JaxToTorch">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">JaxToTorch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/jax_to_torch/#JaxToTorch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.JaxToTorch" title="Link to this definition">¶</a></dt>
+<dd><p>Wraps a Jax-based environment so that it can be interacted with PyTorch Tensors.</p>
+<p>Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
+A vector version of the wrapper exists, <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.JaxToTorch" title="gymnasium.wrappers.vector.JaxToTorch"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.JaxToTorch</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">rendered</span></code> this is returned as a NumPy array not a pytorch Tensor.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>                                                
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>                                     
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;JaxEnv-vx&quot;</span><span class="p">)</span>                                 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">JaxtoTorch</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>                                       
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>                                
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>                                                   
+<span class="go">&lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">action</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>            
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>                                                   
+<span class="go">&lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>                                                
+<span class="go">&lt;class &#39;float&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">terminated</span><span class="p">)</span>                                            
+<span class="go">&lt;class &#39;bool&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">truncated</span><span class="p">)</span>                                             
+<span class="go">&lt;class &#39;bool&#39;&gt;</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.0.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The Jax-based environment to wrap</p></li>
+<li><p><strong>device</strong> – The device the torch Tensors should be moved to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.NumpyToTorch">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">NumpyToTorch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">device</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/numpy_to_torch/#NumpyToTorch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.NumpyToTorch" title="Link to this definition">¶</a></dt>
+<dd><p>Wraps a NumPy-based environment such that it can be interacted with PyTorch Tensors.</p>
+<p>Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.
+A vector version of the wrapper exists, <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.NumpyToTorch" title="gymnasium.wrappers.vector.NumpyToTorch"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.NumpyToTorch</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">rendered</span></code> this is returned as a NumPy array not a pytorch Tensor.</p>
+</div>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">NumpyToTorch</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<span class="go">&lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">action</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<span class="go">&lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+<span class="go">&lt;class &#39;float&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">terminated</span><span class="p">)</span>
+<span class="go">&lt;class &#39;bool&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">truncated</span><span class="p">)</span>
+<span class="go">&lt;class &#39;bool&#39;&gt;</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.0.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The NumPy-based environment to wrap</p></li>
+<li><p><strong>device</strong> – The device the torch Tensors should be moved to</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+          </article>
+        </div>
+        <footer>
+          
+          <div class="related-pages">
+            <a class="next-page" href="../action_wrappers/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Action Wrappers</div>
+              </div>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+            </a>
+            <a class="prev-page" href="../table/">
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">List of Wrappers</div>
+                
+              </div>
+            </a>
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
+                Copyright &#169; 2025 Farama Foundation
+              </div>
+              <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/"
+                  aria-label="On GitHub">
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer">
+        
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">Misc Wrappers</a><ul>
+<li><a class="reference internal" href="#common-wrappers">Common Wrappers</a><ul>
+<li><a class="reference internal" href="#gymnasium.wrappers.TimeLimit"><code class="docutils literal notranslate"><span class="pre">TimeLimit</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.RecordVideo"><code class="docutils literal notranslate"><span class="pre">RecordVideo</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.RecordEpisodeStatistics"><code class="docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.AtariPreprocessing"><code class="docutils literal notranslate"><span class="pre">AtariPreprocessing</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#uncommon-wrappers">Uncommon Wrappers</a><ul>
+<li><a class="reference internal" href="#gymnasium.wrappers.Autoreset"><code class="docutils literal notranslate"><span class="pre">Autoreset</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.PassiveEnvChecker"><code class="docutils literal notranslate"><span class="pre">PassiveEnvChecker</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.HumanRendering"><code class="docutils literal notranslate"><span class="pre">HumanRendering</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.OrderEnforcing"><code class="docutils literal notranslate"><span class="pre">OrderEnforcing</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.RenderCollection"><code class="docutils literal notranslate"><span class="pre">RenderCollection</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#data-conversion-wrappers">Data Conversion Wrappers</a><ul>
+<li><a class="reference internal" href="#gymnasium.wrappers.ArrayConversion"><code class="docutils literal notranslate"><span class="pre">ArrayConversion</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.JaxToNumpy"><code class="docutils literal notranslate"><span class="pre">JaxToNumpy</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.JaxToTorch"><code class="docutils literal notranslate"><span class="pre">JaxToTorch</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.NumpyToTorch"><code class="docutils literal notranslate"><span class="pre">NumpyToTorch</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+        
+        
+      </aside>
+    </div>
+  </div>
+</div>
+    <script>
+      const toggleMenu = () => {
+        const menuBtn = document.querySelector(".farama-header-menu__btn");
+        const menuContainer = document.querySelector(".farama-header-menu-container");
+        if (document.querySelector(".farama-header-menu").classList.contains("active")) {
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuContainer.setAttribute("aria-hidden", "true");
+        } else {
+          menuBtn.setAttribute("aria-expanded", "true");
+          menuContainer.setAttribute("aria-hidden", "false");
+        }
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+    </script>
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
+      <script>
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6H9C8TWXZ8');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
+
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
+      </script>
+
+    <script src="../../../_static/documentation_options.js?v=e86ceb7b"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    
+    <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
+      // Create menu with Farama projects by using the API at farama.org/api/projects.json
+      const createCORSRequest = (method, url) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          // IE8 & IE9
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          // CORS not supported.
+          xhr = null;
+        }
+        return xhr;
+      };
+
+      const url = 'https://farama.org/api/projects.json';
+      const imagesBasepath = "https://farama.org/assets/images"
+      const method = 'GET';
+      let xhr = createCORSRequest(method, url);
+
+      xhr.onload = () => {
+        const jsonResponse = xhr.response;
+        const sections = {
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Foundation": [
+            {
+              name: "About",
+              link: "https://farama.org/about"
+            },
+            {
+              name: "Standards",
+              link: "https://farama.org/project_standards",
+            },
+            {
+              name: "Donate",
+              link: "https://farama.org/donations"
+            }
+          ]
+        }
+
+        // Categorize projects
+        Object.keys(jsonResponse).forEach(key => {
+          projectJson = jsonResponse[key];
+          if (projectJson.website !== null) {
+            projectJson.link = projectJson.website;
+          } else {
+            projectJson.link = projectJson.github;
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
+          }
+        })
+
+        const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        Object.keys(sections).forEach((key, i) => {
+          const sectionElem = Object.assign(
+            document.createElement('div'), {
+              className:'farama-header-menu__section',
+            }
+          )
+          sectionElem.appendChild(Object.assign(document.createElement('span'),
+            {
+              className:'farama-header-menu__section-title' ,
+              innerText: key
+            }
+          ))
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: 'display: flex'
+                }
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
+          }
+          menuContainer.appendChild(sectionElem)
+        });
+      }
+
+      xhr.onerror = function() {
+        console.error("Unable to load projects");
+      };
+
+      xhr.send();
+    </script>
+
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Gymnasium',
+      };
+      fetch('/main/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script>
+
+    </body>
+</html>

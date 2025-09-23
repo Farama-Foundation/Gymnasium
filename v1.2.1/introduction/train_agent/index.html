@@ -1,0 +1,1221 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)">
+    <meta property="og:title" content="Gymnasium Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
+    <meta property="og:url" content="https://gymnasium.farama.org/introduction/train_agent.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Create a Custom Environment" href="../create_custom_env/" /><link rel="prev" title="Basic Usage" href="../basic_usage/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/introduction/train_agent.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+        <title>Training an Agent - Gymnasium Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=82c8b628" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header" aria-label="Farama header">
+      <div class="farama-header__container">
+        <div class="farama-header__left--mobile">
+          <label class="nav-overlay-icon" for="__navigation">
+            <div class="visually-hidden">Toggle site navigation sidebar</div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <defs></defs>
+              <line x1="0.5" y1="4" x2="23.5" y2="4"></line>
+              <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
+              <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
+            </svg>
+          </label>
+        </div>
+        <div class="farama-header__left farama-header__center--mobile">
+          <a href="../../">
+              <img class="farama-header__logo only-light" src="../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+            <span class="farama-header__title">Gymnasium Documentation</span>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
+              <img class="farama-black-logo-invert" src="../../_static/img/farama-logo-header.svg">
+              <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
+              </svg>
+            </button>
+            <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
+                  <span>Farama Foundation</span>
+                </a>
+                <div class="farama-header-menu-header__right">
+                  <button id="farama-close-menu">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                      <line x1="3" y1="21" x2="21" y2="3"></line>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="farama-header-menu__body">
+                <!-- Response from farama.org/api/projects.json -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="page">
+  <!--<header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../"><div class="brand">Gymnasium Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>-->
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../">
+      <img class="farama-header__logo only-light" src="../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+    <span class="farama-header__title">Gymnasium Documentation</span>
+  </a><form class="sidebar-search-container" method="get" action="../../search/" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Training an Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../create_custom_env/">Create a Custom Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../record_agent/">Recording Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../speed_up_env/">Speeding Up Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../migration_guide/">Gym Migration Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Make and register</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/utils/">Spaces Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/table/">List of Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/vector/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/vector/utils/">Utility functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/functional/">Functional Env</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Classic Control</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Box2D</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Toy Text</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../environments/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of MuJoCo</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/inverted_pendulum/">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/pusher/">Pusher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../environments/mujoco/walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/atari/">Atari</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../environments/third_party_environments/">External Environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#results-analysis">Results Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/third-party-tutorials/">Third-Party Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arxiv.org/abs/2407.17032">Paper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gymnasium_release_notes/">Gymnasium Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gym_release_notes/">Gym Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main-container">
+
+    
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container"><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/introduction/train_agent.md" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
+          </div>
+          <article role="main">
+            
+            <section class="tex2jax_ignore mathjax_ignore" id="training-an-agent">
+<h1>Training an Agent<a class="headerlink" href="#training-an-agent" title="Link to this heading">¶</a></h1>
+<p>When we talk about training an RL agent, we’re teaching it to make good decisions through experience. Unlike supervised learning where we show examples of correct answers, RL agents learn by trying different actions and observing the results. It’s like learning to ride a bike - you try different movements, fall down a few times, and gradually learn what works.</p>
+<p>The goal is to develop a <strong>policy</strong> - a strategy that tells the agent what action to take in each situation to maximize long-term rewards.</p>
+<section id="understanding-q-learning-intuitively">
+<h2>Understanding Q-Learning Intuitively<a class="headerlink" href="#understanding-q-learning-intuitively" title="Link to this heading">¶</a></h2>
+<p>For this tutorial, we’ll use Q-learning to solve the Blackjack environment. But first, let’s understand how Q-learning works conceptually.</p>
+<p>Q-learning builds a giant “cheat sheet” called a Q-table that tells the agent how good each action is in each situation:</p>
+<ul class="simple">
+<li><p><strong>Rows</strong> = different situations (states) the agent can encounter</p></li>
+<li><p><strong>Columns</strong> = different actions the agent can take</p></li>
+<li><p><strong>Values</strong> = how good that action is in that situation (expected future reward)</p></li>
+</ul>
+<p>For Blackjack:</p>
+<ul class="simple">
+<li><p><strong>States</strong>: Your hand value, dealer’s showing card, whether you have a usable ace</p></li>
+<li><p><strong>Actions</strong>: Hit (take another card) or Stand (keep current hand)</p></li>
+<li><p><strong>Q-values</strong>: Expected reward for each action in each state</p></li>
+</ul>
+<section id="the-learning-process">
+<h3>The Learning Process<a class="headerlink" href="#the-learning-process" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Try an action</strong> and see what happens (reward + new state)</p></li>
+<li><p><strong>Update your cheat sheet</strong>: “That action was better/worse than I thought”</p></li>
+<li><p><strong>Gradually improve</strong> by trying actions and updating estimates</p></li>
+<li><p><strong>Balance exploration vs exploitation</strong>: Try new things vs use what you know works</p></li>
+</ol>
+<p><strong>Why it works</strong>: Over time, good actions get higher Q-values, bad actions get lower Q-values. The agent learns to pick actions with the highest expected rewards.</p>
+<hr class="docutils" />
+<p>This page provides a short outline of how to train an agent for a Gymnasium environment. We’ll use tabular Q-learning to solve Blackjack-v1. For complete tutorials with other environments and algorithms, see <a class="reference internal" href="#../tutorials/training_agents"><span class="xref myst">training tutorials</span></a>. Please read <a class="reference internal" href="../basic_usage/"><span class="doc std std-doc">basic usage</span></a> before this page.</p>
+</section>
+</section>
+<section id="about-the-environment-blackjack">
+<h2>About the Environment: Blackjack<a class="headerlink" href="#about-the-environment-blackjack" title="Link to this heading">¶</a></h2>
+<p>Blackjack is one of the most popular casino card games and is perfect for learning RL because it has:</p>
+<ul class="simple">
+<li><p><strong>Clear rules</strong>: Get closer to 21 than the dealer without going over</p></li>
+<li><p><strong>Simple observations</strong>: Your hand value, dealer’s showing card, usable ace</p></li>
+<li><p><strong>Discrete actions</strong>: Hit (take card) or Stand (keep current hand)</p></li>
+<li><p><strong>Immediate feedback</strong>: Win, lose, or draw after each hand</p></li>
+</ul>
+<p>This version uses infinite deck (cards drawn with replacement), so card counting won’t work - the agent must learn optimal basic strategy through trial and error.</p>
+<p><strong>Environment Details</strong>:</p>
+<ul class="simple">
+<li><p><strong>Observation</strong>: (player_sum, dealer_card, usable_ace)</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">player_sum</span></code>: Current hand value (4-21)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dealer_card</span></code>: Dealer’s face-up card (1-10)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">usable_ace</span></code>: Whether player has usable ace (True/False)</p></li>
+</ul>
+</li>
+<li><p><strong>Actions</strong>: 0 = Stand, 1 = Hit</p></li>
+<li><p><strong>Rewards</strong>: +1 for win, -1 for loss, 0 for draw</p></li>
+<li><p><strong>Episode ends</strong>: When player stands or busts (goes over 21)</p></li>
+</ul>
+</section>
+<section id="executing-an-action">
+<h2>Executing an action<a class="headerlink" href="#executing-an-action" title="Link to this heading">¶</a></h2>
+<p>After receiving our first observation from <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code>, we use <code class="docutils literal notranslate"><span class="pre">env.step(action)</span></code> to interact with the environment. This function takes an action and returns five important values:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">observation</span></code></strong>: What the agent sees after taking the action (new game state)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">reward</span></code></strong>: Immediate feedback for that action (+1, -1, or 0 in Blackjack)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">terminated</span></code></strong>: Whether the episode ended naturally (hand finished)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">truncated</span></code></strong>: Whether episode was cut short (time limits - not used in Blackjack)</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">info</span></code></strong>: Additional debugging information (can usually be ignored)</p></li>
+</ul>
+<p>The key insight is that <code class="docutils literal notranslate"><span class="pre">reward</span></code> tells us how good our <em>immediate</em> action was, but the agent needs to learn about <em>long-term</em> consequences. Q-learning handles this by estimating the total future reward, not just the immediate reward.</p>
+</section>
+<section id="building-a-q-learning-agent">
+<h2>Building a Q-Learning Agent<a class="headerlink" href="#building-a-q-learning-agent" title="Link to this heading">¶</a></h2>
+<p>Let’s build our agent step by step. We need functions for:</p>
+<ol class="arabic simple">
+<li><p><strong>Choosing actions</strong> (with exploration vs exploitation)</p></li>
+<li><p><strong>Learning from experience</strong> (updating Q-values)</p></li>
+<li><p><strong>Managing exploration</strong> (reducing randomness over time)</p></li>
+</ol>
+<section id="exploration-vs-exploitation">
+<h3>Exploration vs Exploitation<a class="headerlink" href="#exploration-vs-exploitation" title="Link to this heading">¶</a></h3>
+<p>This is a fundamental challenge in RL:</p>
+<ul class="simple">
+<li><p><strong>Exploration</strong>: Try new actions to learn about the environment</p></li>
+<li><p><strong>Exploitation</strong>: Use current knowledge to get the best rewards</p></li>
+</ul>
+<p>We use <strong>epsilon-greedy</strong> strategy:</p>
+<ul class="simple">
+<li><p>With probability <code class="docutils literal notranslate"><span class="pre">epsilon</span></code>: choose a random action (explore)</p></li>
+<li><p>With probability <code class="docutils literal notranslate"><span class="pre">1-epsilon</span></code>: choose the best known action (exploit)</p></li>
+</ul>
+<p>Starting with high epsilon (lots of exploration) and gradually reducing it (more exploitation as we learn) works well in practice.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BlackjackAgent</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">initial_epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_decay</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">final_epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Q-Learning agent.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The training environment</span>
+<span class="sd">            learning_rate: How quickly to update Q-values (0-1)</span>
+<span class="sd">            initial_epsilon: Starting exploration rate (usually 1.0)</span>
+<span class="sd">            epsilon_decay: How much to reduce epsilon each episode</span>
+<span class="sd">            final_epsilon: Minimum exploration rate (usually 0.1)</span>
+<span class="sd">            discount_factor: How much to value future rewards (0-1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
+
+        <span class="c1"># Q-table: maps (state, action) to expected reward</span>
+        <span class="c1"># defaultdict automatically creates entries with zeros for new states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">=</span> <span class="n">discount_factor</span>  <span class="c1"># How much we care about future rewards</span>
+
+        <span class="c1"># Exploration parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">initial_epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">epsilon_decay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_epsilon</span> <span class="o">=</span> <span class="n">final_epsilon</span>
+
+        <span class="c1"># Track learning progress</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training_error</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Choose an action using epsilon-greedy strategy.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            action: 0 (stand) or 1 (hit)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># With probability epsilon: explore (random action)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+
+        <span class="c1"># With probability (1-epsilon): exploit (best known action)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">]))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
+        <span class="n">action</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">reward</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">terminated</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+        <span class="n">next_obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update Q-value based on experience.</span>
+
+<span class="sd">        This is the heart of Q-learning: learn from (state, action, reward, next_state)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># What&#39;s the best we could do from the next state?</span>
+        <span class="c1"># (Zero if episode terminated - no future rewards possible)</span>
+        <span class="n">future_q_value</span> <span class="o">=</span> <span class="p">(</span><span class="ow">not</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
+
+        <span class="c1"># What should the Q-value be? (Bellman equation)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="n">future_q_value</span>
+
+        <span class="c1"># How wrong was our current estimate?</span>
+        <span class="n">temporal_difference</span> <span class="o">=</span> <span class="n">target</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span>
+
+        <span class="c1"># Update our estimate in the direction of the error</span>
+        <span class="c1"># Learning rate controls how big steps we take</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">*</span> <span class="n">temporal_difference</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Track learning progress (useful for debugging)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temporal_difference</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">decay_epsilon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reduce exploration rate after each episode.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_decay</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="understanding-the-q-learning-update">
+<h3>Understanding the Q-Learning Update<a class="headerlink" href="#understanding-the-q-learning-update" title="Link to this heading">¶</a></h3>
+<p>The core learning happens in the <code class="docutils literal notranslate"><span class="pre">update</span></code> method. Let’s break down the math:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Current estimate: Q(state, action)</span>
+<span class="n">current_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span>
+
+<span class="c1"># What we actually experienced: reward + discounted future value</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
+
+<span class="c1"># How wrong were we?</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">target</span> <span class="o">-</span> <span class="n">current_q</span>
+
+<span class="c1"># Update estimate: move toward the target</span>
+<span class="n">new_q</span> <span class="o">=</span> <span class="n">current_q</span> <span class="o">+</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="n">error</span>
+</pre></div>
+</div>
+<p>This is the famous <strong>Bellman equation</strong> in action - it says the value of a state-action pair should equal the immediate reward plus the discounted value of the best next action.</p>
+</section>
+</section>
+<section id="training-the-agent">
+<h2>Training the Agent<a class="headerlink" href="#training-the-agent" title="Link to this heading">¶</a></h2>
+<p>Now let’s train our agent. The process is:</p>
+<ol class="arabic simple">
+<li><p><strong>Reset environment</strong> to start a new episode</p></li>
+<li><p><strong>Play one complete hand</strong> (episode), choosing actions and learning from each step</p></li>
+<li><p><strong>Update exploration rate</strong> (reduce epsilon)</p></li>
+<li><p><strong>Repeat</strong> for many episodes until the agent learns good strategy</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Training hyperparameters</span>
+<span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">0.01</span>        <span class="c1"># How fast to learn (higher = faster but less stable)</span>
+<span class="n">n_episodes</span> <span class="o">=</span> <span class="mi">100_000</span>        <span class="c1"># Number of hands to practice</span>
+<span class="n">start_epsilon</span> <span class="o">=</span> <span class="mf">1.0</span>         <span class="c1"># Start with 100% random actions</span>
+<span class="n">epsilon_decay</span> <span class="o">=</span> <span class="n">start_epsilon</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_episodes</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Reduce exploration over time</span>
+<span class="n">final_epsilon</span> <span class="o">=</span> <span class="mf">0.1</span>         <span class="c1"># Always keep some exploration</span>
+
+<span class="c1"># Create environment and agent</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Blackjack-v1&quot;</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">buffer_length</span><span class="o">=</span><span class="n">n_episodes</span><span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">BlackjackAgent</span><span class="p">(</span>
+    <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="n">learning_rate</span><span class="p">,</span>
+    <span class="n">initial_epsilon</span><span class="o">=</span><span class="n">start_epsilon</span><span class="p">,</span>
+    <span class="n">epsilon_decay</span><span class="o">=</span><span class="n">epsilon_decay</span><span class="p">,</span>
+    <span class="n">final_epsilon</span><span class="o">=</span><span class="n">final_epsilon</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<section id="the-training-loop">
+<h3>The Training Loop<a class="headerlink" href="#the-training-loop" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>  <span class="c1"># Progress bar</span>
+
+<span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_episodes</span><span class="p">)):</span>
+    <span class="c1"># Start a new hand</span>
+    <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># Play one complete hand</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+        <span class="c1"># Agent chooses action (initially random, gradually more intelligent)</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+
+        <span class="c1"># Take action and observe result</span>
+        <span class="n">next_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+        <span class="c1"># Learn from this experience</span>
+        <span class="n">agent</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">next_obs</span><span class="p">)</span>
+
+        <span class="c1"># Move to next state</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+        <span class="n">obs</span> <span class="o">=</span> <span class="n">next_obs</span>
+
+    <span class="c1"># Reduce exploration rate (agent becomes less random over time)</span>
+    <span class="n">agent</span><span class="o">.</span><span class="n">decay_epsilon</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="what-to-expect-during-training">
+<h3>What to Expect During Training<a class="headerlink" href="#what-to-expect-during-training" title="Link to this heading">¶</a></h3>
+<p><strong>Early episodes (0-10,000)</strong>:</p>
+<ul class="simple">
+<li><p>Agent acts mostly randomly (high epsilon)</p></li>
+<li><p>Wins about 43% of hands (slightly worse than random due to poor strategy)</p></li>
+<li><p>Large learning errors as Q-values are very inaccurate</p></li>
+</ul>
+<p><strong>Middle episodes (10,000-50,000)</strong>:</p>
+<ul class="simple">
+<li><p>Agent starts finding good strategies</p></li>
+<li><p>Win rate improves to 45-48%</p></li>
+<li><p>Learning errors decrease as estimates get better</p></li>
+</ul>
+<p><strong>Later episodes (50,000+)</strong>:</p>
+<ul class="simple">
+<li><p>Agent converges to near-optimal strategy</p></li>
+<li><p>Win rate plateaus around 49% (theoretical maximum for this game)</p></li>
+<li><p>Small learning errors as Q-values stabilize</p></li>
+</ul>
+</section>
+</section>
+<section id="analyzing-training-results">
+<h2>Analyzing Training Results<a class="headerlink" href="#analyzing-training-results" title="Link to this heading">¶</a></h2>
+<p>Let’s visualize the training progress:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_moving_avgs</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">convolution_mode</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute moving average to smooth noisy data.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">window</span><span class="p">),</span>
+        <span class="n">mode</span><span class="o">=</span><span class="n">convolution_mode</span>
+    <span class="p">)</span> <span class="o">/</span> <span class="n">window</span>
+
+<span class="c1"># Smooth over a 500-episode window</span>
+<span class="n">rolling_length</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="c1"># Episode rewards (win/loss performance)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Episode rewards&quot;</span><span class="p">)</span>
+<span class="n">reward_moving_average</span> <span class="o">=</span> <span class="n">get_moving_avgs</span><span class="p">(</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">,</span>
+    <span class="n">rolling_length</span><span class="p">,</span>
+    <span class="s2">&quot;valid&quot;</span>
+<span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">reward_moving_average</span><span class="p">)),</span> <span class="n">reward_moving_average</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Average Reward&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
+
+<span class="c1"># Episode lengths (how many actions per hand)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Episode lengths&quot;</span><span class="p">)</span>
+<span class="n">length_moving_average</span> <span class="o">=</span> <span class="n">get_moving_avgs</span><span class="p">(</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">,</span>
+    <span class="n">rolling_length</span><span class="p">,</span>
+    <span class="s2">&quot;valid&quot;</span>
+<span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">length_moving_average</span><span class="p">)),</span> <span class="n">length_moving_average</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Average Episode Length&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
+
+<span class="c1"># Training error (how much we&#39;re still learning)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Training Error&quot;</span><span class="p">)</span>
+<span class="n">training_error_moving_average</span> <span class="o">=</span> <span class="n">get_moving_avgs</span><span class="p">(</span>
+    <span class="n">agent</span><span class="o">.</span><span class="n">training_error</span><span class="p">,</span>
+    <span class="n">rolling_length</span><span class="p">,</span>
+    <span class="s2">&quot;same&quot;</span>
+<span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">training_error_moving_average</span><span class="p">)),</span> <span class="n">training_error_moving_average</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Temporal Difference Error&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Step&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="interpreting-the-results">
+<h3>Interpreting the Results<a class="headerlink" href="#interpreting-the-results" title="Link to this heading">¶</a></h3>
+<p><strong>Reward Plot</strong>: Should show gradual improvement from ~-0.05 (slightly negative) to ~-0.01 (near optimal). Blackjack is a difficult game - even perfect play loses slightly due to the house edge.</p>
+<p><strong>Episode Length</strong>: Should stabilize around 2-3 actions per episode. Very short episodes suggest the agent is standing too early; very long episodes suggest hitting too often.</p>
+<p><strong>Training Error</strong>: Should decrease over time, indicating the agent’s predictions are getting more accurate. Large spikes early in training are normal as the agent encounters new situations.</p>
+</section>
+</section>
+<section id="common-training-issues-and-solutions">
+<h2>Common Training Issues and Solutions<a class="headerlink" href="#common-training-issues-and-solutions" title="Link to this heading">¶</a></h2>
+<section id="agent-never-improves">
+<h3>🚨 <strong>Agent Never Improves</strong><a class="headerlink" href="#agent-never-improves" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Reward stays constant, large training errors
+<strong>Causes</strong>: Learning rate too high/low, poor reward design, bugs in update logic
+<strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Try learning rates between 0.001 and 0.1</p></li>
+<li><p>Check that rewards are meaningful (-1, 0, +1 for Blackjack)</p></li>
+<li><p>Verify Q-table is actually being updated</p></li>
+</ul>
+</section>
+<section id="unstable-training">
+<h3>🚨 <strong>Unstable Training</strong><a class="headerlink" href="#unstable-training" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Rewards fluctuate wildly, never converge
+<strong>Causes</strong>: Learning rate too high, insufficient exploration
+<strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Reduce learning rate (try 0.01 instead of 0.1)</p></li>
+<li><p>Ensure minimum exploration (final_epsilon ≥ 0.05)</p></li>
+<li><p>Train for more episodes</p></li>
+</ul>
+</section>
+<section id="agent-gets-stuck-in-poor-strategy">
+<h3>🚨 <strong>Agent Gets Stuck in Poor Strategy</strong><a class="headerlink" href="#agent-gets-stuck-in-poor-strategy" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Improvement stops early, suboptimal final performance
+<strong>Causes</strong>: Too little exploration, learning rate too low
+<strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Increase exploration time (slower epsilon decay)</p></li>
+<li><p>Try higher learning rate initially</p></li>
+<li><p>Use different exploration strategies (optimistic initialization)</p></li>
+</ul>
+</section>
+<section id="learning-too-slow">
+<h3>🚨 <strong>Learning Too Slow</strong><a class="headerlink" href="#learning-too-slow" title="Link to this heading">¶</a></h3>
+<p><strong>Symptoms</strong>: Agent improves but very gradually
+<strong>Causes</strong>: Learning rate too low, too much exploration
+<strong>Solutions</strong>:</p>
+<ul class="simple">
+<li><p>Increase learning rate (but watch for instability)</p></li>
+<li><p>Faster epsilon decay (less random exploration)</p></li>
+<li><p>More focused training on difficult states</p></li>
+</ul>
+</section>
+</section>
+<section id="testing-your-trained-agent">
+<h2>Testing Your Trained Agent<a class="headerlink" href="#testing-your-trained-agent" title="Link to this heading">¶</a></h2>
+<p>Once training is complete, test your agent’s performance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Test the trained agent</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">test_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">num_episodes</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test agent performance without learning or exploration.&quot;&quot;&quot;</span>
+    <span class="n">total_rewards</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Temporarily disable exploration for testing</span>
+    <span class="n">old_epsilon</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">epsilon</span>
+    <span class="n">agent</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Pure exploitation</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="n">episode_reward</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+            <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="n">episode_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+            <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+
+        <span class="n">total_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">episode_reward</span><span class="p">)</span>
+
+    <span class="c1"># Restore original epsilon</span>
+    <span class="n">agent</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">old_epsilon</span>
+
+    <span class="n">win_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">total_rewards</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">average_reward</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">total_rewards</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test Results over </span><span class="si">{</span><span class="n">num_episodes</span><span class="si">}</span><span class="s2"> episodes:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Win Rate: </span><span class="si">{</span><span class="n">win_rate</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average Reward: </span><span class="si">{</span><span class="n">average_reward</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Deviation: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">total_rewards</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Test your agent</span>
+<span class="n">test_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Good Blackjack performance:</p>
+<ul class="simple">
+<li><p><strong>Win rate</strong>: 42-45% (house edge makes &gt;50% impossible)</p></li>
+<li><p><strong>Average reward</strong>: -0.02 to +0.01</p></li>
+<li><p><strong>Consistency</strong>: Low standard deviation indicates reliable strategy</p></li>
+</ul>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
+<p>Congratulations! You’ve successfully trained your first RL agent. Here’s what to explore next:</p>
+<ol class="arabic simple">
+<li><p><strong>Try other environments</strong>: CartPole, MountainCar, LunarLander</p></li>
+<li><p><strong>Experiment with hyperparameters</strong>: Learning rates, exploration strategies</p></li>
+<li><p><strong>Implement other algorithms</strong>: SARSA, Expected SARSA, Monte Carlo methods</p></li>
+<li><p><strong>Add function approximation</strong>: Neural networks for larger state spaces</p></li>
+<li><p><strong>Create custom environments</strong>: Design your own RL problems</p></li>
+</ol>
+<p>For more information, see:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../basic_usage/"><span class="doc std std-doc">Basic Usage</span></a> - Understanding Gymnasium fundamentals</p></li>
+<li><p><a class="reference internal" href="../create_custom_env/"><span class="doc std std-doc">Custom Environments</span></a> - Building your own RL problems</p></li>
+<li><p><a class="reference internal" href="#../tutorials/training_agents"><span class="xref myst">Complete Training Tutorials</span></a> - More algorithms and environments</p></li>
+<li><p><a class="reference internal" href="../record_agent/"><span class="doc std std-doc">Recording Agent Behavior</span></a> - Saving videos and performance data</p></li>
+</ul>
+<p>The key insight from this tutorial is that RL agents learn through trial and error, gradually building up knowledge about what actions work best in different situations. Q-learning provides a systematic way to learn this knowledge, balancing exploration of new possibilities with exploitation of current knowledge.</p>
+<p>Keep experimenting, and remember that RL is as much art as science - finding the right hyperparameters and environment design often requires patience and intuition!</p>
+</section>
+</section>
+
+          </article>
+        </div>
+        <footer>
+          
+          <div class="related-pages">
+            <a class="next-page" href="../create_custom_env/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Create a Custom Environment</div>
+              </div>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+            </a>
+            <a class="prev-page" href="../basic_usage/">
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Basic Usage</div>
+                
+              </div>
+            </a>
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
+                Copyright &#169; 2025 Farama Foundation
+              </div>
+              <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/"
+                  aria-label="On GitHub">
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer">
+        
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">Training an Agent</a><ul>
+<li><a class="reference internal" href="#understanding-q-learning-intuitively">Understanding Q-Learning Intuitively</a><ul>
+<li><a class="reference internal" href="#the-learning-process">The Learning Process</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#about-the-environment-blackjack">About the Environment: Blackjack</a></li>
+<li><a class="reference internal" href="#executing-an-action">Executing an action</a></li>
+<li><a class="reference internal" href="#building-a-q-learning-agent">Building a Q-Learning Agent</a><ul>
+<li><a class="reference internal" href="#exploration-vs-exploitation">Exploration vs Exploitation</a></li>
+<li><a class="reference internal" href="#understanding-the-q-learning-update">Understanding the Q-Learning Update</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#training-the-agent">Training the Agent</a><ul>
+<li><a class="reference internal" href="#the-training-loop">The Training Loop</a></li>
+<li><a class="reference internal" href="#what-to-expect-during-training">What to Expect During Training</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#analyzing-training-results">Analyzing Training Results</a><ul>
+<li><a class="reference internal" href="#interpreting-the-results">Interpreting the Results</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#common-training-issues-and-solutions">Common Training Issues and Solutions</a><ul>
+<li><a class="reference internal" href="#agent-never-improves">🚨 <strong>Agent Never Improves</strong></a></li>
+<li><a class="reference internal" href="#unstable-training">🚨 <strong>Unstable Training</strong></a></li>
+<li><a class="reference internal" href="#agent-gets-stuck-in-poor-strategy">🚨 <strong>Agent Gets Stuck in Poor Strategy</strong></a></li>
+<li><a class="reference internal" href="#learning-too-slow">🚨 <strong>Learning Too Slow</strong></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing-your-trained-agent">Testing Your Trained Agent</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+        
+        
+      </aside>
+    </div>
+  </div>
+</div>
+    <script>
+      const toggleMenu = () => {
+        const menuBtn = document.querySelector(".farama-header-menu__btn");
+        const menuContainer = document.querySelector(".farama-header-menu-container");
+        if (document.querySelector(".farama-header-menu").classList.contains("active")) {
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuContainer.setAttribute("aria-hidden", "true");
+        } else {
+          menuBtn.setAttribute("aria-expanded", "true");
+          menuContainer.setAttribute("aria-hidden", "false");
+        }
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+    </script>
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
+      <script>
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6H9C8TWXZ8');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
+
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
+      </script>
+
+    <script src="../../_static/documentation_options.js?v=e86ceb7b"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=7660844c"></script>
+    
+    <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
+      // Create menu with Farama projects by using the API at farama.org/api/projects.json
+      const createCORSRequest = (method, url) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          // IE8 & IE9
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          // CORS not supported.
+          xhr = null;
+        }
+        return xhr;
+      };
+
+      const url = 'https://farama.org/api/projects.json';
+      const imagesBasepath = "https://farama.org/assets/images"
+      const method = 'GET';
+      let xhr = createCORSRequest(method, url);
+
+      xhr.onload = () => {
+        const jsonResponse = xhr.response;
+        const sections = {
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Foundation": [
+            {
+              name: "About",
+              link: "https://farama.org/about"
+            },
+            {
+              name: "Standards",
+              link: "https://farama.org/project_standards",
+            },
+            {
+              name: "Donate",
+              link: "https://farama.org/donations"
+            }
+          ]
+        }
+
+        // Categorize projects
+        Object.keys(jsonResponse).forEach(key => {
+          projectJson = jsonResponse[key];
+          if (projectJson.website !== null) {
+            projectJson.link = projectJson.website;
+          } else {
+            projectJson.link = projectJson.github;
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
+          }
+        })
+
+        const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        Object.keys(sections).forEach((key, i) => {
+          const sectionElem = Object.assign(
+            document.createElement('div'), {
+              className:'farama-header-menu__section',
+            }
+          )
+          sectionElem.appendChild(Object.assign(document.createElement('span'),
+            {
+              className:'farama-header-menu__section-title' ,
+              innerText: key
+            }
+          ))
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: 'display: flex'
+                }
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
+          }
+          menuContainer.appendChild(sectionElem)
+        });
+      }
+
+      xhr.onerror = function() {
+        console.error("Unable to load projects");
+      };
+
+      xhr.send();
+    </script>
+
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Gymnasium',
+      };
+      fetch('/main/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script>
+
+    </body>
+</html>
