@@ -378,6 +378,7 @@
 <span class="sd">* ``RescaleObservation`` - Rescales an observation to between a minimum and maximum value</span>
 <span class="sd">* ``DtypeObservation`` - Convert an observation to a dtype</span>
 <span class="sd">* ``RenderObservation`` - Allows the observation to the rendered frame</span>
+<span class="sd">* ``DiscretizeObservation`` - Discretize a continuous Box observation space into a single Discrete space</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
@@ -403,6 +404,7 @@
     <span class="s2">&quot;RescaleObservation&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DtypeObservation&quot;</span><span class="p">,</span>
     <span class="s2">&quot;AddRenderObservation&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DiscretizeObservation&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">rescale_box</span>
@@ -768,7 +770,7 @@
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-        <span class="c1"># for some reason, cv2.resize will return the shape in reverse, todo confirm implementation</span>
+        <span class="c1"># for some reason, cv2.resize will return the shape in reverse</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cv2_shape</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
@@ -1078,6 +1080,158 @@
                 <span class="n">observation_space</span><span class="o">=</span><span class="n">obs_space</span><span class="p">,</span>
             <span class="p">)</span></div>
 
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DiscretizeObservation</span><span class="p">(</span>
+    <span class="n">TransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Uniformly discretizes a continuous Box observation space into a single Discrete space.</span>
+
+<span class="sd">    Example 1 - Discretize MountainCar observation space:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;MountainCar-v0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        Box([-1.2  -0.07], [0.6  0.07], (2,), float32)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([-0.4452088,  0.       ], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; env = DiscretizeObservation(env, bins=10)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        Discrete(100)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        45</span>
+
+<span class="sd">    Example 2 - Discretize LunarLander observation space:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        Box([ -2.5        -2.5       -10.        -10.         -6.2831855 -10.</span>
+<span class="sd">          -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.</span>
+<span class="sd">          1.         1.       ], (8,), float32)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,</span>
+<span class="sd">               -0.05269805,  0.        ,  0.        ], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; env = DiscretizeObservation(env, bins=3)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        Discrete(6561)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        4005</span>
+
+<span class="sd">    Example 3 - Discretize LunarLander observation space with MultiDiscrete:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        Box([ -2.5        -2.5       -10.        -10.         -6.2831855 -10.</span>
+<span class="sd">          -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.</span>
+<span class="sd">          1.         1.       ], (8,), float32)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,</span>
+<span class="sd">               -0.05269805,  0.        ,  0.        ], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; env = DiscretizeObservation(env, bins=3, multidiscrete=True)</span>
+<span class="sd">        &gt;&gt;&gt; env.observation_space</span>
+<span class="sd">        MultiDiscrete([3 3 3 3 3 3 3 3])</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([1, 2, 1, 1, 1, 1, 0, 0])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
+        <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">multidiscrete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the discretize observation wrapper.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The environment to wrap.</span>
+<span class="sd">            bins: int or tuple of ints (number of bins per dimension).</span>
+<span class="sd">            multidiscrete: If True, use MultiDiscrete space instead of flattening to Discrete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;DiscretizeObservation is only compatible with Box continuous observations.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">low</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">low</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">high</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Discretization requires observation space to be finite. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Found: low=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="si">}</span><span class="s2">, high=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">multidiscrete</span> <span class="o">=</span> <span class="n">multidiscrete</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">bins</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;bins must match action dimensions: expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bin_edges</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multidiscrete</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">MultiDiscrete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Discretizes the observation.&quot;&quot;&quot;</span>
+        <span class="c1"># np.digitize returns len(bins) if the input exceeds the last edge.</span>
+        <span class="c1"># If an observation is exactly equal to the high bound, the resulting</span>
+        <span class="c1"># index could be out of range for the number of bins.</span>
+        <span class="c1"># Solution: clip to ensure 0 &lt;= index &lt; bins[i], and add a small margin</span>
+        <span class="c1"># to prevent precision issues.</span>
+        <span class="n">clipped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">observation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">-</span> <span class="mf">1e-8</span><span class="p">)</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">clipped</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_edges</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multidiscrete</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_flatten_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">revert_observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reverts discretization. It returns the edges of the bin the discretized observation belongs to.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multidiscrete</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unflatten_index</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+        <span class="n">lows</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">highs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span>
+            <span class="n">edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">lows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edges</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+            <span class="n">highs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edges</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lows</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="n">highs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_flatten_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+        <span class="n">flat_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="p">):</span>
+            <span class="n">flat_index</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">flat_index</span> <span class="o">+=</span> <span class="n">indices</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">flat_index</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flat_index</span><span class="p">):</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">):</span>
+            <span class="n">indices</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">flat_index</span> <span class="o">%</span> <span class="n">b</span><span class="p">)</span>
+            <span class="n">flat_index</span> <span class="o">//=</span> <span class="n">b</span>
+        <span class="k">return</span> <span class="n">indices</span>
 </pre></div>
           </article>
         </div>
@@ -1195,7 +1349,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=151cd43d"></script>
+    <script src="../../../../_static/documentation_options.js?v=e86ceb7b"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>

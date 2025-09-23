@@ -371,6 +371,7 @@
 
 <span class="sd">* ``TransformAction`` - Transforms the actions based on a function</span>
 <span class="sd">* ``ClipAction`` - Clips the action within a bounds</span>
+<span class="sd">* ``DiscretizeAction`` - Discretizes a continuous Box action space into a single Discrete space</span>
 <span class="sd">* ``RescaleAction`` - Rescales the action within a minimum and maximum actions</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -382,7 +383,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Space</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">MultiDiscrete</span><span class="p">,</span> <span class="n">Space</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TransformAction&quot;</span><span class="p">,</span> <span class="s2">&quot;ClipAction&quot;</span><span class="p">,</span> <span class="s2">&quot;RescaleAction&quot;</span><span class="p">]</span>
@@ -556,6 +557,150 @@
             <span class="n">action_space</span><span class="o">=</span><span class="n">act_space</span><span class="p">,</span>
         <span class="p">)</span></div>
 
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DiscretizeAction</span><span class="p">(</span>
+    <span class="n">TransformAction</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Uniformly discretizes a continuous Box action space into a single Discrete space.</span>
+
+<span class="sd">    Example 1 - Discretize Pendulum action space:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;Pendulum-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.action_space</span>
+<span class="sd">        Box(-2.0, 2.0, (1,), float32)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs, *_ = env.step([-0.6])</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([-0.17606162,  0.9843792 ,  0.5292768 ], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; env = DiscretizeAction(env, bins=10)</span>
+<span class="sd">        &gt;&gt;&gt; env.action_space</span>
+<span class="sd">        Discrete(10)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs, *_ = env.step(3)</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([-0.17606162,  0.9843792 ,  0.5292768 ], dtype=float32)</span>
+
+<span class="sd">    Example 2 - Discretize Reacher action space:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;Reacher-v5&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.action_space</span>
+<span class="sd">        Box(-1.0, 1.0, (2,), float32)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs, *_ = env.step([-0.3, -0.5])</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
+<span class="sd">                0.11442572, -1.18958125, -1.97979484,  0.1054461 , -0.10896341])</span>
+<span class="sd">        &gt;&gt;&gt; env = DiscretizeAction(env, bins=10)</span>
+<span class="sd">        &gt;&gt;&gt; env.action_space</span>
+<span class="sd">        Discrete(100)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs, *_ = env.step(32)</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
+<span class="sd">                0.11442572, -1.18958118, -1.97979484,  0.1054461 , -0.10896341])</span>
+
+<span class="sd">    Example 2 - Discretize Reacher action space with MultiDiscrete:</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;Reacher-v5&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env.action_space</span>
+<span class="sd">        Box(-1.0, 1.0, (2,), float32)</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs, *_ = env.step([-0.3, -0.5])</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
+<span class="sd">                0.11442572, -1.18958125, -1.97979484,  0.1054461 , -0.10896341])</span>
+<span class="sd">        &gt;&gt;&gt; env = DiscretizeAction(env, bins=10, multidiscrete=True)</span>
+<span class="sd">        &gt;&gt;&gt; env.action_space</span>
+<span class="sd">        MultiDiscrete([10 10])</span>
+<span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
+<span class="sd">        &gt;&gt;&gt; obs, *_ = env.step([3, 2])</span>
+<span class="sd">        &gt;&gt;&gt; obs</span>
+<span class="sd">        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
+<span class="sd">                0.11442572, -1.18958118, -1.97979484,  0.1054461 , -0.10896341])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
+        <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">multidiscrete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the discretize action wrapper.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: The environment to wrap.</span>
+<span class="sd">            bins: int or tuple of ints (number of bins per dimension).</span>
+<span class="sd">            multidiscrete: If True, use MultiDiscrete action space instead of flattening to Discrete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;DiscretizeAction is only compatible with Box continuous actions.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">low</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">low</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">high</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Discretization requires action space to be finite. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Found: low=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="si">}</span><span class="s2">, high=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">multidiscrete</span> <span class="o">=</span> <span class="n">multidiscrete</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">ActionWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">bins</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;bins must match action dimensions: expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bin_centers</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="mf">0.5</span>
+            <span class="o">*</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multidiscrete</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">MultiDiscrete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Discretizes the action.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multidiscrete</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unflatten_index</span><span class="p">(</span><span class="n">act</span><span class="p">)</span>
+        <span class="n">centers</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bin_centers</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">centers</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">revert_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts a discretized action to a possible continuous action (the center of the closest bin).&quot;&quot;&quot;</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_centers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">action</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multidiscrete</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel_multi_index</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flat_index</span><span class="p">):</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">):</span>
+            <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flat_index</span> <span class="o">%</span> <span class="n">b</span><span class="p">)</span>
+            <span class="n">flat_index</span> <span class="o">//=</span> <span class="n">b</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
 </pre></div>
           </article>
         </div>
@@ -673,7 +818,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=151cd43d"></script>
+    <script src="../../../../_static/documentation_options.js?v=e86ceb7b"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>

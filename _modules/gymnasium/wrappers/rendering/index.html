@@ -412,8 +412,7 @@
 
 <span class="sd">    No vector version of the wrapper exists.</span>
 
-<span class="sd">    Example:</span>
-<span class="sd">        Return the list of frames for the number of steps ``render`` wasn&#39;t called.</span>
+<span class="sd">    Example - Return the list of frames for the number of steps ``render`` wasn&#39;t called.</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env)</span>
@@ -429,7 +428,7 @@
 <span class="sd">        &gt;&gt;&gt; len(frames)</span>
 <span class="sd">        0</span>
 
-<span class="sd">        Return the list of frames for the number of steps the episode was running.</span>
+<span class="sd">    Example - Return the list of frames for the number of steps the episode was running.</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env, pop_frames=False)</span>
@@ -445,7 +444,7 @@
 <span class="sd">        &gt;&gt;&gt; len(frames)</span>
 <span class="sd">        6</span>
 
-<span class="sd">        Collect all frames for all episodes, without clearing them when render is called</span>
+<span class="sd">    Example - Collect all frames for all episodes, without clearing them when render is called</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env, pop_frames=False, reset_clean=False)</span>
@@ -556,8 +555,6 @@
 <span class="sd">    By default, the recording will be stopped once reset is called.</span>
 <span class="sd">    However, you can also create recordings of fixed length (possibly spanning several episodes)</span>
 <span class="sd">    by passing a strictly positive value for ``video_length``.</span>
-
-<span class="sd">    No vector version of the wrapper exists.</span>
 
 <span class="sd">    Examples - Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:</span>
 <span class="sd">        &gt;&gt;&gt; import os</span>
@@ -698,7 +695,10 @@
 
         <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># render was called</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">&quot;Trying to capture render frame but &#39;env.render()&#39; has just been called. The frame cannot be captured.&quot;</span>
+                <span class="p">)</span>
                 <span class="k">return</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_history</span> <span class="o">+=</span> <span class="n">frame</span>
             <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -792,7 +792,9 @@
             <span class="n">moviepy_logger</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_logger</span> <span class="k">else</span> <span class="s2">&quot;bar&quot;</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_video_name</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">)</span>
             <span class="n">clip</span><span class="o">.</span><span class="n">write_videofile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">moviepy_logger</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">clip</span>
 
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_video_name</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1245,7 +1247,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=151cd43d"></script>
+    <script src="../../../../_static/documentation_options.js?v=e86ceb7b"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
