@@ -30,28 +30,45 @@ def count_step(self: GenericTestEnv, action):
     return self.count, action, self.count == self.max_count, False, {}
 
 
+def np_count_step(self: GenericTestEnv, action):
+    self.count += 1
+
+    return self.count, np.array([action]), self.count == self.max_count, False, {}
+
+
 @pytest.mark.parametrize(
-    "vectoriser",
+    "vectoriser,step_func",
     [
-        SyncVectorEnv,
-        AsyncVectorEnv,
-        partial(AsyncVectorEnv, shared_memory=False),
+        (SyncVectorEnv, count_step),
+        (AsyncVectorEnv, count_step),
+        (partial(AsyncVectorEnv, shared_memory=False), count_step),
+        (SyncVectorEnv, np_count_step),
+        (AsyncVectorEnv, np_count_step),
+        (partial(AsyncVectorEnv, shared_memory=False), np_count_step),
     ],
-    ids=["Sync", "Async(shared_memory=True)", "Async(shared_memory=False)"],
+    ids=[
+        "Sync,reward float",
+        "Async(shared_memory=True),reward float",
+        "Async(shared_memory=False),reward float",
+        "Sync,reward numpy",
+        "Async(shared_memory=True),reward numpy",
+        "Async(shared_memory=False),reward numpy",
+    ],
 )
-def test_autoreset_next_step(vectoriser):
+def test_autoreset_next_step(vectoriser, step_func):
     envs = vectoriser(
         [
             lambda: GenericTestEnv(
                 action_space=Discrete(5),
                 observation_space=Discrete(5),
                 reset_func=count_reset,
-                step_func=count_step,
+                step_func=step_func,
             )
             for _ in range(3)
         ],
         autoreset_mode=AutoresetMode.NEXT_STEP,
     )
+
     assert envs.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP
     envs.set_attr("max_count", [2, 3, 3])
 
