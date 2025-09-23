@@ -1,0 +1,1124 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)">
+    <meta property="og:title" content="Gymnasium Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
+    <meta property="og:url" content="https://gymnasium.farama.org/environments/third_party_environments.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Gymnasium Basics" href="../../tutorials/gymnasium_basics/" /><link rel="prev" title="Atari" href="../atari/" />
+        <link rel="canonical" href="https://gymnasium.farama.org/environments/third_party_environments.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+        <title>External Environments - Gymnasium Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=82c8b628" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header" aria-label="Farama header">
+      <div class="farama-header__container">
+        <div class="farama-header__left--mobile">
+          <label class="nav-overlay-icon" for="__navigation">
+            <div class="visually-hidden">Toggle site navigation sidebar</div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <defs></defs>
+              <line x1="0.5" y1="4" x2="23.5" y2="4"></line>
+              <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
+              <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
+            </svg>
+          </label>
+        </div>
+        <div class="farama-header__left farama-header__center--mobile">
+          <a href="../../">
+              <img class="farama-header__logo only-light" src="../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+            <span class="farama-header__title">Gymnasium Documentation</span>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
+              <img class="farama-black-logo-invert" src="../../_static/img/farama-logo-header.svg">
+              <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
+              </svg>
+            </button>
+            <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
+                  <span>Farama Foundation</span>
+                </a>
+                <div class="farama-header-menu-header__right">
+                  <button id="farama-close-menu">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                      <line x1="3" y1="21" x2="21" y2="3"></line>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="farama-header-menu__body">
+                <!-- Response from farama.org/api/projects.json -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="page">
+  <!--<header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../"><div class="brand">Gymnasium Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>-->
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../">
+      <img class="farama-header__logo only-light" src="../../_static/img/gymnasium_black.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../../_static/img/gymnasium_white.svg" alt="Dark Logo"/>
+    <span class="farama-header__title">Gymnasium Documentation</span>
+  </a><form class="sidebar-search-container" method="get" action="../../search/" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/train_agent/">Training an Agent</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/create_custom_env/">Create a Custom Environment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/record_agent/">Recording Agents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/speed_up_env/">Speeding Up Training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction/migration_guide/">Gym Migration Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/env/">Env</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/registry/">Make and register</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/spaces/">Spaces</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Spaces</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/fundamental/">Fundamental Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/composite/">Composite Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/spaces/utils/">Spaces Utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/wrappers/">Wrappers</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Wrappers</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/table/">List of Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/misc_wrappers/">Misc Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/action_wrappers/">Action Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/observation_wrappers/">Observation Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/wrappers/reward_wrappers/">Reward Wrappers</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/vector/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/vector/utils/">Utility functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/functional/">Functional Env</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Environments</span></p>
+<ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../classic_control/">Classic Control</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Classic Control</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../classic_control/acrobot/">Acrobot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic_control/cart_pole/">Cart Pole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic_control/mountain_car_continuous/">Mountain Car Continuous</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic_control/mountain_car/">Mountain Car</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../classic_control/pendulum/">Pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../box2d/">Box2D</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Box2D</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../box2d/bipedal_walker/">Bipedal Walker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../box2d/car_racing/">Car Racing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../box2d/lunar_lander/">Lunar Lander</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../toy_text/">Toy Text</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Toy Text</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../toy_text/blackjack/">Blackjack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toy_text/taxi/">Taxi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toy_text/cliff_walking/">Cliff Walking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../toy_text/frozen_lake/">Frozen Lake</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of MuJoCo</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/ant/">Ant</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/half_cheetah/">Half Cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/hopper/">Hopper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/humanoid/">Humanoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/humanoid_standup/">Humanoid Standup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/inverted_double_pendulum/">Inverted Double Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/inverted_pendulum/">Inverted Pendulum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/pusher/">Pusher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/reacher/">Reacher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/swimmer/">Swimmer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mujoco/walker2d/">Walker2D</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../atari/">Atari</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">External Environments</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/gymnasium_basics/">Gymnasium Basics</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Gymnasium Basics</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/environment_creation/">Make your own custom environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/handling_time_limits/">Handling Time Limits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/implementing_custom_wrappers/">Implementing Custom Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/gymnasium_basics/load_quadruped_model/">Load custom quadruped robot environments</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/action_masking_taxi/#results-analysis">Results Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/training_agents/vector_a2c/">Speeding up A2C Training with Vector Envs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/third-party-tutorials/">Third-Party Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium">Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://arxiv.org/abs/2407.17032">Paper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gymnasium_release_notes/">Gymnasium Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gym_release_notes/">Gym Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main-container">
+
+    
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container"><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/edit/main/docs/environments/third_party_environments.md" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
+          </div>
+          <article role="main">
+            
+            <section class="tex2jax_ignore mathjax_ignore" id="external-environments">
+<h1>External Environments<a class="headerlink" href="#external-environments" title="Link to this heading">¶</a></h1>
+<section id="first-party-environments">
+<h2>First-Party Environments<a class="headerlink" href="#first-party-environments" title="Link to this heading">¶</a></h2>
+<p>The Farama Foundation maintains a number of other <a class="reference external" href="https://farama.org/projects">projects</a>, which use the Gymnasium API, environments include:
+gridworlds (<a class="reference external" href="https://minigrid.farama.org/">Minigrid</a>),
+robotics (<a class="reference external" href="https://robotics.farama.org/">Gymnasium-Robotics</a>),
+3D navigation (<a class="reference external" href="https://miniworld.farama.org/">Miniworld</a>),
+web interaction (<a class="reference external" href="https://miniwob.farama.org/">MiniWoB++</a>),
+arcade games (<a class="reference external" href="https://github.com/Farama-Foundation/Arcade-Learning-Environment">Arcade Learning Environment</a>),
+Doom (<a class="reference external" href="https://vizdoom.farama.org/">ViZDoom</a>),
+Meta-objective robotics (<a class="reference external" href="https://metaworld.farama.org/">Metaworld</a>),
+autonomous driving (<a class="reference external" href="https://highway-env.farama.org/">HighwayEnv</a>),
+Retro Games (<a class="reference external" href="https://github.com/Farama-Foundation/stable-retro">stable-retro</a>), and many more.</p>
+<p>The Farama Foundation also maintains alternate APIs for RL, including:
+multi-agent RL (<a class="reference external" href="https://pettingzoo.farama.org/">PettingZoo</a>),
+offline-RL (<a class="reference external" href="https://minari.farama.org/">Minari</a>),
+multi-objective RL (<a class="reference external" href="https://mo-gymnasium.farama.org/">MO-Gymnasium</a>),
+goal-RL (<a class="reference external" href="https://robotics.farama.org/">Gymnasium-Robotics</a>).</p>
+</section>
+<section id="third-party-environments-with-gymnasium">
+<h2>Third-party environments with Gymnasium<a class="headerlink" href="#third-party-environments-with-gymnasium" title="Link to this heading">¶</a></h2>
+<p><em>This page contains environments which are not maintained by Farama Foundation and, as such, cannot be guaranteed to function as intended.</em></p>
+<p><em>If you’d like to contribute an environment, please reach out on <a class="reference external" href="https://discord.gg/MHCFauP67z">Discord</a>, then submit a PR by editing this <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/environments/third_party_environments.md">file</a>, additional instructions can be found inside that file</em></p>
+<!-- Template
+- [NAME: SUB_NAME_IF_PRESENT](LINK)
+
+  ![Gymnasium version dependency](ADD YOUR BADGE HERE)
+  ![GitHub stars](ADD YOUR BADGE HERE OPTIONAL)
+
+  A short 2-5 sentence description.
+-->
+<!-- Instructions
+- Follow the template in the file
+- Environments and environment categories are alphabetically sorted
+- You are responsible for picking the environment category, if you would like to add a category please ask
+- Name your PR something like "Add external environment X"
+-->
+<section id="autonomous-driving-environments">
+<h3>Autonomous Driving environments<a class="headerlink" href="#autonomous-driving-environments" title="Link to this heading">¶</a></h3>
+<p><em>Autonomous Vehicle and traffic management.</em></p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/TUDelft-CNS-ATM/bluesky-gym">BlueSky-Gym: Reinforcement Learning Environments for Air Traffic Applications</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/TUDelft-CNS-ATM/bluesky-gym" /></p>
+<p>A collection of Gymnasium environments for air traffic management tasks, allowing for both civil and urban aviation applications. Build on the open-source air traffic simulator <a class="reference external" href="https://github.com/TUDelft-CNS-ATM/bluesky">BlueSky</a>.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/upb-lea/gym-electric-motor">gym-electric-motor: Gym environments for electric motor simulations</a></p>
+<p>An environment for simulating a wide variety of electric drives taking into account different types of electric motors and converters.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/axelbr/racecar_gym/">racecar_gym: Miniature racecar env using PyBullet</a></p>
+<p>A gym environment for a miniature racecar using the <a class="reference external" href="https://github.com/bulletphysics/bullet3">PyBullet</a> physics engine.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/LucasAlegre/sumo-rl">sumo-rl: Reinforcement Learning using SUMO traffic simulator</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.3-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/LucasAlegre/sumo-rl" /></p>
+<p>Gymnasium wrapper for various environments in the SUMO traffic simulator. Supports both single and multiagent settings (using <a class="reference external" href="https://pettingzoo.farama.org/">pettingzoo</a>).</p>
+</li>
+</ul>
+</section>
+<section id="biological-medical-environments">
+<h3>Biological / Medical environments<a class="headerlink" href="#biological-medical-environments" title="Link to this heading">¶</a></h3>
+<p><em>Interacting with Biological Systems.</em></p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/icu-sepsis/icu-sepsis">ICU-Sepsis: A Benchmark MDP Built from Real Medical Data</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/icu-sepsis/icu-sepsis" /></p>
+<p>ICU-Sepsis is a tabular reinforcement learning environment that simulates the treatment of sepsis in an intensive care unit (ICU). Introduced in the paper <a class="reference external" href="https://arxiv.org/abs/2406.05646">ICU-Sepsis: A Benchmark MDP Built from Real Medical Data</a>, the environment is lightweight and easy to use, yet challenging for most reinforcement learning algorithms.</p>
+</li>
+</ul>
+</section>
+<section id="economic-financial-environments">
+<h3>Economic / Financial environments<a class="headerlink" href="#economic-financial-environments" title="Link to this heading">¶</a></h3>
+<p><em>Everything Economics related.</em></p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/AminHP/gym-anytrading">gym-anytrading: Financial trading environments for FOREX and STOCKS</a></p>
+<p>AnyTrading is a collection of Gym environments for reinforcement learning-based trading algorithms with a great focus on simplicity, flexibility, and comprehensiveness.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/AminHP/gym-mtsim">gym-mtsim: Financial trading for MetaTrader 5 platform</a></p>
+<p>MtSim is a simulator for the <a class="reference external" href="https://www.metatrader5.com/">MetaTrader 5</a> trading platform for reinforcement learning-based trading algorithms.</p>
+</li>
+<li><p><a class="reference external" href="https://gym-trading-env.readthedocs.io/">gym-trading-env: Trading Environment</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="Github stars" src="https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env" /></p>
+<p>Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.</p>
+</li>
+</ul>
+</section>
+<section id="electrical-energy-environments">
+<h3>Electrical / Energy environments<a class="headerlink" href="#electrical-energy-environments" title="Link to this heading">¶</a></h3>
+<p><em>Manage the flow of Electrons.</em></p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/StavrosOrf/EV2Gym">EV2Gym: A Realistic EV-V2G-Gym Simulator for EV Smart Charging</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/StavrosOrf/EV2Gym" /></p>
+<p>EV2Gym is a fully customizable and easily configurable environment for Electric Vehicle (EV) smart charging simulations on a small and large scale. Also, includes non-RL baseline implementations such as mathematical programming, model predictive control, and heuristics.</p>
+</li>
+</ul>
+</section>
+<section id="game-environments">
+<h3>Game environments<a class="headerlink" href="#game-environments" title="Link to this heading">¶</a></h3>
+<p><em>Board Games, Video Games and all other interactive entrainment mediums.</em></p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/markov-labs/RL-Minesweeper">Advanced Minesweeper Environment</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v1.1.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/markov-labs/RL-Minesweeper" /></p>
+<p>This is a custom minesweeper gymnasium environment that allows for an optional custom mask for added complexity. Fully customizable with board size, mine density and custom masks.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/mikelma/craftium">Craftium: an extensible framework for creating RL environments</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/mikelma/craftium" /></p>
+<p>Craftium wraps the <a class="reference external" href="https://www.minetest.net/">Minetest</a> game engine into the Gymnasium API, providing a modern and easy-to-use platform for designing Minecraft-like RL environments.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/robertoschiavone/flappy-bird-env">flappy-bird-env</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/robertoschiavone/flappy-bird-env" /></p>
+<p>Flappy Bird as a Farama Gymnasium environment.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/markub3327/flappy-bird-gymnasium">flappy-bird-gymnasium: A Flappy Bird environment for Gymnasium</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/markub3327/flappy-bird-gymnasium" /></p>
+<p>A simple environment for single-agent reinforcement learning algorithms on a clone of <a class="reference external" href="https://en.wikipedia.org/wiki/Flappy_Bird">Flappy Bird</a>, the hugely popular arcade-style mobile game. Both state and pixel observation environments are available.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/strakam/generals-bots">Generals.io bots: Develop your agent for generals.io!</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v1.0.0-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/strakam/generals-bots" /></p>
+<p>Generals.io is a fast-paced strategy game on a 2D grid. We make bot development accessible via the Gymnasium/PettingZoo API.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/bpiwowar/pystk2-gymnasium">pystk2-gymnasium: SuperTuxKart races gymnasium wrapper</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/bpiwowar/pystk2-gymnasium" /></p>
+<p>Uses a <a class="reference external" href="https://github.com/bpiwowar/pystk2">python wrapper</a> around <a class="reference external" href="https://supertuxkart.net/fr/Main_Page">SuperTuxKart</a> that allows to access the world state and to control a race.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/smanolloff/qwop-gym">QWOP: An environment for Bennet Foddy’s game QWOP</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/smanolloff/qwop-gym" /></p>
+<p>QWOP is a game about running extremely fast down a 100 meter track. With this Gymnasium environment you can train your own agents and try to beat the current world record (5.0 in-game seconds for humans and 4.7 for AI).</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/Max-We/Tetris-Gymnasium">Tetris Gymnasium: A fully configurable Gymnasium compatible Tetris environment</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/Max-We/Tetris-Gymnasium" /></p>
+<p>Tetris Gymnasium is a clean implementation of Tetris as a Gymnasium environment. It can be extensively customized (e.g. board dimensions, gravity, …), is well documented and includes many examples on how to use it e.g. by providing training scripts.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/trackmania-rl/tmrl/">tmrl: TrackMania 2020 through RL</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/trackmania-rl/tmrl" /></p>
+<p>tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.</p>
+</li>
+</ul>
+</section>
+<section id="mathematics-computational">
+<h3>Mathematics / Computational<a class="headerlink" href="#mathematics-computational" title="Link to this heading">¶</a></h3>
+<p><em>Reduce computational compute, prove math theorems, and more.</em></p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/ArchieGertsman/spark-sched-sim">spark-sched-sim: Environments for scheduling DAG jobs in Apache Spark</a></p>
+<p>spark-sched-sim simulates Spark clusters for RL-based job scheduling algorithms. Spark jobs are encoded as directed acyclic graphs (DAGs), providing opportunities to experiment with graph neural networks (GNN’s) in the RL context.</p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/ArchieGertsman/spark-sched-sim" /></p>
+</li>
+<li><p><a class="reference external" href="https://github.com/inpefess/gym-saturation">gym-saturation: Environments used to prove theorems</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/inpefess/gym-saturation" /></p>
+<p>An environment for guiding automated theorem provers based on saturation algorithms (e.g. <a class="reference external" href="https://github.com/vprover/vampire">Vampire</a>).</p>
+</li>
+</ul>
+</section>
+<section id="robotics-environments">
+<h3>Robotics environments<a class="headerlink" href="#robotics-environments" title="Link to this heading">¶</a></h3>
+<p><em>Autonomous Robots.</em></p>
+<ul>
+<li><p><a class="reference external" href="https://avslab.github.io/bsk_rl/">BSK-RL: Environments for Spacecraft Planning and Scheduling</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/AVSLab/bsk_rl" /></p>
+<p>BSK-RL is a Python package for constructing Gymnasium environments for spacecraft tasking problems. It is built on top of <a class="reference external" href="http://hanspeterschaub.info/basilisk/">Basilisk</a>, a modular and fast spacecraft simulation framework, making the simulation environments high-fidelity and computationally efficient. BSK-RL also includes a collection of utilities and examples for working with these environments</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/lucasBertola/Connect-4-Gym-env-Reinforcement-learning">Connect-4-gym : An environment for practicing self playing</a></p>
+<p>Connect-4-Gym is an environment designed for creating AIs that learn by playing against themselves and assigning them an Elo rating. This environment can be used to train and evaluate reinforcement learning agents on the classic board game Connect Four.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/GongXudong/fly-craft">FlyCraft: A Fixed-wing UAV Environment</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/GongXudong/fly-craft" /></p>
+<p>FlyCraft is a Gymnasium environment for fixed-wing UAV tasks. By default, FlyCraft provides two tasks: attitude control and velocity vector control. These tasks are characterized by their multi-goal and long-horizon nature, posing significant challenges for RL exploration. Additionally, the rewards can be configured as either Markovian or non-Markovian, making FlyCraft suitable for research on non-Markovian problems.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/RobertTLange/gymnax/">gymnax: Hardware Accelerated RL Environments</a></p>
+<p>RL Environments in JAX which allows for highly vectorised environments with support for a number of environments, Gym, MinAtari, bsuite and more.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/duburcqa/jiminy">gym-jiminy: Training Robots in Jiminy</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.0-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/duburcqa/jiminy" /></p>
+<p>gym-jiminy presents an extension of the initial Gym for robotics using <a class="reference external" href="https://github.com/duburcqa/jiminy">Jiminy</a>, an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/JacopoPan/gym-pybullet-drones">gym-pybullet-drones: Environments for quadcopter control</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/JacopoPan/gym-pybullet-drones" /></p>
+<p>A simple environment using <a class="reference external" href="https://github.com/bulletphysics/bullet3">PyBullet</a> to simulate the dynamics of a <a class="reference external" href="https://www.bitcraze.io/documentation/hardware/crazyflie_2_1/crazyflie_2_1-datasheet.pdf">Bitcraze Crazyflie 2.x</a> nanoquadrotor.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/gustavo-moura/itomori">Itomori: UAV Risk-aware Flight Environment</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/gustavo-moura/itomori" /></p>
+<p>Itomori is an environment for risk-aware UAV flight, it provides tools to solve Chance-Constrained Markov Decision Processes (CCMDP). The env allows to simulate, visualize, and evaluate UAV navigation in complex and risky environments, incorporating variables like GPS uncertainty, collision risk, and adaptive flight planning. Itomori is intended to support UAV path-planning research by offering adjustable parameters, detailed visualizations, and insights into agent behavior in uncertain environments.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/">OmniIsaacGymEnvs: Gym environments for NVIDIA Omniverse Isaac </a></p>
+<p>Reinforcement Learning Environments for <a class="reference external" href="https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/overview.html">Omniverse Isaac simulator</a>.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/qgallouedec/panda-gym/">panda-gym: Robotics environments using the PyBullet physics engine</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.3-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/qgallouedec/panda-gym" /></p>
+<p>PyBullet based simulations of a robotic arm moving objects.</p>
+</li>
+<li><p><a class="reference external" href="https://jjshoots.github.io/PyFlyt/index.html#">PyFlyt: UAV Flight Simulator Environments for Reinforcement Learning Research</a></p>
+<p>A library for testing reinforcement learning algorithms on various UAVs.
+It is built on the <a class="reference external" href="https://github.com/bulletphysics/bullet3">Bullet</a> physics engine, offers flexible rendering options, time-discrete steppable physics, Python bindings, and support for custom drones of any configuration, be it biplanes, quadcopters, rockets, and anything you can think of.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/utiasDSL/safe-control-gym">safe-control-gym: Evaluate safety of RL algorithms</a></p>
+<p>Evaluate safety, robustness and generalization via PyBullet based CartPole and Quadrotor environments—with <a class="reference external" href="https://web.casadi.org">CasADi</a> (symbolic) <em>a priori</em> dynamics and constraints.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/PKU-MARL/safety-gymnasium">Safety-Gymnasium: Ensuring safety in real-world RL scenarios</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium" /></p>
+<p>Highly scalable and customizable Safe Reinforcement Learning library.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/dfki-ric/deformable_gym">deformable_gym: RL environments for grasping deformable objects</a></p>
+<p>A collection of gymnasium environments for learning to grasp 3D deformable objects built with PyBullet and Mujoco.</p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v1.0.0-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/dfki-ric/deformable_gym" /></p>
+</li>
+</ul>
+</section>
+<section id="telecommunication-systems-environments">
+<h3>Telecommunication Systems environments<a class="headerlink" href="#telecommunication-systems-environments" title="Link to this heading">¶</a></h3>
+<p><em>Interact and/or manage wireless and/or wired telecommunication systems.</em></p>
+<ul>
+<li><p><a class="reference external" href="https://github.com/stefanbschneider/mobile-env">mobile-env: Environments for coordination of wireless mobile networks</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/stefanbschneider/mobile-env" /></p>
+<p>An open, minimalist Gymnasium environment for autonomous coordination in wireless mobile networks.</p>
+</li>
+</ul>
+</section>
+<section id="other">
+<h3>Other<a class="headerlink" href="#other" title="Link to this heading">¶</a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/foreverska/buffalo-gym">Buffalo-Gym: Multi-Armed Bandit Gymnasium</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/foreverska/buffalo-gym" /></p>
+<p>Buffalo-Gym is a Multi-Armed Bandit (MAB) gymnasium built primarily to assist in debugging RL implementations. MABs are often easy to reason about what the agent is learning and whether it is correct. Buffalo-gym encompasses Bandits, Contextual bandits, and contextual bandits with aliasing.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/automl/CARL">CARL: context adaptive RL</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.27.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/automl/carl" /></p>
+<p>Contextual extensions of popular reinforcement learning environments that enable training and test distributions for generalization, e.g. CartPole with variable pole lengths or Brax robots with different ground frictions.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/automl/DACBench">DACBench: a benchmark for Dynamic Algorithm Configuration</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.3-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/automl/DACBench" /></p>
+<p>A benchmark library for <a class="reference external" href="https://www.automl.org/dynamic-algorithm-configuration/">Dynamic Algorithm Configuration</a>. Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/elbecerrasoto/gym-cellular-automata">gym-cellular-automata: Cellular Automata environments</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/elbecerrasoto/gym-cellular-automata" /></p>
+<p>Environments where the agent interacts with <em>Cellular Automata</em> by changing its cell states.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/sparisi/gym_gridworlds">Gym-Gridworlds: Collection of Customizable Minimalistic Gridworlds</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.29.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/sparisi/gym_gridworlds" /></p>
+<p>The default class implements a “go-to goal”, but it can be easily customized for different tasks, with a variety of grids, rewards, dynamics, and tasks. It supports different observation types (discrete, coordinates, binary, pixels, partial). Useful for quickly testing and prototyping RL algorithms, both tabular and with function approximation.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/Daveonwave/gym4ReaL">Gym4ReaL</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v1.1.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/Daveonwave/gym4ReaL" /></p>
+<p>Gym4ReaL is a comprehensive suite of realistic environments designed to support the development and evaluation of RL algorithms that can operate in real-world scenarios.
+The suite includes a diverse set of tasks exposing RL algorithms to a variety of practical challenges, such as water management, energy management in microgrids, financial trading, and more.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/Paul-543NA/matrix-mdp-gym">matrix-mdp: Easily create discrete MDPs</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.26.2-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/Paul-543NA/matrix-mdp-gym" /></p>
+<p>An environment to easily implement discrete MDPs as gym environments. Turn a set of matrices (<code class="docutils literal notranslate"><span class="pre">P_0(s)</span></code>, <code class="docutils literal notranslate"><span class="pre">P(s'|</span> <span class="pre">s,</span> <span class="pre">a)</span></code> and <code class="docutils literal notranslate"><span class="pre">R(s',</span> <span class="pre">s,</span> <span class="pre">a)</span></code>) into a gym environment that represents the discrete MDP ruled by these dynamics.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/damat-le/gym-simplegrid">SimpleGrid: a simple grid environment for Gymnasium</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-v0.28.1-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/damat-le/gym-simplegrid" /></p>
+<p>SimpleGrid is a super simple and minimal grid environment for Gymnasium. It is easy to use and customise and it is intended to offer an environment for rapidly testing and prototyping different RL algorithms.</p>
+</li>
+</ul>
+</section>
+</section>
+<section id="third-party-environments-using-gym">
+<h2>Third-Party Environments using Gym<a class="headerlink" href="#third-party-environments-using-gym" title="Link to this heading">¶</a></h2>
+<p>There are a large number of third-party environments using various versions of <a class="reference external" href="https://github.com/openai/gym">Gym</a>.
+Many of these can be adapted to work with gymnasium (see <a class="reference external" href="https://gymnasium.farama.org/content/gym_compatibility/">Compatibility with Gym</a>), but are not guaranteed to be fully functional.</p>
+<section id="video-game-environments">
+<h3>Video Game environments<a class="headerlink" href="#video-game-environments" title="Link to this heading">¶</a></h3>
+<ul>
+<li><p><a class="reference external" href="https://gym.derkgame.com/">gym-derk: GPU accelerated MOBA environment</a></p>
+<p>A 3v3 MOBA environment where you train creatures to fight each other.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/hardmaru/slimevolleygym">SlimeVolleyGym: A simple environment for Slime Volleyball game</a></p>
+<p>A simple environment for benchmarking single and multi-agent reinforcement learning algorithms on a clone of Slime Volleyball game.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/Unity-Technologies/ml-agents">Unity ML Agents: Environments for Unity game engine</a></p>
+<p>Gym (and PettingZoo) wrappers for arbitrary and premade environments with the Unity game engine.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/222464/PGE">PGE: Parallel Game Engine</a></p>
+<p>Uses The <a class="reference external" href="https://www.o3de.org/">Open 3D Engine</a> for AI simulations and can interoperate with the Gym. Uses <a class="reference external" href="https://github.com/bulletphysics/bullet3">PyBullet</a> physics.</p>
+</li>
+</ul>
+</section>
+<section id="id1">
+<h3>Robotics environments<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/dimikout3/MarsExplorer">MarsExplorer: Environments for controlling robot on Mars</a></p>
+<p>Mars Explorer is a Gym compatible environment designed and developed as an initial endeavor to bridge the gap between powerful Deep Reinforcement Learning methodologies and the problem of exploration/coverage of an unknown terrain.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/jr-robotics/robo-gym">robo-gym: Real-world and simulation robotics</a></p>
+<p>Robo-gym provides a collection of reinforcement learning environments involving robotic tasks applicable in both simulation and real-world robotics.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/offworld-projects/offworld-gym">Offworld-gym: Control real robots remotely for free</a></p>
+<p>Gym environments that let you control real robots in a laboratory via the internet.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/skim0119/gym-softrobot/">gym-softrobot: Soft-robotics environments</a></p>
+<p>A large-scale benchmark for co-optimizing the design and control of soft robots.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/StanfordVL/iGibson/">iGibson: Photorealistic and interactive robotics environments</a></p>
+<p>A simulation environment with high-quality realistic scenes, with interactive physics using <a class="reference external" href="https://github.com/bulletphysics/bullet3">PyBullet</a>.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/PKU-MARL/DexterousHands/">DexterousHands: Dual dexterous hand manipulation tasks</a></p>
+<p>This is a library that provides dual dexterous hand manipulation tasks through Isaac Gym.</p>
+</li>
+</ul>
+</section>
+<section id="id2">
+<h3>Autonomous Driving environments<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/duckietown/gym-duckietown">gym-duckietown: Lane-following for self-driving cars</a></p>
+<p>A lane-following simulator built for the <a class="reference external" href="http://duckietown.org/">Duckietown</a> project (small-scale self-driving car course).</p>
+</li>
+<li><p><a class="reference external" href="https://commonroad.in.tum.de/tools/commonroad-rl">CommonRoad-RL: Motion planning for traffic scenarios </a></p>
+<p>A Gym for solving motion planning problems for various traffic scenarios compatible with <a class="reference external" href="https://commonroad.in.tum.de/scenarios">CommonRoad benchmarks</a>, which provides configurable rewards, action spaces, and observation spaces.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/CPS-TUWien/racing_dreamer/">racing_dreamer: Latent imagination in autonomous racing</a></p>
+<p>Train a model-based RL agent in simulation and, without finetuning, transfer it to small-scale race cars.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/learn-to-race/l2r/">l2r: Multimodal control environment where agents learn how to race</a></p>
+<p>An open-source reinforcement learning environment for autonomous racing.</p>
+</li>
+</ul>
+</section>
+<section id="other-environments">
+<h3>Other environments<a class="headerlink" href="#other-environments" title="Link to this heading">¶</a></h3>
+<ul>
+<li><p><a class="reference external" href="https://github.com/facebookresearch/CompilerGym">CompilerGym: Optimise compiler tasks</a></p>
+<p>Reinforcement learning environments for compiler optimization tasks, such as LLVM phase ordering, GCC flag tuning, and CUDA loop nest code generation.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/mpSchrader/gym-sokoban">gym-sokoban: 2D Transportation Puzzles</a></p>
+<p>The environment consists of transportation puzzles in which the player’s goal is to push all boxes to the warehouse’s storage locations.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/rajcscw/nlp-gym">NLPGym: A toolkit to develop RL agents to solve NLP tasks</a></p>
+<p><a class="reference external" href="https://arxiv.org/pdf/2011.08272v1.pdf">NLPGym</a> provides interactive environments for standard NLP tasks such as sequence tagging, question answering, and sequence classification.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/omron-sinicx/ShinRL/">ShinRL: Environments for evaluating RL algorithms</a></p>
+<p>ShinRL: A Library for Evaluating RL Algorithms from Theoretical and Practical Perspectives (Deep RL Workshop 2021)</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/upb-lea/openmodelica-microgrid-gym">openmodelica-microgrid-gym: Environments for controlling power electronic converters in microgrids</a></p>
+<p>The OpenModelica Microgrid Gym (OMG) package is a software toolbox for the simulation and control optimization of microgrids based on energy conversion by power electronic converters.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/wil3/gymfc/">GymFC: A flight control tuning and training framework</a></p>
+<p>GymFC is a modular framework for synthesizing neuro-flight controllers. Has been used to generate policies for the world’s first open-source neural network flight control firmware <a class="reference external" href="https://github.com/wil3/neuroflight">Neuroflight</a>.</p>
+</li>
+</ul>
+</section>
+</section>
+</section>
+
+          </article>
+        </div>
+        <footer>
+          
+          <div class="related-pages">
+            <a class="next-page" href="../../tutorials/gymnasium_basics/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Gymnasium Basics</div>
+              </div>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+            </a>
+            <a class="prev-page" href="../atari/">
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Atari</div>
+                
+              </div>
+            </a>
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
+                Copyright &#169; 2025 Farama Foundation
+              </div>
+              <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                <a class="muted-link" href="https://github.com/Farama-Foundation/Gymnasium/"
+                  aria-label="On GitHub">
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer">
+        
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">External Environments</a><ul>
+<li><a class="reference internal" href="#first-party-environments">First-Party Environments</a></li>
+<li><a class="reference internal" href="#third-party-environments-with-gymnasium">Third-party environments with Gymnasium</a><ul>
+<li><a class="reference internal" href="#autonomous-driving-environments">Autonomous Driving environments</a></li>
+<li><a class="reference internal" href="#biological-medical-environments">Biological / Medical environments</a></li>
+<li><a class="reference internal" href="#economic-financial-environments">Economic / Financial environments</a></li>
+<li><a class="reference internal" href="#electrical-energy-environments">Electrical / Energy environments</a></li>
+<li><a class="reference internal" href="#game-environments">Game environments</a></li>
+<li><a class="reference internal" href="#mathematics-computational">Mathematics / Computational</a></li>
+<li><a class="reference internal" href="#robotics-environments">Robotics environments</a></li>
+<li><a class="reference internal" href="#telecommunication-systems-environments">Telecommunication Systems environments</a></li>
+<li><a class="reference internal" href="#other">Other</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#third-party-environments-using-gym">Third-Party Environments using Gym</a><ul>
+<li><a class="reference internal" href="#video-game-environments">Video Game environments</a></li>
+<li><a class="reference internal" href="#id1">Robotics environments</a></li>
+<li><a class="reference internal" href="#id2">Autonomous Driving environments</a></li>
+<li><a class="reference internal" href="#other-environments">Other environments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+        
+        
+      </aside>
+    </div>
+  </div>
+</div>
+    <script>
+      const toggleMenu = () => {
+        const menuBtn = document.querySelector(".farama-header-menu__btn");
+        const menuContainer = document.querySelector(".farama-header-menu-container");
+        if (document.querySelector(".farama-header-menu").classList.contains("active")) {
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuContainer.setAttribute("aria-hidden", "true");
+        } else {
+          menuBtn.setAttribute("aria-expanded", "true");
+          menuContainer.setAttribute("aria-hidden", "false");
+        }
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+    </script>
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6H9C8TWXZ8"></script>
+      <script>
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-6H9C8TWXZ8');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
+
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
+      </script>
+
+    <script src="../../_static/documentation_options.js?v=e86ceb7b"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=7660844c"></script>
+    
+    <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
+      // Create menu with Farama projects by using the API at farama.org/api/projects.json
+      const createCORSRequest = (method, url) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          // IE8 & IE9
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          // CORS not supported.
+          xhr = null;
+        }
+        return xhr;
+      };
+
+      const url = 'https://farama.org/api/projects.json';
+      const imagesBasepath = "https://farama.org/assets/images"
+      const method = 'GET';
+      let xhr = createCORSRequest(method, url);
+
+      xhr.onload = () => {
+        const jsonResponse = xhr.response;
+        const sections = {
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Foundation": [
+            {
+              name: "About",
+              link: "https://farama.org/about"
+            },
+            {
+              name: "Standards",
+              link: "https://farama.org/project_standards",
+            },
+            {
+              name: "Donate",
+              link: "https://farama.org/donations"
+            }
+          ]
+        }
+
+        // Categorize projects
+        Object.keys(jsonResponse).forEach(key => {
+          projectJson = jsonResponse[key];
+          if (projectJson.website !== null) {
+            projectJson.link = projectJson.website;
+          } else {
+            projectJson.link = projectJson.github;
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
+          }
+        })
+
+        const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        Object.keys(sections).forEach((key, i) => {
+          const sectionElem = Object.assign(
+            document.createElement('div'), {
+              className:'farama-header-menu__section',
+            }
+          )
+          sectionElem.appendChild(Object.assign(document.createElement('span'),
+            {
+              className:'farama-header-menu__section-title' ,
+              innerText: key
+            }
+          ))
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: 'display: flex'
+                }
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
+          }
+          menuContainer.appendChild(sectionElem)
+        });
+      }
+
+      xhr.onerror = function() {
+        console.error("Unable to load projects");
+      };
+
+      xhr.send();
+    </script>
+
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Gymnasium',
+      };
+      fetch('/main/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script>
+
+    </body>
+</html>
