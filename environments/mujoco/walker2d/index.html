@@ -681,7 +681,7 @@ The initial velocity state is <span class="math notranslate nohighlight">\(\math
 The Walker2d is unhealthy if any of the following happens:</p>
 <ol class="arabic simple">
 <li><p>Any of the state space values is no longer finite</p></li>
-<li><p>The z-coordinate of the torso (the height) is <strong>not</strong> in the closed interval given by the <code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code> argument (default to <span class="math notranslate nohighlight">\([0.8, 1.0]\)</span>).</p></li>
+<li><p>The z-coordinate of the torso (the height) is <strong>not</strong> in the closed interval given by the <code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code> argument (default to <span class="math notranslate nohighlight">\([0.8, 2.0]\)</span>).</p></li>
 <li><p>The absolute value of the angle (<code class="docutils literal notranslate"><span class="pre">observation[1]</span></code> if <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code>, else <code class="docutils literal notranslate"><span class="pre">observation[2]</span></code>) is <em><strong>not</strong></em> in the closed interval specified by the <code class="docutils literal notranslate"><span class="pre">healthy_angle_range</span></code> argument (default is <span class="math notranslate nohighlight">\([-1, 1]\)</span>).</p></li>
 </ol>
 </section>
@@ -942,7 +942,7 @@ These parameters can be applied during <code class="docutils literal notranslate
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=151cd43d"></script>
+    <script src="../../../_static/documentation_options.js?v=e86ceb7b"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>

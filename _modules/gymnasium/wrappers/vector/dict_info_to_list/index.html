@@ -420,18 +420,18 @@
 <span class="sd">    Another example for vector environments:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;HalfCheetah-v4&quot;, num_envs=2)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;HalfCheetah-v5&quot;, num_envs=2)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; _, _, _, _, infos = envs.step(envs.action_space.sample())</span>
 <span class="sd">        &gt;&gt;&gt; infos</span>
-<span class="sd">        {&#39;x_position&#39;: array([0.03332211, 0.10172355]), &#39;_x_position&#39;: array([ True,  True]), &#39;x_velocity&#39;: array([-0.06296527,  0.89345848]), &#39;_x_velocity&#39;: array([ True,  True]), &#39;reward_run&#39;: array([-0.06296527,  0.89345848]), &#39;_reward_run&#39;: array([ True,  True]), &#39;reward_ctrl&#39;: array([-0.24503504, -0.21944423], dtype=float32), &#39;_reward_ctrl&#39;: array([ True,  True])}</span>
+<span class="sd">        {&#39;x_position&#39;: array([0.03332211, 0.10172355]), &#39;_x_position&#39;: array([ True,  True]), &#39;x_velocity&#39;: array([-0.06296527,  0.89345848]), &#39;_x_velocity&#39;: array([ True,  True]), &#39;reward_forward&#39;: array([-0.06296527,  0.89345848]), &#39;_reward_forward&#39;: array([ True,  True]), &#39;reward_ctrl&#39;: array([-0.24503504, -0.21944423], dtype=float32), &#39;_reward_ctrl&#39;: array([ True,  True])}</span>
 <span class="sd">        &gt;&gt;&gt; envs = DictInfoToList(envs)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; _, _, _, _, infos = envs.step(envs.action_space.sample())</span>
-<span class="sd">        &gt;&gt;&gt; infos</span>
-<span class="sd">        [{&#39;x_position&#39;: np.float64(0.0333221090036294), &#39;x_velocity&#39;: np.float64(-0.06296527291998574), &#39;reward_run&#39;: np.float64(-0.06296527291998574), &#39;reward_ctrl&#39;: np.float32(-0.24503504)}, {&#39;x_position&#39;: np.float64(0.10172354684460168), &#39;x_velocity&#39;: np.float64(0.8934584807363618), &#39;reward_run&#39;: np.float64(0.8934584807363618), &#39;reward_ctrl&#39;: np.float32(-0.21944423)}]</span>
+<span class="sd">        &gt;&gt;&gt; infos  # doctest: +ELLIPSIS</span>
+<span class="sd">        [{&#39;x_position&#39;: np.float64(0.0333221...), &#39;x_velocity&#39;: np.float64(-0.0629652...), &#39;reward_forward&#39;: np.float64(-0.0629652...), &#39;reward_ctrl&#39;: np.float32(-0.2450350...)}, {&#39;x_position&#39;: np.float64(0.1017235...), &#39;x_velocity&#39;: np.float64(0.8934584...), &#39;reward_forward&#39;: np.float64(0.8934584...), &#39;reward_ctrl&#39;: np.float32(-0.2194442...)}]</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.24.0 - Initially added as ``VectorListInfo``</span>
@@ -620,7 +620,7 @@
         })()
       </script>
 
-    <script src="../../../../../_static/documentation_options.js?v=151cd43d"></script>
+    <script src="../../../../../_static/documentation_options.js?v=e86ceb7b"></script>
     <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=7660844c"></script>
