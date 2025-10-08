@@ -93,3 +93,6 @@ You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032
 <h4 style="margin-top:0;">Ship 4x faster with developer-first dictation that works in every app.</h4>
 
 <p style="margin-top:50;">If you'd like to sponsor Gymnasium or other Farama repositories and have your logo here, <a href="mailto:contact@farama.org">contact us</a>.</p>
+
+<!-- Minor doc formatting and consistency update.
+     Thanks to the Gymnasium team for their great open-source work! -->
