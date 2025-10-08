@@ -43,6 +43,28 @@ from gymnasium.vector.vector_env import ArrayType, AutoresetMode, VectorEnv
 __all__ = ["AsyncVectorEnv", "AsyncState"]
 
 
+def _as_scalar_float(x) -> float:
+    a = np.asarray(x)
+    # 0-d array / numpy scalar / python scalar → float
+    if a.shape == ():
+        return float(a.item())
+    # 1-elem array → scalar
+    if a.size == 1:
+        return float(a.reshape(()).item())
+    raise ValueError(f"Reward must be a scalar; got shape {a.shape} and type {type(x)}")
+
+
+def _as_scalar_bool(x) -> bool:
+    a = np.asarray(x)
+    if a.shape == ():
+        return bool(a.item())
+    if a.size == 1:
+        return bool(a.reshape(()).item())
+    raise ValueError(
+        f"Termination/truncation must be scalar; got shape {a.shape} and type {type(x)}"
+    )
+
+
 class AsyncState(Enum):
     """The AsyncVectorEnv possible states given the different actions."""
 
@@ -448,12 +470,16 @@ class AsyncVectorEnv(VectorEnv):
         for env_idx, pipe in enumerate(self.parent_pipes):
             env_step_return, success = pipe.recv()
 
+            reward = _as_scalar_float(env_step_return[1])
+            terminated = _as_scalar_bool(env_step_return[2])
+            truncated = _as_scalar_bool(env_step_return[3])
+
             successes.append(success)
             if success:
                 observations.append(env_step_return[0])
-                rewards.append(env_step_return[1])
-                terminations.append(env_step_return[2])
-                truncations.append(env_step_return[3])
+                rewards.append(reward)
+                terminations.append(terminated)
+                truncations.append(truncated)
                 infos = self._add_info(infos, env_step_return[4], env_idx)
 
         self._raise_if_errors(successes)
