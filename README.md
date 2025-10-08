@@ -94,5 +94,10 @@ You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032
 
 <p style="margin-top:50;">If you'd like to sponsor Gymnasium or other Farama repositories and have your logo here, <a href="mailto:contact@farama.org">contact us</a>.</p>
 
+## Contributing
+
+We welcome contributions from the community!
+Please see our [CONTRIBUTING.md](https://github.com/Farama-Foundation/Gymnasium/blob/main/CONTRIBUTING.md) for details on how to get started.
+
 <!-- Minor doc formatting and consistency update.
      Thanks to the Gymnasium team for their great open-source work! -->
