@@ -21,6 +21,7 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     # Discrete
     3,
     3,
+    4,
     # Box
     1,
     4,
