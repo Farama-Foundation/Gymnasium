@@ -312,7 +312,7 @@ def _unflatten_discrete(space: Discrete, x: NDArray[IntType]) -> IntType:
             f"{x} is not a valid one-hot encoded vector and can not be unflattened to space {space}. "
             "Not all valid samples in a flattened space can be unflattened."
         )
-    return space.start + nonzero[0][0]
+    return space.start + nonzero[0][0].astype(x.dtype)
 
 
 @unflatten.register(MultiDiscrete)
