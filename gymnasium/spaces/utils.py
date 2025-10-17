@@ -165,7 +165,7 @@ def _flatten_box_multibinary(space: Box | MultiBinary, x: NDArray[Any]) -> NDArr
 
 
 @flatten.register(Discrete)
-def _flatten_discrete(space: Discrete, x: np.int64) -> NDArray[np.int64]:
+def _flatten_discrete(space: Discrete, x: IntType) -> NDArray[IntType]:
     onehot = np.zeros(space.n, dtype=space.dtype)
     onehot[x - space.start] = 1
     return onehot
@@ -302,9 +302,10 @@ def _unflatten_box_multibinary(
 ) -> NDArray[Any]:
     return np.asarray(x, dtype=space.dtype).reshape(space.shape)
 
+IntType = TypeVar('IntType', bound=np.integer)
 
 @unflatten.register(Discrete)
-def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> np.int64:
+def _unflatten_discrete(space: Discrete, x: NDArray[IntType]) -> IntType:
     nonzero = np.nonzero(x)
     if len(nonzero[0]) == 0:
         raise ValueError(
