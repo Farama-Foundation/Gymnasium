@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
-from typing import Any
+from typing import Any, TypeVar
 
 import numpy as np
 
 from gymnasium.spaces.space import MaskNDArray, Space
 
 
-class Discrete(Space[np.int64]):
+IntType = TypeVar("IntType", bound=np.integer)
+
+
+class Discrete(Space[IntType]):
     r"""A space consisting of finitely many elements.
 
     This class represents a finite subset of integers, more specifically a set of the form :math:`\{ a, a+1, \dots, a+n-1 \}`.

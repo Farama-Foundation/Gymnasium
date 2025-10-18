@@ -28,6 +28,7 @@ from gymnasium.spaces import (
     Text,
     Tuple,
 )
+from gymnasium.spaces.discrete import IntType
 
 
 @singledispatch
@@ -301,9 +302,6 @@ def _unflatten_box_multibinary(
     space: Box | MultiBinary, x: NDArray[Any]
 ) -> NDArray[Any]:
     return np.asarray(x, dtype=space.dtype).reshape(space.shape)
-
-
-IntType = TypeVar("IntType", bound=np.integer)
 
 
 @unflatten.register(Discrete)
