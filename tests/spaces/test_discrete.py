@@ -53,6 +53,9 @@ def test_dtype(dtype, sample_dtype):
     print(f"{type(sample)=}, {type(sample_mask)=}")
     assert isinstance(sample, sample_dtype), type(sample)
     assert isinstance(sample_mask, sample_dtype), type(sample_mask)
+    # test with probability
+    sample_prob = space.sample(probability=np.array([0.2, 0.2, 0.2, 0.2, 0.2]))
+    assert isinstance(sample_prob, sample_dtype), type(sample_prob)
 
 
 @pytest.mark.parametrize(
