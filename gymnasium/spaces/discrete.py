@@ -198,10 +198,11 @@ class Discrete(Space[IntType]):
 
         super().__setstate__(state)
 
-    def to_jsonable(self, sample_n: Sequence[np.integer[Any]]) -> list[int]:
+    def to_jsonable(self, sample_n: Sequence[IntType]) -> list[int]:
         """Converts a list of samples to a list of ints."""
         return [int(x) for x in sample_n]
 
-    def from_jsonable(self, sample_n: list[int]) -> list[np.int64]:
-        """Converts a list of json samples to a list of np.int64."""
-        return [np.int64(x) for x in sample_n]
+    def from_jsonable(self, sample_n: list[int]) -> list[IntType]:
+        """Converts a list of json samples to a list of numpy integer scalars."""
+        dtype = np.dtype(self.dtype)
+        return [dtype.type(x) for x in sample_n]
