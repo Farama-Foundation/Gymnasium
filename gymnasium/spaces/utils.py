@@ -302,17 +302,19 @@ def _unflatten_box_multibinary(
 ) -> NDArray[Any]:
     return np.asarray(x, dtype=space.dtype).reshape(space.shape)
 
-IntType = TypeVar('IntType', bound=np.integer)
+
+IntType = TypeVar("IntType", bound=np.integer)
+
 
 @unflatten.register(Discrete)
-def _unflatten_discrete(space: Discrete, x: NDArray[IntType]) -> IntType:
+def _unflatten_discrete(space: Discrete, x: NDArray[IntType | np.float64]) -> IntType:
     nonzero = np.nonzero(x)
     if len(nonzero[0]) == 0:
         raise ValueError(
             f"{x} is not a valid one-hot encoded vector and can not be unflattened to space {space}. "
             "Not all valid samples in a flattened space can be unflattened."
         )
-    return space.start + nonzero[0][0].astype(x.dtype)
+    return space.start + nonzero[0][0].astype(space.dtype)
 
 
 @unflatten.register(MultiDiscrete)
