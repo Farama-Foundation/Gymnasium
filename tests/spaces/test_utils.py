@@ -159,13 +159,20 @@ def test_flatten_roundtripping(space):
     for original, roundtripped in zip(samples, unflattened_samples):
         assert data_equivalence(original, roundtripped)
 
-def test_unflatten_discrete_with_dtype():
-    dtype = np.int16
-    space = gym.spaces.Discrete(3, dtype)
-    flattened = np.array([0, 1, 0], dtype=dtype)
-    unflattened = utils.unflatten(space, flattened)
+
+@pytest.mark.parametrize(
+    ["space", "flattened_sample"],
+    [
+        (gym.spaces.Discrete(3), np.array([0, 1, 0])),
+        (gym.spaces.Discrete(3, dtype=np.int16), np.array([0, 1, 0], dtype=np.int16)),
+        (gym.spaces.Discrete(3, dtype=np.int32), np.array([0, 1, 0], dtype=np.int32)),
+    ],
+)
+def test_unflatten_discrete_with_dtype(space, flattened_sample):
+    unflattened = utils.unflatten(space, flattened_sample)
     assert unflattened == 1
     assert space.dtype == unflattened.dtype
+
 
 def test_unflatten_discrete_error():
     value = np.array([0])
