@@ -199,6 +199,7 @@ def _batch_differing_spaces_box(spaces: list[Box]):
 def _batch_differing_spaces_discrete(spaces: list[Discrete]):
     return MultiDiscrete(
         nvec=np.array([space.n for space in spaces]),
+        dtype=spaces[0].dtype,
         start=np.array([space.start for space in spaces]),
         seed=deepcopy(spaces[0].np_random),
     )
