@@ -178,6 +178,7 @@ class Discrete(Space[IntType]):
             isinstance(other, Discrete)
             and self.n == other.n
             and self.start == other.start
+            and self.dtype == other.dtype
         )
 
     def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):

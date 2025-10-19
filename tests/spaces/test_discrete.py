@@ -58,6 +58,14 @@ def test_dtype(dtype, sample_dtype):
     assert isinstance(sample_prob, sample_dtype), type(sample_prob)
 
 
+def test_equality():
+
+    space = Discrete(n=3, dtype=np.int32)
+    space_dif_dtype = Discrete(n=3)
+
+    assert space != space_dif_dtype
+
+
 @pytest.mark.parametrize(
     "dtype",
     [
