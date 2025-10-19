@@ -156,15 +156,16 @@ class Discrete(Space[IntType]):
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, int):
-            as_int64 = np.int64(x)
+            as_np = np.dtype(self.dtype).type(x)
+
         elif isinstance(x, (np.generic, np.ndarray)) and (
             np.issubdtype(x.dtype, np.integer) and x.shape == ()
         ):
-            as_int64 = np.int64(x)
+            as_np = x
         else:
             return False
 
-        return bool(self.start <= as_int64 < self.start + self.n)
+        return bool(self.start <= as_np < self.start + self.n)
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
