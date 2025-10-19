@@ -66,6 +66,14 @@ def test_equality():
     assert space != space_dif_dtype
 
 
+@pytest.mark.parametrize("element", [0, np.int32(0), np.int64(0), np.array(0)])
+@pytest.mark.parametrize("dtype", [np.int32, np.int64, np.int16])
+def test_contains(element, dtype):
+
+    space = Discrete(3, start=-1, dtype=dtype)  # {-1, 0, 1}
+    assert space.contains(element)
+
+
 @pytest.mark.parametrize(
     "dtype",
     [
