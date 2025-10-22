@@ -32,7 +32,7 @@ class Discrete(Space[IntType]):
         np.int64(1)
         >>> observation_space.sample(probability=np.array([0,0.3,0.7], dtype=np.float64))
         np.int64(1)
-        >>> observation_space = Discrete(3, start=-1, seed=42, dtype=np.int32) # specify dtype for samples
+        >>> observation_space = Discrete(3, dtype=np.int32) # specify dtype for samples
         >>> observation_space.sample()
         np.int32(1)
     """
@@ -50,9 +50,9 @@ class Discrete(Space[IntType]):
 
         Args:
             n (int): The number of elements of this space.
-            dtype: The space type, for example, ``int``, ``np.uint8``, ``np.int32``, or ``np.uint8``.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the ``Dict`` space.
             start (int): The smallest element of this space.
+            dtype: The space type, for example, ``int``, ``np.int64``, ``np.int32``, or ``np.uint8``.
         """
         assert np.issubdtype(
             type(n), np.integer
