@@ -125,8 +125,6 @@ def test_dtype(dtype, sample_dtype):
 
     sample = space.sample()
     sample_mask = space.sample(mask=np.array([0, 1, 0, 0, 0], dtype=np.int8))
-    print(f"{sample=}, {sample_mask=}")
-    print(f"{type(sample)=}, {type(sample_mask)=}")
     assert isinstance(sample, sample_dtype), type(sample)
     assert isinstance(sample_mask, sample_dtype), type(sample_mask)
     # test with probability
