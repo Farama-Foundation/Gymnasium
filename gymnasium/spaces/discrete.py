@@ -169,9 +169,13 @@ class Discrete(Space[IntType]):
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
+        info = [str(self.n)]
         if self.start != 0:
-            return f"Discrete({self.n}, start={self.start})"
-        return f"Discrete({self.n})"
+            info.append(f"start={self.start}")
+        if self.dtype != np.int64:
+            info.append(f"dtype={self.dtype}")
+
+        return f"Discrete({', '.join(info)})"
 
     def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
