@@ -33,7 +33,7 @@ class Discrete(Space[IntType]):
         >>> observation_space.sample(probability=np.array([0,0.3,0.7], dtype=np.float64))
         np.int64(1)
         >>> observation_space = Discrete(3, start=-1, seed=42, dtype=np.int32) # specify dtype for samples
-        >>> observation_space.sample(probability=np.array([0,0.2,0.8], dtype=np.float64))
+        >>> observation_space.sample()
         np.int32(1)
     """
 
