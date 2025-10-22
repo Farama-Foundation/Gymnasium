@@ -160,5 +160,5 @@ def test_contains(element, dtype):
     ],
 )
 def test_dtype_error(dtype):
-    with pytest.raises(ValueError, match="Invalid Discrete dtype"):
+    with pytest.raises(TypeError, match="Invalid Discrete dtype"):
         Discrete(4, dtype=dtype)
