@@ -206,5 +206,4 @@ class Discrete(Space[IntType]):
 
     def from_jsonable(self, sample_n: list[int]) -> list[IntType]:
         """Converts a list of json samples to a list of numpy integer scalars."""
-        dtype = np.dtype(self.dtype)
-        return [dtype.type(x) for x in sample_n]
+        return [self.dtype.type(x) for x in sample_n]
