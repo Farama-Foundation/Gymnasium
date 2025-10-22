@@ -40,9 +40,9 @@ class Discrete(Space[IntType]):
     def __init__(
         self,
         n: int | np.integer[Any],
-        dtype: str | type[np.integer[Any]] = np.int64,
         seed: int | np.random.Generator | None = None,
         start: int | np.integer[Any] = 0,
+        dtype: str | type[np.integer[Any]] = np.int64,
     ):
         r"""Constructor of :class:`Discrete` space.
 
