@@ -197,8 +197,8 @@ def _batch_differing_spaces_box(spaces: list[Box]):
 
 @batch_differing_spaces.register(Discrete)
 def _batch_differing_spaces_discrete(spaces: list[Discrete]):
-    
-    # select the "largest" to fit others. 
+
+    # select the "largest" to fit others.
     # Assumes all spaces dtype are of int dtype
     dtypes = [space.dtype for space in spaces]
     largest = max(dtypes, key=lambda dt: np.dtype(dt).itemsize)

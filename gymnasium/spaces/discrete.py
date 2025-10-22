@@ -64,7 +64,7 @@ class Discrete(Space[IntType]):
 
         # determine dtype
         if dtype is None:
-            raise TypeError(f"Invalid Discrete dtype, cannot be None.")
+            raise TypeError(f"Invalid Discrete dtype, cannot be {dtype}.")
         self.dtype = np.dtype(dtype)
 
         #  * check that dtype is an accepted dtype
