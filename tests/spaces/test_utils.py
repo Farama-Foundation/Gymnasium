@@ -35,6 +35,8 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     10,
     4,
     10,
+    5,
+    5,
     # Multi-binary
     8,
     6,

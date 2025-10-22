@@ -209,7 +209,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         return bool(
             isinstance(x, np.ndarray)
             and x.shape == self.shape
-            and x.dtype != object
+            and np.can_cast(x.dtype, self.dtype)
             and np.all(self.start <= x)
             and np.all(x - self.start < self.nvec)
         )
@@ -224,7 +224,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         self, sample_n: list[Sequence[int]]
     ) -> list[NDArray[np.integer[Any]]]:
         """Convert a JSONable data type to a batch of samples from this space."""
-        return [np.array(sample, dtype=np.int64) for sample in sample_n]
+        return [np.array(sample, dtype=self.dtype) for sample in sample_n]
 
     def __repr__(self):
         """Gives a string representation of this space."""

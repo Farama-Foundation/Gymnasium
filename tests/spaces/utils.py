@@ -34,6 +34,8 @@ TESTING_FUNDAMENTAL_SPACES = [
     MultiDiscrete([[2, 3], [3, 2]]),
     MultiDiscrete([2, 2], start=[10, 10]),
     MultiDiscrete([[2, 3], [3, 2]], start=[[10, 20], [30, 40]]),
+    MultiDiscrete([2, 3], dtype=np.int8),
+    MultiDiscrete([2, 3], dtype=np.uint16),
     MultiBinary(8),
     MultiBinary([2, 3]),
     Text(6),
