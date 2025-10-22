@@ -74,7 +74,8 @@ def test_episodic_trigger(autoreset_mode, episodic_trigger, n_envs=10):
         episode_trigger=episodic_trigger,
         video_aspect_ratio=(1, 1),
     )
-    envs.reset()
+    envs.reset(seed=123)
+    envs.action_space.seed(123)
     episode_count = 0
     for _ in range(199):
         action = envs.action_space.sample()
@@ -91,7 +92,6 @@ def test_episodic_trigger(autoreset_mode, episodic_trigger, n_envs=10):
     mp4_files = [file for file in os.listdir("videos") if file.endswith(".mp4")]
     shutil.rmtree("videos")
     assert envs.episode_trigger is not None
-    print(f"{mp4_files=}, {episode_count=}")
     assert len(mp4_files) == sum(
         envs.episode_trigger(i) for i in range(episode_count + 1)
     )
@@ -113,7 +113,8 @@ def test_step_trigger(autoreset_mode, n_envs=10):
         step_trigger=lambda x: x % 100 == 0,
         video_aspect_ratio=(1, 1),
     )
-    envs.reset()
+    envs.reset(seed=123)
+    envs.action_space.seed(123)
     for _ in range(199):
         action = envs.action_space.sample()
         _, _, terminations, truncations, _ = envs.step(action)
