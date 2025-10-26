@@ -34,7 +34,7 @@ class Discrete(Space[IntType]):
         np.int64(1)
         >>> observation_space = Discrete(3, seed=37, dtype=np.int32) # specify dtype for samples
         >>> observation_space.sample()
-        np.int32(1)
+        np.int32(0)
     """
 
     def __init__(
