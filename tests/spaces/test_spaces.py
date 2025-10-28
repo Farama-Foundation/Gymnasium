@@ -40,6 +40,7 @@ TESTING_SPACE_SAMPLE_MASK = [
     # Discrete
     np.array([1, 1, 0], dtype=np.int8),
     np.array([0, 0, 0], dtype=np.int8),
+    np.array([0, 0, 0, 1], dtype=np.int8),
     # Box
     None,
     None,

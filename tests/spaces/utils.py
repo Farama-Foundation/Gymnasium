@@ -18,6 +18,7 @@ from gymnasium.spaces import (
 TESTING_FUNDAMENTAL_SPACES = [
     Discrete(3),
     Discrete(3, start=-1),
+    Discrete(n=4, dtype=np.int32, start=1),
     Box(low=0.0, high=1.0),
     Box(low=0.0, high=np.inf, shape=(2, 2)),
     Box(low=np.array([-10.0, 0.0]), high=np.array([10.0, 10.0]), dtype=np.float64),

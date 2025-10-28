@@ -3,14 +3,17 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
-from typing import Any
+from typing import Any, TypeVar
 
 import numpy as np
 
 from gymnasium.spaces.space import MaskNDArray, Space
 
 
-class Discrete(Space[np.int64]):
+IntType = TypeVar("IntType", bound=np.integer)
+
+
+class Discrete(Space[IntType]):
     r"""A space consisting of finitely many elements.
 
     This class represents a finite subset of integers, more specifically a set of the form :math:`\{ a, a+1, \dots, a+n-1 \}`.
@@ -29,6 +32,9 @@ class Discrete(Space[np.int64]):
         np.int64(1)
         >>> observation_space.sample(probability=np.array([0,0.3,0.7], dtype=np.float64))
         np.int64(1)
+        >>> observation_space = Discrete(3, seed=37, dtype=np.int32) # specify dtype for samples
+        >>> observation_space.sample()
+        np.int32(0)
     """
 
     def __init__(
@@ -36,6 +42,7 @@ class Discrete(Space[np.int64]):
         n: int | np.integer[Any],
         seed: int | np.random.Generator | None = None,
         start: int | np.integer[Any] = 0,
+        dtype: str | type[np.integer[Any]] = np.int64,
     ):
         r"""Constructor of :class:`Discrete` space.
 
@@ -45,6 +52,7 @@ class Discrete(Space[np.int64]):
             n (int): The number of elements of this space.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the ``Dict`` space.
             start (int): The smallest element of this space.
+            dtype: The space type, for example, ``int``, ``np.int64``, ``np.int32``, or ``np.uint8``.
         """
         assert np.issubdtype(
             type(n), np.integer
@@ -54,9 +62,20 @@ class Discrete(Space[np.int64]):
             type(start), np.integer
         ), f"Expects `start` to be an integer, actual type: {type(start)}"
 
-        self.n = np.int64(n)
-        self.start = np.int64(start)
-        super().__init__((), np.int64, seed)
+        # determine dtype
+        if dtype is None:
+            raise TypeError(f"Invalid Discrete dtype, cannot be {dtype}.")
+        self.dtype = np.dtype(dtype)
+
+        #  * check that dtype is an accepted dtype
+        if not (np.issubdtype(self.dtype, np.integer)):
+            raise TypeError(
+                f"Invalid Discrete dtype ({self.dtype}), must be an integer dtype"
+            )
+
+        self.n = self.dtype.type(n)
+        self.start = self.dtype.type(start)
+        super().__init__((), self.dtype, seed)
 
     @property
     def is_np_flattenable(self):
@@ -65,7 +84,7 @@ class Discrete(Space[np.int64]):
 
     def sample(
         self, mask: MaskNDArray | None = None, probability: MaskNDArray | None = None
-    ) -> np.int64:
+    ) -> IntType:
         """Generates a single random sample from this space.
 
         A sample will be chosen uniformly at random with the mask if provided, or it will be chosen according to a specified probability distribution if the probability mask is provided.
@@ -103,8 +122,8 @@ class Discrete(Space[np.int64]):
             ), f"All values of the sample mask should be 0 or 1, actual values: {mask}"
 
             if np.any(valid_action_mask):
-                return self.start + self.np_random.choice(
-                    np.where(valid_action_mask)[0]
+                return self.start + self.dtype.type(
+                    self.np_random.choice(np.where(valid_action_mask)[0])
                 )
             else:
                 return self.start
@@ -127,29 +146,41 @@ class Discrete(Space[np.int64]):
                 np.sum(probability), 1
             ), f"The sum of the sample probability should be equal to 1, actual sum: {np.sum(probability)}"
 
-            return self.start + self.np_random.choice(np.arange(self.n), p=probability)
+            return self.start + self.np_random.choice(
+                np.arange(self.n, dtype=self.dtype), p=probability
+            )
         # uniform sampling
         else:
-            return self.start + self.np_random.integers(self.n)
+            return self.start + self.np_random.integers(self.n, dtype=self.dtype.type)
 
     def contains(self, x: Any) -> bool:
-        """Return boolean specifying if x is a valid member of this space."""
+        """Return boolean specifying if x is a valid member of this space.
+
+        Also checks if the given value, when provided as an int, can be cast to the space's dtype.
+        """
         if isinstance(x, int):
-            as_int64 = np.int64(x)
+            as_np = np.dtype(self.dtype).type(x)
+
         elif isinstance(x, (np.generic, np.ndarray)) and (
             np.issubdtype(x.dtype, np.integer) and x.shape == ()
         ):
-            as_int64 = np.int64(x)
+            as_np = x
         else:
             return False
 
-        return bool(self.start <= as_int64 < self.start + self.n)
+        value_is_in = bool(self.start <= as_np < self.start + self.n)
+
+        return value_is_in and np.can_cast(as_np.dtype, self.dtype)
 
     def __repr__(self) -> str:
         """Gives a string representation of this space."""
+        info = [str(self.n)]
         if self.start != 0:
-            return f"Discrete({self.n}, start={self.start})"
-        return f"Discrete({self.n})"
+            info.append(f"start={self.start}")
+        if self.dtype != np.int64:
+            info.append(f"dtype={self.dtype}")
+
+        return f"Discrete({', '.join(info)})"
 
     def __eq__(self, other: Any) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
@@ -157,6 +188,7 @@ class Discrete(Space[np.int64]):
             isinstance(other, Discrete)
             and self.n == other.n
             and self.start == other.start
+            and self.dtype == other.dtype
         )
 
     def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
@@ -177,10 +209,10 @@ class Discrete(Space[np.int64]):
 
         super().__setstate__(state)
 
-    def to_jsonable(self, sample_n: Sequence[np.int64]) -> list[int]:
+    def to_jsonable(self, sample_n: Sequence[IntType]) -> list[int]:
         """Converts a list of samples to a list of ints."""
         return [int(x) for x in sample_n]
 
-    def from_jsonable(self, sample_n: list[int]) -> list[np.int64]:
-        """Converts a list of json samples to a list of np.int64."""
-        return [np.int64(x) for x in sample_n]
+    def from_jsonable(self, sample_n: list[int]) -> list[IntType]:
+        """Converts a list of json samples to a list of numpy integer scalars."""
+        return [self.dtype.type(x) for x in sample_n]
