@@ -237,9 +237,9 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         nvec = self.nvec[index]
         start = self.start[index]
         if nvec.ndim == 0:
-            subspace = Discrete(nvec, start=start)
+            subspace = Discrete(nvec, start=start, dtype=self.dtype)
         else:
-            subspace = MultiDiscrete(nvec, self.dtype, start=start)
+            subspace = MultiDiscrete(nvec, start=start, dtype=self.dtype)
 
         # you don't need to deepcopy as np random generator call replaces the state not the data
         subspace.np_random.bit_generator.state = self.np_random.bit_generator.state
