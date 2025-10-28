@@ -28,6 +28,7 @@ from gymnasium.spaces import (
     Text,
     Tuple,
 )
+from gymnasium.spaces.discrete import IntType
 
 
 @singledispatch
@@ -165,7 +166,7 @@ def _flatten_box_multibinary(space: Box | MultiBinary, x: NDArray[Any]) -> NDArr
 
 
 @flatten.register(Discrete)
-def _flatten_discrete(space: Discrete, x: np.int64) -> NDArray[np.int64]:
+def _flatten_discrete(space: Discrete, x: IntType) -> NDArray[IntType]:
     onehot = np.zeros(space.n, dtype=space.dtype)
     onehot[x - space.start] = 1
     return onehot
@@ -304,14 +305,14 @@ def _unflatten_box_multibinary(
 
 
 @unflatten.register(Discrete)
-def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> np.int64:
+def _unflatten_discrete(space: Discrete, x: NDArray[IntType | np.float64]) -> IntType:
     nonzero = np.nonzero(x)
     if len(nonzero[0]) == 0:
         raise ValueError(
             f"{x} is not a valid one-hot encoded vector and can not be unflattened to space {space}. "
             "Not all valid samples in a flattened space can be unflattened."
         )
-    return space.start + nonzero[0][0]
+    return space.start + nonzero[0][0].astype(space.dtype)
 
 
 @unflatten.register(MultiDiscrete)
