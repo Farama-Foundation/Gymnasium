@@ -34,6 +34,46 @@ TESTING_SPACES_PERMUTATIONS = list(
     )
 )
 
+SAMPLE_MASK_RNG, _ = seeding.np_random(1)
+
+TESTING_SPACE_SAMPLE_MASK = [
+    # Discrete
+    np.array([1, 1, 0], dtype=np.int8),
+    np.array([0, 0, 0], dtype=np.int8),
+    np.array([0, 0, 0, 1], dtype=np.int8),
+    # Box
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    # Multi-discrete
+    (np.array([1, 1], dtype=np.int8), np.array([0, 0], dtype=np.int8)),
+    (
+        (np.array([1, 0], dtype=np.int8), np.array([0, 1, 1], dtype=np.int8)),
+        (np.array([1, 1, 0], dtype=np.int8), np.array([0, 1], dtype=np.int8)),
+    ),
+    (np.array([1, 1], dtype=np.int8), np.array([0, 0], dtype=np.int8)),
+    (
+        (np.array([1, 0], dtype=np.int8), np.array([0, 1, 1], dtype=np.int8)),
+        (np.array([1, 1, 0], dtype=np.int8), np.array([0, 1], dtype=np.int8)),
+    ),
+    (np.array([1, 1], dtype=np.int8), np.array([0, 0, 0], dtype=np.int8)),
+    (np.array([1, 1], dtype=np.int8), np.array([0, 0, 0], dtype=np.int8)),
+    # Multi-binary
+    np.array([0, 1, 0, 1, 0, 2, 1, 1], dtype=np.int8),
+    np.array([[0, 1, 2], [0, 2, 1]], dtype=np.int8),
+    # Text
+    (None, SAMPLE_MASK_RNG.integers(low=0, high=2, size=62, dtype=np.int8)),
+    (4, SAMPLE_MASK_RNG.integers(low=0, high=2, size=62, dtype=np.int8)),
+    (None, np.array([1, 1, 0, 1, 0, 0], dtype=np.int8)),
+]
+
+assert len(TESTING_FUNDAMENTAL_SPACES) == len(TESTING_SPACE_SAMPLE_MASK)
+
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
 def test_roundtripping(space: Space):
@@ -306,46 +346,11 @@ def binary_chi2_test(sample, low, high, bounded_below, bounded_above):
         assert variance < critical_value
 
 
-SAMPLE_MASK_RNG, _ = seeding.np_random(1)
-
-
 @pytest.mark.parametrize(
     "space,mask",
     itertools.zip_longest(
         TESTING_FUNDAMENTAL_SPACES,
-        [
-            # Discrete
-            np.array([1, 1, 0], dtype=np.int8),
-            np.array([0, 0, 0], dtype=np.int8),
-            np.array([0, 0, 0, 1], dtype=np.int8),
-            # Box
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            # Multi-discrete
-            (np.array([1, 1], dtype=np.int8), np.array([0, 0], dtype=np.int8)),
-            (
-                (np.array([1, 0], dtype=np.int8), np.array([0, 1, 1], dtype=np.int8)),
-                (np.array([1, 1, 0], dtype=np.int8), np.array([0, 1], dtype=np.int8)),
-            ),
-            (np.array([1, 1], dtype=np.int8), np.array([0, 0], dtype=np.int8)),
-            (
-                (np.array([1, 0], dtype=np.int8), np.array([0, 1, 1], dtype=np.int8)),
-                (np.array([1, 1, 0], dtype=np.int8), np.array([0, 1], dtype=np.int8)),
-            ),
-            # Multi-binary
-            np.array([0, 1, 0, 1, 0, 2, 1, 1], dtype=np.int8),
-            np.array([[0, 1, 2], [0, 2, 1]], dtype=np.int8),
-            # Text
-            (None, SAMPLE_MASK_RNG.integers(low=0, high=2, size=62, dtype=np.int8)),
-            (4, SAMPLE_MASK_RNG.integers(low=0, high=2, size=62, dtype=np.int8)),
-            (None, np.array([1, 1, 0, 1, 0, 0], dtype=np.int8)),
-        ],
+        TESTING_SPACE_SAMPLE_MASK,
     ),
     ids=TESTING_FUNDAMENTAL_SPACES_IDS,
 )
