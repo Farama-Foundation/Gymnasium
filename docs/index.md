@@ -40,6 +40,59 @@ for _ in range(1000):
         observation, info = env.reset()
 
 env.close()
+
+import numpy as np
+
+rows, cols = 5, 5
+gamma = 0.9
+
+A, A_prime = (0, 1), (4, 1)
+B, B_prime = (0, 3), (2, 3)
+
+actions = {
+    0: (-1, 0),  # north
+    1: (1, 0),   # south
+    2: (0, -1),  # west
+    3: (0, 1)    # east
+}
+
+def next_state_and_reward(state, action, reward_config):
+    i, j = state
+    if state == A: return A_prime, reward_config["A"]
+    if state == B: return B_prime, reward_config["B"]
+    di, dj = actions[action]
+    ni, nj = i + di, j + dj
+    if ni < 0 or ni >= rows or nj < 0 or nj >= cols:
+        return state, reward_config["off"]
+    return (ni, nj), reward_config["normal"]
+
+def random_policy(state):
+    return np.random.choice([0, 1, 2, 3])
+
+# Monte Carlo value estimation
+V = np.zeros((rows, cols))
+returns_count = np.zeros((rows, cols))
+
+for episode in range(500):
+    initial_state = (np.random.randint(rows), np.random.randint(cols))
+    history = []
+    state = initial_state
+    for _ in range(1000):
+        action = random_policy(state)
+        next_s, reward = next_state_and_reward(state, action, reward_config_1)
+        history.append((state, action, reward, next_s))
+        state = next_s
+    
+    # Backward pass for returns
+    G = 0
+    for t in reversed(range(len(history))):
+        state, action, reward, next_state = history[t]
+        G = reward + gamma * G  # THE KEY LINE!
+        i, j = state
+        V[i, j] += G
+        returns_count[i, j] += 1
+
+V = np.divide(V, returns_count, out=np.zeros_like(V), where=returns_count != 0)
 ```
 
 ```{toctree}
@@ -98,3 +151,4 @@ gymnasium_release_notes/index
 gym_release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
 ```
+
