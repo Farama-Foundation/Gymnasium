@@ -64,6 +64,11 @@ Please note that this is an incomplete list, and just includes libraries that th
 
 Gymnasium keeps strict versioning for reproducibility reasons. All environments end in a suffix like "-v0".  When changes are made to environments that might impact learning results, the number is increased by one to prevent potential confusion. These were inherited from Gym.
 
+## Contributing
+
+We welcome contributions from the community!
+Please see our [CONTRIBUTING.md](https://github.com/Farama-Foundation/Gymnasium/blob/main/CONTRIBUTING.md) for details on how to get started.
+
 ## Support Gymnasium's Development
 
 If you are financially able to do so and would like to support the development of Gymnasium, please join others in the community in [donating to us](https://github.com/sponsors/Farama-Foundation).
@@ -93,11 +98,3 @@ You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032
 <h4 style="margin-top:0;">Ship 4x faster with developer-first dictation that works in every app.</h4>
 
 <p style="margin-top:50;">If you'd like to sponsor Gymnasium or other Farama repositories and have your logo here, <a href="mailto:contact@farama.org">contact us</a>.</p>
-
-## Contributing
-
-We welcome contributions from the community!
-Please see our [CONTRIBUTING.md](https://github.com/Farama-Foundation/Gymnasium/blob/main/CONTRIBUTING.md) for details on how to get started.
-
-<!-- Minor doc formatting and consistency update.
-     Thanks to the Gymnasium team for their great open-source work! -->
