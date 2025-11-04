@@ -397,6 +397,7 @@
     <span class="n">Text</span><span class="p">,</span>
     <span class="n">Tuple</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces.discrete</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntType</span>
 
 
 <div class="viewcode-block" id="flatdim">
@@ -540,7 +541,7 @@
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">IntType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">IntType</span><span class="p">]:</span>
     <span class="n">onehot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
     <span class="n">onehot</span><span class="p">[</span><span class="n">x</span> <span class="o">-</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">onehot</span>
@@ -682,14 +683,14 @@
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">IntType</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IntType</span><span class="p">:</span>
     <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonzero</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2"> is not a valid one-hot encoded vector and can not be unflattened to space </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">. &quot;</span>
             <span class="s2">&quot;Not all valid samples in a flattened space can be unflattened.&quot;</span>
         <span class="p">)</span>
-    <span class="k">return</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">nonzero</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">nonzero</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
@@ -1166,7 +1167,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=e86ceb7b"></script>
+    <script src="../../../../_static/documentation_options.js?v=348dacf0"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
