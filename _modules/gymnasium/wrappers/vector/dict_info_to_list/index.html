@@ -488,18 +488,43 @@
             <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
                 <span class="k">continue</span>
 
+            <span class="n">binary_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="n">value_list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_info_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">env_num</span><span class="p">,</span> <span class="p">(</span><span class="n">env_info</span><span class="p">,</span> <span class="n">has_info</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-                    <span class="nb">zip</span><span class="p">(</span><span class="n">value_list_info</span><span class="p">,</span> <span class="n">vector_infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">])</span>
-                <span class="p">):</span>
-                    <span class="k">if</span> <span class="n">has_info</span><span class="p">:</span>
-                        <span class="n">list_info</span><span class="p">[</span><span class="n">env_num</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_info</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">value_list_info</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects </span><span class="si">{</span><span class="n">value_list_info</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">value_list_info</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="k">if</span> <span class="n">binary_key</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="p">(</span>
+                        <span class="nb">len</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
+                    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects </span><span class="si">{</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">]</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                    <span class="k">for</span> <span class="n">env_num</span><span class="p">,</span> <span class="p">(</span><span class="n">env_info</span><span class="p">,</span> <span class="n">has_info</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                        <span class="nb">zip</span><span class="p">(</span><span class="n">value_list_info</span><span class="p">,</span> <span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span>
+                    <span class="p">):</span>
+                        <span class="k">if</span> <span class="n">has_info</span><span class="p">:</span>
+                            <span class="n">list_info</span><span class="p">[</span><span class="n">env_num</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_info</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">env_num</span><span class="p">,</span> <span class="n">sub_value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value_list_info</span><span class="p">):</span>
+                        <span class="n">list_info</span><span class="p">[</span><span class="n">env_num</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_value</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">env_num</span><span class="p">,</span> <span class="n">has_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]):</span>
-                    <span class="k">if</span> <span class="n">has_info</span><span class="p">:</span>
-                        <span class="n">list_info</span><span class="p">[</span><span class="n">env_num</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">env_num</span><span class="p">]</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
+                <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="k">if</span> <span class="n">binary_key</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="p">(</span>
+                        <span class="nb">len</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
+                    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expects </span><span class="si">{</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">]</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                    <span class="k">for</span> <span class="n">env_num</span><span class="p">,</span> <span class="n">has_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">]):</span>
+                        <span class="k">if</span> <span class="n">has_info</span><span class="p">:</span>
+                            <span class="n">list_info</span><span class="p">[</span><span class="n">env_num</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="n">env_num</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">env_num</span><span class="p">,</span> <span class="n">sub_value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                        <span class="n">list_info</span><span class="p">[</span><span class="n">env_num</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_value</span>
 
         <span class="k">return</span> <span class="n">list_info</span></div>
 
@@ -620,7 +645,7 @@
         })()
       </script>
 
-    <script src="../../../../../_static/documentation_options.js?v=e86ceb7b"></script>
+    <script src="../../../../../_static/documentation_options.js?v=348dacf0"></script>
     <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=7660844c"></script>
