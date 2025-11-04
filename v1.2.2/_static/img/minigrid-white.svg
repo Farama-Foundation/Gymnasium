@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: CorelDRAW -->
+
+<svg
+   xml:space="preserve"
+   width="1000px"
+   height="1000px"
+   version="1.1"
+   style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+   viewBox="0 0 1000 1000"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   sodipodi:docname="minigrid-white.svg"
+   inkscape:export-filename="..\white100\minigrid-white100.png"
+   inkscape:export-xdpi="9.6000004"
+   inkscape:export-ydpi="9.6000004"
+   id="svg30"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+ <defs
+   id="defs4">
+  <style
+   type="text/css"
+   id="style2">
+   <![CDATA[
+    .str0 {stroke:black;stroke-width:20;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .str1 {stroke:black;stroke-width:20;stroke-linecap:square;stroke-miterlimit:22.9256}
+    .str2 {stroke:black;stroke-width:20;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .fil0 {fill:none;fill-rule:nonzero}
+   ]]>
+  </style>
+ </defs>
+ <g
+   id="Layer_x0020_1"
+   inkscape:label="Layer 1">
+  <metadata
+   id="CorelCorpID_0Corel-Layer" />
+  <sodipodi:namedview
+   id="namedview6381"
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1.0"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="0"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="mm"
+   showgrid="false"
+   inkscape:zoom="0.36388287"
+   inkscape:cx="265.19523"
+   inkscape:cy="568.86437"
+   inkscape:window-width="1538"
+   inkscape:window-height="877"
+   inkscape:window-x="1974"
+   inkscape:window-y="-8"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="layer3"
+   showguides="true">
+   
+   
+   
+   
+   <inkscape:grid
+   type="xygrid"
+   id="grid7671"
+   dotted="true" />
+   
+   
+   
+   
+   
+   
+   
+   
+  </sodipodi:namedview>
+  <g
+   id="layer3"
+   inkscape:groupmode="layer"
+   inkscape:label="Layer 2">
+   <g
+   id="minigrid"
+   transform="matrix(0.9911388,0,0,0.99114013,4.4306,4.429935)"
+   style="stroke:#ffffff">
+    <path
+   id="rect6928"
+   class="fil0 str0"
+   d="m 225.3,5.53 h 549.4 c 121.75,0 219.77,98.02 219.77,219.77 v 549.4 c 0,121.75 -98.02,219.77 -219.77,219.77 H 225.3 C 103.55,994.47 5.53,896.45 5.53,774.7 V 225.3 C 5.53,103.55 103.55,5.53 225.3,5.53 Z"
+   style="stroke:#ffffff" />
+    <line
+   id="path7689"
+   class="fil0 str1"
+   x1="16.52"
+   y1="305.69"
+   x2="983.47998"
+   y2="305.69"
+   sodipodi:nodetypes="cc"
+   style="stroke:#ffffff" />
+    <line
+   id="path7691"
+   class="fil0 str1"
+   x1="16.52"
+   y1="695.06"
+   x2="983.47998"
+   y2="695.06"
+   sodipodi:nodetypes="cc"
+   style="stroke:#ffffff" />
+    <line
+   id="path7693"
+   class="fil0 str1"
+   x1="309.73001"
+   y1="16.52"
+   x2="309.73001"
+   y2="983.47998"
+   sodipodi:nodetypes="cc"
+   style="stroke:#ffffff" />
+    <line
+   id="path7695"
+   class="fil0 str1"
+   x1="694.65997"
+   y1="983.47998"
+   x2="694.65997"
+   y2="16.52"
+   sodipodi:nodetypes="cc"
+   style="stroke:#ffffff" />
+    <polygon
+   id="path12281"
+   class="fil0 str2"
+   points="373.14,609.86 500,390.14 626.86,609.86 "
+   inkscape:transform-center-x="1.2916244e-06"
+   inkscape:transform-center-y="-10.181182"
+   style="stroke:#ffffff" />
+   </g>
+  </g>
+ </g>
+</svg>
