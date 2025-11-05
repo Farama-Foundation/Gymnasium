@@ -1,8 +1,11 @@
 """Test suite for TorchToJax wrapper."""
 
+import pickle
 from typing import NamedTuple
 
 import pytest
+
+import gymnasium
 
 
 jax = pytest.importorskip("jax")
@@ -94,6 +97,7 @@ class ExampleNamedTuple(NamedTuple):
                 b=torch.tensor([1.0, 2.0]),
             ),
         ),
+        (None, None),
     ],
 )
 def test_roundtripping(value, expected_value):
@@ -143,3 +147,13 @@ def test_jax_to_torch_wrapper():
     assert isinstance(reward, float)
     assert isinstance(terminated, bool) and isinstance(truncated, bool)
     assert isinstance(info, dict) and isinstance(info["data"], torch.Tensor)
+
+    # Check that the wrapped environment can render. This implicitly returns None and requires  a
+    # None -> None conversion
+    wrapped_env.render()
+
+    # Test that the wrapped environment can be pickled
+    env = gymnasium.make("CartPole-v1", disable_env_checker=True)
+    wrapped_env = JaxToTorch(env)
+    pkl = pickle.dumps(wrapped_env)
+    pickle.loads(pkl)

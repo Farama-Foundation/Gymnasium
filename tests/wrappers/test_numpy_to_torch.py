@@ -1,9 +1,12 @@
 """Test suite for NumPyToTorch wrapper."""
 
+import pickle
 from typing import NamedTuple
 
 import numpy as np
 import pytest
+
+import gymnasium
 
 
 torch = pytest.importorskip("torch")
@@ -72,6 +75,7 @@ class ExampleNamedTuple(NamedTuple):
                 b=np.array([1.0, 2.0], dtype=np.float32),
             ),
         ),
+        (None, None),
     ],
 )
 def test_roundtripping(value, expected_value):
@@ -123,3 +127,13 @@ def test_numpy_to_torch():
     assert isinstance(reward, float)
     assert isinstance(terminated, bool) and isinstance(truncated, bool)
     assert isinstance(info, dict) and isinstance(info["data"], torch.Tensor)
+
+    # Check that the wrapped environment can render. This implicitly returns None and requires a
+    # None -> None conversion
+    torch_env.render()
+
+    # Test that the wrapped environment can be pickled
+    env = gymnasium.make("CartPole-v1", disable_env_checker=True)
+    wrapped_env = NumpyToTorch(env)
+    pkl = pickle.dumps(wrapped_env)
+    pickle.loads(pkl)

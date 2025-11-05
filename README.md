@@ -2,6 +2,7 @@
 [![PyPI](https://badge.fury.io/py/gymnasium.svg)](https://badge.fury.io/py/gymnasium)
 [![arXiv](https://img.shields.io/badge/arXiv-2407.17032-b31b1b.svg)](https://arxiv.org/abs/2407.17032)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
+[![License](https://img.shields.io/github/license/Farama-Foundation/Gymnasium)](https://github.com/Farama-Foundation/Gymnasium/blob/main/LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 <p align="center">
@@ -31,7 +32,7 @@ To install the base Gymnasium library, use `pip install gymnasium`
 
 This does not include dependencies for all families of environments (there's a massive number, and some can be problematic to install on certain systems). You can install these dependencies for one family like `pip install "gymnasium[atari]"` or use `pip install "gymnasium[all]"` to install all dependencies.
 
-We support and test for Python 3.8, 3.9, 3.10, 3.11 and 3.12 on Linux and macOS. We will accept PRs related to Windows, but do not officially support it.
+We support and test for Python 3.10, 3.11, 3.12 and 3.13 on Linux and macOS. We will accept PRs related to Windows, but do not officially support it.
 
 ## API
 
@@ -63,6 +64,11 @@ Please note that this is an incomplete list, and just includes libraries that th
 
 Gymnasium keeps strict versioning for reproducibility reasons. All environments end in a suffix like "-v0".  When changes are made to environments that might impact learning results, the number is increased by one to prevent potential confusion. These were inherited from Gym.
 
+## Contributing
+
+We welcome contributions from the community!
+Please see our [CONTRIBUTING.md](https://github.com/Farama-Foundation/Gymnasium/blob/main/CONTRIBUTING.md) for details on how to get started.
+
 ## Support Gymnasium's Development
 
 If you are financially able to do so and would like to support the development of Gymnasium, please join others in the community in [donating to us](https://github.com/sponsors/Farama-Foundation).
@@ -79,3 +85,16 @@ You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032
   year={2024}
 }
 ```
+
+## Repository Sponsors
+
+<h3 style="margin-bottom:10;margin-top:0"><a href="https://ref.wisprflow.ai/UnmiceG">Wispr Flow</a></h3>
+
+<a href="https://ref.wisprflow.ai/UnmiceG">
+  <img src="assets/wispr-flow.svg" alt="Wispr Flow" width="100">
+</a>
+
+<h3 style="margin-bottom:10;margin-top:0">Dictation that understands code</h3>
+<h4 style="margin-top:0;">Ship 4x faster with developer-first dictation that works in every app.</h4>
+
+<p style="margin-top:50;">If you'd like to sponsor Gymnasium or other Farama repositories and have your logo here, <a href="mailto:contact@farama.org">contact us</a>.</p>

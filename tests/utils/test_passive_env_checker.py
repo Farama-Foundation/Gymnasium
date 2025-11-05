@@ -1,6 +1,6 @@
 import re
 import warnings
-from typing import Callable, Dict, Union
+from collections.abc import Callable
 
 import numpy as np
 import pytest
@@ -34,17 +34,25 @@ def _modify_space(space: spaces.Space, attribute: str, value):
         # ===== Check box observation space ====
         [
             UserWarning,
-            spaces.Box(np.zeros(5), np.zeros(5)),
+            spaces.Box(np.zeros(5, np.float32), np.zeros(5, np.float32)),
             "A Box observation space maximum and minimum values are equal.",
         ],
         [
             AssertionError,
-            _modify_space(spaces.Box(np.zeros(2), np.ones(2)), "low", np.zeros(3)),
+            _modify_space(
+                spaces.Box(np.zeros(2, np.float32), np.ones(2, np.float32)),
+                "low",
+                np.zeros(3, np.float32),
+            ),
             "The Box observation space shape and low shape have different shapes, low shape: (3,), box shape: (2,)",
         ],
         [
             AssertionError,
-            _modify_space(spaces.Box(np.zeros(2), np.ones(2)), "high", np.ones(3)),
+            _modify_space(
+                spaces.Box(np.zeros(2, np.float32), np.ones(2, np.float32)),
+                "high",
+                np.ones(3, np.float32),
+            ),
             "The Box observation space shape and high shape have have different shapes, high shape: (3,), box shape: (2,)",
         ],
         # ==== Other observation spaces (Discrete, MultiDiscrete, MultiBinary, Tuple, Dict)
@@ -105,17 +113,25 @@ def test_check_observation_space(test, space, message: str):
         # ===== Check box observation space ====
         [
             UserWarning,
-            spaces.Box(np.zeros(5), np.zeros(5)),
+            spaces.Box(np.zeros(5, np.float32), np.zeros(5, np.float32)),
             "A Box action space maximum and minimum values are equal.",
         ],
         [
             AssertionError,
-            _modify_space(spaces.Box(np.zeros(2), np.ones(2)), "low", np.zeros(3)),
+            _modify_space(
+                spaces.Box(np.zeros(2, np.float32), np.ones(2, np.float32)),
+                "low",
+                np.zeros(3, np.float32),
+            ),
             "The Box action space shape and low shape have have different shapes, low shape: (3,), box shape: (2,)",
         ],
         [
             AssertionError,
-            _modify_space(spaces.Box(np.zeros(2), np.ones(2)), "high", np.ones(3)),
+            _modify_space(
+                spaces.Box(np.zeros(2, np.float32), np.ones(2, np.float32)),
+                "high",
+                np.ones(3, np.float32),
+            ),
             "The Box action space shape and high shape have different shapes, high shape: (3,), box shape: (2,)",
         ],
         # ==== Other observation spaces (Discrete, MultiDiscrete, MultiBinary, Tuple, Dict)
@@ -143,7 +159,7 @@ def test_check_observation_space(test, space, message: str):
     ],
 )
 def test_check_action_space(
-    test: Union[UserWarning, type], space: spaces.Space, message: str
+    test: UserWarning | type, space: spaces.Space, message: str
 ):
     """Tests the check action space function."""
     if test is UserWarning:
@@ -267,7 +283,7 @@ def _make_reset_results(results):
         ],
     ],
 )
-def test_passive_env_reset_checker(test, func: Callable, message: str, kwargs: Dict):
+def test_passive_env_reset_checker(test, func: Callable, message: str, kwargs: dict):
     """Tests the passive env reset check"""
     if test is UserWarning:
         with pytest.warns(
@@ -352,14 +368,19 @@ def _modified_step(
     ],
 )
 def test_passive_env_step_checker(
-    test: Union[UserWarning, type], func: Callable, message: str
+    test: UserWarning | type, func: Callable, message: str
 ):
     """Tests the passive env step checker."""
     if test is UserWarning:
         with pytest.warns(
             UserWarning, match=f"^\\x1b\\[33mWARN: {re.escape(message)}\\x1b\\[0m$"
         ):
-            env_step_passive_checker(GenericTestEnv(step_func=func), 0)
+            with warnings.catch_warnings():
+                warnings.filterwarnings(
+                    "ignore",
+                    message="^\\x1b\\[33mWARN: Core environment is written in old step API *",
+                )
+                env_step_passive_checker(GenericTestEnv(step_func=func), 0)
     else:
         with warnings.catch_warnings(record=True) as caught_warnings:
             with pytest.raises(test, match=f"^{re.escape(message)}$"):
@@ -377,7 +398,7 @@ def test_passive_env_step_checker(
         ],
         [
             UserWarning,
-            GenericTestEnv(metadata={"render_modes": "Testing mode"}),
+            GenericTestEnv(metadata={"render_modes": "Testing mode", "render_fps": 1}),
             "Expects the render_modes to be a sequence (i.e. list, tuple), actual type: <class 'str'>",
         ],
         [

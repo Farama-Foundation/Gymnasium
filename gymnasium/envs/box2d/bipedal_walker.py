@@ -1,7 +1,7 @@
 __credits__ = ["Andrea PIERRÉ"]
 
 import math
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -176,17 +176,17 @@ class BipedalWalker(gym.Env, EzPickle):
 
     def __init__(
         self,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         hardcore: bool = False,
         fall_down_penalty: bool = True,
     ):
-        EzPickle.__init__(self, render_mode, hardcore)
+        EzPickle.__init__(self, render_mode, hardcore, fall_down_penalty)
         self.isopen = True
         self.fall_down_penaly = fall_down_penalty
 
         self.world = Box2D.b2World()
-        self.terrain: List[Box2D.b2Body] = []
-        self.hull: Optional[Box2D.b2Body] = None
+        self.terrain: list[Box2D.b2Body] = []
+        self.hull: Box2D.b2Body | None = None
 
         self.prev_shaping = None
 
@@ -270,7 +270,7 @@ class BipedalWalker(gym.Env, EzPickle):
         # state += [l.fraction for l in self.lidar]
 
         self.render_mode = render_mode
-        self.screen: Optional[pygame.Surface] = None
+        self.screen: pygame.Surface | None = None
         self.clock = None
         self._terrain_metadata: dict = {}
 
@@ -542,7 +542,12 @@ class BipedalWalker(gym.Env, EzPickle):
             x2 = max(p[0] for p in poly)
             self.cloud_poly.append((poly, x1, x2))
 
-    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    def reset(
+        self,
+        *,
+        seed: int | None = None,
+        options: dict | None = None,
+    ):
         super().reset(seed=seed)
         self._destroy()
         self.world.contactListener_bug_workaround = ContactDetector(self)
@@ -567,8 +572,8 @@ class BipedalWalker(gym.Env, EzPickle):
             (self.np_random.uniform(-INITIAL_RANDOM, INITIAL_RANDOM), 0), True
         )
 
-        self.legs: List[Box2D.b2Body] = []
-        self.joints: List[Box2D.b2RevoluteJoint] = []
+        self.legs: list[Box2D.b2Body] = []
+        self.joints: list[Box2D.b2RevoluteJoint] = []
         for i in [-1, +1]:
             leg = self.world.CreateDynamicBody(
                 position=(init_x, init_y - LEG_H / 2 - LEG_DOWN),

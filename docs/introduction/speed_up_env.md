@@ -27,6 +27,6 @@ For code written in PyTorch and Jax, they provide the ability to `jit` (just in 
 
 ## Algorithmic heuristics
 
-Academic researchers are consistently explore new optimizations to improve agent performance and reduce the number of samples required to train an agent.
+Academic researchers are consistently exploring new optimizations to improve agent performance and reduce the number of samples required to train an agent.
 In particular, sample efficient reinforcement learning is a specialist sub-field of reinforcement learning that explores optimizations for training algorithms and environment heuristics that reduce the number of agent observation need for an agent to maximise performance.
 As the field is consistently improving, we refer readers to find to survey papers and the latest research to know what the most efficient algorithmic improves that exist currently.

@@ -1,7 +1,7 @@
 __credits__ = ["Andrea PIERRÉ"]
 
 import math
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -213,7 +213,7 @@ class LunarLander(gym.Env, EzPickle):
 
     def __init__(
         self,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         continuous: bool = False,
         gravity: float = -10.0,
         enable_wind: bool = False,
@@ -254,7 +254,7 @@ class LunarLander(gym.Env, EzPickle):
         self.isopen = True
         self.world = Box2D.b2World(gravity=(0, gravity))
         self.moon = None
-        self.lander: Optional[Box2D.b2Body] = None
+        self.lander: Box2D.b2Body | None = None
         self.particles = []
 
         self.prev_reward = None
@@ -323,8 +323,8 @@ class LunarLander(gym.Env, EzPickle):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
         self._destroy()

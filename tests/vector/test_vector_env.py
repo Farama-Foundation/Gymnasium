@@ -317,3 +317,49 @@ def test_partial_reset_failure(vectoriser):
         ),
     ):
         envs.reset(options={"reset_mask": np.array([1.0, 1.0, 0.0])})
+
+
+@pytest.mark.parametrize(
+    "vectoriser",
+    [
+        SyncVectorEnv,
+        AsyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=False),
+    ],
+    ids=["Sync", "Async(shared_memory=True)", "Async(shared_memory=False)"],
+)
+def test_action_count_compatibility(vectoriser):
+    """Test that the number of actions is compatible with the number of environments."""
+    num_envs = 4
+    envs = vectoriser(
+        [lambda: gym.make("CartPole-v1") for _ in range(num_envs)],
+        autoreset_mode=AutoresetMode.DISABLED,
+    )
+
+    # Reset the environment
+    envs.reset()
+
+    # Test correct number of actions (should work)
+    correct_actions = envs.action_space.sample()
+    assert len(correct_actions) == num_envs
+
+    # Test with actions that match the number of environments
+    obs, rewards, terminations, truncations, infos = envs.step(correct_actions)
+    assert len(obs) == num_envs
+    assert len(rewards) == num_envs
+    assert len(terminations) == num_envs
+    assert len(truncations) == num_envs
+
+    # Test with too few actions (should raise error)
+    with pytest.raises(ValueError):
+        envs.step(correct_actions[: num_envs - 1])
+
+    # Test with too many actions (should raise error)
+    with pytest.raises(ValueError):
+        envs.step(np.concatenate([correct_actions, correct_actions[:1]]))
+
+    # Test with scalar action (should raise error for vector env)
+    with pytest.raises(TypeError):
+        envs.step(0)
+
+    envs.close()

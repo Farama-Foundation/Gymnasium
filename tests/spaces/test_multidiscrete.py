@@ -59,6 +59,30 @@ def test_multidiscrete_start_as_tuple():
     assert space[:, :] == space and space[:, :] is not space
 
 
+def test_multidiscrete_dtype_as_tuple():
+    # 1D multi-discrete
+    space = MultiDiscrete([3, 4, 5], dtype=np.int8)
+
+    assert space.shape == (3,)
+    assert space[0] == Discrete(3, dtype=np.int8)
+    assert space[0:1] == MultiDiscrete([3], dtype=np.int8)
+    assert space[0:2] == MultiDiscrete([3, 4], dtype=np.int8)
+    assert space[:] == space and space[:] is not space
+
+    # 2D multi-discrete
+    space = MultiDiscrete([[3, 4, 5], [6, 7, 8]], dtype=np.uint32)
+
+    assert space.shape == (2, 3)
+    assert space[0, 1] == Discrete(4, dtype=np.uint32)
+    assert space[0] == MultiDiscrete([3, 4, 5], dtype=np.uint32)
+    assert space[0:1] == MultiDiscrete([[3, 4, 5]], dtype=np.uint32)
+    assert space[0:2, :] == MultiDiscrete([[3, 4, 5], [6, 7, 8]], dtype=np.uint32)
+    assert space[:, 0:1] == MultiDiscrete([[3], [6]], dtype=np.uint32)
+    assert space[0:2, 0:2] == MultiDiscrete([[3, 4], [6, 7]], dtype=np.uint32)
+    assert space[:] == space and space[:] is not space
+    assert space[:, :] == space and space[:, :] is not space
+
+
 def test_multidiscrete_subspace_reproducibility():
     # 1D multi-discrete
     space = MultiDiscrete([100, 200, 300])
@@ -196,3 +220,61 @@ def test_space_legacy_pickling():
     new_legacy_space.__setstate__(legacy_state)
     assert new_legacy_space == legacy_space
     assert np.all(new_legacy_space.start == np.array([0, 0, 0]))
+
+
+def test_multidiscrete_sample_edge_cases():
+    # Test edge case where one dimension has size 1
+    space = MultiDiscrete([5, 1, 3])
+    samples = [space.sample() for _ in range(1000)]
+    samples = np.array(samples)
+
+    # The second dimension should always be 0 (only one valid value)
+    assert np.all(samples[:, 1] == 0)
+
+
+def test_multidiscrete_sample():
+    # Test sampling without a mask
+    space = MultiDiscrete([5, 2, 3])
+    samples = [space.sample() for _ in range(1000)]
+    samples = np.array(samples)
+
+    # Check that the samples fall within the bounds
+    assert np.all(samples[:, 0] < 5)
+    assert np.all(samples[:, 1] < 2)
+    assert np.all(samples[:, 2] < 3)
+
+
+def test_multidiscrete_sample_with_mask():
+    # Test sampling with a mask
+    space = MultiDiscrete([2, 3, 4])
+    mask = (
+        np.array([1, 0], dtype=np.int8),
+        np.array([1, 1, 0], dtype=np.int8),
+        np.array([1, 0, 1, 0], dtype=np.int8),
+    )
+    samples = [space.sample(mask=mask) for _ in range(1000)]
+    assert all(sample in space for sample in samples)
+    samples = np.array(samples)
+
+    # Check that the samples respect the mask
+    for i, dim in enumerate(space.nvec):
+        for j in range(dim):
+            if mask[i][j] == 0:
+                assert np.all(samples[:, i] != j)
+
+
+def test_multidiscrete_sample_probabilities():
+    # Test sampling with probabilities
+    space = MultiDiscrete([3, 3])
+    probabilities = (
+        np.array([0.1, 0.7, 0.2], dtype=np.float64),
+        np.array([0.3, 0.3, 0.4], dtype=np.float64),
+    )
+    samples = [space.sample(probability=probabilities) for _ in range(10000)]
+    assert all(sample in space for sample in samples)
+    samples = np.array(samples)
+
+    # Check empirical probabilities
+    for i in range(2):
+        counts = np.bincount(samples[:, i], minlength=3) / len(samples)
+        np.testing.assert_allclose(counts, probabilities[i], atol=0.05)

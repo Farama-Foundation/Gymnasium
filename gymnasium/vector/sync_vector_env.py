@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterator, Sequence
 from copy import deepcopy
-from typing import Any, Callable, Iterator, Sequence
+from typing import Any
 
 import numpy as np
 
@@ -75,7 +76,7 @@ class SyncVectorEnv(VectorEnv):
             observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
                 'different' defines that there can be multiple observation spaces with the same length but different high/low values batched together. Passing a ``Space`` object
                 allows the user to set some custom observation space mode not covered by 'same' or 'different.'
-            autoreset_mode: The Autoreset Mode used, see todo for more details.
+            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.
 
         Raises:
             RuntimeError: If the observation space of some sub-environment does not match observation_space
@@ -164,7 +165,7 @@ class SyncVectorEnv(VectorEnv):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | list[int | None] | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Resets each of the sub-environments and concatenate the results together.
@@ -246,7 +247,7 @@ class SyncVectorEnv(VectorEnv):
         actions = iterate(self.action_space, actions)
 
         infos = {}
-        for i, action in enumerate(actions):
+        for i, (action, _) in enumerate(zip(actions, self.envs, strict=True)):
             if self.autoreset_mode == AutoresetMode.NEXT_STEP:
                 if self._autoreset_envs[i]:
                     self._env_obs[i], env_info = self.envs[i].reset()

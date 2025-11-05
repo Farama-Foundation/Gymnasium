@@ -33,9 +33,9 @@ __all__ = [
 class AutoresetMode(Enum):
     """Enum representing the different autoreset modes, next step, same step and disabled."""
 
-    NEXT_STEP: str = "NextStep"
-    SAME_STEP: str = "SameStep"
-    DISABLED: str = "Disabled"
+    NEXT_STEP = "NextStep"
+    SAME_STEP = "SameStep"
+    DISABLED = "Disabled"
 
 
 class VectorEnv(Generic[ObsType, ActType, ArrayType]):
@@ -53,6 +53,13 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     For creating environments, :func:`make_vec` is a vector environment equivalent to :func:`make` for easily creating
     vector environments that contains several unique arguments for modifying environment qualities, number of environment,
     vectorizer type, vectorizer arguments.
+
+    To avoid having to wait for all sub-environments to terminated before resetting, implementations can autoreset
+    sub-environments on episode end (`terminated or truncated is True`). This is crucial for correct implementing training
+    algorithms with vector environments. By default, Gymnasium's implementation uses `next-step` autoreset, with
+    :class:`AutoresetMode` enum as the options. The mode used by vector environment should be available in `metadata["autoreset_mode"]`.
+    Warning, some vector implementations or training algorithms will only support particular autoreset modes.
+    For more information, read https://farama.org/Vector-Autoreset-Mode.
 
     Note:
         The info parameter of :meth:`reset` and :meth:`step` was originally implemented before v0.25 as a list
@@ -101,12 +108,6 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         >>> infos
         {}
         >>> envs.close()
-
-    To avoid having to wait for all sub-environments to terminated before resetting, implementations will autoreset
-    sub-environments on episode end (`terminated or truncated is True`). As a result, when adding observations
-    to a replay buffer, this requires knowing when an observation (and info) for each sub-environment are the first
-    observation from an autoreset. We recommend using an additional variable to store this information such as
-    ``has_autoreset = np.logical_or(terminated, truncated)``.
 
     The Vector Environments have the additional attributes for users to understand the implementation
 

@@ -2,14 +2,14 @@
 
 import copy
 import re
-from typing import Iterable
+from collections.abc import Iterable
 
 import numpy as np
 import pytest
 
 from gymnasium import Space
 from gymnasium.error import CustomSpaceError
-from gymnasium.spaces import Box, Tuple
+from gymnasium.spaces import Box, Discrete, Tuple
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import (
     batch_differing_spaces,
@@ -221,3 +221,22 @@ def test_batch_differing_spaces_deterministic(space: Space, n: int, base_seed: i
         iterate(space_b_batched, space_b_batched_sample),
     ):
         assert data_equivalence(a_sample, b_sample)
+
+
+@pytest.mark.parametrize(
+    "spaces,expected_dtype",
+    [
+        ([Discrete(2), Discrete(3)], np.int64),
+        ([Discrete(2, dtype=np.int16), Discrete(3, dtype=np.int32)], np.int32),
+        (
+            [Discrete(2, dtype=np.int32), Discrete(3), Discrete(1, dtype=np.int8)],
+            np.int64,
+        ),
+        ([Discrete(1, dtype=np.int8), Discrete(5, dtype=np.int16)], np.int16),
+    ],
+)
+def test_batch_differing_discrete_spaces_dtype(spaces, expected_dtype):
+
+    multi_discrete = batch_differing_spaces(spaces)
+
+    assert multi_discrete.dtype == expected_dtype

@@ -49,18 +49,18 @@ class DictInfoToList(VectorWrapper):
     Another example for vector environments:
         >>> import numpy as np
         >>> import gymnasium as gym
-        >>> envs = gym.make_vec("HalfCheetah-v4", num_envs=2)
+        >>> envs = gym.make_vec("HalfCheetah-v5", num_envs=2)
         >>> _ = envs.reset(seed=123)
         >>> _ = envs.action_space.seed(123)
         >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
         >>> infos
-        {'x_position': array([0.03332211, 0.10172355]), '_x_position': array([ True,  True]), 'x_velocity': array([-0.06296527,  0.89345848]), '_x_velocity': array([ True,  True]), 'reward_run': array([-0.06296527,  0.89345848]), '_reward_run': array([ True,  True]), 'reward_ctrl': array([-0.24503504, -0.21944423], dtype=float32), '_reward_ctrl': array([ True,  True])}
+        {'x_position': array([0.03332211, 0.10172355]), '_x_position': array([ True,  True]), 'x_velocity': array([-0.06296527,  0.89345848]), '_x_velocity': array([ True,  True]), 'reward_forward': array([-0.06296527,  0.89345848]), '_reward_forward': array([ True,  True]), 'reward_ctrl': array([-0.24503504, -0.21944423], dtype=float32), '_reward_ctrl': array([ True,  True])}
         >>> envs = DictInfoToList(envs)
         >>> _ = envs.reset(seed=123)
         >>> _ = envs.action_space.seed(123)
         >>> _, _, _, _, infos = envs.step(envs.action_space.sample())
-        >>> infos
-        [{'x_position': np.float64(0.0333221090036294), 'x_velocity': np.float64(-0.06296527291998574), 'reward_run': np.float64(-0.06296527291998574), 'reward_ctrl': np.float32(-0.24503504)}, {'x_position': np.float64(0.10172354684460168), 'x_velocity': np.float64(0.8934584807363618), 'reward_run': np.float64(0.8934584807363618), 'reward_ctrl': np.float32(-0.21944423)}]
+        >>> infos  # doctest: +ELLIPSIS
+        [{'x_position': np.float64(0.0333221...), 'x_velocity': np.float64(-0.0629652...), 'reward_forward': np.float64(-0.0629652...), 'reward_ctrl': np.float32(-0.2450350...)}, {'x_position': np.float64(0.1017235...), 'x_velocity': np.float64(0.8934584...), 'reward_forward': np.float64(0.8934584...), 'reward_ctrl': np.float32(-0.2194442...)}]
 
     Change logs:
      * v0.24.0 - Initially added as ``VectorListInfo``
@@ -117,17 +117,42 @@ class DictInfoToList(VectorWrapper):
             if key.startswith("_"):
                 continue
 
+            binary_key = f"_{key}"
             if isinstance(value, dict):
                 value_list_info = self._convert_info_to_list(value)
-                for env_num, (env_info, has_info) in enumerate(
-                    zip(value_list_info, vector_infos[f"_{key}"])
-                ):
-                    if has_info:
-                        list_info[env_num][key] = env_info
+                assert (
+                    len(value_list_info) == self.num_envs
+                ), f"Expects {value_list_info} to have length equal to the num-envs ({self.num_envs}), actual length is {len(value_list_info)}"
+
+                if binary_key in vector_infos:
+                    assert (
+                        len(vector_infos[binary_key]) == self.num_envs
+                    ), f"Expects {vector_infos[binary_key]} to have length equal to the num-envs ({self.num_envs}), actual length is {len(vector_infos[binary_key])}"
+
+                    for env_num, (env_info, has_info) in enumerate(
+                        zip(value_list_info, vector_infos[binary_key])
+                    ):
+                        if has_info:
+                            list_info[env_num][key] = env_info
+                else:
+                    for env_num, sub_value in enumerate(value_list_info):
+                        list_info[env_num][key] = sub_value
             else:
                 assert isinstance(value, np.ndarray)
-                for env_num, has_info in enumerate(vector_infos[f"_{key}"]):
-                    if has_info:
-                        list_info[env_num][key] = value[env_num]
+                assert (
+                    len(value) == self.num_envs
+                ), f"Expects {value} to have length equal to the num-envs ({self.num_envs}), actual length is {len(value)}"
+
+                if binary_key in vector_infos:
+                    assert (
+                        len(vector_infos[binary_key]) == self.num_envs
+                    ), f"Expects {vector_infos[binary_key]} to have length equal to the num-envs ({self.num_envs}), actual length is {len(vector_infos[binary_key])}"
+
+                    for env_num, has_info in enumerate(vector_infos[binary_key]):
+                        if has_info:
+                            list_info[env_num][key] = value[env_num]
+                else:
+                    for env_num, sub_value in enumerate(value):
+                        list_info[env_num][key] = sub_value
 
         return list_info

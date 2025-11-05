@@ -273,9 +273,12 @@ class Env(Generic[ObsType, ActType]):
         """Gets the attribute `name` from the environment."""
         return getattr(self, name)
 
-    def set_wrapper_attr(self, name: str, value: Any):
-        """Sets the attribute `name` on the environment with `value`."""
-        setattr(self, name, value)
+    def set_wrapper_attr(self, name: str, value: Any, *, force: bool = True) -> bool:
+        """Sets the attribute `name` on the environment with `value`, see `Wrapper.set_wrapper_attr` for more info."""
+        if force or hasattr(self, name):
+            setattr(self, name, value)
+            return True
+        return False
 
 
 WrapperObsType = TypeVar("WrapperObsType")
@@ -425,30 +428,30 @@ class Wrapper(
                     f"wrapper {self.class_name()} has no attribute {name!r}"
                 ) from e
 
-    def set_wrapper_attr(self, name: str, value: Any):
+    def set_wrapper_attr(self, name: str, value: Any, *, force: bool = True) -> bool:
         """Sets an attribute on this wrapper or lower environment if `name` is already defined.
 
         Args:
             name: The variable name
             value: The new variable value
+            force: Whether to create the attribute on this wrapper if it does not exists on the
+               lower environment instead of raising an exception
+
+        Returns:
+            If the variable has been set in this or a lower wrapper.
         """
-        sub_env = self
-
-        # loop through all the wrappers, checking if it has the variable name then setting it
-        #   otherwise stripping the wrapper to check the next.
-        #   end when the core env is reached
-        while isinstance(sub_env, Wrapper):
-            if hasattr(sub_env, name):
-                setattr(sub_env, name, value)
-                return
-
-            sub_env = sub_env.env
-
-        # check if the base environment has the wrapper, otherwise, we set it on the top (this) wrapper
-        if hasattr(sub_env, name):
-            setattr(sub_env, name, value)
-        else:
+        if hasattr(self, name):
             setattr(self, name, value)
+            return True
+        else:
+            already_set = self.env.set_wrapper_attr(name, value, force=False)
+            if already_set:
+                return True
+            elif force:
+                setattr(self, name, value)
+                return True
+            else:
+                return False
 
     def __str__(self):
         """Returns the wrapper name and the :attr:`env` representation string."""

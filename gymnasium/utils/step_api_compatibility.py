@@ -2,21 +2,21 @@
 
 from __future__ import annotations
 
-from typing import SupportsFloat, Tuple, Union
+from typing import SupportsFloat, Union
 
 import numpy as np
 
 from gymnasium.core import ObsType
 
 
-DoneStepType = Tuple[
+DoneStepType = tuple[
     Union[ObsType, np.ndarray],
     Union[SupportsFloat, np.ndarray],
     Union[bool, np.ndarray],
     Union[dict, list],
 ]
 
-TerminatedTruncatedStepType = Tuple[
+TerminatedTruncatedStepType = tuple[
     Union[ObsType, np.ndarray],
     Union[SupportsFloat, np.ndarray],
     Union[bool, np.ndarray],

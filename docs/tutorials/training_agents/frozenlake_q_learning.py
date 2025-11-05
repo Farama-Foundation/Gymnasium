@@ -1,7 +1,8 @@
 """
-Frozenlake benchmark
-====================
+Solving Frozenlake with Tabular Q-Learning
+==========================================
 
+This tutorial trains an agent for FrozenLake using tabular Q-learning.
 """
 
 # %%
@@ -10,14 +11,6 @@ Frozenlake benchmark
 # environment from the reinforcement learning
 # `Gymnasium <https://gymnasium.farama.org/>`__ package using the
 # Q-learning algorithm.
-#
-
-
-# %%
-# Dependencies
-# ------------
-#
-
 
 # %%
 # Let's first import a few dependencies we'll need.
@@ -26,8 +19,6 @@ Frozenlake benchmark
 # Author: Andrea Pierré
 # License: MIT License
 
-
-from pathlib import Path
 from typing import NamedTuple
 
 import matplotlib.pyplot as plt
@@ -63,7 +54,6 @@ class Params(NamedTuple):
     action_size: int  # Number of possible actions
     state_size: int  # Number of possible states
     proba_frozen: float  # Probability that a tile is frozen
-    savefig_folder: Path  # Root folder where plots are saved
 
 
 params = Params(
@@ -78,16 +68,11 @@ params = Params(
     action_size=None,
     state_size=None,
     proba_frozen=0.9,
-    savefig_folder=Path("../../_static/img/tutorials/"),
 )
 params
 
 # Set the seed
 rng = np.random.default_rng(params.seed)
-
-# Create the figure folder if it doesn't exist
-params.savefig_folder.mkdir(parents=True, exist_ok=True)
-
 
 # %%
 # The FrozenLake environment
@@ -333,8 +318,6 @@ def plot_q_values_map(qtable, env, map_size):
         spine.set_visible(True)
         spine.set_linewidth(0.7)
         spine.set_color("black")
-    img_title = f"frozenlake_q_values_{map_size}x{map_size}.png"
-    fig.savefig(params.savefig_folder / img_title, bbox_inches="tight")
     plt.show()
 
 
@@ -355,8 +338,6 @@ def plot_states_actions_distribution(states, actions, map_size):
     ax[1].set_xticks(list(labels.values()), labels=labels.keys())
     ax[1].set_title("Actions")
     fig.tight_layout()
-    img_title = f"frozenlake_states_actions_distrib_{map_size}x{map_size}.png"
-    fig.savefig(params.savefig_folder / img_title, bbox_inches="tight")
     plt.show()
 
 
@@ -505,8 +486,6 @@ def plot_steps_and_rewards(rewards_df, steps_df):
     for axi in ax:
         axi.legend(title="map size")
     fig.tight_layout()
-    img_title = "frozenlake_steps_and_rewards.png"
-    fig.savefig(params.savefig_folder / img_title, bbox_inches="tight")
     plt.show()
 
 

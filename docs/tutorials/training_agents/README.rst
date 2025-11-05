@@ -1,7 +1,6 @@
-Training Agents links in the Gymnasium Documentation
------------------------------------------------------
-Solving Blackjack with Q-Learning link: https://gymnasium.farama.org/tutorials/training_agents/blackjack_tutorial/
+Training Agents
+===============
 
-Frozen Lake Benchmark link: https://gymnasium.farama.org/tutorials/training_agents/FrozenLake_tuto/
+.. _gallery_section_name:
 
-Training using REINFORCE for Mujoco link: https://gymnasium.farama.org/tutorials/training_agents/reinforce_invpend_gym_v26/
+The most common application of Gymnasium is for training RL agents. Therefore, these tutorials aim to show a range of example implementations for different environments.
