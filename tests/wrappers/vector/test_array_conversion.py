@@ -13,14 +13,8 @@ from tests.testing_env import GenericTestVectorEnv
 array_api_compat = pytest.importorskip("array_api_compat")
 from array_api_compat import array_namespace  # noqa: E402
 
-
-jax = pytest.importorskip("jax")
-torch = pytest.importorskip("torch")
 from gymnasium.wrappers.array_conversion import module_namespace  # noqa: E402
 from gymnasium.wrappers.vector import ArrayConversion  # noqa: E402
-from gymnasium.wrappers.vector import JaxToNumpy  # noqa: E402
-from gymnasium.wrappers.vector import JaxToTorch  # noqa: E402
-from gymnasium.wrappers.vector import NumpyToTorch  # noqa: E402
 
 
 # Define available modules
@@ -107,14 +101,29 @@ def test_array_conversion_wrapper(env_xp, target_xp):
     wrapped_env.render()
 
 
-@pytest.mark.parametrize("wrapper", [JaxToNumpy, JaxToTorch, NumpyToTorch])
-def test_specialized_wrappers(wrapper: type[JaxToNumpy | JaxToTorch | NumpyToTorch]):
-    if wrapper is JaxToNumpy:
+@pytest.mark.parametrize("wrapper", ["JaxToNumpy", "JaxToTorch", "NumpyToTorch"])
+def test_specialized_wrappers(wrapper: str):
+    # Imports need to happen inside the function to avoid loading dependencies that may not be
+    # installed (i.e. jax and torch)
+    if wrapper == "JaxToNumpy":
+        jax = pytest.importorskip("jax")
+        from gymnasium.wrappers.vector import JaxToNumpy  # noqa: E402
+
         env_xp, target_xp = jax.numpy, np
-    elif wrapper is JaxToTorch:
+        wrapper = JaxToNumpy
+    elif wrapper == "JaxToTorch":
+        jax = pytest.importorskip("jax")
+        torch = pytest.importorskip("torch")
+        from gymnasium.wrappers.vector import JaxToTorch  # noqa: E402
+
         env_xp, target_xp = jax.numpy, torch
-    elif wrapper is NumpyToTorch:
+        wrapper = JaxToTorch
+    elif wrapper == "NumpyToTorch":
+        torch = pytest.importorskip("torch")
+        from gymnasium.wrappers.vector import NumpyToTorch  # noqa: E402
+
         env_xp, target_xp = np, torch
+        wrapper = NumpyToTorch
     else:
         raise TypeError(f"Unknown specialized conversion wrapper {type(wrapper)}")
     env_xp_compat = module_namespace(env_xp)
@@ -140,6 +149,6 @@ def test_specialized_wrappers(wrapper: type[JaxToNumpy | JaxToTorch | NumpyToTor
     assert truncated.dtype == target_xp.bool
     assert isinstance(info, dict) and array_namespace(info["data"]) is target_xp_compat
 
-    # Check that the wrapped environment can render. This implicitly returns None and requires  a
+    # Check that the wrapped environment can render. This implicitly returns None and requires a
     # None -> None conversion
     wrapped_env.render()
