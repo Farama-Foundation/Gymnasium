@@ -405,7 +405,7 @@
 <span class="sd">        The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was</span>
 <span class="sd">        newly instantiated or the policy was changed recently.</span>
 
-<span class="sd">    Example without the normalize reward wrapper:</span>
+<span class="sd">    Example without the normalize observation wrapper:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
@@ -418,7 +418,7 @@
 <span class="sd">        np.float32(0.62259156)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
 
-<span class="sd">    Example with the normalize reward wrapper:</span>
+<span class="sd">    Example with the normalize observation wrapper:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; envs = NormalizeObservation(envs)</span>
