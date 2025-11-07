@@ -16,6 +16,8 @@ Gymnasium is an open source Python library for developing and comparing reinforc
 
 The documentation website is at [gymnasium.farama.org](https://gymnasium.farama.org), and we have a public discord server (which we also use to coordinate development work) that you can join here: https://discord.gg/bnJ6kubTg6
 
+Here is a sample change for demonstration purposes.
+
 ## Environments
 
 Gymnasium includes the following families of environments along with a wide variety of third-party environments
