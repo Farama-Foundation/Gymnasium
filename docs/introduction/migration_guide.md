@@ -256,7 +256,7 @@ if need_visualization:
 .. py:currentmodule:: gymnasium.wrappers
 
 The :class:`TimeLimit` wrapper behavior also changed to align with the new termination model.
-
+```
 **Old v0.21**: Added `TimeLimit.truncated` to info dict
 ```python
 obs, reward, done, info = env.step(action)
