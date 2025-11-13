@@ -651,14 +651,13 @@
 <section id="timelimit-wrapper-changes">
 <h2>TimeLimit Wrapper Changes<a class="headerlink" href="#timelimit-wrapper-changes" title="Link to this heading">¶</a></h2>
 <p>The <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.TimeLimit" title="gymnasium.wrappers.TimeLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code></a> wrapper behavior also changed to align with the new termination model.</p>
-<p><strong>Old v0.21</strong>: Added <cite>TimeLimit.truncated</cite> to info dict
-<a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
-obs, reward, done, info = env.step(action)
-if done and info.get(‘TimeLimit.truncated’, False):</p>
-<blockquote>
-<div><p># Episode ended due to time limit
-pass</p>
-</div></blockquote>
+<p><strong>Old v0.21</strong>: Added <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code> to info dict</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">done</span> <span class="ow">and</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;TimeLimit.truncated&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="c1"># Episode ended due to time limit</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
 <p><strong>New v0.26+</strong>: Uses the <code class="docutils literal notranslate"><span class="pre">truncated</span></code> return value</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">truncated</span><span class="p">:</span>
