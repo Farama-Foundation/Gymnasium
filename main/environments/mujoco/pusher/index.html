@@ -696,20 +696,20 @@ The robot consists of shoulder, elbow, forearm and wrist joints.</p>
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>The total reward is: <em><strong>reward</strong></em> <em>=</em> <em>reward_dist + reward_ctrl + reward_near</em>.</p>
 <ul class="simple">
-<li><p><em>reward_near</em>:
-This reward is a measure of how far the <em>fingertip</em> of the pusher (the unattached end) is from the object,
-with a more negative value assigned for when the pusher’s <em>fingertip</em> is further away from the target.
-It is <span class="math notranslate nohighlight">\(-w_{near} \|(P_{fingertip} - P_{target})\|_2\)</span>.
-where <span class="math notranslate nohighlight">\(w_{near}\)</span> is the <code class="docutils literal notranslate"><span class="pre">reward_near_weight</span></code> (default is <span class="math notranslate nohighlight">\(0.5\)</span>).</p></li>
 <li><p><em>reward_dist</em>:
 This reward is a measure of how far the object is from the target goal position,
 with a more negative value assigned if the object is further away from the target.
 It is <span class="math notranslate nohighlight">\(-w_{dist} \|(P_{object} - P_{target})\|_2\)</span>.
 where <span class="math notranslate nohighlight">\(w_{dist}\)</span> is the <code class="docutils literal notranslate"><span class="pre">reward_dist_weight</span></code> (default is <span class="math notranslate nohighlight">\(1\)</span>).</p></li>
-<li><p><em>reward_control</em>:
+<li><p><em>reward_ctrl</em>:
 A negative reward to penalize the pusher for taking actions that are too large.
 It is measured as the negative squared Euclidean norm of the action, i.e. as <span class="math notranslate nohighlight">\(-w_{control} \|action\|_2^2\)</span>.
 where <span class="math notranslate nohighlight">\(w_{control}\)</span> is the <code class="docutils literal notranslate"><span class="pre">reward_control_weight</span></code> (default is <span class="math notranslate nohighlight">\(0.1\)</span>).</p></li>
+<li><p><em>reward_near</em>:
+This reward is a measure of how far the <em>fingertip</em> of the pusher (the unattached end) is from the object,
+with a more negative value assigned for when the pusher’s <em>fingertip</em> is further away from the target.
+It is <span class="math notranslate nohighlight">\(-w_{near} \|(P_{fingertip} - P_{target})\|_2\)</span>.
+where <span class="math notranslate nohighlight">\(w_{near}\)</span> is the <code class="docutils literal notranslate"><span class="pre">reward_near_weight</span></code> (default is <span class="math notranslate nohighlight">\(0.5\)</span>).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
