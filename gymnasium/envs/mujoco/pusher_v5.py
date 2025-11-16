@@ -81,20 +81,20 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     ## Rewards
     The total reward is: ***reward*** *=* *reward_dist + reward_ctrl + reward_near*.
 
-    - *reward_near*:
-    This reward is a measure of how far the *fingertip* of the pusher (the unattached end) is from the object,
-    with a more negative value assigned for when the pusher's *fingertip* is further away from the target.
-    It is $-w_{near} \|(P_{fingertip} - P_{target})\|_2$.
-    where $w_{near}$ is the `reward_near_weight` (default is $0.5$).
     - *reward_dist*:
     This reward is a measure of how far the object is from the target goal position,
     with a more negative value assigned if the object is further away from the target.
     It is $-w_{dist} \|(P_{object} - P_{target})\|_2$.
     where $w_{dist}$ is the `reward_dist_weight` (default is $1$).
-    - *reward_control*:
+    - *reward_ctrl*:
     A negative reward to penalize the pusher for taking actions that are too large.
     It is measured as the negative squared Euclidean norm of the action, i.e. as $-w_{control} \|action\|_2^2$.
     where $w_{control}$ is the `reward_control_weight` (default is $0.1$).
+    - *reward_near*:
+    This reward is a measure of how far the *fingertip* of the pusher (the unattached end) is from the object,
+    with a more negative value assigned for when the pusher's *fingertip* is further away from the target.
+    It is $-w_{near} \|(P_{fingertip} - P_{target})\|_2$.
+    where $w_{near}$ is the `reward_near_weight` (default is $0.5$).
 
     `info` contains the individual reward terms.
 
