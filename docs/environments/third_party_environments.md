@@ -228,10 +228,17 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
 - [gym-pybullet-drones: Environments for quadcopter control](https://github.com/JacopoPan/gym-pybullet-drones)
 
-  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.27.1-blue)
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.2-blue)
   ![GitHub stars](https://img.shields.io/github/stars/JacopoPan/gym-pybullet-drones)
 
   A simple environment using [PyBullet](https://github.com/bulletphysics/bullet3) to simulate the dynamics of a [Bitcraze Crazyflie 2.x](https://www.bitcraze.io/documentation/hardware/crazyflie_2_1/crazyflie_2_1-datasheet.pdf) nanoquadrotor.
+
+- [gymnasium-docker-ros2: Gymnasium wrapping of Dockerized Gazebo/ROS2 simulation](https://github.com/JacopoPan/gymnasium-docker-ros2)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.2-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/JacopoPan/gymnasium-docker-ros2)
+
+  GDR2 shows how to wrap a multi-container Docker/Gazebo/ROS2 app into [`gymnasium`](https://github.com/Farama-Foundation/Gymnasium) and train [`stable-baselines3`](https://github.com/DLR-RM/stable-baselines3)'s PPO, using [`pyzmq`](https://github.com/zeromq/pyzmq) for communication and `gz service` to synchronously step the `/clock`
 
 - [Itomori: UAV Risk-aware Flight Environment](https://github.com/gustavo-moura/itomori)
 
