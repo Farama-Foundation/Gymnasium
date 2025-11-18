@@ -20,7 +20,7 @@ The key insight is that we don't tell the agent exactly what to do. Instead, we 
 Whether you want to train an agent to play games, control robots, or optimize trading strategies, Gymnasium gives you the tools to build and test your ideas.
 At its heart, Gymnasium provides an API (application programming interface) for all single agent reinforcement learning environments, with implementations of common environments: cartpole, pendulum, mountain-car, mujoco, atari, and more. This page will outline the basics of how to use Gymnasium including its four key functions: :meth:`make`, :meth:`Env.reset`, :meth:`Env.step` and :meth:`Env.render`.
 
-At the core of Gymnasium is :class:`Env`, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (note: this is not a perfect reconstruction, missing several components of MDPs). The class provides users the ability start new episodes, take actions and visualize the agent's current state. Alongside :class:`Env`, :class:`Wrapper` are provided to help augment / modify the environment, in particular, the agent observations, rewards and actions taken.
+At the core of Gymnasium is :class:`Env`, a high-level python class representing a markov decision process (MDP) from reinforcement learning theory (note: this is not a perfect reconstruction, missing several components of MDPs). The class provides users the ability to start new episodes, take actions and visualize the agent's current state. Alongside :class:`Env`, :class:`Wrapper` are provided to help augment / modify the environment, in particular, the agent observations, rewards and actions taken.
 ```
 
 ## Initializing Environments
