@@ -572,7 +572,7 @@
 
 <div class="viewcode-block" id="Env.close">
 <a class="viewcode-back" href="../../../api/env/#gymnasium.Env.close">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;After the user has finished using the environment, close contains the code necessary to &quot;clean up&quot; the environment.</span>
 
 <span class="sd">        This is critical for closing rendering windows, database or HTTP connections.</span>
@@ -733,7 +733,7 @@
 
 <div class="viewcode-block" id="Wrapper.close">
 <a class="viewcode-back" href="../../../api/wrappers/#gymnasium.Wrapper.close">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the wrapper and :attr:`env`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
