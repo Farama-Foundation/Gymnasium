@@ -190,7 +190,7 @@ class Env(Generic[ObsType, ActType]):
         """
         raise NotImplementedError
 
-    def close(self):
+    def close(self) -> None:
         """After the user has finished using the environment, close contains the code necessary to "clean up" the environment.
 
         This is critical for closing rendering windows, database or HTTP connections.
@@ -336,7 +336,7 @@ class Wrapper(
         """Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data."""
         return self.env.render()
 
-    def close(self):
+    def close(self) -> None:
         """Closes the wrapper and :attr:`env`."""
         return self.env.close()
 
