@@ -173,12 +173,13 @@ class GridWorldEnv(gym.Env):
         The following dictionary maps abstract actions from `self.action_space` to
         the direction we will walk in if that action is taken.
         i.e. 0 corresponds to "right", 1 to "up" etc.
+        Uses NumPy [row, col] convention where row 0 is at the top.
         """
         self._action_to_direction = {
-            Actions.RIGHT.value: np.array([1, 0]),
-            Actions.UP.value: np.array([0, 1]),
-            Actions.LEFT.value: np.array([-1, 0]),
-            Actions.DOWN.value: np.array([0, -1]),
+            Actions.RIGHT.value: np.array([0, 1]),
+            Actions.UP.value: np.array([-1, 0]),
+            Actions.LEFT.value: np.array([0, -1]),
+            Actions.DOWN.value: np.array([1, 0]),
         }
 
         assert render_mode is None or render_mode in self.metadata["render_modes"]
@@ -332,11 +333,12 @@ class GridWorldEnv(gym.Env):
         )  # The size of a single grid square in pixels
 
         # First we draw the target
+        # Convert [row, col] to pygame (x, y) by reversing the coordinates
         pygame.draw.rect(
             canvas,
             (255, 0, 0),
             pygame.Rect(
-                pix_square_size * self._target_location,
+                pix_square_size * self._target_location[::-1],
                 (pix_square_size, pix_square_size),
             ),
         )
@@ -344,7 +346,7 @@ class GridWorldEnv(gym.Env):
         pygame.draw.circle(
             canvas,
             (0, 0, 255),
-            (self._agent_location + 0.5) * pix_square_size,
+            (self._agent_location[::-1] + 0.5) * pix_square_size,
             pix_square_size / 3,
         )
 
