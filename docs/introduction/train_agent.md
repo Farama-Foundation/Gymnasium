@@ -438,7 +438,7 @@ For more information, see:
 
 * [Basic Usage](basic_usage) - Understanding Gymnasium fundamentals
 * [Custom Environments](create_custom_env) - Building your own RL problems
-* [Complete Training Tutorials](../tutorials/training_agents) - More algorithms and environments
+* {doc}`Complete Training Tutorials </tutorials/training_agents/index>` - More algorithms and environments
 * [Recording Agent Behavior](record_agent) - Saving videos and performance data
 
 The key insight from this tutorial is that RL agents learn through trial and error, gradually building up knowledge about what actions work best in different situations. Q-learning provides a systematic way to learn this knowledge, balancing exploration of new possibilities with exploitation of current knowledge.
