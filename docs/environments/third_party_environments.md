@@ -197,6 +197,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 ### Robotics environments
 *Autonomous Robots.*
 
+- [aas-gym: PX4 and ArduPilot multi-drone SITL simulation with YOLO and LiDAR](https://github.com/JacopoPan/aerial-autonomy-stack)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.2-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/JacopoPan/aerial-autonomy-stack)
+
+  Multi-drone PX4 and ArduPilot ROS2 control of quadrotors and VTOL planes in Gazebo Sim, with YOLO, LiDAR, Dockerized Gym simulation, and JetPack deployment.
+
 - [BSK-RL: Environments for Spacecraft Planning and Scheduling](https://avslab.github.io/bsk_rl/)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
