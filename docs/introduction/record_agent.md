@@ -299,7 +299,7 @@ for episode_num in range(num_training_episodes):
 
 * [Training an agent](train_agent) - Learn how to build the agents you're recording
 * [Basic usage](basic_usage) - Understand Gymnasium fundamentals
-* [More training tutorials](../tutorials/training_agents) - Advanced training techniques
+* {doc}`More training tutorials </tutorials/training_agents/index>` - Advanced training techniques
 * [Custom environments](create_custom_env) - Create your own environments to record
 
 Recording agent behavior is an essential skill for RL practitioners. It helps you understand what your agent is actually learning, debug training issues, and communicate results effectively. Start with simple recording setups and gradually add more sophisticated analysis as your projects grow in complexity!
