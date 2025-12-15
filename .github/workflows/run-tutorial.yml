@@ -176,7 +176,7 @@ jobs:
 
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: tutorial-test-results-${{ matrix.tutorial-group }}
         path: test-results/
