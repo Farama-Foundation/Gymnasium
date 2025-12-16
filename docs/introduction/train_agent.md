@@ -35,7 +35,7 @@ For Blackjack:
 
 ---
 
-This page provides a short outline of how to train an agent for a Gymnasium environment. We'll use tabular Q-learning to solve Blackjack-v1. For complete tutorials with other environments and algorithms, see [training tutorials](../tutorials/training_agents). Please read [basic usage](basic_usage) before this page.
+This page provides a short outline of how to train an agent for a Gymnasium environment. We'll use tabular Q-learning to solve Blackjack-v1. For complete tutorials with other environments and algorithms, see {doc}`training tutorials </tutorials/training_agents/index>`. Please read [basic usage](basic_usage) before this page.
 
 ## About the Environment: Blackjack
 
@@ -438,7 +438,7 @@ For more information, see:
 
 * [Basic Usage](basic_usage) - Understanding Gymnasium fundamentals
 * [Custom Environments](create_custom_env) - Building your own RL problems
-* [Complete Training Tutorials](../tutorials/training_agents) - More algorithms and environments
+* {doc}`Complete Training Tutorials </tutorials/training_agents/index>` - More algorithms and environments
 * [Recording Agent Behavior](record_agent) - Saving videos and performance data
 
 The key insight from this tutorial is that RL agents learn through trial and error, gradually building up knowledge about what actions work best in different situations. Q-learning provides a systematic way to learn this knowledge, balancing exploration of new possibilities with exploitation of current knowledge.
