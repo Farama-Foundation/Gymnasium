@@ -35,7 +35,7 @@ For Blackjack:
 
 ---
 
-This page provides a short outline of how to train an agent for a Gymnasium environment. We'll use tabular Q-learning to solve Blackjack-v1. For complete tutorials with other environments and algorithms, see [training tutorials](../tutorials/training_agents). Please read [basic usage](basic_usage) before this page.
+This page provides a short outline of how to train an agent for a Gymnasium environment. We'll use tabular Q-learning to solve Blackjack-v1. For complete tutorials with other environments and algorithms, see {doc}`training tutorials </tutorials/training_agents/index>`. Please read [basic usage](basic_usage) before this page.
 
 ## About the Environment: Blackjack
 
