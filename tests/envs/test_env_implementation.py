@@ -1,5 +1,3 @@
-from typing import Optional
-
 import numpy as np
 import pytest
 
@@ -8,6 +6,7 @@ from gymnasium.envs.box2d import BipedalWalker, CarRacing
 from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
 from gymnasium.envs.toy_text import CliffWalkingEnv, TaxiEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
+from gymnasium.error import InvalidAction
 
 
 def test_lunar_lander_heuristics():
@@ -208,6 +207,83 @@ def test_taxi_encode_decode():
         state, _, _, _, _ = env.step(env.action_space.sample())
 
 
+def test_taxi_is_rainy():
+    env = TaxiEnv(is_rainy=True)
+    for state_dict in env.P.values():
+        for action, transitions in state_dict.items():
+            if action <= 3:
+                assert sum([t[0] for t in transitions]) == 1
+                assert {t[0] for t in transitions} == {0.8, 0.1}
+            else:
+                assert len(transitions) == 1
+                assert transitions[0][0] == 1.0
+
+    state, _ = env.reset()
+    _, _, _, _, info = env.step(0)
+    assert info["prob"] in {0.8, 0.1}
+
+    env = TaxiEnv(is_rainy=False)
+    for state_dict in env.P.values():
+        for action, transitions in state_dict.items():
+            assert len(transitions) == 1
+            assert transitions[0][0] == 1.0
+
+    state, _ = env.reset()
+    _, _, _, _, info = env.step(0)
+    assert info["prob"] == 1.0
+
+
+def test_taxi_disallowed_transitions():
+    disallowed_transitions = [
+        ((0, 1), (0, 3)),
+        ((0, 3), (0, 1)),
+        ((1, 0), (1, 2)),
+        ((1, 2), (1, 0)),
+        ((3, 1), (3, 3)),
+        ((3, 3), (3, 1)),
+        ((3, 3), (3, 5)),
+        ((3, 5), (3, 3)),
+        ((4, 1), (4, 3)),
+        ((4, 3), (4, 1)),
+        ((4, 3), (4, 5)),
+        ((4, 5), (4, 3)),
+    ]
+    for rain in {True, False}:
+        env = TaxiEnv(is_rainy=rain)
+        for state, state_dict in env.P.items():
+            start_row, start_col, _, _ = env.decode(state)
+            for action, transitions in state_dict.items():
+                for transition in transitions:
+                    end_row, end_col, _, _ = env.decode(transition[1])
+                    assert (
+                        (start_row, start_col),
+                        (end_row, end_col),
+                    ) not in disallowed_transitions
+
+
+def test_taxi_fickle_passenger():
+    env = TaxiEnv(fickle_passenger=True)
+    # This is a fickle seed, if randomness or the draws from the PRNG were recently updated, find a new seed
+    env.reset(seed=43)
+    state, *_ = env.step(0)
+    taxi_row, taxi_col, pass_idx, orig_dest_idx = env.decode(state)
+    # force taxi to passenger location
+    env.s = env.encode(
+        env.locs[pass_idx][0], env.locs[pass_idx][1], pass_idx, orig_dest_idx
+    )
+    # pick up the passenger
+    env.step(4)
+    if env.locs[pass_idx][0] == 0:
+        # if we're on the top row, move down
+        state, *_ = env.step(0)
+    else:
+        # otherwise move up
+        state, *_ = env.step(1)
+    taxi_row, taxi_col, pass_idx, dest_idx = env.decode(state)
+    # check that passenger has changed their destination
+    assert orig_dest_idx != dest_idx
+
+
 @pytest.mark.parametrize(
     "env_name",
     ["Acrobot-v1", "CartPole-v1", "MountainCar-v0", "MountainCarContinuous-v0"],
@@ -215,7 +291,7 @@ def test_taxi_encode_decode():
 @pytest.mark.parametrize(
     "low_high", [None, (-0.4, 0.4), (np.array(-0.4), np.array(0.4))]
 )
-def test_customizable_resets(env_name: str, low_high: Optional[list]):
+def test_customizable_resets(env_name: str, low_high: list | None):
     env = gym.make(env_name)
     env.action_space.seed(0)
     # First ensure we can do a reset.
@@ -238,7 +314,7 @@ def test_customizable_resets(env_name: str, low_high: Optional[list]):
         (np.array(1.2), np.array(1.0)),
     ],
 )
-def test_customizable_pendulum_resets(low_high: Optional[list]):
+def test_customizable_pendulum_resets(low_high: list | None):
     env = gym.make("Pendulum-v1")
     env.action_space.seed(0)
     # First ensure we can do a reset and the values are within expected ranges.
@@ -343,3 +419,24 @@ def test_cartpole_vector_equiv():
 
     env.close()
     envs.close()
+
+
+@pytest.mark.parametrize("env_id", ["CarRacing-v3", "LunarLander-v3"])
+def test_discrete_action_validation(env_id):
+    # get continuous action
+    continuous_env = gym.make(env_id, continuous=True)
+    continuous_action = continuous_env.action_space.sample()
+    continuous_env.close()
+
+    # create discrete env
+    discrete_env = gym.make(env_id, continuous=False)
+    discrete_env.reset()
+
+    # expect InvalidAction (caused by CarRacing) or AssertionError (caused by LunarLander)
+    with pytest.raises((InvalidAction, AssertionError)):
+        discrete_env.step(continuous_action)
+
+    # expect no error
+    discrete_action = discrete_env.action_space.sample()
+    discrete_env.step(discrete_action)
+    discrete_env.close()

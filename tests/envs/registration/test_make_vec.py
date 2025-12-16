@@ -1,6 +1,8 @@
 """Testing of the `gym.make_vec` function."""
 
+import multiprocessing
 import re
+import warnings
 
 import pytest
 
@@ -8,7 +10,7 @@ import gymnasium as gym
 from gymnasium import VectorizeMode, error, wrappers
 from gymnasium.envs.classic_control import CartPoleEnv
 from gymnasium.envs.classic_control.cartpole import CartPoleVectorEnv
-from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv, VectorEnv
 from gymnasium.wrappers import TimeLimit, TransformObservation
 from tests.wrappers.utils import has_wrapper
 
@@ -236,7 +238,7 @@ def test_make_vec_with_spec(env_id: str, kwargs: dict):
     recreated_envs.close()
 
 
-@pytest.mark.parametrize("ctx", [None, "spawn", "fork", "forkserver"])
+@pytest.mark.parametrize("ctx", [None] + multiprocessing.get_all_start_methods())
 def test_async_with_dynamically_registered_env(ctx):
     gym.register("TestEnv-v0", CartPoleEnv)
 
@@ -281,3 +283,44 @@ def test_make_vec_with_spec_additional_wrappers():
 
     del gym.registry["TestEnv-v0"]
     del gym.registry["TestEnv-v1"]
+
+
+class MissingMetadataVecEnv(VectorEnv):
+    metadata = {"render_fps": 1}
+
+    def __init__(self, num_envs: int):
+        self.num_envs = num_envs
+
+
+class IncorrectMetadataVecEnv(VectorEnv):
+    metadata = {"autoreset_mode": "next_step"}
+
+    def __init__(self, num_envs: int):
+        self.num_envs = num_envs
+
+
+def test_missing_autoreset_mode_metadata():
+    gym.register("MissingMetadataVecEnv-v0", vector_entry_point=MissingMetadataVecEnv)
+    gym.register(
+        "IncorrectMetadataVecEnv-v0", vector_entry_point=IncorrectMetadataVecEnv
+    )
+
+    with warnings.catch_warnings():
+        with pytest.warns(
+            UserWarning,
+            match=re.escape(
+                "The VectorEnv (MissingMetadataVecEnv(MissingMetadataVecEnv-v0, num_envs=1)) is missing AutoresetMode metadata, metadata={'render_fps': 1}"
+            ),
+        ):
+            gym.make_vec("MissingMetadataVecEnv-v0")
+
+        with pytest.warns(
+            UserWarning,
+            match=re.escape(
+                "The VectorEnv (IncorrectMetadataVecEnv(IncorrectMetadataVecEnv-v0, num_envs=1)) metadata['autoreset_mode'] is not an instance of AutoresetMode, <class 'str'>."
+            ),
+        ):
+            gym.make_vec("IncorrectMetadataVecEnv-v0")
+
+    gym.registry.pop("MissingMetadataVecEnv-v0")
+    gym.registry.pop("IncorrectMetadataVecEnv-v0")

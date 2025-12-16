@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -195,11 +193,11 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     A reward for moving up (trying to stand up).
     This is not a relative reward, measuring how far up the robot has moved since the last timestep,
     but an absolute reward measuring how far up the Humanoid has moved up in total.
-    It is measured as $w{uph} \times (z_{after action} - 0)/dt$,
-    where $z_{after action}$ is the z coordinate of the torso after taking an action,
+    It is measured as $w_{uph} \times \frac{z_{after\_action} - 0}{dt}$,
+    where $z_{after\_action}$ is the z coordinate of the torso after taking an action,
     and $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is $5$),
     and `frametime`, which is $0.01$ - so the default is $dt = 5 \times 0.01 = 0.05$,
-    and $w_{uph}$ is `uph_cost_weight`.
+    and $w_{uph}$ is `uph_cost_weight` (default is $1$).
     - *quad_ctrl_cost*:
     A negative reward to penalize the Humanoid for taking actions that are too large.
     $w_{quad\_control} \times \|action\|_2^2$,
@@ -271,8 +269,8 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         - Added `info["x_position"]` & `info["y_position"]` which contain the observations excluded when `exclude_current_positions_from_observation == True`.
         - Added `info["z_distance_from_origin"]` which is the vertical distance of the "torso" body from its initial position.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
-    * v3: This environment does not have a v3 release.
-    * v2: All continuous control environments now use mujoco-py >= 1.50.
+    * v3: This environment does not have a v3 release. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release.
     """
@@ -282,6 +280,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_tuple",
         ],
     }
 
@@ -289,11 +288,11 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "humanoidstandup.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
         uph_cost_weight: float = 1,
         ctrl_cost_weight: float = 0.1,
         impact_cost_weight: float = 0.5e-6,
-        impact_cost_range: Tuple[float, float] = (-np.inf, 10.0),
+        impact_cost_range: tuple[float, float] = (-np.inf, 10.0),
         reset_noise_scale: float = 1e-2,
         exclude_current_positions_from_observation: bool = True,
         include_cinert_in_observation: bool = True,
@@ -357,6 +356,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
                 "human",
                 "rgb_array",
                 "depth_array",
+                "rgbd_tuple",
             ],
             "render_fps": int(np.round(1.0 / self.dt)),
         }

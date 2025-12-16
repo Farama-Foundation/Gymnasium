@@ -2,10 +2,14 @@
 [![PyPI](https://badge.fury.io/py/gymnasium.svg)](https://badge.fury.io/py/gymnasium)
 [![arXiv](https://img.shields.io/badge/arXiv-2407.17032-b31b1b.svg)](https://arxiv.org/abs/2407.17032)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
+[![License](https://img.shields.io/github/license/Farama-Foundation/Gymnasium)](https://github.com/Farama-Foundation/Gymnasium/blob/main/LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/Farama-Foundation/Gymnasium/main/gymnasium-text.png" width="500px"/>
+    <a href="https://gymnasium.farama.org/" target = "_blank">
+    <img src="https://raw.githubusercontent.com/Farama-Foundation/Gymnasium/main/gymnasium-text.png" width="500px" />
+</a>
+
 </p>
 
 Gymnasium is an open source Python library for developing and comparing reinforcement learning algorithms by providing a standard API to communicate between learning algorithms and environments, as well as a standard set of environments compliant with that API. This is a fork of OpenAI's [Gym](https://github.com/openai/gym) library by its maintainers (OpenAI handed over maintenance a few years ago to an outside team), and is where future maintenance will occur going forward.
@@ -28,7 +32,7 @@ To install the base Gymnasium library, use `pip install gymnasium`
 
 This does not include dependencies for all families of environments (there's a massive number, and some can be problematic to install on certain systems). You can install these dependencies for one family like `pip install "gymnasium[atari]"` or use `pip install "gymnasium[all]"` to install all dependencies.
 
-We support and test for Python 3.8, 3.9, 3.10, 3.11 and 3.12 on Linux and macOS. We will accept PRs related to Windows, but do not officially support it.
+We support and test for Python 3.10, 3.11, 3.12 and 3.13 on Linux and macOS. We will accept PRs related to Windows, but do not officially support it.
 
 ## API
 
@@ -60,9 +64,10 @@ Please note that this is an incomplete list, and just includes libraries that th
 
 Gymnasium keeps strict versioning for reproducibility reasons. All environments end in a suffix like "-v0".  When changes are made to environments that might impact learning results, the number is increased by one to prevent potential confusion. These were inherited from Gym.
 
-## Development Roadmap
+## Contributing
 
-We have a roadmap for future development work for Gymnasium available here: https://github.com/Farama-Foundation/Gymnasium/issues/12
+We welcome contributions from the community!
+Please see our [CONTRIBUTING.md](https://github.com/Farama-Foundation/Gymnasium/blob/main/CONTRIBUTING.md) for details on how to get started.
 
 ## Support Gymnasium's Development
 
@@ -73,13 +78,23 @@ If you are financially able to do so and would like to support the development o
 You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032) as:
 
 ```
-@article{kwiatkowski2024gymnasium,
-      title={Gymnasium: A Standard Interface for Reinforcement Learning Environments},
-      author={Ariel Kwiatkowski and Mark Towers and Jordan Terry and John U. Balis and Gianluca De Cola and Tristan Deleu and Manuel Goulão and Andreas Kallinteris and Markus Krimmel and Arjun KG and Rodrigo Perez-Vicente and Andrea Pierré and Sander Schulhoff and Jun Jet Tai and Hannah Tan and Omar G. Younis},
-      year={2024},
-      eprint={2407.17032},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2407.17032},
+@article{towers2024gymnasium,
+  title={Gymnasium: A Standard Interface for Reinforcement Learning Environments},
+  author={Towers, Mark and Kwiatkowski, Ariel and Terry, Jordan and Balis, John U and De Cola, Gianluca and Deleu, Tristan and Goul{\~a}o, Manuel and Kallinteris, Andreas and Krimmel, Markus and KG, Arjun and others},
+  journal={arXiv preprint arXiv:2407.17032},
+  year={2024}
 }
 ```
+
+## Repository Sponsors
+
+<h3 style="margin-bottom:10;margin-top:0"><a href="https://ref.wisprflow.ai/UnmiceG">Wispr Flow</a></h3>
+
+<a href="https://ref.wisprflow.ai/UnmiceG">
+  <img src="assets/wispr-flow.svg" alt="Wispr Flow" width="100">
+</a>
+
+<h3 style="margin-bottom:10;margin-top:0">Dictation that understands code</h3>
+<h4 style="margin-top:0;">Ship 4x faster with developer-first dictation that works in every app.</h4>
+
+<p style="margin-top:50;">If you'd like to sponsor Gymnasium or other Farama repositories and have your logo here, <a href="mailto:contact@farama.org">contact us</a>.</p>

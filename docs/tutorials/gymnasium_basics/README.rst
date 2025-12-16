@@ -1,7 +1,6 @@
 Gymnasium Basics
-----------------
+================
 
-.. toctree::
-   :hidden:
+.. _gallery_section_name:
 
-   /tutorials/gymnasium_basics/load_quadruped_model.md
+The aim of these tutorials is to showcase the fundamental API of Gymnasium to help users implement it

@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -18,9 +16,10 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 def mass_center(model, data):
-    mass = np.expand_dims(model.body_mass, axis=1)
-    xpos = data.xipos
-    return (np.sum(mass * xpos, axis=0) / np.sum(mass))[0:2].copy()
+    """Calculate center of mass as weighted average: (model.body_mass.T * data.xipos) / sum(model.body_mass)."""
+    num = np.einsum("b,bj->j", model.body_mass, data.xipos)
+    denom = model.body_mass.sum()
+    return (num / denom)[0:2].copy()
 
 
 class HumanoidEnv(MujocoEnv, utils.EzPickle):
@@ -289,9 +288,9 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         - Renamed `info["reward_quadctrl"]` to `info["reward_ctrl"]` to be consistent with the other environments.
         - Removed `info["forward_reward"]` as it is equivalent to `info["reward_forward"]`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
-    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen)
+    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen). Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
         - Note: the environment robot model was slightly changed at `gym==0.21.0` and training results are not comparable with `gym<0.21` and `gym>=0.21` (related [GitHub PR](https://github.com/openai/gym/pull/932/files))
-    * v2: All continuous control environments now use mujoco-py >= 1.50
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
         - Note: the environment robot model was slightly changed at `gym==0.21.0` and training results are not comparable with `gym<0.21` and `gym>=0.21` (related [GitHub PR](https://github.com/openai/gym/pull/932/files))
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release
@@ -302,6 +301,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_tuple",
         ],
     }
 
@@ -309,14 +309,14 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "humanoid.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.25,
         ctrl_cost_weight: float = 0.1,
         contact_cost_weight: float = 5e-7,
-        contact_cost_range: Tuple[float, float] = (-np.inf, 10.0),
+        contact_cost_range: tuple[float, float] = (-np.inf, 10.0),
         healthy_reward: float = 5.0,
         terminate_when_unhealthy: bool = True,
-        healthy_z_range: Tuple[float, float] = (1.0, 2.0),
+        healthy_z_range: tuple[float, float] = (1.0, 2.0),
         reset_noise_scale: float = 1e-2,
         exclude_current_positions_from_observation: bool = True,
         include_cinert_in_observation: bool = True,
@@ -381,6 +381,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
                 "human",
                 "rgb_array",
                 "depth_array",
+                "rgbd_tuple",
             ],
             "render_fps": int(np.round(1.0 / self.dt)),
         }

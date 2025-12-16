@@ -1,0 +1,206 @@
+name: Test Gymnasium Tutorials
+
+on:
+  # Run all tests when merging to main
+  push:
+    branches: [ main ]
+
+  # Run tests only for modified tutorials in PRs
+  pull_request:
+    paths:
+      - 'docs/tutorials/**/*.py'
+      - '.github/workflows/test-tutorials.yml'
+
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  test-tutorials:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # This ensures all matrix combinations run even if one fails
+      matrix:
+        python-version: ["3.12"]
+        tutorial-group:
+          - gymnasium_basics
+          - training_agents
+
+    timeout-minutes: 30  # Set a reasonable timeout for all tests
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v6
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libglu1-mesa-dev libgl1-mesa-dev libosmesa6-dev xvfb unzip patchelf ffmpeg cmake swig
+
+    - name: Install Gymnasium basics tutorial requirements
+      if: matrix.tutorial-group == 'gymnasium_basics'
+      run: |
+        pip install ".[mujoco, box2d]"
+
+    - name: Install Training Agents tutorial requirements
+      if: matrix.tutorial-group == 'training_agents'
+      run: |
+        pip install ".[mujoco, toy_text, box2d]" torch seaborn matplotlib pandas tqdm
+
+    - name: Get changed files
+      id: changed-files
+      uses: tj-actions/changed-files@v47
+      with:
+        files: docs/tutorials/**/*.py
+      if: github.event_name == 'pull_request'
+
+    - name: Patch tutorials
+      run: |
+        # Patch load_quadruped_model.py to use the built-in ant.xml instead of the missing mujoco_menagerie file
+        if [ -f "docs/tutorials/gymnasium_basics/load_quadruped_model.py" ]; then
+          sed -i 's|"./mujoco_menagerie/unitree_go1/scene.xml"|"ant.xml"|g' docs/tutorials/gymnasium_basics/load_quadruped_model.py
+        fi
+
+        # Patch mujoco_reinforce.py to reduce the number of episodes for CI
+        if [ -f "docs/tutorials/training_agents/mujoco_reinforce.py" ]; then
+          sed -i 's/total_num_episodes = int(5e3)/total_num_episodes = int(1e2)/g' docs/tutorials/training_agents/mujoco_reinforce.py
+        fi
+
+        # Patch frozenlake_q_learning.py to reduce the number of episodes and runs
+        if [ -f "docs/tutorials/training_agents/frozenlake_q_learning.py" ]; then
+          sed -i 's/total_episodes=2000/total_episodes=200/g' docs/tutorials/training_agents/frozenlake_q_learning.py
+          sed -i 's/n_runs=20/n_runs=3/g' docs/tutorials/training_agents/frozenlake_q_learning.py
+          sed -i 's/map_sizes = \[4, 7, 9, 11\]/map_sizes = \[4, 7\]/g' docs/tutorials/training_agents/frozenlake_q_learning.py
+        fi
+
+        # Patch vector_a2c.py to reduce the number of updates and environments
+        if [ -f "docs/tutorials/training_agents/vector_a2c.py" ]; then
+          sed -i 's/n_envs = 10/n_envs = 4/g' docs/tutorials/training_agents/vector_a2c.py
+          sed -i 's/n_updates = 1000/n_updates = 100/g' docs/tutorials/training_agents/vector_a2c.py
+        fi
+
+        # Make sure we use 'rgb_array' render mode instead of 'human' everywhere to avoid display issues
+        find docs/tutorials -name "*.py" -type f -exec sed -i 's/render_mode="human"/render_mode="rgb_array"/g' {} \;
+
+    - name: Test tutorials (${{ matrix.tutorial-group }})
+      id: run-tutorials
+      run: |
+        echo "::group::Running tutorials in ${{ matrix.tutorial-group }}"
+        mkdir -p test-results
+
+        # Determine which tutorials to test
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          # Get the list of modified tutorial files in this group
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [[ $file == docs/tutorials/${{ matrix.tutorial-group }}/* && $file == *.py ]]; then
+              echo $file >> tutorial_files.txt
+            fi
+          done
+
+          # If no tutorials in this group were modified, skip this job
+          if [ ! -f tutorial_files.txt ] || [ ! -s tutorial_files.txt ]; then
+            echo "No tutorials modified in ${{ matrix.tutorial-group }} - skipping"
+            exit 0
+          fi
+        else
+          # Find all Python files in the tutorial group
+          find docs/tutorials/${{ matrix.tutorial-group }} -name "*.py" -type f | sort > tutorial_files.txt
+        fi
+
+        # Initialize counters
+        total=0
+        passed=0
+        failed=0
+
+        # Run each tutorial with timeout - continue even if one fails
+        while IFS= read -r tutorial; do
+          # Clear separator for better readability
+          echo ""
+          echo "========================================================"
+          echo "Running tutorial: $tutorial"
+          echo "========================================================"
+          total=$((total+1))
+
+          # Set max time based on complexity (can be adjusted)
+          max_time=300  # 5 minutes default
+
+          # Create log file path
+          log_file="test-results/$(basename "$tutorial").log"
+
+          # Run the tutorial with timeout and record results
+          start_time=$(date +%s)
+          # Use set +e so the script continues even if the command fails
+          set +e
+          timeout $max_time python "$tutorial" > "$log_file" 2>&1
+          exit_code=$?
+          set -e
+          end_time=$(date +%s)
+          execution_time=$((end_time-start_time))
+
+          # Output results to console immediately
+          if [ $exit_code -eq 0 ]; then
+            echo "✅ PASSED: $tutorial (${execution_time}s)"
+            passed=$((passed+1))
+            echo "$tutorial,pass,$execution_time" >> test-results/summary.csv
+          elif [ $exit_code -eq 124 ]; then
+            echo "⚠️ TIMEOUT: $tutorial (exceeded ${max_time}s)"
+            failed=$((failed+1))
+            echo "$tutorial,timeout,$max_time" >> test-results/summary.csv
+            # Show the last output before timeout
+            echo "Last output before timeout:"
+            echo "----------------------------------------"
+            tail -n 20 "$log_file"
+            echo "----------------------------------------"
+          else
+            echo "❌ FAILED: $tutorial (${execution_time}s)"
+            failed=$((failed+1))
+            echo "$tutorial,fail,$execution_time" >> test-results/summary.csv
+            # Show the error details
+            echo "Error details:"
+            echo "----------------------------------------"
+            cat "$log_file"
+            echo "----------------------------------------"
+          fi
+
+        done < tutorial_files.txt
+
+        # Export the counters as outputs for later steps
+        echo "total=$total" >> $GITHUB_OUTPUT
+        echo "passed=$passed" >> $GITHUB_OUTPUT
+        echo "failed=$failed" >> $GITHUB_OUTPUT
+
+        echo "::endgroup::"
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v6
+      with:
+        name: tutorial-test-results-${{ matrix.tutorial-group }}
+        path: test-results/
+        retention-days: 7
+
+    - name: Check test results
+      if: always()
+      run: |
+        # Read the outputs from the test step
+        total="${{ steps.run-tutorials.outputs.total }}"
+        failed="${{ steps.run-tutorials.outputs.failed }}"
+
+        # Default to 0 if empty to avoid bash errors
+        total=${total:-0}
+        failed=${failed:-0}
+
+        if [ "$total" -eq 0 ]; then
+          echo "No tutorials were tested in this group."
+        elif [ "$failed" -gt 0 ]; then
+          echo "Warning: $failed out of $total tutorials failed."
+          echo "Check the test results in the uploaded artifacts to see detailed error messages."
+        else
+          echo "Success: All $total tutorials passed."
+        fi
+
+        # Return exit code based on failures
+        exit $failed

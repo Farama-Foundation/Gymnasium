@@ -3,22 +3,24 @@
 from __future__ import annotations
 
 from os import path
-from typing import Any, Optional, Tuple
+from typing import Any, Optional, TypeAlias
 
 import jax
 import jax.numpy as jnp
 import numpy as np
 from flax import struct
-from jax.random import PRNGKey
 
 import gymnasium as gym
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv, FunctionalJaxVectorEnv
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.experimental.functional import ActType, FuncEnv, StateType
+from gymnasium.experimental.functional import ActType, FuncEnv
 from gymnasium.utils import EzPickle
+from gymnasium.vector import AutoresetMode
 
 
-RenderStateType = Tuple["pygame.Surface", "pygame.time.Clock", Optional[float]]  # type: ignore  # noqa: F821
+PRNGKeyType: TypeAlias = jax.Array
+StateType: TypeAlias = jax.Array
+RenderStateType = tuple["pygame.Surface", "pygame.time.Clock", Optional[float]]  # type: ignore  # noqa: F821
 
 
 @struct.dataclass
@@ -36,7 +38,7 @@ class PendulumParams:
 
 
 class PendulumFunctional(
-    FuncEnv[jax.Array, jax.Array, int, float, bool, RenderStateType, PendulumParams]
+    FuncEnv[StateType, jax.Array, int, float, bool, RenderStateType, PendulumParams]
 ):
     """Pendulum but in jax and functional structure."""
 
@@ -45,18 +47,20 @@ class PendulumFunctional(
     observation_space = gym.spaces.Box(-np.inf, np.inf, shape=(3,), dtype=np.float32)
     action_space = gym.spaces.Box(-max_torque, max_torque, shape=(1,), dtype=np.float32)
 
-    def initial(self, rng: PRNGKey, params: PendulumParams = PendulumParams):
+    def initial(
+        self, rng: PRNGKeyType, params: PendulumParams = PendulumParams
+    ) -> StateType:
         """Initial state generation."""
         high = jnp.array([params.high_x, params.high_y])
         return jax.random.uniform(key=rng, minval=-high, maxval=high, shape=high.shape)
 
     def transition(
         self,
-        state: jax.Array,
+        state: StateType,
         action: int | jax.Array,
         rng: None = None,
         params: PendulumParams = PendulumParams,
-    ) -> jax.Array:
+    ) -> StateType:
         """Pendulum transition."""
         th, thdot = state  # th := theta
         u = action
@@ -76,7 +80,7 @@ class PendulumFunctional(
         return new_state
 
     def observation(
-        self, state: jax.Array, rng: Any, params: PendulumParams = PendulumParams
+        self, state: StateType, rng: Any, params: PendulumParams = PendulumParams
     ) -> jax.Array:
         """Generates an observation based on the state."""
         theta, thetadot = state
@@ -225,7 +229,12 @@ class PendulumFunctional(
 class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
     """Jax-based pendulum environment using the functional version as base."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 30, "jax": True}
+    metadata = {
+        "render_modes": ["rgb_array"],
+        "render_fps": 30,
+        "jax": True,
+        "autoreset_mode": AutoresetMode.NEXT_STEP,
+    }
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
         """Constructor where the kwargs are passed to the base environment to modify the parameters."""

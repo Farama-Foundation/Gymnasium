@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType, RenderFrame
+from gymnasium.logger import warn
 from gymnasium.utils import seeding
 
 
@@ -24,7 +26,16 @@ __all__ = [
     "VectorActionWrapper",
     "VectorRewardWrapper",
     "ArrayType",
+    "AutoresetMode",
 ]
+
+
+class AutoresetMode(Enum):
+    """Enum representing the different autoreset modes, next step, same step and disabled."""
+
+    NEXT_STEP = "NextStep"
+    SAME_STEP = "SameStep"
+    DISABLED = "Disabled"
 
 
 class VectorEnv(Generic[ObsType, ActType, ArrayType]):
@@ -42,6 +53,13 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     For creating environments, :func:`make_vec` is a vector environment equivalent to :func:`make` for easily creating
     vector environments that contains several unique arguments for modifying environment qualities, number of environment,
     vectorizer type, vectorizer arguments.
+
+    To avoid having to wait for all sub-environments to terminated before resetting, implementations can autoreset
+    sub-environments on episode end (`terminated or truncated is True`). This is crucial for correct implementing training
+    algorithms with vector environments. By default, Gymnasium's implementation uses `next-step` autoreset, with
+    :class:`AutoresetMode` enum as the options. The mode used by vector environment should be available in `metadata["autoreset_mode"]`.
+    Warning, some vector implementations or training algorithms will only support particular autoreset modes.
+    For more information, read https://farama.org/Vector-Autoreset-Mode.
 
     Note:
         The info parameter of :meth:`reset` and :meth:`step` was originally implemented before v0.25 as a list
@@ -90,12 +108,6 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         >>> infos
         {}
         >>> envs.close()
-
-    To avoid having to wait for all sub-environments to terminated before resetting, implementations will autoreset
-    sub-environments on episode end (`terminated or truncated is True`). As a result, when adding observations
-    to a replay buffer, this requires knowing when an observation (and info) for each sub-environment are the first
-    observation from an autoreset. We recommend using an additional variable to store this information such as
-    ``has_autoreset = np.logical_or(terminated, truncated)``.
 
     The Vector Environments have the additional attributes for users to understand the implementation
 
@@ -280,8 +292,15 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             infos (dict): the (updated) infos of the vectorized environment
         """
         for key, value in env_info.items():
+            # It is easier for users to access their `final_obs` in the unbatched array of `obs` objects
+            if key == "final_obs":
+                if "final_obs" in vector_infos:
+                    array = vector_infos["final_obs"]
+                else:
+                    array = np.full(self.num_envs, fill_value=None, dtype=object)
+                array[env_num] = value
             # If value is a dictionary, then we apply the `_add_info` recursively.
-            if isinstance(value, dict):
+            elif isinstance(value, dict):
                 array = self._add_info(vector_infos.get(key, {}), value, env_num)
             # Otherwise, we are a base case to group the data
             else:
@@ -315,7 +334,6 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
             # Update the vector info with the updated data and mask information
             vector_infos[key], vector_infos[f"_{key}"] = array, array_mask
-
         return vector_infos
 
     def __del__(self):
@@ -355,7 +373,9 @@ class VectorWrapper(VectorEnv):
             env: The environment to wrap
         """
         self.env = env
-        assert isinstance(env, VectorEnv)
+        assert isinstance(
+            env, VectorEnv
+        ), f"Expected env to be a `gymnasium.vector.VectorEnv` but got {type(env)}"
 
         self._observation_space: gym.Space | None = None
         self._action_space: gym.Space | None = None
@@ -506,6 +526,23 @@ class VectorObservationWrapper(VectorWrapper):
 
     Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.
     """
+
+    def __init__(self, env: VectorEnv):
+        """Vector observation wrapper that batch transforms observations.
+
+        Args:
+            env: Vector environment.
+        """
+        super().__init__(env)
+        if "autoreset_mode" not in env.metadata:
+            warn(
+                f"Vector environment ({env}) is missing `autoreset_mode` metadata key."
+            )
+        else:
+            assert (
+                env.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP
+                or env.metadata["autoreset_mode"] == AutoresetMode.DISABLED
+            )
 
     def reset(
         self,

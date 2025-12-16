@@ -3,100 +3,363 @@ layout: "contents"
 title: Migration Guide
 ---
 
-# Migration Guide - v0.21 to v1.0.0
+# Gym Migration Guide
+
+## Who Should Read This Guide?
+
+**If you're new to Gymnasium**: You can probably skip this page! This guide is for users migrating from older versions of OpenAI Gym. If you're just starting with RL, head to [Basic Usage](basic_usage) instead.
+
+**If you're migrating from OpenAI Gym**: This guide will help you update your code to work with Gymnasium. The changes are significant but straightforward once you understand the reasoning behind them.
+
+**If you're updating old tutorials**: Many online RL tutorials use the old v0.21 API. This guide shows you how to modernize that code.
+
+## Why Did the API Change?
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.wrappers
 
-Gymnasium is a fork of `OpenAI Gym v0.26 <https://github.com/openai/gym/releases/tag/0.26.2>`_, which introduced a large breaking change from `Gym v0.21 <https://github.com/openai/gym/releases/tag/v0.21.0>`_.In this guide, we briefly outline the API changes from Gym v0.21 - which a number of tutorials have been written for - to Gym v0.26 (and later, including 1.0.0). For environments still stuck in the v0.21 API, see the `guide </content/gym_compatibility>`_
+Gymnasium is a fork of `OpenAI Gym v0.26 <https://github.com/openai/gym/releases/tag/0.26.2>`_, which introduced breaking changes from `Gym v0.21 <https://github.com/openai/gym/releases/tag/v0.21.0>`_. These changes weren't made lightly - they solved important problems that made RL research and development more difficult.
+
+The main issues with the old API were:
+
+- **Ambiguous episode endings**: The single ``done`` flag couldn't distinguish between "task completed" and "time limit reached"
+- **Inconsistent seeding**: Random number generation was unreliable and hard to reproduce
+- **Rendering complexity**: Switching between visual modes was unnecessarily complicated
+- **Reproducibility problems**: Subtle bugs made it difficult to reproduce research results
+
+For environments that can't be updated, see the compatibility guide section below.
 ```
 
-## Example code for v0.21
+## Quick Reference: Complete Changes Table
 
+| **Component**            | **v0.21 (Old)**                                   | **v0.26+ (New)**                                              | **Impact**      |
+|--------------------------|---------------------------------------------------|---------------------------------------------------------------|-----------------|
+| **Package Import**       | `import gym`                                      | `import gymnasium as gym`                                     | All code        |
+| **Environment Reset**    | `obs = env.reset()`                               | `obs, info = env.reset()`                                     | Training loops  |
+| **Random Seeding**       | `env.seed(42)`                                    | `env.reset(seed=42)`                                          | Reproducibility |
+| **Step Function**        | `obs, reward, done, info = env.step(action)`      | `obs, reward, terminated, truncated, info = env.step(action)` | RL algorithms   |
+| **Episode Ending**       | `while not done:`                                 | `while not (terminated or truncated):`                        | Training loops  |
+| **Render Mode**          | `env.render(mode="human")`                        | `gym.make(env_id, render_mode="human")`                       | Visualization   |
+| **Time Limit Detection** | `info.get('TimeLimit.truncated')`                 | `truncated` return value                                      | RL algorithms   |
+| **Value Bootstrapping**  | `target = reward + (1-done) * gamma * next_value` | `target = reward + (1-terminated) * gamma * next_value`       | RL correctness  |
+
+## Side-by-Side Code Comparison
+
+### Old v0.21 Code
 ```python
 import gym
+
+# Environment creation and seeding
 env = gym.make("LunarLander-v3", options={})
 env.seed(123)
 observation = env.reset()
 
+# Training loop
 done = False
 while not done:
-    action = env.action_space.sample()  # agent policy that uses the observation and info
+    action = env.action_space.sample()
     observation, reward, done, info = env.step(action)
-
     env.render(mode="human")
 
 env.close()
 ```
 
-## Example code for v0.26 and later, including v1.0.0
-
+### New v0.26+ Code (Including v1.0.0)
 ```python
-import gym
+import gymnasium as gym  # Note: 'gymnasium' not 'gym'
+
+# Environment creation with render mode specified upfront
 env = gym.make("LunarLander-v3", render_mode="human")
+
+# Reset with seed parameter
 observation, info = env.reset(seed=123, options={})
 
+# Training loop with terminated/truncated distinction
 done = False
 while not done:
-    action = env.action_space.sample()  # agent policy that uses the observation and info
+    action = env.action_space.sample()
     observation, reward, terminated, truncated, info = env.step(action)
 
+    # Episode ends if either terminated OR truncated
     done = terminated or truncated
 
 env.close()
 ```
 
-## Seed and random number generator
+## Key Changes Breakdown
 
-```{eval-rst}
-.. py:currentmodule:: gymnasium.Env
+### 1. Package Name Change
 
-The ``Env.seed()`` has been removed from the Gym v0.26 environments in favour of ``Env.reset(seed=seed)``. This allows seeding to only be changed on environment reset. The decision to remove ``seed`` was because some environments use emulators that cannot change random number generators within an episode and must be done at the beginning of a new episode. We are aware of cases where controlling the random number generator is important, in these cases, if the environment uses the built-in random number generator, users can set the seed manually with the attribute :attr:`np_random`.
+**Old**: `import gym`
+**New**: `import gymnasium as gym`
 
-Gymnasium v0.26 changed to using ``numpy.random.Generator`` instead of a custom random number generator. This means that several functions such as ``randint`` were removed in favour of ``integers``. While some environments might use external random number generator, we recommend using the attribute :attr:`np_random` that wrappers and external users can access and utilise.
+Why: Gymnasium is a separate project that maintains and improves upon the original Gym codebase.
+
+```python
+# OLD
+import gym
+
+# NEW
+import gymnasium as gym
 ```
 
-## Environment Reset
+### 2. Seeding and Random Number Generation
 
-```{eval-rst}
-In v0.26+, :meth:`reset` takes two optional parameters and returns one value. This contrasts to v0.21 which takes no parameters and returns ``None``. The two parameters are ``seed`` for setting the random number generator and ``options`` which allows additional data to be passed to the environment on reset. For example, in classic control, the ``options`` parameter now allows users to modify the range of the state bound. See the original `PR <https://github.com/openai/gym/pull/2921>`_ for more details.
+The biggest conceptual change is how randomness is handled.
 
-:meth:`reset` further returns ``info``, similar to the ``info`` returned by :meth:`step`. This is important because ``info`` can include metrics or valid action mask that is used or saved in the next step.
-
-To update older environments, we highly recommend that ``super().reset(seed=seed)`` is called on the first line of :meth:`reset`. This will automatically update the :attr:`np_random` with the seed value.
+**Old v0.21**: Separate `seed()` method
+```python
+env = gym.make("CartPole-v1")
+env.seed(42)  # Set random seed
+obs = env.reset()  # Reset environment
 ```
 
-## Environment Step
-
-```{eval-rst}
-In v0.21, the type definition of :meth:`step` is ``tuple[ObsType, SupportsFloat, bool, dict[str, Any]`` representing the next observation, the reward from the step, if the episode is done and additional info from the step. Due to reproducibility issues that will be expanded on in a blog post soon, we have changed the type definition to ``tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]`` adding an extra boolean value. This extra bool corresponds to the older `done` now changed to `terminated` and `truncated`. These changes were introduced in Gym `v0.26 <https://github.com/openai/gym/releases/tag/0.26.0>`_ (turned off by default in `v25 <https://github.com/openai/gym/releases/tag/0.25.0>`_).
-
-For users wishing to update, in most cases, replacing ``done`` with ``terminated`` and ``truncated=False`` in :meth:`step` should address most issues. However, environments that have reasons for episode truncation rather than termination should read through the associated `PR <https://github.com/openai/gym/pull/2752>`_. For users looping through an environment, they should modify ``done = terminated or truncated`` as is show in the example code. For training libraries, the primary difference is to change ``done`` to ``terminated``, indicating whether bootstrapping should or shouldn't happen.
+**New v0.26+**: Seed passed to `reset()`
+```python
+env = gym.make("CartPole-v1")
+obs, info = env.reset(seed=42)  # Seed and reset together
 ```
 
-## TimeLimit Wrapper
-```{eval-rst}
-In v0.21, the :class:`TimeLimit` wrapper added an extra key in the ``info`` dictionary ``TimeLimit.truncated`` whenever the agent reached the time limit without reaching a terminal state.
+**Why this changed**: Some environments (especially emulated games) can only set their random state at the beginning of an episode, not mid-episode. The old approach could lead to inconsistent behavior.
 
-In v0.26+, this information is instead communicated through the `truncated` return value described in the previous section, which is `True` if the agent reaches the time limit, whether or not it reaches a terminal state. The old dictionary entry is equivalent to ``truncated and not terminated``
+**Practical impact**:
+```python
+# OLD: Seeding applied to all future episodes
+env.seed(42)
+for episode in range(10):
+    obs = env.reset()
+
+# NEW: Each episode can have its own seed
+for episode in range(10):
+    obs, info = env.reset(seed=42 + episode)  # Each episode gets unique seed
 ```
 
-## Environment Render
+### 3. Environment Reset Changes
 
-```{eval-rst}
-In v0.26, a new render API was introduced such that the render mode is fixed at initialisation as some environments don't allow on-the-fly render mode changes. Therefore, users should now specify the :attr:`render_mode` within ``gym.make`` as shown in the v0.26+ example code above.
-
-For a more complete explanation of the changes, please refer to this `summary <https://younis.dev/blog/render-api/>`_.
+**Old v0.21**: Returns only observation
+```python
+observation = env.reset()
 ```
 
-## Removed code
+**New v0.26+**: Returns observation AND info
+```python
+observation, info = env.reset()
+```
+
+**Why this changed**:
+- `info` provides consistent access to debugging information
+- `seed` parameter enables reproducible episodes
+- `options` parameter allows episode-specific configuration
+
+**Common migration pattern**:
+```python
+# If you don't need the new features, just unpack the tuple
+obs, _ = env.reset()  # Ignore info with underscore
+
+# If you want to maintain the same random behavior as v0.21
+env.reset(seed=42)  # Set seed once
+# Then for subsequent resets:
+obs, info = env.reset()  # Uses internal random state
+```
+
+### 4. Step Function: The `done` → `terminated`/`truncated` Split
+
+This is the most important change for training algorithms.
+
+**Old v0.21**: Single `done` flag
+```python
+obs, reward, done, info = env.step(action)
+```
+
+**New v0.26+**: Separate `terminated` and `truncated` flags
+```python
+obs, reward, terminated, truncated, info = env.step(action)
+```
+
+**Why this matters**:
+- **`terminated`**: Episode ended because the task was completed or failed (agent reached goal, died, etc.)
+- **`truncated`**: Episode ended due to external constraints (time limit, step limit, etc.)
+
+This distinction is crucial for value function bootstrapping in RL algorithms:
+
+```python
+# OLD (ambiguous)
+if done:
+    # Should we bootstrap? We don't know if this was natural termination or time limit!
+    next_value = 0  # Assumption that may be wrong
+
+# NEW (clear)
+if terminated:
+    next_value = 0      # Natural ending - no future value
+elif truncated:
+    next_value = value_function(next_obs)  # Time limit - estimate future value
+```
+
+**Migration strategy**:
+```python
+# Simple migration (works for many cases)
+obs, reward, terminated, truncated, info = env.step(action)
+done = terminated or truncated
+
+# Better migration (preserves RL algorithm correctness)
+obs, reward, terminated, truncated, info = env.step(action)
+if terminated:
+    # Episode naturally ended - use reward as-is
+    target = reward
+elif truncated:
+    # Episode cut short - may need to estimate remaining value
+    target = reward + discount * estimate_value(obs)
+```
+
+For more information, see our [blog post](https://farama.org/Gymnasium-Terminated-Truncated-Step-API) about it.
+
+### 5. Render Mode Changes
+
+**Old v0.21**: Render mode specified each time
+```python
+env = gym.make("CartPole-v1")
+env.render(mode="human")     # Visual window
+env.render(mode="rgb_array") # Get pixel array
+```
+
+**New v0.26+**: Render mode fixed at creation
+```python
+env = gym.make("CartPole-v1", render_mode="human")     # For visual display
+env = gym.make("CartPole-v1", render_mode="rgb_array") # For recording
+env.render()  # Uses the mode specified at creation
+```
+
+**Why this changed**: Some environments can't switch render modes on-the-fly. Fixing the mode at creation enables better optimization and prevents bugs.
+
+**Practical implications**:
+```python
+# OLD: Could switch modes dynamically
+env = gym.make("CartPole-v1")
+for episode in range(10):
+    # ... episode code ...
+    if episode % 10 == 0:
+        env.render(mode="human")  # Show every 10th episode
+
+# NEW: Create separate environments for different purposes
+training_env = gym.make("CartPole-v1")  # No rendering for speed
+eval_env = gym.make("CartPole-v1", render_mode="human")  # Visual for evaluation
+
+# Or use None for no rendering, then create visual env when needed
+env = gym.make("CartPole-v1", render_mode=None)  # Fast training
+if need_visualization:
+    visual_env = gym.make("CartPole-v1", render_mode="human")
+```
+
+## TimeLimit Wrapper Changes
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.wrappers
 
-* GoalEnv - This was removed, users needing it should reimplement the environment or use Gymnasium Robotics which contains an implementation of this environment.
-* ``from gym.envs.classic_control import rendering`` - This was removed in favour of users implementing their own rendering systems. Gymnasium environments are coded using pygame.
-* Robotics environments - The robotics environments have been moved to the `Gymnasium Robotics <https://robotics.farama.org/>`_ project.
-* Monitor wrapper - This wrapper was replaced with two separate wrapper, :class:`RecordVideo` and :class:`RecordEpisodeStatistics`
-
+The :class:`TimeLimit` wrapper behavior also changed to align with the new termination model.
 ```
+**Old v0.21**: Added `TimeLimit.truncated` to info dict
+```python
+obs, reward, done, info = env.step(action)
+if done and info.get('TimeLimit.truncated', False):
+    # Episode ended due to time limit
+    pass
+```
+
+**New v0.26+**: Uses the `truncated` return value
+```python
+obs, reward, terminated, truncated, info = env.step(action)
+if truncated:
+    # Episode ended due to time limit (or other truncation)
+    pass
+if terminated:
+    # Episode ended naturally (success/failure)
+    pass
+```
+
+This makes time limit detection much cleaner and more explicit.
+
+## Environment-Specific Changes
+
+### Removed Environments
+
+Some environments were moved or removed:
+
+```python
+# OLD: Robotics environments in main gym
+import gym
+env = gym.make("FetchReach-v1")  # No longer available
+
+# NEW: Moved to separate package
+import gymnasium
+
+import gymnasium_robotics
+import ale_py
+
+gymnasium.register_envs((gymnasium_robotics, ale_py))
+
+env = gymnasium.make("FetchReach-v1")
+env = gymnasium.make("ALE/Pong-v5")
+```
+
+## Compatibility Helpers
+
+### Loading OpenAI Gym environments
+
+For environments that can't be updated to Gymnasium, we provide compatibility wrappers either for v21 and v26 style environments, where either the environment name or the environment itself can be passed.
+
+```python
+import gymnasium
+import shimmy  # install shimmy with `pip install shimmy`
+
+gymnasium.register_envs(shimmy)
+
+
+# Gym v0.21 style environments
+env = gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
+# or
+env = gymnasium.make("GymV21Environment-v0", env=OldV21Env())
+
+# Gym v0.26 style environments
+env = gymnasium.make("GymV26Environment-v0", env_id="Cartpole-v1")
+# or
+env = gymnasium.make("GymV26Environment-v0", env=OldV26Env())
+```
+
+### Step API Compatibility
+
+```{eval-rst}
+.. py:currentmodule:: gymnasium.utils.step_api_compatibility
+
+If environments implement the (old) done step API, Gymnasium provides functions (:meth:`convert_to_terminated_truncated_step_api` and :meth:`convert_to_done_step_api`) that will convert an environment with the old step API (using ``done``) to the new step API (using ``termination`` and ``truncation``), and vice versa.
+```
+
+## Testing Your Migration
+
+After migrating, verify that:
+
+- [ ] **Import statements** use `gymnasium` instead of `gym`
+- [ ] **Reset calls** handle the `(obs, info)` return format
+- [ ] **Step calls** handle `terminated` and `truncated` separately
+- [ ] **Render mode** is specified during environment creation
+- [ ] **Random seeding** uses the `seed` parameter in `reset()`
+- [ ] **Training algorithms** properly distinguish termination types
+
+```{eval-rst}
+.. py:currentmodule:: gymnasium.utils.env_checker
+
+Use the :meth:`check_env` to verify their implementation.
+```
+
+## Getting Help
+
+**If you encounter issues during migration**:
+
+1. **Check the compatibility guide**: Some old environments can be used with compatibility wrappers
+2. **Look at the environment documentation**: Each environment may have specific migration notes
+3. **Test with simple environments first**: Start with CartPole before moving to complex environments
+4. **Compare old vs new behavior**: Run the same code with both APIs to understand differences
+
+**Common resources**:
+- [Gymnasium API documentation](https://gymnasium.farama.org/api/env)
+- [GitHub issues](https://github.com/Farama-Foundation/Gymnasium/issues) for bug reports
+- [Discord community](https://discord.gg/bnJ6kubTg6) for questions

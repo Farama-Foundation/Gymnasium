@@ -2,28 +2,36 @@
 
 from __future__ import annotations
 
+import re
 from functools import partial
 
 import numpy as np
 import pytest
 
+import gymnasium as gym
 from gymnasium.core import ActType, ObsType
 from gymnasium.spaces import Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
+from gymnasium.vector.vector_env import AutoresetMode
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 from tests.testing_env import GenericTestEnv
 from tests.vector.testing_utils import make_env
 
 
 @pytest.mark.parametrize("shared_memory", [True, False])
-def test_vector_env_equal(shared_memory):
+@pytest.mark.parametrize(
+    "autoreset_mode", [AutoresetMode.NEXT_STEP, AutoresetMode.SAME_STEP]
+)
+def test_vector_env_equal(shared_memory, autoreset_mode):
     """Test that vector environment are equal for both async and sync variants."""
     env_fns = [make_env("CartPole-v1", i) for i in range(4)]
     num_steps = 100
 
-    async_env = AsyncVectorEnv(env_fns, shared_memory=shared_memory)
-    sync_env = SyncVectorEnv(env_fns)
+    async_env = AsyncVectorEnv(
+        env_fns, shared_memory=shared_memory, autoreset_mode=autoreset_mode
+    )
+    sync_env = SyncVectorEnv(env_fns, autoreset_mode=autoreset_mode)
 
     assert async_env.num_envs == sync_env.num_envs
     assert async_env.observation_space == sync_env.observation_space
@@ -212,3 +220,146 @@ def test_random_seeds_set_at_retrieval(venv_constructor, example_env_list):
     assert len(set(vector_env.np_random_seed)) == vector_env.num_envs
     # default seed starts at zero. Adjust or remove this test if the default seed changes
     assert vector_env.np_random_seed == tuple(range(vector_env.num_envs))
+
+
+@pytest.mark.parametrize(
+    "vectoriser",
+    [
+        SyncVectorEnv,
+        AsyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=False),
+    ],
+    ids=["Sync", "Async(shared_memory=True)", "Async(shared_memory=False)"],
+)
+def test_partial_reset(vectoriser):
+    envs = vectoriser(
+        [lambda: gym.make("CartPole-v1") for _ in range(3)],
+        autoreset_mode=AutoresetMode.DISABLED,
+    )
+    reset_obs, _ = envs.reset(seed=[0, 1, 2])
+
+    envs.action_space.seed(123)
+    envs.step(envs.action_space.sample())
+    envs.step(envs.action_space.sample())
+    step_obs, *_ = envs.step(envs.action_space.sample())
+
+    reset_mask_obs, _ = envs.reset(
+        seed=[0, 1, 0], options={"reset_mask": np.array([True, True, False])}
+    )
+    assert np.all(reset_mask_obs[:2] == reset_obs[:2])
+    assert np.all(reset_mask_obs[2] == step_obs[2])
+
+    envs.close()
+
+
+@pytest.mark.parametrize(
+    "vectoriser",
+    [
+        SyncVectorEnv,
+        AsyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=False),
+    ],
+    ids=["Sync", "Async(shared_memory=True)", "Async(shared_memory=False)"],
+)
+def test_partial_reset_failure(vectoriser):
+    envs = vectoriser(
+        [lambda: gym.make("CartPole-v1") for _ in range(3)],
+        autoreset_mode=AutoresetMode.DISABLED,
+    )
+
+    # Test first reset using a mask
+    # with pytest.raises(AssertionError):
+    #     envs.reset(options={"reset_mask": np.array([True, True, False])})
+
+    # Reset with all trues
+    envs.reset(options={"reset_mask": np.array([True, True, True])})
+
+    # Reset with mask of an incorrect shape
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "`options['reset_mask': mask]` must have shape `(3,)`, got (1,)"
+        ),
+    ):
+        envs.reset(options={"reset_mask": np.array([True])})
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "options['reset_mask': mask]` must have shape `(3,)`, got (4,)"
+        ),
+    ):
+        envs.reset(options={"reset_mask": np.array([True, True, False, False])})
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "`options['reset_mask': mask]` must have shape `(3,)`, got (1, 3)"
+        ),
+    ):
+        envs.reset(options={"reset_mask": np.array([[True, True, True]])})
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "`options['reset_mask': mask]` must contain a boolean array, got reset_mask=[False False False]"
+        ),
+    ):
+        envs.reset(options={"reset_mask": np.array([False, False, False])})
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "`options['reset_mask': mask]` must have `dtype=np.bool_`, got int64"
+        ),
+    ):
+        envs.reset(options={"reset_mask": np.array([1, 1, 0])})
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "`options['reset_mask': mask]` must have `dtype=np.bool_`, got float64"
+        ),
+    ):
+        envs.reset(options={"reset_mask": np.array([1.0, 1.0, 0.0])})
+
+
+@pytest.mark.parametrize(
+    "vectoriser",
+    [
+        SyncVectorEnv,
+        AsyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=False),
+    ],
+    ids=["Sync", "Async(shared_memory=True)", "Async(shared_memory=False)"],
+)
+def test_action_count_compatibility(vectoriser):
+    """Test that the number of actions is compatible with the number of environments."""
+    num_envs = 4
+    envs = vectoriser(
+        [lambda: gym.make("CartPole-v1") for _ in range(num_envs)],
+        autoreset_mode=AutoresetMode.DISABLED,
+    )
+
+    # Reset the environment
+    envs.reset()
+
+    # Test correct number of actions (should work)
+    correct_actions = envs.action_space.sample()
+    assert len(correct_actions) == num_envs
+
+    # Test with actions that match the number of environments
+    obs, rewards, terminations, truncations, infos = envs.step(correct_actions)
+    assert len(obs) == num_envs
+    assert len(rewards) == num_envs
+    assert len(terminations) == num_envs
+    assert len(truncations) == num_envs
+
+    # Test with too few actions (should raise error)
+    with pytest.raises(ValueError):
+        envs.step(correct_actions[: num_envs - 1])
+
+    # Test with too many actions (should raise error)
+    with pytest.raises(ValueError):
+        envs.step(np.concatenate([correct_actions, correct_actions[:1]]))
+
+    # Test with scalar action (should raise error for vector env)
+    with pytest.raises(TypeError):
+        envs.step(0)
+
+    envs.close()

@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas", "Rushiv Arora"]
 
-from typing import Dict, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -137,8 +135,8 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         - Added `exclude_current_positions_from_observation` argument.
         - Replaced `info["reward_fwd"]` and `info["forward_reward"]` with `info["reward_forward"]` to be consistent with the other environments.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
-    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen).
-    * v2: All continuous control environments now use mujoco-py >= 1.50.
+    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen). Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release.
     """
@@ -148,6 +146,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_tuple",
         ],
     }
 
@@ -155,7 +154,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "swimmer.xml",
         frame_skip: int = 4,
-        default_camera_config: Dict[str, Union[float, int]] = {},
+        default_camera_config: dict[str, float | int] = {},
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 1e-4,
         reset_noise_scale: float = 0.1,
@@ -197,6 +196,7 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
                 "human",
                 "rgb_array",
                 "depth_array",
+                "rgbd_tuple",
             ],
             "render_fps": int(np.round(1.0 / self.dt)),
         }

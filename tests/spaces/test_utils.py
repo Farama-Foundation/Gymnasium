@@ -1,5 +1,4 @@
 from itertools import zip_longest
-from typing import Optional
 
 import numpy as np
 import pytest
@@ -22,6 +21,7 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     # Discrete
     3,
     3,
+    4,
     # Box
     1,
     4,
@@ -36,6 +36,8 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     10,
     4,
     10,
+    5,
+    5,
     # Multi-binary
     8,
     6,
@@ -77,7 +79,7 @@ assert len(TESTING_SPACES) == len(TESTING_SPACES_EXPECTED_FLATDIMS)
     zip_longest(TESTING_SPACES, TESTING_SPACES_EXPECTED_FLATDIMS),
     ids=TESTING_SPACES_IDS,
 )
-def test_flatdim(space: gym.spaces.Space, flatdim: Optional[int]):
+def test_flatdim(space: gym.spaces.Space, flatdim: int | None):
     """Checks that the flattened dims of the space is equal to an expected value."""
     if space.is_np_flattenable:
         dim = utils.flatdim(space)
@@ -158,6 +160,20 @@ def test_flatten_roundtripping(space):
 
     for original, roundtripped in zip(samples, unflattened_samples):
         assert data_equivalence(original, roundtripped)
+
+
+@pytest.mark.parametrize(
+    ["space", "flattened_sample"],
+    [
+        (gym.spaces.Discrete(3), np.array([0, 1, 0])),
+        (gym.spaces.Discrete(3, dtype=np.int16), np.array([0, 1, 0], dtype=np.int16)),
+        (gym.spaces.Discrete(3, dtype=np.int32), np.array([0, 1, 0], dtype=np.int32)),
+    ],
+)
+def test_unflatten_discrete_with_dtype(space, flattened_sample):
+    unflattened = utils.unflatten(space, flattened_sample)
+    assert unflattened == 1
+    assert space.dtype == unflattened.dtype
 
 
 def test_unflatten_discrete_error():

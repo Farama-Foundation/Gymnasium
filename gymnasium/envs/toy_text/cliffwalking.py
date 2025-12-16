@@ -1,7 +1,7 @@
 from contextlib import closing
 from io import StringIO
 from os import path
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any
 
 import numpy as np
 
@@ -101,7 +101,7 @@ class CliffWalkingEnv(Env):
         "render_fps": 4,
     }
 
-    def __init__(self, render_mode: Optional[str] = None, is_slippery: bool = False):
+    def __init__(self, render_mode: str | None = None, is_slippery: bool = False):
         self.shape = (4, 12)
         self.start_state_index = np.ravel_multi_index((3, 0), self.shape)
 
@@ -159,8 +159,8 @@ class CliffWalkingEnv(Env):
         return coord
 
     def _calculate_transition_prob(
-        self, current: Union[List[int], np.ndarray], move: int
-    ) -> List[Tuple[float, Any, int, bool]]:
+        self, current: list[int] | np.ndarray, move: int
+    ) -> list[tuple[float, Any, int, bool]]:
         """Determine the outcome for an action. Transition Prob is always 1.0.
 
         Args:
@@ -203,7 +203,7 @@ class CliffWalkingEnv(Env):
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
         return int(s), r, t, False, {"prob": p}
 
-    def reset(self, *, seed: Optional[int] = None, options: Optional[dict] = None):
+    def reset(self, *, seed: int | None = None, options: dict | None = None):
         super().reset(seed=seed)
         self.s = categorical_sample(self.initial_state_distrib, self.np_random)
         self.lastaction = None
@@ -344,6 +344,13 @@ class CliffWalkingEnv(Env):
 
         with closing(outfile):
             return outfile.getvalue()
+
+    def close(self):
+        if self.window_surface is not None:
+            import pygame
+
+            pygame.display.quit()
+            pygame.quit()
 
 
 # Elf and stool from https://franuka.itch.io/rpg-snow-tileset

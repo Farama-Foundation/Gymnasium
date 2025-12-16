@@ -22,16 +22,8 @@ from gymnasium.envs.registration import (
 )
 from gymnasium import spaces, utils, vector, wrappers, error, logger, experimental
 
-# Initializing pygame initializes audio connections through SDL. SDL uses alsa by default on all Linux systems
-# SDL connecting to alsa frequently create these giant lists of warnings every time you import an environment using
-#   pygame
-# DSP is far more benign (and should probably be the default in SDL anyways)
-
 import os
 import sys
-
-if sys.platform.startswith("linux"):
-    os.environ["SDL_AUDIODRIVER"] = "dsp"
 
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
@@ -66,7 +58,7 @@ __all__ = [
     "logger",
     "experimental",
 ]
-__version__ = "1.0.0"
+__version__ = "1.2.3"
 
 try:
     from farama_notifications import notifications

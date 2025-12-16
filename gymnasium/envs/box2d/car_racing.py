@@ -1,7 +1,6 @@
 __credits__ = ["Andrea PIERRÉ"]
 
 import math
-from typing import Optional, Union
 
 import numpy as np
 
@@ -125,12 +124,12 @@ class CarRacing(gym.Env, EzPickle):
     If continuous there are 3 actions :
     - 0: steering, -1 is full left, +1 is full right
     - 1: gas
-    - 2: breaking
+    - 2: braking
 
     If discrete there are 5 actions:
     - 0: do nothing
-    - 1: steer left
-    - 2: steer right
+    - 1: steer right
+    - 2: steer left
     - 3: gas
     - 4: brake
 
@@ -165,8 +164,8 @@ class CarRacing(gym.Env, EzPickle):
     * `domain_randomize=False` enables the domain randomized variant of the environment.
      In this scenario, the background and track colours are different on every reset.
 
-    * `continuous=True` converts the environment to use discrete action space.
-     The discrete action space has 5 actions: [do nothing, left, right, gas, brake].
+    * `continuous=True` specifies if the agent has continuous (true) or discrete (false) actions.
+     See action space section for a description of each.
 
     ## Reset Arguments
 
@@ -212,7 +211,7 @@ class CarRacing(gym.Env, EzPickle):
 
     def __init__(
         self,
-        render_mode: Optional[str] = None,
+        render_mode: str | None = None,
         verbose: bool = False,
         lap_complete_percent: float = 0.95,
         domain_randomize: bool = False,
@@ -233,14 +232,14 @@ class CarRacing(gym.Env, EzPickle):
 
         self.contactListener_keepref = FrictionDetector(self, self.lap_complete_percent)
         self.world = Box2D.b2World((0, 0), contactListener=self.contactListener_keepref)
-        self.screen: Optional[pygame.Surface] = None
+        self.screen: pygame.Surface | None = None
         self.surf = None
         self.clock = None
         self.isopen = True
         self.invisible_state_window = None
         self.invisible_video_window = None
         self.road = None
-        self.car: Optional[Car] = None
+        self.car: Car | None = None
         self.reward = 0.0
         self.prev_reward = 0.0
         self.verbose = verbose
@@ -258,7 +257,7 @@ class CarRacing(gym.Env, EzPickle):
             )  # steer, gas, brake
         else:
             self.action_space = spaces.Discrete(5)
-            # do nothing, left, right, gas, brake
+            # do nothing, right, left, gas, brake
 
         self.observation_space = spaces.Box(
             low=0, high=255, shape=(STATE_H, STATE_W, 3), dtype=np.uint8
@@ -499,8 +498,8 @@ class CarRacing(gym.Env, EzPickle):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
         self._destroy()
@@ -538,11 +537,11 @@ class CarRacing(gym.Env, EzPickle):
             self.render()
         return self.step(None)[0], {}
 
-    def step(self, action: Union[np.ndarray, int]):
+    def step(self, action: np.ndarray | int):
         assert self.car is not None
         if action is not None:
-            action = action.astype(np.float64)
             if self.continuous:
+                action = action.astype(np.float64)
                 self.car.steer(-action[0])
                 self.car.gas(action[1])
                 self.car.brake(action[2])

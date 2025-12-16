@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Tuple, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -213,8 +211,8 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         - Fixed `info["x_position"]` & `info["y_position"]` & `info["distance_from_origin"]` giving `xpos` instead of `qpos` observations (`xpos` observations are behind 1 `mj_step()` more [here](https://github.com/deepmind/mujoco/issues/889#issuecomment-1568896388)) (related [GitHub issue #1](https://github.com/Farama-Foundation/Gymnasium/issues/521) & [GitHub issue #2](https://github.com/Farama-Foundation/Gymnasium/issues/539)).
         - Removed `info["forward_reward"]` as it is equivalent to `info["reward_forward"]`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3, also removed contact forces from the default observation space (new variable `use_contact_forces=True` can restore them).
-    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen).
-    * v2: All continuous control environments now use mujoco-py >= 1.50.
+    * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen). Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release
     """
@@ -224,6 +222,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_tuple",
         ],
     }
 
@@ -231,15 +230,15 @@ class AntEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "ant.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, Union[float, int]] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1,
         ctrl_cost_weight: float = 0.5,
         contact_cost_weight: float = 5e-4,
         healthy_reward: float = 1.0,
-        main_body: Union[int, str] = 1,
+        main_body: int | str = 1,
         terminate_when_unhealthy: bool = True,
-        healthy_z_range: Tuple[float, float] = (0.2, 1.0),
-        contact_force_range: Tuple[float, float] = (-1.0, 1.0),
+        healthy_z_range: tuple[float, float] = (0.2, 1.0),
+        contact_force_range: tuple[float, float] = (-1.0, 1.0),
         reset_noise_scale: float = 0.1,
         exclude_current_positions_from_observation: bool = True,
         include_cfrc_ext_in_observation: bool = True,
@@ -297,6 +296,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
                 "human",
                 "rgb_array",
                 "depth_array",
+                "rgbd_tuple",
             ],
             "render_fps": int(np.round(1.0 / self.dt)),
         }

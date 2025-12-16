@@ -1,7 +1,5 @@
 __credits__ = ["Kallinteris-Andreas"]
 
-from typing import Dict, Union
-
 import numpy as np
 
 from gymnasium import utils
@@ -128,10 +126,10 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         - Added `xml_file` argument.
         - Added `reset_noise_scale` argument to set the range of initial states.
         - Added `healthy_reward` argument to configure the reward function (defaults are effectively the same as in `v4`).
-        - Added individual reward terms in `info` ( `info["reward_survive"]`, `info["distance_penalty"]`, `info["velocity_penalty"]`).
+        - Added individual reward terms in `info` (`info["reward_survive"]`, `info["distance_penalty"]`, `info["velocity_penalty"]`).
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
-    * v3: This environment does not have a v3 release.
-    * v2: All continuous control environments now use mujoco-py >= 1.50.
+    * v3: This environment does not have a v3 release. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
+    * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum).
     * v0: Initial versions release.
     """
@@ -141,6 +139,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
             "human",
             "rgb_array",
             "depth_array",
+            "rgbd_tuple",
         ],
     }
 
@@ -148,7 +147,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "inverted_double_pendulum.xml",
         frame_skip: int = 5,
-        default_camera_config: Dict[str, Union[float, int]] = {},
+        default_camera_config: dict[str, float | int] = {},
         healthy_reward: float = 10.0,
         reset_noise_scale: float = 0.1,
         **kwargs,
@@ -174,6 +173,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
                 "human",
                 "rgb_array",
                 "depth_array",
+                "rgbd_tuple",
             ],
             "render_fps": int(np.round(1.0 / self.dt)),
         }

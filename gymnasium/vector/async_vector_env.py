@@ -6,11 +6,13 @@ import multiprocessing
 import sys
 import time
 import traceback
+from collections.abc import Callable, Sequence
 from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
-from typing import Any, Callable, Sequence
+from multiprocessing.sharedctypes import SynchronizedArray
+from typing import Any
 
 import numpy as np
 
@@ -35,7 +37,7 @@ from gymnasium.vector.utils import (
     read_from_shared_memory,
     write_to_shared_memory,
 )
-from gymnasium.vector.vector_env import ArrayType, VectorEnv
+from gymnasium.vector.vector_env import ArrayType, AutoresetMode, VectorEnv
 
 
 __all__ = ["AsyncVectorEnv", "AsyncState"]
@@ -101,6 +103,7 @@ class AsyncVectorEnv(VectorEnv):
             | None
         ) = None,
         observation_mode: str | Space = "same",
+        autoreset_mode: str | AutoresetMode = AutoresetMode.NEXT_STEP,
     ):
         """Vectorized environment that runs multiple environments in parallel.
 
@@ -120,6 +123,7 @@ class AsyncVectorEnv(VectorEnv):
                 'different' defines that there can be multiple observation spaces with different parameters though requires the same shape and dtype,
                 warning, may raise unexpected errors. Passing a ``Tuple[Space, Space]`` object allows defining a custom ``single_observation_space`` and
                 ``observation_space``, warning, may raise unexpected errors.
+            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.
 
         Warnings:
             worker is an advanced mode option. It provides a high degree of flexibility and a high chance
@@ -135,7 +139,15 @@ class AsyncVectorEnv(VectorEnv):
         self.env_fns = env_fns
         self.shared_memory = shared_memory
         self.copy = copy
+        self.context = context
+        self.daemon = daemon
+        self.worker = worker
         self.observation_mode = observation_mode
+        self.autoreset_mode = (
+            autoreset_mode
+            if isinstance(autoreset_mode, AutoresetMode)
+            else AutoresetMode(autoreset_mode)
+        )
 
         self.num_envs = len(env_fns)
 
@@ -145,6 +157,7 @@ class AsyncVectorEnv(VectorEnv):
 
         # As we support `make_vec(spec)` then we can't include a `spec = dummy_env.spec` as this doesn't guarantee we can actual recreate the vector env.
         self.metadata = dummy_env.metadata
+        self.metadata["autoreset_mode"] = self.autoreset_mode
         self.render_mode = dummy_env.render_mode
 
         self.single_action_space = dummy_env.action_space
@@ -211,6 +224,7 @@ class AsyncVectorEnv(VectorEnv):
                         parent_pipe,
                         _obs_buffer,
                         self.error_queue,
+                        self.autoreset_mode,
                     ),
                 )
 
@@ -237,7 +251,7 @@ class AsyncVectorEnv(VectorEnv):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | list[int | None] | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Resets all sub-environments in parallel and return a batch of concatenated observations and info.
@@ -254,7 +268,7 @@ class AsyncVectorEnv(VectorEnv):
 
     def reset_async(
         self,
-        seed: int | list[int] | None = None,
+        seed: int | list[int | None] | None = None,
         options: dict | None = None,
     ):
         """Send calls to the :obj:`reset` methods of the sub-environments.
@@ -287,9 +301,32 @@ class AsyncVectorEnv(VectorEnv):
                 str(self._state.value),
             )
 
-        for pipe, env_seed in zip(self.parent_pipes, seed):
-            env_kwargs = {"seed": env_seed, "options": options}
-            pipe.send(("reset", env_kwargs))
+        if options is not None and "reset_mask" in options:
+            reset_mask = options.pop("reset_mask")
+            assert isinstance(
+                reset_mask, np.ndarray
+            ), f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
+            assert reset_mask.shape == (
+                self.num_envs,
+            ), f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
+            assert (
+                reset_mask.dtype == np.bool_
+            ), f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
+            assert np.any(
+                reset_mask
+            ), f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
+
+            for pipe, env_seed, env_reset in zip(self.parent_pipes, seed, reset_mask):
+                if env_reset:
+                    env_kwargs = {"seed": env_seed, "options": options}
+                    pipe.send(("reset", env_kwargs))
+                else:
+                    pipe.send(("reset-noop", None))
+        else:
+            for pipe, env_seed in zip(self.parent_pipes, seed):
+                env_kwargs = {"seed": env_seed, "options": options}
+                pipe.send(("reset", env_kwargs))
+
         self._state = AsyncState.WAITING_RESET
 
     def reset_wait(
@@ -373,7 +410,7 @@ class AsyncVectorEnv(VectorEnv):
             )
 
         iter_actions = iterate(self.action_space, actions)
-        for pipe, action in zip(self.parent_pipes, iter_actions):
+        for pipe, action in zip(self.parent_pipes, iter_actions, strict=True):
             pipe.send(("step", action))
         self._state = AsyncState.WAITING_STEP
 
@@ -683,16 +720,18 @@ class AsyncVectorEnv(VectorEnv):
 
 def _async_worker(
     index: int,
-    env_fn: callable,
+    env_fn: Callable,
     pipe: Connection,
     parent_pipe: Connection,
-    shared_memory: multiprocessing.Array | dict[str, Any] | tuple[Any, ...],
+    shared_memory: SynchronizedArray | dict[str, Any] | tuple[Any, ...],
     error_queue: Queue,
+    autoreset_mode: AutoresetMode,
 ):
     env = env_fn()
     observation_space = env.observation_space
     action_space = env.action_space
     autoreset = False
+    observation = None
 
     parent_pipe.close()
 
@@ -709,11 +748,23 @@ def _async_worker(
                     observation = None
                     autoreset = False
                 pipe.send(((observation, info), True))
+            elif command == "reset-noop":
+                pipe.send(((observation, {}), True))
             elif command == "step":
-                if autoreset:
-                    observation, info = env.reset()
-                    reward, terminated, truncated = 0, False, False
-                else:
+                if autoreset_mode == AutoresetMode.NEXT_STEP:
+                    if autoreset:
+                        observation, info = env.reset()
+                        reward, terminated, truncated = 0, False, False
+                    else:
+                        (
+                            observation,
+                            reward,
+                            terminated,
+                            truncated,
+                            info,
+                        ) = env.step(data)
+                    autoreset = terminated or truncated
+                elif autoreset_mode == AutoresetMode.SAME_STEP:
                     (
                         observation,
                         reward,
@@ -721,7 +772,27 @@ def _async_worker(
                         truncated,
                         info,
                     ) = env.step(data)
-                autoreset = terminated or truncated
+
+                    if terminated or truncated:
+                        reset_observation, reset_info = env.reset()
+
+                        info = {
+                            "final_info": info,
+                            "final_obs": observation,
+                            **reset_info,
+                        }
+                        observation = reset_observation
+                elif autoreset_mode == AutoresetMode.DISABLED:
+                    assert autoreset is False
+                    (
+                        observation,
+                        reward,
+                        terminated,
+                        truncated,
+                        info,
+                    ) = env.step(data)
+                else:
+                    raise ValueError(f"Unexpected autoreset_mode: {autoreset_mode}")
 
                 if shared_memory:
                     write_to_shared_memory(

@@ -19,8 +19,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
 
     - name: Install dependencies
       run: pipx install build
@@ -29,7 +29,7 @@ jobs:
       run: pyproject-build
 
     - name: Store wheels
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         path: dist
 
@@ -40,7 +40,7 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
     steps:
     - name: Download dists
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v7
       with:
         name: artifact
         path: dist

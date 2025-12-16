@@ -28,7 +28,7 @@ mujoco/walker2d
 MuJoCo stands for Multi-Joint dynamics with Contact. It is a physics engine for facilitating research and development in robotics, biomechanics, graphics and animation, and other areas where fast and accurate simulation is needed.
 There is physical contact between the robots and their environment - and MuJoCo attempts at getting realistic physics simulations for the possible physical contact dynamics by aiming for physical accuracy and computational efficiency.
 
-The unique dependencies including the MuJoCo simlator for this set of environments can be installed via:
+The unique dependencies including the MuJoCo simulator for this set of environments can be installed via:
 
 ````bash
 pip install gymnasium[mujoco]
@@ -38,7 +38,12 @@ As of October 2021, DeepMind has acquired MuJoCo and has open-sourced it in 2022
 Using MuJoCo with Gymnasium requires the framework `mujoco` be installed (this dependency is installed with the above command).
 Instructions for installing the MuJoCo engine can be found on their [website](https://mujoco.org) and [GitHub repository](https://github.com/deepmind/mujoco).
 
-For MuJoCo `v3` environments and older the `mujoco-py` framework is required (`pip install gymnasium[mujoco-py]`) which can be found in the [GitHub repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py).
+MuJoCo `v3` environments and older, which relied on the `mujoco-py` framework, were migrated to the `gymnasium-robotics` package starting with `gymnasium` v1.2. For information on using these older versions, please refer to the `gymnasium-robotics` documentation. The original `mujoco-py` framework can be found in its [GitHub repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py).
+
+The dependencies for the old environment versions can be installed via:
+````bash
+pip install gymnasium_robotics[mujoco-py]
+````
 
 There are eleven MuJoCo environments (in roughly increasing complexity):
 
@@ -56,7 +61,7 @@ There are eleven MuJoCo environments (in roughly increasing complexity):
 | Walker2d               | 2d biped with the goal of walking                                    |
 | **Swimmers**           |                                                                      |
 | Swimmer                | 3d robot with the goal of swimming                                   |
-| **Quarduped**          |                                                                      |
+| **Quadruped**          |                                                                      |
 | Ant                    | 3d quadruped with the goal of running                                |
 | **Humanoid Bipeds**    |                                                                      |
 | Humanoid               | 3d humanoid with the goal of running                                 |
@@ -76,12 +81,12 @@ Environments can be configured by changing the `xml_file` argument and/or by twe
 ## Versions
 Gymnasium includes the following versions of the environments:
 
-| Version | Simulator       | Notes                                                  |
-|---------|-----------------|--------------------------------------------------------|
-| `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)            |
-| `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                         |
-| `v3`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
-| `v2`    | `mujoco-py`     | Deprecated, Kept for reproducibility (limited support) |
+| Version | Simulator       | Notes                                                                                                |
+|---------|-----------------|------------------------------------------------------------------------------------------------------|
+| `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)                                                          |
+| `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                                                                       |
+| `v3`    | `mujoco-py`     | Migrated to `gymnasium-robotics` (from `gymnasium` v1.2). Deprecated, Kept for reproducibility.        |
+| `v2`    | `mujoco-py`     | Migrated to `gymnasium-robotics` (from `gymnasium` v1.2). Deprecated, Kept for reproducibility.        |
 
 For more information, see the section "Version History" for each environment.
 
@@ -106,6 +111,7 @@ env = gymnasium.make("Ant-v5", render_mode="rgb_array", width=1280, height=720)
 
 | Parameter               | Type                                | Default | Description                                                                                                                                                                                                                                              |
 |-------------------------|-------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `render_mode`           | **str**                             | `None`   | The modality of the render result. Must be one of `human`, `rgb_array`, `depth_array`, or `rgbd_tuple`. Note that `human` does not return a rendered image, but renders directly to the window                                                                                                                                                                                                                   |
 | `width`                 | **int**                             | `480`   | The width of the render window                                                                                                                                                                                                                           |
 | `height`                | **int**                             | `480`   | The height of the render window                                                                                                                                                                                                                          |
 | `camera_id`             | **int \| None**                     | `None`  | The camera ID used for the render window                                                                                                                                                                                                                 |
@@ -117,11 +123,11 @@ env = gymnasium.make("Ant-v5", render_mode="rgb_array", width=1280, height=720)
 ### Rendering Backend
 The MuJoCo simulator renders images with OpenGL and can use 3 different back ends "glfw" (default), "egl", "omesa", which can be selected by setting an [environment variable](https://en.wikipedia.org/wiki/Environment_variable).
 
-| Backend | Environment Variable       | Description                       |
-|---------|----------------------------|-----------------------------------|
-| `glfw`  | `MUJOCO_GL=glfw` (default) | Renders with window System on GPU |
-| `egl`   | `MUJOCO_GL=egl`            | Renders headless on GPU           |
-| `omesa` | `MUJOCO_GL=omesa`          | Renders headless on CPU           |
+| Backend  | Environment Variable       | Description                       |
+|----------|----------------------------|-----------------------------------|
+| `GLFW`   | `MUJOCO_GL=glfw` (default) | Renders with Window System on GPU |
+| `EGL`    | `MUJOCO_GL=egl`            | Renders headless on GPU           |
+| `OSMESA` | `MUJOCO_GL=osmesa`         | Renders headless on CPU           |
 
 More information of the [MuJoCo/OpenGL documentation](https://mujoco.readthedocs.io/en/stable/programming/index.html#using-opengl).
 <!--

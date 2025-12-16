@@ -11,27 +11,17 @@ RUN apt-get -y update \
     xvfb unzip patchelf ffmpeg cmake swig \
     && apt-get autoremove -y \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    # Download mujoco
-    && mkdir /root/.mujoco \
-    && cd /root/.mujoco \
-    && wget -qO- 'https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz' | tar -xzvf -
+    && rm -rf /var/lib/apt/lists/*
 
-ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin"
-
-# Build mujoco-py from source. Pypi installs wheel packages and Cython won't recompile old file versions in the Github Actions CI.
-# Thus generating the following error https://github.com/cython/cython/pull/4428
-RUN git clone https://github.com/openai/mujoco-py.git\
-    && cd mujoco-py \
-    && pip install -e .
+RUN pip install uv
 
 COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
 
 # Specify the numpy version to cover both 1.x and 2.x
-RUN pip install --upgrade "numpy$NUMPY_VERSION"
+RUN uv pip install --system --upgrade "numpy$NUMPY_VERSION"
 
 # Test with PyTorch CPU build, since CUDA is not available in CI anyway
-RUN pip install .[all,testing] --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu
+RUN uv pip install --system .[all,testing] --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu
 
 ENTRYPOINT ["/usr/local/gymnasium/bin/docker_entrypoint"]

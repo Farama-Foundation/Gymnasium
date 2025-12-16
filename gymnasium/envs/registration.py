@@ -7,26 +7,21 @@ import copy
 import dataclasses
 import difflib
 import importlib
+import importlib.metadata as metadata
 import importlib.util
 import json
 import re
-import sys
 from collections import defaultdict
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from types import ModuleType
-from typing import Any, Callable, Iterable, Sequence
+from typing import Any, Protocol
 
 import gymnasium as gym
 from gymnasium import Env, Wrapper, error, logger
-
-
-if sys.version_info < (3, 10):
-    import importlib_metadata as metadata  # type: ignore
-else:
-    import importlib.metadata as metadata
-
-from typing import Protocol
+from gymnasium.logger import warn
+from gymnasium.vector import AutoresetMode
 
 
 ENV_ID_RE = re.compile(
@@ -604,7 +599,6 @@ def register(
     assert (
         entry_point is not None or vector_entry_point is not None
     ), "Either `entry_point` or `vector_entry_point` (or both) must be provided"
-    global registry, current_namespace
     ns, name, version = parse_env_id(id)
 
     if kwargs is None:
@@ -966,7 +960,7 @@ def make_vec(
 
     # Copies the environment creation specification and kwargs to add to the environment specification details
     copied_id_spec = copy.deepcopy(env_spec)
-    copied_id_spec.kwargs = env_spec_kwargs
+    copied_id_spec.kwargs = env_spec_kwargs.copy()
     if num_envs != 1:
         copied_id_spec.kwargs["num_envs"] = num_envs
     copied_id_spec.kwargs["vectorization_mode"] = vectorization_mode.value
@@ -975,6 +969,15 @@ def make_vec(
     if len(wrappers) > 0:
         copied_id_spec.kwargs["wrappers"] = wrappers
     env.unwrapped.spec = copied_id_spec
+
+    if "autoreset_mode" not in env.metadata:
+        warn(
+            f"The VectorEnv ({env}) is missing AutoresetMode metadata, metadata={env.metadata}"
+        )
+    elif not isinstance(env.metadata["autoreset_mode"], AutoresetMode):
+        warn(
+            f"The VectorEnv ({env}) metadata['autoreset_mode'] is not an instance of AutoresetMode, {type(env.metadata['autoreset_mode'])}."
+        )
 
     return env
 

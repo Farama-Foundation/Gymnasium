@@ -16,22 +16,33 @@ title: Star Gunner
           left: 0;
           width: 100%;
           height: 100%;
-          background-color: rgba(0, 0, 0, 0.5);
+          background-color: rgba(0, 0, 0, 0.5); /* Default background overlay */
           z-index: 999;
           justify-content: center;
           align-items: center;
       }
       .popup-content {
-          background-color: #fff;
+          background-color: #fff; /* Default light content background */
           padding: 20px;
           border-radius: 10px;
           text-align: center;
           width: 300px;
       }
+      .dark-theme .popup {
+          background-color: rgba(0, 0, 0, 0.7); /* Darker overlay for dark theme */
+      }
+      .dark-theme .popup-content {
+          background-color: #333; /* Dark content background */
+          color: #fff; /* Light text for dark theme */
+      }
       button {
           margin-top: 10px;
           padding: 5px 10px;
           cursor: pointer;
+      }
+      /* Add spacing between checkbox and label text */
+      input[type="checkbox"] {
+          margin-right: 5px;
       }
     </style>
   </head>
@@ -39,7 +50,7 @@ title: Star Gunner
     <p>If you are not redirected automatically, follow this <a href="https://ale.farama.org/environments/star_gunner">link to Star Gunner's new page</a>.</p>
     <div id="popup" class="popup">
     <div class="popup-content">
-        <p>Atari's documentation has moved to <b>ale.farama.org</b></p>
+        <p>Star Gunner's documentation has moved to <b>ale.farama.org</b></p>
         <label>
             <input type="checkbox" id="atariAutoRedirect">Enable auto-redirect next time
         </label>
@@ -69,8 +80,39 @@ title: Star Gunner
         document.cookie = `${name}=${value}; ${expires}; path=/`;  // environments/atari/
     }
 
+    // Function to apply theme to the popup
+    function applyTheme() {
+        const theme = localStorage.getItem("theme") || "auto";
+        const body = document.body;
+
+        // Remove any existing theme classes
+        body.classList.remove("dark-theme", "light-theme");
+
+        if (theme === "dark") {
+            body.classList.add("dark-theme");
+        } else if (theme === "light") {
+            body.classList.add("light-theme");
+        } else if (theme === "auto") {
+            // Check system preference for dark mode
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                body.classList.add("dark-theme");
+            } else {
+                body.classList.add("light-theme");
+            }
+
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                body.classList.remove("dark-theme", "light-theme");
+                body.classList.add(e.matches ? "dark-theme" : "light-theme");
+            });
+        }
+    }
+
     // Show popup if the cookie doesn't exist
     window.onload = function() {
+        // Apply theme first
+        applyTheme();
+
         const atariAutoRedirect = getCookie('atariAutoRedirect');
         if (atariAutoRedirect) {
             window.location.href = "https://ale.farama.org/environments/star_gunner";

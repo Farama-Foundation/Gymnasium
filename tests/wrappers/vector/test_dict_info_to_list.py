@@ -169,3 +169,76 @@ def test_update_info():
         {"a": np_array_int_default_dtype(2)},
     ]
     assert data_equivalence(list_info, expected_list_info)
+
+    # Test without binary array (can happen with custom vector environment)
+    vector_infos = {
+        "episode": {
+            "a": np.array([1, 2, 0]),
+            "b": np.array([1.0, 2.0, 0.0]),
+        },
+        "a": np.array([0, 1, 2]),
+    }
+    _, list_info = env.reset(options=vector_infos)
+    expected_list_info = [
+        {
+            "episode": {"a": np_array_int_default_dtype(1), "b": np.float64(1.0)},
+            "a": np_array_int_default_dtype(0),
+        },
+        {
+            "episode": {"a": np_array_int_default_dtype(2), "b": np.float64(2.0)},
+            "a": np_array_int_default_dtype(1),
+        },
+        {
+            "episode": {"a": np_array_int_default_dtype(0), "b": np.float64(0.0)},
+            "a": np_array_int_default_dtype(2),
+        },
+    ]
+    assert data_equivalence(list_info, expected_list_info)
+
+
+@pytest.mark.parametrize(
+    "vector_infos",
+    [
+        {
+            "a": np.array([1, 2]),
+            "_a": np.array([True, True, False]),
+        },
+        {
+            "a": np.array([1, 2]),
+        },
+        {
+            "episode": {
+                "a": np.array([1, 2]),
+                "_a": np.array([True, True, False]),
+            },
+            "a": np.array([0, 1, 2]),
+            "_a": np.array([False, True, True]),
+        },
+        {
+            "episode": {
+                "a": np.array([1, 2]),
+            },
+            "a": np.array([0, 1, 2]),
+        },
+        {
+            "episode": {
+                "a": np.array([1, 2, 0]),
+                "_a": np.array([True, True, False]),
+            },
+            "a": np.array([1, 2]),
+            "_a": np.array([True, True]),
+        },
+        {
+            "episode": {
+                "a": np.array([1, 2, 0]),
+            },
+            "a": np.array([1, 2]),
+        },
+    ],
+)
+def test_errors(vector_infos):
+    env = DictInfoToList(ResetOptionAsInfo())
+    env.unwrapped.num_envs = 3
+
+    with pytest.raises(AssertionError):
+        env.reset(options=vector_infos)

@@ -1,5 +1,4 @@
 from os import path
-from typing import Dict, Optional, Tuple, Union
 
 import numpy as np
 from numpy.typing import NDArray
@@ -41,15 +40,15 @@ class MujocoEnv(gym.Env):
         self,
         model_path: str,
         frame_skip: int,
-        observation_space: Optional[Space],
-        render_mode: Optional[str] = None,
+        observation_space: Space | None,
+        render_mode: str | None = None,
         width: int = DEFAULT_SIZE,
         height: int = DEFAULT_SIZE,
-        camera_id: Optional[int] = None,
-        camera_name: Optional[str] = None,
-        default_camera_config: Optional[Dict[str, Union[float, int]]] = None,
+        camera_id: int | None = None,
+        camera_name: str | None = None,
+        default_camera_config: dict[str, float | int] | None = None,
         max_geom: int = 1000,
-        visual_options: Dict[int, bool] = {},
+        visual_options: dict[int, bool] = {},
     ):
         """Base abstract class for mujoco based environments.
 
@@ -82,11 +81,6 @@ class MujocoEnv(gym.Env):
 
         self.frame_skip = frame_skip
 
-        assert self.metadata["render_modes"] == [
-            "human",
-            "rgb_array",
-            "depth_array",
-        ], self.metadata["render_modes"]
         if "render_fps" in self.metadata:
             assert (
                 int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
@@ -121,7 +115,7 @@ class MujocoEnv(gym.Env):
 
     def _initialize_simulation(
         self,
-    ) -> Tuple["mujoco.MjModel", "mujoco.MjData"]:
+    ) -> tuple["mujoco.MjModel", "mujoco.MjData"]:
         """
         Initialize MuJoCo simulation data structures `mjModel` and `mjData`.
         """
@@ -175,8 +169,8 @@ class MujocoEnv(gym.Env):
     def reset(
         self,
         *,
-        seed: Optional[int] = None,
-        options: Optional[dict] = None,
+        seed: int | None = None,
+        options: dict | None = None,
     ):
         super().reset(seed=seed)
 
@@ -215,7 +209,7 @@ class MujocoEnv(gym.Env):
     # ----------------------------
     def step(
         self, action: NDArray[np.float32]
-    ) -> Tuple[NDArray[np.float64], np.float64, bool, bool, Dict[str, np.float64]]:
+    ) -> tuple[NDArray[np.float64], np.float64, bool, bool, dict[str, np.float64]]:
         raise NotImplementedError
 
     def reset_model(self) -> NDArray[np.float64]:
@@ -225,7 +219,7 @@ class MujocoEnv(gym.Env):
         """
         raise NotImplementedError
 
-    def _get_reset_info(self) -> Dict[str, float]:
+    def _get_reset_info(self) -> dict[str, float]:
         """Function that generates the `info` that is returned during a `reset()`."""
         return {}
 
