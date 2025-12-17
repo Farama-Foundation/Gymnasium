@@ -88,7 +88,7 @@ class MJXEnv(
         self.action_space = gymnasium.spaces.Box(
             low=self.model.actuator_ctrlrange.T[0],
             high=self.model.actuator_ctrlrange.T[1],
-            dtype=np.float32,
+            dtype=np.float64,
         )
         # TODO change bounds and types when and if `Box` supports JAX nativly
         # self.action_space = gymnasium.spaces.Box(low=self.mjx_model.actuator_ctrlrange.T[0], high=self.mjx_model.actuator_ctrlrange.T[1], dtype=np.float32)
