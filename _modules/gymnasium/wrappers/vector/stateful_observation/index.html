@@ -405,7 +405,7 @@
 <span class="sd">        The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was</span>
 <span class="sd">        newly instantiated or the policy was changed recently.</span>
 
-<span class="sd">    Example without the normalize reward wrapper:</span>
+<span class="sd">    Example without the normalize observation wrapper:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
@@ -418,7 +418,7 @@
 <span class="sd">        np.float32(0.62259156)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
 
-<span class="sd">    Example with the normalize reward wrapper:</span>
+<span class="sd">    Example with the normalize observation wrapper:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; envs = NormalizeObservation(envs)</span>
@@ -613,7 +613,7 @@
         })()
       </script>
 
-    <script src="../../../../../_static/documentation_options.js?v=348dacf0"></script>
+    <script src="../../../../../_static/documentation_options.js?v=c9fd93b6"></script>
     <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=7660844c"></script>
