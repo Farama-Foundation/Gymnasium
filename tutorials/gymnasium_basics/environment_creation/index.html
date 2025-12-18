@@ -379,7 +379,7 @@
             
             <div class="sphx-glr-example-title admonition note">
 <p class="admonition-title">Note</p>
-<p>This tutorial is compatible with Gymnasium version 1.2.2.</p>
+<p>This tutorial is compatible with Gymnasium version 1.2.3.</p>
 </div>
 <section id="make-your-own-custom-environment">
 <span id="sphx-glr-tutorials-gymnasium-basics-environment-creation-py"></span><h1>Make your own custom environment<a class="headerlink" href="#make-your-own-custom-environment" title="Link to this heading">¶</a></h1>
@@ -530,12 +530,13 @@ declaration of <code class="docutils literal notranslate"><span class="pre">Grid
 <span class="sd">        The following dictionary maps abstract actions from `self.action_space` to</span>
 <span class="sd">        the direction we will walk in if that action is taken.</span>
 <span class="sd">        i.e. 0 corresponds to &quot;right&quot;, 1 to &quot;up&quot; etc.</span>
+<span class="sd">        Uses NumPy [row, col] convention where row 0 is at the top.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_action_to_direction</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">Actions</span><span class="o">.</span><span class="n">RIGHT</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
-            <span class="n">Actions</span><span class="o">.</span><span class="n">UP</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
-            <span class="n">Actions</span><span class="o">.</span><span class="n">LEFT</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
-            <span class="n">Actions</span><span class="o">.</span><span class="n">DOWN</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">RIGHT</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">UP</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">LEFT</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="n">Actions</span><span class="o">.</span><span class="n">DOWN</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
         <span class="p">}</span>
 
         <span class="k">assert</span> <span class="n">render_mode</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">render_mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_modes&quot;</span><span class="p">]</span>
@@ -681,11 +682,12 @@ can use it as a skeleton for your own environments:</p>
     <span class="p">)</span>  <span class="c1"># The size of a single grid square in pixels</span>
 
     <span class="c1"># First we draw the target</span>
+    <span class="c1"># Convert [row, col] to pygame (x, y) by reversing the coordinates</span>
     <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">rect</span><span class="p">(</span>
         <span class="n">canvas</span><span class="p">,</span>
         <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
         <span class="n">pygame</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span>
-            <span class="n">pix_square_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span>
+            <span class="n">pix_square_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
             <span class="p">(</span><span class="n">pix_square_size</span><span class="p">,</span> <span class="n">pix_square_size</span><span class="p">),</span>
         <span class="p">),</span>
     <span class="p">)</span>
@@ -693,7 +695,7 @@ can use it as a skeleton for your own environments:</p>
     <span class="n">pygame</span><span class="o">.</span><span class="n">draw</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span>
         <span class="n">canvas</span><span class="p">,</span>
         <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
-        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">pix_square_size</span><span class="p">,</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">pix_square_size</span><span class="p">,</span>
         <span class="n">pix_square_size</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -1104,7 +1106,7 @@ in <code class="docutils literal notranslate"><span class="pre">gymnasium_env/wr
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=348dacf0"></script>
+    <script src="../../../_static/documentation_options.js?v=c9fd93b6"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
