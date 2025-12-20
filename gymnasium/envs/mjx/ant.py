@@ -114,7 +114,7 @@ class Ant_MJXEnv(MJXEnv):
 
     def _get_contact_forces(self, mjx_data: mjx.Data, params: AntMJXEnvParams):
         """Get External Contact Forces (`cfrc_ext`) clipped by `contact_force_range`."""
-        raw_contact_forces = mjx_data.cfrc_ext
+        raw_contact_forces = mjx_data._impl.cfrc_ext
         min_value, max_value = params["contact_force_range"]
         contact_forces = jnp.clip(raw_contact_forces, min_value, max_value)
         return contact_forces

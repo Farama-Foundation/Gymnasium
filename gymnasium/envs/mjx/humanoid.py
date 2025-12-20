@@ -150,7 +150,7 @@ class BaseHumanoid_MJXEnv(MJXEnv):
         else:
             actuator_forces = jnp.array([])
         if params["include_cfrc_ext_in_observation"] is True:
-            external_contact_forces = mjx_data.cfrc_ext[1:].flatten()
+            external_contact_forces = mjx_data._impl.cfrc_ext[1:].flatten()
         else:
             external_contact_forces = jnp.array([])
 
@@ -247,7 +247,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         return reward, reward_info
 
     def _get_conctact_cost(self, mjx_data: mjx.Data, params: HumanoidMJXEnvParams):
-        contact_forces = mjx_data.cfrc_ext
+        contact_forces = mjx_data._impl.cfrc_ext
         contact_cost = params["contact_cost_weight"] * jnp.sum(
             jnp.square(contact_forces)
         )
@@ -316,7 +316,7 @@ class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
         quad_ctrl_cost = params["ctrl_cost_weight"] * jnp.square(action).sum()
 
         quad_impact_cost = (
-            params["impact_cost_weight"] * jnp.square(mjx_data_new.cfrc_ext).sum()
+            params["impact_cost_weight"] * jnp.square(mjx_data_new._impl.cfrc_ext).sum()
         )
         min_impact_cost, max_impact_cost = params["impact_cost_range"]
         quad_impact_cost = jnp.clip(quad_impact_cost, min_impact_cost, max_impact_cost)
