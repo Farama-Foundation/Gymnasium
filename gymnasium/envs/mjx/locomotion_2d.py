@@ -12,7 +12,7 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Dict, Optional, Tuple, TypedDict, Union
+from typing import TypedDict
 
 import numpy as np
 
@@ -33,22 +33,22 @@ class Locomotion2dMJXEnvParams(TypedDict):
 
     xml_file: str
     frame_skip: int
-    default_camera_config: Dict[str, Union[float, int, str, None]]
+    default_camera_config: dict[str, float | int | str | None]
     forward_reward_weight: float
     ctrl_cost_weight: float
     healthy_reward: float
     terminate_when_unhealthy: bool
-    healthy_state_range: Tuple[float, float]
-    healthy_z_range: Tuple[float, float]
-    healthy_angle_range: Tuple[float, float]
+    healthy_state_range: tuple[float, float]
+    healthy_z_range: tuple[float, float]
+    healthy_angle_range: tuple[float, float]
     reset_noise_scale: float
     exclude_current_positions_from_observation: bool
-    camera_id: Optional[int]
-    camera_name: Optional[str]
+    camera_id: int | None
+    camera_name: str | None
     max_geom: int
     width: int
     height: int
-    render_mode: Optional[str]
+    render_mode: str | None
 
 
 class Locomotion_2d_MJXEnv(MJXEnv):
@@ -78,7 +78,7 @@ class Locomotion_2d_MJXEnv(MJXEnv):
     def observation(
         self,
         state: mjx.Data,
-        rng: jax.random.PRNGKey,
+        rng: jax.Array,
         params: Locomotion2dMJXEnvParams,
     ) -> jnp.ndarray:
         """Observes the `qpos` (posional elements) and `qvel` (velocity elements) of the robot."""
@@ -99,7 +99,7 @@ class Locomotion_2d_MJXEnv(MJXEnv):
         action: jnp.ndarray,
         next_state: mjx.Data,
         params: Locomotion2dMJXEnvParams,
-    ) -> Tuple[jnp.ndarray, Dict]:
+    ) -> tuple[jnp.ndarray, dict]:
         """Reward = foward_reward + healty_reward - control_cost."""
         mjx_data_old = state
         mjx_data_new = next_state
@@ -129,7 +129,7 @@ class Locomotion_2d_MJXEnv(MJXEnv):
     def terminal(
         self,
         state: mjx.Data,
-        rng: jax.random.PRNGKey,
+        rng: jax.Array,
         params: Locomotion2dMJXEnvParams,
     ) -> bool:
         """Terminates if unhealthy."""
@@ -140,7 +140,7 @@ class Locomotion_2d_MJXEnv(MJXEnv):
 
     def state_info(
         self, state: mjx.Data, params: Locomotion2dMJXEnvParams
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Includes state information exclueded from `observation()`."""
         mjx_data = state
 
@@ -183,7 +183,7 @@ class HalfCheetahMJXEnv(Locomotion_2d_MJXEnv):
 
     def _gen_init_physics_state(
         self, rng, params: Locomotion2dMJXEnvParams
-    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) from a CUD and `qvel` (velocity elements) from a gaussian."""
         noise_low = -params["reset_noise_scale"]
         noise_high = params["reset_noise_scale"]
@@ -223,7 +223,7 @@ class HopperMJXEnv(Locomotion_2d_MJXEnv):
 
     def _gen_init_physics_state(
         self, rng, params: Locomotion2dMJXEnvParams
-    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
         noise_low = -params["reset_noise_scale"]
         noise_high = params["reset_noise_scale"]
@@ -262,7 +262,7 @@ class Walker2dMJXEnv(Locomotion_2d_MJXEnv):
 
     def _gen_init_physics_state(
         self, rng, params: Locomotion2dMJXEnvParams
-    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
         noise_low = -params["reset_noise_scale"]
         noise_high = params["reset_noise_scale"]

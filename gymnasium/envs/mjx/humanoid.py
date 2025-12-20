@@ -12,7 +12,7 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Dict, Optional, Tuple, TypedDict, Union
+from typing import TypedDict, Union
 
 import numpy as np
 
@@ -30,26 +30,26 @@ class HumanoidMJXEnvParams(TypedDict):
 
     xml_file: str
     frame_skip: int
-    default_camera_config: Dict[str, Union[float, int, str, None]]
+    default_camera_config: dict[str, float | int | str | None]
     forward_reward_weight: float
     ctrl_cost_weight: float
     contact_cost_weight: float
-    contact_cost_range: Tuple[float, float]
+    contact_cost_range: tuple[float, float]
     healthy_reward: float
     terminate_when_unhealthy: bool
-    healthy_z_range: Tuple[float, float]
+    healthy_z_range: tuple[float, float]
     reset_noise_scale: float
     exclude_current_positions_from_observation: bool
     include_cinert_in_observation: bool
     include_cvel_in_observation: bool
     include_qfrc_actuator_in_observation: bool
     include_cfrc_ext_in_observation: bool
-    camera_id: Optional[int]
-    camera_name: Optional[str]
+    camera_id: int | None
+    camera_name: str | None
     max_geom: int
     width: int
     height: int
-    render_mode: Optional[str]
+    render_mode: str | None
 
 
 class HumanoidStandupMJXEnvParams(TypedDict):
@@ -57,23 +57,23 @@ class HumanoidStandupMJXEnvParams(TypedDict):
 
     xml_file: str
     frame_skip: int
-    default_camera_config: Dict[str, Union[float, int, str, None]]
+    default_camera_config: dict[str, float | int | str | None]
     uph_cost_weight: float
     ctrl_cost_weight: float
     impact_cost_weight: float
-    impact_cost_range: Tuple[float, float]
+    impact_cost_range: tuple[float, float]
     reset_noise_scale: float
     exclude_current_positions_from_observation: bool
     include_cinert_in_observation: bool
     include_cvel_in_observation: bool
     include_qfrc_actuator_in_observation: bool
     include_cfrc_ext_in_observation: bool
-    camera_id: Optional[int]
-    camera_name: Optional[str]
+    camera_id: int | None
+    camera_name: str | None
     max_geom: int
     width: int
     height: int
-    render_mode: Optional[str]
+    render_mode: str | None
 
 
 BaseHumanoidMJXEnvParams = Union[HumanoidMJXEnvParams, HumanoidStandupMJXEnvParams]
@@ -124,7 +124,7 @@ class BaseHumanoid_MJXEnv(MJXEnv):
     def observation(
         self,
         state: mjx.Data,
-        rng: jax.random.PRNGKey,
+        rng: jax.Array,
         params: BaseHumanoidMJXEnvParams,
     ) -> jnp.ndarray:
         """Observes the `qpos` (posional elements) and `qvel` (velocity elements) and `cfrc_ext` (external contact forces) of the robot."""
@@ -168,7 +168,7 @@ class BaseHumanoid_MJXEnv(MJXEnv):
 
     def state_info(
         self, state: mjx.Data, params: BaseHumanoidMJXEnvParams
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Includes state information exclueded from `observation()`."""
         mjx_data = state
 
@@ -183,7 +183,7 @@ class BaseHumanoid_MJXEnv(MJXEnv):
 
     def _gen_init_physics_state(
         self, rng, params: BaseHumanoidMJXEnvParams
-    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
         noise_low = -params["reset_noise_scale"]
         noise_high = params["reset_noise_scale"]
@@ -214,7 +214,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         action: jnp.ndarray,
         next_state: mjx.Data,
         params: HumanoidMJXEnvParams,
-    ) -> Tuple[jnp.ndarray, Dict]:
+    ) -> tuple[jnp.ndarray, dict]:
         """Reward = forward_reward + healthy_reward - ctrl_cost - contact_cost."""
         mjx_data_old = state
         mjx_data_new = next_state
@@ -265,7 +265,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         return is_healthy
 
     def terminal(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: HumanoidMJXEnvParams
+        self, state: mjx.Data, rng: jax.Array, params: HumanoidMJXEnvParams
     ) -> bool:
         """Terminates if unhealthy."""
         return jnp.logical_and(
@@ -305,7 +305,7 @@ class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
         action: jnp.ndarray,
         next_state: mjx.Data,
         params: HumanoidStandupMJXEnvParams,
-    ) -> Tuple[jnp.ndarray, Dict]:
+    ) -> tuple[jnp.ndarray, dict]:
         """Reward = uph_cost - quad_ctrl_cost - quad_impact_cost + 1."""
         mjx_data_new = next_state
 

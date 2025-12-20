@@ -12,7 +12,7 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Dict, Optional, Tuple, TypedDict, Union
+from typing import TypedDict
 
 import numpy as np
 
@@ -25,24 +25,24 @@ class AntMJXEnvParams(TypedDict):
 
     xml_file: str
     frame_skip: int
-    default_camera_config: Dict[str, Union[float, int, str, None]]
+    default_camera_config: dict[str, float | int | str | None]
     forward_reward_weight: float
     ctrl_cost_weight: float
     contact_cost_weight: float
     healthy_reward: float
     main_body: int
     terminate_when_unhealthy: bool
-    healthy_z_range: Tuple[float, float]
-    contact_force_range: Tuple[float, float]
+    healthy_z_range: tuple[float, float]
+    contact_force_range: tuple[float, float]
     reset_noise_scale: float
     exclude_current_positions_from_observation: bool
     include_cfrc_ext_in_observation: bool
-    camera_id: Optional[int]
-    camera_name: Optional[str]
+    camera_id: int | None
+    camera_name: str | None
     max_geom: int
     width: int
     height: int
-    render_mode: Optional[str]
+    render_mode: str | None
 
 
 class Ant_MJXEnv(MJXEnv):
@@ -76,7 +76,7 @@ class Ant_MJXEnv(MJXEnv):
 
     def _gen_init_physics_state(
         self, rng, params: AntMJXEnvParams
-    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) from a CUD and `qvel` (velocity elements) from a gaussian."""
         noise_low = -params["reset_noise_scale"]
         noise_high = params["reset_noise_scale"]
@@ -92,7 +92,7 @@ class Ant_MJXEnv(MJXEnv):
         return qpos, qvel, act
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: AntMJXEnvParams
+        self, state: mjx.Data, rng: jax.Array, params: AntMJXEnvParams
     ) -> jnp.ndarray:
         """Observes the `qpos` (posional elements) and `qvel` (velocity elements) and `cfrc_ext` (external contact forces) of the robot."""
         mjx_data = state
@@ -125,7 +125,7 @@ class Ant_MJXEnv(MJXEnv):
         action: jnp.ndarray,
         next_state: mjx.Data,
         params: AntMJXEnvParams,
-    ) -> Tuple[jnp.ndarray, Dict]:
+    ) -> tuple[jnp.ndarray, dict]:
         """Reward = forward_reward + healthy_reward - ctrl_cost - contact cost."""
         mjx_data_old = state
         mjx_data_new = next_state
@@ -172,7 +172,7 @@ class Ant_MJXEnv(MJXEnv):
         is_healthy = jnp.logical_and(is_finite, z_ok)
         return is_healthy
 
-    def state_info(self, state: mjx.Data, params: AntMJXEnvParams) -> Dict[str, float]:
+    def state_info(self, state: mjx.Data, params: AntMJXEnvParams) -> dict[str, float]:
         """Includes state information exclueded from `observation()`."""
         mjx_data = state
 
@@ -184,7 +184,7 @@ class Ant_MJXEnv(MJXEnv):
         return info
 
     def terminal(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: AntMJXEnvParams
+        self, state: mjx.Data, rng: jax.Array, params: AntMJXEnvParams
     ) -> bool:
         """Terminates if unhealthy."""
         return jnp.logical_and(

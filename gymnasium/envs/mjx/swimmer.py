@@ -12,7 +12,7 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Any, Dict, Optional, Tuple, TypedDict, Union
+from typing import TypedDict
 
 import numpy as np
 
@@ -24,13 +24,13 @@ class SwimmerParams(TypedDict):
 
     xml_file: str
     frame_skip: int
-    default_camera_config: Dict[str, Union[float, int, str, None]]
-    camera_id: Optional[int]
-    camera_name: Optional[str]
+    default_camera_config: dict[str, float | int | str | None]
+    camera_id: int | None
+    camera_name: str | None
     max_geom: int
     width: int
     height: int
-    render_mode: Optional[str]
+    render_mode: str | None
     forward_reward_weight: float
     ctrl_cost_weight: float
     reset_noise_scale: float
@@ -64,7 +64,7 @@ class Swimmer_MJXEnv(MJXEnv):
 
     def _gen_init_physics_state(
         self, rng, params: SwimmerParams
-    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
         noise_low = -params["reset_noise_scale"]
         noise_high = params["reset_noise_scale"]
@@ -80,7 +80,7 @@ class Swimmer_MJXEnv(MJXEnv):
         return qpos, qvel, act
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: SwimmerParams
+        self, state: mjx.Data, rng: jax.Array, params: SwimmerParams
     ) -> jnp.ndarray:
         """Observes the `qpos` (posional elements) and `qvel` (velocity elements) of the robot."""
         mjx_data = state
@@ -100,7 +100,7 @@ class Swimmer_MJXEnv(MJXEnv):
         action: jnp.ndarray,
         next_state: mjx.Data,
         params: SwimmerParams,
-    ) -> Tuple[jnp.ndarray, Dict]:
+    ) -> tuple[jnp.ndarray, dict]:
         """Reward = reward_dist + reward_ctrl."""
         mjx_data_old = state
         mjx_data_new = next_state
@@ -121,7 +121,7 @@ class Swimmer_MJXEnv(MJXEnv):
 
         return reward, reward_info
 
-    def state_info(self, state: mjx.Data, params: SwimmerParams) -> Dict[str, float]:
+    def state_info(self, state: mjx.Data, params: SwimmerParams) -> dict[str, float]:
         """Includes state information exclueded from `observation()`."""
         mjx_data = state
 
@@ -150,4 +150,3 @@ class Swimmer_MJXEnv(MJXEnv):
             "render_mode": None,
         }
         return {**default, **kwargs}
-

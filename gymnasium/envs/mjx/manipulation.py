@@ -12,7 +12,7 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Any, Dict, Optional, Tuple, TypedDict, Union
+from typing import TypedDict
 
 import numpy as np
 
@@ -30,13 +30,13 @@ class ReacherParams(TypedDict):
 
     xml_file: str
     frame_skip: int
-    default_camera_config: Dict[str, Union[float, int, str, None]]
-    camera_id: Optional[int]
-    camera_name: Optional[str]
+    default_camera_config: dict[str, float | int | str | None]
+    camera_id: int | None
+    camera_name: str | None
     max_geom: int
     width: int
     height: int
-    render_mode: Optional[str]
+    render_mode: str | None
     reward_dist_weight: float
     reward_control_weight: float
 
@@ -65,7 +65,7 @@ class Reacher_MJXEnv(MJXEnv):
 
     def _gen_init_physics_state(
         self, rng, params: ReacherParams
-    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `arm.qpos` (positional elements) and `arm.qvel` (velocity elements) from a CUD and the `goal.qpos` from a cicrular uniform distribution."""
         qpos = self.mjx_model.qpos0 + jax.random.uniform(
             key=rng, minval=-0.1, maxval=0.1, shape=(self.mjx_model.nq,)
@@ -96,7 +96,7 @@ class Reacher_MJXEnv(MJXEnv):
         return mjx_data
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: ReacherParams
+        self, state: mjx.Data, rng: jax.Array, params: ReacherParams
     ) -> jnp.ndarray:
         """Observes the `sin(theta)` & `cos(theta)` & `qpos` &  `qvel` & 'fingertip - target' distance."""
         mjx_data = state
@@ -125,7 +125,7 @@ class Reacher_MJXEnv(MJXEnv):
         action: jnp.ndarray,
         next_state: mjx.Data,
         params: ReacherParams,
-    ) -> Tuple[jnp.ndarray, Dict]:
+    ) -> tuple[jnp.ndarray, dict]:
         """Reward = reward_dist + reward_ctrl."""
         mjx_data = next_state
 
@@ -168,13 +168,13 @@ class PusherParams(TypedDict):
 
     xml_file: str
     frame_skip: int
-    default_camera_config: Dict[str, Union[float, int, str, None]]
-    camera_id: Optional[int]
-    camera_name: Optional[str]
+    default_camera_config: dict[str, float | int | str | None]
+    camera_id: int | None
+    camera_name: str | None
     max_geom: int
     width: int
     height: int
-    render_mode: Optional[str]
+    render_mode: str | None
     reward_near_weight: float
     reward_dist_weight: float
     reward_control_weight: float
@@ -197,7 +197,7 @@ class Pusher_MJXEnv(MJXEnv):
 
     def _gen_init_physics_state(
         self, rng, params: PusherParams
-    ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `arm.qpos` (positional elements) and `arm.qvel` (velocity elements) from a CUD and the `goal.qpos` from a cicrular uniform distribution."""
         qpos = self.mjx_model.qpos0
 
@@ -224,7 +224,7 @@ class Pusher_MJXEnv(MJXEnv):
         return qpos, qvel, act
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: PusherParams
+        self, state: mjx.Data, rng: jax.Array, params: PusherParams
     ) -> jnp.ndarray:
         """Observes the & `qpos` &  `qvel` & `tips_arm` & `object` `goal`."""
         mjx_data = state
@@ -253,7 +253,7 @@ class Pusher_MJXEnv(MJXEnv):
         action: jnp.ndarray,
         next_state: mjx.Data,
         params: PusherParams,
-    ) -> Tuple[jnp.ndarray, Dict]:
+    ) -> tuple[jnp.ndarray, dict]:
         """Reward = reward_dist + reward_ctrl + reward_near."""
         mjx_data = next_state
         tips_arm_position = mjx_data.xpos[10]  # TODO make this dynamic
@@ -294,4 +294,3 @@ class Pusher_MJXEnv(MJXEnv):
             "render_mode": None,
         }
         return {**default, **kwargs}
-
