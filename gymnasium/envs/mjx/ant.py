@@ -165,12 +165,11 @@ class Ant_MJXEnv(MJXEnv):
 
         z = mjx_data.qpos[2]
         min_z, max_z = params["healthy_z_range"]
-        is_healthy = (
-            jnp.isfinite(
-                jnp.concatenate((mjx_data.qpos, mjx_data.qvel, mjx_data.act))
-            ).all()
-            and min_z <= z <= max_z
-        )
+        is_finite = jnp.isfinite(
+            jnp.concatenate((mjx_data.qpos, mjx_data.qvel, mjx_data.act))
+        ).all()
+        z_ok = jnp.logical_and(z >= min_z, z <= max_z)
+        is_healthy = jnp.logical_and(is_finite, z_ok)
         return is_healthy
 
     def state_info(self, state: mjx.Data, params: AntMJXEnvParams) -> Dict[str, float]:
