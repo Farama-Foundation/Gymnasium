@@ -47,8 +47,6 @@ def mjx_set_physics_state(mjx_data: mjx.Data, mjx_physics_state) -> mjx.Data:
 """
 
 
-# TODO add type hint to `params`
-# TODO add render `metadata`
 # TODO add init_qvel
 # TODO create pip install gymnasium[mjx]
 class MJXEnv(
@@ -67,6 +65,15 @@ class MJXEnv(
     `observation`, `terminal`, and `state_info` should be defined in sub-classes.
     """
 
+    metadata = {
+        "render_modes": [
+            "human",
+            "rgb_array",
+            "depth_array",
+            "rgbd_tuple",
+        ],
+    }
+
     def __init__(self, params: Dict[str, any]):
         """Create the `mjx.Model` of the robot defined in `params["xml_file"]`.
 
@@ -83,6 +90,11 @@ class MJXEnv(
 
         self.model = mujoco.MjModel.from_xml_path(fullpath)
         self.mjx_model = mjx.put_model(self.model)
+
+        self.metadata = {
+            "render_modes": self.render_metadata["render_modes"],
+            "render_fps": int(np.round(1.0 / self.dt)),
+        }
 
         # observation_space: gymnasium.spaces.Box  # set by subclass
         self.action_space = gymnasium.spaces.Box(
@@ -192,6 +204,7 @@ class MJXEnv(
 
     def dt(self, params: Dict[str, any]) -> float:
         """Returns the duration between timesteps (`dt`)."""
+
         return self.mjx_model.opt.timestep * params["frame_skip"]
 
     def _gen_init_physics_state(
