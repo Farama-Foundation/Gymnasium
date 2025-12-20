@@ -56,7 +56,7 @@ class FuncEnv(
             **kwargs: Additional arguments passed to get_default_params if params is None.
         """
         if params is None:
-            params = self.get_default_params(**kwargs)
+            params = type(self).get_default_params(**kwargs)
         self.default_params = params
 
     def initial(self, rng: Any, params: Params | None = None) -> StateType:
