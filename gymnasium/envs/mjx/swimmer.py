@@ -12,11 +12,29 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Dict, Tuple
+from typing import Any, Dict, Optional, Tuple, TypedDict, Union
 
 import numpy as np
 
 from gymnasium.envs.mjx.mjx_env import MJXEnv
+
+
+class SwimmerParams(TypedDict):
+    """Parameters for Swimmer environment."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: Dict[str, Union[float, int, str, None]]
+    camera_id: Optional[int]
+    camera_name: Optional[str]
+    max_geom: int
+    width: int
+    height: int
+    render_mode: Optional[str]
+    forward_reward_weight: float
+    ctrl_cost_weight: float
+    reset_noise_scale: float
+    exclude_current_positions_from_observation: bool
 
 
 class Swimmer_MJXEnv(MJXEnv):
@@ -25,7 +43,7 @@ class Swimmer_MJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: Dict[str, any],
+        params: SwimmerParams,
     ):
         """Sets the `obveration_space`."""
         MJXEnv.__init__(self, params=params)
@@ -45,7 +63,7 @@ class Swimmer_MJXEnv(MJXEnv):
         )
 
     def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
+        self, rng, params: SwimmerParams
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
         noise_low = -params["reset_noise_scale"]
@@ -62,7 +80,7 @@ class Swimmer_MJXEnv(MJXEnv):
         return qpos, qvel, act
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self, state: mjx.Data, rng: jax.random.PRNGKey, params: SwimmerParams
     ) -> jnp.ndarray:
         """Observes the `qpos` (posional elements) and `qvel` (velocity elements) of the robot."""
         mjx_data = state
@@ -81,7 +99,7 @@ class Swimmer_MJXEnv(MJXEnv):
         state: mjx.Data,
         action: jnp.ndarray,
         next_state: mjx.Data,
-        params: Dict[str, any],
+        params: SwimmerParams,
     ) -> Tuple[jnp.ndarray, Dict]:
         """Reward = reward_dist + reward_ctrl."""
         mjx_data_old = state
@@ -103,7 +121,7 @@ class Swimmer_MJXEnv(MJXEnv):
 
         return reward, reward_info
 
-    def state_info(self, state: mjx.Data, params: Dict[str, any]) -> Dict[str, float]:
+    def state_info(self, state: mjx.Data, params: SwimmerParams) -> Dict[str, float]:
         """Includes state information exclueded from `observation()`."""
         mjx_data = state
 
@@ -114,9 +132,9 @@ class Swimmer_MJXEnv(MJXEnv):
         }
         return info
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> SwimmerParams:
         """Get the default parameter for the Swimmer environment."""
-        default = {
+        default: SwimmerParams = {
             "xml_file": "swimmer.xml",
             "frame_skip": 4,
             "default_camera_config": {},
@@ -124,5 +142,12 @@ class Swimmer_MJXEnv(MJXEnv):
             "ctrl_cost_weight": 1e-4,
             "reset_noise_scale": 0.1,
             "exclude_current_positions_from_observation": True,
+            "camera_id": None,
+            "camera_name": None,
+            "max_geom": 1000,
+            "width": 480,
+            "height": 480,
+            "render_mode": None,
         }
-        return {**MJXEnv.get_default_params(), **default, **kwargs}
+        return {**default, **kwargs}
+

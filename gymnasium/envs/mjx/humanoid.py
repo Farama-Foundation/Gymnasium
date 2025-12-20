@@ -12,7 +12,7 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple, TypedDict, Union
 
 import numpy as np
 
@@ -25,13 +25,67 @@ from gymnasium.envs.mujoco.humanoidstandup_v5 import (
 )
 
 
+class HumanoidMJXEnvParams(TypedDict):
+    """Parameters for the Humanoid environment."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: Dict[str, Union[float, int, str, None]]
+    forward_reward_weight: float
+    ctrl_cost_weight: float
+    contact_cost_weight: float
+    contact_cost_range: Tuple[float, float]
+    healthy_reward: float
+    terminate_when_unhealthy: bool
+    healthy_z_range: Tuple[float, float]
+    reset_noise_scale: float
+    exclude_current_positions_from_observation: bool
+    include_cinert_in_observation: bool
+    include_cvel_in_observation: bool
+    include_qfrc_actuator_in_observation: bool
+    include_cfrc_ext_in_observation: bool
+    camera_id: Optional[int]
+    camera_name: Optional[str]
+    max_geom: int
+    width: int
+    height: int
+    render_mode: Optional[str]
+
+
+class HumanoidStandupMJXEnvParams(TypedDict):
+    """Parameters for the HumanoidStandup environment."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: Dict[str, Union[float, int, str, None]]
+    uph_cost_weight: float
+    ctrl_cost_weight: float
+    impact_cost_weight: float
+    impact_cost_range: Tuple[float, float]
+    reset_noise_scale: float
+    exclude_current_positions_from_observation: bool
+    include_cinert_in_observation: bool
+    include_cvel_in_observation: bool
+    include_qfrc_actuator_in_observation: bool
+    include_cfrc_ext_in_observation: bool
+    camera_id: Optional[int]
+    camera_name: Optional[str]
+    max_geom: int
+    width: int
+    height: int
+    render_mode: Optional[str]
+
+
+BaseHumanoidMJXEnvParams = Union[HumanoidMJXEnvParams, HumanoidStandupMJXEnvParams]
+
+
 class BaseHumanoid_MJXEnv(MJXEnv):
     # NOTE: MJX does not yet support many features therefore this class can not be instantiated
     """Base environment class for humanoid environments such as Humanoid, & HumanoidStandup."""
 
     def __init__(
         self,
-        params: Dict[str, any],
+        params: BaseHumanoidMJXEnvParams,
     ):
         """Sets the `obveration_space`."""
         MJXEnv.__init__(self, params=params)
@@ -61,14 +115,17 @@ class BaseHumanoid_MJXEnv(MJXEnv):
         obs_size += self.observation_structure["cinert"]
         obs_size += self.observation_structure["cvel"]
         obs_size += self.observation_structure["qfrc_actuator"]
-        obs_size += self.observation_space["cfrc_ext"]
+        obs_size += self.observation_structure["cfrc_ext"]
 
         self.observation_space = gymnasium.spaces.Box(
             low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
         )
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self,
+        state: mjx.Data,
+        rng: jax.random.PRNGKey,
+        params: BaseHumanoidMJXEnvParams,
     ) -> jnp.ndarray:
         """Observes the `qpos` (posional elements) and `qvel` (velocity elements) and `cfrc_ext` (external contact forces) of the robot."""
         mjx_data = state
@@ -109,7 +166,9 @@ class BaseHumanoid_MJXEnv(MJXEnv):
         )
         return observation
 
-    def state_info(self, state: mjx.Data, params: Dict[str, any]) -> Dict[str, float]:
+    def state_info(
+        self, state: mjx.Data, params: BaseHumanoidMJXEnvParams
+    ) -> Dict[str, float]:
         """Includes state information exclueded from `observation()`."""
         mjx_data = state
 
@@ -123,7 +182,7 @@ class BaseHumanoid_MJXEnv(MJXEnv):
         return info
 
     def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
+        self, rng, params: BaseHumanoidMJXEnvParams
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
         noise_low = -params["reset_noise_scale"]
@@ -154,7 +213,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         state: mjx.Data,
         action: jnp.ndarray,
         next_state: mjx.Data,
-        params: Dict[str, any],
+        params: HumanoidMJXEnvParams,
     ) -> Tuple[jnp.ndarray, Dict]:
         """Reward = forward_reward + healthy_reward - ctrl_cost - contact_cost."""
         mjx_data_old = state
@@ -163,7 +222,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         xy_position_before = self.mass_center(mjx_data_old)
         xy_position_after = self.mass_center(mjx_data_new)
 
-        xy_velocity = (xy_position_after - xy_position_before) / self.dt
+        xy_velocity = (xy_position_after - xy_position_before) / self.dt(params)
         x_velocity, y_velocity = xy_velocity
 
         forward_reward = params["forward_reward_weight"] * x_velocity
@@ -187,7 +246,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
 
         return reward, reward_info
 
-    def _get_conctact_cost(self, mjx_data: mjx.Data, params: Dict[str, any]):
+    def _get_conctact_cost(self, mjx_data: mjx.Data, params: HumanoidMJXEnvParams):
         contact_forces = mjx_data.cfrc_ext
         contact_cost = params["contact_cost_weight"] * jnp.sum(
             jnp.square(contact_forces)
@@ -196,7 +255,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         contact_cost = jnp.clip(contact_cost, min_cost, max_cost)
         return contact_cost
 
-    def _gen_is_healty(self, state: mjx.Data, params: Dict[str, any]):
+    def _gen_is_healty(self, state: mjx.Data, params: HumanoidMJXEnvParams):
         """Checks if the robot is in a healthy potision."""
         mjx_data = state
 
@@ -206,7 +265,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         return is_healthy
 
     def terminal(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self, state: mjx.Data, rng: jax.random.PRNGKey, params: HumanoidMJXEnvParams
     ) -> bool:
         """Terminates if unhealthy."""
         return jnp.logical_and(
@@ -214,7 +273,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
             params["terminate_when_unhealthy"],
         )
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> HumanoidMJXEnvParams:
         """Get the default parameter for the Humanoid environment."""
         default = {
             "xml_file": "humanoid.xml",
@@ -245,7 +304,7 @@ class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
         state: mjx.Data,
         action: jnp.ndarray,
         next_state: mjx.Data,
-        params: Dict[str, any],
+        params: HumanoidStandupMJXEnvParams,
     ) -> Tuple[jnp.ndarray, Dict]:
         """Reward = uph_cost - quad_ctrl_cost - quad_impact_cost + 1."""
         mjx_data_new = next_state
@@ -260,7 +319,7 @@ class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
             params["impact_cost_weight"] * jnp.square(mjx_data_new.cfrc_ext).sum()
         )
         min_impact_cost, max_impact_cost = params["impact_cost_range"]
-        quad_impact_cost = np.clip(quad_impact_cost, min_impact_cost, max_impact_cost)
+        quad_impact_cost = jnp.clip(quad_impact_cost, min_impact_cost, max_impact_cost)
 
         reward = uph_cost - quad_ctrl_cost - quad_impact_cost + 1
 
@@ -272,7 +331,7 @@ class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
 
         return reward, reward_info
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> HumanoidStandupMJXEnvParams:
         """Get the default parameter for the Humanoid environment."""
         default = {
             "xml_file": "humanoidstandup.xml",

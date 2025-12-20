@@ -12,7 +12,7 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple, TypedDict, Union
 
 import numpy as np
 
@@ -25,12 +25,43 @@ from gymnasium.envs.mujoco.inverted_pendulum_v5 import (
 )
 
 
+class InvertedDoublePendulumMJXEnvParams(TypedDict):
+    """Parameters for the InvertedDoublePendulum environment."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: Dict[str, Union[float, int, str, None]]
+    healthy_reward: float
+    reset_noise_scale: float
+    camera_id: Optional[int]
+    camera_name: Optional[str]
+    max_geom: int
+    width: int
+    height: int
+    render_mode: Optional[str]
+
+
+class InvertedPendulumMJXEnvParams(TypedDict):
+    """Parameters for the InvertedPendulum environment."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: Dict[str, Union[float, int, str, None]]
+    reset_noise_scale: float
+    camera_id: Optional[int]
+    camera_name: Optional[str]
+    max_geom: int
+    width: int
+    height: int
+    render_mode: Optional[str]
+
+
 class InvertedDoublePendulumMJXEnv(MJXEnv):
     """Class for InvertedDoublePendulum."""
 
     def __init__(
         self,
-        params: Dict[str, any],  # NOTE not API compliant (yet?)
+        params: InvertedDoublePendulumMJXEnvParams,  # NOTE not API compliant (yet?)
     ):
         """Sets the `obveration_space.shape`."""
         MJXEnv.__init__(self, params=params)
@@ -41,7 +72,7 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
         )
 
     def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
+        self, rng, params: InvertedDoublePendulumMJXEnvParams
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) from a CUD and `qvel` (velocity elements) from a gaussian."""
         noise_low = -params["reset_noise_scale"]
@@ -58,7 +89,10 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
         return qpos, qvel, act
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self,
+        state: mjx.Data,
+        rng: jax.random.PRNGKey,
+        params: InvertedDoublePendulumMJXEnvParams,
     ) -> jnp.ndarray:
         """Observes the `qpos` (posional elements) and `qvel` (velocity elements) of the robot."""
         mjx_data = state
@@ -81,7 +115,7 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
         state: mjx.Data,
         action: jnp.ndarray,
         next_state: mjx.Data,
-        params: Dict[str, any],
+        params: InvertedDoublePendulumMJXEnvParams,
     ) -> Tuple[jnp.ndarray, Dict]:
         """Reward = alive_bonus - dist_penalty - vel_penalty."""
         mjx_data_new = next_state
@@ -112,12 +146,15 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
         return jnp.array(y > 1)
 
     def terminal(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self,
+        state: mjx.Data,
+        rng: jax.random.PRNGKey,
+        params: InvertedDoublePendulumMJXEnvParams,
     ) -> bool:
         """Terminates if unhealty."""
         return jnp.logical_not(self._gen_is_healty(state))
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> InvertedDoublePendulumMJXEnvParams:
         """Get the parameters for the InvertedDoublePendulum environment."""
         default = {
             "xml_file": "inverted_double_pendulum.xml",
@@ -134,7 +171,7 @@ class InvertedPendulumMJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: Dict[str, any],  # NOTE not API compliant (yet?)
+        params: InvertedPendulumMJXEnvParams,  # NOTE not API compliant (yet?)
     ):
         """Sets the `obveration_space.shape`."""
         MJXEnv.__init__(self, params=params)
@@ -153,7 +190,7 @@ class InvertedPendulumMJXEnv(MJXEnv):
         )
 
     def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
+        self, rng, params: InvertedPendulumMJXEnvParams
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
         noise_low = -params["reset_noise_scale"]
@@ -170,7 +207,10 @@ class InvertedPendulumMJXEnv(MJXEnv):
         return qpos, qvel, act
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self,
+        state: mjx.Data,
+        rng: jax.random.PRNGKey,
+        params: InvertedPendulumMJXEnvParams,
     ) -> jnp.ndarray:
         """Observes the `qpos` (posional elements) and `qvel` (velocity elements) of the robot."""
         mjx_data = state
@@ -186,7 +226,7 @@ class InvertedPendulumMJXEnv(MJXEnv):
         state: mjx.Data,
         action: jnp.ndarray,
         next_state: mjx.Data,
-        params: Dict[str, any],
+        params: InvertedPendulumMJXEnvParams,
     ) -> Tuple[jnp.ndarray, Dict]:
         reward = jnp.array(self._gen_is_healty(next_state), dtype=jnp.float32)
         reward_info = {"reward_survive": reward}
@@ -201,12 +241,15 @@ class InvertedPendulumMJXEnv(MJXEnv):
         return jnp.abs(angle) <= 0.2
 
     def terminal(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self,
+        state: mjx.Data,
+        rng: jax.random.PRNGKey,
+        params: InvertedPendulumMJXEnvParams,
     ) -> bool:
         """Terminates if unhealty."""
         return jnp.logical_not(self._gen_is_healty(state))
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> InvertedPendulumMJXEnvParams:
         """Get the parameters for the InvertedPendulum environment."""
         default = {
             "xml_file": "inverted_pendulum.xml",

@@ -12,7 +12,7 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple, TypedDict, Union
 
 import numpy as np
 
@@ -28,12 +28,35 @@ from gymnasium.envs.mujoco.walker2d_v5 import (
 )
 
 
+class Locomotion2dMJXEnvParams(TypedDict):
+    """Parameters for the HalfCheetah, Hopper, Walker2d environments."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: Dict[str, Union[float, int, str, None]]
+    forward_reward_weight: float
+    ctrl_cost_weight: float
+    healthy_reward: float
+    terminate_when_unhealthy: bool
+    healthy_state_range: Tuple[float, float]
+    healthy_z_range: Tuple[float, float]
+    healthy_angle_range: Tuple[float, float]
+    reset_noise_scale: float
+    exclude_current_positions_from_observation: bool
+    camera_id: Optional[int]
+    camera_name: Optional[str]
+    max_geom: int
+    width: int
+    height: int
+    render_mode: Optional[str]
+
+
 class Locomotion_2d_MJXEnv(MJXEnv):
     """Base environment class for 2d locomotion environments such as HalfCheetah, Hopper & Walker2d."""
 
     def __init__(
         self,
-        params: Dict[str, any],  # NOTE not API compliant (yet?)
+        params: Locomotion2dMJXEnvParams,  # NOTE not API compliant (yet?)
     ):
         """Sets the `obveration.shape`."""
         MJXEnv.__init__(self, params=params)
@@ -53,7 +76,10 @@ class Locomotion_2d_MJXEnv(MJXEnv):
         )
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self,
+        state: mjx.Data,
+        rng: jax.random.PRNGKey,
+        params: Locomotion2dMJXEnvParams,
     ) -> jnp.ndarray:
         """Observes the `qpos` (posional elements) and `qvel` (velocity elements) of the robot."""
         mjx_data = state
@@ -72,7 +98,7 @@ class Locomotion_2d_MJXEnv(MJXEnv):
         state: mjx.Data,
         action: jnp.ndarray,
         next_state: mjx.Data,
-        params: Dict[str, any],
+        params: Locomotion2dMJXEnvParams,
     ) -> Tuple[jnp.ndarray, Dict]:
         """Reward = foward_reward + healty_reward - control_cost."""
         mjx_data_old = state
@@ -101,7 +127,10 @@ class Locomotion_2d_MJXEnv(MJXEnv):
         return reward, reward_info
 
     def terminal(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self,
+        state: mjx.Data,
+        rng: jax.random.PRNGKey,
+        params: Locomotion2dMJXEnvParams,
     ) -> bool:
         """Terminates if unhealthy."""
         return jnp.logical_and(
@@ -109,7 +138,9 @@ class Locomotion_2d_MJXEnv(MJXEnv):
             params["terminate_when_unhealthy"],
         )
 
-    def state_info(self, state: mjx.Data, params: Dict[str, any]) -> Dict[str, float]:
+    def state_info(
+        self, state: mjx.Data, params: Locomotion2dMJXEnvParams
+    ) -> Dict[str, float]:
         """Includes state information exclueded from `observation()`."""
         mjx_data = state
 
@@ -119,7 +150,7 @@ class Locomotion_2d_MJXEnv(MJXEnv):
         }
         return info
 
-    def _gen_is_healty(self, state: mjx.Data, params: Dict[str, any]):
+    def _gen_is_healty(self, state: mjx.Data, params: Locomotion2dMJXEnvParams):
         """Checks if the robot is a healthy potision."""
         mjx_data = state
 
@@ -151,7 +182,7 @@ class HalfCheetahMJXEnv(Locomotion_2d_MJXEnv):
     """Class for HalfCheetah."""
 
     def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
+        self, rng, params: Locomotion2dMJXEnvParams
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) from a CUD and `qvel` (velocity elements) from a gaussian."""
         noise_low = -params["reset_noise_scale"]
@@ -167,7 +198,7 @@ class HalfCheetahMJXEnv(Locomotion_2d_MJXEnv):
 
         return qpos, qvel, act
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> Locomotion2dMJXEnvParams:
         """Get the default parameter for the HalfCheetah environment."""
         default = {
             "xml_file": "half_cheetah.xml",
@@ -191,7 +222,7 @@ class HopperMJXEnv(Locomotion_2d_MJXEnv):
     """Class for Hopper."""
 
     def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
+        self, rng, params: Locomotion2dMJXEnvParams
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
         noise_low = -params["reset_noise_scale"]
@@ -207,7 +238,7 @@ class HopperMJXEnv(Locomotion_2d_MJXEnv):
 
         return qpos, qvel, act
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> Locomotion2dMJXEnvParams:
         """Get the default parameter for the Hopper environment."""
         default = {
             "xml_file": "hopper.xml",
@@ -230,7 +261,7 @@ class Walker2dMJXEnv(Locomotion_2d_MJXEnv):
     """Class for Walker2d."""
 
     def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
+        self, rng, params: Locomotion2dMJXEnvParams
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
         noise_low = -params["reset_noise_scale"]
@@ -246,7 +277,7 @@ class Walker2dMJXEnv(Locomotion_2d_MJXEnv):
 
         return qpos, qvel, act
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> Locomotion2dMJXEnvParams:
         """Get the default parameter for the Walker2d environment."""
         default = {
             "xml_file": "walker2d_v5.xml",

@@ -12,12 +12,37 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple, TypedDict, Union
 
 import numpy as np
 
 from gymnasium.envs.mjx.mjx_env import MJXEnv
 from gymnasium.envs.mujoco.ant_v5 import DEFAULT_CAMERA_CONFIG
+
+
+class AntMJXEnvParams(TypedDict):
+    """Parameters for the Ant environment."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: Dict[str, Union[float, int, str, None]]
+    forward_reward_weight: float
+    ctrl_cost_weight: float
+    contact_cost_weight: float
+    healthy_reward: float
+    main_body: int
+    terminate_when_unhealthy: bool
+    healthy_z_range: Tuple[float, float]
+    contact_force_range: Tuple[float, float]
+    reset_noise_scale: float
+    exclude_current_positions_from_observation: bool
+    include_cfrc_ext_in_observation: bool
+    camera_id: Optional[int]
+    camera_name: Optional[str]
+    max_geom: int
+    width: int
+    height: int
+    render_mode: Optional[str]
 
 
 class Ant_MJXEnv(MJXEnv):
@@ -26,7 +51,7 @@ class Ant_MJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: Dict[str, any],
+        params: AntMJXEnvParams,
     ):
         """Sets the `obveration_space`."""
         MJXEnv.__init__(self, params=params)
@@ -43,14 +68,14 @@ class Ant_MJXEnv(MJXEnv):
 
         obs_size = self.observation_structure["qpos"]
         obs_size += self.observation_structure["qvel"]
-        obs_size += self.observation_space["cfrc_ext"]
+        obs_size += self.observation_structure["cfrc_ext"]
 
         self.observation_space = gymnasium.spaces.Box(
             low=-np.inf, high=np.inf, shape=(obs_size,), dtype=np.float64
         )
 
     def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
+        self, rng, params: AntMJXEnvParams
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) from a CUD and `qvel` (velocity elements) from a gaussian."""
         noise_low = -params["reset_noise_scale"]
@@ -67,7 +92,7 @@ class Ant_MJXEnv(MJXEnv):
         return qpos, qvel, act
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self, state: mjx.Data, rng: jax.random.PRNGKey, params: AntMJXEnvParams
     ) -> jnp.ndarray:
         """Observes the `qpos` (posional elements) and `qvel` (velocity elements) and `cfrc_ext` (external contact forces) of the robot."""
         mjx_data = state
@@ -87,7 +112,7 @@ class Ant_MJXEnv(MJXEnv):
 
         return observation
 
-    def _get_contact_forces(self, mjx_data: mjx.Data, params: Dict[str, any]):
+    def _get_contact_forces(self, mjx_data: mjx.Data, params: AntMJXEnvParams):
         """Get External Contact Forces (`cfrc_ext`) clipped by `contact_force_range`."""
         raw_contact_forces = mjx_data.cfrc_ext
         min_value, max_value = params["contact_force_range"]
@@ -99,7 +124,7 @@ class Ant_MJXEnv(MJXEnv):
         state: mjx.Data,
         action: jnp.ndarray,
         next_state: mjx.Data,
-        params: Dict[str, any],
+        params: AntMJXEnvParams,
     ) -> Tuple[jnp.ndarray, Dict]:
         """Reward = forward_reward + healthy_reward - ctrl_cost - contact cost."""
         mjx_data_old = state
@@ -134,7 +159,7 @@ class Ant_MJXEnv(MJXEnv):
 
         return reward, reward_info
 
-    def _gen_is_healty(self, state: mjx.Data, params: Dict[str, any]) -> jnp.ndarray:
+    def _gen_is_healthy(self, state: mjx.Data, params: AntMJXEnvParams) -> jnp.ndarray:
         """Checks if the robot is in a healthy potision."""
         mjx_data = state
 
@@ -142,13 +167,13 @@ class Ant_MJXEnv(MJXEnv):
         min_z, max_z = params["healthy_z_range"]
         is_healthy = (
             jnp.isfinite(
-                jnp.concatenate(mjx_data.qpos, mjx_data.qvel.mjx_data.act)
+                jnp.concatenate((mjx_data.qpos, mjx_data.qvel, mjx_data.act))
             ).all()
             and min_z <= z <= max_z
         )
         return is_healthy
 
-    def state_info(self, state: mjx.Data, params: Dict[str, any]) -> Dict[str, float]:
+    def state_info(self, state: mjx.Data, params: AntMJXEnvParams) -> Dict[str, float]:
         """Includes state information exclueded from `observation()`."""
         mjx_data = state
 
@@ -160,15 +185,15 @@ class Ant_MJXEnv(MJXEnv):
         return info
 
     def terminal(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self, state: mjx.Data, rng: jax.random.PRNGKey, params: AntMJXEnvParams
     ) -> bool:
         """Terminates if unhealthy."""
         return jnp.logical_and(
-            jnp.logical_not(self._gen_is_healty(state, params)),
+            jnp.logical_not(self._gen_is_healthy(state, params)),
             params["terminate_when_unhealthy"],
         )
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> AntMJXEnvParams:
         """Get the default parameter for the Ant environment."""
         default = {
             "xml_file": "ant.xml",

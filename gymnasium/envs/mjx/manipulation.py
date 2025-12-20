@@ -12,7 +12,7 @@ except ImportError as e:
 else:
     MJX_IMPORT_ERROR = None
 
-from typing import Dict, Tuple
+from typing import Any, Dict, Optional, Tuple, TypedDict, Union
 
 import numpy as np
 
@@ -25,12 +25,28 @@ from gymnasium.envs.mujoco.reacher_v5 import (
 )
 
 
+class ReacherParams(TypedDict):
+    """Parameters for Reacher environment."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: Dict[str, Union[float, int, str, None]]
+    camera_id: Optional[int]
+    camera_name: Optional[str]
+    max_geom: int
+    width: int
+    height: int
+    render_mode: Optional[str]
+    reward_dist_weight: float
+    reward_control_weight: float
+
+
 class Reacher_MJXEnv(MJXEnv):
     """Class for Reacher."""
 
     def __init__(
         self,
-        params: Dict[str, any],
+        params: ReacherParams,
     ):
         """Sets the `obveration_space`."""
         MJXEnv.__init__(self, params=params)
@@ -48,7 +64,7 @@ class Reacher_MJXEnv(MJXEnv):
         return jnp.less(jnp.linalg.norm(goal), jnp.array(0.2))
 
     def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
+        self, rng, params: ReacherParams
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `arm.qpos` (positional elements) and `arm.qvel` (velocity elements) from a CUD and the `goal.qpos` from a cicrular uniform distribution."""
         qpos = self.mjx_model.qpos0 + jax.random.uniform(
@@ -80,7 +96,7 @@ class Reacher_MJXEnv(MJXEnv):
         return mjx_data
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self, state: mjx.Data, rng: jax.random.PRNGKey, params: ReacherParams
     ) -> jnp.ndarray:
         """Observes the `sin(theta)` & `cos(theta)` & `qpos` &  `qvel` & 'fingertip - target' distance."""
         mjx_data = state
@@ -108,7 +124,7 @@ class Reacher_MJXEnv(MJXEnv):
         state: mjx.Data,
         action: jnp.ndarray,
         next_state: mjx.Data,
-        params: Dict[str, any],
+        params: ReacherParams,
     ) -> Tuple[jnp.ndarray, Dict]:
         """Reward = reward_dist + reward_ctrl."""
         mjx_data = next_state
@@ -129,16 +145,39 @@ class Reacher_MJXEnv(MJXEnv):
 
         return reward, reward_info
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> ReacherParams:
         """Get the default parameter for the Reacher environment."""
-        default = {
+        default: ReacherParams = {
             "xml_file": "reacher.xml",
             "frame_skip": 2,
             "default_camera_config": REACHER_HOPPER_DEFAULT_CAMERA_CONFIG,
-            "reward_dist_weight": 1,
-            "reward_control_weight": 1,
+            "reward_dist_weight": 1.0,
+            "reward_control_weight": 1.0,
+            "camera_id": None,
+            "camera_name": None,
+            "max_geom": 1000,
+            "width": 480,
+            "height": 480,
+            "render_mode": None,
         }
-        return {**MJXEnv.get_default_params(), **default, **kwargs}
+        return {**default, **kwargs}  # type: ignore
+
+
+class PusherParams(TypedDict):
+    """Parameters for Pusher environment."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: Dict[str, Union[float, int, str, None]]
+    camera_id: Optional[int]
+    camera_name: Optional[str]
+    max_geom: int
+    width: int
+    height: int
+    render_mode: Optional[str]
+    reward_near_weight: float
+    reward_dist_weight: float
+    reward_control_weight: float
 
 
 class Pusher_MJXEnv(MJXEnv):
@@ -147,17 +186,17 @@ class Pusher_MJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: Dict[str, any],
+        params: PusherParams,
     ):
         """Sets the `obveration_space`."""
-        MJXEnv.__init__(self, params=params)
+        MJXEnv.__init__(self, params=params)  # type: ignore
 
         self.observation_space = gymnasium.spaces.Box(  # TODO use jnp when and if `Box` supports jax natively
             low=-np.inf, high=np.inf, shape=(23,), dtype=np.float32
         )
 
     def _gen_init_physics_state(
-        self, rng, params: Dict[str, any]
+        self, rng, params: PusherParams
     ) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `arm.qpos` (positional elements) and `arm.qvel` (velocity elements) from a CUD and the `goal.qpos` from a cicrular uniform distribution."""
         qpos = self.mjx_model.qpos0
@@ -185,7 +224,7 @@ class Pusher_MJXEnv(MJXEnv):
         return qpos, qvel, act
 
     def observation(
-        self, state: mjx.Data, rng: jax.random.PRNGKey, params: Dict[str, any]
+        self, state: mjx.Data, rng: jax.random.PRNGKey, params: PusherParams
     ) -> jnp.ndarray:
         """Observes the & `qpos` &  `qvel` & `tips_arm` & `object` `goal`."""
         mjx_data = state
@@ -213,7 +252,7 @@ class Pusher_MJXEnv(MJXEnv):
         state: mjx.Data,
         action: jnp.ndarray,
         next_state: mjx.Data,
-        params: Dict[str, any],
+        params: PusherParams,
     ) -> Tuple[jnp.ndarray, Dict]:
         """Reward = reward_dist + reward_ctrl + reward_near."""
         mjx_data = next_state
@@ -238,14 +277,21 @@ class Pusher_MJXEnv(MJXEnv):
 
         return reward, reward_info
 
-    def get_default_params(**kwargs) -> Dict[str, any]:
+    def get_default_params(**kwargs) -> PusherParams:
         """Get the default parameter for the Reacher environment."""
-        default = {
+        default: PusherParams = {
             "xml_file": "pusher.xml",
             "frame_skip": 5,
             "default_camera_config": PUSHER_DEFAULT_CAMERA_CONFIG,
             "reward_near_weight": 0.5,
-            "reward_dist_weight": 1,
+            "reward_dist_weight": 1.0,
             "reward_control_weight": 0.1,
+            "camera_id": None,
+            "camera_name": None,
+            "max_geom": 1000,
+            "width": 480,
+            "height": 480,
+            "render_mode": None,
         }
-        return {**MJXEnv.get_default_params(), **default, **kwargs}
+        return {**default, **kwargs}
+
