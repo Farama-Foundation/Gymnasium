@@ -48,7 +48,6 @@ def mjx_set_physics_state(mjx_data: mjx.Data, mjx_physics_state) -> mjx.Data:
 
 
 # TODO add init_qvel
-# TODO create pip install gymnasium[mjx]
 class MJXEnv(
     FuncEnv[
         mjx.Data,
