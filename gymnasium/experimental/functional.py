@@ -48,10 +48,16 @@ class FuncEnv(
     observation_space: Space
     action_space: Space
 
-    def __init__(self, options: dict[str, Any] | None = None):
-        """Initialize the environment constants."""
-        self.__dict__.update(options or {})
-        self.default_params = self.get_default_params()
+    def __init__(self, params: Params | None = None, **kwargs):
+        """Initialize the environment constants.
+
+        Args:
+            params: Environment parameters. If None, default parameters will be used.
+            **kwargs: Additional arguments passed to get_default_params if params is None.
+        """
+        if params is None:
+            params = self.get_default_params(**kwargs)
+        self.default_params = params
 
     def initial(self, rng: Any, params: Params | None = None) -> StateType:
         """Generates the initial state of the environment with a random number generator."""
@@ -127,6 +133,7 @@ class FuncEnv(
         """Close the render state."""
         raise NotImplementedError
 
-    def get_default_params(self, **kwargs) -> Params | None:
+    @classmethod
+    def get_default_params(cls, **kwargs) -> Params | None:
         """Get the default params."""
         return None

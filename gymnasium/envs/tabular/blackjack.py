@@ -500,7 +500,8 @@ class BlackjackFunctional(
         pygame.display.quit()
         pygame.quit()
 
-    def get_default_params(self, **kwargs) -> BlackJackParams:
+    @classmethod
+    def get_default_params(cls, **kwargs) -> BlackJackParams:
         """Get the default params."""
         return BlackJackParams(**kwargs)
 

@@ -248,7 +248,8 @@ class CartPoleFunctional(
         pygame.display.quit()
         pygame.quit()
 
-    def get_default_params(self, **kwargs) -> CartPoleParams:
+    @classmethod
+    def get_default_params(cls, **kwargs) -> CartPoleParams:
         """Returns the default parameters for the environment."""
         return CartPoleParams(**kwargs)
 

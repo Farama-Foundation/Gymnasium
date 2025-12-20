@@ -221,7 +221,8 @@ class PendulumFunctional(
         pygame.display.quit()
         pygame.quit()
 
-    def get_default_params(self, **kwargs) -> PendulumParams:
+    @classmethod
+    def get_default_params(cls, **kwargs) -> PendulumParams:
         """Returns the default parameters for the environment."""
         return PendulumParams(**kwargs)
 
