@@ -1,0 +1,200 @@
+import pygame
+import sys
+
+# 初始化
+pygame.init()
+
+# 視窗設定
+WIDTH, HEIGHT = 800, 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Atari Pong")
+
+# 顏色
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+
+# 時間控制
+clock = pygame.time.Clock()
+
+# 球拍
+paddle_width, paddle_height = 10, 80
+left_paddle = pygame.Rect(20, HEIGHT//2 - 40, paddle_width, paddle_height)
+right_paddle = pygame.Rect(WIDTH-30, HEIGHT//2 - 40, paddle_width, paddle_height)
+
+# 球
+ball = pygame.Rect(WIDTH//2 - 7, HEIGHT//2 - 7, 14, 14)
+ball_speed_x = 5
+ball_speed_y = 5
+
+# 主迴圈
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    # 按鍵
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_w] and left_paddle.top > 0:
+        left_paddle.y -= 5
+    if keys[pygame.K_s] and left_paddle.bottom < HEIGHT:
+        left_paddle.y += 5
+    if keys[pygame.K_UP] and right_paddle.top > 0:
+        right_paddle.y -= 5
+    if keys[pygame.K_DOWN] and right_paddle.bottom < HEIGHT:
+        right_paddle.y += 5
+
+    # 球移動
+    ball.x += ball_speed_x
+    ball.y += ball_speed_y
+
+    # 上下反彈
+    if ball.top <= 0 or ball.bottom >= HEIGHT:
+        ball_speed_y *= -1
+
+    # 球拍反彈
+    if ball.colliderect(left_paddle) or ball.colliderect(right_paddle):
+        ball_speed_x *= -1
+
+    # 出界重置
+    if ball.left <= 0 or ball.right >= WIDTH:
+        ball.center = (WIDTH//2, HEIGHT//2)
+        ball_speed_x *= -1
+
+    # 繪圖
+    screen.fill(BLACK)
+    pygame.draw.rect(screen, WHITE, left_paddle)
+    pygame.draw.rect(screen, WHITE, right_paddle)
+    pygame.draw.ellipse(screen, WHITE, ball)
+    pygame.draw.line(screen, WHITE, (WIDTH//2, 0), (WIDTH//2, HEIGHT))
+
+    pygame.display.flip()
+    clock.tick(60)
+
+import pygame
+import sys
+
+pygame.init()
+pygame.mixer.init()
+
+# 視窗設定
+WIDTH, HEIGHT = 800, 400
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Atari Pong - Single Player")
+
+# 顏色
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+
+# 時間
+clock = pygame.time.Clock()
+
+# 字型
+font = pygame.font.SysFont("Arial", 36)
+
+# 音效
+hit_sound = pygame.mixer.Sound("hit.wav")
+score_sound = pygame.mixer.Sound("score.wav")
+
+# 球拍
+paddle_width, paddle_height = 10, 80
+player = pygame.Rect(20, HEIGHT//2 - 40, paddle_width, paddle_height)
+ai = pygame.Rect(WIDTH - 30, HEIGHT//2 - 40, paddle_width, paddle_height)
+
+# 球
+ball = pygame.Rect(WIDTH//2 - 7, HEIGHT//2 - 7, 14, 14)
+ball_speed_x = 5
+ball_speed_y = 5
+
+# 分數
+player_score = 0
+ai_score = 0
+
+# 重置球
+def reset_ball():
+    global ball_speed_x, ball_speed_y
+    ball.center = (WIDTH//2, HEIGHT//2)
+    ball_speed_x *= -1
+    ball_speed_y = 5
+
+# 主迴圈
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    # 玩家控制
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_w] and player.top > 0:
+        player.y -= 6
+    if keys[pygame.K_s] and player.bottom < HEIGHT:
+        player.y += 6
+
+    # AI 控制（簡單追球）
+    if ai.centery < ball.centery:
+        ai.y += 4
+    if ai.centery > ball.centery:
+        ai.y -= 4
+
+    # 球移動
+    ball.x += ball_speed_x
+    ball.y += ball_speed_y
+
+    # 上下反彈
+    if ball.top <= 0 or ball.bottom >= HEIGHT:
+        ball_speed_y *= -1
+
+    # 球拍碰撞
+    if ball.colliderect(player) or ball.colliderect(ai):
+        ball_speed_x *= -1
+        hit_sound.play()
+
+    # 得分判定
+    if ball.left <= 0:
+        ai_score += 1
+        score_sound.play()
+        reset_ball()
+
+    if ball.right >= WIDTH:
+        player_score += 1
+        score_sound.play()
+        reset_ball()
+
+    # 繪圖
+    screen.fill(BLACK)
+
+    pygame.draw.rect(screen, WHITE, player)
+    pygame.draw.rect(screen, WHITE, ai)
+    pygame.draw.ellipse(screen, WHITE, ball)
+    pygame.draw.line(screen, WHITE, (WIDTH//2, 0), (WIDTH//2, HEIGHT))
+
+    # 分數顯示
+    player_text = font.render(str(player_score), True, WHITE)
+    ai_text = font.render(str(ai_score), True, WHITE)
+    screen.blit(player_text, (WIDTH//4, 20))
+    screen.blit(ai_text, (WIDTH*3//4, 20))
+
+    pygame.display.flip()
+    clock.tick(60)
+
+import wave
+import math
+import struct
+
+SAMPLE_RATE = 44100
+
+def generate_tone(filename, freq, duration, volume=0.5):
+    n_samples = int(SAMPLE_RATE * duration)
+
+    with wave.open(filename, 'w') as wav:
+        wav.setparams((1, 2, SAMPLE_RATE, n_samples, 'NONE', 'not compressed'))
+
+        for i in range(n_samples):
+            t = i / SAMPLE_RATE
+            value = volume * math.sin(2 * math.pi * freq * t)
+            data = struct.pack('<h', int(value * 32767))
+            wav.writeframesraw(data)
+
+# 球拍碰撞音（短、偏高）
+generate_ton_
