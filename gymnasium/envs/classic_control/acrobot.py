@@ -8,7 +8,6 @@ from gymnasium import Env, spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 
-
 __copyright__ = "Copyright 2013, RLPy http://acl.mit.edu/RLPy"
 __credits__ = [
     "Alborz Geramifard",
@@ -188,7 +187,9 @@ class AcrobotEnv(Env):
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.
         low, high = utils.maybe_parse_reset_bounds(
-            options, -0.1, 0.1  # default low
+            options,
+            -0.1,
+            0.1,  # default low
         )  # default high
         self.state = self.np_random.uniform(low=low, high=high, size=(4,)).astype(
             np.float32
@@ -339,7 +340,7 @@ class AcrobotEnv(Env):
             color=(0, 0, 0),
         )
 
-        for (x, y), th, llen in zip(xys, thetas, link_lengths):
+        for (x, y), th, llen in zip(xys, thetas, link_lengths, strict=True):
             x = x + offset
             y = y + offset
             l, r, t, b = 0, llen, 0.1 * scale, -0.1 * scale

@@ -32,14 +32,13 @@ import gymnasium as gym
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 
-
 try:
     from array_api_compat import array_namespace, is_array_api_obj, to_device
 
-except ImportError:
+except ImportError as e:
     raise DependencyNotInstalled(
         'Array API packages are not installed therefore cannot call `array_conversion`, run `pip install "gymnasium[array-api]"`'
-    )
+    ) from e
 
 
 if Version(np.__version__) < Version("2.1.0"):

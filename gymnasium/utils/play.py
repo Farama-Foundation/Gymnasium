@@ -13,7 +13,6 @@ from gymnasium import Env, logger
 from gymnasium.core import ActType, ObsType
 from gymnasium.error import DependencyNotInstalled
 
-
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
 
@@ -373,7 +372,7 @@ class PlayPlot:
         self.fig, self.ax = plt.subplots(num_plots)
         if num_plots == 1:
             self.ax = [self.ax]
-        for axis, name in zip(self.ax, plot_names):
+        for axis, name in zip(self.ax, plot_names, strict=True):
             axis.set_title(name)
         self.t = 0
         self.cur_plot: list[Axes | None] = [None for _ in range(num_plots)]
@@ -403,7 +402,7 @@ class PlayPlot:
         points = self.data_callback(
             obs_t, obs_tp1, action, rew, terminated, truncated, info
         )
-        for point, data_series in zip(points, self.data):
+        for point, data_series in zip(points, self.data, strict=True):
             data_series.append(point)
         self.t += 1
 

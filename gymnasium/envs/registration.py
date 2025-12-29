@@ -23,7 +23,6 @@ from gymnasium import Env, Wrapper, error, logger
 from gymnasium.logger import warn
 from gymnasium.vector import AutoresetMode
 
-
 ENV_ID_RE = re.compile(
     r"^(?:(?P<namespace>[\w:-]+)\/)?(?:(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
 )
@@ -415,7 +414,9 @@ def _check_version_exists(ns: str | None, name: str, version: int | None):
         env_spec for env_spec in env_specs if env_spec.version is not None
     ]
 
-    latest_spec = max(versioned_specs, key=lambda env_spec: env_spec.version, default=None)  # type: ignore
+    latest_spec = max(
+        versioned_specs, key=lambda env_spec: env_spec.version, default=None
+    )  # type: ignore
     if latest_spec is not None and version > latest_spec.version:
         version_list_msg = ", ".join(f"`v{env_spec.version}`" for env_spec in env_specs)
         message += f" It provides versioned environments: [ {version_list_msg} ]."
@@ -596,9 +597,9 @@ def register(
     Changelogs:
         v1.0.0 - `autoreset` and `apply_api_compatibility` parameter was removed
     """
-    assert (
-        entry_point is not None or vector_entry_point is not None
-    ), "Either `entry_point` or `vector_entry_point` (or both) must be provided"
+    assert entry_point is not None or vector_entry_point is not None, (
+        "Either `entry_point` or `vector_entry_point` (or both) must be provided"
+    )
     ns, name, version = parse_env_id(id)
 
     if kwargs is None:
@@ -745,7 +746,7 @@ def make(
         else:
             raise type(e)(
                 f"{e} was raised from the environment creator for {env_spec.id} with kwargs ({env_spec_kwargs})"
-            )
+            ) from e
 
     if not isinstance(env, gym.Env):
         if (
@@ -784,7 +785,7 @@ def make(
         != env.spec.additional_wrappers
     ):
         for env_spec_wrapper_spec, recreated_wrapper_spec in zip(
-            env_spec.additional_wrappers, env.spec.additional_wrappers
+            env_spec.additional_wrappers, env.spec.additional_wrappers, strict=True
         ):
             raise ValueError(
                 f"The environment's wrapper spec {recreated_wrapper_spec} is different from the saved `EnvSpec` additional wrapper {env_spec_wrapper_spec}"
@@ -886,11 +887,11 @@ def make_vec(
     else:
         try:
             vectorization_mode = VectorizeMode(vectorization_mode)
-        except ValueError:
+        except ValueError as e:
             raise ValueError(
                 f"Invalid vectorization mode: {vectorization_mode!r}, "
                 f"valid modes: {[mode.value for mode in VectorizeMode]}"
-            )
+            ) from e
     assert isinstance(vectorization_mode, VectorizeMode)
 
     def create_single_env() -> Env:
@@ -1000,9 +1001,9 @@ def spec(env_id: str) -> EnvSpec:
         _check_version_exists(ns, name, version)
         raise error.Error(f"No registered env with id: {env_id}")
     else:
-        assert isinstance(
-            env_spec, EnvSpec
-        ), f"Expected the registry for {env_id} to be an `EnvSpec`, actual type is {type(env_spec)}"
+        assert isinstance(env_spec, EnvSpec), (
+            f"Expected the registry for {env_id} to be an `EnvSpec`, actual type is {type(env_spec)}"
+        )
         return env_spec
 
 

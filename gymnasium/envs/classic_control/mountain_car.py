@@ -130,9 +130,9 @@ class MountainCarEnv(gym.Env):
         self.observation_space = spaces.Box(self.low, self.high, dtype=np.float32)
 
     def step(self, action: int):
-        assert self.action_space.contains(
-            action
-        ), f"{action!r} ({type(action)}) invalid"
+        assert self.action_space.contains(action), (
+            f"{action!r} ({type(action)}) invalid"
+        )
 
         position, velocity = self.state
         velocity += (action - 1) * self.force + math.cos(3 * position) * (-self.gravity)
@@ -214,7 +214,7 @@ class MountainCarEnv(gym.Env):
 
         xs = np.linspace(self.min_position, self.max_position, 100)
         ys = self._height(xs)
-        xys = list(zip((xs - self.min_position) * scale, ys * scale))
+        xys = list(zip((xs - self.min_position) * scale, ys * scale, strict=True))
 
         pygame.draw.aalines(self.surf, points=xys, closed=False, color=(0, 0, 0))
 

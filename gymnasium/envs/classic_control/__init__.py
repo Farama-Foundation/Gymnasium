@@ -5,3 +5,12 @@ from gymnasium.envs.classic_control.continuous_mountain_car import (
 )
 from gymnasium.envs.classic_control.mountain_car import MountainCarEnv
 from gymnasium.envs.classic_control.pendulum import PendulumEnv
+
+__all__ = [
+    "AcrobotEnv",
+    "CartPoleEnv",
+    "Continuous_MountainCarEnv",
+    "MountainCarEnv",
+    "PendulumEnv",
+    "PendulumEnv",
+]

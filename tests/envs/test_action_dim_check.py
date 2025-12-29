@@ -78,7 +78,7 @@ def test_discrete_actions_out_of_bound(env: gym.Env):
     upper_bound = env.action_space.start + env.action_space.n - 1
 
     env.reset()
-    with pytest.raises(Exception):
+    with pytest.raises(Exception):  # noqa: B017
         env.step(upper_bound + 1)
 
     env.close()
@@ -122,7 +122,7 @@ def test_box_actions_out_of_bound(env: gym.Env):
     lower_bounds = env.action_space.low
 
     for i, (is_upper_bound, is_lower_bound) in enumerate(
-        zip(env.action_space.bounded_above, env.action_space.bounded_below)
+        zip(env.action_space.bounded_above, env.action_space.bounded_below, strict=True)
     ):
         if is_upper_bound:
             obs, _, _, _, _ = env.step(upper_bounds)

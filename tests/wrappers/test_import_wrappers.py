@@ -18,7 +18,7 @@ def test_import_wrappers():
             "module 'gymnasium.wrappers' has no attribute 'NonexistentWrapper'"
         ),
     ):
-        getattr(wrappers, "NonexistentWrapper")
+        wrappers.NonexistentWrapper  # noqa: B018
 
 
 @pytest.mark.parametrize("wrapper_name", __all__)

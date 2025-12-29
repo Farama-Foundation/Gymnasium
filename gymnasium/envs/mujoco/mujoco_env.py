@@ -7,7 +7,6 @@ import gymnasium as gym
 from gymnasium import error, spaces
 from gymnasium.spaces import Space
 
-
 try:
     import mujoco
 except ImportError as e:
@@ -48,7 +47,7 @@ class MujocoEnv(gym.Env):
         camera_name: str | None = None,
         default_camera_config: dict[str, float | int] | None = None,
         max_geom: int = 1000,
-        visual_options: dict[int, bool] = {},
+        visual_options: dict[int, bool] | None = None,
     ):
         """Base abstract class for mujoco based environments.
 
@@ -82,9 +81,9 @@ class MujocoEnv(gym.Env):
         self.frame_skip = frame_skip
 
         if "render_fps" in self.metadata:
-            assert (
-                int(np.round(1.0 / self.dt)) == self.metadata["render_fps"]
-            ), f'Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata["render_fps"]}'
+            assert int(np.round(1.0 / self.dt)) == self.metadata["render_fps"], (
+                f"Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata['render_fps']}"
+            )
         if observation_space is not None:
             self.observation_space = observation_space
         self._set_action_space()

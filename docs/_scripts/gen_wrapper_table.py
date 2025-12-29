@@ -2,7 +2,6 @@ import os.path
 
 import gymnasium as gym
 
-
 exclude_wrappers = {"vector"}
 
 

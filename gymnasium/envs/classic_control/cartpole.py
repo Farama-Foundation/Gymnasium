@@ -5,7 +5,6 @@ permalink: https://perma.cc/C9ZM-652R
 """
 
 import math
-from typing import Union
 
 import numpy as np
 
@@ -17,7 +16,7 @@ from gymnasium.vector import AutoresetMode, VectorEnv
 from gymnasium.vector.utils import batch_space
 
 
-class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
+class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
     """
     ## Description
 
@@ -162,9 +161,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         self.steps_beyond_terminated = None
 
     def step(self, action):
-        assert self.action_space.contains(
-            action
-        ), f"{action!r} ({type(action)}) invalid"
+        assert self.action_space.contains(action), (
+            f"{action!r} ({type(action)}) invalid"
+        )
         assert self.state is not None, "Call reset before using step method."
         x, x_dot, theta, theta_dot = self.state
         force = self.force_mag if action == 1 else -self.force_mag
@@ -235,7 +234,9 @@ class CartPoleEnv(gym.Env[np.ndarray, Union[int, np.ndarray]]):
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.
         low, high = utils.maybe_parse_reset_bounds(
-            options, -0.05, 0.05  # default low
+            options,
+            -0.05,
+            0.05,  # default low
         )  # default high
         self.state = self.np_random.uniform(low=low, high=high, size=(4,))
         self.steps_beyond_terminated = None
@@ -420,9 +421,9 @@ class CartPoleVectorEnv(VectorEnv):
     def step(
         self, action: np.ndarray
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
-        assert self.action_space.contains(
-            action
-        ), f"{action!r} ({type(action)}) invalid"
+        assert self.action_space.contains(action), (
+            f"{action!r} ({type(action)}) invalid"
+        )
         assert self.state is not None, "Call reset before using step method."
 
         x, x_dot, theta, theta_dot = self.state
@@ -516,10 +517,10 @@ class CartPoleVectorEnv(VectorEnv):
         try:
             import pygame
             from pygame import gfxdraw
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
-            )
+            ) from e
 
         if self.screens is None:
             pygame.init()
@@ -541,7 +542,7 @@ class CartPoleVectorEnv(VectorEnv):
                 "Cartpole's state is None, it probably hasn't be reset yet."
             )
 
-        for x, screen in zip(self.state.T, self.screens):
+        for x, screen in zip(self.state.T, self.screens, strict=True):
             assert isinstance(x, np.ndarray) and x.shape == (4,)
 
             self.surf = pygame.Surface((self.screen_width, self.screen_height))

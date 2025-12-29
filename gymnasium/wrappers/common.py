@@ -26,7 +26,6 @@ from gymnasium.utils.passive_env_checker import (
     env_step_passive_checker,
 )
 
-
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
 
@@ -98,9 +97,9 @@ class TimeLimit(
             env: The environment to apply the wrapper
             max_episode_steps: the environment step after which the episode is truncated (``elapsed >= max_episode_steps``)
         """
-        assert (
-            isinstance(max_episode_steps, int) and max_episode_steps > 0
-        ), f"Expect the `max_episode_steps` to be positive, actually: {max_episode_steps}"
+        assert isinstance(max_episode_steps, int) and max_episode_steps > 0, (
+            f"Expect the `max_episode_steps` to be positive, actually: {max_episode_steps}"
+        )
         gym.utils.RecordConstructorArgs.__init__(
             self, max_episode_steps=max_episode_steps
         )

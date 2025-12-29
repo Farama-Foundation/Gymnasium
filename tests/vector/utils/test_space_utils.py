@@ -60,7 +60,9 @@ def test_batch_space_concatenate_iterate_create_empty_array(space: Space, n: int
     assert isinstance(iterated_samples, Iterable)
     unbatched_samples = list(iterated_samples)
     assert len(unbatched_samples) == n
-    for unbatched_sample, original_sample in zip(unbatched_samples, space_samples):
+    for unbatched_sample, original_sample in zip(
+        unbatched_samples, space_samples, strict=True
+    ):
         assert data_equivalence(unbatched_sample, original_sample)
 
 
@@ -93,6 +95,7 @@ def test_batch_space_deterministic(space: Space, n: int, base_seed: int):
     for a_sample, b_sample in zip(
         iterate(space_a_batched, space_a_batched_sample),
         iterate(space_b_batched, space_b_batched_sample),
+        strict=True,
     ):
         assert data_equivalence(a_sample, b_sample)
 
@@ -176,7 +179,9 @@ def test_varying_spaces(spaces: "list[Space]", expected_space):
     assert batched_space == expected_space
 
     batch_samples = batched_space.sample()
-    for sub_space, sub_sample in zip(spaces, iterate(batched_space, batch_samples)):
+    for sub_space, sub_sample in zip(
+        spaces, iterate(batched_space, batch_samples), strict=True
+    ):
         assert sub_sample in sub_space
 
 
@@ -219,6 +224,7 @@ def test_batch_differing_spaces_deterministic(space: Space, n: int, base_seed: i
     for a_sample, b_sample in zip(
         iterate(space_a_batched, space_a_batched_sample),
         iterate(space_b_batched, space_b_batched_sample),
+        strict=True,
     ):
         assert data_equivalence(a_sample, b_sample)
 
@@ -236,7 +242,6 @@ def test_batch_differing_spaces_deterministic(space: Space, n: int, base_seed: i
     ],
 )
 def test_batch_differing_discrete_spaces_dtype(spaces, expected_dtype):
-
     multi_discrete = batch_differing_spaces(spaces)
 
     assert multi_discrete.dtype == expected_dtype

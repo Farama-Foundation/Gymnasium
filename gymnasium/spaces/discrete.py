@@ -9,7 +9,6 @@ import numpy as np
 
 from gymnasium.spaces.space import MaskNDArray, Space
 
-
 IntType = TypeVar("IntType", bound=np.integer)
 
 
@@ -54,13 +53,13 @@ class Discrete(Space[IntType]):
             start (int): The smallest element of this space.
             dtype: The space type, for example, ``int``, ``np.int64``, ``np.int32``, or ``np.uint8``.
         """
-        assert np.issubdtype(
-            type(n), np.integer
-        ), f"Expects `n` to be an integer, actual dtype: {type(n)}"
+        assert np.issubdtype(type(n), np.integer), (
+            f"Expects `n` to be an integer, actual dtype: {type(n)}"
+        )
         assert n > 0, "n (counts) have to be positive"
-        assert np.issubdtype(
-            type(start), np.integer
-        ), f"Expects `start` to be an integer, actual type: {type(start)}"
+        assert np.issubdtype(type(start), np.integer), (
+            f"Expects `start` to be an integer, actual type: {type(start)}"
+        )
 
         # determine dtype
         if dtype is None:
@@ -106,20 +105,20 @@ class Discrete(Space[IntType]):
             )
         # binary mask sampling
         elif mask is not None:
-            assert isinstance(
-                mask, np.ndarray
-            ), f"The expected type of the sample mask is np.ndarray, actual type: {type(mask)}"
-            assert (
-                mask.dtype == np.int8
-            ), f"The expected dtype of the sample mask is np.int8, actual dtype: {mask.dtype}"
-            assert mask.shape == (
-                self.n,
-            ), f"The expected shape of the sample mask is {(int(self.n),)}, actual shape: {mask.shape}"
+            assert isinstance(mask, np.ndarray), (
+                f"The expected type of the sample mask is np.ndarray, actual type: {type(mask)}"
+            )
+            assert mask.dtype == np.int8, (
+                f"The expected dtype of the sample mask is np.int8, actual dtype: {mask.dtype}"
+            )
+            assert mask.shape == (self.n,), (
+                f"The expected shape of the sample mask is {(int(self.n),)}, actual shape: {mask.shape}"
+            )
 
             valid_action_mask = mask == 1
-            assert np.all(
-                np.logical_or(mask == 0, valid_action_mask)
-            ), f"All values of the sample mask should be 0 or 1, actual values: {mask}"
+            assert np.all(np.logical_or(mask == 0, valid_action_mask)), (
+                f"All values of the sample mask should be 0 or 1, actual values: {mask}"
+            )
 
             if np.any(valid_action_mask):
                 return self.start + self.dtype.type(
@@ -129,22 +128,22 @@ class Discrete(Space[IntType]):
                 return self.start
         # probability mask sampling
         elif probability is not None:
-            assert isinstance(
-                probability, np.ndarray
-            ), f"The expected type of the sample probability is np.ndarray, actual type: {type(probability)}"
-            assert (
-                probability.dtype == np.float64
-            ), f"The expected dtype of the sample probability is np.float64, actual dtype: {probability.dtype}"
-            assert probability.shape == (
-                self.n,
-            ), f"The expected shape of the sample probability is {(int(self.n),)}, actual shape: {probability.shape}"
+            assert isinstance(probability, np.ndarray), (
+                f"The expected type of the sample probability is np.ndarray, actual type: {type(probability)}"
+            )
+            assert probability.dtype == np.float64, (
+                f"The expected dtype of the sample probability is np.float64, actual dtype: {probability.dtype}"
+            )
+            assert probability.shape == (self.n,), (
+                f"The expected shape of the sample probability is {(int(self.n),)}, actual shape: {probability.shape}"
+            )
 
-            assert np.all(
-                np.logical_and(probability >= 0, probability <= 1)
-            ), f"All values of the sample probability should be between 0 and 1, actual values: {probability}"
-            assert np.isclose(
-                np.sum(probability), 1
-            ), f"The sum of the sample probability should be equal to 1, actual sum: {np.sum(probability)}"
+            assert np.all(np.logical_and(probability >= 0, probability <= 1)), (
+                f"All values of the sample probability should be between 0 and 1, actual values: {probability}"
+            )
+            assert np.isclose(np.sum(probability), 1), (
+                f"The sum of the sample probability should be equal to 1, actual sum: {np.sum(probability)}"
+            )
 
             return self.start + self.np_random.choice(
                 np.arange(self.n, dtype=self.dtype), p=probability

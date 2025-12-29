@@ -44,12 +44,12 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
         self.window = None  # Has to be initialized before asserts, as self.window is used in auto close
         self.clock = None
 
-        assert (
-            self.env.render_mode in self.ACCEPTED_RENDER_MODES
-        ), f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
-        assert (
-            "render_fps" in self.env.metadata
-        ), "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
+        assert self.env.render_mode in self.ACCEPTED_RENDER_MODES, (
+            f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
+        )
+        assert "render_fps" in self.env.metadata, (
+            "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
+        )
 
         if "human" not in self.metadata["render_modes"]:
             self.metadata = deepcopy(self.env.metadata)
@@ -83,10 +83,10 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
         """Fetch the last frame from the base environment and render it to the screen."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 "pygame is not installed, run `pip install gymnasium[classic-control]`"
-            )
+            ) from e
 
         assert self.env.render_mode is not None
         if self.env.render_mode.endswith("_last"):
@@ -98,9 +98,9 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
 
         assert subenv_renders is not None
         assert len(subenv_renders) == self.num_envs
-        assert all(
-            isinstance(render, np.ndarray) for render in subenv_renders
-        ), f"Expected `env.render()` to return a numpy array, actually returned {[type(render) for render in subenv_renders]}"
+        assert all(isinstance(render, np.ndarray) for render in subenv_renders), (
+            f"Expected `env.render()` to return a numpy array, actually returned {[type(render) for render in subenv_renders]}"
+        )
 
         subenv_renders = np.array(subenv_renders, dtype=np.uint8)
         subenv_renders = np.transpose(subenv_renders, axes=(0, 2, 1, 3))
@@ -157,7 +157,9 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
         merged_rgb_array = np.zeros(self.screen_size + (3,), dtype=np.uint8)
         cols, rows = np.meshgrid(np.arange(self.num_cols), np.arange(self.num_rows))
 
-        for i, col, row in zip(range(self.num_envs), cols.flatten(), rows.flatten()):
+        for i, col, row in zip(
+            range(self.num_envs), cols.flatten(), rows.flatten(), strict=True
+        ):
             scaled_render = cv2.resize(subenv_renders[i], self.scaled_subenv_size[::-1])
             x = col * self.scaled_subenv_size[0]
             y = row * self.scaled_subenv_size[1]

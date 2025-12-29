@@ -8,7 +8,6 @@ import pytest
 import gymnasium as gym
 from gymnasium.wrappers import AtariPreprocessing
 
-
 pytest.importorskip("ale_py")
 
 
