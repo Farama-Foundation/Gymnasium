@@ -418,13 +418,15 @@
         <span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_1</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_2</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
-            <span class="n">data_equivalence</span><span class="p">(</span><span class="n">o_1</span><span class="p">,</span> <span class="n">o_2</span><span class="p">,</span> <span class="n">exact</span><span class="p">)</span> <span class="k">for</span> <span class="n">o_1</span><span class="p">,</span> <span class="n">o_2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">)</span>
+            <span class="n">data_equivalence</span><span class="p">(</span><span class="n">o_1</span><span class="p">,</span> <span class="n">o_2</span><span class="p">,</span> <span class="n">exact</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">o_1</span><span class="p">,</span> <span class="n">o_2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">data_1</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">data_2</span><span class="o">.</span><span class="n">shape</span> <span class="ow">and</span> <span class="n">data_1</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">data_2</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">data_1</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">object</span><span class="p">:</span>
                 <span class="k">return</span> <span class="nb">all</span><span class="p">(</span>
-                    <span class="n">data_equivalence</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">exact</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">)</span>
+                    <span class="n">data_equivalence</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">exact</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">exact</span><span class="p">:</span>
@@ -454,37 +456,37 @@
     <span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">obs_1</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">obs_1</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-            <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset(seed=123)` is not within the observation space.&quot;</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="p">),</span> <span class="s2">&quot;Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`.&quot;</span>
+            <span class="k">assert</span> <span class="n">obs_1</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;The observation returned by `env.reset(seed=123)` is not within the observation space.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`.&quot;</span>
+            <span class="p">)</span>
             <span class="n">seed_123_rng_1</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="p">)</span>
 
             <span class="n">obs_2</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">obs_2</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-            <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset()` is not within the observation space.&quot;</span>
+            <span class="k">assert</span> <span class="n">obs_2</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;The observation returned by `env.reset()` is not within the observation space.&quot;</span>
+            <span class="p">)</span>
 
             <span class="n">obs_3</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">obs_3</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-            <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset(seed=123)` is not within the observation space.&quot;</span>
+            <span class="k">assert</span> <span class="n">obs_3</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;The observation returned by `env.reset(seed=123)` is not within the observation space.&quot;</span>
+            <span class="p">)</span>
             <span class="n">seed_123_rng_3</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="p">)</span>
 
             <span class="n">obs_4</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">obs_4</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-            <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset()` is not within the observation space.&quot;</span>
+            <span class="k">assert</span> <span class="n">obs_4</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;The observation returned by `env.reset()` is not within the observation space.&quot;</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">nondeterministic</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
-                    <span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_3</span>
-                <span class="p">),</span> <span class="s2">&quot;Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent.&quot;</span>
-                <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
-                    <span class="n">obs_2</span><span class="p">,</span> <span class="n">obs_4</span>
-                <span class="p">),</span> <span class="s2">&quot;Using `env.reset(seed=123)` then `env.reset()` is non-deterministic as the observations are not equivalent.&quot;</span>
+                <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_3</span><span class="p">),</span> <span class="p">(</span>
+                    <span class="s2">&quot;Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_2</span><span class="p">,</span> <span class="n">obs_4</span><span class="p">),</span> <span class="p">(</span>
+                    <span class="s2">&quot;Using `env.reset(seed=123)` then `env.reset()` is non-deterministic as the observations are not equivalent.&quot;</span>
+                <span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_3</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                         <span class="s2">&quot;Using `env.reset(seed=123)` observations are not equal although similar.&quot;</span>
@@ -496,16 +498,20 @@
 
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">seed_123_rng_1</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">seed_123_rng_3</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
-            <span class="p">),</span> <span class="s2">&quot;Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.&quot;</span>
+            <span class="p">),</span> <span class="p">(</span>
+                <span class="s2">&quot;Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.&quot;</span>
+            <span class="p">)</span>
 
             <span class="n">obs_5</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">456</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">obs_5</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-            <span class="p">),</span> <span class="s2">&quot;The observation returned by `env.reset(seed=456)` is not within the observation space.&quot;</span>
+            <span class="k">assert</span> <span class="n">obs_5</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;The observation returned by `env.reset(seed=456)` is not within the observation space.&quot;</span>
+            <span class="p">)</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
                 <span class="o">!=</span> <span class="n">seed_123_rng_1</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
-            <span class="p">),</span> <span class="s2">&quot;Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.&quot;</span>
+            <span class="p">),</span> <span class="p">(</span>
+                <span class="s2">&quot;Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
@@ -582,28 +588,28 @@
         <span class="o">==</span> <span class="n">seeded_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
     <span class="p">),</span> <span class="s2">&quot;The `.np_random` is not properly been updated after step.&quot;</span>
 
-    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
-        <span class="n">obs_0</span><span class="p">,</span> <span class="n">obs_1</span>
-    <span class="p">),</span> <span class="s2">&quot;Deterministic step observations are not equivalent for the same seed and action&quot;</span>
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_0</span><span class="p">,</span> <span class="n">obs_1</span><span class="p">),</span> <span class="p">(</span>
+        <span class="s2">&quot;Deterministic step observations are not equivalent for the same seed and action&quot;</span>
+    <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_0</span><span class="p">,</span> <span class="n">obs_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;Step observations are not equal although similar given the same seed and action&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
-        <span class="n">rew_0</span><span class="p">,</span> <span class="n">rew_1</span>
-    <span class="p">),</span> <span class="s2">&quot;Deterministic step rewards are not equivalent for the same seed and action&quot;</span>
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">rew_0</span><span class="p">,</span> <span class="n">rew_1</span><span class="p">),</span> <span class="p">(</span>
+        <span class="s2">&quot;Deterministic step rewards are not equivalent for the same seed and action&quot;</span>
+    <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">rew_0</span><span class="p">,</span> <span class="n">rew_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;Step rewards are not equal although similar given the same seed and action&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
-        <span class="n">term_0</span><span class="p">,</span> <span class="n">term_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span>
-    <span class="p">),</span> <span class="s2">&quot;Deterministic step termination are not equivalent for the same seed and action&quot;</span>
-    <span class="k">assert</span> <span class="p">(</span>
-        <span class="n">trunc_0</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">trunc_1</span> <span class="ow">is</span> <span class="kc">False</span>
-    <span class="p">),</span> <span class="s2">&quot;Environment truncates after 1 step, something has gone very wrong.&quot;</span>
+    <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">term_0</span><span class="p">,</span> <span class="n">term_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="p">(</span>
+        <span class="s2">&quot;Deterministic step termination are not equivalent for the same seed and action&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">trunc_0</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">trunc_1</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">&quot;Environment truncates after 1 step, something has gone very wrong.&quot;</span>
+    <span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
         <span class="n">info_0</span><span class="p">,</span>
@@ -657,20 +663,20 @@
 <span class="sd">        AssertionError depending on spec violation</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-        <span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span>
-    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The result returned by `env.reset()` was not a tuple of the form `(obs, info)`, where `obs` is a observation and `info` is a dictionary containing additional information. Actual type: `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span>
-    <span class="k">assert</span> <span class="p">(</span>
-        <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Calling the reset method did not return a 2-tuple, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;The result returned by `env.reset()` was not a tuple of the form `(obs, info)`, where `obs` is a observation and `info` is a dictionary containing additional information. Actual type: `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Calling the reset method did not return a 2-tuple, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
 
     <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">result</span>
-    <span class="k">assert</span> <span class="p">(</span>
-        <span class="n">obs</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-    <span class="p">),</span> <span class="s2">&quot;The first element returned by `env.reset()` is not within the observation space.&quot;</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-        <span class="n">info</span><span class="p">,</span> <span class="nb">dict</span>
-    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The second element returned by `env.reset()` was not a dictionary, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">assert</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">&quot;The first element returned by `env.reset()` is not within the observation space.&quot;</span>
+    <span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;The second element returned by `env.reset()` was not a dictionary, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">check_space_limit</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">space_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>

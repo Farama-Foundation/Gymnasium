@@ -409,9 +409,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">space</span><span class="p">,</span> <span class="n">Space</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2"> does not inherit from `gymnasium.Space`. Actual Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">Space</span><span class="p">),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2"> does not inherit from `gymnasium.Space`. Actual Type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="nd">@property</span>
@@ -445,7 +445,7 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
                 <span class="n">subspace</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">subseed</span><span class="p">))</span>
-                <span class="k">for</span> <span class="n">subspace</span><span class="p">,</span> <span class="n">subseed</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">subseeds</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">subspace</span><span class="p">,</span> <span class="n">subseed</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">subseeds</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">):</span>
@@ -454,7 +454,8 @@
                 <span class="p">)</span>
 
             <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-                <span class="n">space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">subseed</span><span class="p">)</span> <span class="k">for</span> <span class="n">subseed</span><span class="p">,</span> <span class="n">space</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span>
+                <span class="n">space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">subseed</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">subseed</span><span class="p">,</span> <span class="n">space</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
@@ -487,29 +488,31 @@
                 <span class="sa">f</span><span class="s2">&quot;Only one of `mask` or `probability` can be provided, actual values: mask=</span><span class="si">{</span><span class="n">mask</span><span class="si">}</span><span class="s2">, probability=</span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">mask</span><span class="p">,</span> <span class="nb">tuple</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected type of `mask` to be tuple, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected length of `mask` to be </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span><span class="si">}</span><span class="s2">, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Expected type of `mask` to be tuple, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Expected length of `mask` to be </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span><span class="si">}</span><span class="s2">, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
             <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
                 <span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="n">space_mask</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">space</span><span class="p">,</span> <span class="n">space_mask</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">space</span><span class="p">,</span> <span class="n">space_mask</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">probability</span><span class="p">,</span> <span class="nb">tuple</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected type of `probability` to be tuple, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected length of `probability` to be </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span><span class="si">}</span><span class="s2">, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">probability</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Expected type of `probability` to be tuple, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Expected length of `probability` to be </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span><span class="si">}</span><span class="s2">, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">probability</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
             <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
                 <span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">probability</span><span class="o">=</span><span class="n">space_probability</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">space</span><span class="p">,</span> <span class="n">space_probability</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">probability</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">space</span><span class="p">,</span> <span class="n">space_probability</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">probability</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span></div>
@@ -523,7 +526,10 @@
         <span class="k">return</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
             <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="n">space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -548,7 +554,8 @@
                 <span class="o">*</span><span class="p">[</span>
                     <span class="n">space</span><span class="o">.</span><span class="n">from_jsonable</span><span class="p">(</span><span class="n">sample_n</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
                     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">space</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span>
-                <span class="p">]</span>
+                <span class="p">],</span>
+                <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="p">]</span>
 

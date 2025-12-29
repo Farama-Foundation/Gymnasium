@@ -382,7 +382,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyNotInstalled</span>
 
-
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
 
@@ -753,7 +752,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fig</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">num_plots</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">num_plots</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ax</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot_names</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="n">plot_names</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="n">axis</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cur_plot</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Axes</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_plots</span><span class="p">)]</span>
@@ -785,7 +784,7 @@
         <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_callback</span><span class="p">(</span>
             <span class="n">obs_t</span><span class="p">,</span> <span class="n">obs_tp1</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
         <span class="p">)</span>
-        <span class="k">for</span> <span class="n">point</span><span class="p">,</span> <span class="n">data_series</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">point</span><span class="p">,</span> <span class="n">data_series</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="n">data_series</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
 

@@ -380,7 +380,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyNotInstalled</span>
@@ -390,23 +389,22 @@
     <span class="n">module_namespace</span><span class="p">,</span>
 <span class="p">)</span>
 
-
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
         <span class="s1">&#39;Jax is not installed therefore cannot call `torch_to_jax`, run `pip install &quot;gymnasium[jax]&quot;`&#39;</span>
-    <span class="p">)</span>
+    <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
-    <span class="n">Device</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">]</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">Device</span> <span class="o">=</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
         <span class="s1">&#39;Torch is not installed therefore cannot call `torch_to_jax`, run `pip install &quot;gymnasium[torch]&quot;`&#39;</span>
-    <span class="p">)</span>
+    <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;JaxToTorch&quot;</span><span class="p">,</span> <span class="s2">&quot;jax_to_torch&quot;</span><span class="p">,</span> <span class="s2">&quot;torch_to_jax&quot;</span><span class="p">,</span> <span class="s2">&quot;Device&quot;</span><span class="p">]</span>
