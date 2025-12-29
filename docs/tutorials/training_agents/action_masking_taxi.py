@@ -43,7 +43,6 @@ import numpy as np
 
 import gymnasium as gym
 
-
 # Base random seed for reproducibility
 BASE_RANDOM_SEED = 58922320
 
@@ -220,7 +219,7 @@ plt.figure(figsize=(12, 8), dpi=100)
 
 # Plot individual runs with low alpha
 for i, (masked_results, unmasked_results) in enumerate(
-    zip(masked_results_list, unmasked_results_list)
+    zip(masked_results_list, unmasked_results_list, strict=True)
 ):
     plt.plot(
         masked_results["episode_rewards"],

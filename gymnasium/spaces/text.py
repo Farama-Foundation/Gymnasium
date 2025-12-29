@@ -9,7 +9,6 @@ from numpy.typing import NDArray
 
 from gymnasium.spaces.space import Space
 
-
 alphanumeric: frozenset[str] = frozenset(
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )
@@ -49,18 +48,18 @@ class Text(Space[str]):
             charset (Union[set], str): Character set, defaults to the lower and upper english alphabet plus latin digits.
             seed: The seed for sampling from the space.
         """
-        assert np.issubdtype(
-            type(min_length), np.integer
-        ), f"Expects the min_length to be an integer, actual type: {type(min_length)}"
-        assert np.issubdtype(
-            type(max_length), np.integer
-        ), f"Expects the max_length to be an integer, actual type: {type(max_length)}"
-        assert (
-            0 <= min_length
-        ), f"Minimum text length must be non-negative, actual value: {min_length}"
-        assert (
-            min_length <= max_length
-        ), f"The min_length must be less than or equal to the max_length, min_length: {min_length}, max_length: {max_length}"
+        assert np.issubdtype(type(min_length), np.integer), (
+            f"Expects the min_length to be an integer, actual type: {type(min_length)}"
+        )
+        assert np.issubdtype(type(max_length), np.integer), (
+            f"Expects the max_length to be an integer, actual type: {type(max_length)}"
+        )
+        assert 0 <= min_length, (
+            f"Minimum text length must be non-negative, actual value: {min_length}"
+        )
+        assert min_length <= max_length, (
+            f"The min_length must be less than or equal to the max_length, min_length: {min_length}, max_length: {max_length}"
+        )
 
         self.min_length: int = int(min_length)
         self.max_length: int = int(max_length)
@@ -105,9 +104,9 @@ class Text(Space[str]):
             length, charlist_mask = self._validate_mask(mask, np.int8, "mask")
 
             if charlist_mask is not None:
-                assert np.all(
-                    np.logical_or(charlist_mask == 0, charlist_mask == 1)
-                ), f"Expects all mask values to 0 or 1, actual values: {charlist_mask}"
+                assert np.all(np.logical_or(charlist_mask == 0, charlist_mask == 1)), (
+                    f"Expects all mask values to 0 or 1, actual values: {charlist_mask}"
+                )
 
                 # normalise the mask to use as a probability
                 if np.sum(charlist_mask) > 0:
@@ -118,12 +117,12 @@ class Text(Space[str]):
             )
 
             if charlist_mask is not None:
-                assert np.all(
-                    np.logical_and(charlist_mask >= 0, charlist_mask <= 1)
-                ), f"Expects all probability mask values to be within 0 and 1, actual values: {charlist_mask}"
-                assert np.isclose(
-                    np.sum(charlist_mask), 1
-                ), f"Expects the sum of the probability mask to be 1, actual sum: {np.sum(charlist_mask)}"
+                assert np.all(np.logical_and(charlist_mask >= 0, charlist_mask <= 1)), (
+                    f"Expects all probability mask values to be within 0 and 1, actual values: {charlist_mask}"
+                )
+                assert np.isclose(np.sum(charlist_mask), 1), (
+                    f"Expects the sum of the probability mask to be 1, actual sum: {np.sum(charlist_mask)}"
+                )
         else:
             length = charlist_mask = None
 
@@ -152,31 +151,31 @@ class Text(Space[str]):
         expected_dtype: np.dtype,
         mask_type: str,
     ) -> tuple[int | None, NDArray[np.int8] | NDArray[np.float64] | None]:
-        assert isinstance(
-            mask, tuple
-        ), f"Expects the `{mask_type}` type to be a tuple, actual type: {type(mask)}"
-        assert (
-            len(mask) == 2
-        ), f"Expects the `{mask_type}` length to be two, actual length: {len(mask)}"
+        assert isinstance(mask, tuple), (
+            f"Expects the `{mask_type}` type to be a tuple, actual type: {type(mask)}"
+        )
+        assert len(mask) == 2, (
+            f"Expects the `{mask_type}` length to be two, actual length: {len(mask)}"
+        )
         length, charlist_mask = mask
 
         if length is not None:
-            assert np.issubdtype(
-                type(length), np.integer
-            ), f"Expects the Text sample length to be an integer, actual type: {type(length)}"
-            assert (
-                self.min_length <= length <= self.max_length
-            ), f"Expects the Text sample length be between {self.min_length} and {self.max_length}, actual length: {length}"
+            assert np.issubdtype(type(length), np.integer), (
+                f"Expects the Text sample length to be an integer, actual type: {type(length)}"
+            )
+            assert self.min_length <= length <= self.max_length, (
+                f"Expects the Text sample length be between {self.min_length} and {self.max_length}, actual length: {length}"
+            )
         if charlist_mask is not None:
-            assert isinstance(
-                charlist_mask, np.ndarray
-            ), f"Expects the Text sample `{mask_type}` to be an np.ndarray, actual type: {type(charlist_mask)}"
-            assert (
-                charlist_mask.dtype == expected_dtype
-            ), f"Expects the Text sample `{mask_type}` to be type {expected_dtype}, actual dtype: {charlist_mask.dtype}"
-            assert charlist_mask.shape == (
-                len(self.character_set),
-            ), f"expects the Text sample `{mask_type}` to be {(len(self.character_set),)}, actual shape: {charlist_mask.shape}"
+            assert isinstance(charlist_mask, np.ndarray), (
+                f"Expects the Text sample `{mask_type}` to be an np.ndarray, actual type: {type(charlist_mask)}"
+            )
+            assert charlist_mask.dtype == expected_dtype, (
+                f"Expects the Text sample `{mask_type}` to be type {expected_dtype}, actual dtype: {charlist_mask.dtype}"
+            )
+            assert charlist_mask.shape == (len(self.character_set),), (
+                f"expects the Text sample `{mask_type}` to be {(len(self.character_set),)}, actual shape: {charlist_mask.shape}"
+            )
 
         return length, charlist_mask
 

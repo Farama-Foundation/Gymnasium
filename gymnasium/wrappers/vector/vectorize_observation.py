@@ -189,7 +189,7 @@ class VectorizeTransformObservation(VectorObservationWrapper):
             final_obs = infos["final_obs"]
 
             for i, (sub_obs, has_final_obs) in enumerate(
-                zip(final_obs, infos["_final_obs"])
+                zip(final_obs, infos["_final_obs"], strict=True)
             ):
                 if has_final_obs:
                     final_obs[i] = self.wrapper.observation(sub_obs)

@@ -4,7 +4,6 @@ import warnings
 
 from gymnasium.utils import colorize
 
-
 WARN = 30
 ERROR = 40
 

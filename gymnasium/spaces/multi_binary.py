@@ -88,18 +88,18 @@ class MultiBinary(Space[NDArray[np.int8]]):
                 f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
             )
         if mask is not None:
-            assert isinstance(
-                mask, np.ndarray
-            ), f"The expected type of the mask is np.ndarray, actual type: {type(mask)}"
-            assert (
-                mask.dtype == np.int8
-            ), f"The expected dtype of the mask is np.int8, actual dtype: {mask.dtype}"
-            assert (
-                mask.shape == self.shape
-            ), f"The expected shape of the mask is {self.shape}, actual shape: {mask.shape}"
-            assert np.all(
-                (mask == 0) | (mask == 1) | (mask == 2)
-            ), f"All values of a mask should be 0, 1 or 2, actual values: {mask}"
+            assert isinstance(mask, np.ndarray), (
+                f"The expected type of the mask is np.ndarray, actual type: {type(mask)}"
+            )
+            assert mask.dtype == np.int8, (
+                f"The expected dtype of the mask is np.int8, actual dtype: {mask.dtype}"
+            )
+            assert mask.shape == self.shape, (
+                f"The expected shape of the mask is {self.shape}, actual shape: {mask.shape}"
+            )
+            assert np.all((mask == 0) | (mask == 1) | (mask == 2)), (
+                f"All values of a mask should be 0, 1 or 2, actual values: {mask}"
+            )
 
             return np.where(
                 mask == 2,
@@ -107,18 +107,18 @@ class MultiBinary(Space[NDArray[np.int8]]):
                 mask.astype(self.dtype),
             )
         elif probability is not None:
-            assert isinstance(
-                probability, np.ndarray
-            ), f"The expected type of the probability is np.ndarray, actual type: {type(probability)}"
-            assert (
-                probability.dtype == np.float64
-            ), f"The expected dtype of the probability is np.float64, actual dtype: {probability.dtype}"
-            assert (
-                probability.shape == self.shape
-            ), f"The expected shape of the probability is {self.shape}, actual shape: {probability}"
-            assert np.all(
-                np.logical_and(probability >= 0, probability <= 1)
-            ), f"All values of the sample probability should be between 0 and 1, actual values: {probability}"
+            assert isinstance(probability, np.ndarray), (
+                f"The expected type of the probability is np.ndarray, actual type: {type(probability)}"
+            )
+            assert probability.dtype == np.float64, (
+                f"The expected dtype of the probability is np.float64, actual dtype: {probability.dtype}"
+            )
+            assert probability.shape == self.shape, (
+                f"The expected shape of the probability is {self.shape}, actual shape: {probability}"
+            )
+            assert np.all(np.logical_and(probability >= 0, probability <= 1)), (
+                f"All values of the sample probability should be between 0 and 1, actual values: {probability}"
+            )
 
             return (self.np_random.random(size=self.shape) <= probability).astype(
                 self.dtype

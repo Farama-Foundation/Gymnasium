@@ -8,7 +8,6 @@ import pytest
 
 import gymnasium
 
-
 torch = pytest.importorskip("torch")
 
 

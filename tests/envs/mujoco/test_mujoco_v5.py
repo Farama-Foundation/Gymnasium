@@ -12,7 +12,6 @@ from gymnasium.error import Error
 from gymnasium.utils.env_checker import check_env
 from gymnasium.utils.env_match import check_environments_match
 
-
 ALL_MUJOCO_ENVS = [
     "Ant",
     "HalfCheetah",
@@ -177,7 +176,7 @@ def test_verify_reward_survive(env_name: str, version: str):
     env.action_space.seed(1)
 
     terminal = False
-    for step in range(80):
+    for _ in range(80):
         obs, rew, terminal, truncated, info = env.step(env.action_space.sample())
 
         if terminal:
@@ -186,9 +185,9 @@ def test_verify_reward_survive(env_name: str, version: str):
 
         assert info["reward_survive"] != 0
 
-    assert (
-        terminal
-    ), "The environment, should have terminated, if not the test is not valid."
+    assert terminal, (
+        "The environment, should have terminated, if not the test is not valid."
+    )
 
 
 CHECK_ENV_IGNORE_WARNINGS = [

@@ -10,7 +10,6 @@ import gymnasium as gym
 from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidBound, InvalidProbability
 
-
 __all__ = ["StickyAction"]
 
 

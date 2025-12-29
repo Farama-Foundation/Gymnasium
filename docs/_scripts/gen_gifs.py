@@ -6,7 +6,6 @@ from PIL import Image
 import gymnasium as gym
 from gymnasium.envs.registration import find_highest_version, get_env_id
 
-
 # how many steps to record an env for
 LENGTH = 300
 

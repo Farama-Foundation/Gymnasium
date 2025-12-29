@@ -127,7 +127,7 @@ def test_to_terminated_truncated_step_api(
             assert "TimeLimit.truncated" not in info
     elif isinstance(info, list):
         for sub_info, env_done, env_truncated in zip(
-            info, expected_done, expected_truncated
+            info, expected_done, expected_truncated, strict=True
         ):
             if env_done:
                 assert sub_info["TimeLimit.truncated"] == env_truncated

@@ -16,7 +16,6 @@ from gymnasium.experimental.functional import ActType, FuncEnv
 from gymnasium.utils import EzPickle
 from gymnasium.vector import AutoresetMode
 
-
 PRNGKeyType: TypeAlias = jax.Array
 StateType: TypeAlias = jax.Array
 RenderStateType = tuple["pygame.Surface", "pygame.time.Clock"]  # type: ignore  # noqa: F821

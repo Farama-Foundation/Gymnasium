@@ -36,7 +36,7 @@ def test_revert_discretize_action_space(dimensions, bins, multidiscrete):
     """Tests that the action is discretized correctly within the bins."""
     env = GenericTestEnv(action_space=Box(0, 99, shape=(dimensions,)))
     env_discrete = DiscretizeAction(env, bins, multidiscrete)
-    for i in range(1000):
+    for _ in range(1000):
         act_discrete = env_discrete.action_space.sample()
         act_continuous = env_discrete.action(act_discrete)
         assert env.action_space.contains(act_continuous)

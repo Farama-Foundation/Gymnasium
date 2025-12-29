@@ -11,7 +11,6 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import EzPickle
 from gymnasium.utils.step_api_compatibility import step_api_compatibility
 
-
 try:
     import Box2D
     from Box2D.b2 import (
@@ -230,9 +229,9 @@ class LunarLander(gym.Env, EzPickle):
             turbulence_power,
         )
 
-        assert (
-            -12.0 < gravity and gravity < 0.0
-        ), f"gravity (current value: {gravity}) must be between -12 and 0"
+        assert -12.0 < gravity and gravity < 0.0, (
+            f"gravity (current value: {gravity}) must be between -12 and 0"
+        )
         self.gravity = gravity
 
         if 0.0 > wind_power or wind_power > 20.0:
@@ -511,9 +510,9 @@ class LunarLander(gym.Env, EzPickle):
         if self.continuous:
             action = np.clip(action, -1, +1).astype(np.float64)
         else:
-            assert self.action_space.contains(
-                action
-            ), f"{action!r} ({type(action)}) invalid "
+            assert self.action_space.contains(action), (
+                f"{action!r} ({type(action)}) invalid "
+            )
 
         # Apply Engine Impulses
 

@@ -133,7 +133,6 @@ def test_dtype(dtype, sample_dtype):
 
 
 def test_equality():
-
     space = Discrete(n=3, dtype=np.int32)
     space_dif_dtype = Discrete(n=3)
 

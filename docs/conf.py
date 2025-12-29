@@ -19,13 +19,11 @@ import sphinx_gallery.gen_rst
 import sphinx_gallery.sorting
 from furo.gen_tutorials import generate_tutorials
 
-
 # Path setup for building from source tree
 sys.path.insert(0, os.path.abspath("."))  # For building from root
 sys.path.insert(0, os.path.abspath(".."))  # For building from docs dir
 
 import gymnasium  # noqa: E402
-
 
 project = "Gymnasium"
 copyright = f"{time.localtime().tm_year} Farama Foundation"

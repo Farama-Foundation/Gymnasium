@@ -4,7 +4,6 @@ from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
-
 DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0}
 
 

@@ -26,7 +26,6 @@ from gymnasium.spaces import (
     flatten,
 )
 
-
 __all__ = ["create_shared_memory", "read_from_shared_memory", "write_to_shared_memory"]
 
 
@@ -157,7 +156,7 @@ def _read_base_from_shared_memory(
 def _read_tuple_from_shared_memory(space: Tuple, shared_memory, n: int = 1):
     return tuple(
         read_from_shared_memory(subspace, memory, n=n)
-        for (memory, subspace) in zip(shared_memory, space.spaces)
+        for (memory, subspace) in zip(shared_memory, space.spaces, strict=True)
     )
 
 
@@ -197,7 +196,7 @@ def _read_one_of_from_shared_memory(
 
     subspace_samples = tuple(
         read_from_shared_memory(subspace, memory, n=n)
-        for (memory, subspace) in zip(shared_memory[1:], space.spaces)
+        for (memory, subspace) in zip(shared_memory[1:], space.spaces, strict=True)
     )
     return tuple(
         (sample_index, subspace_samples[sample_index][index])
@@ -256,7 +255,9 @@ def _write_base_to_shared_memory(
 def _write_tuple_to_shared_memory(
     space: Tuple, index: int, values: tuple[Any, ...], shared_memory
 ):
-    for value, memory, subspace in zip(values, shared_memory, space.spaces):
+    for value, memory, subspace in zip(
+        values, shared_memory, space.spaces, strict=True
+    ):
         write_to_shared_memory(subspace, index, value, memory)
 
 

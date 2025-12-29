@@ -238,7 +238,7 @@ class Continuous_MountainCarEnv(gym.Env):
 
         xs = np.linspace(self.min_position, self.max_position, 100)
         ys = self._height(xs)
-        xys = list(zip((xs - self.min_position) * scale, ys * scale))
+        xys = list(zip((xs - self.min_position) * scale, ys * scale, strict=True))
 
         pygame.draw.aalines(self.surf, points=xys, closed=False, color=(0, 0, 0))
 

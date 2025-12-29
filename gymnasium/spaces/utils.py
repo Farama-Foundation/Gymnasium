@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import operator as op
 from functools import reduce, singledispatch
-from typing import Any, TypeVar, Union
+from typing import Any, TypeVar
 
 import numpy as np
 from numpy.typing import NDArray
@@ -111,7 +111,7 @@ def _flatdim_oneof(space: OneOf) -> int:
 
 
 T = TypeVar("T")
-FlatType = Union[NDArray[Any], dict[str, Any], tuple[Any, ...], GraphInstance]
+FlatType = NDArray[Any] | dict[str, Any] | tuple[Any, ...] | GraphInstance
 
 
 @singledispatch
@@ -188,9 +188,12 @@ def _flatten_multidiscrete(
 def _flatten_tuple(space: Tuple, x: tuple[Any, ...]) -> tuple[Any, ...] | NDArray[Any]:
     if space.is_np_flattenable:
         return np.concatenate(
-            [np.array(flatten(s, x_part)) for x_part, s in zip(x, space.spaces)]
+            [
+                np.array(flatten(s, x_part))
+                for x_part, s in zip(x, space.spaces, strict=True)
+            ]
         )
-    return tuple(flatten(s, x_part) for x_part, s in zip(x, space.spaces))
+    return tuple(flatten(s, x_part) for x_part, s in zip(x, space.spaces, strict=True))
 
 
 @flatten.register(Dict)
@@ -338,19 +341,21 @@ def _unflatten_tuple(
     space: Tuple, x: NDArray[Any] | tuple[Any, ...]
 ) -> tuple[Any, ...]:
     if space.is_np_flattenable:
-        assert isinstance(
-            x, np.ndarray
-        ), f"{space} is numpy-flattenable. Thus, you should only unflatten numpy arrays for this space. Got a {type(x)}"
+        assert isinstance(x, np.ndarray), (
+            f"{space} is numpy-flattenable. Thus, you should only unflatten numpy arrays for this space. Got a {type(x)}"
+        )
         dims = np.asarray([flatdim(s) for s in space.spaces], dtype=np.int_)
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
         return tuple(
             unflatten(s, flattened)
-            for flattened, s in zip(list_flattened, space.spaces)
+            for flattened, s in zip(list_flattened, space.spaces, strict=True)
         )
-    assert isinstance(
-        x, tuple
-    ), f"{space} is not numpy-flattenable. Thus, you should only unflatten tuples for this space. Got a {type(x)}"
-    return tuple(unflatten(s, flattened) for flattened, s in zip(x, space.spaces))
+    assert isinstance(x, tuple), (
+        f"{space} is not numpy-flattenable. Thus, you should only unflatten tuples for this space. Got a {type(x)}"
+    )
+    return tuple(
+        unflatten(s, flattened) for flattened, s in zip(x, space.spaces, strict=True)
+    )
 
 
 @unflatten.register(Dict)
@@ -360,12 +365,14 @@ def _unflatten_dict(space: Dict, x: NDArray[Any] | dict[str, Any]) -> dict[str, 
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
         return {
             key: unflatten(s, flattened)
-            for flattened, (key, s) in zip(list_flattened, space.spaces.items())
+            for flattened, (key, s) in zip(
+                list_flattened, space.spaces.items(), strict=True
+            )
         }
 
-    assert isinstance(
-        x, dict
-    ), f"{space} is not numpy-flattenable. Thus, you should only unflatten dictionary for this space. Got a {type(x)}"
+    assert isinstance(x, dict), (
+        f"{space} is not numpy-flattenable. Thus, you should only unflatten dictionary for this space. Got a {type(x)}"
+    )
     return {key: unflatten(s, x[key]) for key, s in space.spaces.items()}
 
 

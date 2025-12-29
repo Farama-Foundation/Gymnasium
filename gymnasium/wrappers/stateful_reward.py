@@ -13,7 +13,6 @@ import gymnasium as gym
 from gymnasium.core import ActType, ObsType
 from gymnasium.wrappers.utils import RunningMeanStd
 
-
 __all__ = ["NormalizeReward"]
 
 

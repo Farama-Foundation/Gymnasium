@@ -30,7 +30,7 @@ def test_different_obs_spaces(env, stack_size: int = 3):
     stacked_obs = [obs]
     assert obs in env.observation_space
 
-    for i in range(stack_size * 2):
+    for _ in range(stack_size * 2):
         obs, _, _, _, _ = env.step(env.action_space.sample())
         stacked_obs.append(obs)
         assert obs in env.observation_space

@@ -173,13 +173,13 @@ def test_get_set_wrapper_attr():
 
     # Test get_wrapper_attr
     with pytest.raises(AttributeError):
-        env.gravity
+        env.gravity  # noqa: B018
     assert env.unwrapped.gravity is not None
     assert env.has_wrapper_attr("gravity")
     assert env.get_wrapper_attr("gravity") is not None
 
     with pytest.raises(AttributeError):
-        env.unknown_attr
+        env.unknown_attr  # noqa: B018
     assert env.has_wrapper_attr("unknown_attr") is False
     with pytest.raises(AttributeError):
         env.get_wrapper_attr("unknown_attr")
@@ -187,7 +187,8 @@ def test_get_set_wrapper_attr():
     # Test set_wrapper_attr
     env.set_wrapper_attr("gravity", 10.0)
     with pytest.raises(AttributeError):
-        env.gravity  # checks the top level wrapper hasn't been updated
+        # checks the top level wrapper hasn't been assigned
+        env.gravity  # noqa: B018
     assert env.unwrapped.gravity == 10.0
     assert env.get_wrapper_attr("gravity") == 10.0
 
@@ -201,18 +202,18 @@ def test_get_set_wrapper_attr():
 
     # show that the base and top level objects don't contain the attribute
     with pytest.raises(AttributeError):
-        env._disable_render_order_enforcing
+        env._disable_render_order_enforcing  # noqa: B018
     with pytest.raises(AttributeError):
-        env.unwrapped._disable_render_order_enforcing
+        env.unwrapped._disable_render_order_enforcing  # noqa: B018
     assert env.has_wrapper_attr("_disable_render_order_enforcing")
     assert env.get_wrapper_attr("_disable_render_order_enforcing") is False
 
     env.set_wrapper_attr("_disable_render_order_enforcing", True)
 
     with pytest.raises(AttributeError):
-        env._disable_render_order_enforcing
+        env._disable_render_order_enforcing  # noqa: B018
     with pytest.raises(AttributeError):
-        env.unwrapped._disable_render_order_enforcing
+        env.unwrapped._disable_render_order_enforcing  # noqa: B018
     assert env.get_wrapper_attr("_disable_render_order_enforcing") is True
 
     # Test with top-most wrapper
@@ -223,7 +224,7 @@ def test_get_set_wrapper_attr():
 
     # Test with non-existing attribute
     env.set_wrapper_attr("MY_ATTRIBUTE_2", True)
-    assert getattr(env, "MY_ATTRIBUTE_2") is True
+    assert env.MY_ATTRIBUTE_2 is True
 
 
 class TestRandomSeeding:

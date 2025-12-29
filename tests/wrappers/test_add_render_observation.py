@@ -7,7 +7,6 @@ from gymnasium import spaces
 from gymnasium.wrappers import AddRenderObservation
 from tests.testing_env import GenericTestEnv
 
-
 STATE_KEY = "state"
 
 

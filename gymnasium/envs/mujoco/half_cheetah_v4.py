@@ -6,7 +6,6 @@ from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
-
 DEFAULT_CAMERA_CONFIG = {
     "distance": 4.0,
 }

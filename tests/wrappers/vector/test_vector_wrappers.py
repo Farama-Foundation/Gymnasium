@@ -120,7 +120,7 @@ def test_vector_wrapper_equivalence(
         vector_wrapper_step_returns = vector_wrapper_env.step(action)
 
         for wrapper_vector_return, vector_wrapper_return in zip(
-            wrapper_vector_step_returns, vector_wrapper_step_returns
+            wrapper_vector_step_returns, vector_wrapper_step_returns, strict=True
         ):
             assert data_equivalence(wrapper_vector_return, vector_wrapper_return)
 

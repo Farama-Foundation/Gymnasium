@@ -18,7 +18,6 @@ from gymnasium.utils import EzPickle, seeding
 from gymnasium.vector import AutoresetMode
 from gymnasium.wrappers import HumanRendering
 
-
 PRNGKeyType: TypeAlias = jax.Array
 RenderStateType = tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
 
@@ -361,10 +360,10 @@ class BlackjackFunctional(
         """Returns an initial render state."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
-            )
+            ) from e
 
         rng = seeding.np_random(0)[0]
 
@@ -385,10 +384,10 @@ class BlackjackFunctional(
         """Renders an image from a state."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 'pygame is not installed, run `pip install "gymnasium[toy_text]"`'
-            )
+            ) from e
         screen, dealer_top_card_value_str, dealer_top_card_suit = render_state
 
         player_sum, dealer_card_value, usable_ace = self.observation(state, None)

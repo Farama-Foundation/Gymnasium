@@ -2,10 +2,10 @@ import os
 import re
 from collections import defaultdict
 
-import gymnasium as gym
-from gymnasium.envs.registration import find_highest_version, get_env_id
 from utils import trim
 
+import gymnasium as gym
+from gymnasium.envs.registration import find_highest_version, get_env_id
 
 filtered_envs = defaultdict(list)
 exclude_env_names = [
@@ -75,8 +75,8 @@ This environment is part of the {env_module_name} environments which contains ge
 
 |   |   |
 |---|---|
-| Action Space | `{re.sub(' +', ' ', action_space_table)}` |
-| Observation Space | `{re.sub(' +', ' ', observation_space_table)}` |
+| Action Space | `{re.sub(" +", " ", action_space_table)}` |
+| Observation Space | `{re.sub(" +", " ", observation_space_table)}` |
 | import | `gymnasium.make("{env.spec.id}")` |
 
 {env_docstring}

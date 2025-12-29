@@ -8,7 +8,6 @@ import pytest
 
 import gymnasium
 
-
 jax = pytest.importorskip("jax")
 jnp = pytest.importorskip("jax.numpy")
 

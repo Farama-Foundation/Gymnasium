@@ -6,7 +6,6 @@ from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
-
 DEFAULT_CAMERA_CONFIG = {
     "trackbodyid": 0,
     "distance": 4.1225,
@@ -147,7 +146,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "inverted_double_pendulum.xml",
         frame_skip: int = 5,
-        default_camera_config: dict[str, float | int] = {},
+        default_camera_config: dict[str, float | int] = None,
         healthy_reward: float = 10.0,
         reset_noise_scale: float = 0.1,
         **kwargs,

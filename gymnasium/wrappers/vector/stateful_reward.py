@@ -14,7 +14,6 @@ from gymnasium.core import ActType, ObsType
 from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
-
 __all__ = ["NormalizeReward"]
 
 

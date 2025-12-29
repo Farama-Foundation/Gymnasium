@@ -9,7 +9,6 @@ from gymnasium import Env, spaces, utils
 from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
 
-
 MAP = [
     "+---------+",
     "|R: | : :G|",
@@ -467,9 +466,9 @@ class TaxiEnv(Env):
             elif mode == "rgb_array":
                 self.window = pygame.Surface(WINDOW_SIZE)
 
-        assert (
-            self.window is not None
-        ), "Something went wrong with pygame. This should never happen."
+        assert self.window is not None, (
+            "Something went wrong with pygame. This should never happen."
+        )
         if self.clock is None:
             self.clock = pygame.time.Clock()
         if self.taxi_imgs is None:
@@ -543,7 +542,7 @@ class TaxiEnv(Env):
                 elif desc[y][x] == b"-":
                     self.window.blit(self.median_horiz[1], cell)
 
-        for cell, color in zip(self.locs, self.locs_colors):
+        for cell, color in zip(self.locs, self.locs_colors, strict=True):
             color_cell = pygame.Surface(self.cell_size)
             color_cell.set_alpha(128)
             color_cell.fill(color)

@@ -9,7 +9,6 @@ from gymnasium.error import DependencyNotInstalled
 from gymnasium.vector import VectorEnv
 from gymnasium.wrappers.vector.array_conversion import ArrayConversion
 
-
 __all__ = ["JaxToNumpy"]
 
 

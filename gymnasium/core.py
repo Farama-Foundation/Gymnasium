@@ -11,7 +11,6 @@ import gymnasium
 from gymnasium import spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
-
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec, WrapperSpec
 
@@ -310,9 +309,9 @@ class Wrapper(
             env: The environment to wrap
         """
         self.env = env
-        assert isinstance(
-            env, Env
-        ), f"Expected env to be a `gymnasium.Env` but got {type(env)}"
+        assert isinstance(env, Env), (
+            f"Expected env to be a `gymnasium.Env` but got {type(env)}"
+        )
 
         self._action_space: spaces.Space[WrapperActType] | None = None
         self._observation_space: spaces.Space[WrapperObsType] | None = None
@@ -363,7 +362,7 @@ class Wrapper(
         if env_spec is not None:
             # See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
             if isinstance(self, RecordConstructorArgs):
-                kwargs = getattr(self, "_saved_kwargs")
+                kwargs = self._saved_kwargs
                 if "env" in kwargs:
                     kwargs = deepcopy(kwargs)
                     kwargs.pop("env")

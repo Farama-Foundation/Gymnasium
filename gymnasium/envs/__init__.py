@@ -4,6 +4,13 @@ from typing import Any
 
 from gymnasium.envs.registration import make, pprint_registry, register, registry, spec
 
+__all__ = [
+    "make",
+    "pprint_registry",
+    "register",
+    "registry",
+    "spec",
+]
 
 # Classic
 # ----------------------------------------

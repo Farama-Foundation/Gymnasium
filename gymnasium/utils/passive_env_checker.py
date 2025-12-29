@@ -8,7 +8,6 @@ import numpy as np
 
 from gymnasium import Space, error, logger, spaces
 
-
 __all__ = [
     "env_render_passive_checker",
     "env_reset_passive_checker",
@@ -24,12 +23,12 @@ def _check_box_observation_space(observation_space: spaces.Box):
     Args:
         observation_space: A box observation space
     """
-    assert (
-        observation_space.low.shape == observation_space.shape
-    ), f"The Box observation space shape and low shape have different shapes, low shape: {observation_space.low.shape}, box shape: {observation_space.shape}"
-    assert (
-        observation_space.high.shape == observation_space.shape
-    ), f"The Box observation space shape and high shape have have different shapes, high shape: {observation_space.high.shape}, box shape: {observation_space.shape}"
+    assert observation_space.low.shape == observation_space.shape, (
+        f"The Box observation space shape and low shape have different shapes, low shape: {observation_space.low.shape}, box shape: {observation_space.shape}"
+    )
+    assert observation_space.high.shape == observation_space.shape, (
+        f"The Box observation space shape and high shape have have different shapes, high shape: {observation_space.high.shape}, box shape: {observation_space.shape}"
+    )
 
     if np.any(observation_space.low == observation_space.high):
         logger.warn("A Box observation space maximum and minimum values are equal.")
@@ -43,12 +42,12 @@ def _check_box_action_space(action_space: spaces.Box):
     Args:
         action_space: A box action space
     """
-    assert (
-        action_space.low.shape == action_space.shape
-    ), f"The Box action space shape and low shape have have different shapes, low shape: {action_space.low.shape}, box shape: {action_space.shape}"
-    assert (
-        action_space.high.shape == action_space.shape
-    ), f"The Box action space shape and high shape have different shapes, high shape: {action_space.high.shape}, box shape: {action_space.shape}"
+    assert action_space.low.shape == action_space.shape, (
+        f"The Box action space shape and low shape have have different shapes, low shape: {action_space.low.shape}, box shape: {action_space.shape}"
+    )
+    assert action_space.high.shape == action_space.shape, (
+        f"The Box action space shape and high shape have different shapes, high shape: {action_space.high.shape}, box shape: {action_space.shape}"
+    )
 
     if np.any(action_space.low == action_space.high):
         logger.warn("A Box action space maximum and minimum values are equal.")
@@ -71,33 +70,33 @@ def check_space(
     elif isinstance(space, spaces.Box):
         check_box_space_fn(space)
     elif isinstance(space, spaces.Discrete):
-        assert (
-            0 < space.n
-        ), f"Discrete {space_type} space's number of elements must be positive, actual number of elements: {space.n}"
-        assert (
-            space.shape == ()
-        ), f"Discrete {space_type} space's shape should be empty, actual shape: {space.shape}"
+        assert 0 < space.n, (
+            f"Discrete {space_type} space's number of elements must be positive, actual number of elements: {space.n}"
+        )
+        assert space.shape == (), (
+            f"Discrete {space_type} space's shape should be empty, actual shape: {space.shape}"
+        )
     elif isinstance(space, spaces.MultiDiscrete):
-        assert (
-            space.shape == space.nvec.shape
-        ), f"Multi-discrete {space_type} space's shape must be equal to the nvec shape, space shape: {space.shape}, nvec shape: {space.nvec.shape}"
-        assert np.all(
-            0 < space.nvec
-        ), f"Multi-discrete {space_type} space's all nvec elements must be greater than 0, actual nvec: {space.nvec}"
+        assert space.shape == space.nvec.shape, (
+            f"Multi-discrete {space_type} space's shape must be equal to the nvec shape, space shape: {space.shape}, nvec shape: {space.nvec.shape}"
+        )
+        assert np.all(0 < space.nvec), (
+            f"Multi-discrete {space_type} space's all nvec elements must be greater than 0, actual nvec: {space.nvec}"
+        )
     elif isinstance(space, spaces.MultiBinary):
-        assert np.all(
-            0 < np.asarray(space.shape)
-        ), f"Multi-binary {space_type} space's all shape elements must be greater than 0, actual shape: {space.shape}"
+        assert np.all(0 < np.asarray(space.shape)), (
+            f"Multi-binary {space_type} space's all shape elements must be greater than 0, actual shape: {space.shape}"
+        )
     elif isinstance(space, spaces.Tuple):
-        assert 0 < len(
-            space.spaces
-        ), f"An empty Tuple {space_type} space is not allowed."
+        assert 0 < len(space.spaces), (
+            f"An empty Tuple {space_type} space is not allowed."
+        )
         for subspace in space.spaces:
             check_space(subspace, space_type, check_box_space_fn)
     elif isinstance(space, spaces.Dict):
-        assert 0 < len(
-            space.spaces.keys()
-        ), f"An empty Dict {space_type} space is not allowed."
+        assert 0 < len(space.spaces.keys()), (
+            f"An empty Dict {space_type} space is not allowed."
+        )
         for subspace in space.values():
             check_space(subspace, space_type, check_box_space_fn)
 
@@ -140,16 +139,16 @@ def check_obs(obs, observation_space: spaces.Space, method_name: str):
     elif isinstance(observation_space, spaces.Tuple):
         if not isinstance(obs, tuple):
             logger.warn(f"{pre} was expecting a tuple, actual type: {type(obs)}")
-        assert len(obs) == len(
-            observation_space.spaces
-        ), f"{pre} length is not same as the observation space length, obs length: {len(obs)}, space length: {len(observation_space.spaces)}"
-        for sub_obs, sub_space in zip(obs, observation_space.spaces):
+        assert len(obs) == len(observation_space.spaces), (
+            f"{pre} length is not same as the observation space length, obs length: {len(obs)}, space length: {len(observation_space.spaces)}"
+        )
+        for sub_obs, sub_space in zip(obs, observation_space.spaces, strict=True):
             check_obs(sub_obs, sub_space, method_name)
     elif isinstance(observation_space, spaces.Dict):
         assert isinstance(obs, dict), f"{pre} must be a dict, actual type: {type(obs)}"
-        assert (
-            obs.keys() == observation_space.spaces.keys()
-        ), f"{pre} observation keys is not same as the observation space keys, obs keys: {list(obs.keys())}, space keys: {list(observation_space.spaces.keys())}"
+        assert obs.keys() == observation_space.spaces.keys(), (
+            f"{pre} observation keys is not same as the observation space keys, obs keys: {list(obs.keys())}, space keys: {list(observation_space.spaces.keys())}"
+        )
         for space_key in observation_space.spaces.keys():
             check_obs(obs[space_key], observation_space[space_key], method_name)
 
@@ -195,9 +194,9 @@ def env_reset_passive_checker(env, **kwargs):
     else:
         obs, info = result
         check_obs(obs, env.observation_space, "reset")
-        assert isinstance(
-            info, dict
-        ), f"The second element returned by `env.reset()` was not a dictionary, actual type: {type(info)}"
+        assert isinstance(info, dict), (
+            f"The second element returned by `env.reset()` was not a dictionary, actual type: {type(info)}"
+        )
     return result
 
 
@@ -205,9 +204,9 @@ def env_step_passive_checker(env, action):
     """A passive check for the environment step, investigating the returning data then returning the data unchanged."""
     # We don't check the action as for some environments then out-of-bounds values can be given
     result = env.step(action)
-    assert isinstance(
-        result, tuple
-    ), f"Expects step result to be a tuple, actual type: {type(result)}"
+    assert isinstance(result, tuple), (
+        f"Expects step result to be a tuple, actual type: {type(result)}"
+    )
     if len(result) == 4:
         logger.deprecation(
             "Core environment is written in old step API which returns one bool instead of two. "
@@ -251,9 +250,9 @@ def env_step_passive_checker(env, action):
         if np.isinf(reward):
             logger.warn("The reward is an inf value.")
 
-    assert isinstance(
-        info, dict
-    ), f"The `info` returned by `step()` must be a python dictionary, actual type: {type(info)}"
+    assert isinstance(info, dict), (
+        f"The `info` returned by `step()` must be a python dictionary, actual type: {type(info)}"
+    )
 
     return result
 
@@ -343,15 +342,15 @@ def env_render_passive_checker(env):
                         f"Expects the `env.metadata['render_fps']` to be an integer or a float, actual type: {type(render_fps)}"
                     )
                 else:
-                    assert (
-                        render_fps > 0
-                    ), f"Expects the `env.metadata['render_fps']` to be greater than zero, actual value: {render_fps}"
+                    assert render_fps > 0, (
+                        f"Expects the `env.metadata['render_fps']` to be greater than zero, actual value: {render_fps}"
+                    )
 
         # env.render is now an attribute with default None
         if len(render_modes) == 0:
-            assert (
-                env.render_mode is None
-            ), f"With no render_modes, expects the Env.render_mode to be None, actual value: {env.render_mode}"
+            assert env.render_mode is None, (
+                f"With no render_modes, expects the Env.render_mode to be None, actual value: {env.render_mode}"
+            )
         else:
             assert env.render_mode is None or env.render_mode in render_modes, (
                 "The environment was initialized successfully however with an unsupported render mode. "

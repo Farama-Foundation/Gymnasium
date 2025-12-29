@@ -38,9 +38,9 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         """
         self.spaces = tuple(spaces)
         for space in self.spaces:
-            assert isinstance(
-                space, Space
-            ), f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
+            assert isinstance(space, Space), (
+                f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
+            )
         super().__init__(None, None, seed)  # type: ignore
 
     @property
@@ -72,7 +72,7 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
             )
             return tuple(
                 subspace.seed(int(subseed))
-                for subspace, subseed in zip(self.spaces, subseeds)
+                for subspace, subseed in zip(self.spaces, subseeds, strict=True)
             )
         elif isinstance(seed, (tuple, list)):
             if len(seed) != len(self.spaces):
@@ -81,7 +81,8 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
                 )
 
             return tuple(
-                space.seed(subseed) for subseed, space in zip(seed, self.spaces)
+                space.seed(subseed)
+                for subseed, space in zip(seed, self.spaces, strict=True)
             )
         else:
             raise TypeError(
@@ -111,29 +112,31 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
                 f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
             )
         elif mask is not None:
-            assert isinstance(
-                mask, tuple
-            ), f"Expected type of `mask` to be tuple, actual type: {type(mask)}"
-            assert len(mask) == len(
-                self.spaces
-            ), f"Expected length of `mask` to be {len(self.spaces)}, actual length: {len(mask)}"
+            assert isinstance(mask, tuple), (
+                f"Expected type of `mask` to be tuple, actual type: {type(mask)}"
+            )
+            assert len(mask) == len(self.spaces), (
+                f"Expected length of `mask` to be {len(self.spaces)}, actual length: {len(mask)}"
+            )
 
             return tuple(
                 space.sample(mask=space_mask)
-                for space, space_mask in zip(self.spaces, mask)
+                for space, space_mask in zip(self.spaces, mask, strict=True)
             )
 
         elif probability is not None:
-            assert isinstance(
-                probability, tuple
-            ), f"Expected type of `probability` to be tuple, actual type: {type(probability)}"
-            assert len(probability) == len(
-                self.spaces
-            ), f"Expected length of `probability` to be {len(self.spaces)}, actual length: {len(probability)}"
+            assert isinstance(probability, tuple), (
+                f"Expected type of `probability` to be tuple, actual type: {type(probability)}"
+            )
+            assert len(probability) == len(self.spaces), (
+                f"Expected length of `probability` to be {len(self.spaces)}, actual length: {len(probability)}"
+            )
 
             return tuple(
                 space.sample(probability=space_probability)
-                for space, space_probability in zip(self.spaces, probability)
+                for space, space_probability in zip(
+                    self.spaces, probability, strict=True
+                )
             )
         else:
             return tuple(space.sample() for space in self.spaces)
@@ -146,7 +149,10 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         return (
             isinstance(x, tuple)
             and len(x) == len(self.spaces)
-            and all(space.contains(part) for (space, part) in zip(self.spaces, x))
+            and all(
+                space.contains(part)
+                for (space, part) in zip(self.spaces, x, strict=True)
+            )
         )
 
     def __repr__(self) -> str:
@@ -171,7 +177,8 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
                 *[
                     space.from_jsonable(sample_n[i])
                     for i, space in enumerate(self.spaces)
-                ]
+                ],
+                strict=True,
             )
         ]
 

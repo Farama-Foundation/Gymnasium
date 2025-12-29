@@ -10,7 +10,6 @@ import gymnasium as gym
 from gymnasium.core import WrapperActType, WrapperObsType
 from gymnasium.spaces import Box
 
-
 __all__ = ["AtariPreprocessing"]
 
 
@@ -95,10 +94,10 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
         try:
             import cv2  # noqa: F401
-        except ImportError:
+        except ImportError as e:
             raise gym.error.DependencyNotInstalled(
                 'opencv-python package not installed, run `pip install "gymnasium[other]"` to get dependencies for atari'
-            )
+            ) from e
 
         assert frame_skip > 0
         assert (isinstance(screen_size, int) and screen_size > 0) or (

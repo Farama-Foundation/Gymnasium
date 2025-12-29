@@ -9,7 +9,6 @@ import pytest
 
 import gymnasium
 
-
 array_api_compat = pytest.importorskip("array_api_compat")
 array_api_extra = pytest.importorskip("array_api_extra")
 
@@ -21,7 +20,6 @@ from gymnasium.wrappers.array_conversion import (  # noqa: E402
     module_namespace,
 )
 from tests.testing_env import GenericTestEnv  # noqa: E402
-
 
 # Define available modules
 installed_modules = []
@@ -52,7 +50,8 @@ def xp_data_equivalence(data_1, data_2) -> bool:
             )
         elif isinstance(data_1, (tuple, list)):
             return len(data_1) == len(data_2) and all(
-                xp_data_equivalence(o_1, o_2) for o_1, o_2 in zip(data_1, data_2)
+                xp_data_equivalence(o_1, o_2)
+                for o_1, o_2 in zip(data_1, data_2, strict=True)
             )
         elif is_array_api_obj(data_1):
             xp = array_namespace(data_1)

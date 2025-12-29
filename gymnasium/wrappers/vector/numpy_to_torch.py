@@ -9,7 +9,6 @@ from gymnasium.vector import VectorEnv
 from gymnasium.wrappers.numpy_to_torch import Device
 from gymnasium.wrappers.vector.array_conversion import ArrayConversion
 
-
 __all__ = ["NumpyToTorch"]
 
 

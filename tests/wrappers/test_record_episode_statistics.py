@@ -12,13 +12,13 @@ def test_record_episode_statistics(env_id, deque_size):
     env = gym.make(env_id, disable_env_checker=True)
     env = RecordEpisodeStatistics(env, deque_size)
 
-    for n in range(5):
+    for _ in range(5):
         env.reset()
         assert env.episode_returns is not None and env.episode_lengths is not None
         assert env.episode_returns == 0.0
         assert env.episode_lengths == 0
         assert env.spec is not None
-        for t in range(env.spec.max_episode_steps):
+        for _ in range(env.spec.max_episode_steps):
             _, _, terminated, truncated, info = env.step(env.action_space.sample())
             if terminated or truncated:
                 assert "episode" in info

@@ -61,7 +61,7 @@ all = [
     # atari
     "ale_py >=0.9",
     # box2d
-    "box2d ==2.3.10",
+    "box2d-py ==2.3.5",
     "pygame >=2.1.3",
     "swig ==4.*",
     # classic-control
@@ -120,18 +120,45 @@ gymnasium = [
     "py.typed",
 ]
 
-# Linters and Test tools #######################################################
+[tool.ruff.lint]
+ select = [
+      "E",  # pycodestyle errors
+      "F",  # pyflakes
+      "UP", # pyupgrade
+      "I",  # isort
+      "D",  # pydocstyle
+      "B",  # bugbear
+]
+ignore = [
+    "E501"
+]
+# Ideas: "COM", "C4", "EXE", "FA", "ISC", "PT", "Q", "RSE", "SIM", "TC", "NPY", "RUF"
 
-[tool.black]
+[tool.ruff.lint.per-file-ignores]
+# Disable all docstring rules
+"gymnasium/envs/box2d/*" = ["D"]  # TODO remove
+"gymnasium/envs/classic_control/*" = ["D"]  # TODO remove
+"gymnasium/envs/mujoco/*" = ["D"]  # TODO remove
+"gymnasium/envs/toy_text/*" = ["D"]  # TODO remove
+"tests/*" = ["D"]  # TODO remove
+"docs/*" = ["D"]  # TODO remove
 
-[tool.isort]
-atomic = true
-profile = "black"
-src_paths = ["gymnasium", "tests", "docs/_scripts"]
-extra_standard_library = ["typing_extensions"]
-indent = 4
-lines_after_imports = 2
-multi_line_output = 3
+"gymnasium/envs/mujoco/mujoco_rendering.py" = ["UP031"]
+
+"gymnasium/envs/phys2d/pendulum.py" = ["E741"]
+"gymnasium/envs/phys2d/cartpole.py" = ["E741"]
+"gymnasium/envs/classic_control/pendulum.py" = ["E741"]
+"gymnasium/envs/classic_control/cartpole.py" = ["E741"]
+"gymnasium/envs/classic_control/mountain_car.py" = ["E741"]
+"gymnasium/envs/classic_control/continuous_mountain_car.py" = ["E741"]
+"gymnasium/envs/classic_control/acrobot.py" = ["E741"]
+"gymnasium/envs/box2d/bipedal_walker.py" = ["E741"]
+
+"docs/tutorials/**/*.py" = ["E402", "B007"]
+
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.pyright]
 include = ["gymnasium/**"]

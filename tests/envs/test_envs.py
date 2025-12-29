@@ -9,7 +9,6 @@ from gymnasium.envs.registration import EnvSpec
 from gymnasium.utils.env_checker import check_env, data_equivalence
 from tests.envs.utils import all_testing_env_specs, all_testing_initialised_envs
 
-
 # This runs a smoketest on each official registered env. We may want
 # to try also running environments which are not officially registered envs.
 PASSIVE_CHECK_IGNORE_WARNING = [
@@ -110,23 +109,23 @@ def test_env_determinism_rollout(env_spec: EnvSpec):
         obs_1, rew_1, terminated_1, truncated_1, info_1 = env_1.step(action)
         obs_2, rew_2, terminated_2, truncated_2, info_2 = env_2.step(action)
 
-        assert data_equivalence(
-            obs_1, obs_2, exact=True
-        ), f"[{time_step}] obs_1={obs_1}, obs_2={obs_2}"
+        assert data_equivalence(obs_1, obs_2, exact=True), (
+            f"[{time_step}] obs_1={obs_1}, obs_2={obs_2}"
+        )
         assert env_1.observation_space.contains(
             obs_1
         )  # obs_2 verified by previous assertion
 
         assert rew_1 == rew_2, f"[{time_step}] reward 1={rew_1}, reward 2={rew_2}"
-        assert (
-            terminated_1 == terminated_2
-        ), f"[{time_step}] done 1={terminated_1}, done 2={terminated_2}"
-        assert (
-            truncated_1 == truncated_2
-        ), f"[{time_step}] done 1={truncated_1}, done 2={truncated_2}"
-        assert data_equivalence(
-            info_1, info_2, exact=True
-        ), f"[{time_step}] info_1={info_1}, info_2={info_2}"
+        assert terminated_1 == terminated_2, (
+            f"[{time_step}] done 1={terminated_1}, done 2={terminated_2}"
+        )
+        assert truncated_1 == truncated_2, (
+            f"[{time_step}] done 1={truncated_1}, done 2={truncated_2}"
+        )
+        assert data_equivalence(info_1, info_2, exact=True), (
+            f"[{time_step}] info_1={info_1}, info_2={info_2}"
+        )
 
         if (
             terminated_1 or truncated_1

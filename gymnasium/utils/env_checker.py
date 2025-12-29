@@ -49,13 +49,15 @@ def data_equivalence(data_1, data_2, exact: bool = False) -> bool:
         )
     elif isinstance(data_1, (tuple, list)):
         return len(data_1) == len(data_2) and all(
-            data_equivalence(o_1, o_2, exact) for o_1, o_2 in zip(data_1, data_2)
+            data_equivalence(o_1, o_2, exact)
+            for o_1, o_2 in zip(data_1, data_2, strict=True)
         )
     elif isinstance(data_1, np.ndarray):
         if data_1.shape == data_2.shape and data_1.dtype == data_2.dtype:
             if data_1.dtype == object:
                 return all(
-                    data_equivalence(a, b, exact) for a, b in zip(data_1, data_2)
+                    data_equivalence(a, b, exact)
+                    for a, b in zip(data_1, data_2, strict=True)
                 )
             else:
                 if exact:
@@ -85,37 +87,37 @@ def check_reset_seed_determinism(env: gym.Env):
     ):
         try:
             obs_1, info = env.reset(seed=123)
-            assert (
-                obs_1 in env.observation_space
-            ), "The observation returned by `env.reset(seed=123)` is not within the observation space."
-            assert (
-                env.unwrapped._np_random is not None
-            ), "Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`."
+            assert obs_1 in env.observation_space, (
+                "The observation returned by `env.reset(seed=123)` is not within the observation space."
+            )
+            assert env.unwrapped._np_random is not None, (
+                "Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`."
+            )
             seed_123_rng_1 = deepcopy(env.unwrapped._np_random)
 
             obs_2, info = env.reset()
-            assert (
-                obs_2 in env.observation_space
-            ), "The observation returned by `env.reset()` is not within the observation space."
+            assert obs_2 in env.observation_space, (
+                "The observation returned by `env.reset()` is not within the observation space."
+            )
 
             obs_3, info = env.reset(seed=123)
-            assert (
-                obs_3 in env.observation_space
-            ), "The observation returned by `env.reset(seed=123)` is not within the observation space."
+            assert obs_3 in env.observation_space, (
+                "The observation returned by `env.reset(seed=123)` is not within the observation space."
+            )
             seed_123_rng_3 = deepcopy(env.unwrapped._np_random)
 
             obs_4, info = env.reset()
-            assert (
-                obs_4 in env.observation_space
-            ), "The observation returned by `env.reset()` is not within the observation space."
+            assert obs_4 in env.observation_space, (
+                "The observation returned by `env.reset()` is not within the observation space."
+            )
 
             if env.spec is not None and env.spec.nondeterministic is False:
-                assert data_equivalence(
-                    obs_1, obs_3
-                ), "Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent."
-                assert data_equivalence(
-                    obs_2, obs_4
-                ), "Using `env.reset(seed=123)` then `env.reset()` is non-deterministic as the observations are not equivalent."
+                assert data_equivalence(obs_1, obs_3), (
+                    "Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent."
+                )
+                assert data_equivalence(obs_2, obs_4), (
+                    "Using `env.reset(seed=123)` then `env.reset()` is non-deterministic as the observations are not equivalent."
+                )
                 if not data_equivalence(obs_1, obs_3, exact=True):
                     logger.warn(
                         "Using `env.reset(seed=123)` observations are not equal although similar."
@@ -127,16 +129,20 @@ def check_reset_seed_determinism(env: gym.Env):
 
             assert (
                 seed_123_rng_1.bit_generator.state == seed_123_rng_3.bit_generator.state
-            ), "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`."
+            ), (
+                "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`."
+            )
 
             obs_5, info = env.reset(seed=456)
-            assert (
-                obs_5 in env.observation_space
-            ), "The observation returned by `env.reset(seed=456)` is not within the observation space."
+            assert obs_5 in env.observation_space, (
+                "The observation returned by `env.reset(seed=456)` is not within the observation space."
+            )
             assert (
                 env.unwrapped._np_random.bit_generator.state
                 != seed_123_rng_1.bit_generator.state
-            ), "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`."
+            ), (
+                "Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`."
+            )
 
         except TypeError as e:
             raise AssertionError(
@@ -213,28 +219,28 @@ def check_step_determinism(env: gym.Env, seed=123):
         == seeded_rng.bit_generator.state
     ), "The `.np_random` is not properly been updated after step."
 
-    assert data_equivalence(
-        obs_0, obs_1
-    ), "Deterministic step observations are not equivalent for the same seed and action"
+    assert data_equivalence(obs_0, obs_1), (
+        "Deterministic step observations are not equivalent for the same seed and action"
+    )
     if not data_equivalence(obs_0, obs_1, exact=True):
         logger.warn(
             "Step observations are not equal although similar given the same seed and action"
         )
 
-    assert data_equivalence(
-        rew_0, rew_1
-    ), "Deterministic step rewards are not equivalent for the same seed and action"
+    assert data_equivalence(rew_0, rew_1), (
+        "Deterministic step rewards are not equivalent for the same seed and action"
+    )
     if not data_equivalence(rew_0, rew_1, exact=True):
         logger.warn(
             "Step rewards are not equal although similar given the same seed and action"
         )
 
-    assert data_equivalence(
-        term_0, term_1, exact=True
-    ), "Deterministic step termination are not equivalent for the same seed and action"
-    assert (
-        trunc_0 is False and trunc_1 is False
-    ), "Environment truncates after 1 step, something has gone very wrong."
+    assert data_equivalence(term_0, term_1, exact=True), (
+        "Deterministic step termination are not equivalent for the same seed and action"
+    )
+    assert trunc_0 is False and trunc_1 is False, (
+        "Environment truncates after 1 step, something has gone very wrong."
+    )
 
     assert data_equivalence(
         info_0,
@@ -288,20 +294,20 @@ def check_reset_return_type(env: gym.Env):
         AssertionError depending on spec violation
     """
     result = env.reset()
-    assert isinstance(
-        result, tuple
-    ), f"The result returned by `env.reset()` was not a tuple of the form `(obs, info)`, where `obs` is a observation and `info` is a dictionary containing additional information. Actual type: `{type(result)}`"
-    assert (
-        len(result) == 2
-    ), f"Calling the reset method did not return a 2-tuple, actual length: {len(result)}"
+    assert isinstance(result, tuple), (
+        f"The result returned by `env.reset()` was not a tuple of the form `(obs, info)`, where `obs` is a observation and `info` is a dictionary containing additional information. Actual type: `{type(result)}`"
+    )
+    assert len(result) == 2, (
+        f"Calling the reset method did not return a 2-tuple, actual length: {len(result)}"
+    )
 
     obs, info = result
-    assert (
-        obs in env.observation_space
-    ), "The first element returned by `env.reset()` is not within the observation space."
-    assert isinstance(
-        info, dict
-    ), f"The second element returned by `env.reset()` was not a dictionary, actual type: {type(info)}"
+    assert obs in env.observation_space, (
+        "The first element returned by `env.reset()` is not within the observation space."
+    )
+    assert isinstance(info, dict), (
+        f"The second element returned by `env.reset()` was not a dictionary, actual type: {type(info)}"
+    )
 
 
 def check_space_limit(space, space_type: str):

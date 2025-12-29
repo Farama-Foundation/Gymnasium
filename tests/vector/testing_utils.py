@@ -7,7 +7,6 @@ import numpy as np
 import gymnasium as gym
 from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
 
-
 BaseGymSpaces = (Box, Discrete, MultiDiscrete, MultiBinary)
 
 

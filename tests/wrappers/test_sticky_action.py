@@ -31,7 +31,7 @@ def test_sticky_action(
     env.reset(seed=11)
 
     assert len(actions) == len(expected_action)
-    for action, action_taken in zip(actions, expected_action):
+    for action, action_taken in zip(actions, expected_action, strict=True):
         executed_action, _, _, _, _ = env.step(action)
         assert executed_action == action_taken
 

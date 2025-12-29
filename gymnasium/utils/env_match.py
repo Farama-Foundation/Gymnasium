@@ -57,94 +57,94 @@ def check_environments_match(
     obs_a, info_a = env_a.reset(seed=seed)
     obs_b, info_b = env_b.reset(seed=seed)
 
-    assert skip_obs or data_equivalence(
-        obs_a, obs_b
-    ), f"resetting observation is not equivalent, observation_a = {obs_a}, observation_b = {obs_b}"
+    assert skip_obs or data_equivalence(obs_a, obs_b), (
+        f"resetting observation is not equivalent, observation_a = {obs_a}, observation_b = {obs_b}"
+    )
     if info_comparison == "equivalence":
-        assert data_equivalence(
-            info_a, info_b
-        ), f"resetting info is not equivalent, info_a = {info_a}, info_b = {info_b}"
+        assert data_equivalence(info_a, info_b), (
+            f"resetting info is not equivalent, info_a = {info_a}, info_b = {info_b}"
+        )
     elif info_comparison == "superset":
         for key in info_a:
-            assert data_equivalence(
-                info_a[key], info_b[key]
-            ), f"resetting info is not a superset, key {key} present in info_a with value = {info_a[key]}, in info_b with value = {info_b[key]}"
+            assert data_equivalence(info_a[key], info_b[key]), (
+                f"resetting info is not a superset, key {key} present in info_a with value = {info_a[key]}, in info_b with value = {info_b[key]}"
+            )
     elif info_comparison == "keys-equivalance":
-        assert (
-            info_a.keys() == info_b.keys()
-        ), f"resetting info keys are not equivalent, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
+        assert info_a.keys() == info_b.keys(), (
+            f"resetting info keys are not equivalent, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
+        )
     elif info_comparison == "keys-superset":
-        assert (
-            info_b.keys() >= info_a.keys()
-        ), f"resetting info keys are not a superset, keys not present in info_b are: {info_b.keys() - info_a.keys()}"
+        assert info_b.keys() >= info_a.keys(), (
+            f"resetting info keys are not a superset, keys not present in info_b are: {info_b.keys() - info_a.keys()}"
+        )
 
     if not skip_render:
-        assert (
-            env_a.render() == env_b.render()
-        ).all(), "resetting render is not equivalent"
+        assert (env_a.render() == env_b.render()).all(), (
+            "resetting render is not equivalent"
+        )
 
     for step in range(num_steps):
         action = env_a.action_space.sample()
         obs_a, rew_a, terminal_a, truncated_a, info_a = env_a.step(action)
         obs_b, rew_b, terminal_b, truncated_b, info_b = env_b.step(action)
-        assert skip_obs or data_equivalence(
-            obs_a, obs_b
-        ), f"stepping observation is not equivalent in step = {step}, observation_a = {obs_a}, observation_b = {obs_b}"
-        assert skip_rew or data_equivalence(
-            rew_a, rew_b
-        ), f"stepping reward is not equivalent in step = {step}, reward_a = {rew_a}, reward_b = {rew_b}"
-        assert (
-            skip_terminal or terminal_a == terminal_b
-        ), f"stepping terminal is not equivalent in step = {step}, terminal_a = {terminal_a}, terminal_b = {terminal_b}"
-        assert (
-            skip_truncated or truncated_a == truncated_b
-        ), f"stepping truncated is not equivalent in step = {step}, truncated_a = {truncated_a}, truncated_b = {truncated_b}"
+        assert skip_obs or data_equivalence(obs_a, obs_b), (
+            f"stepping observation is not equivalent in step = {step}, observation_a = {obs_a}, observation_b = {obs_b}"
+        )
+        assert skip_rew or data_equivalence(rew_a, rew_b), (
+            f"stepping reward is not equivalent in step = {step}, reward_a = {rew_a}, reward_b = {rew_b}"
+        )
+        assert skip_terminal or terminal_a == terminal_b, (
+            f"stepping terminal is not equivalent in step = {step}, terminal_a = {terminal_a}, terminal_b = {terminal_b}"
+        )
+        assert skip_truncated or truncated_a == truncated_b, (
+            f"stepping truncated is not equivalent in step = {step}, truncated_a = {truncated_a}, truncated_b = {truncated_b}"
+        )
         if info_comparison == "equivalence":
-            assert data_equivalence(
-                info_a, info_b
-            ), f"stepping info is not equivalent in step = {step}, info_a = {info_a}, info_b = {info_b}"
+            assert data_equivalence(info_a, info_b), (
+                f"stepping info is not equivalent in step = {step}, info_a = {info_a}, info_b = {info_b}"
+            )
         elif info_comparison == "superset":
             for key in info_a:
-                assert data_equivalence(
-                    info_a[key], info_b[key]
-                ), f"stepping info is not a superset in step = {step}, key {key} present in info_a with value = {info_a[key]}, in info_b with value = {info_b[key]}"
+                assert data_equivalence(info_a[key], info_b[key]), (
+                    f"stepping info is not a superset in step = {step}, key {key} present in info_a with value = {info_a[key]}, in info_b with value = {info_b[key]}"
+                )
         elif info_comparison == "keys-equivalance":
-            assert (
-                info_a.keys() == info_b.keys()
-            ), f"stepping info keys are not equivalent in step = {step}, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
+            assert info_a.keys() == info_b.keys(), (
+                f"stepping info keys are not equivalent in step = {step}, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
+            )
         elif info_comparison == "keys-superset":
-            assert (
-                info_b.keys() >= info_a.keys()
-            ), f"stepping info keys are not a superset in step = {step}, keys not present in info_b are: {info_b.keys() - info_a.keys()}"
+            assert info_b.keys() >= info_a.keys(), (
+                f"stepping info keys are not a superset in step = {step}, keys not present in info_b are: {info_b.keys() - info_a.keys()}"
+            )
         if not skip_render:
-            assert (
-                env_a.render() == env_b.render()
-            ).all(), "stepping render is not equivalent in step = {step}"
+            assert (env_a.render() == env_b.render()).all(), (
+                "stepping render is not equivalent in step = {step}"
+            )
 
         if terminal_a or truncated_a or terminal_b or truncated_b:
             obs_a, info_a = env_a.reset(seed=seed)
             obs_b, info_b = env_b.reset(seed=seed)
-            assert skip_obs or data_equivalence(
-                obs_a, obs_b
-            ), f"resetting observation is not equivalent in step = {step}, observation_a = {obs_a}, observation_b = {obs_b}"
+            assert skip_obs or data_equivalence(obs_a, obs_b), (
+                f"resetting observation is not equivalent in step = {step}, observation_a = {obs_a}, observation_b = {obs_b}"
+            )
             if info_comparison == "equivalence":
-                assert data_equivalence(
-                    info_a, info_b
-                ), f"resetting info is not equivalent in step = {step}, info_a = {info_a}, info_b = {info_b}"
+                assert data_equivalence(info_a, info_b), (
+                    f"resetting info is not equivalent in step = {step}, info_a = {info_a}, info_b = {info_b}"
+                )
             elif info_comparison == "superset":
                 for key in info_a:
-                    assert data_equivalence(
-                        info_a[key], info_b[key]
-                    ), f"resetting info is not a superset in step = {step}, key {key} present in info_a with value = {info_a[key]}, in info_b with value = {info_b[key]}"
+                    assert data_equivalence(info_a[key], info_b[key]), (
+                        f"resetting info is not a superset in step = {step}, key {key} present in info_a with value = {info_a[key]}, in info_b with value = {info_b[key]}"
+                    )
             elif info_comparison == "keys-equivalance":
-                assert (
-                    info_a.keys() == info_b.keys()
-                ), f"resetting info keys are not equivalent in step = {step}, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
+                assert info_a.keys() == info_b.keys(), (
+                    f"resetting info keys are not equivalent in step = {step}, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
+                )
             elif info_comparison == "keys-superset":
-                assert (
-                    info_b.keys() >= info_a.keys()
-                ), f"resetting info keys are not a superset in step = {step}, keys not present in info_b are: {info_b.keys() - info_a.keys()}"
+                assert info_b.keys() >= info_a.keys(), (
+                    f"resetting info keys are not a superset in step = {step}, keys not present in info_b are: {info_b.keys() - info_a.keys()}"
+                )
             if not skip_render:
-                assert (
-                    env_a.render() == env_b.render()
-                ).all(), "resetting render is not equivalent in step = {step}"
+                assert (env_a.render() == env_b.render()).all(), (
+                    "resetting render is not equivalent in step = {step}"
+                )

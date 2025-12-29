@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from os import path
-from typing import Any, Optional, TypeAlias
+from typing import Any, TypeAlias
 
 import jax
 import jax.numpy as jnp
@@ -17,10 +17,9 @@ from gymnasium.experimental.functional import ActType, FuncEnv
 from gymnasium.utils import EzPickle
 from gymnasium.vector import AutoresetMode
 
-
 PRNGKeyType: TypeAlias = jax.Array
 StateType: TypeAlias = jax.Array
-RenderStateType = tuple["pygame.Surface", "pygame.time.Clock", Optional[float]]  # type: ignore  # noqa: F821
+RenderStateType = tuple["pygame.Surface", "pygame.time.Clock", float | None]  # type: ignore  # noqa: F821
 
 
 @struct.dataclass

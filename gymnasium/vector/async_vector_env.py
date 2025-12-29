@@ -39,7 +39,6 @@ from gymnasium.vector.utils import (
 )
 from gymnasium.vector.vector_env import ArrayType, AutoresetMode, VectorEnv
 
-
 __all__ = ["AsyncVectorEnv", "AsyncState"]
 
 
@@ -291,9 +290,9 @@ class AsyncVectorEnv(VectorEnv):
             seed = [None for _ in range(self.num_envs)]
         elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
-        assert (
-            len(seed) == self.num_envs
-        ), f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
+        assert len(seed) == self.num_envs, (
+            f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
+        )
 
         if self._state != AsyncState.DEFAULT:
             raise AlreadyPendingCallError(
@@ -303,27 +302,29 @@ class AsyncVectorEnv(VectorEnv):
 
         if options is not None and "reset_mask" in options:
             reset_mask = options.pop("reset_mask")
-            assert isinstance(
-                reset_mask, np.ndarray
-            ), f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
-            assert reset_mask.shape == (
-                self.num_envs,
-            ), f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
-            assert (
-                reset_mask.dtype == np.bool_
-            ), f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
-            assert np.any(
-                reset_mask
-            ), f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
+            assert isinstance(reset_mask, np.ndarray), (
+                f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
+            )
+            assert reset_mask.shape == (self.num_envs,), (
+                f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
+            )
+            assert reset_mask.dtype == np.bool_, (
+                f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
+            )
+            assert np.any(reset_mask), (
+                f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
+            )
 
-            for pipe, env_seed, env_reset in zip(self.parent_pipes, seed, reset_mask):
+            for pipe, env_seed, env_reset in zip(
+                self.parent_pipes, seed, reset_mask, strict=True
+            ):
                 if env_reset:
                     env_kwargs = {"seed": env_seed, "options": options}
                     pipe.send(("reset", env_kwargs))
                 else:
                     pipe.send(("reset-noop", None))
         else:
-            for pipe, env_seed in zip(self.parent_pipes, seed):
+            for pipe, env_seed in zip(self.parent_pipes, seed, strict=True):
                 env_kwargs = {"seed": env_seed, "options": options}
                 pipe.send(("reset", env_kwargs))
 
@@ -349,7 +350,7 @@ class AsyncVectorEnv(VectorEnv):
         self._assert_is_running()
         if self._state != AsyncState.WAITING_RESET:
             raise NoAsyncCallError(
-                "Calling `reset_wait` without any prior " "call to `reset_async`.",
+                "Calling `reset_wait` without any prior call to `reset_async`.",
                 AsyncState.WAITING_RESET.value,
             )
 
@@ -359,11 +360,13 @@ class AsyncVectorEnv(VectorEnv):
                 f"The call to `reset_wait` has timed out after {timeout} second(s)."
             )
 
-        results, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
+        results, successes = zip(
+            *[pipe.recv() for pipe in self.parent_pipes], strict=True
+        )
         self._raise_if_errors(successes)
 
         infos = {}
-        results, info_data = zip(*results)
+        results, info_data = zip(*results, strict=True)
         for i, info in enumerate(info_data):
             infos = self._add_info(infos, info, i)
 
@@ -433,7 +436,7 @@ class AsyncVectorEnv(VectorEnv):
         self._assert_is_running()
         if self._state != AsyncState.WAITING_STEP:
             raise NoAsyncCallError(
-                "Calling `step_wait` without any prior call " "to `step_async`.",
+                "Calling `step_wait` without any prior call to `step_async`.",
                 AsyncState.WAITING_STEP.value,
             )
 
@@ -542,7 +545,9 @@ class AsyncVectorEnv(VectorEnv):
                 f"The call to `call_wait` has timed out after {timeout} second(s)."
             )
 
-        results, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
+        results, successes = zip(
+            *[pipe.recv() for pipe in self.parent_pipes], strict=True
+        )
         self._raise_if_errors(successes)
         self._state = AsyncState.DEFAULT
 
@@ -587,9 +592,9 @@ class AsyncVectorEnv(VectorEnv):
                 str(self._state.value),
             )
 
-        for pipe, value in zip(self.parent_pipes, values):
+        for pipe, value in zip(self.parent_pipes, values, strict=True):
             pipe.send(("_setattr", (name, value)))
-        _, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
+        _, successes = zip(*[pipe.recv() for pipe in self.parent_pipes], strict=True)
         self._raise_if_errors(successes)
 
     def close_extras(self, timeout: int | float | None = None, terminate: bool = False):
@@ -664,9 +669,11 @@ class AsyncVectorEnv(VectorEnv):
                 )
             )
 
-        results, successes = zip(*[pipe.recv() for pipe in self.parent_pipes])
+        results, successes = zip(
+            *[pipe.recv() for pipe in self.parent_pipes], strict=True
+        )
         self._raise_if_errors(successes)
-        same_observation_spaces, same_action_spaces = zip(*results)
+        same_observation_spaces, same_action_spaces = zip(*results, strict=True)
 
         if not all(same_observation_spaces):
             if self.observation_mode == "same":

@@ -9,7 +9,6 @@ import numpy as np
 from gymnasium.core import ActType, ObsType
 from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
 
-
 __all__ = ["DictInfoToList"]
 
 
@@ -120,17 +119,17 @@ class DictInfoToList(VectorWrapper):
             binary_key = f"_{key}"
             if isinstance(value, dict):
                 value_list_info = self._convert_info_to_list(value)
-                assert (
-                    len(value_list_info) == self.num_envs
-                ), f"Expects {value_list_info} to have length equal to the num-envs ({self.num_envs}), actual length is {len(value_list_info)}"
+                assert len(value_list_info) == self.num_envs, (
+                    f"Expects {value_list_info} to have length equal to the num-envs ({self.num_envs}), actual length is {len(value_list_info)}"
+                )
 
                 if binary_key in vector_infos:
-                    assert (
-                        len(vector_infos[binary_key]) == self.num_envs
-                    ), f"Expects {vector_infos[binary_key]} to have length equal to the num-envs ({self.num_envs}), actual length is {len(vector_infos[binary_key])}"
+                    assert len(vector_infos[binary_key]) == self.num_envs, (
+                        f"Expects {vector_infos[binary_key]} to have length equal to the num-envs ({self.num_envs}), actual length is {len(vector_infos[binary_key])}"
+                    )
 
                     for env_num, (env_info, has_info) in enumerate(
-                        zip(value_list_info, vector_infos[binary_key])
+                        zip(value_list_info, vector_infos[binary_key], strict=True)
                     ):
                         if has_info:
                             list_info[env_num][key] = env_info
@@ -139,14 +138,14 @@ class DictInfoToList(VectorWrapper):
                         list_info[env_num][key] = sub_value
             else:
                 assert isinstance(value, np.ndarray)
-                assert (
-                    len(value) == self.num_envs
-                ), f"Expects {value} to have length equal to the num-envs ({self.num_envs}), actual length is {len(value)}"
+                assert len(value) == self.num_envs, (
+                    f"Expects {value} to have length equal to the num-envs ({self.num_envs}), actual length is {len(value)}"
+                )
 
                 if binary_key in vector_infos:
-                    assert (
-                        len(vector_infos[binary_key]) == self.num_envs
-                    ), f"Expects {vector_infos[binary_key]} to have length equal to the num-envs ({self.num_envs}), actual length is {len(vector_infos[binary_key])}"
+                    assert len(vector_infos[binary_key]) == self.num_envs, (
+                        f"Expects {vector_infos[binary_key]} to have length equal to the num-envs ({self.num_envs}), actual length is {len(vector_infos[binary_key])}"
+                    )
 
                     for env_num, has_info in enumerate(vector_infos[binary_key]):
                         if has_info:

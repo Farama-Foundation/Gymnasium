@@ -79,9 +79,9 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         else:
             self.start = np.zeros(self.nvec.shape, dtype=dtype)
 
-        assert (
-            self.start.shape == self.nvec.shape
-        ), "start and nvec (counts) should have the same shape"
+        assert self.start.shape == self.nvec.shape, (
+            "start and nvec (counts) should have the same shape"
+        )
         assert (self.nvec > 0).all(), "nvec (counts) have to be positive"
 
         super().__init__(self.nvec.shape, self.dtype, seed)
@@ -142,52 +142,54 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
     ) -> int | list[Any]:
         """Returns a sample using the provided mask or probability mask."""
         if isinstance(sub_nvec, np.ndarray):
-            assert isinstance(
-                sub_mask, tuple
-            ), f"Expects the mask to be a tuple for sub_nvec ({sub_nvec}), actual type: {type(sub_mask)}"
-            assert len(sub_mask) == len(
-                sub_nvec
-            ), f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, nvec length: {len(sub_nvec)}"
+            assert isinstance(sub_mask, tuple), (
+                f"Expects the mask to be a tuple for sub_nvec ({sub_nvec}), actual type: {type(sub_mask)}"
+            )
+            assert len(sub_mask) == len(sub_nvec), (
+                f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, nvec length: {len(sub_nvec)}"
+            )
             return [
                 self._apply_mask(new_mask, new_nvec, new_start, mask_type)
-                for new_mask, new_nvec, new_start in zip(sub_mask, sub_nvec, sub_start)
+                for new_mask, new_nvec, new_start in zip(
+                    sub_mask, sub_nvec, sub_start, strict=True
+                )
             ]
 
-        assert np.issubdtype(
-            type(sub_nvec), np.integer
-        ), f"Expects the sub_nvec to be an action, actually: {sub_nvec}, {type(sub_nvec)}"
-        assert isinstance(
-            sub_mask, np.ndarray
-        ), f"Expects the sub mask to be np.ndarray, actual type: {type(sub_mask)}"
-        assert (
-            len(sub_mask) == sub_nvec
-        ), f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, action: {sub_nvec}"
+        assert np.issubdtype(type(sub_nvec), np.integer), (
+            f"Expects the sub_nvec to be an action, actually: {sub_nvec}, {type(sub_nvec)}"
+        )
+        assert isinstance(sub_mask, np.ndarray), (
+            f"Expects the sub mask to be np.ndarray, actual type: {type(sub_mask)}"
+        )
+        assert len(sub_mask) == sub_nvec, (
+            f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, action: {sub_nvec}"
+        )
 
         if mask_type == "mask":
-            assert (
-                sub_mask.dtype == np.int8
-            ), f"Expects the mask dtype to be np.int8, actual dtype: {sub_mask.dtype}"
+            assert sub_mask.dtype == np.int8, (
+                f"Expects the mask dtype to be np.int8, actual dtype: {sub_mask.dtype}"
+            )
 
             valid_action_mask = sub_mask == 1
-            assert np.all(
-                np.logical_or(sub_mask == 0, valid_action_mask)
-            ), f"Expects all masks values to 0 or 1, actual values: {sub_mask}"
+            assert np.all(np.logical_or(sub_mask == 0, valid_action_mask)), (
+                f"Expects all masks values to 0 or 1, actual values: {sub_mask}"
+            )
 
             if np.any(valid_action_mask):
                 return self.np_random.choice(np.where(valid_action_mask)[0]) + sub_start
             else:
                 return sub_start
         elif mask_type == "probability":
-            assert (
-                sub_mask.dtype == np.float64
-            ), f"Expects the mask dtype to be np.float64, actual dtype: {sub_mask.dtype}"
+            assert sub_mask.dtype == np.float64, (
+                f"Expects the mask dtype to be np.float64, actual dtype: {sub_mask.dtype}"
+            )
             valid_action_mask = np.logical_and(sub_mask > 0, sub_mask <= 1)
-            assert np.all(
-                np.logical_or(sub_mask == 0, valid_action_mask)
-            ), f"Expects all masks values to be between 0 and 1, actual values: {sub_mask}"
-            assert np.isclose(
-                np.sum(sub_mask), 1
-            ), f"Expects the sum of all mask values to be 1, actual sum: {np.sum(sub_mask)}"
+            assert np.all(np.logical_or(sub_mask == 0, valid_action_mask)), (
+                f"Expects all masks values to be between 0 and 1, actual values: {sub_mask}"
+            )
+            assert np.isclose(np.sum(sub_mask), 1), (
+                f"Expects the sum of all mask values to be 1, actual sum: {np.sum(sub_mask)}"
+            )
 
             normalized_sub_mask = sub_mask / np.sum(sub_mask)
             return (

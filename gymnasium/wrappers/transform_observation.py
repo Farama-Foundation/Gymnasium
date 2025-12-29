@@ -24,7 +24,6 @@ from gymnasium import spaces
 from gymnasium.core import ActType, ObsType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 
-
 __all__ = [
     "TransformObservation",
     "FilterObservation",
@@ -177,9 +176,9 @@ class FilterObservation(
             # Filter for tuple observation
         elif isinstance(env.observation_space, spaces.Tuple):
             assert all(isinstance(key, int) for key in filter_keys)
-            assert len(set(filter_keys)) == len(
-                filter_keys
-            ), f"Duplicate keys exist, filter_keys: {filter_keys}"
+            assert len(set(filter_keys)) == len(filter_keys), (
+                f"Duplicate keys exist, filter_keys: {filter_keys}"
+            )
 
             if any(
                 0 < key and key >= len(env.observation_space) for key in filter_keys
@@ -776,9 +775,9 @@ class DiscretizeObservation(
         if isinstance(bins, int):
             self.bins = np.array([bins] * self.n_dims)
         else:
-            assert (
-                len(bins) == self.n_dims
-            ), f"bins must match action dimensions: expected {self.n_dims}, got {len(bins)}"
+            assert len(bins) == self.n_dims, (
+                f"bins must match action dimensions: expected {self.n_dims}, got {len(bins)}"
+            )
             self.bins = np.array(bins)
 
         self.bin_edges = [
