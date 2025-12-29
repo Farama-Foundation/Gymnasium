@@ -222,7 +222,7 @@ class GenericTestVectorEnv(VectorEnv):
             self.spec = spec
 
         # Set the single spaces and create batched spaces
-        if action_space is DefaultTestSpace:
+        if action_space is DEFAULT_SPACE:
             self.single_action_space = spaces.Box(0, 1, (1,))
         elif action_space is not None:
             self.single_action_space = action_space
@@ -231,7 +231,7 @@ class GenericTestVectorEnv(VectorEnv):
         if hasattr(self, "single_action_space"):
             self.action_space = batch_space(self.single_action_space, num_envs)
 
-        if observation_space is DefaultTestSpace:
+        if observation_space is DEFAULT_SPACE:
             self.single_observation_space = spaces.Box(0, 1, (1,))
         elif observation_space is not None:
             self.single_observation_space = observation_space
