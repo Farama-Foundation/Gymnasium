@@ -780,12 +780,16 @@ def make(
     # Check if pre-wrapped wrappers
     assert env.spec is not None
     num_prior_wrappers = len(env.spec.additional_wrappers)
+    # Only validate if env_spec expects at least num_prior_wrappers (entry points can add their own wrappers)
     if (
-        env_spec.additional_wrappers[:num_prior_wrappers]
+        num_prior_wrappers <= len(env_spec.additional_wrappers)
+        and env_spec.additional_wrappers[:num_prior_wrappers]
         != env.spec.additional_wrappers
     ):
         for env_spec_wrapper_spec, recreated_wrapper_spec in zip(
-            env_spec.additional_wrappers, env.spec.additional_wrappers, strict=True
+            env_spec.additional_wrappers[:num_prior_wrappers],
+            env.spec.additional_wrappers,
+            strict=True,
         ):
             raise ValueError(
                 f"The environment's wrapper spec {recreated_wrapper_spec} is different from the saved `EnvSpec` additional wrapper {env_spec_wrapper_spec}"

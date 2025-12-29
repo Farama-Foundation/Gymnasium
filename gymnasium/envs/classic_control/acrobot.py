@@ -324,12 +324,7 @@ class AcrobotEnv(Env):
             self.LINK_LENGTH_1 * sin(s[0]) * scale,
         ]
 
-        p2 = [
-            p1[0] - self.LINK_LENGTH_2 * cos(s[0] + s[1]) * scale,
-            p1[1] + self.LINK_LENGTH_2 * sin(s[0] + s[1]) * scale,
-        ]
-
-        xys = np.array([[0, 0], p1, p2])[:, ::-1]
+        xys = np.array([[0, 0], p1])[:, ::-1]
         thetas = [s[0] - pi / 2, s[0] + s[1] - pi / 2]
         link_lengths = [self.LINK_LENGTH_1 * scale, self.LINK_LENGTH_2 * scale]
 

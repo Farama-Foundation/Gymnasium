@@ -157,9 +157,7 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
         merged_rgb_array = np.zeros(self.screen_size + (3,), dtype=np.uint8)
         cols, rows = np.meshgrid(np.arange(self.num_cols), np.arange(self.num_rows))
 
-        for i, col, row in zip(
-            range(self.num_envs), cols.flatten(), rows.flatten(), strict=True
-        ):
+        for i, col, row in zip(range(self.num_envs), cols.flatten(), rows.flatten()):  # noqa: B905
             scaled_render = cv2.resize(subenv_renders[i], self.scaled_subenv_size[::-1])
             x = col * self.scaled_subenv_size[0]
             y = row * self.scaled_subenv_size[1]

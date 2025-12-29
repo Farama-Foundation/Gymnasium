@@ -17,6 +17,13 @@ from gymnasium.vector.utils import batch_space
 from gymnasium.vector.vector_env import AutoresetMode
 
 
+class DefaultTestSpace:
+    """Sentinel class to indicate that the default space should be used."""
+
+
+DEFAULT_SPACE = DefaultTestSpace()
+
+
 def basic_reset_func(
     self,
     *,
@@ -55,8 +62,8 @@ class GenericTestEnv(gym.Env):
 
     def __init__(
         self,
-        action_space: spaces.Space | None = None,
-        observation_space: spaces.Space | None = None,
+        action_space: spaces.Space | DefaultTestSpace | None = DEFAULT_SPACE,
+        observation_space: spaces.Space | DefaultTestSpace | None = DEFAULT_SPACE,
         reset_func: Callable = basic_reset_func,
         step_func: Callable = basic_step_func,
         render_func: Callable = basic_render_func,
@@ -67,8 +74,10 @@ class GenericTestEnv(gym.Env):
         """Generic testing environment constructor.
 
         Args:
-            action_space: The environment action space
-            observation_space: The environment observation space
+            action_space: The environment action space. Use DEFAULT_SPACE for default,
+                None for no space (to test error cases), or a custom Space.
+            observation_space: The environment observation space. Use DEFAULT_SPACE for default,
+                None for no space (to test error cases), or a custom Space.
             reset_func: The environment reset function
             step_func: The environment step function
             render_func: The environment render function
@@ -76,14 +85,17 @@ class GenericTestEnv(gym.Env):
             render_mode: The render mode of the environment
             spec: The environment spec
         """
-        if action_space is not None:
-            self.action_space = action_space
-        else:
+        if action_space is DEFAULT_SPACE:
             self.action_space = spaces.Box(0, 1, (1,))
-        if observation_space is not None:
-            self.observation_space = observation_space
-        else:
+        elif action_space is not None:
+            self.action_space = action_space
+        # If action_space is None, don't set the attribute (for testing error cases)
+
+        if observation_space is DEFAULT_SPACE:
             self.observation_space = spaces.Box(0, 1, (1,))
+        elif observation_space is not None:
+            self.observation_space = observation_space
+        # If observation_space is None, don't set the attribute (for testing error cases)
 
         if reset_func is not None:
             self.reset = types.MethodType(reset_func, self)
@@ -165,8 +177,8 @@ class GenericTestVectorEnv(VectorEnv):
     def __init__(
         self,
         num_envs: int = 1,
-        action_space: spaces.Space | None = None,
-        observation_space: spaces.Space | None = None,
+        action_space: spaces.Space | DefaultTestSpace | None = DEFAULT_SPACE,
+        observation_space: spaces.Space | DefaultTestSpace | None = DEFAULT_SPACE,
         reset_func: Callable = basic_vector_reset_func,
         step_func: Callable = basic_vector_step_func,
         render_func: Callable = basic_vector_render_func,
@@ -178,8 +190,10 @@ class GenericTestVectorEnv(VectorEnv):
 
         Args:
             num_envs: The number of environments to create
-            action_space: The environment action space
-            observation_space: The environment observation space
+            action_space: The environment action space. Use DEFAULT_SPACE for default,
+                None for no space (to test error cases), or a custom Space.
+            observation_space: The environment observation space. Use DEFAULT_SPACE for default,
+                None for no space (to test error cases), or a custom Space.
             reset_func: The environment reset function
             step_func: The environment step function
             render_func: The environment render function
@@ -208,17 +222,25 @@ class GenericTestVectorEnv(VectorEnv):
             self.spec = spec
 
         # Set the single spaces and create batched spaces
-        if action_space is None:
+        if action_space is DefaultTestSpace:
             self.single_action_space = spaces.Box(0, 1, (1,))
-        else:
+        elif action_space is not None:
             self.single_action_space = action_space
-        self.action_space = batch_space(action_space, num_envs)
+        # If action_space is None, don't set the attribute (for testing error cases)
 
-        if observation_space is None:
+        if hasattr(self, "single_action_space"):
+            self.action_space = batch_space(self.single_action_space, num_envs)
+
+        if observation_space is DefaultTestSpace:
             self.single_observation_space = spaces.Box(0, 1, (1,))
-        else:
+        elif observation_space is not None:
             self.single_observation_space = observation_space
-        self.observation_space = batch_space(observation_space, num_envs)
+        # If observation_space is None, don't set the attribute (for testing error cases)
+
+        if hasattr(self, "single_observation_space"):
+            self.observation_space = batch_space(
+                self.single_observation_space, num_envs
+            )
 
         # Bind the functions to the instance
         if reset_func is not None:
