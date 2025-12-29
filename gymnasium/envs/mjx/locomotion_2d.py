@@ -198,7 +198,7 @@ class HalfCheetahMJXEnv(Locomotion_2d_MJXEnv):
 
         return qpos, qvel, act
 
-    def get_default_params(**kwargs) -> Locomotion2dMJXEnvParams:
+    def get_default_params(self, **kwargs) -> Locomotion2dMJXEnvParams:
         """Get the default parameter for the HalfCheetah environment."""
         default = {
             "xml_file": "half_cheetah.xml",
@@ -238,7 +238,7 @@ class HopperMJXEnv(Locomotion_2d_MJXEnv):
 
         return qpos, qvel, act
 
-    def get_default_params(**kwargs) -> Locomotion2dMJXEnvParams:
+    def get_default_params(self, **kwargs) -> Locomotion2dMJXEnvParams:
         """Get the default parameter for the Hopper environment."""
         default = {
             "xml_file": "hopper.xml",
@@ -277,7 +277,7 @@ class Walker2dMJXEnv(Locomotion_2d_MJXEnv):
 
         return qpos, qvel, act
 
-    def get_default_params(**kwargs) -> Locomotion2dMJXEnvParams:
+    def get_default_params(self, **kwargs) -> Locomotion2dMJXEnvParams:
         """Get the default parameter for the Walker2d environment."""
         default = {
             "xml_file": "walker2d_v5.xml",

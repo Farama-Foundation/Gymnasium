@@ -238,7 +238,7 @@ class MJXEnv(
         """Should be overwritten if the sub-class environment terminates."""
         return jnp.array(False)
 
-    def get_default_params(**kwargs) -> dict[str, Any]:
+    def get_default_params(self, **kwargs) -> dict[str, Any]:
         """Generate the default parameters for rendering."""
         default = {
             "default_camera_config": {},

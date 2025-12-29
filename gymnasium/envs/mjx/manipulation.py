@@ -145,7 +145,7 @@ class Reacher_MJXEnv(MJXEnv):
 
         return reward, reward_info
 
-    def get_default_params(**kwargs) -> ReacherParams:
+    def get_default_params(self, **kwargs) -> ReacherParams:
         """Get the default parameter for the Reacher environment."""
         default: ReacherParams = {
             "xml_file": "reacher.xml",
@@ -277,7 +277,7 @@ class Pusher_MJXEnv(MJXEnv):
 
         return reward, reward_info
 
-    def get_default_params(**kwargs) -> PusherParams:
+    def get_default_params(self, **kwargs) -> PusherParams:
         """Get the default parameter for the Reacher environment."""
         default: PusherParams = {
             "xml_file": "pusher.xml",

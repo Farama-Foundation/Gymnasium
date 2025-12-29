@@ -132,7 +132,7 @@ class Swimmer_MJXEnv(MJXEnv):
         }
         return info
 
-    def get_default_params(**kwargs) -> SwimmerParams:
+    def get_default_params(self, **kwargs) -> SwimmerParams:
         """Get the default parameter for the Swimmer environment."""
         default: SwimmerParams = {
             "xml_file": "swimmer.xml",

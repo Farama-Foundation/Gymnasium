@@ -273,7 +273,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
             params["terminate_when_unhealthy"],
         )
 
-    def get_default_params(**kwargs) -> HumanoidMJXEnvParams:
+    def get_default_params(self, **kwargs) -> HumanoidMJXEnvParams:
         """Get the default parameter for the Humanoid environment."""
         default = {
             "xml_file": "humanoid.xml",
@@ -331,7 +331,7 @@ class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
 
         return reward, reward_info
 
-    def get_default_params(**kwargs) -> HumanoidStandupMJXEnvParams:
+    def get_default_params(self, **kwargs) -> HumanoidStandupMJXEnvParams:
         """Get the default parameter for the Humanoid environment."""
         default = {
             "xml_file": "humanoidstandup.xml",

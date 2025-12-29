@@ -154,7 +154,7 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
         """Terminates if unhealty."""
         return jnp.logical_not(self._gen_is_healty(state))
 
-    def get_default_params(**kwargs) -> InvertedDoublePendulumMJXEnvParams:
+    def get_default_params(self, **kwargs) -> InvertedDoublePendulumMJXEnvParams:
         """Get the parameters for the InvertedDoublePendulum environment."""
         default = {
             "xml_file": "inverted_double_pendulum.xml",
@@ -249,7 +249,7 @@ class InvertedPendulumMJXEnv(MJXEnv):
         """Terminates if unhealty."""
         return jnp.logical_not(self._gen_is_healty(state))
 
-    def get_default_params(**kwargs) -> InvertedPendulumMJXEnvParams:
+    def get_default_params(self, **kwargs) -> InvertedPendulumMJXEnvParams:
         """Get the parameters for the InvertedPendulum environment."""
         default = {
             "xml_file": "inverted_pendulum.xml",
