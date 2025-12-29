@@ -192,7 +192,7 @@ class Ant_MJXEnv(MJXEnv):
             params["terminate_when_unhealthy"],
         )
 
-    def get_default_params(**kwargs) -> AntMJXEnvParams:
+    def get_default_params(self, **kwargs) -> AntMJXEnvParams:
         """Get the default parameter for the Ant environment."""
         default = {
             "xml_file": "ant.xml",
