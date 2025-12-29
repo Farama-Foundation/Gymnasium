@@ -392,7 +392,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoresetMode</span>
 
-
 <span class="n">ENV_ID_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
     <span class="sa">r</span><span class="s2">&quot;^(?:(?P&lt;namespace&gt;[\w:-]+)\/)?(?:(?P&lt;name&gt;[\w:.-]+?))(?:-v(?P&lt;version&gt;\d+))?$&quot;</span>
 <span class="p">)</span>
@@ -799,7 +798,9 @@
         <span class="n">env_spec</span> <span class="k">for</span> <span class="n">env_spec</span> <span class="ow">in</span> <span class="n">env_specs</span> <span class="k">if</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="p">]</span>
 
-    <span class="n">latest_spec</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">versioned_specs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">latest_spec</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+        <span class="n">versioned_specs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>  <span class="c1"># type: ignore</span>
     <span class="k">if</span> <span class="n">latest_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">version</span> <span class="o">&gt;</span> <span class="n">latest_spec</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
         <span class="n">version_list_msg</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`v</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">`&quot;</span> <span class="k">for</span> <span class="n">env_spec</span> <span class="ow">in</span> <span class="n">env_specs</span><span class="p">)</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; It provides versioned environments: [ </span><span class="si">{</span><span class="n">version_list_msg</span><span class="si">}</span><span class="s2"> ].&quot;</span>
@@ -988,9 +989,9 @@
 <span class="sd">    Changelogs:</span>
 <span class="sd">        v1.0.0 - `autoreset` and `apply_api_compatibility` parameter was removed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="p">(</span>
-        <span class="n">entry_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">vector_entry_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-    <span class="p">),</span> <span class="s2">&quot;Either `entry_point` or `vector_entry_point` (or both) must be provided&quot;</span>
+    <span class="k">assert</span> <span class="n">entry_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">vector_entry_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+        <span class="s2">&quot;Either `entry_point` or `vector_entry_point` (or both) must be provided&quot;</span>
+    <span class="p">)</span>
     <span class="n">ns</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">parse_env_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1140,7 +1141,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)(</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2"> was raised from the environment creator for </span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> with kwargs (</span><span class="si">{</span><span class="n">env_spec_kwargs</span><span class="si">}</span><span class="s2">)&quot;</span>
-            <span class="p">)</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span>
@@ -1174,12 +1175,16 @@
     <span class="c1"># Check if pre-wrapped wrappers</span>
     <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">num_prior_wrappers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="p">)</span>
+    <span class="c1"># Only validate if env_spec expects at least num_prior_wrappers (entry points can add their own wrappers)</span>
     <span class="k">if</span> <span class="p">(</span>
-        <span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="p">[:</span><span class="n">num_prior_wrappers</span><span class="p">]</span>
+        <span class="n">num_prior_wrappers</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="p">[:</span><span class="n">num_prior_wrappers</span><span class="p">]</span>
         <span class="o">!=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">additional_wrappers</span>
     <span class="p">):</span>
         <span class="k">for</span> <span class="n">env_spec_wrapper_spec</span><span class="p">,</span> <span class="n">recreated_wrapper_spec</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-            <span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">additional_wrappers</span>
+            <span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="p">[:</span><span class="n">num_prior_wrappers</span><span class="p">],</span>
+            <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="p">,</span>
+            <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;The environment&#39;s wrapper spec </span><span class="si">{</span><span class="n">recreated_wrapper_spec</span><span class="si">}</span><span class="s2"> is different from the saved `EnvSpec` additional wrapper </span><span class="si">{</span><span class="n">env_spec_wrapper_spec</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1284,11 +1289,11 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">vectorization_mode</span> <span class="o">=</span> <span class="n">VectorizeMode</span><span class="p">(</span><span class="n">vectorization_mode</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Invalid vectorization mode: </span><span class="si">{</span><span class="n">vectorization_mode</span><span class="si">!r}</span><span class="s2">, &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;valid modes: </span><span class="si">{</span><span class="p">[</span><span class="n">mode</span><span class="o">.</span><span class="n">value</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">VectorizeMode</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vectorization_mode</span><span class="p">,</span> <span class="n">VectorizeMode</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">create_single_env</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
@@ -1401,9 +1406,9 @@
         <span class="n">_check_version_exists</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
         <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No registered env with id: </span><span class="si">{</span><span class="n">env_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-            <span class="n">env_spec</span><span class="p">,</span> <span class="n">EnvSpec</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expected the registry for </span><span class="si">{</span><span class="n">env_id</span><span class="si">}</span><span class="s2"> to be an `EnvSpec`, actual type is </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">),</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Expected the registry for </span><span class="si">{</span><span class="n">env_id</span><span class="si">}</span><span class="s2"> to be an `EnvSpec`, actual type is </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">env_spec</span></div>
 
 

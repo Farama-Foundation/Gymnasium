@@ -385,7 +385,6 @@
     <span class="n">VectorWrapper</span><span class="p">,</span>
 <span class="p">)</span>
 
-
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RecordEpisodeStatistics&quot;</span><span class="p">]</span>
 
 
@@ -485,18 +484,18 @@
 
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;reset_mask&quot;</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
             <span class="n">reset_mask</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;reset_mask&quot;</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">reset_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must be a numpy array, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">reset_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">assert</span> <span class="n">reset_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must have shape `(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">,)`, got </span><span class="si">{</span><span class="n">reset_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">reset_mask</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must have `dtype=np.bool_`, got </span><span class="si">{</span><span class="n">reset_mask</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
-                <span class="n">reset_mask</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must contain a boolean array, got reset_mask=</span><span class="si">{</span><span class="n">reset_mask</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reset_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must be a numpy array, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">reset_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">reset_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must have shape `(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">,)`, got </span><span class="si">{</span><span class="n">reset_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">reset_mask</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">,</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must have `dtype=np.bool_`, got </span><span class="si">{</span><span class="n">reset_mask</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">reset_mask</span><span class="p">),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must contain a boolean array, got reset_mask=</span><span class="si">{</span><span class="n">reset_mask</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_times</span><span class="p">[</span><span class="n">reset_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">[</span><span class="n">reset_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -522,9 +521,9 @@
             <span class="n">infos</span><span class="p">,</span>
         <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-            <span class="n">infos</span><span class="p">,</span> <span class="nb">dict</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span><span class="si">}</span><span class="s2">. This may be due to usage of other wrappers in the wrong order.&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span><span class="si">}</span><span class="s2">. This may be due to usage of other wrappers in the wrong order.&quot;</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prev_dones</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prev_dones</span><span class="p">)]</span> <span class="o">+=</span> <span class="n">rewards</span><span class="p">[</span>

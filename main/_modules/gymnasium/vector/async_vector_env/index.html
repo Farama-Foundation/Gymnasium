@@ -408,7 +408,6 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.vector_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">AutoresetMode</span><span class="p">,</span> <span class="n">VectorEnv</span>
 
-
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AsyncVectorEnv&quot;</span><span class="p">,</span> <span class="s2">&quot;AsyncState&quot;</span><span class="p">]</span>
 
 
@@ -665,9 +664,9 @@
             <span class="n">seed</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">seed</span> <span class="o">=</span> <span class="p">[</span><span class="n">seed</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;If seeds are passed as a list the length must match num_envs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2"> but got length=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;If seeds are passed as a list the length must match num_envs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2"> but got length=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">!=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">AlreadyPendingCallError</span><span class="p">(</span>
@@ -677,27 +676,29 @@
 
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;reset_mask&quot;</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
             <span class="n">reset_mask</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;reset_mask&quot;</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">reset_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must be a numpy array, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">reset_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">assert</span> <span class="n">reset_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must have shape `(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">,)`, got </span><span class="si">{</span><span class="n">reset_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">reset_mask</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must have `dtype=np.bool_`, got </span><span class="si">{</span><span class="n">reset_mask</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
-                <span class="n">reset_mask</span>
-            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must contain a boolean array, got reset_mask=</span><span class="si">{</span><span class="n">reset_mask</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reset_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must be a numpy array, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">reset_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">reset_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must have shape `(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">,)`, got </span><span class="si">{</span><span class="n">reset_mask</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">reset_mask</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">,</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must have `dtype=np.bool_`, got </span><span class="si">{</span><span class="n">reset_mask</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">reset_mask</span><span class="p">),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`options[&#39;reset_mask&#39;: mask]` must contain a boolean array, got reset_mask=</span><span class="si">{</span><span class="n">reset_mask</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">env_seed</span><span class="p">,</span> <span class="n">env_reset</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">reset_mask</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">env_seed</span><span class="p">,</span> <span class="n">env_reset</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">reset_mask</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">):</span>
                 <span class="k">if</span> <span class="n">env_reset</span><span class="p">:</span>
                     <span class="n">env_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="n">env_seed</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">}</span>
                     <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;reset-noop&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">env_seed</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">env_seed</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                 <span class="n">env_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="n">env_seed</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="n">options</span><span class="p">}</span>
                 <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;reset&quot;</span><span class="p">,</span> <span class="n">env_kwargs</span><span class="p">))</span>
 
@@ -723,7 +724,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_running</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">!=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_RESET</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NoAsyncCallError</span><span class="p">(</span>
-                <span class="s2">&quot;Calling `reset_wait` without any prior &quot;</span> <span class="s2">&quot;call to `reset_async`.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Calling `reset_wait` without any prior call to `reset_async`.&quot;</span><span class="p">,</span>
                 <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_RESET</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -733,11 +734,13 @@
                 <span class="sa">f</span><span class="s2">&quot;The call to `reset_wait` has timed out after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> second(s).&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">results</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">])</span>
+        <span class="n">results</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_errors</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span>
 
         <span class="n">infos</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">results</span><span class="p">,</span> <span class="n">info_data</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">,</span> <span class="n">info_data</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">info_data</span><span class="p">):</span>
             <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
 
@@ -810,7 +813,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_assert_is_running</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">!=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_STEP</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">NoAsyncCallError</span><span class="p">(</span>
-                <span class="s2">&quot;Calling `step_wait` without any prior call &quot;</span> <span class="s2">&quot;to `step_async`.&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;Calling `step_wait` without any prior call to `step_async`.&quot;</span><span class="p">,</span>
                 <span class="n">AsyncState</span><span class="o">.</span><span class="n">WAITING_STEP</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -922,7 +925,9 @@
                 <span class="sa">f</span><span class="s2">&quot;The call to `call_wait` has timed out after </span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2"> second(s).&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">results</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">])</span>
+        <span class="n">results</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_errors</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">AsyncState</span><span class="o">.</span><span class="n">DEFAULT</span>
 
@@ -972,9 +977,9 @@
                 <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state</span><span class="o">.</span><span class="n">value</span><span class="p">),</span>
             <span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">pipe</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
             <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s2">&quot;_setattr&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)))</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">])</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_errors</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span></div>
 
 
@@ -1050,9 +1055,11 @@
                 <span class="p">)</span>
             <span class="p">)</span>
 
-        <span class="n">results</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">])</span>
+        <span class="n">results</span><span class="p">,</span> <span class="n">successes</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="o">*</span><span class="p">[</span><span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span> <span class="k">for</span> <span class="n">pipe</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_raise_if_errors</span><span class="p">(</span><span class="n">successes</span><span class="p">)</span>
-        <span class="n">same_observation_spaces</span><span class="p">,</span> <span class="n">same_action_spaces</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">)</span>
+        <span class="n">same_observation_spaces</span><span class="p">,</span> <span class="n">same_action_spaces</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">results</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">same_observation_spaces</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_mode</span> <span class="o">==</span> <span class="s2">&quot;same&quot;</span><span class="p">:</span>

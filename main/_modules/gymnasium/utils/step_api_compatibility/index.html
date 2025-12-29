@@ -371,26 +371,25 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">SupportsFloat</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObsType</span>
 
-
 <span class="n">DoneStepType</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span>
-    <span class="n">Union</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Union</span><span class="p">[</span><span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+    <span class="n">ObsType</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">SupportsFloat</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="nb">bool</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="n">TerminatedTruncatedStepType</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span>
-    <span class="n">Union</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Union</span><span class="p">[</span><span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-    <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
+    <span class="n">ObsType</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">SupportsFloat</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="nb">bool</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="nb">bool</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="nb">dict</span> <span class="o">|</span> <span class="nb">list</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -483,7 +482,7 @@
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">info</span><span class="p">,</span> <span class="n">env_truncated</span><span class="p">,</span> <span class="n">env_terminated</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-                <span class="n">infos</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">terminated</span>
+                <span class="n">infos</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">):</span>
                 <span class="k">if</span> <span class="n">env_truncated</span> <span class="ow">or</span> <span class="n">env_terminated</span><span class="p">:</span>
                     <span class="n">info</span><span class="p">[</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_truncated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">env_terminated</span>

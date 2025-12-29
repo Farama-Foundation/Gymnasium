@@ -30,7 +30,6 @@ from tqdm import tqdm
 import gymnasium as gym
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
-
 sns.set_theme()
 
 # %load_ext lab_black
@@ -69,7 +68,6 @@ params = Params(
     state_size=None,
     proba_frozen=0.9,
 )
-params
 
 # Set the seed
 rng = np.random.default_rng(params.seed)
