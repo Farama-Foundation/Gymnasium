@@ -91,8 +91,8 @@ class MJXEnv(
         self.mjx_model = mjx.put_model(self.model)
 
         self.metadata = {
-            "render_modes": self.render_metadata["render_modes"],
-            "render_fps": int(np.round(1.0 / self.dt)),
+            "render_modes": ['human', 'rgb_array', 'depth_array', 'rgbd_tuple'],
+            "render_fps": int(np.round(1.0 / self.dt(params))),
         }
 
         # observation_space: gymnasium.spaces.Box  # set by subclass
