@@ -20,7 +20,6 @@ from gymnasium.vector.utils import (
 )
 from gymnasium.vector.vector_env import ArrayType, AutoresetMode, VectorEnv
 
-
 __all__ = ["SyncVectorEnv"]
 
 
@@ -129,17 +128,19 @@ class SyncVectorEnv(VectorEnv):
         # check sub-environment obs and action spaces
         for env in self.envs:
             if observation_mode == "same":
-                assert (
-                    env.observation_space == self.single_observation_space
-                ), f"SyncVectorEnv(..., observation_mode='same') however the sub-environments observation spaces are not equivalent. single_observation_space={self.single_observation_space}, sub-environment observation_space={env.observation_space}. If this is intentional, use `observation_mode='different'` instead."
+                assert env.observation_space == self.single_observation_space, (
+                    f"SyncVectorEnv(..., observation_mode='same') however the sub-environments observation spaces are not equivalent. single_observation_space={self.single_observation_space}, sub-environment observation_space={env.observation_space}. If this is intentional, use `observation_mode='different'` instead."
+                )
             else:
                 assert is_space_dtype_shape_equiv(
                     env.observation_space, self.single_observation_space
-                ), f"SyncVectorEnv(..., observation_mode='different' or custom space) however the sub-environments observation spaces do not share a common shape and dtype, single_observation_space={self.single_observation_space}, sub-environment observation space={env.observation_space}"
+                ), (
+                    f"SyncVectorEnv(..., observation_mode='different' or custom space) however the sub-environments observation spaces do not share a common shape and dtype, single_observation_space={self.single_observation_space}, sub-environment observation space={env.observation_space}"
+                )
 
-            assert (
-                env.action_space == self.single_action_space
-            ), f"Sub-environment action space doesn't make the `single_action_space`, action_space={env.action_space}, single_action_space={self.single_action_space}"
+            assert env.action_space == self.single_action_space, (
+                f"Sub-environment action space doesn't make the `single_action_space`, action_space={env.action_space}, single_action_space={self.single_action_space}"
+            )
 
         # Initialise attributes used in `step` and `reset`
         self._env_obs = [None for _ in range(self.num_envs)]
@@ -184,24 +185,24 @@ class SyncVectorEnv(VectorEnv):
             seed = [None for _ in range(self.num_envs)]
         elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
-        assert (
-            len(seed) == self.num_envs
-        ), f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
+        assert len(seed) == self.num_envs, (
+            f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
+        )
 
         if options is not None and "reset_mask" in options:
             reset_mask = options.pop("reset_mask")
-            assert isinstance(
-                reset_mask, np.ndarray
-            ), f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
-            assert reset_mask.shape == (
-                self.num_envs,
-            ), f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
-            assert (
-                reset_mask.dtype == np.bool_
-            ), f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
-            assert np.any(
-                reset_mask
-            ), f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
+            assert isinstance(reset_mask, np.ndarray), (
+                f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
+            )
+            assert reset_mask.shape == (self.num_envs,), (
+                f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
+            )
+            assert reset_mask.dtype == np.bool_, (
+                f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
+            )
+            assert np.any(reset_mask), (
+                f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
+            )
 
             self._terminations[reset_mask] = False
             self._truncations[reset_mask] = False
@@ -209,7 +210,7 @@ class SyncVectorEnv(VectorEnv):
 
             infos = {}
             for i, (env, single_seed, env_mask) in enumerate(
-                zip(self.envs, seed, reset_mask)
+                zip(self.envs, seed, reset_mask, strict=True)
             ):
                 if env_mask:
                     self._env_obs[i], env_info = env.reset(
@@ -223,7 +224,7 @@ class SyncVectorEnv(VectorEnv):
             self._autoreset_envs = np.zeros((self.num_envs,), dtype=np.bool_)
 
             infos = {}
-            for i, (env, single_seed) in enumerate(zip(self.envs, seed)):
+            for i, (env, single_seed) in enumerate(zip(self.envs, seed, strict=True)):
                 self._env_obs[i], env_info = env.reset(
                     seed=single_seed, options=options
                 )
@@ -367,7 +368,7 @@ class SyncVectorEnv(VectorEnv):
                 f"Got `{len(values)}` values for {self.num_envs} environments."
             )
 
-        for env, value in zip(self.envs, values):
+        for env, value in zip(self.envs, values, strict=True):
             env.set_wrapper_attr(name, value)
 
     def close_extras(self, **kwargs: Any):

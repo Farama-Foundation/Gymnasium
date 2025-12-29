@@ -16,7 +16,6 @@ from gymnasium.vector.vector_env import (
     VectorWrapper,
 )
 
-
 __all__ = ["RecordEpisodeStatistics"]
 
 
@@ -114,18 +113,18 @@ class RecordEpisodeStatistics(VectorWrapper):
 
         if options is not None and "reset_mask" in options:
             reset_mask = options.pop("reset_mask")
-            assert isinstance(
-                reset_mask, np.ndarray
-            ), f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
-            assert reset_mask.shape == (
-                self.num_envs,
-            ), f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
-            assert (
-                reset_mask.dtype == np.bool_
-            ), f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
-            assert np.any(
-                reset_mask
-            ), f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
+            assert isinstance(reset_mask, np.ndarray), (
+                f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
+            )
+            assert reset_mask.shape == (self.num_envs,), (
+                f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
+            )
+            assert reset_mask.dtype == np.bool_, (
+                f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
+            )
+            assert np.any(reset_mask), (
+                f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
+            )
 
             self.episode_start_times[reset_mask] = time.perf_counter()
             self.episode_returns[reset_mask] = 0
@@ -151,9 +150,9 @@ class RecordEpisodeStatistics(VectorWrapper):
             infos,
         ) = self.env.step(actions)
 
-        assert isinstance(
-            infos, dict
-        ), f"`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is {type(infos)}. This may be due to usage of other wrappers in the wrong order."
+        assert isinstance(infos, dict), (
+            f"`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is {type(infos)}. This may be due to usage of other wrappers in the wrong order."
+        )
 
         self.episode_returns[self.prev_dones] = 0
         self.episode_returns[np.logical_not(self.prev_dones)] += rewards[

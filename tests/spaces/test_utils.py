@@ -16,7 +16,6 @@ from gymnasium.vector.utils import (
 )
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 
-
 TESTING_SPACES_EXPECTED_FLATDIMS = [
     # Discrete
     3,
@@ -158,7 +157,7 @@ def test_flatten_roundtripping(space):
         utils.unflatten(space, sample) for sample in flattened_samples
     ]
 
-    for original, roundtripped in zip(samples, unflattened_samples):
+    for original, roundtripped in zip(samples, unflattened_samples, strict=True):
         assert data_equivalence(original, roundtripped)
 
 

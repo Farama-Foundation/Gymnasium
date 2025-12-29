@@ -25,7 +25,6 @@ def create_env(obs_space):
     ],
 )
 class TestVectorEnvObservationModes:
-
     def test_invalid_observation_mode(self, vector_env_fn):
         with pytest.raises(
             ValueError,

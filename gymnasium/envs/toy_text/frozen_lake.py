@@ -12,7 +12,6 @@ from gymnasium.envs.toy_text.utils import categorical_sample
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import seeding
 
-
 LEFT = 0
 DOWN = 1
 RIGHT = 2
@@ -39,7 +38,7 @@ def is_valid(board: list[list[str]], max_size: int) -> bool:
     frontier.append((0, 0))
     while frontier:
         r, c = frontier.pop()
-        if not (r, c) in discovered:
+        if (r, c) not in discovered:
             discovered.add((r, c))
             directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
             for x, y in directions:
@@ -380,9 +379,9 @@ class FrozenLakeEnv(Env):
             elif mode == "rgb_array":
                 self.window_surface = pygame.Surface(self.window_size)
 
-        assert (
-            self.window_surface is not None
-        ), "Something went wrong with pygame. This should never happen."
+        assert self.window_surface is not None, (
+            "Something went wrong with pygame. This should never happen."
+        )
 
         if self.clock is None:
             self.clock = pygame.time.Clock()

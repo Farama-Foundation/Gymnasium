@@ -15,7 +15,6 @@ from gymnasium.utils import seeding
 from gymnasium.vector import AutoresetMode
 from gymnasium.vector.utils import batch_space
 
-
 PRNGKeyType: TypeAlias = jax.Array
 
 

@@ -14,7 +14,6 @@ from gymnasium.spaces import (
     Tuple,
 )
 
-
 TESTING_FUNDAMENTAL_SPACES = [
     Discrete(3),
     Discrete(3, start=-1),

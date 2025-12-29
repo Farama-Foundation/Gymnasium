@@ -2,3 +2,8 @@
 
 from gymnasium.envs.tabular.blackjack import BlackJackJaxEnv
 from gymnasium.envs.tabular.cliffwalking import CliffWalkingJaxEnv
+
+__all__ = [
+    "BlackJackJaxEnv",
+    "CliffWalkingJaxEnv",
+]

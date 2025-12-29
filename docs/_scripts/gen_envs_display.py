@@ -1,7 +1,6 @@
 import os
 import sys
 
-
 all_envs = [
     {
         "id": "mujoco",
@@ -42,7 +41,7 @@ def create_grid_cell(type_id, env_id, base_path):
                         <img src="/_static/videos/{type_id}/{env_id}.gif">
                     </div>
                     <div class="cell__title">
-                        <span>{' '.join(env_id.split('_')).title()}</span>
+                        <span>{" ".join(env_id.split("_")).title()}</span>
                     </div>
                 </div>
             </a>

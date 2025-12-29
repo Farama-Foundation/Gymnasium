@@ -16,7 +16,6 @@ import gymnasium as gym
 from gymnasium.core import ActType, ObsType, WrapperActType
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Space
 
-
 __all__ = ["TransformAction", "ClipAction", "RescaleAction"]
 
 from gymnasium.wrappers.utils import rescale_box
@@ -275,9 +274,9 @@ class DiscretizeAction(
         if isinstance(bins, int):
             self.bins = np.array([bins] * self.n_dims)
         else:
-            assert (
-                len(bins) == self.n_dims
-            ), f"bins must match action dimensions: expected {self.n_dims}, got {len(bins)}"
+            assert len(bins) == self.n_dims, (
+                f"bins must match action dimensions: expected {self.n_dims}, got {len(bins)}"
+            )
             self.bins = np.array(bins)
 
         self.bin_centers = [

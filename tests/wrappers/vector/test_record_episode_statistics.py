@@ -35,7 +35,7 @@ def test_record_episode_statistics(num_envs, env_id="CartPole-v1", num_steps=100
     assert data_equivalence(wrapper_vector_obs, vector_wrapper_obs)
     assert data_equivalence(wrapper_vector_info, vector_wrapper_info)
 
-    for t in range(1, num_steps + 1):
+    for _ in range(1, num_steps + 1):
         action = wrapper_vector_env.action_space.sample()
         (
             wrapper_vector_obs,

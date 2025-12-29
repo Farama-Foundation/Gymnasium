@@ -10,7 +10,6 @@ from gymnasium import error, spaces
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.utils import EzPickle
 
-
 try:
     import Box2D
     from Box2D.b2 import (
@@ -411,7 +410,7 @@ class BipedalWalker(gym.Env, EzPickle):
     def _generate_clouds(self):
         # Sorry for the clouds, couldn't resist
         self.cloud_poly = []
-        for i in range(TERRAIN_LENGTH // 20):
+        for _ in range(TERRAIN_LENGTH // 20):
             x = self.np_random.uniform(0, TERRAIN_LENGTH) * TERRAIN_STEP
             y = VIEWPORT_H / SCALE * 3 / 4
             poly = [

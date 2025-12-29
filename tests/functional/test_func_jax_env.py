@@ -3,7 +3,6 @@
 import numpy as np
 import pytest
 
-
 pytest.skip(
     "Github CI is running forever for the tests in this file.", allow_module_level=True
 )
@@ -26,7 +25,7 @@ def test_without_transform(env_class):
     state = env.initial(rng)
     env.action_space.seed(0)
 
-    for t in range(10):
+    for _ in range(10):
         obs = env.observation(state, rng)
         action = env.action_space.sample()
         next_state = env.transition(state, action, rng)
@@ -60,7 +59,7 @@ def test_jit(env_class):
     state = env.initial(rng)
     env.action_space.seed(0)
 
-    for t in range(10):
+    for _ in range(10):
         obs = env.observation(state, rng)
         action = env.action_space.sample()
         next_state = env.transition(state, action, rng)
@@ -96,7 +95,7 @@ def test_vmap(env_class):
     state = env.initial(rng)
     env.action_space.seed(0)
 
-    for t in range(10):
+    for _ in range(10):
         obs = env.observation(state, rng)
         action = jnp.array([env.action_space.sample() for _ in range(num_envs)])
         # if isinstance(env.action_space, Discrete):
@@ -131,7 +130,6 @@ def test_equal_episode_length(vectorization_mode: str):
     env.reset()
 
     for t in range(1000):
-
         actions = env.action_space.sample()
 
         next_obs, reward, term, trunc, info = env.step(actions)

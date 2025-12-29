@@ -17,7 +17,6 @@ from gymnasium.utils import EzPickle
 from gymnasium.vector import AutoresetMode
 from gymnasium.wrappers import HumanRendering
 
-
 if TYPE_CHECKING:
     import pygame
 
@@ -219,10 +218,10 @@ class CliffWalkingFunctional(
         """Returns an initial render state."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
-            )
+            ) from e
 
         cell_size = (60, 60)
         window_size = (
@@ -303,10 +302,10 @@ class CliffWalkingFunctional(
         """Renders an image from a state."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 'pygame is not installed, run `pip install "gymnasium[toy_text]"`'
-            )
+            ) from e
         (
             window_surface,
             shape,

@@ -15,13 +15,12 @@ from gymnasium.wrappers.array_conversion import (
     module_namespace,
 )
 
-
 try:
     import jax.numpy as jnp
-except ImportError:
+except ImportError as e:
     raise DependencyNotInstalled(
         'Jax is not installed therefore cannot call `numpy_to_jax`, run `pip install "gymnasium[jax]"`'
-    )
+    ) from e
 
 __all__ = ["JaxToNumpy", "jax_to_numpy", "numpy_to_jax"]
 

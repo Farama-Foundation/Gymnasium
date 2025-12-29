@@ -2,26 +2,25 @@
 
 from __future__ import annotations
 
-from typing import SupportsFloat, Union
+from typing import SupportsFloat
 
 import numpy as np
 
 from gymnasium.core import ObsType
 
-
 DoneStepType = tuple[
-    Union[ObsType, np.ndarray],
-    Union[SupportsFloat, np.ndarray],
-    Union[bool, np.ndarray],
-    Union[dict, list],
+    ObsType | np.ndarray,
+    SupportsFloat | np.ndarray,
+    bool | np.ndarray,
+    dict | list,
 ]
 
 TerminatedTruncatedStepType = tuple[
-    Union[ObsType, np.ndarray],
-    Union[SupportsFloat, np.ndarray],
-    Union[bool, np.ndarray],
-    Union[bool, np.ndarray],
-    Union[dict, list],
+    ObsType | np.ndarray,
+    SupportsFloat | np.ndarray,
+    bool | np.ndarray,
+    bool | np.ndarray,
+    dict | list,
 ]
 
 
@@ -109,7 +108,7 @@ def convert_to_done_step_api(
             )
         elif isinstance(infos, list):
             for info, env_truncated, env_terminated in zip(
-                infos, truncated, terminated
+                infos, truncated, terminated, strict=True
             ):
                 if env_truncated or env_terminated:
                     info["TimeLimit.truncated"] = env_truncated and not env_terminated

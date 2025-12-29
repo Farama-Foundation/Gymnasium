@@ -7,7 +7,6 @@ import pytest
 
 import gymnasium
 
-
 jax = pytest.importorskip("jax")
 jnp = pytest.importorskip("jax.numpy")
 torch = pytest.importorskip("torch")
@@ -29,7 +28,8 @@ def torch_data_equivalence(data_1, data_2) -> bool:
             )
         elif isinstance(data_1, (tuple, list)):
             return len(data_1) == len(data_2) and all(
-                torch_data_equivalence(o_1, o_2) for o_1, o_2 in zip(data_1, data_2)
+                torch_data_equivalence(o_1, o_2)
+                for o_1, o_2 in zip(data_1, data_2, strict=True)
             )
         elif isinstance(data_1, torch.Tensor):
             return data_1.shape == data_2.shape and torch.allclose(

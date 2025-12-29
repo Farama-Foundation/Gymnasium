@@ -6,7 +6,6 @@ import gymnasium as gym
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 from tests.testing_env import GenericTestEnv
 
-
 SEED = 42
 ENV_ID = "CartPole-v1"
 DISCRETE_ACTION = 0
@@ -62,20 +61,20 @@ def check_obs(
         original_obs: The original observation by the base environment.
         strict: If to check that the observations aren't contained in the other environment.
     """
-    assert (
-        transformed_obs in wrapped_env.observation_space
-    ), f"{transformed_obs}, {wrapped_env.observation_space}"
-    assert (
-        original_obs in env.observation_space
-    ), f"{original_obs}, {env.observation_space}"
+    assert transformed_obs in wrapped_env.observation_space, (
+        f"{transformed_obs}, {wrapped_env.observation_space}"
+    )
+    assert original_obs in env.observation_space, (
+        f"{original_obs}, {env.observation_space}"
+    )
 
     if strict:
-        assert (
-            transformed_obs not in env.observation_space
-        ), f"{transformed_obs}, {env.observation_space}"
-        assert (
-            original_obs not in wrapped_env.observation_space
-        ), f"{original_obs}, {wrapped_env.observation_space}"
+        assert transformed_obs not in env.observation_space, (
+            f"{transformed_obs}, {env.observation_space}"
+        )
+        assert original_obs not in wrapped_env.observation_space, (
+            f"{original_obs}, {wrapped_env.observation_space}"
+        )
 
 
 TESTING_OBS_ENVS = [GenericTestEnv(observation_space=space) for space in TESTING_SPACES]

@@ -11,7 +11,6 @@
 from __future__ import annotations
 
 import functools
-from typing import Union
 
 import gymnasium as gym
 from gymnasium.error import DependencyNotInstalled
@@ -21,23 +20,22 @@ from gymnasium.wrappers.array_conversion import (
     module_namespace,
 )
 
-
 try:
     import jax.numpy as jnp
 
-except ImportError:
+except ImportError as e:
     raise DependencyNotInstalled(
         'Jax is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[jax]"`'
-    )
+    ) from e
 
 try:
     import torch
 
-    Device = Union[str, torch.device]
-except ImportError:
+    Device = str | torch.device
+except ImportError as e:
     raise DependencyNotInstalled(
         'Torch is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[torch]"`'
-    )
+    ) from e
 
 
 __all__ = ["JaxToTorch", "jax_to_torch", "torch_to_jax", "Device"]
