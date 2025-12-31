@@ -166,7 +166,7 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
             "healthy_reward": 10.0,
             "reset_noise_scale": 0.1,
         }
-        return {**MJXEnv.get_default_params(), **default, **kwargs}
+        return {**super().get_default_params(), **default, **kwargs}
 
 
 class InvertedPendulumMJXEnv(MJXEnv):
@@ -264,4 +264,4 @@ class InvertedPendulumMJXEnv(MJXEnv):
             "reset_noise_scale": 0.01,
         }
 
-        return {**MJXEnv.get_default_params(), **default, **kwargs}
+        return {**super().get_default_params(), **default, **kwargs}

@@ -213,4 +213,4 @@ class Ant_MJXEnv(MJXEnv):
             "exclude_current_positions_from_observation": True,
             "include_cfrc_ext_in_observation": True,
         }
-        return {**MJXEnv.get_default_params(), **default, **kwargs}
+        return {**super().get_default_params(), **default, **kwargs}

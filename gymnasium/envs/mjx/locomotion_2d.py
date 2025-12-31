@@ -217,7 +217,7 @@ class HalfCheetahMJXEnv(Locomotion_2d_MJXEnv):
             "reset_noise_scale": 0.1,
             "exclude_current_positions_from_observation": True,
         }
-        return {**Locomotion_2d_MJXEnv.get_default_params(), **default, **kwargs}
+        return {**super().get_default_params(), **default, **kwargs}
 
 
 class HopperMJXEnv(Locomotion_2d_MJXEnv):
@@ -257,7 +257,7 @@ class HopperMJXEnv(Locomotion_2d_MJXEnv):
             "reset_noise_scale": 5e-3,
             "exclude_current_positions_from_observation": True,
         }
-        return {**Locomotion_2d_MJXEnv.get_default_params(), **default, **kwargs}
+        return {**super().get_default_params(), **default, **kwargs}
 
 
 class Walker2dMJXEnv(Locomotion_2d_MJXEnv):
@@ -296,4 +296,4 @@ class Walker2dMJXEnv(Locomotion_2d_MJXEnv):
             "reset_noise_scale": 5e-3,
             "exclude_current_positions_from_observation": True,
         }
-        return {**Locomotion_2d_MJXEnv.get_default_params(), **default, **kwargs}
+        return {**super().get_default_params(), **default, **kwargs}
