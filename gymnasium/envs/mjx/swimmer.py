@@ -43,9 +43,12 @@ class Swimmer_MJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: SwimmerParams,
+        params: SwimmerParams = None,
     ):
         """Sets the `obveration_space`."""
+        if params is None:
+            params = self.get_default_params()
+
         MJXEnv.__init__(self, params=params)
 
         self.observation_structure = {

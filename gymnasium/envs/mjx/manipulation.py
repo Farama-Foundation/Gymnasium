@@ -46,9 +46,12 @@ class Reacher_MJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: ReacherParams,
+        params: ReacherParams = None,
     ):
         """Sets the `obveration_space`."""
+        if params is None:
+            params = self.get_default_params()
+
         MJXEnv.__init__(self, params=params)
 
         self.observation_space = gymnasium.spaces.Box(  # TODO use jnp when and if `Box` supports jax natively
@@ -186,9 +189,12 @@ class Pusher_MJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: PusherParams,
+        params: PusherParams = None,
     ):
         """Sets the `obveration_space`."""
+        if params is None:
+            params = self.get_default_params()
+
         MJXEnv.__init__(self, params=params)  # type: ignore
 
         self.observation_space = gymnasium.spaces.Box(  # TODO use jnp when and if `Box` supports jax natively

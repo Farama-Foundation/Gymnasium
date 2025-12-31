@@ -61,9 +61,12 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: InvertedDoublePendulumMJXEnvParams,  # NOTE not API compliant (yet?)
+        params: InvertedDoublePendulumMJXEnvParams = None,  # NOTE not API compliant (yet?)
     ):
         """Sets the `obveration_space.shape`."""
+        if params is None:
+            params = self.get_default_params()
+
         MJXEnv.__init__(self, params=params)
 
         # TODO use jnp when and if `Box` supports jax natively
@@ -171,9 +174,12 @@ class InvertedPendulumMJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: InvertedPendulumMJXEnvParams,  # NOTE not API compliant (yet?)
+        params: InvertedPendulumMJXEnvParams = None,  # NOTE not API compliant (yet?)
     ):
         """Sets the `obveration_space.shape`."""
+        if params is None:
+            params = self.get_default_params()
+
         MJXEnv.__init__(self, params=params)
 
         self.observation_structure = {

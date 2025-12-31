@@ -56,9 +56,12 @@ class Locomotion_2d_MJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: Locomotion2dMJXEnvParams,  # NOTE not API compliant (yet?)
+        params: Locomotion2dMJXEnvParams = None,  # NOTE not API compliant (yet?)
     ):
         """Sets the `obveration.shape`."""
+        if params is None:
+            params = self.get_default_params()
+
         MJXEnv.__init__(self, params=params)
 
         self.observation_structure = {

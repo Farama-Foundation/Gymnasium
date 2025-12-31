@@ -51,9 +51,12 @@ class Ant_MJXEnv(MJXEnv):
 
     def __init__(
         self,
-        params: AntMJXEnvParams,
+        params: AntMJXEnvParams = None,
     ):
         """Sets the `obveration_space`."""
+        if params is None:
+            params = self.get_default_params()
+
         MJXEnv.__init__(self, params=params)
 
         self.observation_structure = {
