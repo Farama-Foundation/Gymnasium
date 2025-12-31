@@ -17,6 +17,8 @@ from typing import TypedDict
 import numpy as np
 
 from gymnasium.envs.mjx.mjx_env import MJXEnv
+from gymnasium.envs.functional_jax_env import FunctionalJaxEnv, FunctionalJaxVectorEnv
+from gymnasium.utils import EzPickle
 from gymnasium.envs.mujoco.ant_v5 import DEFAULT_CAMERA_CONFIG
 
 
@@ -214,3 +216,27 @@ class Ant_MJXEnv(MJXEnv):
             "include_cfrc_ext_in_observation": True,
         }
         return {**super().get_default_params(), **default, **kwargs}
+
+
+class AntJaxEnv(FunctionalJaxEnv, EzPickle):
+    """Jax-based Ant environment using the MJX functional implementation as base."""
+
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
+
+    def __init__(self, render_mode: str | None = None, **kwargs: any):
+        """Constructor where the kwargs are passed to the base environment to modify the parameters."""
+        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
+
+        # Merge defaults and user provided kwargs into params dict
+        default_params = Ant_MJXEnv().get_default_params()
+        params = {**default_params, **kwargs}
+
+        env = Ant_MJXEnv(params=params)
+        env.transform(jax.jit)
+
+        FunctionalJaxEnv.__init__(
+            self,
+            env,
+            metadata=self.metadata,
+            render_mode=render_mode,
+        )

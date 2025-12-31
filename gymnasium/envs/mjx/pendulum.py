@@ -17,6 +17,8 @@ from typing import TypedDict
 import numpy as np
 
 from gymnasium.envs.mjx.mjx_env import MJXEnv
+from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
+from gymnasium.utils import EzPickle
 from gymnasium.envs.mujoco.inverted_double_pendulum_v5 import (
     DEFAULT_CAMERA_CONFIG as INVERTED_DOUBLE_PENDULUM_DEFAULT_CAMERA_CONFIG,
 )
@@ -265,3 +267,47 @@ class InvertedPendulumMJXEnv(MJXEnv):
         }
 
         return {**super().get_default_params(), **default, **kwargs}
+
+
+class InvertedDoublePendulumJaxEnv(FunctionalJaxEnv, EzPickle):
+    """Jax-based InvertedDoublePendulum environment using the MJX implementation as base."""
+
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
+
+    def __init__(self, render_mode: str | None = None, **kwargs: any):
+        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
+
+        default_params = InvertedDoublePendulumMJXEnv().get_default_params()
+        params = {**default_params, **kwargs}
+
+        env = InvertedDoublePendulumMJXEnv(params=params)
+        env.transform(jax.jit)
+
+        FunctionalJaxEnv.__init__(
+            self,
+            env,
+            metadata=self.metadata,
+            render_mode=render_mode,
+        )
+
+
+class InvertedPendulumJaxEnv(FunctionalJaxEnv, EzPickle):
+    """Jax-based InvertedPendulum environment using the MJX implementation as base."""
+
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
+
+    def __init__(self, render_mode: str | None = None, **kwargs: any):
+        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
+
+        default_params = InvertedPendulumMJXEnv().get_default_params()
+        params = {**default_params, **kwargs}
+
+        env = InvertedPendulumMJXEnv(params=params)
+        env.transform(jax.jit)
+
+        FunctionalJaxEnv.__init__(
+            self,
+            env,
+            metadata=self.metadata,
+            render_mode=render_mode,
+        )
