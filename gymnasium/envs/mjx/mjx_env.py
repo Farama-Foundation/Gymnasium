@@ -18,6 +18,7 @@ try:
     import mujoco
     from jax import numpy as jnp
     from mujoco import mjx
+    import flax.struct
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -47,6 +48,17 @@ def mjx_set_physics_state(mjx_data: mjx.Data, mjx_physics_state) -> mjx.Data:
 """
 
 
+@flax.struct.dataclass
+class MJXEnvParams:
+    default_camera_config: dict[str, float | int | str | None]
+    camera_id: int | None
+    camera_name: str | None
+    max_geom: int
+    width: int
+    height: int
+    render_mode: str | None
+
+
 # TODO add init_qvel
 class MJXEnv(
     FuncEnv[
@@ -74,7 +86,7 @@ class MJXEnv(
     }
 
     def __init__(self, params: dict[str, Any]):
-        """Create the `mjx.Model` of the robot defined in `params["xml_file"]`.
+        """Create the `mjx.Model` of the robot defined in `params.xml_file`.
 
         Keep `mujoco.MjModel` of model for rendering purposes.
         The Sub-class environments are expected to define `self.observation_space`
@@ -85,7 +97,8 @@ class MJXEnv(
                 "(HINT: you need to install mujoco-mjx, run `pip install gymnasium[mjx]`.)"
             )
 
-        fullpath = expand_model_path(params["xml_file"])
+        #fullpath = expand_model_path(params.xml_file)
+        fullpath = expand_model_path("ant.xml")
 
         self.model = mujoco.MjModel.from_xml_path(fullpath)
         self.mjx_model = mjx.put_model(self.model)
@@ -99,7 +112,7 @@ class MJXEnv(
         self.action_space = gymnasium.spaces.Box(
             low=self.model.actuator_ctrlrange.T[0],
             high=self.model.actuator_ctrlrange.T[1],
-            dtype=np.float64,
+            dtype=np.float32,  # TODO fp64?
         )
         # TODO change bounds and types when and if `Box` supports JAX nativly
         # self.action_space = gymnasium.spaces.Box(low=self.mjx_model.actuator_ctrlrange.T[0], high=self.mjx_model.actuator_ctrlrange.T[1], dtype=np.float32)
@@ -128,7 +141,7 @@ class MJXEnv(
             lambda x, _: (mjx.step(self.mjx_model, x), None),
             init=mjx_data,
             xs=None,
-            length=params["frame_skip"],
+            length=params.frame_skip,
         )
 
         # TODO fix sensors with MJX>=3.2
@@ -163,12 +176,12 @@ class MJXEnv(
         return MujocoRenderer(
             self.model,
             None,  # no MuJoCo DATA
-            params["default_camera_config"],
-            params["width"],
-            params["height"],
-            params["max_geom"],
-            params["camera_id"],
-            params["camera_name"],
+            params.default_camera_config,
+            params.width,
+            params.height,
+            params.max_geom,
+            params.camera_id,
+            params.camera_name,
         )
 
     def render_image(
@@ -189,7 +202,7 @@ class MJXEnv(
 
         mujoco_renderer.data = data
 
-        frame = mujoco_renderer.render(params["render_mode"])
+        frame = mujoco_renderer.render(params.render_mode)
 
         return mujoco_renderer, frame
 
@@ -203,7 +216,7 @@ class MJXEnv(
 
     def dt(self, params: dict[str, Any]) -> float:
         """Returns the duration between timesteps (`dt`)."""
-        return self.mjx_model.opt.timestep * params["frame_skip"]
+        return self.mjx_model.opt.timestep * params.frame_skip
 
     def _gen_init_physics_state(
         self, rng, params: dict[str, Any]
@@ -238,18 +251,17 @@ class MJXEnv(
         """Should be overwritten if the sub-class environment terminates."""
         return jnp.array(False)
 
-    def get_default_params(self, **kwargs) -> dict[str, Any]:
+    def get_default_params(self, **kwargs) -> MJXEnvParams:
         """Generate the default parameters for rendering."""
-        default = {
-            "default_camera_config": {},
-            "camera_id": None,
-            "camera_name": None,
-            "max_geom": 1000,
-            "width": 480,
-            "height": 480,
-            "render_mode": None,
-        }
-        return default
+        return MJXEnvParams(
+            default_camera_config=kwargs.get("default_camera_config", {}),
+            camera_id=kwargs.get("camera_id", None),
+            camera_name=kwargs.get("camera_name", None),
+            max_geom=kwargs.get("max_geom", 1000),
+            width=kwargs.get("width", 480),
+            height=kwargs.get("height", 480),
+            render_mode=kwargs.get("render_mode", None),
+        )
 
     """
     def mjx_get_physics_state_put_version(self, mjx_data: mjx.Data) -> np.ndarray:
