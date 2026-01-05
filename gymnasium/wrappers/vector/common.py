@@ -46,6 +46,7 @@ class RecordEpisodeStatistics(VectorWrapper):
     Example:
         >>> from pprint import pprint
         >>> import gymnasium as gym
+        >>> from gymnasium.wrappers.vector import RecordEpisodeStatistics
         >>> envs = gym.make_vec("CartPole-v1", num_envs=3)
         >>> envs = RecordEpisodeStatistics(envs)
         >>> obs, info = envs.reset(123)
@@ -58,14 +59,9 @@ class RecordEpisodeStatistics(VectorWrapper):
         >>> envs.close()
         >>> pprint(info) # doctest: +SKIP
         {'_episode': array([ True, False, False]),
-         '_final_info': array([ True, False, False]),
-         '_final_observation': array([ True, False, False]),
          'episode': {'l': array([11,  0,  0], dtype=int32),
                      'r': array([11.,  0.,  0.], dtype=float32),
                      't': array([0.007812, 0.      , 0.      ], dtype=float32)},
-         'final_info': array([{}, None, None], dtype=object),
-         'final_observation': array([array([ 0.11448676,  0.9416149 , -0.20946532, -1.7619033 ], dtype=float32),
-               None, None], dtype=object)}
     """
 
     def __init__(
