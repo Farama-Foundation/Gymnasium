@@ -729,6 +729,7 @@ is used to indicate the environment index which has a terminated or truncated ep
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pprint</span><span class="w"> </span><span class="kn">import</span> <span class="n">pprint</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.vector</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">envs</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
@@ -741,14 +742,9 @@ is used to indicate the environment index which has a terminated or truncated ep
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pprint</span><span class="p">(</span><span class="n">info</span><span class="p">)</span> 
 <span class="go">{&#39;_episode&#39;: array([ True, False, False]),</span>
-<span class="go"> &#39;_final_info&#39;: array([ True, False, False]),</span>
-<span class="go"> &#39;_final_observation&#39;: array([ True, False, False]),</span>
 <span class="go"> &#39;episode&#39;: {&#39;l&#39;: array([11,  0,  0], dtype=int32),</span>
 <span class="go">             &#39;r&#39;: array([11.,  0.,  0.], dtype=float32),</span>
 <span class="go">             &#39;t&#39;: array([0.007812, 0.      , 0.      ], dtype=float32)},</span>
-<span class="go"> &#39;final_info&#39;: array([{}, None, None], dtype=object),</span>
-<span class="go"> &#39;final_observation&#39;: array([array([ 0.11448676,  0.9416149 , -0.20946532, -1.7619033 ], dtype=float32),</span>
-<span class="go">       None, None], dtype=object)}</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -1483,7 +1479,7 @@ data or device transfers.</p>
           <div class="bottom-of-page">
             <div class="left-details">
               <div class="copyright">
-                Copyright &#169; 2025 Farama Foundation
+                Copyright &#169; 2026 Farama Foundation
               </div>
               <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s

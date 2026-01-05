@@ -417,6 +417,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from pprint import pprint</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
+<span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers.vector import RecordEpisodeStatistics</span>
 <span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3)</span>
 <span class="sd">        &gt;&gt;&gt; envs = RecordEpisodeStatistics(envs)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(123)</span>
@@ -429,14 +430,9 @@
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
 <span class="sd">        &gt;&gt;&gt; pprint(info) # doctest: +SKIP</span>
 <span class="sd">        {&#39;_episode&#39;: array([ True, False, False]),</span>
-<span class="sd">         &#39;_final_info&#39;: array([ True, False, False]),</span>
-<span class="sd">         &#39;_final_observation&#39;: array([ True, False, False]),</span>
 <span class="sd">         &#39;episode&#39;: {&#39;l&#39;: array([11,  0,  0], dtype=int32),</span>
 <span class="sd">                     &#39;r&#39;: array([11.,  0.,  0.], dtype=float32),</span>
 <span class="sd">                     &#39;t&#39;: array([0.007812, 0.      , 0.      ], dtype=float32)},</span>
-<span class="sd">         &#39;final_info&#39;: array([{}, None, None], dtype=object),</span>
-<span class="sd">         &#39;final_observation&#39;: array([array([ 0.11448676,  0.9416149 , -0.20946532, -1.7619033 ], dtype=float32),</span>
-<span class="sd">               None, None], dtype=object)}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -581,7 +577,7 @@
           <div class="bottom-of-page">
             <div class="left-details">
               <div class="copyright">
-                Copyright &#169; 2025 Farama Foundation
+                Copyright &#169; 2026 Farama Foundation
               </div>
               <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
