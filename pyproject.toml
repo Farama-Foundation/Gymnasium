@@ -183,3 +183,6 @@ too-many-positional-arguments = "warn"    # TODO remove
 unresolved-attribute = "warn"             # TODO remove
 unresolved-import = "warn"                # TODO remove
 unsupported-operator = "warn"             # TODO remove
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning:gymnasium.*:"]
