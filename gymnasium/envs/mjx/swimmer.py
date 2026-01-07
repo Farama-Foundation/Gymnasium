@@ -8,6 +8,7 @@ try:
     from jax import numpy as jnp
     from mujoco import mjx
     import flax.struct
+    from flax.core.frozen_dict import FrozenDict
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -28,7 +29,7 @@ class SwimmerParams:
 
     xml_file: str
     frame_skip: int
-    default_camera_config: dict[str, float | int | str | None]
+    default_camera_config: FrozenDict[str, float | int | str | None]
     camera_id: int | None
     camera_name: str | None
     max_geom: int
@@ -142,10 +143,14 @@ class Swimmer_MJXEnv(MJXEnv):
     def get_default_params(self, **kwargs) -> SwimmerParams:
         """Get the default parameter for the Swimmer environment."""
         base = super().get_default_params()
+        camera_cfg = kwargs.get("default_camera_config", {})
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return SwimmerParams(
             xml_file=kwargs.get("xml_file", "swimmer.xml"),
             frame_skip=kwargs.get("frame_skip", 4),
-            default_camera_config=kwargs.get("default_camera_config", {}),
+            default_camera_config=camera_cfg,
             forward_reward_weight=kwargs.get("forward_reward_weight", 1.0),
             ctrl_cost_weight=kwargs.get("ctrl_cost_weight", 1e-4),
             reset_noise_scale=kwargs.get("reset_noise_scale", 0.1),

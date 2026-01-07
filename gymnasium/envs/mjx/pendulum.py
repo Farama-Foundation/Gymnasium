@@ -8,6 +8,7 @@ try:
     from jax import numpy as jnp
     from mujoco import mjx
     import flax.struct
+    from flax.core.frozen_dict import FrozenDict
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -34,7 +35,7 @@ class InvertedDoublePendulumMJXEnvParams:
 
     xml_file: str
     frame_skip: int
-    default_camera_config: dict[str, float | int | str | None]
+    default_camera_config: FrozenDict[str, float | int | str | None]
     healthy_reward: float
     reset_noise_scale: float
     camera_id: int | None
@@ -51,7 +52,7 @@ class InvertedPendulumMJXEnvParams:
 
     xml_file: str
     frame_skip: int
-    default_camera_config: dict[str, float | int | str | None]
+    default_camera_config: FrozenDict[str, float | int | str | None]
     reset_noise_scale: float
     camera_id: int | None
     camera_name: str | None
@@ -165,12 +166,16 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
     def get_default_params(self, **kwargs) -> InvertedDoublePendulumMJXEnvParams:
         """Get the parameters for the InvertedDoublePendulum environment."""
         base = super().get_default_params()
+        camera_cfg = kwargs.get(
+            "default_camera_config", INVERTED_DOUBLE_PENDULUM_DEFAULT_CAMERA_CONFIG
+        )
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return InvertedDoublePendulumMJXEnvParams(
             xml_file=kwargs.get("xml_file", "inverted_double_pendulum.xml"),
             frame_skip=kwargs.get("frame_skip", 5),
-            default_camera_config=kwargs.get(
-                "default_camera_config", INVERTED_DOUBLE_PENDULUM_DEFAULT_CAMERA_CONFIG
-            ),
+            default_camera_config=camera_cfg,
             healthy_reward=kwargs.get("healthy_reward", 10.0),
             reset_noise_scale=kwargs.get("reset_noise_scale", 0.1),
             camera_id=kwargs.get("camera_id", base.camera_id),
@@ -271,12 +276,16 @@ class InvertedPendulumMJXEnv(MJXEnv):
     def get_default_params(self, **kwargs) -> InvertedPendulumMJXEnvParams:
         """Get the parameters for the InvertedPendulum environment."""
         base = super().get_default_params()
+        camera_cfg = kwargs.get(
+            "default_camera_config", INVERTED_PENDULUM_DEFAULT_CAMERA_CONFIG
+        )
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return InvertedPendulumMJXEnvParams(
             xml_file=kwargs.get("xml_file", "inverted_pendulum.xml"),
             frame_skip=kwargs.get("frame_skip", 2),
-            default_camera_config=kwargs.get(
-                "default_camera_config", INVERTED_PENDULUM_DEFAULT_CAMERA_CONFIG
-            ),
+            default_camera_config=camera_cfg,
             reset_noise_scale=kwargs.get("reset_noise_scale", 0.01),
             camera_id=kwargs.get("camera_id", base.camera_id),
             camera_name=kwargs.get("camera_name", base.camera_name),

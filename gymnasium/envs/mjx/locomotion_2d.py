@@ -8,6 +8,7 @@ try:
     from jax import numpy as jnp
     from mujoco import mjx
     import flax.struct
+    from flax.core.frozen_dict import FrozenDict
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -37,7 +38,7 @@ class Locomotion2dMJXEnvParams:
 
     xml_file: str
     frame_skip: int
-    default_camera_config: dict[str, float | int | str | None]
+    default_camera_config: FrozenDict[str, float | int | str | None]
     forward_reward_weight: float
     ctrl_cost_weight: float
     healthy_reward: float
@@ -208,12 +209,16 @@ class HalfCheetahMJXEnv(Locomotion_2d_MJXEnv):
     def get_default_params(self, **kwargs) -> Locomotion2dMJXEnvParams:
         """Get the default parameter for the HalfCheetah environment."""
         base_params = super().get_default_params()
+        camera_cfg = kwargs.get(
+            "default_camera_config", HALFCHEETAH_DEFAULT_CAMERA_CONFIG
+        )
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return Locomotion2dMJXEnvParams(
             xml_file=kwargs.get("xml_file", "half_cheetah.xml"),
             frame_skip=kwargs.get("frame_skip", 5),
-            default_camera_config=kwargs.get(
-                "default_camera_config", HALFCHEETAH_DEFAULT_CAMERA_CONFIG
-            ),
+            default_camera_config=camera_cfg,
             forward_reward_weight=kwargs.get("forward_reward_weight", 1.0),
             ctrl_cost_weight=kwargs.get("ctrl_cost_weight", 0.1),
             healthy_reward=kwargs.get("healthy_reward", 0),
@@ -258,10 +263,14 @@ class HopperMJXEnv(Locomotion_2d_MJXEnv):
     def get_default_params(self, **kwargs) -> Locomotion2dMJXEnvParams:
         """Get the default parameter for the Hopper environment."""
         base_params = super().get_default_params()
+        camera_cfg = kwargs.get("default_camera_config", HOPPER_DEFAULT_CAMERA_CONFIG)
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return Locomotion2dMJXEnvParams(
             xml_file=kwargs.get("xml_file", "hopper.xml"),
             frame_skip=kwargs.get("frame_skip", 4),
-            default_camera_config=kwargs.get("default_camera_config", HOPPER_DEFAULT_CAMERA_CONFIG),
+            default_camera_config=camera_cfg,
             forward_reward_weight=kwargs.get("forward_reward_weight", 1.0),
             ctrl_cost_weight=kwargs.get("ctrl_cost_weight", 1e-3),
             healthy_reward=kwargs.get("healthy_reward", 1.0),
@@ -305,10 +314,16 @@ class Walker2dMJXEnv(Locomotion_2d_MJXEnv):
     def get_default_params(self, **kwargs) -> Locomotion2dMJXEnvParams:
         """Get the default parameter for the Walker2d environment."""
         base_params = super().get_default_params()
+        camera_cfg = kwargs.get(
+            "default_camera_config", WALKER2D_DEFAULT_CAMERA_CONFIG
+        )
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return Locomotion2dMJXEnvParams(
             xml_file=kwargs.get("xml_file", "walker2d_v5.xml"),
             frame_skip=kwargs.get("frame_skip", 4),
-            default_camera_config=kwargs.get("default_camera_config", WALKER2D_DEFAULT_CAMERA_CONFIG),
+            default_camera_config=camera_cfg,
             forward_reward_weight=kwargs.get("forward_reward_weight", 1.0),
             ctrl_cost_weight=kwargs.get("ctrl_cost_weight", 1e-3),
             healthy_reward=kwargs.get("healthy_reward", 1.0),

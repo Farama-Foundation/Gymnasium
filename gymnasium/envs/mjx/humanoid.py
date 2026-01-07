@@ -8,6 +8,7 @@ try:
     from jax import numpy as jnp
     from mujoco import mjx
     import flax.struct
+    from flax.core.frozen_dict import FrozenDict
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -34,7 +35,7 @@ class HumanoidMJXEnvParams:
 
     xml_file: str
     frame_skip: int
-    default_camera_config: dict[str, float | int | str | None]
+    default_camera_config: FrozenDict[str, float | int | str | None]
     forward_reward_weight: float
     ctrl_cost_weight: float
     contact_cost_weight: float
@@ -62,7 +63,7 @@ class HumanoidStandupMJXEnvParams:
 
     xml_file: str
     frame_skip: int
-    default_camera_config: dict[str, float | int | str | None]
+    default_camera_config: FrozenDict[str, float | int | str | None]
     uph_cost_weight: float
     ctrl_cost_weight: float
     impact_cost_weight: float
@@ -284,10 +285,14 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
     def get_default_params(self, **kwargs) -> HumanoidMJXEnvParams:
         """Get the default parameter for the Humanoid environment."""
         base = super().get_default_params()
+        camera_cfg = kwargs.get("default_camera_config", HUMANOID_DEFAULT_CAMERA_CONFIG)
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return HumanoidMJXEnvParams(
             xml_file=kwargs.get("xml_file", "humanoid.xml"),
             frame_skip=kwargs.get("frame_skip", 5),
-            default_camera_config=kwargs.get("default_camera_config", HUMANOID_DEFAULT_CAMERA_CONFIG),
+            default_camera_config=camera_cfg,
             forward_reward_weight=kwargs.get("forward_reward_weight", 1.25),
             ctrl_cost_weight=kwargs.get("ctrl_cost_weight", 0.1),
             contact_cost_weight=kwargs.get("contact_cost_weight", 5e-7),
@@ -352,12 +357,16 @@ class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
     def get_default_params(self, **kwargs) -> HumanoidStandupMJXEnvParams:
         """Get the default parameter for the Humanoid environment."""
         base = super().get_default_params()
+        camera_cfg = kwargs.get(
+            "default_camera_config", HUMANOIDSTANDUP_DEFAULT_CAMERA_CONFIG
+        )
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return HumanoidStandupMJXEnvParams(
             xml_file=kwargs.get("xml_file", "humanoidstandup.xml"),
             frame_skip=kwargs.get("frame_skip", 5),
-            default_camera_config=kwargs.get(
-                "default_camera_config", HUMANOIDSTANDUP_DEFAULT_CAMERA_CONFIG
-            ),
+            default_camera_config=camera_cfg,
             uph_cost_weight=kwargs.get("uph_cost_weight", 1),
             ctrl_cost_weight=kwargs.get("ctrl_cost_weight", 0.1),
             impact_cost_weight=kwargs.get("impact_cost_weight", 0.5e-6),

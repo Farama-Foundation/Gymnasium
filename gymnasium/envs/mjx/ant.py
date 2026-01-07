@@ -9,6 +9,7 @@ try:
     from jax import numpy as jnp
     from mujoco import mjx
     import flax.struct
+    from flax.core.frozen_dict import FrozenDict
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -29,7 +30,7 @@ class AntMJXEnvParams:
     # xml_file: str
     xml_file: int  # TODO temporarly change to int to bypass MJX xml loading issue
     frame_skip: int
-    default_camera_config: dict[str, float | int | str | None]
+    default_camera_config: FrozenDict[str, float | int | str | None]
     forward_reward_weight: float
     ctrl_cost_weight: float
     contact_cost_weight: float
@@ -107,13 +108,16 @@ class Ant_MJXEnv(MJXEnv):
         position = mjx_data.qpos.flatten()
         velocity = mjx_data.qvel.flatten()
 
+        # TODO reanable later
         if params.exclude_current_positions_from_observation:
             position = position[2:]
+        # position = position[2:]
 
         if params.include_cfrc_ext_in_observation is True:
-            external_contact_forces = self._get_contact_forces(mjx_data, params)
+            external_contact_forces = self._get_contact_forces(mjx_data, params)[1:].flatten()
         else:
             external_contact_forces = jnp.array([])
+        # external_contact_forces = self._get_contact_forces(mjx_data, params)[1:].flatten()
 
         observation = jnp.concatenate((position, velocity, external_contact_forces))
 
@@ -202,10 +206,14 @@ class Ant_MJXEnv(MJXEnv):
     def get_default_params(self, **kwargs) -> AntMJXEnvParams:
         """Get the default parameter for the Ant environment."""
         base_params = super().get_default_params()
+        camera_cfg = kwargs.get("default_camera_config", DEFAULT_CAMERA_CONFIG)
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return AntMJXEnvParams(
             xml_file=kwargs.get("xml_file", 1),
             frame_skip=kwargs.get("frame_skip", 5),
-            default_camera_config=kwargs.get("default_camera_config", DEFAULT_CAMERA_CONFIG),
+            default_camera_config=camera_cfg,
             forward_reward_weight=kwargs.get("forward_reward_weight", 1),
             ctrl_cost_weight=kwargs.get("ctrl_cost_weight", 0.5),
             contact_cost_weight=kwargs.get("contact_cost_weight", 5e-4),
@@ -238,9 +246,7 @@ class AntJaxEnv(FunctionalJaxEnv, EzPickle):
         params = temp_env.get_default_params(**kwargs)
 
         env = Ant_MJXEnv(params=params)
-        env.transform(jax.jit)
-        # env.transition = jax.jit(lambda s, a, r: env.transition(s, a, r, params=params))
-        # env.transform(lambda f: jax.jit(f, static_argnums=(3,)))
+        env.transform(partial(jax.jit, static_argnames="params"))
 
         metadata = dict(env.metadata)
         metadata["jax"] = True

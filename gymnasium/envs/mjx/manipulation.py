@@ -8,6 +8,7 @@ try:
     from jax import numpy as jnp
     from mujoco import mjx
     import flax.struct
+    from flax.core.frozen_dict import FrozenDict
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -34,7 +35,7 @@ class ReacherParams:
 
     xml_file: str
     frame_skip: int
-    default_camera_config: dict[str, float | int | str | None]
+    default_camera_config: FrozenDict[str, float | int | str | None]
     camera_id: int | None
     camera_name: str | None
     max_geom: int
@@ -155,12 +156,16 @@ class Reacher_MJXEnv(MJXEnv):
     def get_default_params(self, **kwargs) -> ReacherParams:
         """Get the default parameter for the Reacher environment."""
         base = super().get_default_params()
+        camera_cfg = kwargs.get(
+            "default_camera_config", REACHER_HOPPER_DEFAULT_CAMERA_CONFIG
+        )
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return ReacherParams(
             xml_file=kwargs.get("xml_file", "reacher.xml"),
             frame_skip=kwargs.get("frame_skip", 2),
-            default_camera_config=kwargs.get(
-                "default_camera_config", REACHER_HOPPER_DEFAULT_CAMERA_CONFIG
-            ),
+            default_camera_config=camera_cfg,
             reward_dist_weight=kwargs.get("reward_dist_weight", 1.0),
             reward_control_weight=kwargs.get("reward_control_weight", 1.0),
             camera_id=kwargs.get("camera_id", base.camera_id),
@@ -178,7 +183,7 @@ class PusherParams:
 
     xml_file: str
     frame_skip: int
-    default_camera_config: dict[str, float | int | str | None]
+    default_camera_config: FrozenDict[str, float | int | str | None]
     camera_id: int | None
     camera_name: str | None
     max_geom: int
@@ -293,10 +298,14 @@ class Pusher_MJXEnv(MJXEnv):
     def get_default_params(self, **kwargs) -> PusherParams:
         """Get the default parameter for the Reacher environment."""
         base = super().get_default_params()
+        camera_cfg = kwargs.get("default_camera_config", PUSHER_DEFAULT_CAMERA_CONFIG)
+        if not isinstance(camera_cfg, FrozenDict):
+            camera_cfg = FrozenDict(camera_cfg)
+
         return PusherParams(
             xml_file=kwargs.get("xml_file", "pusher.xml"),
             frame_skip=kwargs.get("frame_skip", 5),
-            default_camera_config=kwargs.get("default_camera_config", PUSHER_DEFAULT_CAMERA_CONFIG),
+            default_camera_config=camera_cfg,
             reward_near_weight=kwargs.get("reward_near_weight", 0.5),
             reward_dist_weight=kwargs.get("reward_dist_weight", 1.0),
             reward_control_weight=kwargs.get("reward_control_weight", 0.1),
