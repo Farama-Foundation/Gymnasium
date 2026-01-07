@@ -47,12 +47,10 @@ repos:
 
   - repo: local
     hooks:
-      - id: pyright
-        name: pyright
-        entry: pyright
-        language: node
+      - id: ty
+        name: ty check
+        entry: ty check .
+        language: python
         pass_filenames: false
         types: [python]
-        additional_dependencies: ["pyright@1.1.383"]
-        args:
-          - --project=pyproject.toml
+        additional_dependencies: ["ty==0.0.9"]

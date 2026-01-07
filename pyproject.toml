@@ -160,36 +160,26 @@ ignore = [
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.pyright]
-include = ["gymnasium/**"]
-exclude = ["tests/**", "**/node_modules", "**/__pycache__"]
-strict = []
+[tool.ty.src]
+include = ["gymnasium"]
+exclude = ["tests", "**/node_modules", "**/__pycache__"]
 
-typeCheckingMode = "basic"
-pythonVersion = "3.10"
-pythonPlatform = "All"
-typeshedPath = "typeshed"
-enableTypeIgnoreComments = true
+[tool.ty.environment]
+python-version = "3.10"
+python-platform = "all"
+extra-paths = []
 
-# This is required as the CI pre-commit does not download the module (i.e. numpy, pygame, box2d)
-#   Therefore, we have to ignore missing imports
-reportMissingImports = "none"
-# Some modules are missing type stubs, which is an issue when running pyright locally
-reportMissingTypeStubs = false
-# For warning and error, will raise an error when
-reportInvalidTypeVarUse = "none"
-
-reportAttributeAccessIssue = "none" # pyright provides false positives
-reportArgumentType = "none"         # pyright provides false positives
-
-reportPrivateUsage = "warning"
-
-reportIndexIssue = "none"           # TODO fix one by one
-reportReturnType = "none"           # TODO fix one by one
-reportCallIssue = "none"            # TODO fix one by one
-reportOperatorIssue = "none"        # TODO fix one by one
-reportOptionalMemberAccess = "none" # TODO fix one by one
-reportAssignmentType = "none"       # TODO fix one by one
-
-[tool.pytest.ini_options]
-filterwarnings = ["ignore::DeprecationWarning:gymnasium.*:"]
+[tool.ty.rules]
+index-out-of-bounds = "warn"              # TODO remove
+invalid-argument-type = "warn"            # TODO remove
+invalid-assignment = "warn"               # TODO remove
+invalid-method-override = "warn"          # TODO remove
+invalid-parameter-default = "warn"        # TODO remove
+invalid-return-type = "warn"              # TODO remove
+no-matching-overload = "warn"             # TODO remove
+missing-argument = "warn"                 # TODO remove
+not-subscriptable = "warn"                # TODO remove
+too-many-positional-arguments = "warn"    # TODO remove
+unresolved-attribute = "warn"             # TODO remove
+unresolved-import = "warn"                # TODO remove
+unsupported-operator = "warn"             # TODO remove
