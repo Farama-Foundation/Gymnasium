@@ -364,16 +364,19 @@ class HumanoidJaxEnv(FunctionalJaxEnv, EzPickle):
     def __init__(self, render_mode: str | None = None, **kwargs: any):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
 
-        default_params = HumanoidMJXEnv().get_default_params()
-        params = {**default_params, **kwargs}
+        temp_env = HumanoidMJXEnv()
+        params = temp_env.get_default_params(**kwargs)
 
         env = HumanoidMJXEnv(params=params)
         env.transform(jax.jit)
 
+        metadata = dict(env.metadata)
+        metadata["jax"] = True
+
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=self.metadata,
+            metadata=metadata,
             render_mode=render_mode,
         )
 
@@ -386,15 +389,18 @@ class HumanoidStandupJaxEnv(FunctionalJaxEnv, EzPickle):
     def __init__(self, render_mode: str | None = None, **kwargs: any):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
 
-        default_params = HumanoidStandupMJXEnv().get_default_params()
-        params = {**default_params, **kwargs}
+        temp_env = HumanoidStandupMJXEnv()
+        params = temp_env.get_default_params(**kwargs)
 
         env = HumanoidStandupMJXEnv(params=params)
         env.transform(jax.jit)
 
+        metadata = dict(env.metadata)
+        metadata["jax"] = True
+
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=self.metadata,
+            metadata=metadata,
             render_mode=render_mode,
         )

@@ -312,16 +312,19 @@ class ReacherJaxEnv(FunctionalJaxEnv, EzPickle):
     def __init__(self, render_mode: str | None = None, **kwargs: any):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
 
-        default_params = Reacher_MJXEnv().get_default_params()
-        params = {**default_params, **kwargs}
+        temp_env = Reacher_MJXEnv()
+        params = temp_env.get_default_params(**kwargs)
 
         env = Reacher_MJXEnv(params=params)
         env.transform(jax.jit)
 
+        metadata = dict(env.metadata)
+        metadata["jax"] = True
+
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=self.metadata,
+            metadata=metadata,
             render_mode=render_mode,
         )
 
@@ -334,15 +337,18 @@ class PusherJaxEnv(FunctionalJaxEnv, EzPickle):
     def __init__(self, render_mode: str | None = None, **kwargs: any):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
 
-        default_params = Pusher_MJXEnv().get_default_params()
-        params = {**default_params, **kwargs}
+        temp_env = Pusher_MJXEnv()
+        params = temp_env.get_default_params(**kwargs)
 
         env = Pusher_MJXEnv(params=params)
         env.transform(jax.jit)
 
+        metadata = dict(env.metadata)
+        metadata["jax"] = True
+
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=self.metadata,
+            metadata=metadata,
             render_mode=render_mode,
         )

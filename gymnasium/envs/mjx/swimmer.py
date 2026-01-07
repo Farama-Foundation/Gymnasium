@@ -165,15 +165,18 @@ class SwimmerJaxEnv(FunctionalJaxEnv, EzPickle):
     def __init__(self, render_mode: str | None = None, **kwargs: any):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
 
-        default_params = Swimmer_MJXEnv().get_default_params()
-        params = {**default_params, **kwargs}
+        temp_env = Swimmer_MJXEnv()
+        params = temp_env.get_default_params(**kwargs)
 
         env = Swimmer_MJXEnv(params=params)
         env.transform(jax.jit)
 
+        metadata = dict(env.metadata)
+        metadata["jax"] = True
+
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=self.metadata,
+            metadata=metadata,
             render_mode=render_mode,
         )

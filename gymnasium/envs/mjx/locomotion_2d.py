@@ -309,16 +309,19 @@ class HalfCheetahJaxEnv(FunctionalJaxEnv, EzPickle):
     def __init__(self, render_mode: str | None = None, **kwargs: any):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
 
-        default_params = HalfCheetahMJXEnv().get_default_params()
-        params = {**default_params, **kwargs}
+        temp_env = HalfCheetahMJXEnv()
+        params = temp_env.get_default_params(**kwargs)
 
         env = HalfCheetahMJXEnv(params=params)
         env.transform(jax.jit)
 
+        metadata = dict(env.metadata)
+        metadata["jax"] = True
+
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=self.metadata,
+            metadata=metadata,
             render_mode=render_mode,
         )
 
@@ -331,16 +334,19 @@ class HopperJaxEnv(FunctionalJaxEnv, EzPickle):
     def __init__(self, render_mode: str | None = None, **kwargs: any):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
 
-        default_params = HopperMJXEnv().get_default_params()
-        params = {**default_params, **kwargs}
+        temp_env = HopperMJXEnv()
+        params = temp_env.get_default_params(**kwargs)
 
         env = HopperMJXEnv(params=params)
         env.transform(jax.jit)
 
+        metadata = dict(env.metadata)
+        metadata["jax"] = True
+
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=self.metadata,
+            metadata=metadata,
             render_mode=render_mode,
         )
 
@@ -353,15 +359,18 @@ class Walker2dJaxEnv(FunctionalJaxEnv, EzPickle):
     def __init__(self, render_mode: str | None = None, **kwargs: any):
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
 
-        default_params = Walker2dMJXEnv().get_default_params()
-        params = {**default_params, **kwargs}
+        temp_env = Walker2dMJXEnv()
+        params = temp_env.get_default_params(**kwargs)
 
         env = Walker2dMJXEnv(params=params)
         env.transform(jax.jit)
 
+        metadata = dict(env.metadata)
+        metadata["jax"] = True
+
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=self.metadata,
+            metadata=metadata,
             render_mode=render_mode,
         )
