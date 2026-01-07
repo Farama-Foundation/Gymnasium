@@ -17,17 +17,15 @@ This section contains technical instructions & hints for the contributors.
 
 ## Type checking
 
-The project uses `pyright` to check types.
-To type check locally, install `pyright` per official [instructions](https://github.com/microsoft/pyright#command-line).
+The project uses `ty` to check types.
+To type check locally, install `ty` per official [instructions](https://docs.astral.sh/ty/installation/).
 It's configuration lives within `pyproject.toml`. It includes list of included and excluded files currently supporting type checks.
-To run `pyright` for the project, run the pre-commit process (`pre-commit run --all-files`) or `pyright --project=pyproject.toml`
-Alternatively, pyright is a built-in feature of VSCode that will automatically provide type hinting.
+To run `ty` for the project, run the pre-commit process (`pre-commit run --all-files`) or `ty check .`
 
 ### Adding typing to more modules and packages
 
 If you would like to add typing to a module in the project,
-the list of included, excluded and strict files can be found in pyproject.toml (pyproject.toml -> [tool.pyright]).
-To run `pyright` for the project, run the pre-commit process (`pre-commit run --all-files`) or `pyright`
+the list of included and excluded files can be found in pyproject.toml (pyproject.toml -> [tool.ty.src]).
 
 ## Git hooks
 
