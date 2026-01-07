@@ -7,6 +7,7 @@ try:
     import jax
     from jax import numpy as jnp
     from mujoco import mjx
+    import flax.struct
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -27,7 +28,8 @@ from gymnasium.envs.mujoco.inverted_pendulum_v5 import (
 )
 
 
-class InvertedDoublePendulumMJXEnvParams(TypedDict):
+@flax.struct.dataclass
+class InvertedDoublePendulumMJXEnvParams:
     """Parameters for the InvertedDoublePendulum environment."""
 
     xml_file: str
@@ -43,7 +45,8 @@ class InvertedDoublePendulumMJXEnvParams(TypedDict):
     render_mode: str | None
 
 
-class InvertedPendulumMJXEnvParams(TypedDict):
+@flax.struct.dataclass
+class InvertedPendulumMJXEnvParams:
     """Parameters for the InvertedPendulum environment."""
 
     xml_file: str
@@ -80,13 +83,13 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
         self, rng, params: InvertedDoublePendulumMJXEnvParams
     ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) from a CUD and `qvel` (velocity elements) from a gaussian."""
-        noise_low = -params["reset_noise_scale"]
-        noise_high = params["reset_noise_scale"]
+        noise_low = -params.reset_noise_scale
+        noise_high = params.reset_noise_scale
 
         qpos = self.mjx_model.qpos0 + jax.random.uniform(
             key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
         )
-        qvel = params["reset_noise_scale"] * jax.random.normal(
+        qvel = params.reset_noise_scale * jax.random.normal(
             key=rng, shape=(self.mjx_model.nv,)
         )
         act = jnp.empty(self.mjx_model.na)
@@ -130,7 +133,7 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
 
         dist_penalty = 0.01 * x**2 + (y - 2) ** 2
         vel_penalty = jnp.array([1e-3, 5e-3]).T * jnp.square(v)
-        alive_bonus = params["healthy_reward"] * self._gen_is_healty(mjx_data_new)
+        alive_bonus = params.healthy_reward * self._gen_is_healty(mjx_data_new)
 
         reward = alive_bonus - dist_penalty - vel_penalty
 
@@ -161,14 +164,22 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
 
     def get_default_params(self, **kwargs) -> InvertedDoublePendulumMJXEnvParams:
         """Get the parameters for the InvertedDoublePendulum environment."""
-        default = {
-            "xml_file": "inverted_double_pendulum.xml",
-            "frame_skip": 5,
-            "default_camera_config": INVERTED_DOUBLE_PENDULUM_DEFAULT_CAMERA_CONFIG,
-            "healthy_reward": 10.0,
-            "reset_noise_scale": 0.1,
-        }
-        return {**super().get_default_params(), **default, **kwargs}
+        base = super().get_default_params()
+        return InvertedDoublePendulumMJXEnvParams(
+            xml_file=kwargs.get("xml_file", "inverted_double_pendulum.xml"),
+            frame_skip=kwargs.get("frame_skip", 5),
+            default_camera_config=kwargs.get(
+                "default_camera_config", INVERTED_DOUBLE_PENDULUM_DEFAULT_CAMERA_CONFIG
+            ),
+            healthy_reward=kwargs.get("healthy_reward", 10.0),
+            reset_noise_scale=kwargs.get("reset_noise_scale", 0.1),
+            camera_id=kwargs.get("camera_id", base.camera_id),
+            camera_name=kwargs.get("camera_name", base.camera_name),
+            max_geom=kwargs.get("max_geom", base.max_geom),
+            width=kwargs.get("width", base.width),
+            height=kwargs.get("height", base.height),
+            render_mode=kwargs.get("render_mode", base.render_mode),
+        )
 
 
 class InvertedPendulumMJXEnv(MJXEnv):
@@ -201,8 +212,8 @@ class InvertedPendulumMJXEnv(MJXEnv):
         self, rng, params: InvertedPendulumMJXEnvParams
     ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
-        noise_low = -params["reset_noise_scale"]
-        noise_high = params["reset_noise_scale"]
+        noise_low = -params.reset_noise_scale
+        noise_high = params.reset_noise_scale
 
         qpos = self.mjx_model.qpos0 + jax.random.uniform(
             key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
@@ -259,14 +270,21 @@ class InvertedPendulumMJXEnv(MJXEnv):
 
     def get_default_params(self, **kwargs) -> InvertedPendulumMJXEnvParams:
         """Get the parameters for the InvertedPendulum environment."""
-        default = {
-            "xml_file": "inverted_pendulum.xml",
-            "frame_skip": 2,
-            "default_camera_config": INVERTED_PENDULUM_DEFAULT_CAMERA_CONFIG,
-            "reset_noise_scale": 0.01,
-        }
-
-        return {**super().get_default_params(), **default, **kwargs}
+        base = super().get_default_params()
+        return InvertedPendulumMJXEnvParams(
+            xml_file=kwargs.get("xml_file", "inverted_pendulum.xml"),
+            frame_skip=kwargs.get("frame_skip", 2),
+            default_camera_config=kwargs.get(
+                "default_camera_config", INVERTED_PENDULUM_DEFAULT_CAMERA_CONFIG
+            ),
+            reset_noise_scale=kwargs.get("reset_noise_scale", 0.01),
+            camera_id=kwargs.get("camera_id", base.camera_id),
+            camera_name=kwargs.get("camera_name", base.camera_name),
+            max_geom=kwargs.get("max_geom", base.max_geom),
+            width=kwargs.get("width", base.width),
+            height=kwargs.get("height", base.height),
+            render_mode=kwargs.get("render_mode", base.render_mode),
+        )
 
 
 class InvertedDoublePendulumJaxEnv(FunctionalJaxEnv, EzPickle):

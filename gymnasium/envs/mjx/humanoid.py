@@ -7,6 +7,7 @@ try:
     import jax
     from jax import numpy as jnp
     from mujoco import mjx
+    import flax.struct
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -27,7 +28,8 @@ from gymnasium.envs.mujoco.humanoidstandup_v5 import (
 )
 
 
-class HumanoidMJXEnvParams(TypedDict):
+@flax.struct.dataclass
+class HumanoidMJXEnvParams:
     """Parameters for the Humanoid environment."""
 
     xml_file: str
@@ -54,7 +56,8 @@ class HumanoidMJXEnvParams(TypedDict):
     render_mode: str | None
 
 
-class HumanoidStandupMJXEnvParams(TypedDict):
+@flax.struct.dataclass
+class HumanoidStandupMJXEnvParams:
     """Parameters for the HumanoidStandup environment."""
 
     xml_file: str
@@ -96,21 +99,21 @@ class BaseHumanoid_MJXEnv(MJXEnv):
         MJXEnv.__init__(self, params=params)
 
         self.observation_structure = {
-            "skipped_qpos": 2 * params["exclude_current_positions_from_observation"],
+            "skipped_qpos": 2 * params.exclude_current_positions_from_observation,
             "qpos": self.mjx_model.nq
-            - 2 * params["exclude_current_positions_from_observation"],
+            - 2 * params.exclude_current_positions_from_observation,
             "qvel": self.mjx_model.nv,
             "cinert": (self.mjx_model.nbody - 1)
             * 10
-            * params["include_cinert_in_observation"],
+            * params.include_cinert_in_observation,
             "cvel": (self.mjx_model.nbody - 1)
             * 6
-            * params["include_cvel_in_observation"],
+            * params.include_cvel_in_observation,
             "qfrc_actuator": (self.mjx_model.nv - 6)
-            * params["include_qfrc_actuator_in_observation"],
+            * params.include_qfrc_actuator_in_observation,
             "cfrc_ext": (self.mjx_model.nbody - 1)
             * 6
-            * params["include_cfrc_ext_in_observation"],
+            * params.include_cfrc_ext_in_observation,
             "ten_lenght": 0,
             "ten_velocity": 0,
         }
@@ -138,23 +141,23 @@ class BaseHumanoid_MJXEnv(MJXEnv):
         position = mjx_data.qpos.flatten()
         velocity = mjx_data.qvel.flatten()
 
-        if params["exclude_current_positions_from_observation"]:
+        if params.exclude_current_positions_from_observation:
             position = position[2:]
 
-        if params["include_cinert_in_observation"] is True:
+        if params.include_cinert_in_observation is True:
             com_inertia = mjx_data.cinert[1:].flatten()
         else:
             com_inertia = jnp.array([])
-        if params["include_cvel_in_observation"] is True:
+        if params.include_cvel_in_observation is True:
             com_velocity = mjx_data.cvel[1:].flatten()
         else:
             com_velocity = jnp.array([])
 
-        if params["include_qfrc_actuator_in_observation"] is True:
+        if params.include_qfrc_actuator_in_observation is True:
             actuator_forces = mjx_data.qfrc_actuator[6:].flatten()
         else:
             actuator_forces = jnp.array([])
-        if params["include_cfrc_ext_in_observation"] is True:
+        if params.include_cfrc_ext_in_observation is True:
             external_contact_forces = mjx_data._impl.cfrc_ext[1:].flatten()
         else:
             external_contact_forces = jnp.array([])
@@ -190,8 +193,8 @@ class BaseHumanoid_MJXEnv(MJXEnv):
         self, rng, params: BaseHumanoidMJXEnvParams
     ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
-        noise_low = -params["reset_noise_scale"]
-        noise_high = params["reset_noise_scale"]
+        noise_low = -params.reset_noise_scale
+        noise_high = params.reset_noise_scale
 
         qpos = self.mjx_model.qpos0 + jax.random.uniform(
             key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
@@ -230,13 +233,13 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         xy_velocity = (xy_position_after - xy_position_before) / self.dt(params)
         x_velocity, y_velocity = xy_velocity
 
-        forward_reward = params["forward_reward_weight"] * x_velocity
-        healthy_reward = params["healthy_reward"] * self._gen_is_healty(
+        forward_reward = params.forward_reward_weight * x_velocity
+        healthy_reward = params.healthy_reward * self._gen_is_healty(
             mjx_data_new, params
         )
         rewards = forward_reward + healthy_reward
 
-        ctrl_cost = params["ctrl_cost_weight"] * jnp.sum(jnp.square(action))
+        ctrl_cost = params.ctrl_cost_weight * jnp.sum(jnp.square(action))
         contact_cost = self._get_conctact_cost(mjx_data_new, params)
         costs = ctrl_cost + contact_cost
 
@@ -253,10 +256,10 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
 
     def _get_conctact_cost(self, mjx_data: mjx.Data, params: HumanoidMJXEnvParams):
         contact_forces = mjx_data._impl.cfrc_ext
-        contact_cost = params["contact_cost_weight"] * jnp.sum(
+        contact_cost = params.contact_cost_weight * jnp.sum(
             jnp.square(contact_forces)
         )
-        min_cost, max_cost = params["contact_cost_range"]
+        min_cost, max_cost = params.contact_cost_range
         contact_cost = jnp.clip(contact_cost, min_cost, max_cost)
         return contact_cost
 
@@ -264,7 +267,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         """Checks if the robot is in a healthy potision."""
         mjx_data = state
 
-        min_z, max_z = params["healthy_z_range"]
+        min_z, max_z = params.healthy_z_range
         is_healthy = min_z < mjx_data.qpos[2] < max_z
 
         return is_healthy
@@ -275,30 +278,40 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         """Terminates if unhealthy."""
         return jnp.logical_and(
             jnp.logical_not(self._gen_is_healty(state, params)),
-            params["terminate_when_unhealthy"],
+            params.terminate_when_unhealthy,
         )
 
     def get_default_params(self, **kwargs) -> HumanoidMJXEnvParams:
         """Get the default parameter for the Humanoid environment."""
-        default = {
-            "xml_file": "humanoid.xml",
-            "frame_skip": 5,
-            "default_camera_config": HUMANOID_DEFAULT_CAMERA_CONFIG,
-            "forward_reward_weight": 1.25,
-            "ctrl_cost_weight": 0.1,
-            "contact_cost_weight": 5e-7,
-            "contact_cost_range": (-np.inf, 10.0),
-            "healthy_reward": 5.0,
-            "terminate_when_unhealthy": True,
-            "healthy_z_range": (1.0, 2.0),
-            "reset_noise_scale": 1e-2,
-            "exclude_current_positions_from_observation": True,
-            "include_cinert_in_observation": True,
-            "include_cvel_in_observation": True,
-            "include_qfrc_actuator_in_observation": True,
-            "include_cfrc_ext_in_observation": True,
-        }
-        return {**super().get_default_params(), **default, **kwargs}
+        base = super().get_default_params()
+        return HumanoidMJXEnvParams(
+            xml_file=kwargs.get("xml_file", "humanoid.xml"),
+            frame_skip=kwargs.get("frame_skip", 5),
+            default_camera_config=kwargs.get("default_camera_config", HUMANOID_DEFAULT_CAMERA_CONFIG),
+            forward_reward_weight=kwargs.get("forward_reward_weight", 1.25),
+            ctrl_cost_weight=kwargs.get("ctrl_cost_weight", 0.1),
+            contact_cost_weight=kwargs.get("contact_cost_weight", 5e-7),
+            contact_cost_range=kwargs.get("contact_cost_range", (-np.inf, 10.0)),
+            healthy_reward=kwargs.get("healthy_reward", 5.0),
+            terminate_when_unhealthy=kwargs.get("terminate_when_unhealthy", True),
+            healthy_z_range=kwargs.get("healthy_z_range", (1.0, 2.0)),
+            reset_noise_scale=kwargs.get("reset_noise_scale", 1e-2),
+            exclude_current_positions_from_observation=kwargs.get(
+                "exclude_current_positions_from_observation", True
+            ),
+            include_cinert_in_observation=kwargs.get("include_cinert_in_observation", True),
+            include_cvel_in_observation=kwargs.get("include_cvel_in_observation", True),
+            include_qfrc_actuator_in_observation=kwargs.get(
+                "include_qfrc_actuator_in_observation", True
+            ),
+            include_cfrc_ext_in_observation=kwargs.get("include_cfrc_ext_in_observation", True),
+            camera_id=kwargs.get("camera_id", base.camera_id),
+            camera_name=kwargs.get("camera_name", base.camera_name),
+            max_geom=kwargs.get("max_geom", base.max_geom),
+            width=kwargs.get("width", base.width),
+            height=kwargs.get("height", base.height),
+            render_mode=kwargs.get("render_mode", base.render_mode),
+        )
 
 
 class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
@@ -318,12 +331,12 @@ class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
 
         uph_cost = (pos_after - 0) / self.mjx_model.opt.timestep
 
-        quad_ctrl_cost = params["ctrl_cost_weight"] * jnp.square(action).sum()
+        quad_ctrl_cost = params.ctrl_cost_weight * jnp.square(action).sum()
 
         quad_impact_cost = (
-            params["impact_cost_weight"] * jnp.square(mjx_data_new._impl.cfrc_ext).sum()
+            params.impact_cost_weight * jnp.square(mjx_data_new._impl.cfrc_ext).sum()
         )
-        min_impact_cost, max_impact_cost = params["impact_cost_range"]
+        min_impact_cost, max_impact_cost = params.impact_cost_range
         quad_impact_cost = jnp.clip(quad_impact_cost, min_impact_cost, max_impact_cost)
 
         reward = uph_cost - quad_ctrl_cost - quad_impact_cost + 1
@@ -338,22 +351,34 @@ class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
 
     def get_default_params(self, **kwargs) -> HumanoidStandupMJXEnvParams:
         """Get the default parameter for the Humanoid environment."""
-        default = {
-            "xml_file": "humanoidstandup.xml",
-            "frame_skip": 5,
-            "default_camera_config": HUMANOIDSTANDUP_DEFAULT_CAMERA_CONFIG,
-            "uph_cost_weight": 1,
-            "ctrl_cost_weight": 0.1,
-            "impact_cost_weight": 0.5e-6,
-            "impact_cost_range": (-np.inf, 10.0),
-            "reset_noise_scale": 1e-2,
-            "exclude_current_positions_from_observation": True,
-            "include_cinert_in_observation": True,
-            "include_cvel_in_observation": True,
-            "include_qfrc_actuator_in_observation": True,
-            "include_cfrc_ext_in_observation": True,
-        }
-        return {**super().get_default_params(), **default, **kwargs}
+        base = super().get_default_params()
+        return HumanoidStandupMJXEnvParams(
+            xml_file=kwargs.get("xml_file", "humanoidstandup.xml"),
+            frame_skip=kwargs.get("frame_skip", 5),
+            default_camera_config=kwargs.get(
+                "default_camera_config", HUMANOIDSTANDUP_DEFAULT_CAMERA_CONFIG
+            ),
+            uph_cost_weight=kwargs.get("uph_cost_weight", 1),
+            ctrl_cost_weight=kwargs.get("ctrl_cost_weight", 0.1),
+            impact_cost_weight=kwargs.get("impact_cost_weight", 0.5e-6),
+            impact_cost_range=kwargs.get("impact_cost_range", (-np.inf, 10.0)),
+            reset_noise_scale=kwargs.get("reset_noise_scale", 1e-2),
+            exclude_current_positions_from_observation=kwargs.get(
+                "exclude_current_positions_from_observation", True
+            ),
+            include_cinert_in_observation=kwargs.get("include_cinert_in_observation", True),
+            include_cvel_in_observation=kwargs.get("include_cvel_in_observation", True),
+            include_qfrc_actuator_in_observation=kwargs.get(
+                "include_qfrc_actuator_in_observation", True
+            ),
+            include_cfrc_ext_in_observation=kwargs.get("include_cfrc_ext_in_observation", True),
+            camera_id=kwargs.get("camera_id", base.camera_id),
+            camera_name=kwargs.get("camera_name", base.camera_name),
+            max_geom=kwargs.get("max_geom", base.max_geom),
+            width=kwargs.get("width", base.width),
+            height=kwargs.get("height", base.height),
+            render_mode=kwargs.get("render_mode", base.render_mode),
+        )
 
 
 class HumanoidJaxEnv(FunctionalJaxEnv, EzPickle):

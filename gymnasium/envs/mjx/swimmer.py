@@ -7,6 +7,7 @@ try:
     import jax
     from jax import numpy as jnp
     from mujoco import mjx
+    import flax.struct
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -21,7 +22,8 @@ from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.utils import EzPickle
 
 
-class SwimmerParams(TypedDict):
+@flax.struct.dataclass
+class SwimmerParams:
     """Parameters for Swimmer environment."""
 
     xml_file: str
@@ -54,9 +56,9 @@ class Swimmer_MJXEnv(MJXEnv):
         MJXEnv.__init__(self, params=params)
 
         self.observation_structure = {
-            "skipped_qpos": 2 * params["exclude_current_positions_from_observation"],
+            "skipped_qpos": 2 * params.exclude_current_positions_from_observation,
             "qpos": self.mjx_model.nq
-            - 2 * params["exclude_current_positions_from_observation"],
+            - 2 * params.exclude_current_positions_from_observation,
             "qvel": self.mjx_model.nv,
         }
 
@@ -71,8 +73,8 @@ class Swimmer_MJXEnv(MJXEnv):
         self, rng, params: SwimmerParams
     ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `qpos` (positional elements) and `qvel` (velocity elements) form a CUD."""
-        noise_low = -params["reset_noise_scale"]
-        noise_high = params["reset_noise_scale"]
+        noise_low = -params.reset_noise_scale
+        noise_high = params.reset_noise_scale
 
         qpos = self.mjx_model.qpos0 + jax.random.uniform(
             key=rng, minval=noise_low, maxval=noise_high, shape=(self.mjx_model.nq,)
@@ -93,7 +95,7 @@ class Swimmer_MJXEnv(MJXEnv):
         position = mjx_data.qpos.flatten()
         velocity = mjx_data.qvel.flatten()
 
-        if params["exclude_current_positions_from_observation"]:
+        if params.exclude_current_positions_from_observation:
             position = position[2:]
 
         observation = jnp.concatenate((position, velocity))
@@ -114,8 +116,8 @@ class Swimmer_MJXEnv(MJXEnv):
         x_position_after = mjx_data_new.qpos[0]
         x_velocity = (x_position_after - x_position_before) / self.dt(params)
 
-        forward_reward = params["forward_reward_weight"] * x_velocity
-        ctrl_cost = params["ctrl_cost_weight"] * jnp.sum(jnp.square(action))
+        forward_reward = params.forward_reward_weight * x_velocity
+        ctrl_cost = params.ctrl_cost_weight * jnp.sum(jnp.square(action))
 
         reward = forward_reward - ctrl_cost
 
@@ -139,22 +141,24 @@ class Swimmer_MJXEnv(MJXEnv):
 
     def get_default_params(self, **kwargs) -> SwimmerParams:
         """Get the default parameter for the Swimmer environment."""
-        default: SwimmerParams = {
-            "xml_file": "swimmer.xml",
-            "frame_skip": 4,
-            "default_camera_config": {},
-            "forward_reward_weight": 1.0,
-            "ctrl_cost_weight": 1e-4,
-            "reset_noise_scale": 0.1,
-            "exclude_current_positions_from_observation": True,
-            "camera_id": None,
-            "camera_name": None,
-            "max_geom": 1000,
-            "width": 480,
-            "height": 480,
-            "render_mode": None,
-        }
-        return {**default, **kwargs}
+        base = super().get_default_params()
+        return SwimmerParams(
+            xml_file=kwargs.get("xml_file", "swimmer.xml"),
+            frame_skip=kwargs.get("frame_skip", 4),
+            default_camera_config=kwargs.get("default_camera_config", {}),
+            forward_reward_weight=kwargs.get("forward_reward_weight", 1.0),
+            ctrl_cost_weight=kwargs.get("ctrl_cost_weight", 1e-4),
+            reset_noise_scale=kwargs.get("reset_noise_scale", 0.1),
+            exclude_current_positions_from_observation=kwargs.get(
+                "exclude_current_positions_from_observation", True
+            ),
+            camera_id=kwargs.get("camera_id", base.camera_id),
+            camera_name=kwargs.get("camera_name", base.camera_name),
+            max_geom=kwargs.get("max_geom", base.max_geom),
+            width=kwargs.get("width", base.width),
+            height=kwargs.get("height", base.height),
+            render_mode=kwargs.get("render_mode", base.render_mode),
+        )
 
 
 class SwimmerJaxEnv(FunctionalJaxEnv, EzPickle):

@@ -7,6 +7,7 @@ try:
     import jax
     from jax import numpy as jnp
     from mujoco import mjx
+    import flax.struct
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -27,7 +28,8 @@ from gymnasium.envs.mujoco.reacher_v5 import (
 )
 
 
-class ReacherParams(TypedDict):
+@flax.struct.dataclass
+class ReacherParams:
     """Parameters for Reacher environment."""
 
     xml_file: str
@@ -138,8 +140,8 @@ class Reacher_MJXEnv(MJXEnv):
         target_position = mjx_data.xpos[4]  # TODO make this dynamic
 
         vec = fingertip_position - target_position
-        reward_dist = -jnp.linalg.norm(vec) * params["reward_dist_weight"]
-        reward_ctrl = -jnp.square(action).sum() * params["reward_control_weight"]
+        reward_dist = -jnp.linalg.norm(vec) * params.reward_dist_weight
+        reward_ctrl = -jnp.square(action).sum() * params.reward_control_weight
 
         reward = reward_dist + reward_ctrl
 
@@ -152,23 +154,26 @@ class Reacher_MJXEnv(MJXEnv):
 
     def get_default_params(self, **kwargs) -> ReacherParams:
         """Get the default parameter for the Reacher environment."""
-        default: ReacherParams = {
-            "xml_file": "reacher.xml",
-            "frame_skip": 2,
-            "default_camera_config": REACHER_HOPPER_DEFAULT_CAMERA_CONFIG,
-            "reward_dist_weight": 1.0,
-            "reward_control_weight": 1.0,
-            "camera_id": None,
-            "camera_name": None,
-            "max_geom": 1000,
-            "width": 480,
-            "height": 480,
-            "render_mode": None,
-        }
-        return {**default, **kwargs}  # type: ignore
+        base = super().get_default_params()
+        return ReacherParams(
+            xml_file=kwargs.get("xml_file", "reacher.xml"),
+            frame_skip=kwargs.get("frame_skip", 2),
+            default_camera_config=kwargs.get(
+                "default_camera_config", REACHER_HOPPER_DEFAULT_CAMERA_CONFIG
+            ),
+            reward_dist_weight=kwargs.get("reward_dist_weight", 1.0),
+            reward_control_weight=kwargs.get("reward_control_weight", 1.0),
+            camera_id=kwargs.get("camera_id", base.camera_id),
+            camera_name=kwargs.get("camera_name", base.camera_name),
+            max_geom=kwargs.get("max_geom", base.max_geom),
+            width=kwargs.get("width", base.width),
+            height=kwargs.get("height", base.height),
+            render_mode=kwargs.get("render_mode", base.render_mode),
+        )
 
 
-class PusherParams(TypedDict):
+@flax.struct.dataclass
+class PusherParams:
     """Parameters for Pusher environment."""
 
     xml_file: str
@@ -209,7 +214,7 @@ class Pusher_MJXEnv(MJXEnv):
         """Sets `arm.qpos` (positional elements) and `arm.qvel` (velocity elements) from a CUD and the `goal.qpos` from a cicrular uniform distribution."""
         qpos = self.mjx_model.qpos0
 
-        goal_pos = jnp.zeroes(2)
+        goal_pos = jnp.zeros(2)
         while True:
             cylinder_pos = np.concatenate(
                 [
@@ -271,9 +276,9 @@ class Pusher_MJXEnv(MJXEnv):
         vec_1 = object_position - tips_arm_position
         vec_2 = object_position - goal_position
 
-        reward_near = -jnp.linalg.norm(vec_1) * params["reward_near_weight"]
-        reward_dist = -jnp.linalg.norm(vec_2) * params["reward_dist_weight"]
-        reward_ctrl = -jnp.square(action).sum() * params["reward_control_weight"]
+        reward_near = -jnp.linalg.norm(vec_1) * params.reward_near_weight
+        reward_dist = -jnp.linalg.norm(vec_2) * params.reward_dist_weight
+        reward_ctrl = -jnp.square(action).sum() * params.reward_control_weight
 
         reward = reward_dist + reward_ctrl + reward_near
 
@@ -287,21 +292,21 @@ class Pusher_MJXEnv(MJXEnv):
 
     def get_default_params(self, **kwargs) -> PusherParams:
         """Get the default parameter for the Reacher environment."""
-        default: PusherParams = {
-            "xml_file": "pusher.xml",
-            "frame_skip": 5,
-            "default_camera_config": PUSHER_DEFAULT_CAMERA_CONFIG,
-            "reward_near_weight": 0.5,
-            "reward_dist_weight": 1.0,
-            "reward_control_weight": 0.1,
-            "camera_id": None,
-            "camera_name": None,
-            "max_geom": 1000,
-            "width": 480,
-            "height": 480,
-            "render_mode": None,
-        }
-        return {**default, **kwargs}
+        base = super().get_default_params()
+        return PusherParams(
+            xml_file=kwargs.get("xml_file", "pusher.xml"),
+            frame_skip=kwargs.get("frame_skip", 5),
+            default_camera_config=kwargs.get("default_camera_config", PUSHER_DEFAULT_CAMERA_CONFIG),
+            reward_near_weight=kwargs.get("reward_near_weight", 0.5),
+            reward_dist_weight=kwargs.get("reward_dist_weight", 1.0),
+            reward_control_weight=kwargs.get("reward_control_weight", 0.1),
+            camera_id=kwargs.get("camera_id", base.camera_id),
+            camera_name=kwargs.get("camera_name", base.camera_name),
+            max_geom=kwargs.get("max_geom", base.max_geom),
+            width=kwargs.get("width", base.width),
+            height=kwargs.get("height", base.height),
+            render_mode=kwargs.get("render_mode", base.render_mode),
+        )
 
 
 class ReacherJaxEnv(FunctionalJaxEnv, EzPickle):
