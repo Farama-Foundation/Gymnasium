@@ -229,8 +229,6 @@ class Ant_MJXEnv(MJXEnv):
 class AntJaxEnv(FunctionalJaxEnv, EzPickle):
     """Jax-based Ant environment using the MJX functional implementation as base."""
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
-
     def __init__(self, render_mode: str | None = None, **kwargs: any):
         """Constructor where the kwargs are passed to the base environment to modify the parameters."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
@@ -241,10 +239,15 @@ class AntJaxEnv(FunctionalJaxEnv, EzPickle):
 
         env = Ant_MJXEnv(params=params)
         env.transform(jax.jit)
+        # env.transition = jax.jit(lambda s, a, r: env.transition(s, a, r, params=params))
+        # env.transform(lambda f: jax.jit(f, static_argnums=(3,)))
+
+        metadata = dict(env.metadata)
+        metadata["jax"] = True
 
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=self.metadata,
+            metadata=metadata,
             render_mode=render_mode,
         )
