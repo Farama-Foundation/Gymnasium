@@ -2,29 +2,26 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 from typing import Any, NamedTuple
 
 import numpy as np
 from numpy.typing import NDArray
 
 import gymnasium as gym
-from gymnasium.spaces.box import Box
-from gymnasium.spaces.discrete import Discrete
-from gymnasium.spaces.multi_discrete import MultiDiscrete
 from gymnasium.spaces.space import Space
 
 
 class GraphInstance(NamedTuple):
     """A Graph space instance.
 
-    * nodes (np.ndarray): an (n x ...) sized array representing the features for n nodes, (...) must adhere to the shape of the node space.
-    * edges (Optional[np.ndarray]): an (m x ...) sized array representing the features for m edges, (...) must adhere to the shape of the edge space.
+    * nodes (Iterable): an (n x ...) sized array representing the features for n nodes, (...) must adhere to the shape of the node space.
+    * edges (Optional[Iterable]): an (m x ...) sized array representing the features for m edges, (...) must adhere to the shape of the edge space.
     * edge_links (Optional[np.ndarray]): an (m x 2) sized array of ints representing the indices of the two nodes that each edge connects.
     """
 
-    nodes: NDArray[Any]
-    edges: NDArray[Any] | None
+    nodes: Iterable[Any]
+    edges: Iterable[Any] | None
     edge_links: NDArray[Any] | None
 
 
@@ -50,31 +47,21 @@ class Graph(Space[GraphInstance]):
 
     def __init__(
         self,
-        node_space: Box | Discrete,
-        edge_space: None | Box | Discrete,
+        node_space: Space[Any],
+        edge_space: None | Space[Any],
         seed: int | np.random.Generator | None = None,
     ):
         r"""Constructor of :class:`Graph`.
 
         The argument ``node_space`` specifies the base space that each node feature will use.
-        This argument must be either a Box or Discrete instance.
 
         The argument ``edge_space`` specifies the base space that each edge feature will use.
-        This argument must be either a None, Box or Discrete instance.
 
         Args:
-            node_space (Union[Box, Discrete]): space of the node features.
-            edge_space (Union[None, Box, Discrete]): space of the edge features.
+            node_space (Space[Any]): space of the node features.
+            edge_space (None | Space[Any]): space of the edge features.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
         """
-        assert isinstance(node_space, (Box, Discrete)), (
-            f"Values of the node_space should be instances of Box or Discrete, got {type(node_space)}"
-        )
-        if edge_space is not None:
-            assert isinstance(edge_space, (Box, Discrete)), (
-                f"Values of the edge_space should be instances of None Box or Discrete, got {type(edge_space)}"
-            )
-
         self.node_space = node_space
         self.edge_space = edge_space
 
@@ -84,27 +71,6 @@ class Graph(Space[GraphInstance]):
     def is_np_flattenable(self):
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return False
-
-    def _generate_sample_space(
-        self, base_space: None | Box | Discrete, num: int
-    ) -> Box | MultiDiscrete | None:
-        if num == 0 or base_space is None:
-            return None
-
-        if isinstance(base_space, Box):
-            return Box(
-                low=np.array(max(1, num) * [base_space.low]),
-                high=np.array(max(1, num) * [base_space.high]),
-                shape=(num,) + base_space.shape,
-                dtype=base_space.dtype,
-                seed=self.np_random,
-            )
-        elif isinstance(base_space, Discrete):
-            return MultiDiscrete(nvec=[base_space.n] * num, seed=self.np_random)
-        else:
-            raise TypeError(
-                f"Expects base space to be Box and Discrete, actual space: {type(base_space)}."
-            )
 
     def seed(
         self, seed: int | tuple[int, int] | tuple[int, int, int] | None = None
@@ -198,10 +164,10 @@ class Graph(Space[GraphInstance]):
         """Generates a single sample graph with num_nodes between ``1`` and ``10`` sampled from the Graph.
 
         Args:
-            mask: An optional tuple of optional node and edge mask that is only possible with Discrete spaces
+            mask: An optional tuple of optional node and edge mask
                 (Box spaces don't support sample masks).
                 If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges
-            probability: An optional tuple of optional node and edge probability mask that is only possible with Discrete spaces
+            probability: An optional tuple of optional node and edge probability mask
                 (Box spaces don't support sample probability masks).
                 If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges
             num_nodes: The number of nodes that will be sampled, the default is `10` nodes
@@ -247,9 +213,21 @@ class Graph(Space[GraphInstance]):
             )
         assert num_edges is not None
 
-        sampled_node_space = self._generate_sample_space(self.node_space, num_nodes)
-        assert sampled_node_space is not None
-        sampled_edge_space = self._generate_sample_space(self.edge_space, num_edges)
+        sampled_node_space = None
+        sampled_edge_space = None
+
+        if num_nodes != 0 and self.node_space is not None:
+            _ = self.node_space.np_random.random()
+            sampled_node_space = gym.vector.utils.batch_space(
+                self.node_space, num_nodes
+            )
+            assert sampled_node_space is not None
+
+        if num_edges != 0 and self.edge_space is not None:
+            _ = self.edge_space.np_random.random()
+            sampled_edge_space = gym.vector.utils.batch_space(
+                self.edge_space, num_edges
+            )
 
         if mask_type is not None:
             node_sample_kwargs = {mask_type: node_space_mask}
@@ -272,30 +250,40 @@ class Graph(Space[GraphInstance]):
 
     def contains(self, x: GraphInstance) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
-        if isinstance(x, GraphInstance):
-            # Checks the nodes
-            if isinstance(x.nodes, np.ndarray):
-                if all(node in self.node_space for node in x.nodes):
-                    # Check the edges and edge links which are optional
-                    if isinstance(x.edges, np.ndarray) and isinstance(
-                        x.edge_links, np.ndarray
-                    ):
-                        assert x.edges is not None
-                        assert x.edge_links is not None
-                        if self.edge_space is not None:
-                            if all(edge in self.edge_space for edge in x.edges):
-                                if np.issubdtype(x.edge_links.dtype, np.integer):
-                                    if x.edge_links.shape == (len(x.edges), 2):
-                                        if np.all(
-                                            np.logical_and(
-                                                x.edge_links >= 0,
-                                                x.edge_links < len(x.nodes),
-                                            )
-                                        ):
-                                            return True
-                    else:
-                        return x.edges is None and x.edge_links is None
-        return False
+        if not isinstance(x, GraphInstance):
+            return False
+
+        if not isinstance(x.nodes, Iterable):
+            return False
+
+        if not all(node in self.node_space for node in x.nodes):
+            return False
+
+        # Check the edges and edge links which are optional
+        if isinstance(x.edges, Iterable) and isinstance(x.edge_links, np.ndarray):
+            if self.edge_space is None:
+                return False
+
+            if not all(edge in self.edge_space for edge in x.edges):
+                return False
+
+            if not np.issubdtype(x.edge_links.dtype, np.integer):
+                return False
+
+            if not x.edge_links.shape == (len(x.edges), 2):
+                return False
+
+            if not np.all(
+                np.logical_and(
+                    x.edge_links >= 0,
+                    x.edge_links < len(x.nodes),
+                )
+            ):
+                return False
+
+            return True
+
+        return x.edges is None and x.edge_links is None
 
     def __repr__(self) -> str:
         """A string representation of this space.
