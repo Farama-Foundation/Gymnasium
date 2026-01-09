@@ -108,16 +108,13 @@ class Ant_MJXEnv(MJXEnv):
         position = mjx_data.qpos.flatten()
         velocity = mjx_data.qvel.flatten()
 
-        # TODO reanable later
         if params.exclude_current_positions_from_observation:
             position = position[2:]
-        # position = position[2:]
 
         if params.include_cfrc_ext_in_observation is True:
             external_contact_forces = self._get_contact_forces(mjx_data, params)[1:].flatten()
         else:
             external_contact_forces = jnp.array([])
-        # external_contact_forces = self._get_contact_forces(mjx_data, params)[1:].flatten()
 
         observation = jnp.concatenate((position, velocity, external_contact_forces))
 
