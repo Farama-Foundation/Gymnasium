@@ -15,6 +15,7 @@ else:
     MJX_IMPORT_ERROR = None
 
 from typing import TypedDict, Union
+from functools import partial
 
 import numpy as np
 
@@ -402,7 +403,7 @@ class HumanoidJaxEnv(FunctionalJaxEnv, EzPickle):
         params = temp_env.get_default_params(**kwargs)
 
         env = HumanoidMJXEnv(params=params)
-        env.transform(jax.jit)
+        env.transform(partial(jax.jit, static_argnames="params"))
 
         metadata = dict(env.metadata)
         metadata["jax"] = True
@@ -427,7 +428,7 @@ class HumanoidStandupJaxEnv(FunctionalJaxEnv, EzPickle):
         params = temp_env.get_default_params(**kwargs)
 
         env = HumanoidStandupMJXEnv(params=params)
-        env.transform(jax.jit)
+        env.transform(partial(jax.jit, static_argnames="params"))
 
         metadata = dict(env.metadata)
         metadata["jax"] = True

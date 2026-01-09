@@ -15,6 +15,7 @@ else:
     MJX_IMPORT_ERROR = None
 
 from typing import TypedDict
+from functools import partial
 
 import numpy as np
 
@@ -356,7 +357,7 @@ class HalfCheetahJaxEnv(FunctionalJaxEnv, EzPickle):
         params = temp_env.get_default_params(**kwargs)
 
         env = HalfCheetahMJXEnv(params=params)
-        env.transform(jax.jit)
+        env.transform(partial(jax.jit, static_argnames="params"))
 
         metadata = dict(env.metadata)
         metadata["jax"] = True
@@ -381,7 +382,7 @@ class HopperJaxEnv(FunctionalJaxEnv, EzPickle):
         params = temp_env.get_default_params(**kwargs)
 
         env = HopperMJXEnv(params=params)
-        env.transform(jax.jit)
+        env.transform(partial(jax.jit, static_argnames="params"))
 
         metadata = dict(env.metadata)
         metadata["jax"] = True
@@ -406,7 +407,7 @@ class Walker2dJaxEnv(FunctionalJaxEnv, EzPickle):
         params = temp_env.get_default_params(**kwargs)
 
         env = Walker2dMJXEnv(params=params)
-        env.transform(jax.jit)
+        env.transform(partial(jax.jit, static_argnames="params"))
 
         metadata = dict(env.metadata)
         metadata["jax"] = True

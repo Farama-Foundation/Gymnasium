@@ -15,6 +15,7 @@ else:
     MJX_IMPORT_ERROR = None
 
 from typing import TypedDict
+from functools import partial
 
 import numpy as np
 
@@ -308,7 +309,7 @@ class InvertedDoublePendulumJaxEnv(FunctionalJaxEnv, EzPickle):
         params = temp_env.get_default_params(**kwargs)
 
         env = InvertedDoublePendulumMJXEnv(params=params)
-        env.transform(jax.jit)
+        env.transform(partial(jax.jit, static_argnames="params"))
 
         metadata = dict(env.metadata)
         metadata["jax"] = True
@@ -333,7 +334,7 @@ class InvertedPendulumJaxEnv(FunctionalJaxEnv, EzPickle):
         params = temp_env.get_default_params(**kwargs)
 
         env = InvertedPendulumMJXEnv(params=params)
-        env.transform(jax.jit)
+        env.transform(partial(jax.jit, static_argnames="params"))
 
         metadata = dict(env.metadata)
         metadata["jax"] = True

@@ -15,6 +15,7 @@ else:
     MJX_IMPORT_ERROR = None
 
 from typing import TypedDict
+from functools import partial
 
 import numpy as np
 
@@ -178,7 +179,7 @@ class SwimmerJaxEnv(FunctionalJaxEnv, EzPickle):
         params = temp_env.get_default_params(**kwargs)
 
         env = Swimmer_MJXEnv(params=params)
-        env.transform(jax.jit)
+        env.transform(partial(jax.jit, static_argnames="params"))
 
         metadata = dict(env.metadata)
         metadata["jax"] = True
