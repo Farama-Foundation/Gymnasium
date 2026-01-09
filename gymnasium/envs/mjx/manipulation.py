@@ -85,12 +85,12 @@ class Reacher_MJXEnv(MJXEnv):
             lambda goal: self._body_goal(goal, rng),
             init_val=jnp.array((10.0, 0.0)),
         )
-        qpos.at[-2:].set(goal)
+        qpos = qpos.at[-2:].set(goal)
 
         qvel = jax.random.uniform(
             key=rng, minval=-0.005, maxval=0.005, shape=(self.mjx_model.nv,)
         )
-        qvel.at[-2:].set(jnp.zeros(2))
+        qvel = qvel.at[-2:].set(jnp.zeros(2))
 
         act = jnp.empty(self.mjx_model.na)
 
@@ -218,26 +218,41 @@ class Pusher_MJXEnv(MJXEnv):
     ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
         """Sets `arm.qpos` (positional elements) and `arm.qvel` (velocity elements) from a CUD and the `goal.qpos` from a cicrular uniform distribution."""
         qpos = self.mjx_model.qpos0
-
         goal_pos = jnp.zeros(2)
-        while True:
-            cylinder_pos = jnp.concatenate(
-                [
-                    jax.random.uniform(key=rng, minval=-0.3, maxval=0.3, shape=1),
-                    jax.random.uniform(key=rng, minval=-0.2, maxval=0.2, shape=1),
-                ]
+
+        rng, rng_loop, rng_vel = jax.random.split(rng, 3)
+
+        # Cylinder position must be at least 0.17m away from the goal
+        def loop_cond(carry):
+            _, cylinder_pos = carry
+            return jnp.linalg.norm(cylinder_pos - goal_pos) <= 0.17
+
+        def loop_body(carry):
+            rng, _ = carry
+            rng, key = jax.random.split(rng)
+            cylinder_pos = jax.random.uniform(
+                key=key,
+                minval=jnp.array([-0.3, -0.2]),
+                maxval=jnp.array([0.3, 0.2]),
+                shape=(2,),
             )
-            if jnp.linalg.norm(cylinder_pos - goal_pos) > 0.17:
-                break
+            return rng, cylinder_pos
 
-        qpos.at[-4:-2].set(cylinder_pos)
-        qpos.at[-2:].set(goal_pos)
-        qvel = jax.random.uniform(
-            key=rng, minval=-0.005, maxval=0.005, shape=(self.mjx_model.nv,)
+        _, cylinder_pos = jax.lax.while_loop(
+            loop_cond,
+            loop_body,
+            (rng_loop, goal_pos)
         )
-        qvel.at[-4:].set(0)
 
-        act = jnp.empty(self.mjx_model.na)
+        qpos = qpos.at[-4:-2].set(cylinder_pos)
+        qpos = qpos.at[-2:].set(goal_pos)
+
+        qvel = jax.random.uniform(
+            key=rng_vel, minval=-0.005, maxval=0.005, shape=(self.mjx_model.nv,)
+        )
+        qvel = qvel.at[-4:].set(0)
+
+        act = jnp.zeros(self.mjx_model.na)
 
         return qpos, qvel, act
 
