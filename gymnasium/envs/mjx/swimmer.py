@@ -19,7 +19,7 @@ from functools import partial
 
 import numpy as np
 
-from gymnasium.envs.mjx.mjx_env import MJXEnv
+from gymnasium.envs.mjx.mjx_env import MJXEnv, _normalize_camera_config
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.utils import EzPickle
 
@@ -145,8 +145,7 @@ class Swimmer_MJXEnv(MJXEnv):
         """Get the default parameter for the Swimmer environment."""
         base = super().get_default_params()
         camera_cfg = kwargs.get("default_camera_config", {})
-        if not isinstance(camera_cfg, FrozenDict):
-            camera_cfg = FrozenDict(camera_cfg)
+        camera_cfg = _normalize_camera_config(camera_cfg)
 
         return SwimmerParams(
             xml_file=kwargs.get("xml_file", "swimmer.xml"),

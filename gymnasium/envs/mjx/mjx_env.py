@@ -19,6 +19,7 @@ try:
     from jax import numpy as jnp
     from mujoco import mjx
     import flax.struct
+    from flax.core.frozen_dict import FrozenDict
 except ImportError as e:
     MJX_IMPORT_ERROR = e
 else:
@@ -58,6 +59,20 @@ class MJXEnvParams:
     height: int
     render_mode: str | None
 
+
+def _normalize_camera_config(camera_cfg):
+    """Return a `FrozenDict` where any numpy arrays are converted to tuples for hashing."""
+    # Accept FrozenDict or mapping-like objects
+    if isinstance(camera_cfg, FrozenDict):
+        camera_dict = dict(camera_cfg)
+    else:
+        camera_dict = dict(camera_cfg)
+
+    for k, v in list(camera_dict.items()):
+        if isinstance(v, np.ndarray):
+            camera_dict[k] = tuple(float(x) for x in v.tolist())
+
+    return FrozenDict(camera_dict)
 
 # TODO add init_qvel
 class MJXEnv(
@@ -143,7 +158,6 @@ class MJXEnv(
             length=params.frame_skip,
         )
 
-        # TODO fix sensors with MJX>=3.2
         return mjx_data
 
     def reward(

@@ -19,7 +19,7 @@ from functools import partial
 
 import numpy as np
 
-from gymnasium.envs.mjx.mjx_env import MJXEnv
+from gymnasium.envs.mjx.mjx_env import MJXEnv, _normalize_camera_config
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.utils import EzPickle
 from gymnasium.envs.mujoco.inverted_double_pendulum_v5 import (
@@ -170,8 +170,7 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
         camera_cfg = kwargs.get(
             "default_camera_config", INVERTED_DOUBLE_PENDULUM_DEFAULT_CAMERA_CONFIG
         )
-        if not isinstance(camera_cfg, FrozenDict):
-            camera_cfg = FrozenDict(camera_cfg)
+        camera_cfg = _normalize_camera_config(camera_cfg)
 
         return InvertedDoublePendulumMJXEnvParams(
             xml_file=kwargs.get("xml_file", "inverted_double_pendulum.xml"),
@@ -280,8 +279,7 @@ class InvertedPendulumMJXEnv(MJXEnv):
         camera_cfg = kwargs.get(
             "default_camera_config", INVERTED_PENDULUM_DEFAULT_CAMERA_CONFIG
         )
-        if not isinstance(camera_cfg, FrozenDict):
-            camera_cfg = FrozenDict(camera_cfg)
+        camera_cfg = _normalize_camera_config(camera_cfg)
 
         return InvertedPendulumMJXEnvParams(
             xml_file=kwargs.get("xml_file", "inverted_pendulum.xml"),

@@ -19,7 +19,7 @@ from functools import partial
 
 import numpy as np
 
-from gymnasium.envs.mjx.mjx_env import MJXEnv
+from gymnasium.envs.mjx.mjx_env import MJXEnv, _normalize_camera_config
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.utils import EzPickle
 from gymnasium.envs.mujoco.pusher_v5 import (
@@ -160,8 +160,7 @@ class Reacher_MJXEnv(MJXEnv):
         camera_cfg = kwargs.get(
             "default_camera_config", REACHER_HOPPER_DEFAULT_CAMERA_CONFIG
         )
-        if not isinstance(camera_cfg, FrozenDict):
-            camera_cfg = FrozenDict(camera_cfg)
+        camera_cfg = _normalize_camera_config(camera_cfg)
 
         return ReacherParams(
             xml_file=kwargs.get("xml_file", "reacher.xml"),
@@ -300,8 +299,7 @@ class Pusher_MJXEnv(MJXEnv):
         """Get the default parameter for the Reacher environment."""
         base = super().get_default_params()
         camera_cfg = kwargs.get("default_camera_config", PUSHER_DEFAULT_CAMERA_CONFIG)
-        if not isinstance(camera_cfg, FrozenDict):
-            camera_cfg = FrozenDict(camera_cfg)
+        camera_cfg = _normalize_camera_config(camera_cfg)
 
         return PusherParams(
             xml_file=kwargs.get("xml_file", "pusher.xml"),

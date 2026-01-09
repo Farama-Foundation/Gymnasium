@@ -19,7 +19,7 @@ from functools import partial
 
 import numpy as np
 
-from gymnasium.envs.mjx.mjx_env import MJXEnv
+from gymnasium.envs.mjx.mjx_env import MJXEnv, _normalize_camera_config
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.utils import EzPickle
 from gymnasium.envs.mujoco.humanoid_v5 import (
@@ -287,8 +287,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         """Get the default parameter for the Humanoid environment."""
         base = super().get_default_params()
         camera_cfg = kwargs.get("default_camera_config", HUMANOID_DEFAULT_CAMERA_CONFIG)
-        if not isinstance(camera_cfg, FrozenDict):
-            camera_cfg = FrozenDict(camera_cfg)
+        camera_cfg = _normalize_camera_config(camera_cfg)
 
         return HumanoidMJXEnvParams(
             xml_file=kwargs.get("xml_file", "humanoid.xml"),
@@ -361,8 +360,7 @@ class HumanoidStandupMJXEnv(BaseHumanoid_MJXEnv):
         camera_cfg = kwargs.get(
             "default_camera_config", HUMANOIDSTANDUP_DEFAULT_CAMERA_CONFIG
         )
-        if not isinstance(camera_cfg, FrozenDict):
-            camera_cfg = FrozenDict(camera_cfg)
+        camera_cfg = _normalize_camera_config(camera_cfg)
 
         return HumanoidStandupMJXEnvParams(
             xml_file=kwargs.get("xml_file", "humanoidstandup.xml"),

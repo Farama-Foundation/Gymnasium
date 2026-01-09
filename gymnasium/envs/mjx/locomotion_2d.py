@@ -19,7 +19,7 @@ from functools import partial
 
 import numpy as np
 
-from gymnasium.envs.mjx.mjx_env import MJXEnv
+from gymnasium.envs.mjx.mjx_env import MJXEnv, _normalize_camera_config
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
 from gymnasium.utils import EzPickle
 from gymnasium.envs.mujoco.half_cheetah_v5 import (
@@ -31,7 +31,6 @@ from gymnasium.envs.mujoco.hopper_v5 import (
 from gymnasium.envs.mujoco.walker2d_v5 import (
     DEFAULT_CAMERA_CONFIG as WALKER2D_DEFAULT_CAMERA_CONFIG,
 )
-
 
 @flax.struct.dataclass
 class Locomotion2dMJXEnvParams:
@@ -213,8 +212,7 @@ class HalfCheetahMJXEnv(Locomotion_2d_MJXEnv):
         camera_cfg = kwargs.get(
             "default_camera_config", HALFCHEETAH_DEFAULT_CAMERA_CONFIG
         )
-        if not isinstance(camera_cfg, FrozenDict):
-            camera_cfg = FrozenDict(camera_cfg)
+        camera_cfg = _normalize_camera_config(camera_cfg)
 
         return Locomotion2dMJXEnvParams(
             xml_file=kwargs.get("xml_file", "half_cheetah.xml"),
@@ -265,8 +263,7 @@ class HopperMJXEnv(Locomotion_2d_MJXEnv):
         """Get the default parameter for the Hopper environment."""
         base_params = super().get_default_params()
         camera_cfg = kwargs.get("default_camera_config", HOPPER_DEFAULT_CAMERA_CONFIG)
-        if not isinstance(camera_cfg, FrozenDict):
-            camera_cfg = FrozenDict(camera_cfg)
+        camera_cfg = _normalize_camera_config(camera_cfg)
 
         return Locomotion2dMJXEnvParams(
             xml_file=kwargs.get("xml_file", "hopper.xml"),
@@ -318,8 +315,7 @@ class Walker2dMJXEnv(Locomotion_2d_MJXEnv):
         camera_cfg = kwargs.get(
             "default_camera_config", WALKER2D_DEFAULT_CAMERA_CONFIG
         )
-        if not isinstance(camera_cfg, FrozenDict):
-            camera_cfg = FrozenDict(camera_cfg)
+        camera_cfg = _normalize_camera_config(camera_cfg)
 
         return Locomotion2dMJXEnvParams(
             xml_file=kwargs.get("xml_file", "walker2d_v5.xml"),
