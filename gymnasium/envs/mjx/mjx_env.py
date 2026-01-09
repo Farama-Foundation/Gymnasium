@@ -97,8 +97,7 @@ class MJXEnv(
                 "(HINT: you need to install mujoco-mjx, run `pip install gymnasium[mjx]`.)"
             )
 
-        #fullpath = expand_model_path(params.xml_file)
-        fullpath = expand_model_path("ant.xml")
+        fullpath = expand_model_path(params.xml_file)
 
         self.model = mujoco.MjModel.from_xml_path(fullpath)
         self.mjx_model = mjx.put_model(self.model)

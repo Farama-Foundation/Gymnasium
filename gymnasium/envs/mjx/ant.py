@@ -27,8 +27,7 @@ from gymnasium.envs.mujoco.ant_v5 import DEFAULT_CAMERA_CONFIG
 class AntMJXEnvParams:
     """Parameters for the Ant environment."""
 
-    # xml_file: str
-    xml_file: int  # TODO temporarly change to int to bypass MJX xml loading issue
+    xml_file: str
     frame_skip: int
     default_camera_config: FrozenDict[str, float | int | str | None]
     forward_reward_weight: float
@@ -208,7 +207,7 @@ class Ant_MJXEnv(MJXEnv):
             camera_cfg = FrozenDict(camera_cfg)
 
         return AntMJXEnvParams(
-            xml_file=kwargs.get("xml_file", 1),
+            xml_file=kwargs.get("xml_file", "ant.xml"),
             frame_skip=kwargs.get("frame_skip", 5),
             default_camera_config=camera_cfg,
             forward_reward_weight=kwargs.get("forward_reward_weight", 1),
