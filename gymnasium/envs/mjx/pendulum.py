@@ -134,7 +134,7 @@ class InvertedDoublePendulumMJXEnv(MJXEnv):
         x, _, y = mjx_data_new.site_xpos[0]
 
         dist_penalty = 0.01 * x**2 + (y - 2) ** 2
-        vel_penalty = jnp.array([1e-3, 5e-3]).T * jnp.square(v)
+        vel_penalty = jnp.array([1e-3, 5e-3]).T @ jnp.square(v)
         alive_bonus = params.healthy_reward * self._gen_is_healty(mjx_data_new)
 
         reward = alive_bonus - dist_penalty - vel_penalty
