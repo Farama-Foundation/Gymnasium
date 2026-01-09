@@ -221,7 +221,7 @@ class Pusher_MJXEnv(MJXEnv):
 
         goal_pos = jnp.zeros(2)
         while True:
-            cylinder_pos = np.concatenate(
+            cylinder_pos = jnp.concatenate(
                 [
                     jax.random.uniform(key=rng, minval=-0.3, maxval=0.3, shape=1),
                     jax.random.uniform(key=rng, minval=-0.2, maxval=0.2, shape=1),
