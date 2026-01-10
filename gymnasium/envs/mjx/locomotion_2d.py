@@ -46,6 +46,7 @@ class Locomotion2dMJXEnvParams:
     healthy_state_range: tuple[float, float]
     healthy_z_range: tuple[float, float]
     healthy_angle_range: tuple[float, float]
+    velocity_clip: tuple[float, float]
     reset_noise_scale: float
     exclude_current_positions_from_observation: bool
     camera_id: int | None
@@ -97,6 +98,9 @@ class Locomotion_2d_MJXEnv(MJXEnv):
 
         if params.exclude_current_positions_from_observation:
             position = position[1:]
+
+        low, high = params.velocity_clip
+        velocity = jnp.clip(velocity, low, high)
 
         observation = jnp.concatenate((position, velocity))
         return observation
@@ -225,6 +229,7 @@ class HalfCheetahMJXEnv(Locomotion_2d_MJXEnv):
             healthy_state_range=kwargs.get("healthy_state_range", (-jnp.inf, jnp.inf)),
             healthy_z_range=kwargs.get("healthy_z_range", (-jnp.inf, jnp.inf)),
             healthy_angle_range=kwargs.get("healthy_angle_range", (-jnp.inf, jnp.inf)),
+            velocity_clip=kwargs.get("velocity_clip", (-jnp.inf, jnp.inf)),
             reset_noise_scale=kwargs.get("reset_noise_scale", 0.1),
             exclude_current_positions_from_observation=kwargs.get(
                 "exclude_current_positions_from_observation", True
@@ -276,6 +281,7 @@ class HopperMJXEnv(Locomotion_2d_MJXEnv):
             healthy_state_range=kwargs.get("healthy_state_range", (-100.0, 100.0)),
             healthy_z_range=kwargs.get("healthy_z_range", (0.7, jnp.inf)),
             healthy_angle_range=kwargs.get("healthy_angle_range", (-0.2, 0.2)),
+            velocity_clip=kwargs.get("velocity_clip", (-jnp.inf, jnp.inf)),
             reset_noise_scale=kwargs.get("reset_noise_scale", 5e-3),
             exclude_current_positions_from_observation=kwargs.get(
                 "exclude_current_positions_from_observation", True
@@ -328,6 +334,7 @@ class Walker2dMJXEnv(Locomotion_2d_MJXEnv):
             healthy_state_range=kwargs.get("healthy_state_range", (-jnp.inf, jnp.inf)),
             healthy_z_range=kwargs.get("healthy_z_range", (0.8, 2.0)),
             healthy_angle_range=kwargs.get("healthy_angle_range", (-1.0, 1.0)),
+            velocity_clip=kwargs.get("velocity_clip", (-10.0, 10.0)),
             reset_noise_scale=kwargs.get("reset_noise_scale", 5e-3),
             exclude_current_positions_from_observation=kwargs.get(
                 "exclude_current_positions_from_observation", True
