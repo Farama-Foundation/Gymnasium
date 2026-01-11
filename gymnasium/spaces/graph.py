@@ -142,6 +142,16 @@ class Graph(Space[GraphInstance]):
                 f"Expects `None`, int or tuple of ints, actual type: {type(seed)}"
             )
 
+    def _generate_sample_space(self, space: Space[Any], n: int) -> Space[Any] | None:
+        if n == 0 or space is None:
+            # There is nothing to batch
+            return
+
+        # TODO: remove this weird code that is just for advancing the node space RNG
+        _ = self.node_space.np_random.random()
+        batched_space = gym.vector.utils.batch_space(space, n)
+        return batched_space
+
     def sample(
         self,
         mask: None
@@ -216,18 +226,11 @@ class Graph(Space[GraphInstance]):
         sampled_node_space = None
         sampled_edge_space = None
 
-        if num_nodes != 0 and self.node_space is not None:
-            _ = self.node_space.np_random.random()
-            sampled_node_space = gym.vector.utils.batch_space(
-                self.node_space, num_nodes
-            )
-            assert sampled_node_space is not None
+        sampled_node_space = self._generate_sample_space(self.node_space, num_nodes)
+        assert sampled_node_space is not None
 
-        if num_edges != 0 and self.edge_space is not None:
-            _ = self.edge_space.np_random.random()
-            sampled_edge_space = gym.vector.utils.batch_space(
-                self.edge_space, num_edges
-            )
+        if self.edge_space is not None:
+            sampled_edge_space = self._generate_sample_space(self.edge_space, num_edges)
 
         if mask_type is not None:
             node_sample_kwargs = {mask_type: node_space_mask}
