@@ -270,6 +270,12 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   A library for testing reinforcement learning algorithms on various UAVs.
   It is built on the [Bullet](https://github.com/bulletphysics/bullet3) physics engine, offers flexible rendering options, time-discrete steppable physics, Python bindings, and support for custom drones of any configuration, be it biplanes, quadcopters, rockets, and anything you can think of.
 
+- [relign: Active alignments of optical systems](https://github.com/hs-kempten/relign)
+
+  ![GitHub stars](https://img.shields.io/github/stars/hs-kempten/relign)
+
+  An environment for active alignments of lens systems with reinforcement learning using high-dimensional optical sensor output as observation.
+  
 - [safe-control-gym: Evaluate safety of RL algorithms](https://github.com/utiasDSL/safe-control-gym)
 
   Evaluate safety, robustness and generalization via PyBullet based CartPole and Quadrotor environments—with [CasADi](https://web.casadi.org) (symbolic) *a priori* dynamics and constraints.
@@ -341,6 +347,12 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Gym4ReaL is a comprehensive suite of realistic environments designed to support the development and evaluation of RL algorithms that can operate in real-world scenarios.
 The suite includes a diverse set of tasks exposing RL algorithms to a variety of practical challenges, such as water management, energy management in microgrids, financial trading, and more.
+
+- [LineFlow: Active control of production lines](https://github.com/hs-kempten/lineflow)
+
+  ![GitHub stars](https://img.shields.io/github/stars/hs-kempten/lineflow)
+
+  An environment to learn active control of production lines with reinforcement learning.
 
 - [matrix-mdp: Easily create discrete MDPs](https://github.com/Paul-543NA/matrix-mdp-gym)
 
