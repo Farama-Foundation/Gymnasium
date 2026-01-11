@@ -98,6 +98,7 @@ class MJXEnv(
             "depth_array",
             "rgbd_tuple",
         ],
+        "jax": True,
     }
 
     def __init__(self, params: dict[str, Any]):
@@ -120,6 +121,7 @@ class MJXEnv(
         self.metadata = {
             "render_modes": ['human', 'rgb_array', 'depth_array', 'rgbd_tuple'],
             "render_fps": int(np.round(1.0 / self.dt(params))),
+            "jax": True,
         }
 
         # observation_space: gymnasium.spaces.Box  # set by subclass

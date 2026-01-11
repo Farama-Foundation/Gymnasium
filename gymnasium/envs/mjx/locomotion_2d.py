@@ -362,13 +362,10 @@ class HalfCheetahJaxEnv(FunctionalJaxEnv, EzPickle):
         env = HalfCheetahMJXEnv(params=params)
         env.transform(partial(jax.jit, static_argnames="params"))
 
-        metadata = dict(env.metadata)
-        metadata["jax"] = True
-
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=metadata,
+            metadata=env.metadata,
             render_mode=render_mode,
         )
 
@@ -387,13 +384,10 @@ class HopperJaxEnv(FunctionalJaxEnv, EzPickle):
         env = HopperMJXEnv(params=params)
         env.transform(partial(jax.jit, static_argnames="params"))
 
-        metadata = dict(env.metadata)
-        metadata["jax"] = True
-
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=metadata,
+            metadata=env.metadata,
             render_mode=render_mode,
         )
 
@@ -412,12 +406,9 @@ class Walker2dJaxEnv(FunctionalJaxEnv, EzPickle):
         env = Walker2dMJXEnv(params=params)
         env.transform(partial(jax.jit, static_argnames="params"))
 
-        metadata = dict(env.metadata)
-        metadata["jax"] = True
-
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=metadata,
+            metadata=env.metadata,
             render_mode=render_mode,
         )

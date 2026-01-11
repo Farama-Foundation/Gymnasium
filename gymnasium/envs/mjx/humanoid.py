@@ -403,13 +403,10 @@ class HumanoidJaxEnv(FunctionalJaxEnv, EzPickle):
         env = HumanoidMJXEnv(params=params)
         env.transform(partial(jax.jit, static_argnames="params"))
 
-        metadata = dict(env.metadata)
-        metadata["jax"] = True
-
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=metadata,
+            metadata=env.metadata,
             render_mode=render_mode,
         )
 
@@ -428,12 +425,9 @@ class HumanoidStandupJaxEnv(FunctionalJaxEnv, EzPickle):
         env = HumanoidStandupMJXEnv(params=params)
         env.transform(partial(jax.jit, static_argnames="params"))
 
-        metadata = dict(env.metadata)
-        metadata["jax"] = True
-
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=metadata,
+            metadata=env.metadata,
             render_mode=render_mode,
         )

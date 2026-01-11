@@ -309,13 +309,10 @@ class InvertedDoublePendulumJaxEnv(FunctionalJaxEnv, EzPickle):
         env = InvertedDoublePendulumMJXEnv(params=params)
         env.transform(partial(jax.jit, static_argnames="params"))
 
-        metadata = dict(env.metadata)
-        metadata["jax"] = True
-
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=metadata,
+            metadata=env.metadata,
             render_mode=render_mode,
         )
 
@@ -334,12 +331,9 @@ class InvertedPendulumJaxEnv(FunctionalJaxEnv, EzPickle):
         env = InvertedPendulumMJXEnv(params=params)
         env.transform(partial(jax.jit, static_argnames="params"))
 
-        metadata = dict(env.metadata)
-        metadata["jax"] = True
-
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=metadata,
+            metadata=env.metadata,
             render_mode=render_mode,
         )
