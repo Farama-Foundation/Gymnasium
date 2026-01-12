@@ -457,8 +457,9 @@ def create_empty_array(
         >>> from gymnasium.spaces import Box, Dict
         >>> import numpy as np
         >>> space = Dict({
-        ... 'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
-        ... 'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)})
+        ...     'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),
+        ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32),
+        ... })
         >>> create_empty_array(space, n=2, fn=np.zeros)
         {'position': array([[0., 0., 0.],
                [0., 0., 0.]], dtype=float32), 'velocity': array([[0., 0.],

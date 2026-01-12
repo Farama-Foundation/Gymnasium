@@ -34,6 +34,17 @@ def test_node_space_sample():
         sample = space.sample(num_edges=5)
         assert sample in space
 
+    # Change the node_space or edge_space to a non-Box or discrete space.
+    # This should not happen, test is primarily to increase coverage.
+    with pytest.raises(
+        TypeError,
+        match=re.escape(
+            "The space provided to `batch_space` is not a gymnasium Space instance, type: <class 'str'>, abc"
+        ),
+    ):
+        space.node_space = "abc"
+        space.sample()
+
 
 def test_edge_space_sample():
     space = Graph(node_space=Discrete(3), edge_space=Discrete(3))
