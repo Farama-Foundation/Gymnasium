@@ -95,9 +95,7 @@ def _flatdim_dict(space: Dict) -> int:
 
 @flatdim.register(Graph)
 def _flatdim_graph(space: Graph):
-    raise ValueError(
-        "Cannot get flattened size as the Graph Space in Gym has a dynamic size."
-    )
+    raise ValueError("Cannot get flattened size as the Graph Space has a dynamic size.")
 
 
 @flatdim.register(Text)
@@ -207,32 +205,36 @@ def _flatten_dict(space: Dict, x: dict[str, Any]) -> dict[str, Any] | NDArray[An
 
 @flatten.register(Graph)
 def _flatten_graph(space: Graph, x: GraphInstance) -> GraphInstance:
-    """We're not using ``.unflatten()`` for :class:`Box` and :class:`Discrete` because a graph is not a homogeneous space, see `.flatten` docstring."""
+    """The nodes and edges should be an instances of a batched of a flattened node/edge space."""
+    flat_node_space = flatten_space(space.node_space)
+    flattened_nodes = list(
+        flatten(space.node_space, node)
+        for node in gym.vector.utils.iterate(space.batch_node_space, x.nodes)
+    )
+    node_out = gym.vector.utils.create_empty_array(
+        flat_node_space, n=len(flattened_nodes)
+    )
+    concat_flat_nodes = gym.vector.utils.concatenate(
+        flat_node_space, flattened_nodes, node_out
+    )
 
-    def _graph_unflatten(
-        unflatten_space: Discrete | Box | None,
-        unflatten_x: NDArray[Any] | None,
-    ) -> NDArray[Any] | None:
-        ret = None
-        if unflatten_space is not None and unflatten_x is not None:
-            if isinstance(unflatten_space, Box):
-                ret = unflatten_x.reshape(unflatten_x.shape[0], -1)
-            else:
-                assert isinstance(unflatten_space, Discrete)
-                ret = np.zeros(
-                    (unflatten_x.shape[0], unflatten_space.n - unflatten_space.start),
-                    dtype=unflatten_space.dtype,
-                )
-                ret[
-                    np.arange(unflatten_x.shape[0]), unflatten_x - unflatten_space.start
-                ] = 1
-        return ret
+    if x.edges is not None:
+        assert space.edge_space is not None
+        flat_edge_space = flatten_space(space.edge_space)
+        flattened_edges = list(
+            flatten(space.edge_space, edge)
+            for edge in gym.vector.utils.iterate(space.batch_edge_space, x.edges)
+        )
+        edge_out = gym.vector.utils.create_empty_array(
+            flat_edge_space, n=len(flattened_edges)
+        )
+        concat_flat_edges = gym.vector.utils.concatenate(
+            flat_edge_space, flattened_edges, edge_out
+        )
+    else:
+        concat_flat_edges = None
 
-    nodes = _graph_unflatten(space.node_space, x.nodes)
-    assert nodes is not None
-    edges = _graph_unflatten(space.edge_space, x.edges)
-
-    return GraphInstance(nodes, edges, x.edge_links)
+    return GraphInstance(concat_flat_nodes, concat_flat_edges, x.edge_links)
 
 
 @flatten.register(Text)

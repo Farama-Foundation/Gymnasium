@@ -65,6 +65,12 @@ class Graph(Space[GraphInstance]):
         self.node_space = node_space
         self.edge_space = edge_space
 
+        self.batch_node_space = gym.vector.utils.batch_space(node_space, n=1)
+        if edge_space is not None:
+            self.batch_edge_space = gym.vector.utils.batch_space(edge_space, n=1)
+        else:
+            self.batch_edge_space = None
+
         super().__init__(None, None, seed)
 
     @property
@@ -142,16 +148,6 @@ class Graph(Space[GraphInstance]):
                 f"Expects `None`, int or tuple of ints, actual type: {type(seed)}"
             )
 
-    def _generate_sample_space(self, space: Space[Any], n: int) -> Space[Any] | None:
-        if n == 0 or space is None:
-            # There is nothing to batch
-            return
-
-        # TODO: remove this weird code that is just for advancing the node space RNG
-        _ = self.node_space.np_random.random()
-        batched_space = gym.vector.utils.batch_space(space, n)
-        return batched_space
-
     def sample(
         self,
         mask: None
@@ -207,7 +203,7 @@ class Graph(Space[GraphInstance]):
         if num_edges is None:
             if num_nodes > 1:
                 # maximal number of edges is `n*(n-1)` allowing self connections and two-way is allowed
-                num_edges = self.np_random.integers(num_nodes * (num_nodes - 1))
+                num_edges = int(self.np_random.integers(num_nodes * (num_nodes - 1)))
             else:
                 num_edges = 0
 
@@ -223,14 +219,14 @@ class Graph(Space[GraphInstance]):
             )
         assert num_edges is not None
 
-        sampled_node_space = None
-        sampled_edge_space = None
-
-        sampled_node_space = self._generate_sample_space(self.node_space, num_nodes)
+        sampled_node_space = gym.vector.utils.batch_space(self.node_space, num_nodes)
         assert sampled_node_space is not None
-
-        if self.edge_space is not None:
-            sampled_edge_space = self._generate_sample_space(self.edge_space, num_edges)
+        if self.edge_space is not None and (num_nodes > 1 or num_edges == 1):
+            sampled_edge_space = gym.vector.utils.batch_space(
+                self.edge_space, num_edges
+            )
+        else:
+            sampled_edge_space = None
 
         if mask_type is not None:
             node_sample_kwargs = {mask_type: node_space_mask}
@@ -239,9 +235,11 @@ class Graph(Space[GraphInstance]):
             node_sample_kwargs = edge_sample_kwargs = {}
 
         sampled_nodes = sampled_node_space.sample(**node_sample_kwargs)
+        self.node_space.sample()
         sampled_edges = None
         if sampled_edge_space is not None:
             sampled_edges = sampled_edge_space.sample(**edge_sample_kwargs)
+            self.edge_space.sample()
 
         sampled_edge_links = None
         if sampled_edges is not None and num_edges > 0:
@@ -253,40 +251,29 @@ class Graph(Space[GraphInstance]):
 
     def contains(self, x: GraphInstance) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
-        if not isinstance(x, GraphInstance):
-            return False
-
-        if not isinstance(x.nodes, Iterable):
-            return False
-
-        if not all(node in self.node_space for node in x.nodes):
-            return False
-
-        # Check the edges and edge links which are optional
-        if isinstance(x.edges, Iterable) and isinstance(x.edge_links, np.ndarray):
-            if self.edge_space is None:
-                return False
-
-            if not all(edge in self.edge_space for edge in x.edges):
-                return False
-
-            if not np.issubdtype(x.edge_links.dtype, np.integer):
-                return False
-
-            if not x.edge_links.shape == (len(x.edges), 2):
-                return False
-
-            if not np.all(
-                np.logical_and(
-                    x.edge_links >= 0,
-                    x.edge_links < len(x.nodes),
-                )
-            ):
-                return False
-
-            return True
-
-        return x.edges is None and x.edge_links is None
+        if isinstance(x, GraphInstance) and x.nodes is not None:
+            # Checks the nodes
+            nodes = list(gym.vector.utils.iterate(self.batch_node_space, x.nodes))
+            if all(node in self.node_space for node in nodes):
+                # Check the edges and edge links which are optional
+                if isinstance(x.edges, np.ndarray) and isinstance(
+                    x.edge_links, np.ndarray
+                ):
+                    assert x.edges is not None
+                    assert x.edge_links is not None
+                    if self.edge_space is not None:
+                        if all(edge in self.edge_space for edge in x.edges):
+                            if np.issubdtype(x.edge_links.dtype, np.integer):
+                                if x.edge_links.shape == (len(x.edges), 2):
+                                    if np.all(
+                                        np.logical_and(
+                                            x.edge_links >= 0, x.edge_links < len(nodes)
+                                        )
+                                    ):
+                                        return True
+                else:
+                    return x.edges is None and x.edge_links is None
+        return False
 
     def __repr__(self) -> str:
         """A string representation of this space.
@@ -312,9 +299,9 @@ class Graph(Space[GraphInstance]):
         """Convert a batch of samples from this space to a JSONable data type."""
         ret_n = []
         for sample in sample_n:
-            ret = {"nodes": sample.nodes.tolist()}
+            ret = {"nodes": self.batch_node_space.to_jsonable([sample.nodes])}
             if sample.edges is not None and sample.edge_links is not None:
-                ret["edges"] = sample.edges.tolist()
+                ret["edges"] = self.batch_edge_space.to_jsonable([sample.edges])
                 ret["edge_links"] = sample.edge_links.tolist()
             ret_n.append(ret)
         return ret_n
@@ -328,13 +315,13 @@ class Graph(Space[GraphInstance]):
             if "edges" in sample:
                 assert self.edge_space is not None
                 ret_n = GraphInstance(
-                    np.asarray(sample["nodes"], dtype=self.node_space.dtype),
-                    np.asarray(sample["edges"], dtype=self.edge_space.dtype),
+                    self.batch_node_space.from_jsonable(sample["nodes"])[0],
+                    self.batch_edge_space.from_jsonable(sample["edges"])[0],
                     np.asarray(sample["edge_links"], dtype=np.int32),
                 )
             else:
                 ret_n = GraphInstance(
-                    np.asarray(sample["nodes"], dtype=self.node_space.dtype),
+                    self.batch_node_space.from_jsonable(sample["nodes"])[0],
                     None,
                     None,
                 )
