@@ -270,7 +270,7 @@ class HumanoidMJXEnv(BaseHumanoid_MJXEnv):
         mjx_data = state
 
         min_z, max_z = params.healthy_z_range
-        is_healthy = min_z < mjx_data.qpos[2] < max_z
+        is_healthy = jnp.logical_and(min_z < mjx_data.qpos[2], mjx_data.qpos[2] < max_z)
 
         return is_healthy
 
