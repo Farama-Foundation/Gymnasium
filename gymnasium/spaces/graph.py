@@ -219,27 +219,30 @@ class Graph(Space[GraphInstance]):
             )
         assert num_edges is not None
 
-        sampled_node_space = gym.vector.utils.batch_space(self.node_space, num_nodes)
-        assert sampled_node_space is not None
-        if self.edge_space is not None and (num_nodes > 1 or num_edges == 1):
-            sampled_edge_space = gym.vector.utils.batch_space(
-                self.edge_space, num_edges
-            )
-        else:
-            sampled_edge_space = None
-
         if mask_type is not None:
             node_sample_kwargs = {mask_type: node_space_mask}
             edge_sample_kwargs = {mask_type: edge_space_mask}
         else:
             node_sample_kwargs = edge_sample_kwargs = {}
 
-        sampled_nodes = sampled_node_space.sample(**node_sample_kwargs)
-        self.node_space.sample()
-        sampled_edges = None
-        if sampled_edge_space is not None:
-            sampled_edges = sampled_edge_space.sample(**edge_sample_kwargs)
-            self.edge_space.sample()
+        # We need to reconstruct the batch node space each time as the num_nodes will change each time.
+        sample_batch_node_space = gym.vector.utils.batch_space(
+            self.node_space, num_nodes
+        )
+        sampled_nodes = sample_batch_node_space.sample(**node_sample_kwargs)
+        # The batch_space function deepcopies the node_space's np_random therefore to avoid generating the same samples each time
+        #   we need to get the updated np_random
+        self.node_space.np_random.random()
+
+        if num_nodes > 1 and num_edges >= 1 and self.edge_space is not None:
+            sample_batch_edge_space = gym.vector.utils.batch_space(
+                self.edge_space, num_edges
+            )
+
+            sampled_edges = sample_batch_edge_space.sample(**edge_sample_kwargs)
+            self.edge_space.np_random.random()
+        else:
+            sampled_edges = None
 
         sampled_edge_links = None
         if sampled_edges is not None and num_edges > 0:
