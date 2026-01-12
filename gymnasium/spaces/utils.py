@@ -385,20 +385,33 @@ def _unflatten_graph(space: Graph, x: GraphInstance) -> GraphInstance:
     The size of the outcome is actually not fixed, but determined based on the number of
     nodes and edges in the graph.
     """
+    flat_nodes = list(
+        gym.vector.utils.iterate(flatten_space(space.node_space), x.nodes)
+    )
+    unflat_nodes = [unflatten(space.node_space, flat_node) for flat_node in flat_nodes]
+    node_out = gym.vector.utils.create_empty_array(space.node_space, n=len(flat_nodes))
+    concat_unflat_nodes = gym.vector.utils.concatenate(
+        space.node_space, unflat_nodes, node_out
+    )
 
-    def _graph_unflatten(unflatten_space, unflatten_x):
-        result = None
-        if unflatten_space is not None and unflatten_x is not None:
-            if isinstance(unflatten_space, Box):
-                result = unflatten_x.reshape(-1, *unflatten_space.shape)
-            elif isinstance(unflatten_space, Discrete):
-                result = np.asarray(np.nonzero(unflatten_x))[-1, :]
-        return result
+    if x.edges is not None:
+        assert space.edge_space is not None
+        flat_edges = list(
+            gym.vector.utils.iterate(flatten_space(space.edge_space), x.edges)
+        )
+        unflat_edges = [
+            unflatten(space.edge_space, flat_node) for flat_node in flat_edges
+        ]
+        edge_out = gym.vector.utils.create_empty_array(
+            space.edge_space, n=len(unflat_edges)
+        )
+        concat_unflat_edges = gym.vector.utils.concatenate(
+            space.edge_space, unflat_edges, edge_out
+        )
+    else:
+        concat_unflat_edges = None
 
-    nodes = _graph_unflatten(space.node_space, x.nodes)
-    edges = _graph_unflatten(space.edge_space, x.edges)
-
-    return GraphInstance(nodes, edges, x.edge_links)
+    return GraphInstance(concat_unflat_nodes, concat_unflat_edges, x.edge_links)
 
 
 @unflatten.register(Text)

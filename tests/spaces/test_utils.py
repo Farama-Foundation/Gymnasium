@@ -155,7 +155,7 @@ def test_flatten_roundtripping(space):
 
     flattened_samples = [utils.flatten(space, sample) for sample in samples]
     unflattened_samples = [
-        utils.unflatten(space, sample) for sample in flattened_samples
+        utils.unflatten(space, flat_sample) for flat_sample in flattened_samples
     ]
 
     for original, roundtripped in zip(samples, unflattened_samples, strict=True):
