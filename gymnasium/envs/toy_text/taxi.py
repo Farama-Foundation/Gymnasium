@@ -429,28 +429,32 @@ class TaxiEnv(Env):
         self.imgs: dict[str, pygame.Surface] = {}
         self.taxi_orientation = "taxi_0"
 
-    def encode(self, taxi_row, taxi_col, pass_loc: Locations, dest_idx: Locations):
-        # (5) 5, 5, 4
-        i = taxi_row
-        i *= 5
-        i += taxi_col
-        i *= 5
-        i += pass_loc
-        i *= 4
-        i += dest_idx
-        return i
+    @staticmethod
+    def encode(
+        taxi_row: int, taxi_col: int, pass_loc: Locations, dest_idx: Locations
+    ) -> int:
+        """Returns an encoded state index from the state values."""
+        state_index = taxi_row
+        state_index *= 5
+        state_index += taxi_col
+        state_index *= 5
+        state_index += pass_loc
+        state_index *= 4
+        state_index += dest_idx
+        return state_index
 
-    def decode(self, i) -> tuple[int, int, Locations, Locations]:
-        out = []
-        out.append(Locations(i % 4))
-        i = i // 4
-        out.append(Locations(i % 5))
-        i = i // 5
-        out.append(i % 5)
-        i = i // 5
-        out.append(i)
-        assert 0 <= i < 5
-        return reversed(out)
+    @staticmethod
+    def decode(state_index: int) -> tuple[int, int, Locations, Locations]:
+        """Returns the state values represented by a state index."""
+        dest_idx = Locations(state_index % 4)
+        state_index = state_index // 4
+        pass_loc = Locations(state_index % 5)
+        state_index = state_index // 5
+        taxi_col = state_index % 5
+        state_index = state_index // 5
+        taxi_row = state_index
+        assert 0 <= taxi_row < 5
+        return taxi_row, taxi_col, pass_loc, dest_idx
 
     def action_mask(self, state: int):
         """Computes an action mask for the action space using the state information."""
