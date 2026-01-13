@@ -84,7 +84,7 @@ class Actions(IntEnum):
     DROPOFF = 5
 
 
-class TaxiEnv(Env):
+class TaxiEnv(Env[int, int]):
     """
     The Taxi Problem involves navigating to passengers in a grid world, picking them up and dropping them
     off at one of four locations.
@@ -244,7 +244,9 @@ class TaxiEnv(Env):
     action_space: spaces.Space[int] = spaces.Discrete(len(Actions))
     observation_space: spaces.Space[int] = spaces.Discrete(num_states)
 
-    def _pickup(self, taxi_loc, pass_idx: Locations) -> tuple[Locations, float]:
+    def _pickup(
+        self, taxi_loc: tuple[int, int], pass_idx: Locations
+    ) -> tuple[Locations, float]:
         """Computes the new location and reward for pickup action."""
         if pass_idx != Locations.TAXI and taxi_loc == self.locs[pass_idx]:
             new_pass_idx = Locations.TAXI
@@ -256,7 +258,7 @@ class TaxiEnv(Env):
         return new_pass_idx, new_reward
 
     def _dropoff(
-        self, taxi_loc, pass_idx: Locations, dest_idx: Locations
+        self, taxi_loc: tuple[int, int], pass_idx: Locations, dest_idx: Locations
     ) -> tuple[Locations, float, bool]:
         """Computes the new location and reward for return dropoff action."""
         if (taxi_loc == self.locs[dest_idx]) and pass_idx == Locations.TAXI:
@@ -394,6 +396,9 @@ class TaxiEnv(Env):
         is_rainy: bool = False,
         fickle_passenger: bool = False,
     ):
+        self.s: int  # the direct state of the sim
+        self.lastaction: int | None = None
+
         self.desc = np.asarray(MAP, dtype="c")
 
         self.locs = [(0, 0), (0, 4), (4, 0), (4, 3)]
@@ -406,7 +411,7 @@ class TaxiEnv(Env):
         self.max_col = num_columns - 1
         self.initial_state_distrib = np.zeros(num_states)
         num_actions = len(Actions)
-        self.P = {
+        self.P: dict[int, dict[int, list[tuple[float, int, float, bool]]]] = {
             state: {action: [] for action in range(num_actions)}
             for state in range(num_states)
         }
@@ -420,8 +425,8 @@ class TaxiEnv(Env):
         self.fickle_step = self.fickle_passenger and self.np_random.random() < 0.3
 
         # pygame utils
-        self.window = None
-        self.clock = None
+        self.window: pygame.Surface | None = None
+        self.clock: pygame.time.Clock | None = None
         self.cell_size = (
             WINDOW_SIZE[0] / self.desc.shape[1],
             WINDOW_SIZE[1] / self.desc.shape[0],
@@ -456,7 +461,7 @@ class TaxiEnv(Env):
         assert 0 <= taxi_row < 5
         return taxi_row, taxi_col, pass_loc, dest_idx
 
-    def action_mask(self, state: int):
+    def action_mask(self, state: int) -> NDArray[np.int8]:
         """Computes an action mask for the action space using the state information."""
         mask = np.zeros(len(Actions), dtype=np.int8)
         taxi_row, taxi_col, pass_loc, dest_idx = self.decode(state)
@@ -473,7 +478,7 @@ class TaxiEnv(Env):
             mask[Actions.DROPOFF] = 1
         return mask
 
-    def step(self, a):
+    def step(self, a: int) -> tuple[int, float, bool, bool, dict[str, Any]]:
         transitions = self.P[self.s][a]
         if len(transitions) > 1:
             probabilities = [t[0] for t in transitions]
@@ -509,8 +514,8 @@ class TaxiEnv(Env):
         self,
         *,
         seed: int | None = None,
-        options: dict | None = None,
-    ):
+        options: dict[str, Any] | None = None,
+    ) -> tuple[int, dict[str, Any]]:
         super().reset(seed=seed)
         self.s = categorical_sample(self.initial_state_distrib, self.np_random)
         self.lastaction = None
@@ -546,7 +551,7 @@ class TaxiEnv(Env):
             "background": load_image("taxi_background.png"),
         }
 
-    def render(self):
+    def render(self) -> NDArray[np.int32] | str | None:  # type: ignore[override]
         if self.render_mode is None:
             assert self.spec is not None
             gym.logger.warn(
@@ -560,7 +565,7 @@ class TaxiEnv(Env):
         else:  # self.render_mode in {"human", "rgb_array"}:
             return self._render_gui(self.render_mode)
 
-    def _render_gui(self, mode):
+    def _render_gui(self, mode: str) -> NDArray[np.int32] | None:
         try:
             import pygame  # dependency to pygame only if rendering with human
         except ImportError as e:
@@ -651,19 +656,19 @@ class TaxiEnv(Env):
                 np.array(pygame.surfarray.pixels3d(self.window)), axes=(1, 0, 2)
             )
 
-    def get_surf_loc(self, map_loc):
+    def get_surf_loc(self, map_loc: tuple[int, int]) -> tuple[float, float]:
         return (map_loc[1] * 2 + 1) * self.cell_size[0], (
             map_loc[0] + 1
         ) * self.cell_size[1]
 
-    def _render_text(self):
+    def _render_text(self) -> str:
         desc = self.desc.copy().tolist()
         outfile = StringIO()
 
         out = [[c.decode("utf-8") for c in line] for line in desc]
         taxi_row, taxi_col, pass_idx, dest_idx = self.decode(self.s)
 
-        def ul(x):
+        def ul(x: str) -> str:
             return "_" if x == " " else x
 
         if pass_idx != Locations.TAXI:
@@ -710,7 +715,7 @@ class TaxiEnv(Env):
         self.taxi_orientation = state.taxi_orientation
         self.np_random.bit_generator.state = state.np_random_state
 
-    def close(self):
+    def close(self) -> None:
         if self.window is not None:
             import pygame
 
