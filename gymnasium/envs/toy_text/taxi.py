@@ -471,27 +471,28 @@ class TaxiEnv(Env):
 
     def step(self, a):
         transitions = self.P[self.s][a]
-        i = categorical_sample([t[0] for t in transitions], self.np_random)
+        if len(transitions) > 1:
+            probabilities = [t[0] for t in transitions]
+            i = categorical_sample(probabilities, self.np_random)
+        else:
+            i = 0
         p, s, r, t = transitions[i]
         self.lastaction = a
 
-        shadow_row, shadow_col, shadow_pass_loc, shadow_dest_idx = self.decode(self.s)
-        taxi_row, taxi_col, pass_loc, _ = self.decode(s)
-
-        # If we are in the fickle step, the passenger has been in the vehicle for at least a step and this step the
-        # position changed
-        if (
-            self.fickle_passenger
-            and self.fickle_step
-            and shadow_pass_loc == Locations.TAXI
-            and (taxi_row != shadow_row or taxi_col != shadow_col)
-        ):
-            self.fickle_step = False
-            possible_destinations = [
-                i for i in range(len(Locations) - 1) if i != shadow_dest_idx
-            ]
-            dest_idx = self.np_random.choice(possible_destinations)
-            s = self.encode(taxi_row, taxi_col, pass_loc, dest_idx)
+        # If we are in the fickle step, the passenger has been in the vehicle for at
+        # least a step and this step the position changed
+        if self.fickle_step:
+            prev_row, prev_col, prev_pass_loc, prev_dest_idx = self.decode(self.s)
+            taxi_row, taxi_col, pass_loc, _ = self.decode(s)
+            if prev_pass_loc == Locations.TAXI and (
+                taxi_row != prev_row or taxi_col != prev_col
+            ):
+                self.fickle_step = False
+                possible_destinations = [
+                    i for i in range(len(Locations) - 1) if i != prev_dest_idx
+                ]
+                dest_idx = self.np_random.choice(possible_destinations)
+                s = self.encode(taxi_row, taxi_col, pass_loc, dest_idx)
 
         self.s = s
 
