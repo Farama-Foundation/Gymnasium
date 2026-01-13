@@ -13,7 +13,7 @@ from numpy.typing import NDArray
 import gymnasium as gym
 from gymnasium import Env, spaces, utils
 from gymnasium.envs.toy_text.utils import categorical_sample
-from gymnasium.error import DependencyNotInstalled
+from gymnasium.error import DependencyNotInstalled, UnsupportedMode
 
 if TYPE_CHECKING:
     import pygame
@@ -247,15 +247,15 @@ class TaxiEnv(Env[int, int]):
     def _pickup(
         self, taxi_loc: tuple[int, int], pass_idx: Locations
     ) -> tuple[Locations, float]:
-        """Computes the new location and reward for pickup action."""
+        """Attempts a pickup action, returning the new passenger location and reward."""
         if pass_idx != Locations.TAXI and taxi_loc == self.locs[pass_idx]:
             new_pass_idx = Locations.TAXI
-            new_reward = self.PENALTY_STEP
-        else:  # passenger not at location
+            reward = self.PENALTY_STEP
+        else:  # passenger in taxi or not at location
             new_pass_idx = pass_idx
-            new_reward = self.PENALTY_ILLEGAL_PICKUP_DROPOFF
+            reward = self.PENALTY_ILLEGAL_PICKUP_DROPOFF
 
-        return new_pass_idx, new_reward
+        return new_pass_idx, reward
 
     def _dropoff(
         self, taxi_loc: tuple[int, int], pass_idx: Locations, dest_idx: Locations
@@ -399,21 +399,10 @@ class TaxiEnv(Env[int, int]):
         self.s: int  # the direct state of the sim
         self.lastaction: int | None = None
 
-        self.desc = np.asarray(MAP, dtype="c")
-
-        self.locs = [(0, 0), (0, 4), (4, 0), (4, 3)]
-        self.locs_colors = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255)]
-
-        num_states = 500
-        num_rows = 5
-        num_columns = 5
-        self.max_row = num_rows - 1
-        self.max_col = num_columns - 1
-        self.initial_state_distrib = np.zeros(num_states)
         num_actions = len(Actions)
         self.P: dict[int, dict[int, list[tuple[float, int, float, bool]]]] = {
             state: {action: [] for action in range(num_actions)}
-            for state in range(num_states)
+            for state in range(self.num_states)
         }
 
         self._build_movements()
@@ -478,15 +467,15 @@ class TaxiEnv(Env[int, int]):
             mask[Actions.DROPOFF] = 1
         return mask
 
-    def step(self, a: int) -> tuple[int, float, bool, bool, dict[str, Any]]:
-        transitions = self.P[self.s][a]
+    def step(self, action: int) -> tuple[int, float, bool, bool, dict[str, Any]]:
+        transitions = self.P[self.s][action]
         if len(transitions) > 1:
             probabilities = [t[0] for t in transitions]
             i = categorical_sample(probabilities, self.np_random)
         else:
             i = 0
         p, s, r, t = transitions[i]
-        self.lastaction = a
+        self.lastaction = action
 
         # If we are in the fickle step, the passenger has been in the vehicle for at
         # least a step and this step the position changed
@@ -517,7 +506,7 @@ class TaxiEnv(Env[int, int]):
         options: dict[str, Any] | None = None,
     ) -> tuple[int, dict[str, Any]]:
         super().reset(seed=seed)
-        self.s = categorical_sample(self.initial_state_distrib, self.np_random)
+        self.s = int(categorical_sample(self.initial_state_distrib, self.np_random))
         self.lastaction = None
         self.fickle_step = self.fickle_passenger and self.np_random.random() < 0.3
         self.taxi_orientation = "taxi_0"
@@ -559,11 +548,13 @@ class TaxiEnv(Env[int, int]):
                 "You can specify the render_mode at initialization, "
                 f'e.g. gym.make("{self.spec.id}", render_mode="rgb_array")'
             )
-            return
+            return None
         elif self.render_mode == "ansi":
             return self._render_text()
-        else:  # self.render_mode in {"human", "rgb_array"}:
+        elif self.render_mode in {"human", "rgb_array"}:
             return self._render_gui(self.render_mode)
+        msg = f"Unknown render mode: {self.render_mode}"
+        raise UnsupportedMode(msg)
 
     def _render_gui(self, mode: str) -> NDArray[np.int32] | None:
         try:
@@ -651,10 +642,11 @@ class TaxiEnv(Env[int, int]):
             pygame.event.pump()
             pygame.display.update()
             self.clock.tick(self.metadata["render_fps"])
-        elif mode == "rgb_array":
-            return np.transpose(
-                np.array(pygame.surfarray.pixels3d(self.window)), axes=(1, 0, 2)
-            )
+            return None
+        # "rgb_array":
+        return np.transpose(
+            np.array(pygame.surfarray.pixels3d(self.window)), axes=(1, 0, 2)
+        )
 
     def get_surf_loc(self, map_loc: tuple[int, int]) -> tuple[float, float]:
         return (map_loc[1] * 2 + 1) * self.cell_size[0], (
