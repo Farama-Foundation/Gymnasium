@@ -271,93 +271,119 @@ class TaxiEnv(Env):
 
         return new_pass_idx, new_reward, new_terminated
 
-    def _build_dry_transitions(self, row, col, pass_idx, dest_idx, action):
-        """Computes the next action for a state (row, col, pass_idx, dest_idx) and action."""
-        state = self.encode(row, col, pass_idx, dest_idx)
+    def _build_movements(self) -> None:
+        """Computes movements used in transitions and masks."""
+        max_row = 4
+        max_col = 4
+        desc = self.desc
+        # row, col, move direction, new position (row, col)
+        self._movements = np.zeros((max_row + 1, max_col + 1, 4, 2), dtype=int)
 
-        taxi_loc = (row, col)
-        new_row, new_col, new_pass_idx = row, col, pass_idx
-        reward = -1  # default reward when there is no pickup/dropoff
-        terminated = False
+        # Create coordinate grids for vectorized operations
+        rows = np.arange(max_row + 1)[:, np.newaxis]  # shape (5, 1)
+        cols = np.arange(max_col + 1)[np.newaxis, :]  # shape (1, 5)
 
-        if action == Actions.MOVE_SOUTH:
-            new_row = min(row + 1, self.max_row)
-        elif action == Actions.MOVE_NORTH:
-            new_row = max(row - 1, 0)
-        if action == Actions.MOVE_EAST and self.desc[1 + row, 2 * col + 2] == PASSABLE:
-            new_col = min(col + 1, self.max_col)
-        elif action == Actions.MOVE_WEST and self.desc[1 + row, 2 * col] == PASSABLE:
-            new_col = max(col - 1, 0)
-        elif action == Actions.PICKUP:
-            new_pass_idx, reward = self._pickup(taxi_loc, new_pass_idx, reward)
-        elif action == Actions.DROPOFF:
-            new_pass_idx, reward, terminated = self._dropoff(
-                taxi_loc, new_pass_idx, dest_idx, reward
-            )
+        # All movements start at the current row or col
+        self._movements[:, :, :, 0] = rows[:, :, np.newaxis]
+        self._movements[:, :, :, 1] = cols[:, :, np.newaxis]
 
-        new_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
-        self.P[state][action].append((1.0, new_state, reward, terminated))
+        # Check wall openings for all positions at once
+        open_north = (desc[rows, 2 * cols + 1] != WALL_HORIZONTAL).astype(int)
+        open_south = (desc[rows + 2, 2 * cols + 1] != WALL_HORIZONTAL).astype(int)
+        open_east = (desc[rows + 1, 2 * cols + 2] != WALL_VERTICAL).astype(int)
+        open_west = (desc[rows + 1, 2 * cols] != WALL_VERTICAL).astype(int)
 
-    def _calc_new_position(self, row, col, movement, offset=0):
-        """Calculates the new position for a row and col to the movement."""
-        dr, dc = movement
-        new_row = max(0, min(row + dr, self.max_row))
-        new_col = max(0, min(col + dc, self.max_col))
-        if self.desc[1 + new_row, 2 * new_col + offset] == PASSABLE:
-            return new_row, new_col
-        else:  # Default to current position if not traversable
-            return row, col
+        # If a space is open, move there
+        self._movements[:, :, Actions.MOVE_EAST, 1] += open_east
+        self._movements[:, :, Actions.MOVE_WEST, 1] -= open_west
+        self._movements[:, :, Actions.MOVE_NORTH, 0] -= open_north
+        self._movements[:, :, Actions.MOVE_SOUTH, 0] += open_south
 
-    def _build_rainy_transitions(self, row, col, pass_idx, dest_idx, action):
+    def _build_transitions(self, is_rainy: bool) -> None:
         """Computes the next action for a state (row, col, pass_idx, dest_idx) and action for `is_rainy`."""
-        state = self.encode(row, col, pass_idx, dest_idx)
-
-        taxi_loc = left_pos = right_pos = (row, col)
-        new_row, new_col, new_pass_idx = row, col, pass_idx
-        reward = -1  # default reward when there is no pickup/dropoff
-        terminated = False
-
-        moves = {
-            0: ((1, 0), (0, -1), (0, 1)),  # Down
-            1: ((-1, 0), (0, -1), (0, 1)),  # Up
-            2: ((0, 1), (1, 0), (-1, 0)),  # Right
-            3: ((0, -1), (1, 0), (-1, 0)),  # Left
-        }
-
-        # Check if movement is allowed
-        if (
-            action in {Actions.MOVE_SOUTH, Actions.MOVE_NORTH}
-            or (
-                action == Actions.MOVE_EAST
-                and self.desc[1 + row, 2 * col + 2] == PASSABLE
-            )
-            or (action == Actions.MOVE_WEST and self.desc[1 + row, 2 * col] == PASSABLE)
+        # mapping of left and right actions by action
+        left = [
+            Actions.MOVE_EAST,
+            Actions.MOVE_WEST,
+            Actions.MOVE_NORTH,
+            Actions.MOVE_SOUTH,
+        ]
+        right = [
+            Actions.MOVE_WEST,
+            Actions.MOVE_EAST,
+            Actions.MOVE_SOUTH,
+            Actions.MOVE_NORTH,
+        ]
+        for row, col, pass_idx, dest_idx in itertools.product(
+            range(self.max_row + 1),
+            range(self.max_col + 1),
+            Locations,
+            Locations,
         ):
-            dr, dc = moves[action][0]
-            new_row = max(0, min(row + dr, self.max_row))
-            new_col = max(0, min(col + dc, self.max_col))
+            if dest_idx == Locations.TAXI:
+                continue
 
-            left_pos = self._calc_new_position(row, col, moves[action][1], offset=2)
-            right_pos = self._calc_new_position(row, col, moves[action][2])
-        elif action == Actions.PICKUP:
-            new_pass_idx, reward = self._pickup(taxi_loc, new_pass_idx, reward)
-        elif action == Actions.DROPOFF:
-            new_pass_idx, reward, terminated = self._dropoff(
-                taxi_loc, new_pass_idx, dest_idx, reward
-            )
-        intended_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
+            state = self.encode(row, col, pass_idx, dest_idx)
+            for action in Actions:
+                new_row, new_col, new_pass_idx = row, col, pass_idx
+                reward = (
+                    self.PENALTY_STEP
+                )  # default reward when there is no pickup/dropoff
+                term = False
 
-        if action <= 3:
-            left_state = self.encode(left_pos[0], left_pos[1], new_pass_idx, dest_idx)
-            right_state = self.encode(
-                right_pos[0], right_pos[1], new_pass_idx, dest_idx
-            )
+                if action in {
+                    Actions.MOVE_SOUTH,
+                    Actions.MOVE_NORTH,
+                    Actions.MOVE_EAST,
+                    Actions.MOVE_WEST,
+                }:
+                    new_row, new_col = self._movements[row, col, action]
+                elif action == Actions.PICKUP:
+                    new_pass_idx, reward = self._pickup((row, col), new_pass_idx)
+                elif action == Actions.DROPOFF:
+                    new_pass_idx, reward, term = self._dropoff(
+                        (row, col), new_pass_idx, dest_idx
+                    )
+                new_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
 
-            self.P[state][action].append((0.8, intended_state, -1, terminated))
-            self.P[state][action].append((0.1, left_state, -1, terminated))
-            self.P[state][action].append((0.1, right_state, -1, terminated))
-        else:
-            self.P[state][action].append((1.0, intended_state, reward, terminated))
+                # If it is rainy, veering left and right is possible only if the straight
+                # ahead action causes a move.
+                if is_rainy and (row != new_row or col != new_col):
+                    l_row, l_col = self._movements[row, col, left[action]]
+                    r_row, r_col = self._movements[row, col, right[action]]
+                    left_state = self.encode(l_row, l_col, new_pass_idx, dest_idx)
+                    right_state = self.encode(r_row, r_col, new_pass_idx, dest_idx)
+
+                    prob_succeed = 0.8
+                    prob_fail = 0.1
+                    transitions = [
+                        (prob_succeed, new_state, self.PENALTY_STEP, term),
+                        (prob_fail, left_state, self.PENALTY_STEP, term),
+                        (prob_fail, right_state, self.PENALTY_STEP, term),
+                    ]
+                else:
+                    probability = 1.0
+                    transitions = [(probability, new_state, reward, term)]
+                self.P[state][action].extend(transitions)
+
+    def _build_masks(self) -> None:
+        """Computes movement part of actions masks."""
+        n_rows, n_cols, _, _ = self._movements.shape
+
+        # create coordinate grids for broadcasting
+        self._masks = np.zeros((n_rows, n_cols, 4), dtype=np.int8)
+        row_coords = np.arange(n_rows)[
+            :, np.newaxis, np.newaxis
+        ]  # shape (n_rows, 1, 1)
+        col_coords = np.arange(n_cols)[
+            np.newaxis, :, np.newaxis
+        ]  # shape (1, n_cols, 1)
+
+        # if a movement gives the same location, the move is not allowed
+        self._masks = (
+            (self._movements[:, :, :, 0] != row_coords)
+            | (self._movements[:, :, :, 1] != col_coords)
+        ).astype(np.int8)
 
     def __init__(
         self,
@@ -367,7 +393,7 @@ class TaxiEnv(Env):
     ):
         self.desc = np.asarray(MAP, dtype="c")
 
-        self.locs = locs = [(0, 0), (0, 4), (4, 0), (4, 3)]
+        self.locs = [(0, 0), (0, 4), (4, 0), (4, 3)]
         self.locs_colors = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255)]
 
         num_states = 500
@@ -382,27 +408,9 @@ class TaxiEnv(Env):
             for state in range(num_states)
         }
 
-        for row in range(num_rows):
-            for col in range(num_columns):
-                for pass_idx in range(len(locs) + 1):  # +1 for being inside taxi
-                    for dest_idx in range(len(locs)):
-                        for action in range(num_actions):
-                            if is_rainy:
-                                self._build_rainy_transitions(
-                                    row,
-                                    col,
-                                    pass_idx,
-                                    dest_idx,
-                                    action,
-                                )
-                            else:
-                                self._build_dry_transitions(
-                                    row,
-                                    col,
-                                    pass_idx,
-                                    dest_idx,
-                                    action,
-                                )
+        self._build_movements()
+        self._build_masks()
+        self._build_transitions(is_rainy)
 
         self.render_mode = render_mode
         self.fickle_passenger = fickle_passenger
@@ -450,14 +458,10 @@ class TaxiEnv(Env):
         """Computes an action mask for the action space using the state information."""
         mask = np.zeros(len(Actions), dtype=np.int8)
         taxi_row, taxi_col, pass_loc, dest_idx = self.decode(state)
-        if taxi_row < 4:
-            mask[Actions.MOVE_SOUTH] = 1
-        if taxi_row > 0:
-            mask[Actions.MOVE_NORTH] = 1
-        if taxi_col < 4 and self.desc[taxi_row + 1, 2 * taxi_col + 2] == PASSABLE:
-            mask[Actions.MOVE_EAST] = 1
-        if taxi_col > 0 and self.desc[taxi_row + 1, 2 * taxi_col] == PASSABLE:
-            mask[Actions.MOVE_WEST] = 1
+        # Copy the movement part from the pre-computed masks
+        mask[:4] = self._masks[taxi_row, taxi_col, :].copy()
+
+        # Add the pickup, dropoff part
         if pass_loc != Locations.TAXI and (taxi_row, taxi_col) == self.locs[pass_loc]:
             mask[Actions.PICKUP] = 1
         if pass_loc == Locations.TAXI and (
