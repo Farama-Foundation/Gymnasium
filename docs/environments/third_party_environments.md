@@ -275,7 +275,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![GitHub stars](https://img.shields.io/github/stars/hs-kempten/relign)
 
   An environment for active alignments of lens systems with reinforcement learning using high-dimensional optical sensor output as observation.
-  
+
 - [safe-control-gym: Evaluate safety of RL algorithms](https://github.com/utiasDSL/safe-control-gym)
 
   Evaluate safety, robustness and generalization via PyBullet based CartPole and Quadrotor environments—with [CasADi](https://web.casadi.org) (symbolic) *a priori* dynamics and constraints.
