@@ -86,21 +86,21 @@ class Actions(IntEnum):
 
 class TaxiEnv(Env[int, int]):
     """
-    The Taxi Problem involves navigating to passengers in a grid world, picking them up and dropping them
-    off at one of four locations.
+    The Taxi Problem involves navigating in a grid world to pick up passengers
+    and drop them off at one of four locations.
 
     ## Description
     There are four designated pick-up and drop-off locations (Red, Green, Yellow and Blue) in the
-    5x5 grid world. The taxi starts off at a random square and the passenger at one of the
+    5x5 grid world. The taxi starts at a random square and the passenger starts at one of the
     designated locations.
 
-    The goal is move the taxi to the passenger's location, pick up the passenger,
-    move to the passenger's desired destination, and
+    The goal is to move the taxi to the passenger's location, pick up the passenger,
+    and move to the passenger's desired destination. Once there, the taxi must
     drop off the passenger. Once the passenger is dropped off, the episode ends.
 
-    The player receives positive rewards for successfully dropping-off the passenger at the correct
-    location. Negative rewards for incorrect attempts to pick-up/drop-off passenger and
-    for each step where another reward is not received.
+    The player receives positive rewards for successfully dropping off the passenger at the
+    correct location. Penalties are received for illegal pickup/dropoff attempts, and
+    for each step where another reward or penalty is not received.
 
     Map:
 
@@ -116,22 +116,26 @@ class TaxiEnv(Env[int, int]):
     by Tom Dietterich [<a href="#taxi_ref">1</a>].
 
     ## Action Space
-    The action shape is `(1,)` in the range `{0, 5}` indicating
-    which direction to move the taxi or to pickup/drop off passengers.
+    The action is a scalar with values in the set `{0, 1, 2, 3, 4, 5}` indicating
+    either which direction to move the taxi, or whether to pickup/dropoff a passenger.
 
     - 0: Move south (down)
     - 1: Move north (up)
     - 2: Move east (right)
     - 3: Move west (left)
-    - 4: Pickup passenger
-    - 5: Drop off passenger
+    - 4: Pick up passenger (only valid when taxi and passenger at same location)
+    - 5: Drop off passenger (only valid passenger in taxi and at a colored location)
+
+    A valid pickup action changes the passenger location to the Taxi.
+    A valid dropoff location changes the passenger location from the Taxi to the space
+    the taxi is in. If this space is the destination the episode ends.
 
     ## Observation Space
     There are 500 discrete states since there are 25 taxi positions, 5 possible
     locations of the passenger (including the case when the passenger is in the
     taxi), and 4 destination locations.
 
-    Destination on the map are represented with the first letter of the color.
+    Each destination on the map is represented by the first letter of the color.
 
     Passenger locations:
     - 0: Red
@@ -146,51 +150,59 @@ class TaxiEnv(Env[int, int]):
     - 2: Yellow
     - 3: Blue
 
-    An observation is returned as an `int()` that encodes the corresponding state, calculated by
-    `((taxi_row * 5 + taxi_col) * 5 + passenger_location) * 4 + destination`
+    The environment returns each observation as an `int` that encodes the corresponding state,
+    calculated by `((taxi_row * 5 + taxi_col) * 5 + passenger_location) * 4 + destination`
 
-    Note that there are 400 states that can actually be reached during an
-    episode. The missing states correspond to situations in which the passenger
-    is at the same location as their destination, as this typically signals the
-    end of an episode. Four additional states can be observed right after a
-    successful episodes, when both the passenger and the taxi are at the destination.
-    This gives a total of 404 reachable discrete states.
+    Note that there are 400 states that can be observed during a non-terminating
+    step of an episode. The missing states correspond to situations in which the passenger
+    is at the same location as their destination. Four of these states are terminal
+    states that end the episode, with the taxi also at the destination, having just dropped
+    off the passenger. The remaining states are when the passenger is at the destination
+    but the taxi is somewhere else. These cannot be reached as they would require the taxi
+    to move after the episode ends.
+    Thus there are a total of 404 reachable discrete states (including the 4 terminal states).
 
     ## Starting State
-    The initial state is sampled uniformly from the possible states
-    where the passenger is neither at their destination nor inside the taxi.
-    There are 300 possible initial states: 25 taxi positions, 4 passenger locations (excluding inside the taxi)
-    and 3 destinations (excluding the passenger's current location).
+    The initial state is sampled uniformly from the possible states where the passenger is
+    neither at their destination nor inside the taxi. This gives 300 possible initial states,
+    consisting of: 25 taxi positions, 4 passenger locations (excluding inside the taxi), and
+    3 destinations (excluding the passenger's current location).
 
     ## Rewards
-    - -1 per step unless other reward is triggered.
-    - +20 delivering passenger.
-    - -10  executing "pickup" and "drop-off" actions illegally.
+    - -1 for each step unless another reward/penalty is triggered.
+    - +20 for delivering the passenger to their destination.
+    - -10 for executing the "pickup" or "dropoff" action illegally. The penalty is triggered by:
+        attempting to dropoff at a location that is not one of the colored drop-off locations,
+        attempting to dropoff when the passenger is not in the taxi, or attempting to pickup
+        when there is no passenger at the taxi's location. Note that dropping off the passenger
+        at a valid, but wrong location does not trigger this penalty.
 
-    An action that results a noop, like moving into a wall, will incur the time step
-    penalty. Noops can be avoided by sampling the `action_mask` returned in `info`.
+    An action that results in a no-op, like moving into a wall, will incur the time step
+    penalty. No-ops can be avoided by sampling the `action_mask` returned in `info`.
 
     ## Episode End
-    The episode ends if the following happens:
+    The episode ends if any of the following happen:
 
     - Termination:
-            1. The taxi drops off the passenger.
+        1. The taxi drops off the passenger.
 
     - Truncation (when using the time_limit wrapper):
-            1. The length of the episode is 200.
+        1. The length of the episode is 200.
 
     ## Information
 
     `step()` and `reset()` return a dict with the following keys:
-    - p - transition probability for the state.
-    - action_mask - if actions will cause a transition to a new state.
+    - prob - transition probability for the state.
+    - action_mask - indicates whether each action will cause a transition to a different state.
 
     For some cases, taking an action will have no effect on the state of the episode.
-    In v0.25.0, ``info["action_mask"]`` contains a np.ndarray for each of the actions specifying
-    if the action will change the state.
+    In v3, ``info["action_mask"]`` contains an np.ndarray specifying whether each
+    action will change the state (1 for changes state, 0 otherwise).
 
-    To sample a modifying action, use ``action = env.action_space.sample(info["action_mask"])``
-    Or with a Q-value based algorithm ``action = np.argmax(q_values[obs, np.where(info["action_mask"] == 1)[0]])``.
+    To sample an action that modifies the state, use:
+    ``action = env.action_space.sample(info["action_mask"])``
+    Or with a Q-value based algorithm:
+    ``action = np.argmax(q_values[obs, np.where(info["action_mask"] == 1)[0]])``.
 
     ## Arguments
 
@@ -199,23 +211,27 @@ class TaxiEnv(Env[int, int]):
     gym.make('Taxi-v3')
     ```
 
-    <a id="is_raining"></a>`is_raining=False`: If True the cab will move in intended direction with
-    probability of 80% else will move in either left or right of target direction with
-    equal probability of 10% in both directions.
+    <a id="is_rainy"></a>`is_rainy=False`: If True, the taxi will move in the intended direction
+    with a probability of 80%; otherwise it will move to the left or right of the target direction
+    with a 10% probability for each direction.
 
-    <a id="fickle_passenger"></a>`fickle_passenger=False`: If true the passenger has a 30% chance of changing
-    destinations when the cab has moved one square away from the passenger's source location.  Passenger fickleness
-    only happens on the first pickup and successful movement.  If the passenger is dropped off at the source location
-    and picked up again, it is not triggered again.
+    <a id="fickle_passenger"></a>`fickle_passenger=False`: If True, the passenger has a 30% chance
+    of changing its destination after the taxi moves with the passenger inside. This behavior
+    only happens on the first successful movement after pickup. If the passenger is dropped off
+    and then picked up again, the fickleness is not triggered again in the same episode.
 
     ## References
-    <a id="taxi_ref"></a>[1] T. G. Dietterich, “Hierarchical Reinforcement Learning with the MAXQ Value Function Decomposition,”
-    Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, doi: 10.1613/jair.639.
+    <a id="taxi_ref"></a>[1] T. G. Dietterich, “Hierarchical Reinforcement Learning with the MAXQ
+    Value Function Decomposition,” Journal of Artificial Intelligence Research, vol. 13,
+    pp. 227–303, Nov. 2000, doi: 10.1613/jair.639.
 
     ## Version History
-    * v3: Map Correction + Cleaner Domain Description, v0.25.0 action masking added to the reset and step information
-        - In Gymnasium `1.2.0` the `is_rainy` and `fickle_passenger` arguments were added to align with Dietterich, 2000
-    * v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.
+    * v3: Map Correction + Cleaner Domain Description. In Gymnasium v0.25.0 action masking added
+      to the reset and step information
+        - In Gymnasium `1.2.0`, the `is_rainy` and `fickle_passenger` arguments were added to
+          align with Dietterich, 2000
+    * v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout,
+      Update Taxi reward threshold.
     * v1: Remove (3,2) from locs, add passidx<4 check
     * v0: Initial version release
     """
