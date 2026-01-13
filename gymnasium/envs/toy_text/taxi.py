@@ -1,6 +1,9 @@
+from collections.abc import Mapping
 from contextlib import closing
+from dataclasses import dataclass
 from io import StringIO
 from os import path
+from typing import Annotated, Any
 
 import numpy as np
 
@@ -19,6 +22,34 @@ MAP = [
     "+---------+",
 ]
 WINDOW_SIZE = (550, 350)
+
+
+@dataclass
+class TaxiState:
+    """Represents the complete state of a Taxi environment episode."""
+
+    s: Annotated[
+        int,
+        """Encoded representation of the current locations of the taxi and the
+        passenger as well as the passenger's current destination.""",
+    ]
+    lastaction: Annotated[
+        int | None,
+        """The last action taken in the episode.
+        This is None at the start of the episode.""",
+    ]
+    fickle_step: Annotated[
+        bool,
+        """Whether the passenger will change destinations after the taxi
+        moves one step with the passenger inside.""",
+    ]
+    taxi_orientation: Annotated[
+        str,
+        """The image to use for the taxi facing.
+        This is one of 'taxi_0', 'taxi_1', 'taxi_2', 'taxi_3'
+        Used for rendering.""",
+    ]
+    np_random_state: Annotated[Mapping[str, Any], """The numpy random number state."""]
 
 
 class TaxiEnv(Env):
@@ -621,6 +652,24 @@ class TaxiEnv(Env):
 
         with closing(outfile):
             return outfile.getvalue()
+
+    def clone_state(self) -> TaxiState:
+        """Returns a copy of the current episode state."""
+        return TaxiState(
+            s=self.s,
+            lastaction=self.lastaction,
+            fickle_step=self.fickle_step,
+            taxi_orientation=self.taxi_orientation,
+            np_random_state=self.np_random.bit_generator.state,
+        )
+
+    def restore_state(self, state: TaxiState) -> None:
+        """Restores the environment to a previously saved state."""
+        self.s = state.s
+        self.lastaction = state.lastaction
+        self.fickle_step = state.fickle_step
+        self.taxi_orientation = state.taxi_orientation
+        self.np_random.bit_generator.state = state.np_random_state
 
     def close(self):
         if self.window is not None:
