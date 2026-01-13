@@ -1,11 +1,14 @@
+import itertools
 from collections.abc import Mapping
 from contextlib import closing
 from dataclasses import dataclass
+from enum import IntEnum
 from io import StringIO
 from os import path
 from typing import Annotated, Any
 
 import numpy as np
+from numpy.typing import NDArray
 
 import gymnasium as gym
 from gymnasium import Env, spaces, utils
@@ -22,6 +25,11 @@ MAP = [
     "+---------+",
 ]
 WINDOW_SIZE = (550, 350)
+
+# MAP character constants
+WALL_VERTICAL = b"|"
+WALL_HORIZONTAL = b"-"
+PASSABLE = b":"
 
 
 @dataclass
@@ -50,6 +58,27 @@ class TaxiState:
         Used for rendering.""",
     ]
     np_random_state: Annotated[Mapping[str, Any], """The numpy random number state."""]
+
+
+class Locations(IntEnum):
+    """Possible locations for the passenger."""
+
+    RED = 0
+    GREEN = 1
+    YELLOW = 2
+    BLUE = 3
+    TAXI = 4
+
+
+class Actions(IntEnum):
+    """Possible actions the agent can take."""
+
+    MOVE_SOUTH = 0
+    MOVE_NORTH = 1
+    MOVE_EAST = 2
+    MOVE_WEST = 3
+    PICKUP = 4
+    DROPOFF = 5
 
 
 class TaxiEnv(Env):
@@ -193,31 +222,52 @@ class TaxiEnv(Env):
         "render_fps": 4,
     }
 
-    def _pickup(self, taxi_loc, pass_idx, reward):
+    initial_state_distrib: NDArray[np.float64]
+
+    REWARD_COMPLETE = 20.0
+    PENALTY_STEP = -1.0
+    PENALTY_ILLEGAL_PICKUP_DROPOFF = -10.0
+
+    max_row = 4
+    max_col = 4
+
+    desc = np.asarray(MAP, dtype="c")
+    locs = [(0, 0), (0, 4), (4, 0), (4, 3)]
+    locs_colors = [(255, 0, 0), (0, 255, 0), (255, 255, 0), (0, 0, 255)]
+
+    # state is a combination of taxi row, col, passenger location, and destination
+    num_states = (max_row + 1) * (max_col + 1) * len(Locations) * (len(Locations) - 1)
+
+    action_space: spaces.Space[int] = spaces.Discrete(len(Actions))
+    observation_space: spaces.Space[int] = spaces.Discrete(num_states)
+
+    def _pickup(self, taxi_loc, pass_idx: Locations) -> tuple[Locations, float]:
         """Computes the new location and reward for pickup action."""
-        if pass_idx < 4 and taxi_loc == self.locs[pass_idx]:
-            new_pass_idx = 4
-            new_reward = reward
+        if pass_idx != Locations.TAXI and taxi_loc == self.locs[pass_idx]:
+            new_pass_idx = Locations.TAXI
+            new_reward = self.PENALTY_STEP
         else:  # passenger not at location
             new_pass_idx = pass_idx
-            new_reward = -10
+            new_reward = self.PENALTY_ILLEGAL_PICKUP_DROPOFF
 
         return new_pass_idx, new_reward
 
-    def _dropoff(self, taxi_loc, pass_idx, dest_idx, default_reward):
+    def _dropoff(
+        self, taxi_loc, pass_idx: Locations, dest_idx: Locations
+    ) -> tuple[Locations, float, bool]:
         """Computes the new location and reward for return dropoff action."""
-        if (taxi_loc == self.locs[dest_idx]) and pass_idx == 4:
+        if (taxi_loc == self.locs[dest_idx]) and pass_idx == Locations.TAXI:
             new_pass_idx = dest_idx
             new_terminated = True
-            new_reward = 20
-        elif (taxi_loc in self.locs) and pass_idx == 4:
-            new_pass_idx = self.locs.index(taxi_loc)
+            new_reward = self.REWARD_COMPLETE
+        elif (taxi_loc in self.locs) and pass_idx == Locations.TAXI:
+            new_pass_idx = Locations(self.locs.index(taxi_loc))
             new_terminated = False
-            new_reward = default_reward
+            new_reward = self.PENALTY_STEP
         else:  # dropoff at wrong location
             new_pass_idx = pass_idx
             new_terminated = False
-            new_reward = -10
+            new_reward = self.PENALTY_ILLEGAL_PICKUP_DROPOFF
 
         return new_pass_idx, new_reward, new_terminated
 
@@ -230,17 +280,17 @@ class TaxiEnv(Env):
         reward = -1  # default reward when there is no pickup/dropoff
         terminated = False
 
-        if action == 0:
+        if action == Actions.MOVE_SOUTH:
             new_row = min(row + 1, self.max_row)
-        elif action == 1:
+        elif action == Actions.MOVE_NORTH:
             new_row = max(row - 1, 0)
-        if action == 2 and self.desc[1 + row, 2 * col + 2] == b":":
+        if action == Actions.MOVE_EAST and self.desc[1 + row, 2 * col + 2] == PASSABLE:
             new_col = min(col + 1, self.max_col)
-        elif action == 3 and self.desc[1 + row, 2 * col] == b":":
+        elif action == Actions.MOVE_WEST and self.desc[1 + row, 2 * col] == PASSABLE:
             new_col = max(col - 1, 0)
-        elif action == 4:  # pickup
+        elif action == Actions.PICKUP:
             new_pass_idx, reward = self._pickup(taxi_loc, new_pass_idx, reward)
-        elif action == 5:  # dropoff
+        elif action == Actions.DROPOFF:
             new_pass_idx, reward, terminated = self._dropoff(
                 taxi_loc, new_pass_idx, dest_idx, reward
             )
@@ -253,7 +303,7 @@ class TaxiEnv(Env):
         dr, dc = movement
         new_row = max(0, min(row + dr, self.max_row))
         new_col = max(0, min(col + dc, self.max_col))
-        if self.desc[1 + new_row, 2 * new_col + offset] == b":":
+        if self.desc[1 + new_row, 2 * new_col + offset] == PASSABLE:
             return new_row, new_col
         else:  # Default to current position if not traversable
             return row, col
@@ -276,9 +326,12 @@ class TaxiEnv(Env):
 
         # Check if movement is allowed
         if (
-            action in {0, 1}
-            or (action == 2 and self.desc[1 + row, 2 * col + 2] == b":")
-            or (action == 3 and self.desc[1 + row, 2 * col] == b":")
+            action in {Actions.MOVE_SOUTH, Actions.MOVE_NORTH}
+            or (
+                action == Actions.MOVE_EAST
+                and self.desc[1 + row, 2 * col + 2] == PASSABLE
+            )
+            or (action == Actions.MOVE_WEST and self.desc[1 + row, 2 * col] == PASSABLE)
         ):
             dr, dc = moves[action][0]
             new_row = max(0, min(row + dr, self.max_row))
@@ -286,9 +339,9 @@ class TaxiEnv(Env):
 
             left_pos = self._calc_new_position(row, col, moves[action][1], offset=2)
             right_pos = self._calc_new_position(row, col, moves[action][2])
-        elif action == 4:  # pickup
+        elif action == Actions.PICKUP:
             new_pass_idx, reward = self._pickup(taxi_loc, new_pass_idx, reward)
-        elif action == 5:  # dropoff
+        elif action == Actions.DROPOFF:
             new_pass_idx, reward, terminated = self._dropoff(
                 taxi_loc, new_pass_idx, dest_idx, reward
             )
@@ -323,7 +376,7 @@ class TaxiEnv(Env):
         self.max_row = num_rows - 1
         self.max_col = num_columns - 1
         self.initial_state_distrib = np.zeros(num_states)
-        num_actions = 6
+        num_actions = len(Actions)
         self.P = {
             state: {action: [] for action in range(num_actions)}
             for state in range(num_states)
@@ -333,9 +386,6 @@ class TaxiEnv(Env):
             for col in range(num_columns):
                 for pass_idx in range(len(locs) + 1):  # +1 for being inside taxi
                     for dest_idx in range(len(locs)):
-                        state = self.encode(row, col, pass_idx, dest_idx)
-                        if pass_idx < 4 and pass_idx != dest_idx:
-                            self.initial_state_distrib[state] += 1
                         for action in range(num_actions):
                             if is_rainy:
                                 self._build_rainy_transitions(
@@ -353,9 +403,6 @@ class TaxiEnv(Env):
                                     dest_idx,
                                     action,
                                 )
-        self.initial_state_distrib /= self.initial_state_distrib.sum()
-        self.action_space = spaces.Discrete(num_actions)
-        self.observation_space = spaces.Discrete(num_states)
 
         self.render_mode = render_mode
         self.fickle_passenger = fickle_passenger
@@ -376,7 +423,7 @@ class TaxiEnv(Env):
         self.median_vert = None
         self.background_img = None
 
-    def encode(self, taxi_row, taxi_col, pass_loc, dest_idx):
+    def encode(self, taxi_row, taxi_col, pass_loc: Locations, dest_idx: Locations):
         # (5) 5, 5, 4
         i = taxi_row
         i *= 5
@@ -387,11 +434,11 @@ class TaxiEnv(Env):
         i += dest_idx
         return i
 
-    def decode(self, i):
+    def decode(self, i) -> tuple[int, int, Locations, Locations]:
         out = []
-        out.append(i % 4)
+        out.append(Locations(i % 4))
         i = i // 4
-        out.append(i % 5)
+        out.append(Locations(i % 5))
         i = i // 5
         out.append(i % 5)
         i = i // 5
@@ -401,23 +448,23 @@ class TaxiEnv(Env):
 
     def action_mask(self, state: int):
         """Computes an action mask for the action space using the state information."""
-        mask = np.zeros(6, dtype=np.int8)
+        mask = np.zeros(len(Actions), dtype=np.int8)
         taxi_row, taxi_col, pass_loc, dest_idx = self.decode(state)
         if taxi_row < 4:
-            mask[0] = 1
+            mask[Actions.MOVE_SOUTH] = 1
         if taxi_row > 0:
-            mask[1] = 1
-        if taxi_col < 4 and self.desc[taxi_row + 1, 2 * taxi_col + 2] == b":":
-            mask[2] = 1
-        if taxi_col > 0 and self.desc[taxi_row + 1, 2 * taxi_col] == b":":
-            mask[3] = 1
-        if pass_loc < 4 and (taxi_row, taxi_col) == self.locs[pass_loc]:
-            mask[4] = 1
-        if pass_loc == 4 and (
+            mask[Actions.MOVE_NORTH] = 1
+        if taxi_col < 4 and self.desc[taxi_row + 1, 2 * taxi_col + 2] == PASSABLE:
+            mask[Actions.MOVE_EAST] = 1
+        if taxi_col > 0 and self.desc[taxi_row + 1, 2 * taxi_col] == PASSABLE:
+            mask[Actions.MOVE_WEST] = 1
+        if pass_loc != Locations.TAXI and (taxi_row, taxi_col) == self.locs[pass_loc]:
+            mask[Actions.PICKUP] = 1
+        if pass_loc == Locations.TAXI and (
             (taxi_row, taxi_col) == self.locs[dest_idx]
             or (taxi_row, taxi_col) in self.locs
         ):
-            mask[5] = 1
+            mask[Actions.DROPOFF] = 1
         return mask
 
     def step(self, a):
@@ -434,12 +481,12 @@ class TaxiEnv(Env):
         if (
             self.fickle_passenger
             and self.fickle_step
-            and shadow_pass_loc == 4
+            and shadow_pass_loc == Locations.TAXI
             and (taxi_row != shadow_row or taxi_col != shadow_col)
         ):
             self.fickle_step = False
             possible_destinations = [
-                i for i in range(len(self.locs)) if i != shadow_dest_idx
+                i for i in range(len(Locations) - 1) if i != shadow_dest_idx
             ]
             dest_idx = self.np_random.choice(possible_destinations)
             s = self.encode(taxi_row, taxi_col, pass_loc, dest_idx)
@@ -556,21 +603,25 @@ class TaxiEnv(Env):
             for x in range(0, desc.shape[1]):
                 cell = (x * self.cell_size[0], y * self.cell_size[1])
                 self.window.blit(self.background_img, cell)
-                if desc[y][x] == b"|" and (y == 0 or desc[y - 1][x] != b"|"):
+                if desc[y][x] == WALL_VERTICAL and (
+                    y == 0 or desc[y - 1][x] != WALL_VERTICAL
+                ):
                     self.window.blit(self.median_vert[0], cell)
-                elif desc[y][x] == b"|" and (
-                    y == desc.shape[0] - 1 or desc[y + 1][x] != b"|"
+                elif desc[y][x] == WALL_VERTICAL and (
+                    y == desc.shape[0] - 1 or desc[y + 1][x] != WALL_VERTICAL
                 ):
                     self.window.blit(self.median_vert[2], cell)
-                elif desc[y][x] == b"|":
+                elif desc[y][x] == WALL_VERTICAL:
                     self.window.blit(self.median_vert[1], cell)
-                elif desc[y][x] == b"-" and (x == 0 or desc[y][x - 1] != b"-"):
+                elif desc[y][x] == WALL_HORIZONTAL and (
+                    x == 0 or desc[y][x - 1] != WALL_HORIZONTAL
+                ):
                     self.window.blit(self.median_horiz[0], cell)
-                elif desc[y][x] == b"-" and (
-                    x == desc.shape[1] - 1 or desc[y][x + 1] != b"-"
+                elif desc[y][x] == WALL_HORIZONTAL and (
+                    x == desc.shape[1] - 1 or desc[y][x + 1] != WALL_HORIZONTAL
                 ):
                     self.window.blit(self.median_horiz[2], cell)
-                elif desc[y][x] == b"-":
+                elif desc[y][x] == WALL_HORIZONTAL:
                     self.window.blit(self.median_horiz[1], cell)
 
         for cell, color in zip(self.locs, self.locs_colors, strict=True):
@@ -582,10 +633,15 @@ class TaxiEnv(Env):
 
         taxi_row, taxi_col, pass_idx, dest_idx = self.decode(self.s)
 
-        if pass_idx < 4:
+        if pass_idx != Locations.TAXI:
             self.window.blit(self.passenger_img, self.get_surf_loc(self.locs[pass_idx]))
 
-        if self.lastaction in [0, 1, 2, 3]:
+        if self.lastaction in [
+            Actions.MOVE_SOUTH,
+            Actions.MOVE_NORTH,
+            Actions.MOVE_WEST,
+            Actions.MOVE_EAST,
+        ]:
             self.taxi_orientation = self.lastaction
         dest_loc = self.get_surf_loc(self.locs[dest_idx])
         taxi_location = self.get_surf_loc((taxi_row, taxi_col))
@@ -627,7 +683,7 @@ class TaxiEnv(Env):
         def ul(x):
             return "_" if x == " " else x
 
-        if pass_idx < 4:
+        if pass_idx != Locations.TAXI:
             out[1 + taxi_row][2 * taxi_col + 1] = utils.colorize(
                 out[1 + taxi_row][2 * taxi_col + 1], "yellow", highlight=True
             )
@@ -677,6 +733,30 @@ class TaxiEnv(Env):
 
             pygame.display.quit()
             pygame.quit()
+
+
+def _compute_initial_state_distrib() -> NDArray[np.float64]:
+    """Compute the initial state distribution for the Taxi environment."""
+    num_rows = TaxiEnv.max_row + 1
+    num_columns = TaxiEnv.max_col + 1
+    distrib = np.zeros(TaxiEnv.num_states)
+
+    for row, col, pass_idx, dest_idx in itertools.product(
+        range(num_rows),
+        range(num_columns),
+        Locations,
+        Locations,
+    ):
+        if pass_idx != dest_idx:
+            state = TaxiEnv.encode(row, col, pass_idx, dest_idx)
+            distrib[state] += 1
+
+    distrib /= distrib.sum()
+    return distrib
+
+
+# Initialize initial_state_distrib at module load time
+TaxiEnv.initial_state_distrib = _compute_initial_state_distrib()
 
 
 # Taxi rider from https://franuka.itch.io/rpg-asset-pack
