@@ -50,7 +50,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
     **Note:** While the ranges above denote the possible values for observation space of each element,
         it is not reflective of the allowed values of the state space in an unterminated episode. Particularly:
-    -  The cart x-position (index 0) can be take values between `(-4.8, 4.8)`, but the episode terminates
+    -  The cart x-position (index 0) can take values between `(-4.8, 4.8)`, but the episode terminates 
        if the cart leaves the `(-2.4, 2.4)` range.
     -  The pole angle can be observed between  `(-.418, .418)` radians (or **±24°**), but the episode terminates
        if the pole angle is not in the range `(-.2095, .2095)` (or **±12°**)
