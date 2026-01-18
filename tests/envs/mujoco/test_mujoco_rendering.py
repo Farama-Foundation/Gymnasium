@@ -8,7 +8,6 @@ import gymnasium
 from gymnasium.envs.mujoco.mujoco_env import DEFAULT_SIZE
 from gymnasium.envs.mujoco.mujoco_rendering import MujocoRenderer, OffScreenViewer
 
-
 ASSET_PATH = os.path.join(
     os.path.dirname(__file__), "assets", "walker2d_v5_uneven_feet.xml"
 )

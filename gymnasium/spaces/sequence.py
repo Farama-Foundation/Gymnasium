@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import typing
-from typing import Any, Union
+from typing import Any
 
 import numpy as np
 from numpy.typing import NDArray
@@ -12,7 +12,7 @@ import gymnasium as gym
 from gymnasium.spaces.space import Space
 
 
-class Sequence(Space[Union[tuple[Any, ...], Any]]):
+class Sequence(Space[tuple[Any, ...] | Any]):
     r"""This space represent sets of finite-length sequences.
 
     This space represents the set of tuples of the form :math:`(a_0, \dots, a_n)` where the :math:`a_i` belong
@@ -47,9 +47,9 @@ class Sequence(Space[Union[tuple[Any, ...], Any]]):
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
             stack: If ``True`` then the resulting samples would be stacked.
         """
-        assert isinstance(
-            space, Space
-        ), f"Expects the feature space to be instance of a gym Space, actual type: {type(space)}"
+        assert isinstance(space, Space), (
+            f"Expects the feature space to be instance of a gym Space, actual type: {type(space)}"
+        )
         self.feature_space = space
         self.stack = stack
         if self.stack:
@@ -101,13 +101,15 @@ class Sequence(Space[Union[tuple[Any, ...], Any]]):
 
     def sample(
         self,
-        mask: None | (
+        mask: None
+        | (
             tuple[
                 None | int | NDArray[np.integer],
                 Any,
             ]
         ) = None,
-        probability: None | (
+        probability: None
+        | (
             tuple[
                 None | int | NDArray[np.integer],
                 Any,
@@ -169,21 +171,21 @@ class Sequence(Space[Union[tuple[Any, ...], Any]]):
         """Generate the sample length for a given length mask and mask type."""
         if length_mask is not None:
             if np.issubdtype(type(length_mask), np.integer):
-                assert (
-                    0 <= length_mask
-                ), f"Expects the length mask of `{mask_type}` to be greater than or equal to zero, actual value: {length_mask}"
+                assert 0 <= length_mask, (
+                    f"Expects the length mask of `{mask_type}` to be greater than or equal to zero, actual value: {length_mask}"
+                )
 
                 return length_mask
             elif isinstance(length_mask, np.ndarray):
-                assert (
-                    len(length_mask.shape) == 1
-                ), f"Expects the shape of the length mask of `{mask_type}` to be 1-dimensional, actual shape: {length_mask.shape}"
-                assert np.all(
-                    0 <= length_mask
-                ), f"Expects all values in the length_mask of `{mask_type}` to be greater than or equal to zero, actual values: {length_mask}"
-                assert np.issubdtype(
-                    length_mask.dtype, np.integer
-                ), f"Expects the length mask array of `{mask_type}` to have dtype of np.integer, actual type: {length_mask.dtype}"
+                assert len(length_mask.shape) == 1, (
+                    f"Expects the shape of the length mask of `{mask_type}` to be 1-dimensional, actual shape: {length_mask.shape}"
+                )
+                assert np.all(0 <= length_mask), (
+                    f"Expects all values in the length_mask of `{mask_type}` to be greater than or equal to zero, actual values: {length_mask}"
+                )
+                assert np.issubdtype(length_mask.dtype, np.integer), (
+                    f"Expects the length mask array of `{mask_type}` to have dtype of np.integer, actual type: {length_mask.dtype}"
+                )
 
                 return self.np_random.choice(length_mask)
             else:

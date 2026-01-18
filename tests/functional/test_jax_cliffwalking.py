@@ -2,7 +2,6 @@
 
 import pytest
 
-
 jax = pytest.importorskip("jax")
 import jax.numpy as jnp  # noqa: E402
 import jax.random as jrng  # noqa: E402
@@ -20,7 +19,7 @@ def test_normal_CliffWalkingFunctional():
     state = env.initial(split_rng)
     env.action_space.seed(0)
 
-    for t in range(10):
+    for _ in range(10):
         obs = env.observation(state, rng)
         action = env.action_space.sample()
 
@@ -61,7 +60,7 @@ def test_jit_CliffWalkingFunctional():
     state = env.initial(split_rng)
     env.action_space.seed(0)
 
-    for t in range(10):
+    for _ in range(10):
         obs = env.observation(state, rng)
         action = env.action_space.sample()
         split_rng, rng = jrng.split(rng)
@@ -103,7 +102,7 @@ def test_vmap_BlackJack():
     state = env.initial(jnp.array(split_rng))
     env.action_space.seed(0)
 
-    for t in range(10):
+    for _ in range(10):
         obs = env.observation(state, jnp.array(split_rng))
         action = jnp.array([env.action_space.sample() for _ in range(num_envs)])
         # if isinstance(env.action_space, Discrete):

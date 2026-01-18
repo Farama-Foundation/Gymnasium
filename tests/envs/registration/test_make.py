@@ -25,7 +25,6 @@ from tests.envs.utils import all_testing_env_specs
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import has_wrapper
 
-
 # Tests
 #  * basic example
 #  * parameters (equivalent for str and EnvSpec)

@@ -150,7 +150,7 @@ def test_both_episodic_and_step_trigger(autoreset_mode, n_envs=10):
 
     envs.reset(seed=123)
     envs.action_space.seed(123)
-    for i in range(199):
+    for _ in range(199):
         action = envs.action_space.sample()
         _, _, terminations, truncations, _ = envs.step(action)
 

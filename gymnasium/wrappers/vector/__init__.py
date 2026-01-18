@@ -31,7 +31,6 @@ from gymnasium.wrappers.vector.vectorize_reward import (
     VectorizeTransformReward,
 )
 
-
 __all__ = [
     # --- Vector only wrappers
     "VectorizeTransformObservation",

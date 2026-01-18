@@ -9,7 +9,6 @@ import numpy as np
 
 from gymnasium import Space
 
-
 StateType = TypeVar("StateType")
 ActType = TypeVar("ActType")
 ObsType = TypeVar("ObsType")

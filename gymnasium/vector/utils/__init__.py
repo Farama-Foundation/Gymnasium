@@ -14,7 +14,6 @@ from gymnasium.vector.utils.space_utils import (
     iterate,
 )
 
-
 __all__ = [
     "batch_space",
     "batch_differing_spaces",

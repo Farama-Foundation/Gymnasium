@@ -17,6 +17,13 @@ from gymnasium.vector.utils import batch_space
 from gymnasium.vector.vector_env import AutoresetMode
 
 
+class DefaultTestSpace:
+    """Sentinel class to indicate that the default space should be used."""
+
+
+DEFAULT_SPACE = DefaultTestSpace()
+
+
 def basic_reset_func(
     self,
     *,
@@ -55,22 +62,22 @@ class GenericTestEnv(gym.Env):
 
     def __init__(
         self,
-        action_space: spaces.Space = spaces.Box(0, 1, (1,)),
-        observation_space: spaces.Space = spaces.Box(0, 1, (1,)),
+        action_space: spaces.Space | DefaultTestSpace | None = DEFAULT_SPACE,
+        observation_space: spaces.Space | DefaultTestSpace | None = DEFAULT_SPACE,
         reset_func: Callable = basic_reset_func,
         step_func: Callable = basic_step_func,
         render_func: Callable = basic_render_func,
-        metadata: dict[str, Any] = {"render_modes": []},
+        metadata: dict[str, Any] | None = None,
         render_mode: str | None = None,
-        spec: EnvSpec = EnvSpec(
-            "TestingEnv-v0", "tests.testing_env:GenericTestEnv", max_episode_steps=100
-        ),
+        spec: EnvSpec | None = None,
     ):
         """Generic testing environment constructor.
 
         Args:
-            action_space: The environment action space
-            observation_space: The environment observation space
+            action_space: The environment action space. Use DEFAULT_SPACE for default,
+                None for no space (to test error cases), or a custom Space.
+            observation_space: The environment observation space. Use DEFAULT_SPACE for default,
+                None for no space (to test error cases), or a custom Space.
             reset_func: The environment reset function
             step_func: The environment step function
             render_func: The environment render function
@@ -78,14 +85,17 @@ class GenericTestEnv(gym.Env):
             render_mode: The render mode of the environment
             spec: The environment spec
         """
-        self.metadata = metadata
-        self.render_mode = render_mode
-        self.spec = spec
-
-        if observation_space is not None:
-            self.observation_space = observation_space
-        if action_space is not None:
+        if action_space is DEFAULT_SPACE:
+            self.action_space = spaces.Box(0, 1, (1,))
+        elif action_space is not None:
             self.action_space = action_space
+        # If action_space is None, don't set the attribute (for testing error cases)
+
+        if observation_space is DEFAULT_SPACE:
+            self.observation_space = spaces.Box(0, 1, (1,))
+        elif observation_space is not None:
+            self.observation_space = observation_space
+        # If observation_space is None, don't set the attribute (for testing error cases)
 
         if reset_func is not None:
             self.reset = types.MethodType(reset_func, self)
@@ -93,6 +103,22 @@ class GenericTestEnv(gym.Env):
             self.step = types.MethodType(step_func, self)
         if render_func is not None:
             self.render = types.MethodType(render_func, self)
+
+        if metadata is None:
+            self.metadata = {"render_modes": []}
+        else:
+            self.metadata = metadata
+
+        self.render_mode = render_mode
+
+        if spec is None:
+            self.spec = EnvSpec(
+                "TestingEnv-v0",
+                "tests.testing_env:GenericTestEnv",
+                max_episode_steps=100,
+            )
+        else:
+            self.spec = spec
 
     def reset(
         self,
@@ -151,28 +177,23 @@ class GenericTestVectorEnv(VectorEnv):
     def __init__(
         self,
         num_envs: int = 1,
-        action_space: spaces.Space = spaces.Box(0, 1, (1,)),
-        observation_space: spaces.Space = spaces.Box(0, 1, (1,)),
+        action_space: spaces.Space | DefaultTestSpace | None = DEFAULT_SPACE,
+        observation_space: spaces.Space | DefaultTestSpace | None = DEFAULT_SPACE,
         reset_func: Callable = basic_vector_reset_func,
         step_func: Callable = basic_vector_step_func,
         render_func: Callable = basic_vector_render_func,
-        metadata: dict[str, Any] = {
-            "render_modes": [],
-            "autoreset_mode": AutoresetMode.NEXT_STEP,
-        },
+        metadata: dict[str, Any] | None = None,
         render_mode: str | None = None,
-        spec: EnvSpec = EnvSpec(
-            "TestingVectorEnv-v0",
-            "tests.testing_env:GenericTestVectorEnv",
-            max_episode_steps=100,
-        ),
+        spec: EnvSpec | None = None,
     ):
         """Generic testing vector environment constructor.
 
         Args:
             num_envs: The number of environments to create
-            action_space: The environment action space
-            observation_space: The environment observation space
+            action_space: The environment action space. Use DEFAULT_SPACE for default,
+                None for no space (to test error cases), or a custom Space.
+            observation_space: The environment observation space. Use DEFAULT_SPACE for default,
+                None for no space (to test error cases), or a custom Space.
             reset_func: The environment reset function
             step_func: The environment step function
             render_func: The environment render function
@@ -183,15 +204,43 @@ class GenericTestVectorEnv(VectorEnv):
         super().__init__()
 
         self.num_envs = num_envs
-        self.metadata = metadata
+        if metadata is None:
+            self.metadata = {
+                "render_modes": [],
+                "autoreset_mode": AutoresetMode.NEXT_STEP,
+            }
+        else:
+            self.metadata = metadata
         self.render_mode = render_mode
-        self.spec = spec
+        if spec is None:
+            self.spec = EnvSpec(
+                "TestingVectorEnv-v0",
+                "tests.testing_env:GenericTestVectorEnv",
+                max_episode_steps=100,
+            )
+        else:
+            self.spec = spec
 
         # Set the single spaces and create batched spaces
-        self.single_observation_space = observation_space
-        self.single_action_space = action_space
-        self.observation_space = batch_space(observation_space, num_envs)
-        self.action_space = batch_space(action_space, num_envs)
+        if action_space is DEFAULT_SPACE:
+            self.single_action_space = spaces.Box(0, 1, (1,))
+        elif action_space is not None:
+            self.single_action_space = action_space
+        # If action_space is None, don't set the attribute (for testing error cases)
+
+        if hasattr(self, "single_action_space"):
+            self.action_space = batch_space(self.single_action_space, num_envs)
+
+        if observation_space is DEFAULT_SPACE:
+            self.single_observation_space = spaces.Box(0, 1, (1,))
+        elif observation_space is not None:
+            self.single_observation_space = observation_space
+        # If observation_space is None, don't set the attribute (for testing error cases)
+
+        if hasattr(self, "single_observation_space"):
+            self.observation_space = batch_space(
+                self.single_observation_space, num_envs
+            )
 
         # Bind the functions to the instance
         if reset_func is not None:

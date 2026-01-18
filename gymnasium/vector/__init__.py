@@ -12,7 +12,6 @@ from gymnasium.vector.vector_env import (
     VectorWrapper,
 )
 
-
 __all__ = [
     "VectorEnv",
     "VectorWrapper",

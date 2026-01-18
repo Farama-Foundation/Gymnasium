@@ -19,7 +19,6 @@ from gymnasium.vector.vector_env import (
 )
 from gymnasium.wrappers.utils import RunningMeanStd
 
-
 __all__ = ["NormalizeObservation"]
 
 

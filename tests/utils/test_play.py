@@ -12,7 +12,6 @@ import gymnasium as gym
 from gymnasium.utils.play import MissingKeysToAction, PlayableGame, play
 from tests.testing_env import GenericTestEnv
 
-
 RELEVANT_KEY_1 = ord("a")  # 97
 RELEVANT_KEY_2 = ord("d")  # 100
 IRRELEVANT_KEY = 1
@@ -168,7 +167,16 @@ def test_play_loop_real_env():
         ]
         keydown_events = [k for k in callback_events if k.type == KEYDOWN]
 
-        def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):
+        def callback(
+            obs_t,
+            obs_tp1,
+            action,
+            rew,
+            terminated,
+            truncated,
+            info,
+            callback_events=callback_events,
+        ):
             pygame_event = callback_events.pop(0)
             event.post(pygame_event)
 
@@ -190,7 +198,7 @@ def test_play_loop_real_env():
         elif key_type == "int":
             keys_to_action = dummy_keys_to_action_int()
         else:
-            assert False
+            raise AssertionError()
 
         # first action is 0 because at the first iteration
         # we can not inject a callback event into play()
@@ -203,7 +211,7 @@ def test_play_loop_real_env():
             elif key_type == "int":
                 action = keys_to_action[e.key]
             else:
-                assert False
+                raise AssertionError()
             obs, _, _, _, _ = env.step(action)
 
         env_play = gym.make(ENV, render_mode="rgb_array", disable_env_checker=True)

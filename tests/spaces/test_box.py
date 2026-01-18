@@ -353,6 +353,29 @@ def test_infinite_space(low, high, shape, dtype):
     assert np.all(np.sign(space.low) <= np.sign(sample))
 
 
+def test_equality():
+    # Check if two spaces are equivalent.
+    space_a = Box(low=0, high=1, shape=[2], dtype=np.float32)
+
+    space_b = Box(low=0, high=1, shape=[2], dtype=np.float32)
+    assert space_a == space_b
+
+    space_b = Box(low=0, high=np.array([1, 1]), shape=[2], dtype=np.float32)
+    assert space_a == space_b
+
+    space_b = Box(low=-1, high=1, shape=[2], dtype=np.float32)
+    assert space_a != space_b
+
+    space_b = Box(low=0, high=np.array([1, 2]), shape=[2], dtype=np.float32)
+    assert space_a != space_b
+
+    space_b = Box(low=0, high=1, shape=[3], dtype=np.float32)
+    assert space_a != space_b
+
+    space_b = Box(low=0, high=1, shape=[2], dtype=np.int32)
+    assert space_a != space_b
+
+
 def test_legacy_state_pickling():
     legacy_state = {
         "dtype": np.dtype("float32"),

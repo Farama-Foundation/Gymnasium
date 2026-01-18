@@ -9,7 +9,6 @@ from packaging.version import Version
 
 from gymnasium.logger import warn
 
-
 # The marker API changed in MuJoCo 3.2.0, so we check the mujoco version and set a flag that
 # determines which function we use when adding markers to the scene.
 _MUJOCO_MARKER_LEGACY_MODE = Version(mujoco.__version__) < Version("3.2.0")
@@ -48,7 +47,7 @@ class BaseRender:
         width: int,
         height: int,
         max_geom: int = 1000,
-        visual_options: dict[int, bool] = {},
+        visual_options: dict[int, bool] = None,
     ):
         """Render context superclass for offscreen and window rendering."""
         self.model = model
@@ -65,6 +64,8 @@ class BaseRender:
         self.vopt = mujoco.MjvOption()
         self.pert = mujoco.MjvPerturb()
 
+        if visual_options is None:
+            visual_options = {}
         for flag, value in visual_options.items():
             self.vopt.flags[flag] = value
 
@@ -157,9 +158,7 @@ class BaseRender:
                     g.label = value
             elif hasattr(g, key):
                 raise ValueError(
-                    "mjtGeom has attr {} but type {} is invalid".format(
-                        key, type(value)
-                    )
+                    f"mjtGeom has attr {key} but type {type(value)} is invalid"
                 )
             else:
                 raise ValueError("mjtGeom doesn't have field %s" % key)
@@ -181,11 +180,13 @@ class OffScreenViewer(BaseRender):
         width: int,
         height: int,
         max_geom: int = 1000,
-        visual_options: dict[int, bool] = {},
+        visual_options: dict[int, bool] = None,
     ):
         # We must make GLContext before MjrContext
         self._get_opengl_backend(width, height)
 
+        if visual_options is None:
+            visual_options = {}
         super().__init__(model, data, width, height, max_geom, visual_options)
 
         self._init_camera()
@@ -340,7 +341,7 @@ class WindowViewer(BaseRender):
         width: int | None = None,
         height: int | None = None,
         max_geom: int = 1000,
-        visual_options: dict[int, bool] = {},
+        visual_options: dict[int, bool] = None,
     ):
         glfw.init()
 
@@ -379,6 +380,8 @@ class WindowViewer(BaseRender):
         glfw.set_scroll_callback(self.window, self._scroll_callback)
         glfw.set_key_callback(self.window, self._key_callback)
 
+        if visual_options is None:
+            visual_options = {}
         super().__init__(model, data, width, height, max_geom, visual_options)
         glfw.swap_interval(1)
 
@@ -698,7 +701,7 @@ class MujocoRenderer:
         max_geom: int = 1000,
         camera_id: int | None = None,
         camera_name: str | None = None,
-        visual_options: dict[int, bool] = {},
+        visual_options: dict[int, bool] | None = None,
     ):
         """A wrapper for clipping continuous actions within the valid bound.
 
@@ -720,7 +723,7 @@ class MujocoRenderer:
         self.width = width
         self.height = height
         self.max_geom = max_geom
-        self._vopt = visual_options
+        self._vopt = visual_options or {}
 
         # set self.camera_id using `camera_id` or `camera_name`
         if camera_id is not None and camera_name is not None:
@@ -755,9 +758,9 @@ class MujocoRenderer:
             If render_mode is "rgb_array" or "depth_array" it returns a numpy array in the specified format. "rgbd_tuple" returns a tuple of numpy arrays of the form (rgb, depth). "human" render mode does not return anything.
         """
         if render_mode != "human":
-            assert (
-                self.width is not None and self.height is not None
-            ), f"The width: {self.width} and height: {self.height} cannot be `None` when the render_mode is not `human`."
+            assert self.width is not None and self.height is not None, (
+                f"The width: {self.width} and height: {self.height} cannot be `None` when the render_mode is not `human`."
+            )
 
         viewer = self._get_viewer(render_mode=render_mode)
 

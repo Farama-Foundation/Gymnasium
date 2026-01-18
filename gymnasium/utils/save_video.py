@@ -8,7 +8,6 @@ from collections.abc import Callable
 import gymnasium as gym
 from gymnasium import logger
 
-
 try:
     from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 except ImportError as e:

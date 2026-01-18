@@ -9,13 +9,11 @@ import pytest
 
 from tests.testing_env import GenericTestVectorEnv
 
-
 array_api_compat = pytest.importorskip("array_api_compat")
 from array_api_compat import array_namespace  # noqa: E402
 
 from gymnasium.wrappers.array_conversion import module_namespace  # noqa: E402
 from gymnasium.wrappers.vector import ArrayConversion  # noqa: E402
-
 
 # Define available modules
 installed_modules = []

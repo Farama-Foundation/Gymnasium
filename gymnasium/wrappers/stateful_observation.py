@@ -22,7 +22,6 @@ from gymnasium.spaces import Box, Dict, Tuple
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array
 from gymnasium.wrappers.utils import RunningMeanStd, create_zero_array
 
-
 __all__ = [
     "DelayObservation",
     "TimeAwareObservation",

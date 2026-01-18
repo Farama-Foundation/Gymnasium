@@ -29,9 +29,9 @@ def test_lunar_lander_random_wind_seed(seed: int):
     w1, t1 = lunar_lander.wind_idx, lunar_lander.torque_idx
     lunar_lander.reset(seed=seed)
     w2, t2 = lunar_lander.wind_idx, lunar_lander.torque_idx
-    assert (
-        w1 == w2 and t1 == t2
-    ), "Setting same seed caused different initial wind or torque index"
+    assert w1 == w2 and t1 == t2, (
+        "Setting same seed caused different initial wind or torque index"
+    )
 
     # Test that different seed gives different wind
     # There is a small chance that different seeds causes same number so test
@@ -61,29 +61,27 @@ def test_carracing_domain_randomize():
 
     env.reset(options={"randomize": False})
 
-    assert (
-        road_color == env.road_color
-    ).all(), f"Have different road color after reset with randomize turned off. Before: {road_color}, after: {env.road_color}."
-    assert (
-        bg_color == env.bg_color
-    ).all(), f"Have different bg color after reset with randomize turned off. Before: {bg_color}, after: {env.bg_color}."
-    assert (
-        grass_color == env.grass_color
-    ).all(), f"Have different grass color after reset with randomize turned off. Before: {grass_color}, after: {env.grass_color}."
+    assert (road_color == env.road_color).all(), (
+        f"Have different road color after reset with randomize turned off. Before: {road_color}, after: {env.road_color}."
+    )
+    assert (bg_color == env.bg_color).all(), (
+        f"Have different bg color after reset with randomize turned off. Before: {bg_color}, after: {env.bg_color}."
+    )
+    assert (grass_color == env.grass_color).all(), (
+        f"Have different grass color after reset with randomize turned off. Before: {grass_color}, after: {env.grass_color}."
+    )
 
     env.reset()
 
-    assert (
-        road_color != env.road_color
-    ).all(), f"Have same road color after reset. Before: {road_color}, after: {env.road_color}."
-    assert (
-        bg_color != env.bg_color
-    ).all(), (
+    assert (road_color != env.road_color).all(), (
+        f"Have same road color after reset. Before: {road_color}, after: {env.road_color}."
+    )
+    assert (bg_color != env.bg_color).all(), (
         f"Have same bg color after reset. Before: {bg_color}, after: {env.bg_color}."
     )
-    assert (
-        grass_color != env.grass_color
-    ).all(), f"Have same grass color after reset. Before: {grass_color}, after: {env.grass_color}."
+    assert (grass_color != env.grass_color).all(), (
+        f"Have same grass color after reset. Before: {grass_color}, after: {env.grass_color}."
+    )
 
 
 def test_slippery_cliffwalking():
@@ -201,9 +199,9 @@ def test_taxi_encode_decode():
 
     state, info = env.reset()
     for _ in range(100):
-        assert (
-            env.encode(*env.decode(state)) == state
-        ), f"state={state}, encode(decode(state))={env.encode(*env.decode(state))}"
+        assert env.encode(*env.decode(state)) == state, (
+            f"state={state}, encode(decode(state))={env.encode(*env.decode(state))}"
+        )
         state, _, _, _, _ = env.step(env.action_space.sample())
 
 
@@ -224,7 +222,7 @@ def test_taxi_is_rainy():
 
     env = TaxiEnv(is_rainy=False)
     for state_dict in env.P.values():
-        for action, transitions in state_dict.items():
+        for transitions in state_dict.values():
             assert len(transitions) == 1
             assert transitions[0][0] == 1.0
 
@@ -252,7 +250,7 @@ def test_taxi_disallowed_transitions():
         env = TaxiEnv(is_rainy=rain)
         for state, state_dict in env.P.items():
             start_row, start_col, _, _ = env.decode(state)
-            for action, transitions in state_dict.items():
+            for transitions in state_dict.values():
                 for transition in transitions:
                     end_row, end_col, _, _ = env.decode(transition[1])
                     assert (
@@ -376,7 +374,7 @@ def test_cartpole_vector_equiv():
     assert np.all(env.unwrapped.state == envs.unwrapped.state[:, 0])
 
     # step
-    for i in range(100):
+    for _ in range(100):
         action = env.action_space.sample()
         assert np.array([action]) in envs.action_space
 
