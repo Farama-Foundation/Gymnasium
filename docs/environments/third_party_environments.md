@@ -161,6 +161,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   QWOP is a game about running extremely fast down a 100 meter track. With this Gymnasium environment you can train your own agents and try to beat the current world record (5.0 in-game seconds for humans and 4.7 for AI).
 
+- [Reinforce Tactics: 2D Turned-Based Strategy Game](https://github.com/kuds/reinforce-tactics)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/kuds/reinforce-tactics)
+
+  Reinforce Tactics is a turn-based strategy game designed for reinforcement learning research, combining tactical grid-based combat with an economy system while supporting multiple AI opponent types including rule-based bots, LLM-powered agents, and trainable RL models.
+
 - [Tetris Gymnasium: A fully configurable Gymnasium compatible Tetris environment](https://github.com/Max-We/Tetris-Gymnasium)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
