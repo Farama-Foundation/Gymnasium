@@ -43,6 +43,13 @@ ALL_MUJOCO_ENVS = [
         "Swimmer-v4",
         "Walker2d-v5",
         "Walker2d-v4",
+        "MJX/Ant-v5",
+        #"MJX/HalfCheetah-v5",
+        #"MJX/Hopper-v5",
+        #"MJX/Humanoid-v5",
+        #"MJX/HumanoidStandup-v5",
+        #"MJX/Swimmer-v5",
+        #"MJX/Walker2d-v5",
     ],
 )
 def test_verify_info_x_position(env_id: str):
