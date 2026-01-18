@@ -180,12 +180,10 @@ class SwimmerJaxEnv(FunctionalJaxEnv, EzPickle):
         env = Swimmer_MJXEnv(params=params)
         env.transform(partial(jax.jit, static_argnames="params"))
 
-        metadata = dict(env.metadata)
-        metadata["jax"] = True
-
         FunctionalJaxEnv.__init__(
             self,
             env,
-            metadata=metadata,
+            metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )

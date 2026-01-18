@@ -408,6 +408,7 @@ class HumanoidJaxEnv(FunctionalJaxEnv, EzPickle):
             env,
             metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )
 
 
@@ -430,4 +431,5 @@ class HumanoidStandupJaxEnv(FunctionalJaxEnv, EzPickle):
             env,
             metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )

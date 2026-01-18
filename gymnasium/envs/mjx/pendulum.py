@@ -314,6 +314,7 @@ class InvertedDoublePendulumJaxEnv(FunctionalJaxEnv, EzPickle):
             env,
             metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )
 
 
@@ -336,4 +337,5 @@ class InvertedPendulumJaxEnv(FunctionalJaxEnv, EzPickle):
             env,
             metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )

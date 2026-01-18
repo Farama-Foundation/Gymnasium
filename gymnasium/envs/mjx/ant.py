@@ -248,4 +248,5 @@ class AntJaxEnv(FunctionalJaxEnv, EzPickle):
             env,
             metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )

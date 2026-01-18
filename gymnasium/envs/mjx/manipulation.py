@@ -351,6 +351,7 @@ class ReacherJaxEnv(FunctionalJaxEnv, EzPickle):
             env,
             metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )
 
 
@@ -373,4 +374,5 @@ class PusherJaxEnv(FunctionalJaxEnv, EzPickle):
             env,
             metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )

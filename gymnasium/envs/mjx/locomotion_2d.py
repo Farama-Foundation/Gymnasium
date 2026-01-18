@@ -367,6 +367,7 @@ class HalfCheetahJaxEnv(FunctionalJaxEnv, EzPickle):
             env,
             metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )
 
 
@@ -389,6 +390,7 @@ class HopperJaxEnv(FunctionalJaxEnv, EzPickle):
             env,
             metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )
 
 
@@ -411,4 +413,5 @@ class Walker2dJaxEnv(FunctionalJaxEnv, EzPickle):
             env,
             metadata=env.metadata,
             render_mode=render_mode,
+            kwargs=kwargs,
         )
