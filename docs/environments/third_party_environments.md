@@ -152,7 +152,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
   ![GitHub stars](https://img.shields.io/github/stars/smallgig/Pickomino)
 
-  Push your luck dice game with a twist. Your agent plays against 1 to 6 bots.
+  Push your luck dice game with a twist. Your agent plays against one to six bots.
 
 - [pystk2-gymnasium: SuperTuxKart races gymnasium wrapper](https://github.com/bpiwowar/pystk2-gymnasium)
 
