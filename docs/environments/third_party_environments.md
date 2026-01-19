@@ -147,6 +147,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Generals.io is a fast-paced strategy game on a 2D grid. We make bot development accessible via the Gymnasium/PettingZoo API.
 
+- [Pickomino (Heckmeck): Dice and Tile game](https://github.com/smallgig/Pickomino)
+  
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/smallgig/Pickomino)
+
+  Push your luck dice game with a twist. Your agent plays against 1 to 6 bots.
+  
 - [pystk2-gymnasium: SuperTuxKart races gymnasium wrapper](https://github.com/bpiwowar/pystk2-gymnasium)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
