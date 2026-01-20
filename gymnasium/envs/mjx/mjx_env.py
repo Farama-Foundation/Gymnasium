@@ -180,8 +180,11 @@ class MJXEnv(
         next_state: mjx.Data,
         params: dict[str, Any],
     ) -> dict:
-        """Includes just reward info."""
-        return self._get_reward(state, action, next_state, params)[1]
+        """Returns reward info merged with the next state's info."""
+        reward_info = self._get_reward(state, action, next_state, params)[1]
+        state_info = self.state_info(next_state, params=params)
+
+        return {**reward_info, **state_info}
 
     def render_init(
         self,
