@@ -218,9 +218,12 @@ class MJXEnv(
         data = mjx.get_data(self.model, mjx_data)
         mujoco.mj_forward(self.model, data)
 
-        mujoco_renderer.data = data
+        #mujoco_renderer.set_data(data)
+        if mujoco_renderer._viewers != {}:
+            mujoco_renderer._viewers["rgb_array"].data = data
 
-        frame = mujoco_renderer.render(params.render_mode)
+        # frame = mujoco_renderer.render(params.render_mode)
+        frame = mujoco_renderer.render("rgb_array")  # TODO update API to support other modes
 
         return mujoco_renderer, frame
 
