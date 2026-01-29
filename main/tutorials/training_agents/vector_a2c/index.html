@@ -762,6 +762,7 @@ use the rest of the timesteps to begin a new one).</p>
     <span class="n">ep_value_preds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_steps_per_update</span><span class="p">,</span> <span class="n">n_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
     <span class="n">ep_rewards</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_steps_per_update</span><span class="p">,</span> <span class="n">n_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
     <span class="n">ep_action_log_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_steps_per_update</span><span class="p">,</span> <span class="n">n_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">ep_entropies</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_steps_per_update</span><span class="p">,</span> <span class="n">n_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
     <span class="n">masks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_steps_per_update</span><span class="p">,</span> <span class="n">n_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
     <span class="c1"># at the start of training reset all envs to get an initial state</span>
@@ -783,6 +784,7 @@ use the rest of the timesteps to begin a new one).</p>
         <span class="n">ep_value_preds</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">state_value_preds</span><span class="p">)</span>
         <span class="n">ep_rewards</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">rewards</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
         <span class="n">ep_action_log_probs</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">action_log_probs</span>
+        <span class="n">ep_entropies</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">entropy</span>
 
         <span class="c1"># add a mask (for the return calculation later);</span>
         <span class="c1"># for each env the mask is 1 if the episode is ongoing and 0 if it is terminated (not by truncation!)</span>
@@ -793,7 +795,7 @@ use the rest of the timesteps to begin a new one).</p>
         <span class="n">ep_rewards</span><span class="p">,</span>
         <span class="n">ep_action_log_probs</span><span class="p">,</span>
         <span class="n">ep_value_preds</span><span class="p">,</span>
-        <span class="n">entropy</span><span class="p">,</span>
+        <span class="n">ep_entropies</span><span class="p">,</span>
         <span class="n">masks</span><span class="p">,</span>
         <span class="n">gamma</span><span class="p">,</span>
         <span class="n">lam</span><span class="p">,</span>
@@ -807,7 +809,7 @@ use the rest of the timesteps to begin a new one).</p>
     <span class="c1"># log the losses and entropy</span>
     <span class="n">critic_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">critic_loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
     <span class="n">actor_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">actor_loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-    <span class="n">entropies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entropy</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+    <span class="n">entropies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ep_entropies</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
 </pre></div>
 </div>
 </section>
