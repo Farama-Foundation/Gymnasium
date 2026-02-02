@@ -653,7 +653,7 @@ Regardless of whether <code class="docutils literal notranslate"><span class="pr
 Every timestep that the Walker2d is alive, it receives a fixed reward of value <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> (default is <span class="math notranslate nohighlight">\(1\)</span>),</p></li>
 <li><p><em>forward_reward</em>:
 A reward for moving forward,
-this reward would be positive if the Swimmer moves forward (in the positive <span class="math notranslate nohighlight">\(x\)</span> direction / in the right direction).
+this reward would be positive if the Walker2d moves forward (in the positive <span class="math notranslate nohighlight">\(x\)</span> direction / in the right direction).
 <span class="math notranslate nohighlight">\(w_{forward} \times \frac{dx}{dt}\)</span>, where
 <span class="math notranslate nohighlight">\(dx\)</span> is the displacement of the (front) “tip” (<span class="math notranslate nohighlight">\(x_{after-action} - x_{before-action}\)</span>),
 <span class="math notranslate nohighlight">\(dt\)</span> is the time between actions, which depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter (default is <span class="math notranslate nohighlight">\(4\)</span>),
