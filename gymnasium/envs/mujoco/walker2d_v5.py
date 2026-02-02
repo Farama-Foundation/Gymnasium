@@ -82,7 +82,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     Every timestep that the Walker2d is alive, it receives a fixed reward of value `healthy_reward` (default is $1$),
     - *forward_reward*:
     A reward for moving forward,
-    this reward would be positive if the Swimmer moves forward (in the positive $x$ direction / in the right direction).
+    this reward would be positive if the Walker2d moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the (front) "tip" ($x_{after-action} - x_{before-action}$),
     $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is $4$),
