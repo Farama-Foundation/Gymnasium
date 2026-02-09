@@ -234,7 +234,8 @@ class Graph(Space[GraphInstance]):
         #   we need to get the updated np_random
         self.node_space.np_random.random()
 
-        if num_nodes > 1 and num_edges >= 1 and self.edge_space is not None:
+        # It is valid to sample one node and one edge (self loop)
+        if num_nodes >= 1 and num_edges >= 1 and self.edge_space is not None:
             sample_batch_edge_space = gym.vector.utils.batch_space(
                 self.edge_space, num_edges
             )
@@ -259,15 +260,17 @@ class Graph(Space[GraphInstance]):
             nodes = list(gym.vector.utils.iterate(self.batch_node_space, x.nodes))
             if all(node in self.node_space for node in nodes):
                 # Check the edges and edge links which are optional
-                if isinstance(x.edges, np.ndarray) and isinstance(
-                    x.edge_links, np.ndarray
-                ):
-                    assert x.edges is not None
-                    assert x.edge_links is not None
-                    if self.edge_space is not None:
-                        if all(edge in self.edge_space for edge in x.edges):
+                if x.edges is not None and x.edge_links is not None:
+                    if self.edge_space is not None and isinstance(
+                        x.edge_links, np.ndarray
+                    ):
+                        # Use iterate to handle all space types (Dict, Tuple, etc.)
+                        edges = list(
+                            gym.vector.utils.iterate(self.batch_edge_space, x.edges)
+                        )
+                        if all(edge in self.edge_space for edge in edges):
                             if np.issubdtype(x.edge_links.dtype, np.integer):
-                                if x.edge_links.shape == (len(x.edges), 2):
+                                if x.edge_links.shape == (len(edges), 2):
                                     if np.all(
                                         np.logical_and(
                                             x.edge_links >= 0, x.edge_links < len(nodes)
