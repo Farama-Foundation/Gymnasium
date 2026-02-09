@@ -496,24 +496,20 @@ def _create_empty_array_dict(space: Dict, n: int = 1, fn=np.zeros) -> dict[str, 
 def _create_empty_array_graph(
     space: Graph, n: int = 1, fn=np.zeros
 ) -> tuple[GraphInstance, ...]:
-    if space.edge_space is not None:
-        return tuple(
-            GraphInstance(
-                nodes=fn((1,) + space.node_space.shape, dtype=space.node_space.dtype),
-                edges=fn((1,) + space.edge_space.shape, dtype=space.edge_space.dtype),
-                edge_links=fn((1, 2), dtype=np.int64),
-            )
-            for _ in range(n)
+    return tuple(
+        GraphInstance(
+            nodes=create_empty_array(space.node_space, n=1, fn=fn),
+            edges=(
+                create_empty_array(space.edge_space, n=1, fn=fn)
+                if space.edge_space is not None
+                else None
+            ),
+            edge_links=(
+                fn((1, 2), dtype=np.int64) if space.edge_space is not None else None
+            ),
         )
-    else:
-        return tuple(
-            GraphInstance(
-                nodes=fn((1,) + space.node_space.shape, dtype=space.node_space.dtype),
-                edges=None,
-                edge_links=None,
-            )
-            for _ in range(n)
-        )
+        for _ in range(n)
+    )
 
 
 @create_empty_array.register(Text)
