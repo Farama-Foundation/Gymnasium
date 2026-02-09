@@ -61,6 +61,13 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     None,
     None,
     None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
     # Sequence
     None,
     None,
