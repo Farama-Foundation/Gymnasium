@@ -491,7 +491,9 @@ class RecordVideo(
             moviepy_logger = None if self.disable_logger else "bar"
             path = os.path.join(self.video_folder, f"{self._video_name}.mp4")
             clip.write_videofile(path, logger=moviepy_logger)
+            del clip
 
+        del self.recorded_frames
         self.recorded_frames = []
         self.recording = False
         self._video_name = None
