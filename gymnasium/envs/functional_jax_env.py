@@ -64,6 +64,12 @@ class FunctionalJaxEnv(gym.Env, Generic[StateType]):
 
         rng, self.rng = jrng.split(self.rng)
 
+        # Reset options configure FuncEnv parameters; these are not passed to JAX calls
+        if options is None:
+            self._params = self.func_env.get_default_params()
+        else:
+            self._params = self.func_env.get_default_params(**options)
+
         self.state = self.func_env.initial(rng=rng)
         obs = self.func_env.observation(self.state, rng)
         info = self.func_env.state_info(self.state)
@@ -161,6 +167,12 @@ class FunctionalJaxVectorEnv(
         rng, self.rng = jrng.split(self.rng)
 
         rng = jrng.split(rng, self.num_envs)
+
+        # Reset options configure FuncEnv parameters; these are not passed to JAX calls
+        if options is None:
+            self._params = self.func_env.get_default_params()
+        else:
+            self._params = self.func_env.get_default_params(**options)
 
         self.state = self.func_env.initial(rng=rng)
         obs = self.func_env.observation(self.state, rng)
