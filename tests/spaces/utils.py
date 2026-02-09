@@ -110,6 +110,27 @@ TESTING_COMPOSITE_SPACES = [
         ),
         edge_space=Box(low=1, high=4),
     ),
+    # Graph spaces with arbitrary node/edge spaces
+    Graph(node_space=MultiBinary(4), edge_space=None),
+    Graph(node_space=MultiDiscrete([3, 4, 2]), edge_space=Discrete(3)),
+    Graph(node_space=Tuple((Box(-1, 1, shape=(2,)), Discrete(3))), edge_space=None),
+    Graph(
+        node_space=Discrete(4), edge_space=Tuple((Box(0, 1, shape=(2,)), Discrete(3)))
+    ),
+    Graph(
+        node_space=Discrete(3),
+        edge_space=Dict({"weight": Box(0, 1, shape=()), "type": Discrete(4)}),
+    ),
+    Graph(
+        node_space=Dict({"pos": Box(-10, 10, shape=(3,)), "label": Discrete(5)}),
+        edge_space=Dict({"weight": Box(0, 1, shape=()), "type": Discrete(3)}),
+    ),
+    Graph(
+        node_space=Tuple((Dict({"a": Discrete(3)}), MultiBinary(2))),
+        edge_space=Tuple((Discrete(4), Box(0, 1, shape=(2,)))),
+    ),
+    # Note: Text, Sequence, Graph, and OneOf as node/edge spaces have broken
+    # JSON serialization in Graph.to_jsonable/from_jsonable
     # Sequence spaces
     Sequence(Discrete(4)),
     Sequence(Dict({"feature": Box(0, 1, (3,))})),
