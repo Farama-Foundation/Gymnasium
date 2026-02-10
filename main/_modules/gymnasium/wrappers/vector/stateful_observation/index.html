@@ -381,6 +381,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ObsType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">batch_space</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.vector_env</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AutoresetMode</span><span class="p">,</span>
     <span class="n">VectorEnv</span><span class="p">,</span>
@@ -449,6 +451,15 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;autoreset_mode&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span><span class="p">}</span>
 
+        <span class="n">new_single_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span>
+            <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+            <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span> <span class="o">=</span> <span class="n">new_single_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span><span class="n">new_single_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span> <span class="o">=</span> <span class="n">RunningMeanStd</span><span class="p">(</span>
             <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
             <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
@@ -491,9 +502,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">observations</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">observations</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">var</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="p">(</span><span class="n">observations</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
+            <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">var</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span></div>
 
 </pre></div>
           </article>
