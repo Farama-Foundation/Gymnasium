@@ -100,3 +100,18 @@ def test_update_running_mean():
 
     assert np.any(copied_rms_mean != env.obs_rms.mean)
     assert np.any(copied_rms_var != env.obs_rms.var)
+
+
+def test_observation_space_and_dtype():
+    vec_env = SyncVectorEnv([create_env for _ in range(2)])
+    vec_env = wrappers.vector.NormalizeObservation(vec_env)
+
+    assert vec_env.single_observation_space.dtype == np.float32
+    assert np.all(vec_env.single_observation_space.low == -np.inf)
+    assert np.all(vec_env.single_observation_space.high == np.inf)
+
+    obs, _ = vec_env.reset(seed=123)
+    assert obs.dtype == np.float32
+
+    obs, *_ = vec_env.step(vec_env.action_space.sample())
+    assert obs.dtype == np.float32
