@@ -12,6 +12,8 @@ import numpy as np
 import gymnasium as gym
 from gymnasium.core import ObsType
 from gymnasium.logger import warn
+from gymnasium.spaces import Box
+from gymnasium.vector.utils import batch_space
 from gymnasium.vector.vector_env import (
     AutoresetMode,
     VectorEnv,
@@ -78,6 +80,15 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         else:
             assert self.env.metadata["autoreset_mode"] in {AutoresetMode.NEXT_STEP}
 
+        new_single_space = Box(
+            low=-np.inf,
+            high=np.inf,
+            shape=self.single_observation_space.shape,
+            dtype=np.float32,
+        )
+        self.single_observation_space = new_single_space
+        self.observation_space = batch_space(new_single_space, self.num_envs)
+
         self.obs_rms = RunningMeanStd(
             shape=self.single_observation_space.shape,
             dtype=self.single_observation_space.dtype,
@@ -120,6 +131,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         """
         if self._update_running_mean:
             self.obs_rms.update(observations)
-        return (observations - self.obs_rms.mean) / np.sqrt(
-            self.obs_rms.var + self.epsilon
-        )
+        return (
+            (observations - self.obs_rms.mean)
+            / np.sqrt(self.obs_rms.var + self.epsilon)
+        ).astype(np.float32)
