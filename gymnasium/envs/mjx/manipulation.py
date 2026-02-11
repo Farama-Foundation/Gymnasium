@@ -1,0 +1,378 @@
+"""Contains the classes for the manipulation environments, `Pusher`, `Reacher`."""
+
+import gymnasium
+
+
+try:
+    import jax
+    from jax import numpy as jnp
+    from mujoco import mjx
+    import flax.struct
+    from flax.core.frozen_dict import FrozenDict
+except ImportError as e:
+    MJX_IMPORT_ERROR = e
+else:
+    MJX_IMPORT_ERROR = None
+
+from typing import TypedDict
+from functools import partial
+
+import numpy as np
+
+from gymnasium.envs.mjx.mjx_env import MJXEnv, _normalize_camera_config
+from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
+from gymnasium.utils import EzPickle
+from gymnasium.envs.mujoco.pusher_v5 import (
+    DEFAULT_CAMERA_CONFIG as PUSHER_DEFAULT_CAMERA_CONFIG,
+)
+from gymnasium.envs.mujoco.reacher_v5 import (
+    DEFAULT_CAMERA_CONFIG as REACHER_HOPPER_DEFAULT_CAMERA_CONFIG,
+)
+
+
+@flax.struct.dataclass
+class ReacherParams:
+    """Parameters for Reacher environment."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: FrozenDict[str, float | int | str | None]
+    camera_id: int | None
+    camera_name: str | None
+    max_geom: int
+    width: int
+    height: int
+    render_mode: str | None
+    reward_dist_weight: float
+    reward_control_weight: float
+
+
+class Reacher_MJXEnv(MJXEnv):
+    """Class for Reacher."""
+
+    def __init__(
+        self,
+        params: ReacherParams = None,
+    ):
+        """Sets the `obveration_space`."""
+        if params is None:
+            params = self.get_default_params()
+
+        MJXEnv.__init__(self, params=params)
+
+        self.observation_space = gymnasium.spaces.Box(  # TODO use jnp when and if `Box` supports jax natively
+            low=-np.inf, high=np.inf, shape=(10,), dtype=np.float32
+        )
+
+    def _body_goal(self, goal, rng):
+        goal = jax.random.uniform(key=rng, minval=-0.2, maxval=0.2, shape=(2,))
+        return goal
+
+    def _validate_goal(self, goal):
+        """Check if the `goal` is within a circle of radius 0.2 meters."""
+        return jnp.less(jnp.linalg.norm(goal), jnp.array(0.2))
+
+    def _gen_init_physics_state(
+        self, rng, params: ReacherParams
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+        """Sets `arm.qpos` (positional elements) and `arm.qvel` (velocity elements) from a CUD and the `goal.qpos` from a cicrular uniform distribution."""
+        qpos = self.mjx_model.qpos0 + jax.random.uniform(
+            key=rng, minval=-0.1, maxval=0.1, shape=(self.mjx_model.nq,)
+        )
+
+        goal = jax.lax.while_loop(
+            self._validate_goal,
+            lambda goal: self._body_goal(goal, rng),
+            init_val=jnp.array((10.0, 0.0)),
+        )
+        qpos = qpos.at[-2:].set(goal)
+
+        qvel = jax.random.uniform(
+            key=rng, minval=-0.005, maxval=0.005, shape=(self.mjx_model.nv,)
+        )
+        qvel = qvel.at[-2:].set(jnp.zeros(2))
+
+        act = jnp.empty(self.mjx_model.na)
+
+        return qpos, qvel, act
+
+    def _get_goal(self, mjx_data: mjx.Data) -> jnp.ndarray:
+        return mjx_data.qpos[-2:]
+
+    def _set_goal(self, mjx_data: mjx.Data, goal: jnp.ndarray) -> mjx.Data:
+        """Add the coordinate of `goal` to `mjx_data`."""
+        mjx_data = mjx_data.replace(qpos=mjx_data.qpos.at[-2:].set(goal))
+        return mjx_data
+
+    def observation(
+        self, state: mjx.Data, rng: jax.Array, params: ReacherParams
+    ) -> jnp.ndarray:
+        """Observes the `sin(theta)` & `cos(theta)` & `qpos` &  `qvel` & 'fingertip - target' distance."""
+        mjx_data = state
+
+        position = mjx_data.qpos.flatten()
+        velocity = mjx_data.qvel.flatten()
+        theta = position[:2]
+
+        fingertip_position = mjx_data.xpos[3]  # TODO make this dynamic
+        target_position = mjx_data.xpos[4]  # TODO make this dynamic
+        observation = jnp.concatenate(
+            (
+                jnp.cos(theta),
+                jnp.sin(theta),
+                position[2:],
+                velocity[:2],
+                (fingertip_position - target_position)[:2],
+            )
+        )
+
+        return observation
+
+    def _get_reward(
+        self,
+        state: mjx.Data,
+        action: jnp.ndarray,
+        next_state: mjx.Data,
+        params: ReacherParams,
+    ) -> tuple[jnp.ndarray, dict]:
+        """Reward = reward_dist + reward_ctrl."""
+        mjx_data = next_state
+
+        fingertip_position = mjx_data.xpos[3]  # TODO make this dynamic
+        target_position = mjx_data.xpos[4]  # TODO make this dynamic
+
+        vec = fingertip_position - target_position
+        reward_dist = -jnp.linalg.norm(vec) * params.reward_dist_weight
+        reward_ctrl = -jnp.square(action).sum() * params.reward_control_weight
+
+        reward = reward_dist + reward_ctrl
+
+        reward_info = {
+            "reward_dist": reward_dist,
+            "reward_ctrl": reward_ctrl,
+        }
+
+        return reward, reward_info
+
+    def get_default_params(self, **kwargs) -> ReacherParams:
+        """Get the default parameter for the Reacher environment."""
+        base = super().get_default_params()
+        camera_cfg = kwargs.get(
+            "default_camera_config", REACHER_HOPPER_DEFAULT_CAMERA_CONFIG
+        )
+        camera_cfg = _normalize_camera_config(camera_cfg)
+
+        return ReacherParams(
+            xml_file=kwargs.get("xml_file", "reacher.xml"),
+            frame_skip=kwargs.get("frame_skip", 2),
+            default_camera_config=camera_cfg,
+            reward_dist_weight=kwargs.get("reward_dist_weight", 1.0),
+            reward_control_weight=kwargs.get("reward_control_weight", 1.0),
+            camera_id=kwargs.get("camera_id", base.camera_id),
+            camera_name=kwargs.get("camera_name", base.camera_name),
+            max_geom=kwargs.get("max_geom", base.max_geom),
+            width=kwargs.get("width", base.width),
+            height=kwargs.get("height", base.height),
+            render_mode=kwargs.get("render_mode", base.render_mode),
+        )
+
+
+@flax.struct.dataclass
+class PusherParams:
+    """Parameters for Pusher environment."""
+
+    xml_file: str
+    frame_skip: int
+    default_camera_config: FrozenDict[str, float | int | str | None]
+    camera_id: int | None
+    camera_name: str | None
+    max_geom: int
+    width: int
+    height: int
+    render_mode: str | None
+    reward_near_weight: float
+    reward_dist_weight: float
+    reward_control_weight: float
+
+
+class Pusher_MJXEnv(MJXEnv):
+    # NOTE: MJX does not yet support condim=1 and therefore this class can not be instantiated
+    """Class for Pusher."""
+
+    def __init__(
+        self,
+        params: PusherParams = None,
+    ):
+        """Sets the `obveration_space`."""
+        if params is None:
+            params = self.get_default_params()
+
+        MJXEnv.__init__(self, params=params)  # type: ignore
+
+        self.observation_space = gymnasium.spaces.Box(  # TODO use jnp when and if `Box` supports jax natively
+            low=-np.inf, high=np.inf, shape=(23,), dtype=np.float32
+        )
+
+    def _gen_init_physics_state(
+        self, rng, params: PusherParams
+    ) -> tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray]:
+        """Sets `arm.qpos` (positional elements) and `arm.qvel` (velocity elements) from a CUD and the `goal.qpos` from a cicrular uniform distribution."""
+        qpos = self.mjx_model.qpos0
+        goal_pos = jnp.zeros(2)
+
+        rng, rng_loop, rng_vel = jax.random.split(rng, 3)
+
+        # Cylinder position must be at least 0.17m away from the goal
+        def loop_cond(carry):
+            _, cylinder_pos = carry
+            return jnp.linalg.norm(cylinder_pos - goal_pos) <= 0.17
+
+        def loop_body(carry):
+            rng, _ = carry
+            rng, key = jax.random.split(rng)
+            cylinder_pos = jax.random.uniform(
+                key=key,
+                minval=jnp.array([-0.3, -0.2]),
+                maxval=jnp.array([0.3, 0.2]),
+                shape=(2,),
+            )
+            return rng, cylinder_pos
+
+        _, cylinder_pos = jax.lax.while_loop(
+            loop_cond,
+            loop_body,
+            (rng_loop, goal_pos)
+        )
+
+        qpos = qpos.at[-4:-2].set(cylinder_pos)
+        qpos = qpos.at[-2:].set(goal_pos)
+
+        qvel = jax.random.uniform(
+            key=rng_vel, minval=-0.005, maxval=0.005, shape=(self.mjx_model.nv,)
+        )
+        qvel = qvel.at[-4:].set(0)
+
+        act = jnp.zeros(self.mjx_model.na)
+
+        return qpos, qvel, act
+
+    def observation(
+        self, state: mjx.Data, rng: jax.Array, params: PusherParams
+    ) -> jnp.ndarray:
+        """Observes the & `qpos` &  `qvel` & `tips_arm` & `object` `goal`."""
+        mjx_data = state
+
+        position = mjx_data.qpos.flatten()
+        velocity = mjx_data.qvel.flatten()
+        tips_arm_position = mjx_data.xpos[10]  # TODO make this dynamic
+        object_position = mjx_data.xpos[11]  # TODO make this dynamic
+        goal_position = mjx_data.xpos[12]  # TODO make this dynamic
+
+        observation = jnp.concatenate(
+            (
+                position[:7],
+                velocity[:7],
+                tips_arm_position,
+                object_position,
+                goal_position,
+            )
+        )
+
+        return observation
+
+    def _get_reward(
+        self,
+        state: mjx.Data,
+        action: jnp.ndarray,
+        next_state: mjx.Data,
+        params: PusherParams,
+    ) -> tuple[jnp.ndarray, dict]:
+        """Reward = reward_dist + reward_ctrl + reward_near."""
+        mjx_data = next_state
+        tips_arm_position = mjx_data.xpos[10]  # TODO make this dynamic
+        object_position = mjx_data.xpos[11]  # TODO make this dynamic
+        goal_position = mjx_data.xpos[12]  # TODO make this dynamic
+
+        vec_1 = object_position - tips_arm_position
+        vec_2 = object_position - goal_position
+
+        reward_near = -jnp.linalg.norm(vec_1) * params.reward_near_weight
+        reward_dist = -jnp.linalg.norm(vec_2) * params.reward_dist_weight
+        reward_ctrl = -jnp.square(action).sum() * params.reward_control_weight
+
+        reward = reward_dist + reward_ctrl + reward_near
+
+        reward_info = {
+            "reward_dist": reward_dist,
+            "reward_ctrl": reward_ctrl,
+            "reward_near": reward_near,
+        }
+
+        return reward, reward_info
+
+    def get_default_params(self, **kwargs) -> PusherParams:
+        """Get the default parameter for the Reacher environment."""
+        base = super().get_default_params()
+        camera_cfg = kwargs.get("default_camera_config", PUSHER_DEFAULT_CAMERA_CONFIG)
+        camera_cfg = _normalize_camera_config(camera_cfg)
+
+        return PusherParams(
+            xml_file=kwargs.get("xml_file", "pusher.xml"),
+            frame_skip=kwargs.get("frame_skip", 5),
+            default_camera_config=camera_cfg,
+            reward_near_weight=kwargs.get("reward_near_weight", 0.5),
+            reward_dist_weight=kwargs.get("reward_dist_weight", 1.0),
+            reward_control_weight=kwargs.get("reward_control_weight", 0.1),
+            camera_id=kwargs.get("camera_id", base.camera_id),
+            camera_name=kwargs.get("camera_name", base.camera_name),
+            max_geom=kwargs.get("max_geom", base.max_geom),
+            width=kwargs.get("width", base.width),
+            height=kwargs.get("height", base.height),
+            render_mode=kwargs.get("render_mode", base.render_mode),
+        )
+
+
+class ReacherJaxEnv(FunctionalJaxEnv, EzPickle):
+    """Jax-based Reacher environment using the MJX implementation as base."""
+
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
+
+    def __init__(self, render_mode: str | None = None, **kwargs: any):
+        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
+
+        temp_env = Reacher_MJXEnv()
+        params = temp_env.get_default_params(**kwargs)
+
+        env = Reacher_MJXEnv(params=params)
+        env.transform(partial(jax.jit, static_argnames="params"))
+
+        FunctionalJaxEnv.__init__(
+            self,
+            env,
+            metadata=env.metadata,
+            render_mode=render_mode,
+            kwargs=kwargs,
+        )
+
+
+class PusherJaxEnv(FunctionalJaxEnv, EzPickle):
+    """Jax-based Pusher environment using the MJX implementation as base."""
+
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
+
+    def __init__(self, render_mode: str | None = None, **kwargs: any):
+        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
+
+        temp_env = Pusher_MJXEnv()
+        params = temp_env.get_default_params(**kwargs)
+
+        env = Pusher_MJXEnv(params=params)
+        env.transform(partial(jax.jit, static_argnames="params"))
+
+        FunctionalJaxEnv.__init__(
+            self,
+            env,
+            metadata=env.metadata,
+            render_mode=render_mode,
+            kwargs=kwargs,
+        )
