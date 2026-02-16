@@ -148,7 +148,7 @@ class MJXEnv(
         state: mjx.Data,
         action: jnp.ndarray,
         rng: jax.Array,
-        params: dict[str, Any],
+        params,
     ) -> mjx.Data:
         """Step through the simulator using `action` for `self.dt` (note: `rng` argument is ignored)."""
         mjx_data = state.replace(ctrl=action)
