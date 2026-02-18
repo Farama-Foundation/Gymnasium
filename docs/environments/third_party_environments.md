@@ -147,6 +147,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Generals.io is a fast-paced strategy game on a 2D grid. We make bot development accessible via the Gymnasium/PettingZoo API.
 
+- [Pickomino (Heckmeck): Dice and Tile game](https://github.com/smallgig/Pickomino)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/smallgig/Pickomino)
+
+  Push your luck dice game with a twist. Your agent plays against 1 to 6 bots.
+
 - [pystk2-gymnasium: SuperTuxKart races gymnasium wrapper](https://github.com/bpiwowar/pystk2-gymnasium)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
@@ -160,6 +167,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![GitHub stars](https://img.shields.io/github/stars/smanolloff/qwop-gym)
 
   QWOP is a game about running extremely fast down a 100 meter track. With this Gymnasium environment you can train your own agents and try to beat the current world record (5.0 in-game seconds for humans and 4.7 for AI).
+
+- [Reinforce Tactics: 2D Turned-Based Strategy Game](https://github.com/kuds/reinforce-tactics)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/kuds/reinforce-tactics)
+
+  Reinforce Tactics is a turn-based strategy game designed for reinforcement learning research, combining tactical grid-based combat with an economy system while supporting multiple AI opponent types including rule-based bots, LLM-powered agents, and trainable RL models.
 
 - [Tetris Gymnasium: A fully configurable Gymnasium compatible Tetris environment](https://github.com/Max-We/Tetris-Gymnasium)
 

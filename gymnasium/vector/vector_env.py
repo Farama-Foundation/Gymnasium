@@ -335,11 +335,6 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             vector_infos[key], vector_infos[f"_{key}"] = array, array_mask
         return vector_infos
 
-    def __del__(self):
-        """Closes the vector environment."""
-        if not getattr(self, "closed", True):
-            self.close()
-
     def __repr__(self) -> str:
         """Returns a string representation of the vector environment.
 
