@@ -31,7 +31,9 @@ def array_short_repr(arr: NDArray[Any]) -> str:
 
 def is_float_integer(var: Any) -> bool:
     """Checks if a scalar variable is an integer or float (does not include bool)."""
-    return np.issubdtype(type(var), np.integer) or np.issubdtype(type(var), np.floating)
+    return isinstance(var, (int, float, np.integer, np.floating)) and not isinstance(
+        var, bool
+    )
 
 
 class Box(Space[NDArray[Any]]):
@@ -88,11 +90,7 @@ class Box(Space[NDArray[Any]]):
         self.dtype = np.dtype(dtype)
 
         #  * check that dtype is an accepted dtype
-        if not (
-            np.issubdtype(self.dtype, np.integer)
-            or np.issubdtype(self.dtype, np.floating)
-            or self.dtype == np.bool_
-        ):
+        if self.dtype.kind not in ("i", "u", "f", "b"):
             raise ValueError(
                 f"Invalid Box dtype ({self.dtype}), must be an integer, floating, or bool dtype"
             )
@@ -103,7 +101,7 @@ class Box(Space[NDArray[Any]]):
                 raise TypeError(
                     f"Expected Box shape to be an iterable, actual type={type(shape)}"
                 )
-            elif not all(np.issubdtype(type(dim), np.integer) for dim in shape):
+            elif not all(isinstance(dim, (int, np.integer)) for dim in shape):
                 raise TypeError(
                     f"Expected all Box shape elements to be integer, actual type={tuple(type(dim) for dim in shape)}"
                 )
@@ -135,9 +133,9 @@ class Box(Space[NDArray[Any]]):
         #  * nan - must be done beforehand as int dtype can cast `nan` to another value
         #  * unsign int inf and -inf - special case that is disallowed
 
-        if self.dtype == np.bool_:
+        if self.dtype.kind == "b":
             dtype_min, dtype_max = 0, 1
-        elif np.issubdtype(self.dtype, np.floating):
+        elif self.dtype.kind == "f":
             dtype_min = float(np.finfo(self.dtype).min)
             dtype_max = float(np.finfo(self.dtype).max)
         else:
@@ -164,8 +162,8 @@ class Box(Space[NDArray[Any]]):
                 f"Box all low values must be less than or equal to high (some values break this), low={self.low}, high={self.high}"
             )
 
-        self.low_repr = array_short_repr(self.low)
-        self.high_repr = array_short_repr(self.high)
+        self.low_repr = None
+        self.high_repr = None
 
         super().__init__(self.shape, self.dtype, seed)
 
@@ -180,7 +178,7 @@ class Box(Space[NDArray[Any]]):
             The updated low value and for what values the input is bounded (below)
         """
         if is_float_integer(low):
-            bounded_below = -np.inf < np.full(self.shape, low, dtype=float)
+            bounded_below = np.full(self.shape, -np.inf < low)
 
             if np.isnan(low):
                 raise ValueError(f"No low value can be equal to `np.nan`, low={low}")
@@ -203,11 +201,7 @@ class Box(Space[NDArray[Any]]):
                 raise ValueError(
                     f"Box low must be a np.ndarray, integer, or float, actual type={type(low)}"
                 )
-            elif not (
-                np.issubdtype(low.dtype, np.floating)
-                or np.issubdtype(low.dtype, np.integer)
-                or low.dtype == np.bool_
-            ):
+            elif low.dtype.kind not in ("f", "i", "u", "b"):
                 raise ValueError(
                     f"Box low must be a floating, integer, or bool dtype, actual dtype={low.dtype}"
                 )
@@ -216,9 +210,10 @@ class Box(Space[NDArray[Any]]):
 
             bounded_below = -np.inf < low
 
-            if np.any(np.isneginf(low)):
+            neginf = np.isneginf(low)
+            if np.any(neginf):
                 if self.dtype.kind == "i":  # signed int
-                    low[np.isneginf(low)] = dtype_min
+                    low[neginf] = dtype_min
                 elif self.dtype.kind in {"u", "b"}:  # unsigned int and bool
                     raise ValueError(
                         f"Box unsigned int dtype don't support `-np.inf`, low={low}"
@@ -229,8 +224,8 @@ class Box(Space[NDArray[Any]]):
                 )
 
             if (
-                np.issubdtype(low.dtype, np.floating)
-                and np.issubdtype(self.dtype, np.floating)
+                low.dtype.kind == "f"
+                and self.dtype.kind == "f"
                 and np.finfo(self.dtype).precision < np.finfo(low.dtype).precision
             ):
                 gym.logger.warn(
@@ -249,7 +244,7 @@ class Box(Space[NDArray[Any]]):
             The updated high value and for what values the input is bounded (above)
         """
         if is_float_integer(high):
-            bounded_above = np.full(self.shape, high, dtype=float) < np.inf
+            bounded_above = np.full(self.shape, high < np.inf)
 
             if np.isnan(high):
                 raise ValueError(f"No high value can be equal to `np.nan`, high={high}")
@@ -272,11 +267,7 @@ class Box(Space[NDArray[Any]]):
                 raise ValueError(
                     f"Box high must be a np.ndarray, integer, or float, actual type={type(high)}"
                 )
-            elif not (
-                np.issubdtype(high.dtype, np.floating)
-                or np.issubdtype(high.dtype, np.integer)
-                or high.dtype == np.bool_
-            ):
+            elif high.dtype.kind not in ("f", "i", "u", "b"):
                 raise ValueError(
                     f"Box high must be a floating or integer dtype, actual dtype={high.dtype}"
                 )
@@ -299,8 +290,8 @@ class Box(Space[NDArray[Any]]):
                 )
 
             if (
-                np.issubdtype(high.dtype, np.floating)
-                and np.issubdtype(self.dtype, np.floating)
+                high.dtype.kind == "f"
+                and self.dtype.kind == "f"
                 and np.finfo(self.dtype).precision < np.finfo(high.dtype).precision
             ):
                 gym.logger.warn(
@@ -451,6 +442,10 @@ class Box(Space[NDArray[Any]]):
         Returns:
             A representation of the space
         """
+        if self.low_repr is None:
+            self.low_repr = array_short_repr(self.low)
+        if self.high_repr is None:
+            self.high_repr = array_short_repr(self.high)
         return f"Box({self.low_repr}, {self.high_repr}, {self.shape}, {self.dtype})"
 
     def __eq__(self, other: Any) -> bool:
