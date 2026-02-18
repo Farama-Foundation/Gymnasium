@@ -148,8 +148,8 @@ def test_verify_info_xy_velocity_com(env_id: str):
 
     dxy = new_xy - old_xy
     vel_x, vel_y = dxy / env.dt
-    assert np.allclose(vel_x, info["x_velocity"])
-    assert np.allclose(vel_y, info["y_velocity"])
+    assert vel_x == info["x_velocity"]
+    assert vel_y == info["y_velocity"]
 
 
 # Note: Hopper-v4/3/2 does not have `info['reward_survive']`, but it is still affected
