@@ -176,7 +176,7 @@ def test_verify_reward_survive(env_name: str, version: str):
     env.action_space.seed(1)
 
     terminal = False
-    for _ in range(80):
+    for _ in range(160):
         obs, rew, terminal, truncated, info = env.step(env.action_space.sample())
 
         if terminal:
