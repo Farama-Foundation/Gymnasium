@@ -1,6 +1,5 @@
 import pytest
 
-
 jax = pytest.importorskip("jax")
 import jax.numpy as jnp  # noqa: E402
 import jax.random as jrng  # noqa: E402
@@ -24,7 +23,7 @@ def test_normal(env_class):
     state = env.initial(rng)
     env.action_space.seed(0)
 
-    for t in range(10):
+    for _ in range(10):
         obs = env.observation(state, rng)
         action = env.action_space.sample()
         next_state = env.transition(state, action, rng)
@@ -57,7 +56,7 @@ def test_jit(env_class):
     state = env.initial(rng)
     env.action_space.seed(0)
 
-    for t in range(10):
+    for _ in range(10):
         obs = env.observation(state, rng)
         action = env.action_space.sample()
         next_state = env.transition(state, action, rng)
@@ -92,7 +91,7 @@ def test_vmap(env_class):
     state = env.initial(rng)
     env.action_space.seed(0)
 
-    for t in range(10):
+    for _ in range(10):
         obs = env.observation(state, None)
         action = jnp.array([env.action_space.sample() for _ in range(num_envs)])
         # if isinstance(env.action_space, Discrete):
@@ -123,7 +122,7 @@ def test_vectorized(env_class):
     assert isinstance(obs, jax.Array)
     assert isinstance(info, dict)
 
-    for t in range(100):
+    for _ in range(100):
         action = env.action_space.sample()
         obs, reward, terminated, truncated, info = env.step(action)
 

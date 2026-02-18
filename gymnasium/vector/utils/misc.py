@@ -8,7 +8,6 @@ from collections.abc import Callable
 
 from gymnasium.core import Env
 
-
 __all__ = ["CloudpickleWrapper", "clear_mpi_env_vars"]
 
 

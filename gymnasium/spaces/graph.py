@@ -67,13 +67,13 @@ class Graph(Space[GraphInstance]):
             edge_space (Union[None, Box, Discrete]): space of the edge features.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
         """
-        assert isinstance(
-            node_space, (Box, Discrete)
-        ), f"Values of the node_space should be instances of Box or Discrete, got {type(node_space)}"
+        assert isinstance(node_space, (Box, Discrete)), (
+            f"Values of the node_space should be instances of Box or Discrete, got {type(node_space)}"
+        )
         if edge_space is not None:
-            assert isinstance(
-                edge_space, (Box, Discrete)
-            ), f"Values of the edge_space should be instances of None Box or Discrete, got {type(edge_space)}"
+            assert isinstance(edge_space, (Box, Discrete)), (
+                f"Values of the edge_space should be instances of None Box or Discrete, got {type(edge_space)}"
+            )
 
         self.node_space = node_space
         self.edge_space = edge_space
@@ -178,13 +178,15 @@ class Graph(Space[GraphInstance]):
 
     def sample(
         self,
-        mask: None | (
+        mask: None
+        | (
             tuple[
                 NDArray[Any] | tuple[Any, ...] | None,
                 NDArray[Any] | tuple[Any, ...] | None,
             ]
         ) = None,
-        probability: None | (
+        probability: None
+        | (
             tuple[
                 NDArray[Any] | tuple[Any, ...] | None,
                 NDArray[Any] | tuple[Any, ...] | None,
@@ -208,9 +210,9 @@ class Graph(Space[GraphInstance]):
         Returns:
             A :class:`GraphInstance` with attributes `.nodes`, `.edges`, and `.edge_links`.
         """
-        assert (
-            num_nodes > 0
-        ), f"The number of nodes is expected to be greater than 0, actual value: {num_nodes}"
+        assert num_nodes > 0, (
+            f"The number of nodes is expected to be greater than 0, actual value: {num_nodes}"
+        )
 
         if mask is not None and probability is not None:
             raise ValueError(
@@ -240,9 +242,9 @@ class Graph(Space[GraphInstance]):
                 gym.logger.warn(
                     f"The number of edges is set ({num_edges}) but the edge space is None."
                 )
-            assert (
-                num_edges >= 0
-            ), f"Expects the number of edges to be greater than 0, actual value: {num_edges}"
+            assert num_edges >= 0, (
+                f"Expects the number of edges to be greater than 0, actual value: {num_edges}"
+            )
         assert num_edges is not None
 
         sampled_node_space = self._generate_sample_space(self.node_space, num_nodes)

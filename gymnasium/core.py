@@ -11,7 +11,6 @@ import gymnasium
 from gymnasium import spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
-
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec, WrapperSpec
 
@@ -190,7 +189,7 @@ class Env(Generic[ObsType, ActType]):
         """
         raise NotImplementedError
 
-    def close(self):
+    def close(self) -> None:
         """After the user has finished using the environment, close contains the code necessary to "clean up" the environment.
 
         This is critical for closing rendering windows, database or HTTP connections.
@@ -310,9 +309,9 @@ class Wrapper(
             env: The environment to wrap
         """
         self.env = env
-        assert isinstance(
-            env, Env
-        ), f"Expected env to be a `gymnasium.Env` but got {type(env)}"
+        assert isinstance(env, Env), (
+            f"Expected env to be a `gymnasium.Env` but got {type(env)}"
+        )
 
         self._action_space: spaces.Space[WrapperActType] | None = None
         self._observation_space: spaces.Space[WrapperObsType] | None = None
@@ -336,7 +335,7 @@ class Wrapper(
         """Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data."""
         return self.env.render()
 
-    def close(self):
+    def close(self) -> None:
         """Closes the wrapper and :attr:`env`."""
         return self.env.close()
 
@@ -363,7 +362,7 @@ class Wrapper(
         if env_spec is not None:
             # See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`
             if isinstance(self, RecordConstructorArgs):
-                kwargs = getattr(self, "_saved_kwargs")
+                kwargs = self._saved_kwargs
                 if "env" in kwargs:
                     kwargs = deepcopy(kwargs)
                     kwargs.pop("env")

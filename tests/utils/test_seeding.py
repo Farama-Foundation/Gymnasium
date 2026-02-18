@@ -11,7 +11,7 @@ def test_invalid_seeds():
         except error.Error:
             pass
         else:
-            assert False, f"Invalid seed {seed} passed validation"
+            raise AssertionError(f"Invalid seed {seed} passed validation")
 
 
 def test_valid_seeds():
@@ -24,7 +24,7 @@ def test_rng_pickle():
     rng, _ = seeding.np_random(seed=0)
     pickled = pickle.dumps(rng)
     rng2 = pickle.loads(pickled)
-    assert isinstance(
-        rng2, seeding.RandomNumberGenerator
-    ), "Unpickled object is not a RandomNumberGenerator"
+    assert isinstance(rng2, seeding.RandomNumberGenerator), (
+        "Unpickled object is not a RandomNumberGenerator"
+    )
     assert rng.random() == rng2.random()

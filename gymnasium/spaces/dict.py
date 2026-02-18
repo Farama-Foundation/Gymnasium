@@ -99,9 +99,9 @@ class Dict(Space[dict[str, Any]], typing.Mapping[str, Space[Any]]):
 
         self.spaces: dict[str, Space[Any]] = spaces
         for key, space in self.spaces.items():
-            assert isinstance(
-                space, Space
-            ), f"Dict space element is not an instance of Space: key='{key}', space={space}"
+            assert isinstance(space, Space), (
+                f"Dict space element is not an instance of Space: key='{key}', space={space}"
+            )
 
         # None for shape and dtype, since it'll require special handling
         super().__init__(None, None, seed)  # type: ignore
@@ -136,7 +136,9 @@ class Dict(Space[dict[str, Any]], typing.Mapping[str, Space[Any]]):
             )
             return {
                 key: subspace.seed(int(subseed))
-                for (key, subspace), subseed in zip(self.spaces.items(), subseeds)
+                for (key, subspace), subseed in zip(
+                    self.spaces.items(), subseeds, strict=True
+                )
             }
         elif isinstance(seed, dict):
             if seed.keys() != self.spaces.keys():
@@ -171,21 +173,21 @@ class Dict(Space[dict[str, Any]], typing.Mapping[str, Space[Any]]):
                 f"Only one of `mask` or `probability` can be provided, actual values: mask={mask}, probability={probability}"
             )
         elif mask is not None:
-            assert isinstance(
-                mask, dict
-            ), f"Expected sample mask to be a dict, actual type: {type(mask)}"
-            assert (
-                mask.keys() == self.spaces.keys()
-            ), f"Expected sample mask keys to be same as space keys, mask keys: {mask.keys()}, space keys: {self.spaces.keys()}"
+            assert isinstance(mask, dict), (
+                f"Expected sample mask to be a dict, actual type: {type(mask)}"
+            )
+            assert mask.keys() == self.spaces.keys(), (
+                f"Expected sample mask keys to be same as space keys, mask keys: {mask.keys()}, space keys: {self.spaces.keys()}"
+            )
 
             return {k: space.sample(mask=mask[k]) for k, space in self.spaces.items()}
         elif probability is not None:
-            assert isinstance(
-                probability, dict
-            ), f"Expected sample probability mask to be a dict, actual type: {type(probability)}"
-            assert (
-                probability.keys() == self.spaces.keys()
-            ), f"Expected sample probability mask keys to be same as space keys, mask keys: {probability.keys()}, space keys: {self.spaces.keys()}"
+            assert isinstance(probability, dict), (
+                f"Expected sample probability mask to be a dict, actual type: {type(probability)}"
+            )
+            assert probability.keys() == self.spaces.keys(), (
+                f"Expected sample probability mask keys to be same as space keys, mask keys: {probability.keys()}, space keys: {self.spaces.keys()}"
+            )
 
             return {
                 k: space.sample(probability=probability[k])
@@ -210,9 +212,9 @@ class Dict(Space[dict[str, Any]], typing.Mapping[str, Space[Any]]):
 
     def __setitem__(self, key: str, value: Space[Any]):
         """Set the space that is associated to `key`."""
-        assert isinstance(
-            value, Space
-        ), f"Trying to set {key} to Dict space with value that is not a gymnasium space, actual type: {type(value)}"
+        assert isinstance(value, Space), (
+            f"Trying to set {key} to Dict space with value that is not a gymnasium space, actual type: {type(value)}"
+        )
         self.spaces[key] = value
 
     def __iter__(self):

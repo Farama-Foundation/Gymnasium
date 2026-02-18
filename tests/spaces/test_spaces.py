@@ -20,7 +20,6 @@ from tests.spaces.utils import (
     TESTING_SPACES_IDS,
 )
 
-
 # Due to this test taking a 1ms each then we don't mind generating so many tests
 # This generates all pairs of spaces of the same type in TESTING_SPACES
 TESTING_SPACES_PERMUTATIONS = list(
@@ -33,6 +32,46 @@ TESTING_SPACES_PERMUTATIONS = list(
         ]
     )
 )
+
+SAMPLE_MASK_RNG, _ = seeding.np_random(1)
+
+TESTING_SPACE_SAMPLE_MASK = [
+    # Discrete
+    np.array([1, 1, 0], dtype=np.int8),
+    np.array([0, 0, 0], dtype=np.int8),
+    np.array([0, 0, 0, 1], dtype=np.int8),
+    # Box
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    # Multi-discrete
+    (np.array([1, 1], dtype=np.int8), np.array([0, 0], dtype=np.int8)),
+    (
+        (np.array([1, 0], dtype=np.int8), np.array([0, 1, 1], dtype=np.int8)),
+        (np.array([1, 1, 0], dtype=np.int8), np.array([0, 1], dtype=np.int8)),
+    ),
+    (np.array([1, 1], dtype=np.int8), np.array([0, 0], dtype=np.int8)),
+    (
+        (np.array([1, 0], dtype=np.int8), np.array([0, 1, 1], dtype=np.int8)),
+        (np.array([1, 1, 0], dtype=np.int8), np.array([0, 1], dtype=np.int8)),
+    ),
+    (np.array([1, 1], dtype=np.int8), np.array([0, 0, 0], dtype=np.int8)),
+    (np.array([1, 1], dtype=np.int8), np.array([0, 0, 0], dtype=np.int8)),
+    # Multi-binary
+    np.array([0, 1, 0, 1, 0, 2, 1, 1], dtype=np.int8),
+    np.array([[0, 1, 2], [0, 2, 1]], dtype=np.int8),
+    # Text
+    (None, SAMPLE_MASK_RNG.integers(low=0, high=2, size=62, dtype=np.int8)),
+    (4, SAMPLE_MASK_RNG.integers(low=0, high=2, size=62, dtype=np.int8)),
+    (None, np.array([1, 1, 0, 1, 0, 0], dtype=np.int8)),
+]
+
+assert len(TESTING_FUNDAMENTAL_SPACES) == len(TESTING_SPACE_SAMPLE_MASK)
 
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
@@ -47,12 +86,12 @@ def test_roundtripping(space: Space):
     sample_1_prime, sample_2_prime = space.from_jsonable(sample_roundtripped)
 
     # Check if the samples are equivalent
-    assert data_equivalence(
-        sample_1, sample_1_prime
-    ), f"sample 1: {sample_1}, prime: {sample_1_prime}"
-    assert data_equivalence(
-        sample_2, sample_2_prime
-    ), f"sample 2: {sample_2}, prime: {sample_2_prime}"
+    assert data_equivalence(sample_1, sample_1_prime), (
+        f"sample 1: {sample_1}, prime: {sample_1_prime}"
+    )
+    assert data_equivalence(sample_2, sample_2_prime), (
+        f"sample 2: {sample_2}, prime: {sample_2_prime}"
+    )
 
 
 @pytest.mark.parametrize(
@@ -156,7 +195,7 @@ def test_sample(space: Space, n_trials: int = 1_000):
 
         def _update_observed_frequency(obs_sample, obs_freq):
             if isinstance(obs_sample, np.ndarray):
-                for sub_sample, sub_freq in zip(obs_sample, obs_freq):
+                for sub_sample, sub_freq in zip(obs_sample, obs_freq, strict=True):
                     _update_observed_frequency(sub_sample, sub_freq)
             else:
                 obs_freq[obs_sample] += 1
@@ -170,7 +209,9 @@ def test_sample(space: Space, n_trials: int = 1_000):
 
         def _chi_squared_test(dim, exp_freq, obs_freq):
             if isinstance(dim, np.ndarray):
-                for sub_dim, sub_exp_freq, sub_obs_freq in zip(dim, exp_freq, obs_freq):
+                for sub_dim, sub_exp_freq, sub_obs_freq in zip(
+                    dim, exp_freq, obs_freq, strict=True
+                ):
                     _chi_squared_test(sub_dim, sub_exp_freq, sub_obs_freq)
             else:
                 assert exp_freq.shape == (dim,) and obs_freq.shape == (dim,)
@@ -306,45 +347,11 @@ def binary_chi2_test(sample, low, high, bounded_below, bounded_above):
         assert variance < critical_value
 
 
-SAMPLE_MASK_RNG, _ = seeding.np_random(1)
-
-
 @pytest.mark.parametrize(
     "space,mask",
     itertools.zip_longest(
         TESTING_FUNDAMENTAL_SPACES,
-        [
-            # Discrete
-            np.array([1, 1, 0], dtype=np.int8),
-            np.array([0, 0, 0], dtype=np.int8),
-            # Box
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            # Multi-discrete
-            (np.array([1, 1], dtype=np.int8), np.array([0, 0], dtype=np.int8)),
-            (
-                (np.array([1, 0], dtype=np.int8), np.array([0, 1, 1], dtype=np.int8)),
-                (np.array([1, 1, 0], dtype=np.int8), np.array([0, 1], dtype=np.int8)),
-            ),
-            (np.array([1, 1], dtype=np.int8), np.array([0, 0], dtype=np.int8)),
-            (
-                (np.array([1, 0], dtype=np.int8), np.array([0, 1, 1], dtype=np.int8)),
-                (np.array([1, 1, 0], dtype=np.int8), np.array([0, 1], dtype=np.int8)),
-            ),
-            # Multi-binary
-            np.array([0, 1, 0, 1, 0, 2, 1, 1], dtype=np.int8),
-            np.array([[0, 1, 2], [0, 2, 1]], dtype=np.int8),
-            # Text
-            (None, SAMPLE_MASK_RNG.integers(low=0, high=2, size=62, dtype=np.int8)),
-            (4, SAMPLE_MASK_RNG.integers(low=0, high=2, size=62, dtype=np.int8)),
-            (None, np.array([1, 1, 0, 1, 0, 0], dtype=np.int8)),
-        ],
+        TESTING_SPACE_SAMPLE_MASK,
     ),
     ids=TESTING_FUNDAMENTAL_SPACES_IDS,
 )
@@ -404,14 +411,14 @@ def test_space_sample_mask(space: Space, mask, n_trials: int = 100):
             if isinstance(_dim, np.ndarray):
                 return [
                     _generate_frequency(sub_dim, sub_mask, func)
-                    for sub_dim, sub_mask in zip(_dim, _mask)
+                    for sub_dim, sub_mask in zip(_dim, _mask, strict=True)
                 ]
             else:
                 return func(_dim, _mask)
 
         def _update_observed_frequency(obs_sample, obs_freq):
             if isinstance(obs_sample, np.ndarray):
-                for sub_sample, sub_freq in zip(obs_sample, obs_freq):
+                for sub_sample, sub_freq in zip(obs_sample, obs_freq, strict=True):
                     _update_observed_frequency(sub_sample, sub_freq)
             else:
                 obs_freq[obs_sample] += 1
@@ -437,7 +444,7 @@ def test_space_sample_mask(space: Space, mask, n_trials: int = 100):
         def _chi_squared_test(dim, _mask, exp_freq, obs_freq):
             if isinstance(dim, np.ndarray):
                 for sub_dim, sub_mask, sub_exp_freq, sub_obs_freq in zip(
-                    dim, _mask, exp_freq, obs_freq
+                    dim, _mask, exp_freq, obs_freq, strict=True
                 ):
                     _chi_squared_test(sub_dim, sub_mask, sub_exp_freq, sub_obs_freq)
             else:
@@ -540,7 +547,7 @@ assert len(SPACE_CLS) == len(SPACE_KWARGS)
 
 @pytest.mark.parametrize(
     "space_cls,kwarg",
-    list(zip(SPACE_CLS, SPACE_KWARGS)),
+    list(zip(SPACE_CLS, SPACE_KWARGS, strict=True)),
     ids=[f"{space_cls}" for space_cls in SPACE_CLS],
 )
 def test_seed_np_random(space_cls, kwarg):
@@ -569,9 +576,9 @@ def test_sample_contains(space):
     for other_space in TESTING_SPACES:
         sample = other_space.sample()
         space_contains = other_space.contains(sample)
-        assert isinstance(
-            space_contains, bool
-        ), f"{space_contains}, {type(space_contains)}, {space}, {other_space}, {sample}"
+        assert isinstance(space_contains, bool), (
+            f"{space_contains}, {type(space_contains)}, {space}, {other_space}, {sample}"
+        )
 
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)

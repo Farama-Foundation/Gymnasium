@@ -34,7 +34,6 @@ from gymnasium.spaces import (
 )
 from gymnasium.spaces.space import T_cov
 
-
 __all__ = [
     "batch_space",
     "batch_differing_spaces",
@@ -59,7 +58,6 @@ def batch_space(space: Space[Any], n: int = 1) -> Space[Any]:
         ValueError: Cannot batch spaces that does not have a registered function.
 
     Example:
-
         >>> from gymnasium.spaces import Box, Dict
         >>> import numpy as np
         >>> space = Dict({
@@ -165,27 +163,27 @@ def batch_differing_spaces(spaces: typing.Sequence[Space]) -> Space:
         MultiDiscrete([3 5 4 8])
     """
     assert len(spaces) > 0, "Expects a non-empty list of spaces"
-    assert all(
-        isinstance(space, type(spaces[0])) for space in spaces
-    ), f"Expects all spaces to be the same shape, actual types: {[type(space) for space in spaces]}"
-    assert (
-        type(spaces[0]) in batch_differing_spaces.registry
-    ), f"Requires the Space type to have a registered `batch_differing_space`, current list: {batch_differing_spaces.registry}"
+    assert all(isinstance(space, type(spaces[0])) for space in spaces), (
+        f"Expects all spaces to be the same shape, actual types: {[type(space) for space in spaces]}"
+    )
+    assert type(spaces[0]) in batch_differing_spaces.registry, (
+        f"Requires the Space type to have a registered `batch_differing_space`, current list: {batch_differing_spaces.registry}"
+    )
 
     return batch_differing_spaces.dispatch(type(spaces[0]))(spaces)
 
 
 @batch_differing_spaces.register(Box)
 def _batch_differing_spaces_box(spaces: list[Box]):
-    assert all(
-        spaces[0].dtype == space.dtype for space in spaces
-    ), f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
-    assert all(
-        spaces[0].low.shape == space.low.shape for space in spaces
-    ), f"Expected all Box.low shape to be equal, actually {[space.low.shape for space in spaces]}"
-    assert all(
-        spaces[0].high.shape == space.high.shape for space in spaces
-    ), f"Expected all Box.high shape to be equal, actually {[space.high.shape for space in spaces]}"
+    assert all(spaces[0].dtype == space.dtype for space in spaces), (
+        f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
+    )
+    assert all(spaces[0].low.shape == space.low.shape for space in spaces), (
+        f"Expected all Box.low shape to be equal, actually {[space.low.shape for space in spaces]}"
+    )
+    assert all(spaces[0].high.shape == space.high.shape for space in spaces), (
+        f"Expected all Box.high shape to be equal, actually {[space.high.shape for space in spaces]}"
+    )
 
     return Box(
         low=np.array([space.low for space in spaces]),
@@ -197,8 +195,13 @@ def _batch_differing_spaces_box(spaces: list[Box]):
 
 @batch_differing_spaces.register(Discrete)
 def _batch_differing_spaces_discrete(spaces: list[Discrete]):
+    # select the "largest" to fit others.
+    # Assumes all spaces dtype are of int dtype
+    dtypes = [space.dtype for space in spaces]
+    largest = max(dtypes, key=lambda dt: np.dtype(dt).itemsize)
     return MultiDiscrete(
         nvec=np.array([space.n for space in spaces]),
+        dtype=largest,
         start=np.array([space.start for space in spaces]),
         seed=deepcopy(spaces[0].np_random),
     )
@@ -206,15 +209,15 @@ def _batch_differing_spaces_discrete(spaces: list[Discrete]):
 
 @batch_differing_spaces.register(MultiDiscrete)
 def _batch_differing_spaces_multi_discrete(spaces: list[MultiDiscrete]):
-    assert all(
-        spaces[0].dtype == space.dtype for space in spaces
-    ), f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
-    assert all(
-        spaces[0].nvec.shape == space.nvec.shape for space in spaces
-    ), f"Expects all MultiDiscrete.nvec shape, actually {[space.nvec.shape for space in spaces]}"
-    assert all(
-        spaces[0].start.shape == space.start.shape for space in spaces
-    ), f"Expects all MultiDiscrete.start shape, actually {[space.start.shape for space in spaces]}"
+    assert all(spaces[0].dtype == space.dtype for space in spaces), (
+        f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
+    )
+    assert all(spaces[0].nvec.shape == space.nvec.shape for space in spaces), (
+        f"Expects all MultiDiscrete.nvec shape, actually {[space.nvec.shape for space in spaces]}"
+    )
+    assert all(spaces[0].start.shape == space.start.shape for space in spaces), (
+        f"Expects all MultiDiscrete.start shape, actually {[space.start.shape for space in spaces]}"
+    )
 
     return Box(
         low=np.array([space.start for space in spaces]),
@@ -242,7 +245,7 @@ def _batch_differing_spaces_tuple(spaces: list[Tuple]):
     return Tuple(
         tuple(
             batch_differing_spaces(subspaces)
-            for subspaces in zip(*[space.spaces for space in spaces])
+            for subspaces in zip(*[space.spaces for space in spaces], strict=True)
         ),
         seed=deepcopy(spaces[0].np_random),
     )
@@ -327,7 +330,10 @@ def _iterate_base(space: Box | MultiDiscrete | MultiBinary, items: np.ndarray):
 def _iterate_tuple(space: Tuple, items: tuple[Any, ...]):
     # If this is a tuple of custom subspaces only, then simply iterate over items
     if all(type(subspace) in iterate.registry for subspace in space):
-        return zip(*[iterate(subspace, items[i]) for i, subspace in enumerate(space)])
+        return zip(
+            *[iterate(subspace, items[i]) for i, subspace in enumerate(space)],
+            strict=True,
+        )
 
     try:
         return iter(items)
@@ -348,10 +354,11 @@ def _iterate_dict(space: Dict, items: dict[str, Any]):
         *[
             (key, iterate(subspace, items[key]))
             for key, subspace in space.spaces.items()
-        ]
+        ],
+        strict=True,
     )
-    for item in zip(*values):
-        yield {key: value for key, value in zip(keys, item)}
+    for item in zip(*values, strict=True):
+        yield {key: value for key, value in zip(keys, item, strict=True)}
 
 
 @singledispatch

@@ -10,7 +10,6 @@ from gymnasium.envs.box2d.car_dynamics import Car
 from gymnasium.error import DependencyNotInstalled, InvalidAction
 from gymnasium.utils import EzPickle
 
-
 try:
     import Box2D
     from Box2D.b2 import contactListener, fixtureDef, polygonShape
@@ -291,9 +290,9 @@ class CarRacing(gym.Env, EzPickle):
             self.grass_color = np.array([102, 230, 102])
 
     def _reinit_colors(self, randomize):
-        assert (
-            self.domain_randomize
-        ), "domain_randomize must be True to use this function."
+        assert self.domain_randomize, (
+            "domain_randomize must be True to use this function."
+        )
 
         if randomize:
             # domain randomize the bg and grass colour
@@ -403,7 +402,7 @@ class CarRacing(gym.Env, EzPickle):
                 i1 = i
                 break
         if self.verbose:
-            print("Track generation: %i..%i -> %i-tiles track" % (i1, i2, i2 - i1))
+            print(f"Track generation: {i1}..{i2} -> {i2 - i1}-tiles track")
         assert i1 != -1
         assert i2 != -1
 
@@ -639,7 +638,7 @@ class CarRacing(gym.Env, EzPickle):
         self._render_indicators(WINDOW_W, WINDOW_H)
 
         font = pygame.font.Font(pygame.font.get_default_font(), 42)
-        text = font.render("%04i" % self.reward, True, (255, 255, 255), (0, 0, 0))
+        text = font.render(f"{self.reward:04}", True, (255, 255, 255), (0, 0, 0))
         text_rect = text.get_rect()
         text_rect.center = (60, WINDOW_H - WINDOW_H * 2.5 / 40.0)
         self.surf.blit(text, text_rect)

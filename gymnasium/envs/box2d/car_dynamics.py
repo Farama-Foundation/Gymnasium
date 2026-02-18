@@ -14,7 +14,6 @@ import numpy as np
 
 from gymnasium.error import DependencyNotInstalled
 
-
 try:
     from Box2D.b2 import fixtureDef, polygonShape, revoluteJointDef
 except ImportError as e:

@@ -45,9 +45,10 @@ def test_normalization(
 def test_wrapper_equivalence(
     n_envs: int = 3,
     n_steps: int = 250,
-    mean_rtol=np.array([0.1, 0.4, 0.25]),
-    var_rtol=np.array([0.15, 0.15, 0.18]),
 ):
+    mean_rtol = (np.array([0.1, 0.4, 0.25]),)
+    var_rtol = (np.array([0.15, 0.15, 0.18]),)
+
     vec_env = SyncVectorEnv([create_env for _ in range(n_envs)])
     vec_env = wrappers.vector.NormalizeObservation(vec_env)
 
@@ -85,7 +86,7 @@ def test_update_running_mean():
     copied_rms_var = np.copy(env.obs_rms.var)
 
     # Continue stepping through the environment and check that the running mean is not effected
-    for i in range(10):
+    for _ in range(10):
         env.step(env.action_space.sample())
 
     assert np.all(copied_rms_mean == env.obs_rms.mean)
@@ -94,8 +95,23 @@ def test_update_running_mean():
     # Re-enable updating the running mean
     env.update_running_mean = True
 
-    for i in range(10):
+    for _ in range(10):
         env.step(env.action_space.sample())
 
     assert np.any(copied_rms_mean != env.obs_rms.mean)
     assert np.any(copied_rms_var != env.obs_rms.var)
+
+
+def test_observation_space_and_dtype():
+    vec_env = SyncVectorEnv([create_env for _ in range(2)])
+    vec_env = wrappers.vector.NormalizeObservation(vec_env)
+
+    assert vec_env.single_observation_space.dtype == np.float32
+    assert np.all(vec_env.single_observation_space.low == -np.inf)
+    assert np.all(vec_env.single_observation_space.high == np.inf)
+
+    obs, _ = vec_env.reset(seed=123)
+    assert obs.dtype == np.float32
+
+    obs, *_ = vec_env.step(vec_env.action_space.sample())
+    assert obs.dtype == np.float32

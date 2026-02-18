@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import operator as op
 from functools import reduce, singledispatch
-from typing import Any, TypeVar, Union
+from typing import Any, TypeVar
 
 import numpy as np
 from numpy.typing import NDArray
@@ -28,6 +28,7 @@ from gymnasium.spaces import (
     Text,
     Tuple,
 )
+from gymnasium.spaces.discrete import IntType
 
 
 @singledispatch
@@ -110,7 +111,7 @@ def _flatdim_oneof(space: OneOf) -> int:
 
 
 T = TypeVar("T")
-FlatType = Union[NDArray[Any], dict[str, Any], tuple[Any, ...], GraphInstance]
+FlatType = NDArray[Any] | dict[str, Any] | tuple[Any, ...] | GraphInstance
 
 
 @singledispatch
@@ -165,7 +166,7 @@ def _flatten_box_multibinary(space: Box | MultiBinary, x: NDArray[Any]) -> NDArr
 
 
 @flatten.register(Discrete)
-def _flatten_discrete(space: Discrete, x: np.int64) -> NDArray[np.int64]:
+def _flatten_discrete(space: Discrete, x: IntType) -> NDArray[IntType]:
     onehot = np.zeros(space.n, dtype=space.dtype)
     onehot[x - space.start] = 1
     return onehot
@@ -187,9 +188,12 @@ def _flatten_multidiscrete(
 def _flatten_tuple(space: Tuple, x: tuple[Any, ...]) -> tuple[Any, ...] | NDArray[Any]:
     if space.is_np_flattenable:
         return np.concatenate(
-            [np.array(flatten(s, x_part)) for x_part, s in zip(x, space.spaces)]
+            [
+                np.array(flatten(s, x_part))
+                for x_part, s in zip(x, space.spaces, strict=True)
+            ]
         )
-    return tuple(flatten(s, x_part) for x_part, s in zip(x, space.spaces))
+    return tuple(flatten(s, x_part) for x_part, s in zip(x, space.spaces, strict=True))
 
 
 @flatten.register(Dict)
@@ -304,14 +308,14 @@ def _unflatten_box_multibinary(
 
 
 @unflatten.register(Discrete)
-def _unflatten_discrete(space: Discrete, x: NDArray[np.int64]) -> np.int64:
+def _unflatten_discrete(space: Discrete, x: NDArray[IntType | np.float64]) -> IntType:
     nonzero = np.nonzero(x)
     if len(nonzero[0]) == 0:
         raise ValueError(
             f"{x} is not a valid one-hot encoded vector and can not be unflattened to space {space}. "
             "Not all valid samples in a flattened space can be unflattened."
         )
-    return space.start + nonzero[0][0]
+    return space.start + nonzero[0][0].astype(space.dtype)
 
 
 @unflatten.register(MultiDiscrete)
@@ -337,19 +341,21 @@ def _unflatten_tuple(
     space: Tuple, x: NDArray[Any] | tuple[Any, ...]
 ) -> tuple[Any, ...]:
     if space.is_np_flattenable:
-        assert isinstance(
-            x, np.ndarray
-        ), f"{space} is numpy-flattenable. Thus, you should only unflatten numpy arrays for this space. Got a {type(x)}"
+        assert isinstance(x, np.ndarray), (
+            f"{space} is numpy-flattenable. Thus, you should only unflatten numpy arrays for this space. Got a {type(x)}"
+        )
         dims = np.asarray([flatdim(s) for s in space.spaces], dtype=np.int_)
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
         return tuple(
             unflatten(s, flattened)
-            for flattened, s in zip(list_flattened, space.spaces)
+            for flattened, s in zip(list_flattened, space.spaces, strict=True)
         )
-    assert isinstance(
-        x, tuple
-    ), f"{space} is not numpy-flattenable. Thus, you should only unflatten tuples for this space. Got a {type(x)}"
-    return tuple(unflatten(s, flattened) for flattened, s in zip(x, space.spaces))
+    assert isinstance(x, tuple), (
+        f"{space} is not numpy-flattenable. Thus, you should only unflatten tuples for this space. Got a {type(x)}"
+    )
+    return tuple(
+        unflatten(s, flattened) for flattened, s in zip(x, space.spaces, strict=True)
+    )
 
 
 @unflatten.register(Dict)
@@ -359,12 +365,14 @@ def _unflatten_dict(space: Dict, x: NDArray[Any] | dict[str, Any]) -> dict[str, 
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
         return {
             key: unflatten(s, flattened)
-            for flattened, (key, s) in zip(list_flattened, space.spaces.items())
+            for flattened, (key, s) in zip(
+                list_flattened, space.spaces.items(), strict=True
+            )
         }
 
-    assert isinstance(
-        x, dict
-    ), f"{space} is not numpy-flattenable. Thus, you should only unflatten dictionary for this space. Got a {type(x)}"
+    assert isinstance(x, dict), (
+        f"{space} is not numpy-flattenable. Thus, you should only unflatten dictionary for this space. Got a {type(x)}"
+    )
     return {key: unflatten(s, x[key]) for key, s in space.spaces.items()}
 
 

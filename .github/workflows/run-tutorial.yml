@@ -28,7 +28,7 @@ jobs:
     timeout-minutes: 30  # Set a reasonable timeout for all tests
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v6
@@ -176,7 +176,7 @@ jobs:
 
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: tutorial-test-results-${{ matrix.tutorial-group }}
         path: test-results/

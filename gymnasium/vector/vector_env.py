@@ -12,7 +12,6 @@ from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.logger import warn
 from gymnasium.utils import seeding
 
-
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
 
@@ -336,11 +335,6 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             vector_infos[key], vector_infos[f"_{key}"] = array, array_mask
         return vector_infos
 
-    def __del__(self):
-        """Closes the vector environment."""
-        if not getattr(self, "closed", True):
-            self.close()
-
     def __repr__(self) -> str:
         """Returns a string representation of the vector environment.
 
@@ -373,9 +367,9 @@ class VectorWrapper(VectorEnv):
             env: The environment to wrap
         """
         self.env = env
-        assert isinstance(
-            env, VectorEnv
-        ), f"Expected env to be a `gymnasium.vector.VectorEnv` but got {type(env)}"
+        assert isinstance(env, VectorEnv), (
+            f"Expected env to be a `gymnasium.vector.VectorEnv` but got {type(env)}"
+        )
 
         self._observation_space: gym.Space | None = None
         self._action_space: gym.Space | None = None

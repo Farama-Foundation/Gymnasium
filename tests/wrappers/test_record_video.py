@@ -98,7 +98,7 @@ def test_both_episodic_and_step_trigger():
 
     env.reset(seed=123)
     env.action_space.seed(123)
-    for i in range(199):
+    for _ in range(199):
         action = env.action_space.sample()
         _, _, terminated, truncated, _ = env.step(action)
         if terminated or truncated:

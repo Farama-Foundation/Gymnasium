@@ -113,10 +113,10 @@ class GridWorldEnv(gym.Env):
         # Map action numbers to actual movements on the grid
         # This makes the code more readable than using raw numbers
         self._action_to_direction = {
-            0: np.array([1, 0]),   # Move right (positive x)
-            1: np.array([0, 1]),   # Move up (positive y)
-            2: np.array([-1, 0]),  # Move left (negative x)
-            3: np.array([0, -1]),  # Move down (negative y)
+            0: np.array([0, 1]),   # Move right (column + 1)
+            1: np.array([-1, 0]),  # Move up (row - 1)
+            2: np.array([0, -1]),  # Move left (column - 1)
+            3: np.array([1, 0]),   # Move down (row + 1)
         }
 ```
 
@@ -408,12 +408,12 @@ def reset(self, seed=None, options=None):
     # super().reset(seed=seed)  # ❌ Missing this line
     # Results in: possibly incorrect seeding
 
-# Issue 2: Wrong action mapping
+# Issue 2: Mixing up coordinate conventions
+# Using Cartesian [x, y] instead of NumPy [row, col] causes visual confusion
+# when rendering, since row 0 is at the top of the screen:
 self._action_to_direction = {
-    0: np.array([1, 0]),   # right
-    1: np.array([0, 1]),   # up - but is this really "up" in your coordinate system?
-    2: np.array([-1, 0]),  # left
-    3: np.array([0, -1]),  # down
+    0: np.array([1, 0]),   # Intended as "right" but this changes row
+    1: np.array([0, 1]),   # Intended as "up" but this changes column
 }
 
 # Issue 3: Not handling boundaries properly

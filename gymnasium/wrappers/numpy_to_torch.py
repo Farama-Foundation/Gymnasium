@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import functools
-from typing import Union
 
 import numpy as np
 
@@ -15,15 +14,14 @@ from gymnasium.wrappers.array_conversion import (
     module_namespace,
 )
 
-
 try:
     import torch
 
-    Device = Union[str, torch.device]
-except ImportError:
+    Device = str | torch.device
+except ImportError as e:
     raise DependencyNotInstalled(
         'Torch is not installed therefore cannot call `torch_to_numpy`, run `pip install "gymnasium[torch]"`'
-    )
+    ) from e
 
 
 __all__ = ["NumpyToTorch", "torch_to_numpy", "numpy_to_torch", "Device"]

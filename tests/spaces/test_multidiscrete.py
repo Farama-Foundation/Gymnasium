@@ -59,6 +59,30 @@ def test_multidiscrete_start_as_tuple():
     assert space[:, :] == space and space[:, :] is not space
 
 
+def test_multidiscrete_dtype_as_tuple():
+    # 1D multi-discrete
+    space = MultiDiscrete([3, 4, 5], dtype=np.int8)
+
+    assert space.shape == (3,)
+    assert space[0] == Discrete(3, dtype=np.int8)
+    assert space[0:1] == MultiDiscrete([3], dtype=np.int8)
+    assert space[0:2] == MultiDiscrete([3, 4], dtype=np.int8)
+    assert space[:] == space and space[:] is not space
+
+    # 2D multi-discrete
+    space = MultiDiscrete([[3, 4, 5], [6, 7, 8]], dtype=np.uint32)
+
+    assert space.shape == (2, 3)
+    assert space[0, 1] == Discrete(4, dtype=np.uint32)
+    assert space[0] == MultiDiscrete([3, 4, 5], dtype=np.uint32)
+    assert space[0:1] == MultiDiscrete([[3, 4, 5]], dtype=np.uint32)
+    assert space[0:2, :] == MultiDiscrete([[3, 4, 5], [6, 7, 8]], dtype=np.uint32)
+    assert space[:, 0:1] == MultiDiscrete([[3], [6]], dtype=np.uint32)
+    assert space[0:2, 0:2] == MultiDiscrete([[3, 4], [6, 7]], dtype=np.uint32)
+    assert space[:] == space and space[:] is not space
+    assert space[:, :] == space and space[:, :] is not space
+
+
 def test_multidiscrete_subspace_reproducibility():
     # 1D multi-discrete
     space = MultiDiscrete([100, 200, 300])

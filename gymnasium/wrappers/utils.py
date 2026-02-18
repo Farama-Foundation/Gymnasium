@@ -24,7 +24,6 @@ from gymnasium.spaces import (
 )
 from gymnasium.spaces.space import T_cov
 
-
 __all__ = ["RunningMeanStd", "update_mean_var_count_from_moments", "create_zero_array"]
 
 
@@ -179,9 +178,9 @@ def rescale_box(
             type(new_min), np.floating
         )
         new_min = np.full(box.shape, new_min)
-    assert (
-        new_min.shape == box.shape
-    ), f"{new_min.shape}, {box.shape}, {new_min}, {box.low}"
+    assert new_min.shape == box.shape, (
+        f"{new_min.shape}, {box.shape}, {new_min}, {box.low}"
+    )
 
     if not isinstance(new_max, np.ndarray):
         assert np.issubdtype(type(new_max), np.integer) or np.issubdtype(

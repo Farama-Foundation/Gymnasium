@@ -21,7 +21,6 @@ from gymnasium.utils.env_checker import (
 )
 from tests.testing_env import GenericTestEnv
 
-
 CHECK_ENV_IGNORE_WARNINGS = [
     f"\x1b[33mWARN: {message}\x1b[0m"
     for message in [

@@ -22,7 +22,6 @@ from gymnasium import error, logger
 from gymnasium.core import ActType, ObsType, RenderFrame
 from gymnasium.error import DependencyNotInstalled, InvalidProbability
 
-
 __all__ = [
     "RenderCollection",
     "RecordVideo",
@@ -495,12 +494,12 @@ class HumanRendering(
         self.window = None  # Has to be initialized before asserts, as self.window is used in auto close
         self.clock = None
 
-        assert (
-            self.env.render_mode in self.ACCEPTED_RENDER_MODES
-        ), f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
-        assert (
-            "render_fps" in self.env.metadata
-        ), "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
+        assert self.env.render_mode in self.ACCEPTED_RENDER_MODES, (
+            f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
+        )
+        assert "render_fps" in self.env.metadata, (
+            "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
+        )
 
         if "human" not in self.metadata["render_modes"]:
             self.metadata = deepcopy(self.env.metadata)
@@ -533,10 +532,10 @@ class HumanRendering(
         """Fetch the last frame from the base environment and render it to the screen."""
         try:
             import pygame
-        except ImportError:
+        except ImportError as e:
             raise DependencyNotInstalled(
                 'pygame is not installed, run `pip install "gymnasium[classic-control]"`'
-            )
+            ) from e
         assert self.env.render_mode is not None
         if self.env.render_mode.endswith("_list"):
             last_rgb_array = self.env.render()
@@ -545,18 +544,18 @@ class HumanRendering(
         else:
             last_rgb_array = self.env.render()
 
-        assert isinstance(
-            last_rgb_array, np.ndarray
-        ), f"Expected `env.render()` to return a numpy array, actually returned {type(last_rgb_array)}"
+        assert isinstance(last_rgb_array, np.ndarray), (
+            f"Expected `env.render()` to return a numpy array, actually returned {type(last_rgb_array)}"
+        )
 
         rgb_array = np.transpose(last_rgb_array, axes=(1, 0, 2))
 
         if self.screen_size is None:
             self.screen_size = rgb_array.shape[:2]
 
-        assert (
-            self.screen_size == rgb_array.shape[:2]
-        ), f"The shape of the rgb array has changed from {self.screen_size} to {rgb_array.shape[:2]}"
+        assert self.screen_size == rgb_array.shape[:2], (
+            f"The shape of the rgb array has changed from {self.screen_size} to {rgb_array.shape[:2]}"
+        )
 
         if self.window is None:
             pygame.init()
@@ -726,7 +725,7 @@ class ObstructView(
         mask = np.zeros((render_shape[0], render_shape[1]), dtype=bool)
         low = self.obstruction_width // 2
         high = self.obstruction_width - low
-        for x, y in zip(*centers):
+        for x, y in zip(*centers, strict=True):
             mask[
                 max(x - low, 0) : min(x + high, render_shape[0]),
                 max(y - low, 0) : min(y + high, render_shape[1]),
