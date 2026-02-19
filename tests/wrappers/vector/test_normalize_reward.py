@@ -69,7 +69,7 @@ def test_against_wrapper(n_envs=3, n_steps=100, rtol=0.1, atol=0):
     assert np.allclose(env.return_rms.var, vec_env.return_rms.var, rtol=rtol, atol=atol)
 
 
-def test_count_against_wrapper(n_steps=50):
+def test_equivalence_with_wrapper(n_steps=50):
     def thunk_with_normalize():
         return wrappers.NormalizeReward(thunk())
 
@@ -85,5 +85,11 @@ def test_count_against_wrapper(n_steps=50):
         vec_env.step(vec_env.action_space.sample())
 
     assert vec_env.return_rms.count == per_env.envs[0].return_rms.count
+    assert np.allclose(
+        vec_env.return_rms.mean, per_env.envs[0].return_rms.mean, rtol=1e-4
+    )
+    assert np.allclose(
+        vec_env.return_rms.var, per_env.envs[0].return_rms.var, rtol=1e-4
+    )
     per_env.close()
     vec_env.close()
