@@ -129,3 +129,12 @@ class FuncEnv(
     def get_default_params(self, **kwargs) -> Params | None:
         """Get the default params."""
         return None
+
+    def generate_params(self, **kwargs) -> Params | None:
+        """Generate parameters used by one env instance / reset.
+
+        By default, this delegates to :meth:`get_default_params` for backwards
+        compatibility. Environments that need explicit reset-time
+        configuration can override this method directly.
+        """
+        return self.get_default_params(**kwargs)

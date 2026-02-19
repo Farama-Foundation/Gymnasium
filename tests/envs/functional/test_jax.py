@@ -168,3 +168,28 @@ def test_jax_vector_env_reset_without_options_is_stable(env_class):
     obs2, _ = env.reset(seed=123)
 
     assert jnp.allclose(obs1, obs2)
+
+
+def test_jax_vector_env_reset_options_change_params():
+    env = CartPoleJaxVectorEnv(num_envs=4)
+
+    obs1, _ = env.reset(seed=123, options={"x_init": 0.05})
+    obs2, _ = env.reset(seed=123, options={"x_init": 0.5})
+
+    assert not jnp.allclose(obs1, obs2)
+
+
+def test_jax_vector_env_reset_uses_generate_params(monkeypatch):
+    env = CartPoleJaxVectorEnv(num_envs=4)
+
+    called = {"count": 0}
+
+    def _generate_params(**kwargs):
+        called["count"] += 1
+        return env.func_env.get_default_params(**kwargs)
+
+    monkeypatch.setattr(env.func_env, "generate_params", _generate_params)
+
+    env.reset(seed=0, options={"gravity": 15.0})
+
+    assert called["count"] == 1
