@@ -59,9 +59,9 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         ...
         >>> envs.close()
         >>> np.mean(episode_rewards)
-        np.float64(-0.1598639586606745)
+        np.float64(-0.1598639409552856)
         >>> np.std(episode_rewards)
-        np.float64(0.27800309628058434)
+        np.float64(0.2780030923586878)
     """
 
     def __init__(
@@ -85,6 +85,7 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         self.gamma = gamma
         self.epsilon = epsilon
         self._update_running_mean = True
+        self._prev_dones = np.zeros((self.num_envs,), dtype=np.float32)
 
     @property
     def update_running_mean(self) -> bool:
@@ -96,15 +97,37 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         """Sets the property to freeze/continue the running mean calculation of the reward statistics."""
         self._update_running_mean = setting
 
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Resets the environment and clears accumulated reward tracking state."""
+        self.accumulated_reward[:] = 0
+        self._prev_dones[:] = 0
+        return super().reset(seed=seed, options=options)
+
     def step(
         self, actions: ActType
     ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Steps through the environment, normalizing the reward returned."""
         obs, reward, terminated, truncated, info = super().step(actions)
-        self.accumulated_reward = (
-            self.accumulated_reward * self.gamma * (1 - terminated) + reward
+        active = ~self._prev_dones.astype(bool)
+        self.accumulated_reward[active] = (
+            self.accumulated_reward[active] * self.gamma * (1 - terminated[active])
+            + reward[active]
         )
-        return obs, self.normalize(reward), terminated, truncated, info
+        if self._update_running_mean and np.any(active):
+            self.return_rms.update(self.accumulated_reward[active])
+        self._prev_dones = np.logical_or(terminated, truncated).astype(np.float32)
+        return (
+            obs,
+            reward / np.sqrt(self.return_rms.var + self.epsilon),
+            terminated,
+            truncated,
+            info,
+        )
 
     def normalize(self, reward: SupportsFloat):
         """Normalizes the rewards with the running mean rewards and their variance."""
