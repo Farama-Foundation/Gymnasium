@@ -222,17 +222,18 @@ class TaxiEnv(Env):
         dr, dc = movement
         new_row = max(0, min(row + dr, self.max_row))
         new_col = max(0, min(col + dc, self.max_col))
-        if self.desc[1 + new_row, 2 * new_col + offset] == b":":
-            return new_row, new_col
-        else:  # Default to current position if not traversable
+        # Only check walls for horizontal movements; vertical movements have
+        # no walls between rows in the Taxi grid.
+        if dc != 0 and self.desc[1 + new_row, 2 * new_col + offset] != b":":
             return row, col
+        return new_row, new_col
 
     def _build_rainy_transitions(self, row, col, pass_idx, dest_idx, action):
         """Computes the next action for a state (row, col, pass_idx, dest_idx) and action for `is_rainy`."""
         state = self.encode(row, col, pass_idx, dest_idx)
 
-        taxi_loc = left_pos = right_pos = (row, col)
-        new_row, new_col, new_pass_idx = row, col, pass_idx
+        taxi_loc = (row, col)
+        new_pass_idx = pass_idx
         reward = -1  # default reward when there is no pickup/dropoff
         terminated = False
 
@@ -243,28 +244,28 @@ class TaxiEnv(Env):
             3: ((0, -1), (1, 0), (-1, 0)),  # Left
         }
 
-        # Check if movement is allowed
-        if (
-            action in {0, 1}
-            or (action == 2 and self.desc[1 + row, 2 * col + 2] == b":")
-            or (action == 3 and self.desc[1 + row, 2 * col] == b":")
-        ):
-            dr, dc = moves[action][0]
-            new_row = max(0, min(row + dr, self.max_row))
-            new_col = max(0, min(col + dc, self.max_col))
-
-            left_pos = self._calc_new_position(row, col, moves[action][1], offset=2)
-            right_pos = self._calc_new_position(row, col, moves[action][2])
-        elif action == 4:  # pickup
-            new_pass_idx, reward = self._pickup(taxi_loc, new_pass_idx, reward)
-        elif action == 5:  # dropoff
-            new_pass_idx, reward, terminated = self._dropoff(
-                taxi_loc, new_pass_idx, dest_idx, reward
-            )
-        intended_state = self.encode(new_row, new_col, new_pass_idx, dest_idx)
-
         if action <= 3:
-            left_state = self.encode(left_pos[0], left_pos[1], new_pass_idx, dest_idx)
+            # Compute all three outcomes independently: each movement is
+            # resolved on its own against walls and boundaries.
+            # offset=2 for westward moves, offset=0 for eastward moves;
+            # offset is unused for vertical moves (no walls between rows).
+            main_offset = 2 if moves[action][0][1] < 0 else 0
+            main_pos = self._calc_new_position(
+                row, col, moves[action][0], offset=main_offset
+            )
+            left_pos = self._calc_new_position(
+                row, col, moves[action][1], offset=2
+            )
+            right_pos = self._calc_new_position(
+                row, col, moves[action][2]
+            )
+
+            intended_state = self.encode(
+                main_pos[0], main_pos[1], new_pass_idx, dest_idx
+            )
+            left_state = self.encode(
+                left_pos[0], left_pos[1], new_pass_idx, dest_idx
+            )
             right_state = self.encode(
                 right_pos[0], right_pos[1], new_pass_idx, dest_idx
             )
@@ -272,8 +273,16 @@ class TaxiEnv(Env):
             self.P[state][action].append((0.8, intended_state, -1, terminated))
             self.P[state][action].append((0.1, left_state, -1, terminated))
             self.P[state][action].append((0.1, right_state, -1, terminated))
-        else:
-            self.P[state][action].append((1.0, intended_state, reward, terminated))
+        elif action == 4:  # pickup
+            new_pass_idx, reward = self._pickup(taxi_loc, new_pass_idx, reward)
+            new_state = self.encode(row, col, new_pass_idx, dest_idx)
+            self.P[state][action].append((1.0, new_state, reward, terminated))
+        elif action == 5:  # dropoff
+            new_pass_idx, reward, terminated = self._dropoff(
+                taxi_loc, new_pass_idx, dest_idx, reward
+            )
+            new_state = self.encode(row, col, new_pass_idx, dest_idx)
+            self.P[state][action].append((1.0, new_state, reward, terminated))
 
     def __init__(
         self,
