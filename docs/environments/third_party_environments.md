@@ -411,6 +411,11 @@ Many of these can be adapted to work with gymnasium (see [Compatibility with Gym
 
   Mars Explorer is a Gym compatible environment designed and developed as an initial endeavor to bridge the gap between powerful Deep Reinforcement Learning methodologies and the problem of exploration/coverage of an unknown terrain.
 
+- [MarsExplorer-Gymnasium: Gymnasium-compatible Mars rover exploration environment](https://github.com/markub3327/MarsExplorer-Gymnasium)
+
+  MarsExplorer-Gymnasium is a fully Gymnasium-compatible environment for autonomous Mars rover exploration. It enables research on terrain coverage, navigation, and exploration efficiency in unknown, procedurally generated landscapes, supporting modern deep reinforcement learning algorithms through the standard Gymnasium API.
+
+
 - [robo-gym: Real-world and simulation robotics](https://github.com/jr-robotics/robo-gym)
 
   Robo-gym provides a collection of reinforcement learning environments involving robotic tasks applicable in both simulation and real-world robotics.
