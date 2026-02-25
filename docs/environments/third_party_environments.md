@@ -413,7 +413,7 @@ Many of these can be adapted to work with gymnasium (see [Compatibility with Gym
 
 - [MarsExplorer-Gymnasium: Gymnasium-compatible Mars rover exploration environment](https://github.com/markub3327/MarsExplorer-Gymnasium)
 
-  ![Gymnasium 1.2.3+](https://img.shields.io/badge/Gymnasium-1.2.3%2B-blue)
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
   ![GitHub stars](https://img.shields.io/github/stars/markub3327/MarsExplorer-Gymnasium)
 
   MarsExplorer-Gymnasium is a fully Gymnasium-compatible environment for autonomous Mars rover exploration. It enables research on terrain coverage, navigation, and exploration efficiency in unknown, procedurally generated landscapes, supporting modern deep reinforcement learning algorithms through the standard Gymnasium API.
