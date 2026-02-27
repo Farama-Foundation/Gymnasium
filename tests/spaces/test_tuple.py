@@ -1,9 +1,22 @@
+from __future__ import annotations
+
+import typing
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, Tuple
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
 from gymnasium.utils.env_checker import data_equivalence
+
+if TYPE_CHECKING:
+    # typing.assert_type exists on newer Python versions; fall back for older ones
+    try:
+        from typing import assert_type  # type: ignore[attr-defined]
+    except ImportError:  # pragma: no cover
+        # type: ignore[import-not-found]
+        from typing_extensions import assert_type
 
 
 def test_sequence_inheritance():
@@ -34,6 +47,27 @@ def test_sequence_inheritance():
         tuple_space.index(Discrete(10), 0, 1)
     with pytest.raises(IndexError):
         assert tuple_space[4]
+
+
+def test_tuple_generic_typing():
+    """Typing-only test: Tuple should support generic parameters for subspace types.
+
+    This test is effectively a no-op at runtime, but it will fail in type-check CI
+    (mypy/pyright/ty) if Tuple is not generic or if .spaces doesn't reflect the parameters.
+    """
+    obs_space: Tuple[MultiDiscrete, Box] = Tuple(
+        (
+            MultiDiscrete([3, 4, 5]),
+            Box(low=0.0, high=1.0, shape=(10,)),
+        )
+    )
+
+    # Runtime sanity
+    assert isinstance(obs_space, Tuple)
+    assert len(obs_space.spaces) == 2
+
+    if TYPE_CHECKING:
+        assert_type(obs_space.spaces, tuple[MultiDiscrete, Box])
 
 
 @pytest.mark.parametrize(
@@ -87,14 +121,16 @@ def test_bad_space_calls(space_fn):
 
 
 def test_contains_promotion():
-    space = gym.spaces.Tuple((gym.spaces.Box(0, 1), gym.spaces.Box(-1, 0, (2,))))
+    space = gym.spaces.Tuple(
+        (gym.spaces.Box(0, 1), gym.spaces.Box(-1, 0, (2,))))
 
     assert (
         np.array([0.0], dtype=np.float32),
         np.array([0.0, 0.0], dtype=np.float32),
     ) in space
 
-    space = gym.spaces.Tuple((gym.spaces.Box(0, 1), gym.spaces.Box(-1, 0, (1,))))
+    space = gym.spaces.Tuple(
+        (gym.spaces.Box(0, 1), gym.spaces.Box(-1, 0, (1,))))
     assert np.array([[0.0], [0.0]], dtype=np.float32) in space
 
 
