@@ -4,14 +4,28 @@ from __future__ import annotations
 
 import typing
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, TYPE_CHECKING, overload
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
+try:
+    # Python 3.11+
+    from typing import TypeVarTuple, Unpack
+except ImportError:  # pragma: no cover
+    # For older Python versions supported by Gymnasium
+    from typing_extensions import TypeVarTuple, Unpack
 
-class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
+
+_TSpaces = TypeVarTuple("_TSpaces")
+
+
+class Tuple(
+    Space[tuple[Any, ...]],
+    typing.Sequence[Space[Any]],
+    typing.Generic[Unpack[_TSpaces]],
+):
     """A tuple (more precisely: the cartesian product) of :class:`Space` instances.
 
     Elements of this space are tuples of elements of the constituent spaces.
@@ -23,6 +37,25 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         (np.int64(0), array([-0.3991573 ,  0.21649833], dtype=float32))
     """
 
+    # Help type-checkers understand that Tuple[Box, Discrete].spaces is (Box, Discrete)
+    if TYPE_CHECKING:
+        spaces: tuple[Unpack[_TSpaces]]
+    else:
+        spaces: tuple[Space[Any], ...]
+
+    @overload
+    def __init__(
+        self,
+        spaces: tuple[Unpack[_TSpaces]],
+        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
+    ): ...
+    @overload
+    def __init__(
+        self,
+        spaces: Iterable[Space[Any]],
+        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
+    ): ...
+
     def __init__(
         self,
         spaces: Iterable[Space[Any]],
@@ -30,7 +63,8 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
     ):
         r"""Constructor of :class:`Tuple` space.
 
-        The generated instance will represent the cartesian product :math:`\text{spaces}[0] \times ... \times \text{spaces}[-1]`.
+        The generated instance will represent the cartesian product
+        :math:`\text{spaces}[0] \times ... \times \text{spaces}[-1]`.
 
         Args:
             spaces (Iterable[Space]): The spaces that are involved in the cartesian product.
@@ -77,7 +111,8 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         elif isinstance(seed, (tuple, list)):
             if len(seed) != len(self.spaces):
                 raise ValueError(
-                    f"Expects that the subspaces of seeds equals the number of subspaces. Actual length of seeds: {len(seed)}, length of subspaces: {len(self.spaces)}"
+                    f"Expects that the subspaces of seeds equals the number of subspaces. "
+                    f"Actual length of seeds: {len(seed)}, length of subspaces: {len(self.spaces)}"
                 )
 
             return tuple(
