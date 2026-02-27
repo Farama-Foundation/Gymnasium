@@ -307,6 +307,15 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.0.0-blue)
   ![GitHub stars](https://img.shields.io/github/stars/dfki-ric/deformable_gym)
+
+- [MarsExplorer-Gymnasium: Gymnasium-compatible Mars rover exploration environment](https://github.com/markub3327/MarsExplorer-Gymnasium)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/markub3327/MarsExplorer-Gymnasium)
+
+  MarsExplorer-Gymnasium is a fully Gymnasium-compatible environment for autonomous Mars rover exploration. It enables research on terrain coverage, navigation, and exploration efficiency in unknown, procedurally generated landscapes, supporting modern deep reinforcement learning algorithms through the standard Gymnasium API.
+
+
 ### Telecommunication Systems environments
 *Interact and/or manage wireless and/or wired telecommunication systems.*
 - [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
@@ -410,13 +419,6 @@ Many of these can be adapted to work with gymnasium (see [Compatibility with Gym
 - [MarsExplorer: Environments for controlling robot on Mars](https://github.com/dimikout3/MarsExplorer)
 
   Mars Explorer is a Gym compatible environment designed and developed as an initial endeavor to bridge the gap between powerful Deep Reinforcement Learning methodologies and the problem of exploration/coverage of an unknown terrain.
-
-- [MarsExplorer-Gymnasium: Gymnasium-compatible Mars rover exploration environment](https://github.com/markub3327/MarsExplorer-Gymnasium)
-
-  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
-  ![GitHub stars](https://img.shields.io/github/stars/markub3327/MarsExplorer-Gymnasium)
-
-  MarsExplorer-Gymnasium is a fully Gymnasium-compatible environment for autonomous Mars rover exploration. It enables research on terrain coverage, navigation, and exploration efficiency in unknown, procedurally generated landscapes, supporting modern deep reinforcement learning algorithms through the standard Gymnasium API.
 
 - [robo-gym: Real-world and simulation robotics](https://github.com/jr-robotics/robo-gym)
 
