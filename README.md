@@ -85,16 +85,3 @@ You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032
   year={2024}
 }
 ```
-
-## Repository Sponsors
-
-<h3 style="margin-bottom:10;margin-top:0"><a href="https://ref.wisprflow.ai/UnmiceG">Wispr Flow</a></h3>
-
-<a href="https://ref.wisprflow.ai/UnmiceG">
-  <img src="assets/wispr-flow.svg" alt="Wispr Flow" width="100">
-</a>
-
-<h3 style="margin-bottom:10;margin-top:0">Dictation that understands code</h3>
-<h4 style="margin-top:0;">Ship 4x faster with developer-first dictation that works in every app.</h4>
-
-<p style="margin-top:50;">If you'd like to sponsor Gymnasium or other Farama repositories and have your logo here, <a href="mailto:contact@farama.org">contact us</a>.</p>
