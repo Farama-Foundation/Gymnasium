@@ -243,7 +243,9 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
         if self.render_mode == "human":
             self.render()
-        return np.array(self.state, dtype=np.float32), {}
+        #returning some useful data instead of an empty dictonary in every case
+        return np.array(self.state, dtype=np.float32), {"reset_bounds": (low, high)}
+
 
     def render(self):
         if self.render_mode is None:
