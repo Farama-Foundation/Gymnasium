@@ -80,6 +80,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   ICU-Sepsis is a tabular reinforcement learning environment that simulates the treatment of sepsis in an intensive care unit (ICU). Introduced in the paper [ICU-Sepsis: A Benchmark MDP Built from Real Medical Data](https://arxiv.org/abs/2406.05646), the environment is lightweight and easy to use, yet challenging for most reinforcement learning algorithms.
 
+### Cybersecurity environments
+*Interacting with systems and cybersecurity tools.*
+
+- [Security-Gym](https://github.com/j-klawson/security-gym)
+[![Gymnasium](https://img.shields.io/badge/Gymnasium-%E2%89%A51.0.0-blue)](https://gymnasium.farama.org/)
+
+A gymnasium environment that sends continuous Linux server log data and kernel events to simulate an environment where an agent runs continually on the Linux server. The action space supports actions an agent can take to react to cybersecurity attacks on the server.
 
 ### Economic / Financial environments
 *Everything Economics related.*
