@@ -275,6 +275,13 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   Itomori is an environment for risk-aware UAV flight, it provides tools to solve Chance-Constrained Markov Decision Processes (CCMDP). The env allows to simulate, visualize, and evaluate UAV navigation in complex and risky environments, incorporating variables like GPS uncertainty, collision risk, and adaptive flight planning. Itomori is intended to support UAV path-planning research by offering adjustable parameters, detailed visualizations, and insights into agent behavior in uncertain environments.
 
+- [Mesozoic Labs: Robotic Dinosaur Locomotion](https://github.com/kuds/mesozoic-labs)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/kuds/mesozoic-labs)
+
+  Mesozoic Labs is a reinforcement learning research project that trains robotic dinosaurs (Velociraptor, T-Rex, Brachiosaurus) to walk, run, and hunt using MuJoCo physics simulation, curriculum learning, and algorithms like PPO and SAC.
+
 - [OmniIsaacGymEnvs: Gym environments for NVIDIA Omniverse Isaac ](https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/)
 
   Reinforcement Learning Environments for [Omniverse Isaac simulator](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/overview.html).
