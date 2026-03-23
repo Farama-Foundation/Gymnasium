@@ -173,7 +173,7 @@ def test_verify_reward_survive(env_name: str, version: str):
     env = gym.make(f"{env_name}-{version}", reset_noise_scale=0).unwrapped
     assert isinstance(env, (MujocoEnv))
     env.reset(seed=0)
-    env.action_space.seed(2)
+    env.action_space.seed(1)
 
     terminal = False
     for _ in range(80):
