@@ -151,6 +151,7 @@ def test_verify_info_xy_velocity_com(env_id: str):
     assert vel_x == info["x_velocity"]
     assert vel_y == info["y_velocity"]
 
+
 # Note: Hopper-v4/3/2 does not have `info['reward_survive']`, but it is still affected
 # Note: Walker2d-v4/3/2 does not have `info['reward_survive']`, but it is still affected
 # Note: Inverted(Double)Pendulum-v4/2 does not have `info['reward_survive']`, but it is still affected
