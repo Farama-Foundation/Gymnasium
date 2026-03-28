@@ -116,6 +116,16 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   EV2Gym is a fully customizable and easily configurable environment for Electric Vehicle (EV) smart charging simulations on a small and large scale. Also, includes non-RL baseline implementations such as mathematical programming, model predictive control, and heuristics.
 
+### Environmental / Climate environments
+*Simulation of natural phenomena, disaster management, and ecological systems.*
+
+- [FirecastRL: Wildfire Suppression Environment](https://github.com/aisystems-lab/wildfire-env)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/aisystems-lab/wildfire-env)
+
+  A Gymnasium-compatible wildfire simulation environment that models fire spread using physics-based dynamics and incorporates helicopter firefighting strategies. It's built on real terrain data, including land cover and elevation, and supports customizable observation and reward wrappers.
+
 ### Game environments
 *Board Games, Video Games and all other interactive entrainment mediums.*
 
