@@ -73,7 +73,7 @@ class TransformObservation(
         self,
         env: gym.Env[ObsType, ActType],
         func: Callable[[ObsType], Any],
-        observation_space: gym.Space[WrapperObsType] | None,
+        observation_space: gym.Space[WrapperObsType] = None,
     ):
         """Constructor for the transform observation wrapper.
 
