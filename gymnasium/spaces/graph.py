@@ -32,17 +32,17 @@ class Graph(Space[GraphInstance]):
         >>> from gymnasium.spaces import Graph, Box, Discrete
         >>> observation_space = Graph(node_space=Box(low=-100, high=100, shape=(3,)), edge_space=Discrete(3), seed=123)
         >>> observation_space.sample(num_nodes=4, num_edges=8)
-        GraphInstance(nodes=array([[ 36.47037 , -89.235794, -55.928024],
-               [-63.125637, -64.81882 ,  62.4189  ],
-               [ 84.669   , -44.68512 ,  63.950912],
-               [ 77.97854 ,   2.594091, -51.00708 ]], dtype=float32), edges=array([2, 0, 2, 1, 2, 0, 2, 1]), edge_links=array([[3, 0],
-               [0, 0],
-               [0, 1],
-               [0, 2],
+        GraphInstance(nodes=array([[-50.143734, -89.37025 , -42.120003],
+               [ 31.519672, -96.5817  ,  85.16244 ],
+               [ 97.65833 ,  92.20077 ,  75.31062 ],
+               [-21.80443 , -73.790115,  39.97857 ]], dtype=float32), edges=array([1, 0, 2, 0, 2, 1, 1, 2]), edge_links=array([[0, 2],
+               [2, 0],
+               [3, 0],
                [1, 0],
                [1, 0],
-               [0, 1],
-               [0, 2]], dtype=int32))
+               [1, 3],
+               [1, 3],
+               [1, 1]], dtype=int32))
     """
 
     def __init__(
