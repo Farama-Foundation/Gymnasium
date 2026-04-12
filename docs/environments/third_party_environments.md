@@ -136,6 +136,13 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   This is a custom minesweeper gymnasium environment that allows for an optional custom mask for added complexity. Fully customizable with board size, mine density and custom masks.
 
+- [BoltCrypt: Procedural Dungeon RL Environment](https://github.com/foreverska/BoltCrypt/)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/foreverska/BoltCrypt)
+
+  BoltCrypt is a lightweight environment featuring procedurally generated dungeons. It challenges Reinforcement Learning agents to navigate complex layouts, solve sokoban-style boulder puzzles, and manage inventory items like keys to reach the exit. BoltCrypt also contains a Natural Language wrapper to enable testing LLM's long term planning.
+
 - [Craftium: an extensible framework for creating RL environments](https://github.com/mikelma/craftium)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
@@ -163,14 +170,14 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
   ![GitHub stars](https://img.shields.io/github/stars/strakam/generals-bots)
 
   Generals.io is a fast-paced strategy game on a 2D grid. We make bot development accessible via the Gymnasium/PettingZoo API.
-  
+
 - [Hill Climb Racing Env: A Hill Climb Racing RL environment](https://github.com/alexzh3/hillclimbracing)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26+-blue)
   ![GitHub stars](https://img.shields.io/github/stars/alexzh3/hillclimbracing)
 
   An environment inspired by the mobile game Hill Climb Racing, featuring Box2D physics, Pygame rendering, procedurally generated Perlin noise terrain, discrete and continuous action spaces, five reward functions, and 13 pre-trained PPO baseline models.
-  
+
 - [Pickomino (Heckmeck): Dice and Tile game](https://github.com/smallgig/Pickomino)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
