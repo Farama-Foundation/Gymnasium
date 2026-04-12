@@ -137,13 +137,24 @@ def _create_text_zero_array(space: Text):
     return "".join(space.characters[0] for _ in range(space.min_length))
 
 
+def expand_dims(sample, axis=0):
+    if isinstance(sample, (list, tuple)):
+        expanded_sample = [expand_dims(i) for i in sample]
+        return expanded_sample
+    elif isinstance(sample, dict):
+        expanded_sample = {k: expand_dims(v) for k, v in sample.items()}
+        return expanded_sample
+    else:
+        return np.expand_dims(sample, axis=axis)
+
+
 @create_zero_array.register(Graph)
 def _create_graph_zero_array(space: Graph):
-    nodes = np.expand_dims(create_zero_array(space.node_space), axis=0)
+    nodes = expand_dims(create_zero_array(space.node_space), axis=0)
     if space.edge_space is None:
         return GraphInstance(nodes=nodes, edges=None, edge_links=None)
     else:
-        edges = np.expand_dims(create_zero_array(space.edge_space), axis=0)
+        edges = expand_dims(create_zero_array(space.edge_space), axis=0)
         edge_links = np.zeros((1, 2), dtype=np.int64)
         return GraphInstance(nodes=nodes, edges=edges, edge_links=edge_links)
 
