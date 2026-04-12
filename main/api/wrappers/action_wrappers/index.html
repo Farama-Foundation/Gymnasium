@@ -570,6 +570,46 @@ repeats) or a tuple[int, int] for a range of stochastic number of repeats.</p></
 </dl>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.RepeatAction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">RepeatAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_repeats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/stateful_action/#RepeatAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.RepeatAction" title="Link to this definition">¶</a></dt>
+<dd><p>Repeats the given action for <code class="docutils literal notranslate"><span class="pre">num_repeats</span></code> steps, accumulating the reward.</p>
+<p>This is useful for environments where the agent does not need to make
+a decision at every time step. By repeating actions, the effective
+decision frequency is reduced, which can speed up training and make
+exploration more efficient.</p>
+<p>Unlike <a class="reference internal" href="#gymnasium.wrappers.StickyAction" title="gymnasium.wrappers.StickyAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">StickyAction</span></code></a>, which <em>stochastically</em> replaces the agent’s
+action with the <em>previous</em> action, <code class="docutils literal notranslate"><span class="pre">ActionRepeat</span></code> <em>deterministically</em>
+executes the <em>current</em> action multiple times and returns the accumulated
+reward together with the final observation. If the episode terminates or
+is truncated during repetition, the loop stops early.</p>
+<p>No vector version of the wrapper exists.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">RepeatAction</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">num_repeats</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reward</span>  <span class="c1"># sum of 4 inner-step rewards</span>
+<span class="go">4.0</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Change logs:</dt><dd><ul class="simple">
+<li><p>v1.3.0 - Initially added</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.Env"><em>Env</em></a>) – The wrapped environment.</p></li>
+<li><p><strong>num_repeats</strong> (<em>int</em>) – The number of times to repeat each action.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -655,6 +695,7 @@ repeats) or a tuple[int, int] for a range of stochastic number of repeats.</p></
 <li><a class="reference internal" href="#gymnasium.wrappers.ClipAction"><code class="docutils literal notranslate"><span class="pre">ClipAction</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.RescaleAction"><code class="docutils literal notranslate"><span class="pre">RescaleAction</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.StickyAction"><code class="docutils literal notranslate"><span class="pre">StickyAction</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.RepeatAction"><code class="docutils literal notranslate"><span class="pre">RepeatAction</span></code></a></li>
 </ul>
 </li>
 </ul>

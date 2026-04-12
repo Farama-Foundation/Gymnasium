@@ -472,22 +472,25 @@ wrapper in the page on the wrapper type</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.ResizeObservation" title="gymnasium.wrappers.ResizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResizeObservation</span></code></a></p></td>
 <td><p>Resizes image observations using OpenCV to a specified shape.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.StickyAction" title="gymnasium.wrappers.StickyAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">StickyAction</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.RepeatAction" title="gymnasium.wrappers.RepeatAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">RepeatAction</span></code></a></p></td>
+<td><p>Repeats an action <code class="docutils literal notranslate"><span class="pre">N</span></code> times, returning the cumulative reward and last observation / info.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.StickyAction" title="gymnasium.wrappers.StickyAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">StickyAction</span></code></a></p></td>
 <td><p>Adds a probability that the action is repeated for the same <code class="docutils literal notranslate"><span class="pre">step</span></code> function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.TimeAwareObservation" title="gymnasium.wrappers.TimeAwareObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.TimeAwareObservation" title="gymnasium.wrappers.TimeAwareObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></a></p></td>
 <td><p>Augment the observation with the number of time steps taken within an episode.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.TimeLimit" title="gymnasium.wrappers.TimeLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../misc_wrappers/#gymnasium.wrappers.TimeLimit" title="gymnasium.wrappers.TimeLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code></a></p></td>
 <td><p>Limits the number of steps for an environment through truncating the environment if a maximum number of timesteps is exceeded.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.TransformAction" title="gymnasium.wrappers.TransformAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformAction</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../action_wrappers/#gymnasium.wrappers.TransformAction" title="gymnasium.wrappers.TransformAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformAction</span></code></a></p></td>
 <td><p>Applies a function to the <code class="docutils literal notranslate"><span class="pre">action</span></code> before passing the modified value to the environment <code class="docutils literal notranslate"><span class="pre">step</span></code> function.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.TransformObservation" title="gymnasium.wrappers.TransformObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformObservation</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../observation_wrappers/#gymnasium.wrappers.TransformObservation" title="gymnasium.wrappers.TransformObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformObservation</span></code></a></p></td>
 <td><p>Applies a function to the <code class="docutils literal notranslate"><span class="pre">observation</span></code> received from the environment’s <code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> that is passed back to the user.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../reward_wrappers/#gymnasium.wrappers.TransformReward" title="gymnasium.wrappers.TransformReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformReward</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../reward_wrappers/#gymnasium.wrappers.TransformReward" title="gymnasium.wrappers.TransformReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">TransformReward</span></code></a></p></td>
 <td><p>Applies a function to the <code class="docutils literal notranslate"><span class="pre">reward</span></code> received from the environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code>.</p></td>
 </tr>
 </tbody>
