@@ -136,6 +136,13 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   This is a custom minesweeper gymnasium environment that allows for an optional custom mask for added complexity. Fully customizable with board size, mine density and custom masks.
 
+- [BoltCrypt: Procedural Dungeon RL Environment](https://github.com/foreverska/BoltCrypt/)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/foreverska/BoltCrypt)
+
+  BoltCrypt is a lightweight environment featuring procedurally generated dungeons. It challenges Reinforcement Learning agents to navigate complex layouts, solve sokoban-style boulder puzzles, and manage inventory items like keys to reach the exit. BoltCrypt also contains a Natural Language wrapper to enable testing LLM's long term planning.
+
 - [Craftium: an extensible framework for creating RL environments](https://github.com/mikelma/craftium)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.1-blue)
@@ -205,13 +212,6 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
   ![GitHub stars](https://img.shields.io/github/stars/trackmania-rl/tmrl)
 
   tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
-
-- [BoltCrypt: Procedural Dungeon RL Environment](https://github.com/foreverska/BoltCrypt/)
-
-  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
-  ![GitHub stars](https://img.shields.io/github/stars/foreverska/BoltCrypt)
-
-  BoltCrypt is a lightweight environment featuring procedurally generated dungeons. It challenges Reinforcement Learning agents  to navigate complex layouts, solve sokoban-style boulder puzzles, and manage inventory items like keys to reach the exit.  BoltCrypt also contains a Natural Language wrapper to enable testing LLM's long term planning.
 
 
 ### Mathematics / Computational
