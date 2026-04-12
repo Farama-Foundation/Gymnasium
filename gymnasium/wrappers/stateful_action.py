@@ -1,16 +1,16 @@
-"""``StickyAction`` wrapper - There is a probability that the action is taken again."""
+"""Stateful action wrappers - ``StickyAction`` and ``RepeatAction``."""
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, SupportsFloat
 
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import ActType, ObsType
+from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.error import InvalidBound, InvalidProbability
 
-__all__ = ["StickyAction"]
+__all__ = ["StickyAction", "RepeatAction"]
 
 
 class StickyAction(
@@ -133,3 +133,81 @@ class StickyAction(
 
         self.last_action = action
         return action
+
+
+class RepeatAction(
+    gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
+):
+    """Repeats the given action for ``num_repeats`` steps, accumulating the reward.
+
+    This is useful for environments where the agent does not need to make
+    a decision at every time step. By repeating actions, the effective
+    decision frequency is reduced, which can speed up training and make
+    exploration more efficient.
+
+    Unlike :class:`StickyAction`, which *stochastically* replaces the agent's
+    action with the *previous* action, ``ActionRepeat`` *deterministically*
+    executes the *current* action multiple times and returns the accumulated
+    reward together with the final observation. If the episode terminates or
+    is truncated during repetition, the loop stops early.
+
+    No vector version of the wrapper exists.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = gym.make("CartPole-v1")
+        >>> env = RepeatAction(env, num_repeats=4)
+        >>> obs, info = env.reset(seed=123)
+        >>> obs, reward, terminated, truncated, info = env.step(1)
+        >>> reward  # sum of 4 inner-step rewards
+        4.0
+
+    Change logs:
+     * v1.3.0 - Initially added
+    """
+
+    def __init__(self, env: gym.Env[ObsType, ActType], num_repeats: int):
+        """Initialize ActionRepeat wrapper.
+
+        Args:
+            env (Env): The wrapped environment.
+            num_repeats (int): The number of times to repeat each action.
+        """
+        if not np.issubdtype(type(num_repeats), np.integer):
+            raise TypeError(
+                f"The num_repeats is expected to be an integer, actual type: {type(num_repeats)}"
+            )
+        if num_repeats < 1:
+            raise ValueError(
+                f"The num_repeats value needs to be equal or greater than one, actual value: {num_repeats}"
+            )
+
+        gym.utils.RecordConstructorArgs.__init__(self, num_repeats=num_repeats)
+        gym.Wrapper.__init__(self, env)
+
+        self.num_repeats = num_repeats
+
+    def step(
+        self, action: WrapperActType
+    ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+        """Step the environment, repeating the action for ``num_repeats`` steps.
+
+        The reward returned is the sum of rewards from all inner steps.
+        If the episode terminates or is truncated during repetition,
+        the loop stops early.
+
+        Args:
+            action: The action to repeat.
+
+        Returns:
+            The last observation, accumulated reward, terminated, truncated, and info.
+        """
+        total_reward = 0.0
+        terminated = truncated = False
+        info: dict[str, Any] = {}
+        for _ in range(self.num_repeats):
+            obs, reward, terminated, truncated, info = self.env.step(action)
+            total_reward += float(reward)
+            if terminated or truncated:
+                break
+        return obs, total_reward, terminated, truncated, info
