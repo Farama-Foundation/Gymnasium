@@ -1,4 +1,4 @@
-"""Stateful action wrappers - ``StickyAction`` and ``ActionRepeat``."""
+"""Stateful action wrappers - ``StickyAction`` and ``RepeatAction``."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import gymnasium as gym
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.error import InvalidBound, InvalidProbability
 
-__all__ = ["StickyAction", "ActionRepeat"]
+__all__ = ["StickyAction", "RepeatAction"]
 
 
 class StickyAction(
@@ -135,7 +135,7 @@ class StickyAction(
         return action
 
 
-class ActionRepeat(
+class RepeatAction(
     gym.Wrapper[ObsType, ActType, ObsType, ActType], gym.utils.RecordConstructorArgs
 ):
     """Repeats the given action for ``num_repeats`` steps, accumulating the reward.
@@ -156,7 +156,7 @@ class ActionRepeat(
     Example:
         >>> import gymnasium as gym
         >>> env = gym.make("CartPole-v1")
-        >>> env = ActionRepeat(env, num_repeats=4)
+        >>> env = RepeatAction(env, num_repeats=4)
         >>> obs, info = env.reset(seed=123)
         >>> obs, reward, terminated, truncated, info = env.step(1)
         >>> reward  # sum of 4 inner-step rewards

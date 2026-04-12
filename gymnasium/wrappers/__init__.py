@@ -65,7 +65,7 @@ from gymnasium.wrappers.rendering import (
     RecordVideo,
     RenderCollection,
 )
-from gymnasium.wrappers.stateful_action import ActionRepeat, StickyAction
+from gymnasium.wrappers.stateful_action import RepeatAction, StickyAction
 from gymnasium.wrappers.stateful_observation import (
     DelayObservation,
     FrameStackObservation,
@@ -120,7 +120,7 @@ __all__ = [
     "RescaleAction",
     # "NanAction",
     "StickyAction",
-    "ActionRepeat",
+    "RepeatAction",
     # --- Reward wrappers ---
     "ClipReward",
     "TransformReward",

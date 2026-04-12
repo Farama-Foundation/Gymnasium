@@ -15,4 +15,5 @@
 .. autoclass:: gymnasium.wrappers.ClipAction
 .. autoclass:: gymnasium.wrappers.RescaleAction
 .. autoclass:: gymnasium.wrappers.StickyAction
+.. autoclass:: gymnasium.wrappers.RepeatAction
 ```

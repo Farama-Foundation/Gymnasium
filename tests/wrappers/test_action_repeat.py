@@ -5,7 +5,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.spaces import Discrete
-from gymnasium.wrappers.stateful_action import ActionRepeat
+from gymnasium.wrappers.stateful_action import RepeatAction
 from tests.testing_env import GenericTestEnv
 
 
@@ -24,7 +24,7 @@ def _terminating_step(self, action):
 
 def test_action_repeat_exact_steps():
     """Test that exactly num_repeats inner steps are taken using GenericTestEnv."""
-    env = ActionRepeat(
+    env = RepeatAction(
         GenericTestEnv(
             step_func=_counting_step,
             action_space=Discrete(5),
@@ -55,7 +55,7 @@ def test_action_repeat_reward_accumulation():
 
     # With wrapper: single step should accumulate 4 rewards
     env2 = gym.make("CartPole-v1")
-    wrapped_env = ActionRepeat(env2, num_repeats=4)
+    wrapped_env = RepeatAction(env2, num_repeats=4)
     wrapped_env.reset(seed=42)
     obs_wrapped, reward_wrapped, _, _, _ = wrapped_env.step(1)
 
@@ -65,7 +65,7 @@ def test_action_repeat_reward_accumulation():
 
 def test_action_repeat_early_termination():
     """Test that repetition stops early on termination."""
-    env = ActionRepeat(
+    env = RepeatAction(
         GenericTestEnv(
             step_func=_terminating_step,
             action_space=Discrete(3),
@@ -83,7 +83,7 @@ def test_action_repeat_early_termination():
 
 def test_action_repeat_info_propagation():
     """Test that info from the last inner step is returned."""
-    env = ActionRepeat(
+    env = RepeatAction(
         GenericTestEnv(
             step_func=_counting_step,
             action_space=Discrete(5),
@@ -100,7 +100,7 @@ def test_action_repeat_num_repeats_one():
     """Test that num_repeats=1 behaves identically to the unwrapped environment."""
     env1 = gym.make("CartPole-v1")
     env2 = gym.make("CartPole-v1")
-    wrapped_env = ActionRepeat(env2, num_repeats=1)
+    wrapped_env = RepeatAction(env2, num_repeats=1)
 
     env1.reset(seed=42)
     wrapped_env.reset(seed=42)
@@ -120,7 +120,7 @@ def test_action_repeat_num_repeats_one():
 def test_action_repeat_observation_space():
     """Test that observation and action spaces are preserved."""
     env = gym.make("CartPole-v1")
-    wrapped_env = ActionRepeat(env, num_repeats=4)
+    wrapped_env = RepeatAction(env, num_repeats=4)
 
     assert wrapped_env.observation_space == env.observation_space
     assert wrapped_env.action_space == env.action_space
@@ -140,7 +140,7 @@ def test_action_repeat_invalid_type(num_repeats):
     """Test that non-integer num_repeats raises TypeError."""
     env = gym.make("CartPole-v1")
     with pytest.raises(TypeError, match="expected to be an integer"):
-        ActionRepeat(env, num_repeats=num_repeats)
+        RepeatAction(env, num_repeats=num_repeats)
 
 
 @pytest.mark.parametrize("num_repeats", [0, -1, -100])
@@ -148,4 +148,4 @@ def test_action_repeat_invalid_value(num_repeats):
     """Test that num_repeats < 1 raises ValueError."""
     env = gym.make("CartPole-v1")
     with pytest.raises(ValueError, match="equal or greater than one"):
-        ActionRepeat(env, num_repeats=num_repeats)
+        RepeatAction(env, num_repeats=num_repeats)
