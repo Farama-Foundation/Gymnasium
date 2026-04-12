@@ -206,6 +206,13 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
+- [BoltCrypt: Procedural Dungeon RL Environment](https://github.com/foreverska/BoltCrypt/)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/foreverska/BoltCrypt)
+
+  BoltCrypt is a lightweight environment featuring procedurally generated dungeons. It challenges Reinforcement Learning agents  to navigate complex layouts, solve sokoban-style boulder puzzles, and manage inventory items like keys to reach the exit.  BoltCrypt also contains a Natural Language wrapper to enable testing LLM's long term planning.
+
 
 ### Mathematics / Computational
 *Reduce computational compute, prove math theorems, and more.*
