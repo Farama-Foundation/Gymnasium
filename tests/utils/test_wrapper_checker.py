@@ -4,8 +4,9 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium import wrappers
+from gymnasium import spaces, wrappers
 from gymnasium.utils.wrapper_checker import check_wrapper
+from tests.testing_env import GenericTestEnv
 
 
 def test_correct_wrapper_passes():
@@ -351,5 +352,74 @@ def test_builtin_wrappers_cartpole(wrapped_env):
 )
 def test_builtin_wrappers_continuous(wrapped_env):
     """Check that all built-in wrappers pass check_wrapper with a continuous action env."""
+    check_wrapper(wrapped_env, skip_render_check=True)
+    wrapped_env.close()
+
+
+# ============= Special environment wrapper tests =============
+# These wrappers need custom environments (image obs, finite bounds, rendering).
+# We use GenericTestEnv to create the right setup without external dependencies.
+
+
+def _make_image_env():
+    """Create an env with RGB image observations (25x25x3, uint8)."""
+    return GenericTestEnv(
+        observation_space=spaces.Box(0, 255, shape=(25, 25, 3), dtype=np.uint8)
+    )
+
+
+def _make_finite_obs_env():
+    """Create an env with finite-bounded Box observations."""
+    return GenericTestEnv(
+        observation_space=spaces.Box(-1.2, 0.6, shape=(2,), dtype=np.float32)
+    )
+
+
+def _make_finite_action_env():
+    """Create an env with finite-bounded Box actions."""
+    return GenericTestEnv(
+        action_space=spaces.Box(-1.0, 1.0, shape=(2,), dtype=np.float32)
+    )
+
+
+def _render_func(self):
+    """A render function that returns a fake RGB frame."""
+    return np.zeros((32, 32, 3), dtype=np.uint8)
+
+
+def _make_render_env():
+    """Create an env that supports rgb_array rendering."""
+    return GenericTestEnv(
+        render_mode="rgb_array",
+        render_func=_render_func,
+        metadata={"render_modes": ["rgb_array"], "render_fps": 30},
+    )
+
+
+def _builtin_wrappers_special():
+    """Wrappers that need special environments (images, finite bounds, rendering)."""
+    # GrayscaleObservation needs RGB image observations
+    yield wrappers.GrayscaleObservation(_make_image_env())
+
+    # DiscretizeObservation needs finite-bounded Box observations
+    yield wrappers.DiscretizeObservation(_make_finite_obs_env(), bins=5)
+
+    # DiscretizeAction needs finite-bounded Box actions
+    yield wrappers.DiscretizeAction(_make_finite_action_env(), bins=5)
+
+    # RenderCollection needs render_mode="rgb_array"
+    yield wrappers.RenderCollection(_make_render_env())
+
+    # AddRenderObservation needs render_mode="rgb_array", render_only mode
+    yield wrappers.AddRenderObservation(_make_render_env(), render_only=True)
+
+
+@pytest.mark.parametrize(
+    "wrapped_env",
+    list(_builtin_wrappers_special()),
+    ids=lambda env: type(env).__name__,
+)
+def test_builtin_wrappers_special(wrapped_env):
+    """Check that wrappers needing special environments pass check_wrapper."""
     check_wrapper(wrapped_env, skip_render_check=True)
     wrapped_env.close()
