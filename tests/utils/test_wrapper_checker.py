@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
+from gymnasium import wrappers
 from gymnasium.utils.wrapper_checker import check_wrapper
 
 
@@ -269,3 +270,86 @@ def test_none_info_wrapper():
     wrapped = NoneInfoWrapper(env)
     with pytest.raises(AssertionError, match="info from step.*must be a dict"):
         check_wrapper(wrapped)
+
+
+# ============= Built-in wrapper tests =============
+# Test check_wrapper against every wrapper that Gymnasium ships with.
+# Grouped by the type of environment they require.
+
+
+def _make_cartpole():
+    """Create a raw CartPole env (Discrete action, Box obs)."""
+    return gym.make("CartPole-v1", disable_env_checker=True).unwrapped
+
+
+def _make_continuous():
+    """Create a raw MountainCarContinuous env (Box action, Box obs)."""
+    return gym.make("MountainCarContinuous-v0", disable_env_checker=True).unwrapped
+
+
+def _builtin_wrappers_cartpole():
+    """Wrappers that work with CartPole (Discrete actions, Box obs)."""
+    # Common wrappers, work with any env
+    yield wrappers.TimeLimit(_make_cartpole(), max_episode_steps=100)
+    yield wrappers.Autoreset(_make_cartpole())
+    yield wrappers.PassiveEnvChecker(_make_cartpole())
+    yield wrappers.OrderEnforcing(_make_cartpole())
+    yield wrappers.RecordEpisodeStatistics(_make_cartpole())
+
+    # Observation wrappers, work with Box obs
+    yield wrappers.FlattenObservation(_make_cartpole())
+    yield wrappers.DtypeObservation(_make_cartpole(), dtype=np.float64)
+    yield wrappers.NormalizeObservation(_make_cartpole())
+    yield wrappers.ReshapeObservation(_make_cartpole(), shape=(2, 2))
+    # RescaleObservation needs finite bounds, so use MountainCar (all bounds finite)
+    yield wrappers.RescaleObservation(_make_continuous(), min_obs=-1.0, max_obs=1.0)
+    yield wrappers.DelayObservation(_make_cartpole(), delay=1)
+    yield wrappers.FrameStackObservation(_make_cartpole(), stack_size=3)
+    yield wrappers.MaxAndSkipObservation(_make_cartpole(), skip=2)
+    yield wrappers.TransformObservation(
+        _make_cartpole(), func=lambda obs: obs, observation_space=None
+    )
+
+    # Reward wrappers, work with any env
+    yield wrappers.ClipReward(_make_cartpole(), min_reward=-1.0, max_reward=1.0)
+    yield wrappers.TransformReward(_make_cartpole(), func=lambda r: r)
+    yield wrappers.NormalizeReward(_make_cartpole())
+
+    # Action wrappers, StickyAction works with any env
+    yield wrappers.StickyAction(_make_cartpole(), repeat_action_probability=0.25)
+
+    # TimeAwareObservation needs a TimeLimit wrapper
+    yield wrappers.TimeAwareObservation(
+        wrappers.TimeLimit(_make_cartpole(), max_episode_steps=100)
+    )
+
+
+def _builtin_wrappers_continuous():
+    """Wrappers that require continuous (Box) action spaces."""
+    yield wrappers.ClipAction(_make_continuous())
+    yield wrappers.RescaleAction(_make_continuous(), min_action=-0.5, max_action=0.5)
+    yield wrappers.TransformAction(
+        _make_continuous(), func=lambda a: a, action_space=None
+    )
+
+
+@pytest.mark.parametrize(
+    "wrapped_env",
+    list(_builtin_wrappers_cartpole()),
+    ids=lambda env: type(env).__name__,
+)
+def test_builtin_wrappers_cartpole(wrapped_env):
+    """Check that all built-in wrappers pass check_wrapper with CartPole."""
+    check_wrapper(wrapped_env, skip_render_check=True)
+    wrapped_env.close()
+
+
+@pytest.mark.parametrize(
+    "wrapped_env",
+    list(_builtin_wrappers_continuous()),
+    ids=lambda env: type(env).__name__,
+)
+def test_builtin_wrappers_continuous(wrapped_env):
+    """Check that all built-in wrappers pass check_wrapper with a continuous action env."""
+    check_wrapper(wrapped_env, skip_render_check=True)
+    wrapped_env.close()
