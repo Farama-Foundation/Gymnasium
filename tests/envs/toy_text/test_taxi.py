@@ -3,17 +3,20 @@ import pytest
 from gymnasium.envs.toy_text.taxi import TaxiEnv
 
 
-def test_taxi_action_mask():
-    env = TaxiEnv()
+@pytest.mark.parametrize("is_rainy", [False, True])
+def test_taxi_action_mask(is_rainy):
+    env = TaxiEnv(is_rainy=is_rainy)
 
     for state in env.P:
         mask = env.action_mask(state)
         for action, possible in enumerate(mask):
-            _, next_state, _, _ = env.P[state][action][0]
+            transitions = env.P[state][action]
             if possible:
+                _, next_state, _, _ = transitions[0]
                 assert state != next_state
             else:
-                assert state == next_state
+                for _, next_state, _, _ in transitions:
+                    assert state == next_state
 
 
 def test_taxi_encode_decode_roundtrip():
@@ -21,6 +24,33 @@ def test_taxi_encode_decode_roundtrip():
 
     for state in env.P:
         assert env.encode(*env.decode(state)) == state
+
+
+def test_taxi_state_counts():
+    """Total, initial, and reachable state counts derived from `P`.
+
+    Matches the docstring counts: 500 total, 300 initial, 404 reachable
+    (300 initial + 100 in-taxi + 4 post-dropoff terminals).
+    """
+    env = TaxiEnv()
+    assert len(env.P) == 500
+
+    initial_states = {s for s in env.P if env.initial_state_distrib[s] > 0}
+    assert len(initial_states) == 300
+
+    reachable = set(initial_states)
+    frontier = set(initial_states)
+    while frontier:
+        next_frontier = set()
+        for state in frontier:
+            for transitions in env.P[state].values():
+                for _prob, next_state, _reward, done in transitions:
+                    if next_state not in reachable:
+                        reachable.add(next_state)
+                        if not done:
+                            next_frontier.add(next_state)
+        frontier = next_frontier
+    assert len(reachable) == 404
 
 
 @pytest.mark.parametrize("is_rainy", [False, True])
@@ -147,6 +177,7 @@ def rainy_env():
         pytest.param(4, 3, 0, (4, 3), (4, 3), (4, 3), id="south-boundary-blocked"),
         pytest.param(0, 3, 1, (0, 3), (0, 3), (0, 3), id="north-boundary-blocked"),
         pytest.param(0, 1, 2, (0, 1), (0, 1), (0, 1), id="east-wall-blocked"),
+        pytest.param(0, 2, 3, (0, 2), (0, 2), (0, 2), id="west-wall-blocked"),
         # Lateral that would pass through an interior wall stays put.
         # At (0, 2) going south, the west lateral to (0, 1) is blocked by
         # desc[1, 4] = '|' while the primary and east lateral remain open.

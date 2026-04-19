@@ -137,7 +137,7 @@ class TaxiEnv(Env):
     ```
 
     <a id="is_rainy"></a>`is_rainy=False`: If True the cab will move in the intended direction with probability
-    80%, controlled by `rainy_probability`, else in another direction with equal probability.
+    80%, controlled by `rainy_probability`, else in a lateral direction with equal probability.
     Pickup and dropoff actions remain deterministic (probability 1.0).
 
     <a id="rainy_probability"></a>`rainy_probability=0.8`: When `is_rainy=True`, the probability of
@@ -391,7 +391,7 @@ class TaxiEnv(Env):
         i += dest_idx
         return i
 
-    def decode(self, i):
+    def decode(self, i) -> tuple[int, int, int, int]:
         out = []
         out.append(i % 4)
         i = i // 4
@@ -401,7 +401,7 @@ class TaxiEnv(Env):
         i = i // 5
         out.append(i)
         assert 0 <= i < 5
-        return reversed(out)
+        return tuple(reversed(out))
 
     def action_mask(self, state: int):
         """Computes an action mask for the action space using the state information."""
