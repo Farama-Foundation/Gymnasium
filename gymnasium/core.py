@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeAlias, TypeVar
 
 import numpy as np
 
@@ -16,7 +16,8 @@ if TYPE_CHECKING:
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
-RenderFrame = TypeVar("RenderFrame")
+
+RenderFrame: TypeAlias = str | np.ndarray | tuple[np.ndarray, np.ndarray]
 
 
 class Env(Generic[ObsType, ActType]):
@@ -302,7 +303,7 @@ class Wrapper(
         If you inherit from :class:`Wrapper`, don't forget to call ``super().__init__(env)``
     """
 
-    def __init__(self, env: Env[ObsType, ActType]):
+    def __init__(self, env: Env[WrapperObsType, WrapperActType]):
         """Wraps an environment to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.
 
         Args:
