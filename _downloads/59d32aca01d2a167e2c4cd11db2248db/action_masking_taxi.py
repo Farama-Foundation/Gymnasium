@@ -43,7 +43,6 @@ import numpy as np
 
 import gymnasium as gym
 
-
 # Base random seed for reproducibility
 BASE_RANDOM_SEED = 58922320
 
@@ -171,7 +170,7 @@ for i, seed in enumerate(seeds):
     print(f"Run {i + 1}/{n_runs} with seed {seed}")
 
     # Train agent WITH action masking
-    env_masked = gym.make("Taxi-v3")
+    env_masked = gym.make("Taxi-v4")
     masked_results = train_q_learning(
         env_masked,
         use_action_mask=True,
@@ -185,7 +184,7 @@ for i, seed in enumerate(seeds):
     masked_results_list.append(masked_results)
 
     # Train agent WITHOUT action masking
-    env_unmasked = gym.make("Taxi-v3")
+    env_unmasked = gym.make("Taxi-v4")
     unmasked_results = train_q_learning(
         env_unmasked,
         use_action_mask=False,
@@ -220,7 +219,7 @@ plt.figure(figsize=(12, 8), dpi=100)
 
 # Plot individual runs with low alpha
 for i, (masked_results, unmasked_results) in enumerate(
-    zip(masked_results_list, unmasked_results_list)
+    zip(masked_results_list, unmasked_results_list, strict=True)
 ):
     plt.plot(
         masked_results["episode_rewards"],

@@ -31,7 +31,6 @@ import numpy as np
 
 import gymnasium as gym
 
-
 # Make sure Gymnasium is properly installed
 # You can run this in your terminal:
 # pip install "gymnasium>=1.0.0"

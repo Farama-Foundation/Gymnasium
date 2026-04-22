@@ -57,7 +57,6 @@ from tqdm import tqdm
 
 import gymnasium as gym
 
-
 # Let's start by creating the blackjack environment.
 # Note: We are going to follow the rules from Sutton & Barto.
 # Other versions of the game can be found below for you to experiment.

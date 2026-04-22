@@ -68,7 +68,6 @@ from tqdm import tqdm
 
 import gymnasium as gym
 
-
 # %%
 # Advantage Actor-Critic (A2C)
 # ----------------------------
@@ -443,6 +442,7 @@ for sample_phase in tqdm(range(n_updates)):
     ep_value_preds = torch.zeros(n_steps_per_update, n_envs, device=device)
     ep_rewards = torch.zeros(n_steps_per_update, n_envs, device=device)
     ep_action_log_probs = torch.zeros(n_steps_per_update, n_envs, device=device)
+    ep_entropies = torch.zeros(n_steps_per_update, n_envs, device=device)
     masks = torch.zeros(n_steps_per_update, n_envs, device=device)
 
     # at the start of training reset all envs to get an initial state
@@ -464,6 +464,7 @@ for sample_phase in tqdm(range(n_updates)):
         ep_value_preds[step] = torch.squeeze(state_value_preds)
         ep_rewards[step] = torch.tensor(rewards, device=device)
         ep_action_log_probs[step] = action_log_probs
+        ep_entropies[step] = entropy
 
         # add a mask (for the return calculation later);
         # for each env the mask is 1 if the episode is ongoing and 0 if it is terminated (not by truncation!)
@@ -474,7 +475,7 @@ for sample_phase in tqdm(range(n_updates)):
         ep_rewards,
         ep_action_log_probs,
         ep_value_preds,
-        entropy,
+        ep_entropies,
         masks,
         gamma,
         lam,
@@ -488,7 +489,7 @@ for sample_phase in tqdm(range(n_updates)):
     # log the losses and entropy
     critic_losses.append(critic_loss.detach().cpu().numpy())
     actor_losses.append(actor_loss.detach().cpu().numpy())
-    entropies.append(entropy.detach().mean().cpu().numpy())
+    entropies.append(ep_entropies.detach().mean().cpu().numpy())
 
 
 # %%

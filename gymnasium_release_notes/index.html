@@ -378,6 +378,30 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="gymnasium-release-notes">
 <h1>Gymnasium Release Notes<a class="headerlink" href="#gymnasium-release-notes" title="Link to this heading">¶</a></h1>
+<section id="release-v1-3-0">
+<h2>v1.3.0<a class="headerlink" href="#release-v1-3-0" title="Link to this heading">¶</a></h2>
+<p><em>Released on 2026-04-22 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v1.3.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v1.3.0/">PyPI</a></em></p>
+<h1>Gymnasium v1.3.0</h1>
+<p>This release brings a new Taxi environment version, a new <code>RepeatAction</code> wrapper, and a range of bug fixes across vector environments and wrappers.</p>
+<h2>Core Changes</h2>
+<ul>
+<li>The <code>Taxi</code> environment has been updated to <code>v4</code> to correct the <code>is_rainy</code> implementation, which previously did not behave as documented by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/pseudo-rnd-thoughts/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/pseudo-rnd-thoughts">@pseudo-rnd-thoughts</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4307782993" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1561" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1561/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1561">#1561</a>)</li>
+<li><code>pygame</code> has been replaced with <a href="https://pyga.me/" rel="nofollow"><code>pygame-ce</code></a>, unlocking Python 3.14 compatibility. The drop-in replacement preserves the existing rendering behaviour by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/mwydmuch/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/mwydmuch">@mwydmuch</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="3788673329" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1512" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1512/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1512">#1512</a>)</li>
+<li>Added <code>RepeatAction</code> wrapper that repeats a given action for a fixed number of steps, useful for frame-skipping and coarser control loops by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Lidang-Jiang/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Lidang-Jiang">@Lidang-Jiang</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4194777638" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1553" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1553/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1553">#1553</a>)</li>
+<li>Optimised <code>Box.__init__</code> to reduce overhead through lazy evaluation of variables by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/pseudo-rnd-thoughts/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/pseudo-rnd-thoughts">@pseudo-rnd-thoughts</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="3958776450" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1529" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1529/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1529">#1529</a>)</li>
+<li>Fix vector <code>RecordVideo</code> wrapper to remove memory leaks across episodes by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JonahFSD/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JonahFSD">@JonahFSD</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="3914195171" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1527" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1527/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1527">#1527</a>)</li>
+<li>Fix Vector <code>NormalizeReward</code> wrapper to work identically as the non-vectorized version by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JonahFSD/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JonahFSD">@JonahFSD</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="3912418439" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1526" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1526/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1526">#1526</a>)</li>
+</ul>
+<h2>Bug Fixes</h2>
+<ul>
+<li>Removed the <code>VectorEnv</code> destructor, which was causing <code>VectorEnv.close()</code> to be called unintentionally by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/TimSchneider42/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/TimSchneider42">@TimSchneider42</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="3832761339" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1522" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1522/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1522">#1522</a>)</li>
+<li>Fixed <code>NormalizeObservation</code> vectorized wrapper to override the <code>observation_space</code> and a <code>float32</code> cast by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JonahFSD/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JonahFSD">@JonahFSD</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="3914296741" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1528" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1528/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1528">#1528</a>)</li>
+<li>Fixed <code>RenderFrame</code>'s typing by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/jorenham/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/jorenham">@jorenham</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4305182899" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1560" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1560/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1560">#1560</a>)</li>
+<li>Fixed A2C tutorial's entropy computation when a scalar (rather than tensor) is passed to the loss function by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/epoint95/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/epoint95">@epoint95</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="3868402075" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1524" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1524/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1524">#1524</a>)</li>
+</ul>
+<h2>Third-Party Environments</h2>
+<p>10 new community environments have been added to the <a href="https://gymnasium.farama.org/environments/third_party_environments/" rel="nofollow">third-party environments list</a>, including a new Cybersecurity environments section.</p>
+<p><strong>Full Changelog:</strong> <a class="commit-link" href="https://github.com/Farama-Foundation/Gymnasium/compare/v1.2.3...v1.3.0"><tt>v1.2.3...v1.3.0</tt></a></p></section>
 <section id="release-v1-2-3">
 <h2>v1.2.3<a class="headerlink" href="#release-v1-2-3" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2025-12-18 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v1.2.3">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v1.2.3/">PyPI</a></em></p>
@@ -1516,7 +1540,7 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
           <div class="bottom-of-page">
             <div class="left-details">
               <div class="copyright">
-                Copyright &#169; 2025 Farama Foundation
+                Copyright &#169; 2026 Farama Foundation
               </div>
               <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
@@ -1553,6 +1577,7 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Gymnasium Release Notes</a><ul>
+<li><a class="reference internal" href="#release-v1-3-0">v1.3.0</a></li>
 <li><a class="reference internal" href="#release-v1-2-3">v1.2.3</a></li>
 <li><a class="reference internal" href="#release-v1-2-2">v1.2.2: V1.2.2</a></li>
 <li><a class="reference internal" href="#release-v1-2-1">v1.2.1</a></li>
@@ -1658,7 +1683,7 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
         })()
       </script>
 
-    <script src="../_static/documentation_options.js?v=c9fd93b6"></script>
+    <script src="../_static/documentation_options.js?v=0559ecf3"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=7660844c"></script>
