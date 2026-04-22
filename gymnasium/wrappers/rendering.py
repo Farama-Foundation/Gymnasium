@@ -33,7 +33,7 @@ __all__ = [
 
 class RenderCollection(
     gym.Wrapper[ObsType, ActType, ObsType, ActType],
-    Generic[ObsType, ActType, RenderFrame],
+    Generic[ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
@@ -161,7 +161,7 @@ class RenderCollection(
 
 class RecordVideo(
     gym.Wrapper[ObsType, ActType, ObsType, ActType],
-    Generic[ObsType, ActType, RenderFrame],
+    Generic[ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
     """Records videos of environment episodes using the environment's render function.
