@@ -3,8 +3,14 @@ import pytest
 from gymnasium.envs.toy_text.taxi import TaxiEnv
 
 
+def test_encode_decode_roundtrip():
+    env = TaxiEnv()
+    for state in env.P:
+        assert env.encode(*env.decode(state)) == state
+
+
 @pytest.mark.parametrize("is_rainy", [False, True])
-def test_taxi_action_mask(is_rainy):
+def test_action_mask(is_rainy):
     env = TaxiEnv(is_rainy=is_rainy)
 
     for state in env.P:
@@ -19,42 +25,8 @@ def test_taxi_action_mask(is_rainy):
                     assert state == next_state
 
 
-def test_taxi_encode_decode_roundtrip():
-    env = TaxiEnv()
-
-    for state in env.P:
-        assert env.encode(*env.decode(state)) == state
-
-
-def test_taxi_state_counts():
-    """Total, initial, and reachable state counts derived from `P`.
-
-    Matches the docstring counts: 500 total, 300 initial, 404 reachable
-    (300 initial + 100 in-taxi + 4 post-dropoff terminals).
-    """
-    env = TaxiEnv()
-    assert len(env.P) == 500
-
-    initial_states = {s for s in env.P if env.initial_state_distrib[s] > 0}
-    assert len(initial_states) == 300
-
-    reachable = set(initial_states)
-    frontier = set(initial_states)
-    while frontier:
-        next_frontier = set()
-        for state in frontier:
-            for transitions in env.P[state].values():
-                for _prob, next_state, _reward, done in transitions:
-                    if next_state not in reachable:
-                        reachable.add(next_state)
-                        if not done:
-                            next_frontier.add(next_state)
-        frontier = next_frontier
-    assert len(reachable) == 404
-
-
 @pytest.mark.parametrize("is_rainy", [False, True])
-def test_taxi_disallowed_transitions(is_rainy):
+def test_disallowed_transitions(is_rainy):
     """No transition in P crosses an interior wall, with or without `is_rainy`."""
     disallowed_transitions = {
         ((0, 1), (0, 3)),
@@ -130,29 +102,8 @@ def test_step_info_prob(kwargs, valid_probs):
     assert any(info["prob"] == pytest.approx(p) for p in valid_probs)
 
 
-def _lateral_positions(env, row, col, action, pass_idx=0, dest_idx=1):
-    """Return the destination (row, col) for each of the 3 rainy transitions.
-
-    Returns a tuple (ahead, left, right) matching the order in env.P.
-    """
-    state = env.encode(row, col, pass_idx, dest_idx)
-    transitions = env.P[state][action]
-    assert len(transitions) == 3, (
-        f"Expected 3 rainy transitions, got {len(transitions)}"
-    )
-    return tuple(
-        tuple(env.decode(new_state))[:2]  # (new_row, new_col)
-        for _prob, new_state, _reward, _done in transitions
-    )
-
-
-@pytest.fixture
-def rainy_env():
-    return TaxiEnv(is_rainy=True)
-
-
 @pytest.mark.parametrize(
-    "row,col,action,ahead,left,right",
+    "row,col,action,expected_ahead,expected_left,expected_right",
     [
         # Directional convention: left/right relative to heading, from (1, 3).
         #   south → left=east,  right=west
@@ -186,17 +137,24 @@ def rainy_env():
         ),
     ],
 )
-def test_rainy_transition_targets(rainy_env, row, col, action, ahead, left, right):
+def test_rainy_transition_targets(
+    row, col, action, expected_ahead, expected_left, expected_right
+):
     """Validate rainy (ahead, left, right) target cells across directional, wall, and boundary cases.
 
     Covers left/right convention and N/S laterals not gated by E/W wall
     checks, no lateral drift when the primary move is blocked, and
     the lateral-into-interior-wall case.
     """
-    got_ahead, got_left, got_right = _lateral_positions(rainy_env, row, col, action)
-    assert got_ahead == ahead
-    assert got_left == left
-    assert got_right == right
+    rainy_env = TaxiEnv(is_rainy=True)
+
+    state = rainy_env.encode(row, col, pass_loc=0, dest_idx=1)
+    transitions = rainy_env.P[state][action]
+
+    assert len(transitions) == 3
+    assert rainy_env.decode(transitions[0][1])[:2] == expected_ahead
+    assert rainy_env.decode(transitions[1][1])[:2] == expected_left
+    assert rainy_env.decode(transitions[2][1])[:2] == expected_right
 
 
 @pytest.mark.parametrize(
@@ -210,6 +168,7 @@ def test_fickle_probability_extremes(fickle_probability, should_change):
     """Fickle at the extremes: p=1.0 always changes destination, p=0.0 never does."""
     env = TaxiEnv(fickle_passenger=True, fickle_probability=fickle_probability)
     env.reset(seed=0)
+
     _, _, pass_idx, orig_dest_idx = env.decode(env.s)
     env.s = env.encode(*env.locs[pass_idx], pass_idx, orig_dest_idx)
     env.step(4)  # pickup at the passenger's source

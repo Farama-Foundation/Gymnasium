@@ -119,7 +119,7 @@ class TaxiEnv(Env):
     ## Information
 
     `step()` and `reset()` return a dict with the following keys:
-    - "p": transition probability for the state.
+    - "prob": transition probability for the state.
     - "action_mask": if actions will cause a transition to a new state. This was added in v0.25.0
 
     For some cases, taking an action will have no effect on the state of the episode.
@@ -133,7 +133,7 @@ class TaxiEnv(Env):
 
     ```python
     import gymnasium as gym
-    gym.make('Taxi-v3')
+    gym.make('Taxi-v4')
     ```
 
     <a id="is_rainy"></a>`is_rainy=False`: If True the cab will move in the intended direction with probability
@@ -156,10 +156,11 @@ class TaxiEnv(Env):
     Journal of Artificial Intelligence Research, vol. 13, pp. 227–303, Nov. 2000, doi: 10.1613/jair.639.
 
     ## Version History
+    * v4: In v1.3.0, fix `is_rainy=True` and `fickle_passenger=True` implementations
+        - Add `rainy_probability` and `fickle_probability` arguments to tune the stochastic behaviour
     * v3: Map Correction + Cleaner Domain Description,
-        - v0.25.0 action masking added to the reset and step information
-        - In Gymnasium `1.2.0` the `is_rainy` and `fickle_passenger` arguments were added to align with Dietterich, 2000
-        - Subsequently the `rainy_probability` and `fickle_probability` arguments were added to tune the stochastic behaviour
+        - In v0.25.0 action masking added to the reset and step information
+        - In v1.2.0 added `is_rainy` and `fickle_passenger` arguments to align with Dietterich, 2000 Section 7.1
     * v2: Disallow Taxi start location = goal location, Update Taxi observations in the rollout, Update Taxi reward threshold.
     * v1: Remove (3,2) from locs, add passidx<4 check
     * v0: Initial version release
@@ -328,6 +329,7 @@ class TaxiEnv(Env):
         self.max_col = num_columns - 1
         self.initial_state_distrib = np.zeros(num_states)
         num_actions = 6
+        # P = dict[state, dict[action, tuple[probability, next-state, reward, termination]]]
         self.P = {
             state: {action: [] for action in range(num_actions)}
             for state in range(num_states)
