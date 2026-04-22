@@ -540,7 +540,7 @@ We’ll use multiple random seeds to ensure robust statistical comparison.</p>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_runs</span><span class="si">}</span><span class="s2"> with seed </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Train agent WITH action masking</span>
-    <span class="n">env_masked</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Taxi-v3&quot;</span><span class="p">)</span>
+    <span class="n">env_masked</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Taxi-v4&quot;</span><span class="p">)</span>
     <span class="n">masked_results</span> <span class="o">=</span> <span class="n">train_q_learning</span><span class="p">(</span>
         <span class="n">env_masked</span><span class="p">,</span>
         <span class="n">use_action_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -554,7 +554,7 @@ We’ll use multiple random seeds to ensure robust statistical comparison.</p>
     <span class="n">masked_results_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">masked_results</span><span class="p">)</span>
 
     <span class="c1"># Train agent WITHOUT action masking</span>
-    <span class="n">env_unmasked</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Taxi-v3&quot;</span><span class="p">)</span>
+    <span class="n">env_unmasked</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Taxi-v4&quot;</span><span class="p">)</span>
     <span class="n">unmasked_results</span> <span class="o">=</span> <span class="n">train_q_learning</span><span class="p">(</span>
         <span class="n">env_unmasked</span><span class="p">,</span>
         <span class="n">use_action_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>

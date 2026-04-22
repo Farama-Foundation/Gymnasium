@@ -170,7 +170,7 @@ for i, seed in enumerate(seeds):
     print(f"Run {i + 1}/{n_runs} with seed {seed}")
 
     # Train agent WITH action masking
-    env_masked = gym.make("Taxi-v3")
+    env_masked = gym.make("Taxi-v4")
     masked_results = train_q_learning(
         env_masked,
         use_action_mask=True,
@@ -184,7 +184,7 @@ for i, seed in enumerate(seeds):
     masked_results_list.append(masked_results)
 
     # Train agent WITHOUT action masking
-    env_unmasked = gym.make("Taxi-v3")
+    env_unmasked = gym.make("Taxi-v4")
     unmasked_results = train_q_learning(
         env_unmasked,
         use_action_mask=False,
