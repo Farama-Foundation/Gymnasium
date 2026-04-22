@@ -531,7 +531,7 @@ At its heart, Gymnasium provides an API (application programming interface) for 
 <li><p><a class="reference internal" href="../../api/wrappers/action_wrappers/#gymnasium.wrappers.RescaleAction" title="gymnasium.wrappers.RescaleAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">RescaleAction</span></code></a>: Rescales actions to a different range (useful for algorithms that output actions in [-1, 1] but environment expects [0, 10]).</p></li>
 <li><p><a class="reference internal" href="../../api/wrappers/observation_wrappers/#gymnasium.wrappers.TimeAwareObservation" title="gymnasium.wrappers.TimeAwareObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></a>: Adds information about the current timestep to the observation (sometimes helps with learning).</p></li>
 </ul>
-<p>For a full list of implemented wrappers in Gymnasium, see <a class="reference internal" href="../../api/wrappers/"><span class="doc std std-doc">wrappers</span></a>.</p>
+<p>For a full list of implemented wrappers in Gymnasium, see <a class="reference internal" href="../../api/wrappers/table/"><span class="doc std std-doc">wrappers</span></a>.</p>
 <p>If you have a wrapped environment and want to access the original environment underneath all the layers of wrappers (to manually call a function or change some underlying aspect), you can use the <a class="reference internal" href="../../api/env/#gymnasium.Env.unwrapped" title="gymnasium.Env.unwrapped"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unwrapped</span></code></a> attribute. If the environment is already a base environment, <a class="reference internal" href="../../api/env/#gymnasium.Env.unwrapped" title="gymnasium.Env.unwrapped"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unwrapped</span></code></a> just returns itself.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
 <span class="go">&lt;FlattenObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CarRacing&lt;CarRacing-v3&gt;&gt;&gt;&gt;&gt;&gt;</span>
@@ -592,7 +592,7 @@ At its heart, Gymnasium provides an API (application programming interface) for 
           <div class="bottom-of-page">
             <div class="left-details">
               <div class="copyright">
-                Copyright &#169; 2025 Farama Foundation
+                Copyright &#169; 2026 Farama Foundation
               </div>
               <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
@@ -727,7 +727,7 @@ At its heart, Gymnasium provides an API (application programming interface) for 
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=c9fd93b6"></script>
+    <script src="../../_static/documentation_options.js?v=0559ecf3"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>

@@ -395,7 +395,6 @@
     <span class="n">env_step_passive_checker</span><span class="p">,</span>
 <span class="p">)</span>
 
-
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvSpec</span>
 
@@ -469,9 +468,9 @@
 <span class="sd">            env: The environment to apply the wrapper</span>
 <span class="sd">            max_episode_steps: the environment step after which the episode is truncated (``elapsed &gt;= max_episode_steps``)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">max_episode_steps</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Expect the `max_episode_steps` to be positive, actually: </span><span class="si">{</span><span class="n">max_episode_steps</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">max_episode_steps</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Expect the `max_episode_steps` to be positive, actually: </span><span class="si">{</span><span class="n">max_episode_steps</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="n">max_episode_steps</span>
         <span class="p">)</span>
@@ -943,7 +942,7 @@
           <div class="bottom-of-page">
             <div class="left-details">
               <div class="copyright">
-                Copyright &#169; 2025 Farama Foundation
+                Copyright &#169; 2026 Farama Foundation
               </div>
               <!--
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
@@ -1048,7 +1047,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=c9fd93b6"></script>
+    <script src="../../../../_static/documentation_options.js?v=0559ecf3"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
