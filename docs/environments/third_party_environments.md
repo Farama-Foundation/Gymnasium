@@ -353,6 +353,12 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   MarsExplorer-Gymnasium is a fully Gymnasium-compatible environment for autonomous Mars rover exploration. It enables research on terrain coverage, navigation, and exploration efficiency in unknown, procedurally generated landscapes, supporting modern deep reinforcement learning algorithms through the standard Gymnasium API.
 
+- [Balloon Popping Challenge: A 6-DoF Rocket GNC Simulation Gymnasium Environment](https://github.com/ARRC-Rocket/BalloonPoppingChallenge)
+  
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/ARRC-Rocket/BalloonPoppingChallenge)
+  
+  Balloon Popping Challenge is a 6-DoF rocket guidance, navigation, and control (GNC) simulation environment. The environment is designed to simulate an active controlled rocket to pop balloons scattered in the sky. The simulator incorporates realistic physics, including atmospheric conditions and rocket dynamics, to provide a challenging platform for developing and testing GNC algorithms. This project is based on [ActiveRocketPy](https://github.com/ARRC-Rocket/BalloonPoppingChallenge), a fork of open-source software [RocketPy](https://github.com/RocketPy-Team/RocketPy).
 
 ### Telecommunication Systems environments
 *Interact and/or manage wireless and/or wired telecommunication systems.*
