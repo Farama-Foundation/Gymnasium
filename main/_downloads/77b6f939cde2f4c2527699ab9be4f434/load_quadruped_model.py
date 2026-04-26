@@ -43,7 +43,7 @@ import gymnasium as gym
 # much harder than the `Gymnasium/MuJoCo/Ant` environment.
 #
 # Note: The original tutorial includes an image of the Unitree Go1 robot in a flat terrain scene.
-# You can view this image at: https://github.com/google-deepmind/mujoco_menagerie/blob/main/unitree_go1/go1.png?raw=true
+# You can view this image at: https://raw.githubusercontent.com/google-deepmind/mujoco_menagerie/refs/heads/main/unitree_go1/go1.png
 
 # You can download the whole MuJoCo Menagerie collection (which includes `Go1`):
 # git clone https://github.com/google-deepmind/mujoco_menagerie.git
