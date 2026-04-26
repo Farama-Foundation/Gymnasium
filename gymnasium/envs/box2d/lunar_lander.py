@@ -131,9 +131,8 @@ class LunarLander(gym.Env, EzPickle):
     The episode finishes if:
     1) the lander crashes (the lander body gets in contact with the moon);
     2) the lander gets outside of the viewport (`x` coordinate is greater than 1);
-    3) the lander is not awake. From the [Box2D docs](https://box2d.org/documentation/md__d_1__git_hub_box2d_docs_dynamics.html#autotoc_md61),
-        a body which is not awake is a body which doesn't move and doesn't
-        collide with any other body:
+    3) the lander is not awake. From the [Box2D docs](https://box2d.org/documentation/md_simulation.html),
+       a body which is not awake is a body which doesn't move and doesn't collide with any other body:
     > When Box2D determines that a body (or group of bodies) has come to rest,
     > the body enters a sleep state which has very little CPU overhead. If a
     > body is awake and collides with a sleeping body, then the sleeping body

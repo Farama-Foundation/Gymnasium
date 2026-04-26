@@ -13,12 +13,17 @@ LENGTH = 300
 exclude_env_names = [
     "GymV21Environment",
     "GymV26Environment",
+    "CliffWalkingSlippery",
     "FrozenLake8x8",
     "LunarLanderContinuous",
     "BipedalWalkerHardcore",
+    "phys2d/CartPole",
+    "phys2d/Pendulum",
+    "tabular/Blackjack",
+    "tabular/CliffWalking",
 ]
 for env_spec in gym.registry.values():
-    if env_spec.name in exclude_env_names:
+    if get_env_id(env_spec.namespace, env_spec.name, None) in exclude_env_names:
         continue
 
     highest_version = find_highest_version(env_spec.namespace, env_spec.name)
