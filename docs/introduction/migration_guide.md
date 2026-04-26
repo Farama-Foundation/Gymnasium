@@ -362,4 +362,4 @@ Use the :meth:`check_env` to verify their implementation.
 **Common resources**:
 - [Gymnasium API documentation](https://gymnasium.farama.org/api/env)
 - [GitHub issues](https://github.com/Farama-Foundation/Gymnasium/issues) for bug reports
-- [Discord community](https://discord.gg/bnJ6kubTg6) for questions
+- [Discord community](https://discord.com/invite/bnJ6kubTg6) for questions

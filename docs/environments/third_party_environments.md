@@ -99,7 +99,7 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   MtSim is a simulator for the [MetaTrader 5](https://www.metatrader5.com/) trading platform for reinforcement learning-based trading algorithms.
 
-- [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/)
+- [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/en/latest/)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
   ![Github stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)
@@ -278,7 +278,7 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](https://github.com/duburcqa/jiminy), an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.
 
-- [gym-pybullet-drones: Environments for quadcopter control](https://github.com/JacopoPan/gym-pybullet-drones)
+- [gym-pybullet-drones: Environments for quadcopter control](https://github.com/utiasDSL/gym-pybullet-drones)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.2-blue)
   ![GitHub stars](https://img.shields.io/github/stars/JacopoPan/gym-pybullet-drones)
@@ -306,9 +306,9 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   Mesozoic Labs is a reinforcement learning research project that trains robotic dinosaurs (Velociraptor, T-Rex, Brachiosaurus) to walk, run, and hunt using MuJoCo physics simulation, curriculum learning, and algorithms like PPO and SAC.
 
-- [OmniIsaacGymEnvs: Gym environments for NVIDIA Omniverse Isaac ](https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/)
+- [OmniIsaacGymEnvs: Gym environments for NVIDIA Omniverse Isaac](https://github.com/isaac-sim/OmniIsaacGymEnvs)
 
-  Reinforcement Learning Environments for [Omniverse Isaac simulator](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/overview.html).
+  Reinforcement Learning Environments for [Omniverse Isaac simulator](https://developer.nvidia.com/isaac/sim).
 
 - [panda-gym: Robotics environments using the PyBullet physics engine](https://github.com/qgallouedec/panda-gym/)
 
@@ -317,7 +317,7 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   PyBullet based simulations of a robotic arm moving objects.
 
-- [PyFlyt: UAV Flight Simulator Environments for Reinforcement Learning Research](https://jjshoots.github.io/PyFlyt/index.html#)
+- [PyFlyt: UAV Flight Simulator Environments for Reinforcement Learning Research](https://taijunjet.com/PyFlyt/index.html)
 
   A library for testing reinforcement learning algorithms on various UAVs.
   It is built on the [Bullet](https://github.com/bulletphysics/bullet3) physics engine, offers flexible rendering options, time-discrete steppable physics, Python bindings, and support for custom drones of any configuration, be it biplanes, quadcopters, rockets, and anything you can think of.
@@ -332,7 +332,7 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   Evaluate safety, robustness and generalization via PyBullet based CartPole and Quadrotor environments—with [CasADi](https://web.casadi.org) (symbolic) *a priori* dynamics and constraints.
 
-- [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
+- [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-Alignment/safety-gymnasium)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
   ![GitHub stars](https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium)
@@ -432,7 +432,7 @@ The suite includes a diverse set of tasks exposing RL algorithms to a variety of
 
 ## Third-Party Environments using Gym
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
-Many of these can be adapted to work with gymnasium (see [Compatibility with Gym](https://gymnasium.farama.org/content/gym_compatibility/)), but are not guaranteed to be fully functional.
+Many of these can be adapted to work with gymnasium (see [Compatibility with Gym](https://gymnasium.farama.org/introduction/migration_guide/)), but are not guaranteed to be fully functional.
 
 ### Video Game environments
 
@@ -450,7 +450,7 @@ Many of these can be adapted to work with gymnasium (see [Compatibility with Gym
 
 - [PGE: Parallel Game Engine](https://github.com/222464/PGE)
 
-  Uses The [Open 3D Engine](https://www.o3de.org/) for AI simulations and can interoperate with the Gym. Uses [PyBullet](https://github.com/bulletphysics/bullet3) physics.
+  Uses The [Open 3D Engine](https://o3de.org) for AI simulations and can interoperate with the Gym. Uses [PyBullet](https://github.com/bulletphysics/bullet3) physics.
 
 ### Robotics environments
 
@@ -482,7 +482,7 @@ Many of these can be adapted to work with gymnasium (see [Compatibility with Gym
 
 - [gym-duckietown: Lane-following for self-driving cars](https://github.com/duckietown/gym-duckietown)
 
-  A lane-following simulator built for the [Duckietown](http://duckietown.org/) project (small-scale self-driving car course).
+  A lane-following simulator built for the [Duckietown](https://duckietown.com/) project (small-scale self-driving car course).
 
 - [CommonRoad-RL: Motion planning for traffic scenarios ](https://commonroad.in.tum.de/tools/commonroad-rl)
 
