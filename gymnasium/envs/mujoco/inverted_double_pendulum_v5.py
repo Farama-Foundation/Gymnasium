@@ -43,7 +43,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     - *qfrc_constraint (1 element):* Constraint force of the cart.
     There is one constraint force for contacts for each degree of freedom (3).
     The approach and handling of constraints by MuJoCo is unique to the simulator and is based on their research.
-    More information can be found  in their [*documentation*](https://mujoco.readthedocs.io/en/latest/computation.html) or in their paper ["Analytically-invertible dynamics with contacts and constraints: Theory and implementation in MuJoCo"](https://homes.cs.washington.edu/~todorov/papers/TodorovICRA14.pdf).
+    More information can be found  in their [*documentation*](https://mujoco.readthedocs.io/en/latest/computation.html) or in their paper ["Convex and analytically-invertible dynamics with contacts and constraints: Theory and implementation in MuJoCo"](https://roboti.us/lab/papers/TodorovICRA14.pdf).
 
     The observation space is a `Box(-Inf, Inf, (9,), float64)` where the elements are as follows:
 
