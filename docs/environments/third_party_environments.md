@@ -249,6 +249,13 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   Multi-drone PX4 and ArduPilot ROS2 control of quadrotors and VTOL planes in Gazebo Sim, with YOLO, LiDAR, Dockerized Gym simulation, and JetPack deployment.
 
+- [Balloon Popping Challenge: A 6-DoF Rocket GNC Simulation Gymnasium Environment](https://github.com/ARRC-Rocket/BalloonPoppingChallenge)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/ARRC-Rocket/BalloonPoppingChallenge)
+
+  Balloon Popping Challenge is a 6-DoF rocket guidance, navigation, and control (GNC) simulation environment. The environment is designed to simulate an active controlled rocket to pop balloons scattered in the sky. The simulator incorporates realistic physics, including atmospheric conditions and rocket dynamics, to provide a challenging platform for developing and testing GNC algorithms. This project is based on [ActiveRocketPy](https://github.com/ARRC-Rocket/BalloonPoppingChallenge), a fork of open-source software [RocketPy](https://github.com/RocketPy-Team/RocketPy).
+
 - [BSK-RL: Environments for Spacecraft Planning and Scheduling](https://avslab.github.io/bsk_rl/)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
@@ -259,6 +266,13 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 - [Connect-4-gym : An environment for practicing self playing](https://github.com/lucasBertola/Connect-4-Gym-env-Reinforcement-learning)
 
   Connect-4-Gym is an environment designed for creating AIs that learn by playing against themselves and assigning them an Elo rating. This environment can be used to train and evaluate reinforcement learning agents on the classic board game Connect Four.
+
+- [deformable_gym: RL environments for grasping deformable objects](https://github.com/dfki-ric/deformable_gym)
+
+  A collection of gymnasium environments for learning to grasp 3D deformable objects built with PyBullet and Mujoco.
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.0.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/dfki-ric/deformable_gym)
 
 - [FlyCraft: A Fixed-wing UAV Environment](https://github.com/GongXudong/fly-craft)
 
@@ -298,6 +312,13 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
   ![GitHub stars](https://img.shields.io/github/stars/gustavo-moura/itomori)
 
   Itomori is an environment for risk-aware UAV flight, it provides tools to solve Chance-Constrained Markov Decision Processes (CCMDP). The env allows to simulate, visualize, and evaluate UAV navigation in complex and risky environments, incorporating variables like GPS uncertainty, collision risk, and adaptive flight planning. Itomori is intended to support UAV path-planning research by offering adjustable parameters, detailed visualizations, and insights into agent behavior in uncertain environments.
+
+- [MarsExplorer-Gymnasium: Gymnasium-compatible Mars rover exploration environment](https://github.com/markub3327/MarsExplorer-Gymnasium)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/markub3327/MarsExplorer-Gymnasium)
+
+  MarsExplorer-Gymnasium is a fully Gymnasium-compatible environment for autonomous Mars rover exploration. It enables research on terrain coverage, navigation, and exploration efficiency in unknown, procedurally generated landscapes, supporting modern deep reinforcement learning algorithms through the standard Gymnasium API.
 
 - [Mesozoic Labs: Robotic Dinosaur Locomotion](https://github.com/kuds/mesozoic-labs)
 
@@ -339,26 +360,6 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   Highly scalable and customizable Safe Reinforcement Learning library.
 
-- [deformable_gym: RL environments for grasping deformable objects](https://github.com/dfki-ric/deformable_gym)
-
-  A collection of gymnasium environments for learning to grasp 3D deformable objects built with PyBullet and Mujoco.
-
-  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.0.0-blue)
-  ![GitHub stars](https://img.shields.io/github/stars/dfki-ric/deformable_gym)
-
-- [MarsExplorer-Gymnasium: Gymnasium-compatible Mars rover exploration environment](https://github.com/markub3327/MarsExplorer-Gymnasium)
-
-  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
-  ![GitHub stars](https://img.shields.io/github/stars/markub3327/MarsExplorer-Gymnasium)
-
-  MarsExplorer-Gymnasium is a fully Gymnasium-compatible environment for autonomous Mars rover exploration. It enables research on terrain coverage, navigation, and exploration efficiency in unknown, procedurally generated landscapes, supporting modern deep reinforcement learning algorithms through the standard Gymnasium API.
-
-- [Balloon Popping Challenge: A 6-DoF Rocket GNC Simulation Gymnasium Environment](https://github.com/ARRC-Rocket/BalloonPoppingChallenge)
-  
-  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
-  ![GitHub stars](https://img.shields.io/github/stars/ARRC-Rocket/BalloonPoppingChallenge)
-  
-  Balloon Popping Challenge is a 6-DoF rocket guidance, navigation, and control (GNC) simulation environment. The environment is designed to simulate an active controlled rocket to pop balloons scattered in the sky. The simulator incorporates realistic physics, including atmospheric conditions and rocket dynamics, to provide a challenging platform for developing and testing GNC algorithms. This project is based on [ActiveRocketPy](https://github.com/ARRC-Rocket/BalloonPoppingChallenge), a fork of open-source software [RocketPy](https://github.com/RocketPy-Team/RocketPy).
 
 ### Telecommunication Systems environments
 *Interact and/or manage wireless and/or wired telecommunication systems.*
