@@ -177,7 +177,6 @@ invalid-parameter-default = "warn"        # TODO remove
 invalid-return-type = "warn"              # TODO remove
 no-matching-overload = "warn"             # TODO remove
 missing-argument = "warn"                 # TODO remove
-too-many-positional-arguments = "warn"    # TODO remove
 unresolved-attribute = "warn"             # TODO remove
 unresolved-import = "warn"                # TODO remove
 unsupported-operator = "warn"             # TODO remove
