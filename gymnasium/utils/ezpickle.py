@@ -19,19 +19,19 @@ class EzPickle:
     This is generally needed only for environments which wrap C/C++ code, such as MuJoCo and Atari.
     """
 
-    def __init__(self, *args: Any, **kwargs: Any):
+    def __init__(self, *args: object, **kwargs: object) -> None:
         """Uses the ``args`` and ``kwargs`` from the object's constructor for pickling."""
         self._ezpickle_args = args
         self._ezpickle_kwargs = kwargs
 
-    def __getstate__(self):
+    def __getstate__(self) -> dict[str, Any]:
         """Returns the object pickle state with args and kwargs."""
         return {
             "_ezpickle_args": self._ezpickle_args,
             "_ezpickle_kwargs": self._ezpickle_kwargs,
         }
 
-    def __setstate__(self, d):
+    def __setstate__(self, d: dict[str, Any]) -> None:
         """Sets the object pickle state using d."""
         out = type(self)(*d["_ezpickle_args"], **d["_ezpickle_kwargs"])
         self.__dict__.update(out.__dict__)
