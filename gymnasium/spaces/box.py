@@ -87,7 +87,7 @@ class Box(Space[NDArray[Any]]):
         # determine dtype
         if dtype is None:
             raise ValueError("Box dtype must be explicitly provided, cannot be None.")
-        self.dtype = np.dtype(dtype)
+        self.dtype: np.dtype = np.dtype(dtype)
 
         #  * check that dtype is an accepted dtype
         if self.dtype.kind not in ("i", "u", "f", "b"):

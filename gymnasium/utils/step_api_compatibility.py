@@ -43,7 +43,7 @@ def convert_to_terminated_truncated_step_api(
 
         # Cases to handle - info single env /  info vector env (list) / info vector env (dict)
         if is_vector_env is False:
-            truncated = infos.pop("TimeLimit.truncated", False)  # ty:ignore[too-many-positional-arguments]
+            truncated = infos.pop("TimeLimit.truncated", False)  # ty:ignore[no-matching-overload,too-many-positional-arguments]
             return (
                 observations,
                 rewards,

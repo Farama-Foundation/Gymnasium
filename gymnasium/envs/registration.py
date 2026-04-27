@@ -1032,7 +1032,7 @@ def pprint_registry(
     """
     # Defaultdict to store environment ids according to namespace.
     namespace_envs: dict[str, list[str]] = defaultdict(list)
-    max_justify = float("-inf")
+    max_justify = 0
 
     # Find the namespace associated with each environment spec
     for env_spec in print_registry.values():
