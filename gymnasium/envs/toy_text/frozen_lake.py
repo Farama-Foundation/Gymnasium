@@ -232,7 +232,7 @@ class FrozenLakeEnv(Env):
     def __init__(
         self,
         render_mode: str | None = None,
-        desc: list[str] = None,
+        desc: list[str] | None = None,
         map_name: str = "4x4",
         is_slippery: bool = True,
         success_rate: float = 1.0 / 3.0,
@@ -242,7 +242,8 @@ class FrozenLakeEnv(Env):
             desc = generate_random_map()
         elif desc is None:
             desc = MAPS[map_name]
-        self.desc = desc = np.asarray(desc, dtype="c")
+        desc: np.typing.NDArray[np.bytes_] = np.asarray(desc, dtype="c")
+        self.desc = desc
         self.nrow, self.ncol = nrow, ncol = desc.shape
         self.reward_range = (min(reward_schedule), max(reward_schedule))
 
