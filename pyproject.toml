@@ -170,7 +170,6 @@ python-platform = "all"
 extra-paths = []
 
 [tool.ty.rules]
-index-out-of-bounds = "warn"              # TODO remove
 invalid-argument-type = "warn"            # TODO remove
 invalid-assignment = "warn"               # TODO remove
 invalid-method-override = "warn"          # TODO remove
