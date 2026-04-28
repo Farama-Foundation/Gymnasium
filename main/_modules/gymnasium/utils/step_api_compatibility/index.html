@@ -396,7 +396,8 @@
 <div class="viewcode-block" id="convert_to_terminated_truncated_step_api">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_to_terminated_truncated_step_api</span><span class="p">(</span>
-    <span class="n">step_returns</span><span class="p">:</span> <span class="n">DoneStepType</span> <span class="o">|</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">,</span> <span class="n">is_vector_env</span><span class="o">=</span><span class="kc">False</span>
+    <span class="n">step_returns</span><span class="p">:</span> <span class="n">DoneStepType</span> <span class="o">|</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">,</span>
+    <span class="n">is_vector_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to transform step returns to new step API irrespective of input API.</span>
 
