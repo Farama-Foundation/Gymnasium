@@ -47,7 +47,7 @@ class EnvState(NamedTuple):
 
     player_position: jax.Array
     last_action: int
-    fallen: bool
+    fallen: bool | jax.Array
 
 
 PRNGKeyType: TypeAlias = jax.Array
@@ -144,7 +144,7 @@ class CliffWalkingFunctional(
     def transition(
         self,
         state: EnvState,
-        action: int | jax.Array,
+        action: jax.Array,
         key: PRNGKeyType,
         params: None = None,
     ) -> EnvState:
@@ -209,6 +209,9 @@ class CliffWalkingFunctional(
     ) -> jax.Array:
         """Calculates reward from a state."""
         state = next_state
+        assert not isinstance(state.fallen, bool), (
+            "state.fallen should be a jax array, not a bool"
+        )
         reward = -1 + (-99 * state.fallen[0])
         return jax.lax.convert_element_type(reward, jnp.float32)
 
