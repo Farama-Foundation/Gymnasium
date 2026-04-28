@@ -2,16 +2,17 @@
 
 from __future__ import annotations
 
-import typing
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, Generic, TypeVar
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
+_T_co = TypeVar("_T_co", covariant=True)
 
-class OneOf(Space[Any]):
+
+class OneOf(Space[tuple[int, _T_co]], Generic[_T_co]):
     """An exclusive tuple (more precisely: the direct sum) of :class:`Space` instances.
 
     Elements of this space are elements of one of the constituent spaces.
@@ -31,11 +32,13 @@ class OneOf(Space[Any]):
         2
     """
 
+    spaces: tuple[Space[_T_co], ...]
+
     def __init__(
         self,
-        spaces: Iterable[Space[Any]],
-        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
-    ):
+        spaces: Iterable[Space[_T_co]],
+        seed: int | np.random.Generator | None = None,
+    ) -> None:
         r"""Constructor of :class:`OneOf` space.
 
         The generated instance will represent the cartesian product :math:`\text{spaces}[0] \times ... \times \text{spaces}[-1]`.
@@ -54,7 +57,7 @@ class OneOf(Space[Any]):
         super().__init__(None, None, seed)
 
     @property
-    def is_np_flattenable(self):
+    def is_np_flattenable(self) -> bool:
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces)
 
@@ -106,7 +109,7 @@ class OneOf(Space[Any]):
         self,
         mask: tuple[Any | None, ...] | None = None,
         probability: tuple[Any | None, ...] | None = None,
-    ) -> tuple[int, Any]:
+    ) -> tuple[int, _T_co]:
         """Generates a single random sample inside this space.
 
         This method draws independent samples from the subspaces.
@@ -120,7 +123,7 @@ class OneOf(Space[Any]):
         Returns:
             Tuple of the subspace's samples
         """
-        subspace_idx = self.np_random.integers(0, len(self.spaces), dtype=np.int64)
+        subspace_idx = int(self.np_random.integers(0, len(self.spaces), dtype=np.int64))
         subspace = self.spaces[subspace_idx]
 
         if mask is not None and probability is not None:
@@ -166,9 +169,7 @@ class OneOf(Space[Any]):
         """Gives a string representation of this space."""
         return "OneOf(" + ", ".join([str(s) for s in self.spaces]) + ")"
 
-    def to_jsonable(
-        self, sample_n: typing.Sequence[tuple[int, Any]]
-    ) -> list[list[Any]]:
+    def to_jsonable(self, sample_n: Iterable[tuple[int, Any]]) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [
             [int(i), self.spaces[i].to_jsonable([subsample])[0]]
@@ -185,7 +186,7 @@ class OneOf(Space[Any]):
             for space_idx, jsonable_sample in sample_n
         ]
 
-    def __getitem__(self, index: int) -> Space[Any]:
+    def __getitem__(self, index: int) -> Space[_T_co]:
         """Get the subspace at specific `index`."""
         return self.spaces[index]
 
@@ -193,6 +194,6 @@ class OneOf(Space[Any]):
         """Get the number of subspaces that are involved in the cartesian product."""
         return len(self.spaces)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object, /) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return isinstance(other, OneOf) and self.spaces == other.spaces
