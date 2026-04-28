@@ -3,19 +3,22 @@
 from __future__ import annotations
 
 from collections import deque
-from collections.abc import Callable
-from typing import TYPE_CHECKING
+from collections.abc import Callable, Iterable
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import numpy as np
 
 import gymnasium as gym
 from gymnasium import Env, logger
-from gymnasium.core import ActType, ObsType
+from gymnasium.core import ActType
 from gymnasium.error import DependencyNotInstalled
 
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
-
+    from matplotlib.collections import PathCollection
+    from matplotlib.figure import Figure
+    from pygame import Surface
+    from pygame.event import Event
 
 try:
     import pygame
@@ -36,6 +39,11 @@ except ImportError:
     matplotlib, plt = None, None
 
 
+_ObsT_contra = TypeVar("_ObsT_contra", contravariant=True)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True)
+_ActionKey = TypeVar("_ActionKey", bound=tuple[str | int, ...] | str | int)
+
+
 class MissingKeysToAction(Exception):
     """Raised when the environment does not have a default ``keys_to_action`` mapping."""
 
@@ -43,12 +51,19 @@ class MissingKeysToAction(Exception):
 class PlayableGame:
     """Wraps an environment allowing keyboard inputs to interact with the environment."""
 
+    env: Env
+    relevant_keys: set[int]
+    video_size: tuple[int, int]
+    screen: Surface
+    pressed_keys: list[int]
+    running: bool
+
     def __init__(
         self,
         env: Env,
         keys_to_action: dict[tuple[int, ...], int] | None = None,
         zoom: float | None = None,
-    ):
+    ) -> None:
         """Wraps an environment with a dictionary of keyboard buttons to action and if to zoom in on the environment.
 
         Args:
@@ -72,8 +87,8 @@ class PlayableGame:
         self.running = True
 
     def _get_relevant_keys(
-        self, keys_to_action: dict[tuple[int], int] | None = None
-    ) -> set:
+        self, keys_to_action: dict[tuple[int, ...], int] | None = None
+    ) -> set[int]:
         if keys_to_action is None:
             if self.env.has_wrapper_attr("get_keys_to_action"):
                 keys_to_action = self.env.get_wrapper_attr("get_keys_to_action")()
@@ -99,7 +114,7 @@ class PlayableGame:
 
         return video_size
 
-    def process_event(self, event: Event):
+    def process_event(self, event: Event) -> None:
         """Processes a PyGame event.
 
         In particular, this function is used to keep track of which buttons are currently pressed
@@ -127,8 +142,11 @@ class PlayableGame:
 
 
 def display_arr(
-    screen: Surface, arr: np.ndarray, video_size: tuple[int, int], transpose: bool
-):
+    screen: Surface,
+    arr: np.typing.NDArray[np.uint8],
+    video_size: tuple[int, int],
+    transpose: bool | None,
+) -> None:
     """Displays a numpy array on screen.
 
     Args:
@@ -149,16 +167,17 @@ def display_arr(
 
 
 def play(
-    env: Env,
+    env: Env[Any, ActType],
     transpose: bool | None = True,
     fps: int | None = None,
     zoom: float | None = None,
     callback: Callable | None = None,
-    keys_to_action: dict[tuple[str | int, ...] | str | int, ActType] | None = None,
+    # `dict` is invariant so we use a type variable as key type
+    keys_to_action: dict[_ActionKey, ActType] | None = None,
     seed: int | None = None,
-    noop: ActType = 0,
+    noop: ActType | int = 0,
     wait_on_player: bool = False,
-):
+) -> None:
     """Allows the user to play the environment using a keyboard.
 
     If playing in a turn-based environment, set wait_on_player to True.
@@ -274,7 +293,7 @@ def play(
         if isinstance(key_combination, int):
             key_combination = (key_combination,)
         key_code = tuple(
-            sorted(ord(key) if isinstance(key, str) else key for key in key_combination)
+            sorted(ord(key) if isinstance(key, str) else key for key in key_combination)  # ty:ignore[not-iterable]
         )
         key_code_to_action[key_code] = action
 
@@ -282,6 +301,7 @@ def play(
 
     if fps is None:
         fps = env.metadata.get("render_fps", 30)
+        assert isinstance(fps, int)
 
     done, obs = True, None
     clock = pygame.time.Clock()
@@ -301,7 +321,7 @@ def play(
             rendered = env.render()
             if isinstance(rendered, list):
                 rendered = rendered[-1]
-            assert rendered is not None and isinstance(rendered, np.ndarray)
+            assert isinstance(rendered, np.ndarray)
             display_arr(
                 game.screen, rendered, transpose=transpose, video_size=game.video_size
             )
@@ -315,7 +335,7 @@ def play(
     pygame.quit()
 
 
-class PlayPlot:
+class PlayPlot(Generic[_ObsT_contra, _ActT_contra]):
     """Provides a callback to create live plots of arbitrary metrics when using :func:`play`.
 
     This class is instantiated with a function that accepts information about a single environment transition:
@@ -343,9 +363,27 @@ class PlayPlot:
         >>> play(your_env, callback=plotter.callback)                                                # doctest: +SKIP
     """
 
+    data_callback: Callable[
+        [_ObsT_contra, _ObsT_contra, _ActT_contra, float, bool, bool, dict],
+        Iterable[float],
+    ]
+    horizon_timesteps: int
+    plot_names: list[str]
+    fig: Figure
+    ax: list[Axes]
+    t: int
+    cur_plot: list[PathCollection | None]
+    data: list[deque[float]]
+
     def __init__(
-        self, callback: Callable, horizon_timesteps: int, plot_names: list[str]
-    ):
+        self,
+        callback: Callable[
+            [_ObsT_contra, _ObsT_contra, _ActT_contra, float, bool, bool, dict],
+            Iterable[Any],
+        ],
+        horizon_timesteps: int,
+        plot_names: list[str],
+    ) -> None:
         """Constructor of :class:`PlayPlot`.
 
         The function ``callback`` that is passed to this constructor should return
@@ -369,25 +407,27 @@ class PlayPlot:
             )
 
         num_plots = len(self.plot_names)
-        self.fig, self.ax = plt.subplots(num_plots)
+        self.fig, ax = plt.subplots(num_plots)
         if num_plots == 1:
-            self.ax = [self.ax]
+            self.ax = [ax]
+        else:
+            self.ax = ax
         for axis, name in zip(self.ax, plot_names, strict=True):
             axis.set_title(name)
         self.t = 0
-        self.cur_plot: list[Axes | None] = [None for _ in range(num_plots)]
+        self.cur_plot = [None for _ in range(num_plots)]
         self.data = [deque(maxlen=horizon_timesteps) for _ in range(num_plots)]
 
     def callback(
         self,
-        obs_t: ObsType,
-        obs_tp1: ObsType,
-        action: ActType,
+        obs_t: _ObsT_contra,
+        obs_tp1: _ObsT_contra,
+        action: _ActT_contra,
         rew: float,
         terminated: bool,
         truncated: bool,
         info: dict,
-    ):
+    ) -> None:
         """The callback that calls the provided data callback and adds the data to the plots.
 
         Args:

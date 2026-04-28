@@ -1,5 +1,7 @@
 """A set of tests to help the designer of gymnasium environments verify that they work correctly."""
 
+import numpy as np
+
 import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
 
@@ -15,7 +17,7 @@ def check_environments_match(
     skip_truncated: bool = False,
     skip_render: bool = False,
     info_comparison: str = "equivalence",
-):
+) -> None:
     """Checks if the environments `env_a` & `env_b` are identical.
 
     Args:
@@ -79,7 +81,7 @@ def check_environments_match(
         )
 
     if not skip_render:
-        assert (env_a.render() == env_b.render()).all(), (
+        assert np.all(env_a.render() == env_b.render()), (
             "resetting render is not equivalent"
         )
 
@@ -117,7 +119,7 @@ def check_environments_match(
                 f"stepping info keys are not a superset in step = {step}, keys not present in info_b are: {info_b.keys() - info_a.keys()}"
             )
         if not skip_render:
-            assert (env_a.render() == env_b.render()).all(), (
+            assert np.all(env_a.render() == env_b.render()), (
                 "stepping render is not equivalent in step = {step}"
             )
 
@@ -145,6 +147,6 @@ def check_environments_match(
                     f"resetting info keys are not a superset in step = {step}, keys not present in info_b are: {info_b.keys() - info_a.keys()}"
                 )
             if not skip_render:
-                assert (env_a.render() == env_b.render()).all(), (
+                assert np.all(env_a.render() == env_b.render()), (
                     "resetting render is not equivalent in step = {step}"
                 )

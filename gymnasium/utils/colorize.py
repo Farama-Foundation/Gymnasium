@@ -3,7 +3,11 @@
 These are not intended as API functions, and will not remain stable over time.
 """
 
-color2num = dict(
+from collections.abc import Mapping
+from typing import Final
+
+# We use `Mapping` instead of `dict` here because it's not intended to be modified
+color2num: Final[Mapping[str, int]] = dict(
     gray=30,
     red=31,
     green=32,

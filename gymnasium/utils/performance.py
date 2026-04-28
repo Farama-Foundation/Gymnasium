@@ -6,7 +6,9 @@ from collections.abc import Callable
 import gymnasium
 
 
-def benchmark_step(env: gymnasium.Env, target_duration: int = 5, seed=None) -> float:
+def benchmark_step(
+    env: gymnasium.Env, target_duration: int = 5, seed: int | None = None
+) -> float:
     """A benchmark to measure the runtime performance of step for an environment.
 
     example usage:
@@ -50,7 +52,9 @@ def benchmark_step(env: gymnasium.Env, target_duration: int = 5, seed=None) -> f
 
 
 def benchmark_init(
-    env_lambda: Callable[[], gymnasium.Env], target_duration: int = 5, seed=None
+    env_lambda: Callable[[], gymnasium.Env],
+    target_duration: int = 5,
+    seed: int | None = None,
 ) -> float:
     """A benchmark to measure the initialization time and first reset.
 

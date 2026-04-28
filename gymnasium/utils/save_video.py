@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Callable
+from typing import Any
 
 import gymnasium as gym
 from gymnasium import logger
@@ -36,15 +37,15 @@ def capped_cubic_video_schedule(episode_id: int) -> bool:
 def save_video(
     frames: list,
     video_folder: str,
-    episode_trigger: Callable[[int], bool] = None,
-    step_trigger: Callable[[int], bool] = None,
+    episode_trigger: Callable[[int], bool] | None = None,
+    step_trigger: Callable[[int], bool] | None = None,
     video_length: int | None = None,
     name_prefix: str = "rl-video",
     episode_index: int = 0,
     step_starting_index: int = 0,
     save_logger: str | None = None,
-    **kwargs,
-):
+    **kwargs: Any,
+) -> None:
     """Save videos from rendering frames.
 
     This function extract video from a list of render frame episodes.
