@@ -542,7 +542,7 @@
                 <span class="k">return</span> <span class="p">(</span>
                     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>  <span class="c1"># ty:ignore[index-out-of-bounds]</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>

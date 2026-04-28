@@ -414,7 +414,7 @@
 
         <span class="c1"># Cases to handle - info single env /  info vector env (list) / info vector env (dict)</span>
         <span class="k">if</span> <span class="n">is_vector_env</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="n">truncated</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">truncated</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># ty:ignore[no-matching-overload,too-many-positional-arguments]</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">observations</span><span class="p">,</span>
                 <span class="n">rewards</span><span class="p">,</span>
