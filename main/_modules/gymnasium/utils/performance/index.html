@@ -377,7 +377,9 @@
 
 <div class="viewcode-block" id="benchmark_step">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.performance.benchmark_step">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">benchmark_step</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">target_duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">benchmark_step</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">target_duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A benchmark to measure the runtime performance of step for an environment.</span>
 
 <span class="sd">    example usage:</span>
@@ -424,7 +426,9 @@
 <div class="viewcode-block" id="benchmark_init">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.performance.benchmark_init">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">benchmark_init</span><span class="p">(</span>
-    <span class="n">env_lambda</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">Env</span><span class="p">],</span> <span class="n">target_duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span>
+    <span class="n">env_lambda</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">Env</span><span class="p">],</span>
+    <span class="n">target_duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A benchmark to measure the initialization time and first reset.</span>
 
