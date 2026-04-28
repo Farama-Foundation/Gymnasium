@@ -25,7 +25,8 @@ TerminatedTruncatedStepType = tuple[
 
 
 def convert_to_terminated_truncated_step_api(
-    step_returns: DoneStepType | TerminatedTruncatedStepType, is_vector_env=False
+    step_returns: DoneStepType | TerminatedTruncatedStepType,
+    is_vector_env: bool = False,
 ) -> TerminatedTruncatedStepType:
     """Function to transform step returns to new step API irrespective of input API.
 
