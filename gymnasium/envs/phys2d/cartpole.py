@@ -51,7 +51,9 @@ class CartPoleFunctional(
     action_space = gym.spaces.Discrete(2)
 
     def initial(
-        self, rng: PRNGKeyType, params: CartPoleParams = CartPoleParams
+        self,
+        rng: PRNGKeyType,
+        params: CartPoleParams | type[CartPoleParams] = CartPoleParams,
     ) -> StateType:
         """Initial state generation."""
         return jax.random.uniform(
@@ -63,7 +65,7 @@ class CartPoleFunctional(
         state: StateType,
         action: int | jax.Array,
         rng: None = None,
-        params: CartPoleParams = CartPoleParams,
+        params: CartPoleParams | type[CartPoleParams] = CartPoleParams,
     ) -> StateType:
         """Cartpole transition."""
         x, x_dot, theta, theta_dot = state
@@ -92,13 +94,19 @@ class CartPoleFunctional(
         return state
 
     def observation(
-        self, state: StateType, rng: Any, params: CartPoleParams = CartPoleParams
+        self,
+        state: StateType,
+        rng: Any,
+        params: CartPoleParams | type[CartPoleParams] = CartPoleParams,
     ) -> jax.Array:
         """Cartpole observation."""
         return state
 
     def terminal(
-        self, state: StateType, rng: Any, params: CartPoleParams = CartPoleParams
+        self,
+        state: StateType,
+        rng: Any,
+        params: CartPoleParams | type[CartPoleParams] = CartPoleParams,
     ) -> jax.Array:
         """Checks if the state is terminal."""
         x, _, theta, _ = state
@@ -118,7 +126,7 @@ class CartPoleFunctional(
         action: ActType,
         next_state: StateType,
         rng: Any,
-        params: CartPoleParams = CartPoleParams,
+        params: CartPoleParams | type[CartPoleParams] = CartPoleParams,
     ) -> jax.Array:
         """Computes the reward for the state transition using the action."""
         x, _, theta, _ = state
@@ -142,7 +150,7 @@ class CartPoleFunctional(
         self,
         state: StateType,
         render_state: RenderStateType,
-        params: CartPoleParams = CartPoleParams,
+        params: CartPoleParams | type[CartPoleParams] = CartPoleParams,
     ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an image of the state using the render state."""
         try:
@@ -216,7 +224,7 @@ class CartPoleFunctional(
 
     def render_init(
         self,
-        params: CartPoleParams = CartPoleParams,
+        params: CartPoleParams | type[CartPoleParams] = CartPoleParams,
         screen_width: int = 600,
         screen_height: int = 400,
     ) -> RenderStateType:
@@ -235,7 +243,9 @@ class CartPoleFunctional(
         return screen, clock
 
     def render_close(
-        self, render_state: RenderStateType, params: CartPoleParams = CartPoleParams
+        self,
+        render_state: RenderStateType,
+        params: CartPoleParams | type[CartPoleParams] = CartPoleParams,
     ) -> None:
         """Closes the render state."""
         try:
