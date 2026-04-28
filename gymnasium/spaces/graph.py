@@ -169,7 +169,7 @@ class Graph(Space[GraphInstance]):
                 return (
                     super().seed(seed[0]),
                     self.node_space.seed(seed[1]),
-                    self.edge_space.seed(seed[2]),
+                    self.edge_space.seed(seed[2]),  # ty:ignore[index-out-of-bounds]
                 )
         else:
             raise TypeError(

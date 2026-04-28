@@ -134,8 +134,8 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
                 num_cols * subenv_size[0] * scaling_factor == self.screen_size[0]
             ) or (num_rows * subenv_size[1] * scaling_factor == self.screen_size[1])
 
-            self.num_rows = num_rows
-            self.num_cols = num_cols
+            self.num_rows: int = num_rows
+            self.num_cols: int = num_cols
             self.scaled_subenv_size = (
                 int(subenv_size[0] * scaling_factor),
                 int(subenv_size[1] * scaling_factor),

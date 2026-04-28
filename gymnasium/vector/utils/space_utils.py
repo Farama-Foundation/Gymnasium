@@ -141,7 +141,7 @@ def _batch_space_custom(space: Graph | Text | Sequence | OneOf, n: int = 1):
         tuple(deepcopy(space) for _ in range(n)), seed=deepcopy(space.np_random)
     )
     space_rng = deepcopy(space.np_random)
-    new_seeds = list(map(int, space_rng.integers(0, 1e8, n)))
+    new_seeds = list(map(int, space_rng.integers(0, int(1e8), n)))
     batched_space.seed(new_seeds)
     return batched_space
 
@@ -402,7 +402,7 @@ def _concatenate_base(
     items: Iterable,
     out: np.ndarray,
 ) -> np.ndarray:
-    return np.stack(items, axis=0, out=out)
+    return np.stack(list(items), axis=0, out=out)
 
 
 @concatenate.register(Tuple)

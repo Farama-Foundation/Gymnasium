@@ -267,7 +267,7 @@ def _flatten_sequence(
 def _flatten_oneof(space: OneOf, x: tuple[int, Any]) -> NDArray[Any]:
     idx, sample = x
     sub_space = space.spaces[idx]
-    flat_sample = flatten(sub_space, sample)
+    flat_sample: np.ndarray = flatten(sub_space, sample)
 
     max_flatdim = flatdim(space) - 1  # Don't include the index
     if flat_sample.size < max_flatdim:
@@ -361,6 +361,9 @@ def _unflatten_tuple(
 @unflatten.register(Dict)
 def _unflatten_dict(space: Dict, x: NDArray[Any] | dict[str, Any]) -> dict[str, Any]:
     if space.is_np_flattenable:
+        assert isinstance(x, np.ndarray), (
+            "x must be a numpy array when unflattening a numpy-flattenable space"
+        )
         dims = np.asarray([flatdim(s) for s in space.spaces.values()], dtype=np.int_)
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
         return {

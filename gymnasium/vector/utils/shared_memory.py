@@ -66,6 +66,7 @@ def _create_base_shared_memory(
     space: Box | Discrete | MultiDiscrete | MultiBinary, n: int = 1, ctx=mp
 ):
     assert space.dtype is not None
+    assert space.shape is not None
     dtype = space.dtype.char
     if dtype in "?":
         dtype = c_bool
@@ -243,6 +244,7 @@ def _write_base_to_shared_memory(
     value,
     shared_memory,
 ):
+    assert space.shape is not None
     size = int(np.prod(space.shape))
     destination = np.frombuffer(shared_memory.get_obj(), dtype=space.dtype)
     np.copyto(
