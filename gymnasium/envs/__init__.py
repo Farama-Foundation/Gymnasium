@@ -388,6 +388,83 @@ register(
 )
 
 
+# MJX (mujoco-mjx) environments registered under "MJX/ENVNAME-v5"
+# These mirror the v5 Mujoco environments but use the MJX implementations.
+register(
+    id="MJX/Reacher-v5",
+    entry_point="gymnasium.envs.mjx.manipulation:ReacherJaxEnv",
+    max_episode_steps=50,
+    reward_threshold=-3.75,
+)
+
+register(
+    id="MJX/Pusher-v5",
+    entry_point="gymnasium.envs.mjx.manipulation:PusherJaxEnv",
+    max_episode_steps=100,
+    reward_threshold=0.0,
+)
+
+register(
+    id="MJX/InvertedPendulum-v5",
+    entry_point="gymnasium.envs.mjx.pendulum:InvertedPendulumJaxEnv",
+    max_episode_steps=1000,
+    reward_threshold=950.0,
+)
+
+register(
+    id="MJX/InvertedDoublePendulum-v5",
+    entry_point="gymnasium.envs.mjx.pendulum:InvertedDoublePendulumJaxEnv",
+    max_episode_steps=1000,
+    reward_threshold=9100.0,
+)
+
+register(
+    id="MJX/HalfCheetah-v5",
+    entry_point="gymnasium.envs.mjx.locomotion_2d:HalfCheetahJaxEnv",
+    max_episode_steps=1000,
+    reward_threshold=4800.0,
+)
+
+register(
+    id="MJX/Hopper-v5",
+    entry_point="gymnasium.envs.mjx.locomotion_2d:HopperJaxEnv",
+    max_episode_steps=1000,
+    reward_threshold=3800.0,
+)
+
+register(
+    id="MJX/Swimmer-v5",
+    entry_point="gymnasium.envs.mjx.swimmer:SwimmerJaxEnv",
+    max_episode_steps=1000,
+    reward_threshold=360.0,
+)
+
+register(
+    id="MJX/Walker2d-v5",
+    entry_point="gymnasium.envs.mjx.locomotion_2d:Walker2dJaxEnv",
+    max_episode_steps=1000,
+)
+
+register(
+    id="MJX/Ant-v5",
+    entry_point="gymnasium.envs.mjx.ant:AntJaxEnv",
+    max_episode_steps=1000,
+    reward_threshold=6000.0,
+)
+
+register(
+    id="MJX/Humanoid-v5",
+    entry_point="gymnasium.envs.mjx.humanoid:HumanoidJaxEnv",
+    max_episode_steps=1000,
+)
+
+register(
+    id="MJX/HumanoidStandup-v5",
+    entry_point="gymnasium.envs.mjx.humanoid:HumanoidStandupJaxEnv",
+    max_episode_steps=1000,
+)
+
+
 # --- For shimmy compatibility
 def _raise_shimmy_error(*args: Any, **kwargs: Any):
     raise ImportError(
