@@ -123,7 +123,7 @@ class OneOf(Space[tuple[int, _T_co]], Generic[_T_co]):
         Returns:
             Tuple of the subspace's samples
         """
-        subspace_idx = int(self.np_random.integers(0, len(self.spaces), dtype=np.int64))
+        subspace_idx: int = self.np_random.integers(0, len(self.spaces), dtype=np.int64)  # ty:ignore[invalid-assignment]
         subspace = self.spaces[subspace_idx]
 
         if mask is not None and probability is not None:
