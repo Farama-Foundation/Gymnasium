@@ -10,13 +10,12 @@ import numpy.typing as npt
 
 from gymnasium.utils import seeding
 
-T_cov = TypeVar("T_cov", covariant=True)
-
+_T_co = TypeVar("_T_co", covariant=True)
 
 MaskNDArray: TypeAlias = npt.NDArray[np.int8]
 
 
-class Space(Generic[T_cov]):
+class Space(Generic[_T_co]):
     """Superclass that is used to define observation and action spaces.
 
     Spaces are crucially used in Gym to define the format of valid actions and observations.
@@ -42,6 +41,10 @@ class Space(Generic[T_cov]):
         not handle custom spaces properly. Use custom spaces with care.
     """
 
+    dtype: np.dtype | None
+    _shape: tuple[int, ...] | None
+    _np_random: np.random.Generator
+
     def __init__(
         self,
         shape: Sequence[int] | None = None,
@@ -57,7 +60,7 @@ class Space(Generic[T_cov]):
         """
         self._shape = None if shape is None else tuple(shape)
         self.dtype = None if dtype is None else np.dtype(dtype)
-        self._np_random = None
+        self._np_random = None  # ty:ignore[invalid-assignment]
         if seed is not None:
             if isinstance(seed, np.random.Generator):
                 self._np_random = seed
@@ -90,7 +93,7 @@ class Space(Generic[T_cov]):
         """Checks whether this space can be flattened to a :class:`gymnasium.spaces.Box`."""
         raise NotImplementedError
 
-    def sample(self, mask: Any | None = None, probability: Any | None = None) -> T_cov:
+    def sample(self, mask: Any | None = None, probability: Any | None = None) -> _T_co:
         """Randomly sample an element of this space.
 
         Can be uniform or non-uniform sampling based on boundedness of space.
@@ -106,7 +109,7 @@ class Space(Generic[T_cov]):
         """
         raise NotImplementedError
 
-    def seed(self, seed: int | None = None) -> int | list[int] | dict[str, int]:
+    def seed(self, seed: int | None = None) -> int | Any:
         """Seed the pseudorandom number generator (PRNG) of this space and, if applicable, the PRNGs of subspaces.
 
         Args:
@@ -126,7 +129,9 @@ class Space(Generic[T_cov]):
         """Return boolean specifying if x is a valid member of this space."""
         return self.contains(x)
 
-    def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
+    def __setstate__(
+        self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]
+    ) -> None:
         """Used when loading a pickled space.
 
         This method was implemented explicitly to allow for loading of legacy states.
@@ -152,12 +157,12 @@ class Space(Generic[T_cov]):
         # Update our state
         self.__dict__.update(state)
 
-    def to_jsonable(self, sample_n: Sequence[T_cov]) -> list[Any]:
+    def to_jsonable(self, sample_n: Iterable[_T_co]) -> list[Any] | Any:
         """Convert a batch of samples from this space to a JSONable data type."""
         # By default, assume identity is JSONable
         return list(sample_n)
 
-    def from_jsonable(self, sample_n: list[Any]) -> list[T_cov]:
+    def from_jsonable(self, sample_n: list[Any]) -> list[Any]:
         """Convert a JSONable data type to a batch of samples from this space."""
         # By default, assume identity is JSONable
         return sample_n

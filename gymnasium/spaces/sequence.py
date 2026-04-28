@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import typing
-from typing import Any
+from collections.abc import Iterable
+from typing import Any, Literal
 
 import numpy as np
 from numpy.typing import NDArray
@@ -34,12 +34,16 @@ class Sequence(Space[tuple[Any, ...] | Any]):
                [0.19049619]], dtype=float32)
     """
 
+    feature_space: Space[Any]
+    stack: bool
+    stacked_feature_space: Space[Any]
+
     def __init__(
         self,
         space: Space[Any],
         seed: int | np.random.Generator | None = None,
         stack: bool = False,
-    ):
+    ) -> None:
         """Constructor of the :class:`Sequence` space.
 
         Args:
@@ -53,7 +57,7 @@ class Sequence(Space[tuple[Any, ...] | Any]):
         self.feature_space = space
         self.stack = stack
         if self.stack:
-            self.stacked_feature_space: Space = gym.vector.utils.batch_space(
+            self.stacked_feature_space = gym.vector.utils.batch_space(
                 self.feature_space, 1
             )
 
@@ -95,27 +99,15 @@ class Sequence(Space[tuple[Any, ...] | Any]):
             )
 
     @property
-    def is_np_flattenable(self):
+    def is_np_flattenable(self) -> Literal[False]:
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return False
 
     def sample(
         self,
-        mask: None
-        | (
-            tuple[
-                None | int | NDArray[np.integer],
-                Any,
-            ]
-        ) = None,
-        probability: None
-        | (
-            tuple[
-                None | int | NDArray[np.integer],
-                Any,
-            ]
-        ) = None,
-    ) -> tuple[Any] | Any:
+        mask: tuple[None | int | NDArray[np.integer], Any] | None = None,
+        probability: tuple[None | int | NDArray[np.integer], Any] | None = None,
+    ) -> tuple[Any, ...] | Any:
         """Generates a single random sample from this space.
 
         Args:
@@ -213,9 +205,7 @@ class Sequence(Space[tuple[Any, ...] | Any]):
         """Gives a string representation of this space."""
         return f"Sequence({self.feature_space}, stack={self.stack})"
 
-    def to_jsonable(
-        self, sample_n: typing.Sequence[tuple[Any, ...] | Any]
-    ) -> list[list[Any]]:
+    def to_jsonable(self, sample_n: Iterable[tuple[Any, ...] | Any]) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         if self.stack:
             return self.stacked_feature_space.to_jsonable(sample_n)
@@ -231,7 +221,7 @@ class Sequence(Space[tuple[Any, ...] | Any]):
                 tuple(self.feature_space.from_jsonable(sample)) for sample in sample_n
             ]
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object, /) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return (
             isinstance(other, Sequence)

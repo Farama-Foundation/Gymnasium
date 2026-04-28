@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
-from typing import Any, NamedTuple
+from collections.abc import Iterable, Sequence
+from typing import Any, Literal, NamedTuple
 
 import numpy as np
 from numpy.typing import NDArray
@@ -48,12 +48,15 @@ class Graph(Space[GraphInstance]):
                [0, 2]], dtype=int32))
     """
 
+    node_space: Box | Discrete
+    edge_space: Box | Discrete | None
+
     def __init__(
         self,
         node_space: Box | Discrete,
-        edge_space: None | Box | Discrete,
+        edge_space: Box | Discrete | None,
         seed: int | np.random.Generator | None = None,
-    ):
+    ) -> None:
         r"""Constructor of :class:`Graph`.
 
         The argument ``node_space`` specifies the base space that each node feature will use.
@@ -81,7 +84,7 @@ class Graph(Space[GraphInstance]):
         super().__init__(None, None, seed)
 
     @property
-    def is_np_flattenable(self):
+    def is_np_flattenable(self) -> Literal[False]:
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return False
 
@@ -100,7 +103,7 @@ class Graph(Space[GraphInstance]):
                 seed=self.np_random,
             )
         elif isinstance(base_space, Discrete):
-            return MultiDiscrete(nvec=[base_space.n] * num, seed=self.np_random)
+            return MultiDiscrete(nvec=[int(base_space.n)] * num, seed=self.np_random)
         else:
             raise TypeError(
                 f"Expects base space to be Box and Discrete, actual space: {type(base_space)}."
@@ -178,20 +181,20 @@ class Graph(Space[GraphInstance]):
 
     def sample(
         self,
-        mask: None
-        | (
+        mask: (
             tuple[
                 NDArray[Any] | tuple[Any, ...] | None,
                 NDArray[Any] | tuple[Any, ...] | None,
             ]
-        ) = None,
-        probability: None
-        | (
+        )
+        | None = None,
+        probability: (
             tuple[
                 NDArray[Any] | tuple[Any, ...] | None,
                 NDArray[Any] | tuple[Any, ...] | None,
             ]
-        ) = None,
+        )
+        | None = None,
         num_nodes: int = 10,
         num_edges: int | None = None,
     ) -> GraphInstance:
@@ -231,7 +234,7 @@ class Graph(Space[GraphInstance]):
         if num_edges is None:
             if num_nodes > 1:
                 # maximal number of edges is `n*(n-1)` allowing self connections and two-way is allowed
-                num_edges = self.np_random.integers(num_nodes * (num_nodes - 1))
+                num_edges = int(self.np_random.integers(num_nodes * (num_nodes - 1)))
             else:
                 num_edges = 0
 
@@ -250,6 +253,10 @@ class Graph(Space[GraphInstance]):
         sampled_node_space = self._generate_sample_space(self.node_space, num_nodes)
         assert sampled_node_space is not None
         sampled_edge_space = self._generate_sample_space(self.edge_space, num_edges)
+
+        # ty can't infer typed dictionaries (yet?)
+        node_sample_kwargs: dict[str, Any]
+        edge_sample_kwargs: dict[str, Any]
 
         if mask_type is not None:
             node_sample_kwargs = {mask_type: node_space_mask}
@@ -316,8 +323,8 @@ class Graph(Space[GraphInstance]):
         )
 
     def to_jsonable(
-        self, sample_n: Sequence[GraphInstance]
-    ) -> list[dict[str, list[int | float]]]:
+        self, sample_n: Iterable[GraphInstance]
+    ) -> list[dict[str, list[float]]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         ret_n = []
         for sample in sample_n:
