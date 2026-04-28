@@ -60,6 +60,7 @@ class Space(Generic[_T_co]):
         """
         self._shape = None if shape is None else tuple(shape)
         self.dtype = None if dtype is None else np.dtype(dtype)
+        self._np_random = None  # ty:ignore[invalid-assignment]
         if seed is not None:
             if isinstance(seed, np.random.Generator):
                 self._np_random = seed
