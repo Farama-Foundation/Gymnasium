@@ -19,7 +19,7 @@ def warn(
     *args: object,
     category: type[Warning] | None = None,
     stacklevel: int = 1,
-):
+) -> None:
     """Raises a warning to the user if the min_level <= WARN.
 
     Args:
@@ -36,12 +36,12 @@ def warn(
         )
 
 
-def deprecation(msg: str, *args: object):
+def deprecation(msg: str, *args: object) -> None:
     """Logs a deprecation warning to users."""
     warn(msg, *args, category=DeprecationWarning, stacklevel=2)
 
 
-def error(msg: str, *args: object):
+def error(msg: str, *args: object) -> None:
     """Logs an error message if min_level <= ERROR in red on the sys.stderr."""
     if min_level <= ERROR:
         warnings.warn(colorize(f"ERROR: {msg % args}", "red"), stacklevel=3)
