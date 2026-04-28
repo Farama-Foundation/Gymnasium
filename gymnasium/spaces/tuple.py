@@ -4,14 +4,28 @@ from __future__ import annotations
 
 import typing
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, TYPE_CHECKING, overload
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
+try:
+    # Python 3.11+
+    from typing import TypeVarTuple, Unpack
+except ImportError:  # pragma: no cover
+    # For older Python versions supported by Gymnasium
+    from typing_extensions import TypeVarTuple, Unpack
 
-class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
+
+_TSpaces = TypeVarTuple("_TSpaces")
+
+
+class Tuple(
+    Space[tuple[Any, ...]],
+    typing.Sequence[Space[Any]],
+    typing.Generic[Unpack[_TSpaces]],
+):
     """A tuple (more precisely: the cartesian product) of :class:`Space` instances.
 
     Elements of this space are tuples of elements of the constituent spaces.
@@ -22,6 +36,26 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         >>> observation_space.sample()
         (np.int64(0), array([-0.3991573 ,  0.21649833], dtype=float32))
     """
+
+    # Help type-checkers understand that Tuple[Box, Discrete].spaces is (Box, Discrete)
+    if TYPE_CHECKING:
+        spaces: tuple[Unpack[_TSpaces]]
+    else:
+        spaces: tuple[Space[Any], ...]
+
+    @overload
+    def __init__(
+        self,
+        spaces: tuple[Unpack[_TSpaces]],
+        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
+    ): ...
+
+    @overload
+    def __init__(
+        self,
+        spaces: Iterable[Space[Any]],
+        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
+    ): ...
 
     def __init__(
         self,
@@ -144,7 +178,8 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, (list, np.ndarray)):
-            x = tuple(x)  # Promote list and ndarray to tuple for contains check
+            # Promote list and ndarray to tuple for contains check
+            x = tuple(x)
 
         return (
             isinstance(x, tuple)
