@@ -34,10 +34,10 @@ if TYPE_CHECKING:
 __all__ = ["create_shared_memory", "read_from_shared_memory", "write_to_shared_memory"]
 
 
-_SharedMemory: TypeAlias = dict[str, Any] | tuple[Any, ...] | SynchronizedArray[Any]
+_SharedMemory: TypeAlias = dict[str, Any] | tuple[Any, ...] | SynchronizedArray
 _SharedMemoryOneOf: TypeAlias = tuple[
-    SynchronizedArray[c_int64],
-    Unpack[tuple[SynchronizedArray[Any], ...]],
+    "SynchronizedArray[c_int64]",
+    "Unpack[tuple[SynchronizedArray[Any], ...]]",
 ]
 
 
