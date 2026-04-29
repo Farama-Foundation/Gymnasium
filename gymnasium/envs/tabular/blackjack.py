@@ -247,7 +247,7 @@ class BlackjackFunctional(
         state: EnvState,
         action: int | jax.Array,
         key: PRNGKeyType,
-        params: BlackJackParams = BlackJackParams,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> EnvState:
         """The blackjack environment's state transition function."""
         env_state = jax.lax.cond(action, take, notake, (state, key))
@@ -273,7 +273,9 @@ class BlackjackFunctional(
         return new_state
 
     def initial(
-        self, rng: PRNGKeyType, params: BlackJackParams = BlackJackParams
+        self,
+        rng: PRNGKeyType,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> EnvState:
         """Blackjack initial observataion function."""
         player_hand = jnp.zeros(21)
@@ -297,7 +299,7 @@ class BlackjackFunctional(
         self,
         state: EnvState,
         rng: PRNGKeyType,
-        params: BlackJackParams = BlackJackParams,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> jax.Array:
         """Blackjack observation."""
         return jnp.array(
@@ -313,7 +315,7 @@ class BlackjackFunctional(
         self,
         state: EnvState,
         rng: PRNGKeyType,
-        params: BlackJackParams = BlackJackParams,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> jax.Array:
         """Determines if a particular Blackjack observation is terminal."""
         return (state.done) > 0
@@ -324,7 +326,7 @@ class BlackjackFunctional(
         action: ActType,
         next_state: EnvState,
         rng: PRNGKeyType,
-        params: BlackJackParams = BlackJackParams,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> jax.Array:
         """Calculates reward from a state."""
         state = next_state
@@ -379,7 +381,7 @@ class BlackjackFunctional(
         self,
         state: StateType,
         render_state: RenderStateType,
-        params: BlackJackParams = BlackJackParams,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an image from a state."""
         try:
@@ -487,7 +489,9 @@ class BlackjackFunctional(
         )
 
     def render_close(
-        self, render_state: RenderStateType, params: BlackJackParams = BlackJackParams
+        self,
+        render_state: RenderStateType,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> None:
         """Closes the render state."""
         try:

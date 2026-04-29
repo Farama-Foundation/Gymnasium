@@ -173,7 +173,6 @@ extra-paths = []
 invalid-argument-type = "warn"            # TODO remove
 invalid-assignment = "warn"               # TODO remove
 invalid-method-override = "warn"          # TODO remove
-invalid-parameter-default = "warn"        # TODO remove
 invalid-return-type = "warn"              # TODO remove
 missing-argument = "warn"                 # TODO remove
 unresolved-attribute = "warn"             # TODO remove

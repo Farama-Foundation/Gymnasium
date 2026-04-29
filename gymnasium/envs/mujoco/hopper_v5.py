@@ -164,7 +164,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "hopper.xml",
         frame_skip: int = 4,
-        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float | np.ndarray] = DEFAULT_CAMERA_CONFIG,
         forward_reward_weight: float = 1.0,
         ctrl_cost_weight: float = 1e-3,
         healthy_reward: float = 1.0,

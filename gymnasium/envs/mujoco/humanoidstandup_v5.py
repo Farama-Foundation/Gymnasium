@@ -287,7 +287,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "humanoidstandup.xml",
         frame_skip: int = 5,
-        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float | np.ndarray] = DEFAULT_CAMERA_CONFIG,
         uph_cost_weight: float = 1,
         ctrl_cost_weight: float = 0.1,
         impact_cost_weight: float = 0.5e-6,
