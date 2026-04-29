@@ -13,6 +13,8 @@ from gymnasium.logger import warn
 from gymnasium.utils import seeding
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from gymnasium.envs.registration import EnvSpec
 
 ArrayType = TypeVar("ArrayType")
@@ -119,7 +121,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     metadata: dict[str, Any] = {}
     spec: EnvSpec | None = None
-    render_mode: str | None = None
+    render_mode: tuple[RenderFrame, ...] | None = None
     closed: bool = False
 
     observation_space: gym.Space
@@ -210,7 +212,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             f"{self.__str__()} render function is not implemented."
         )
 
-    def close(self, **kwargs: Any):
+    def close(self, **kwargs: Any) -> None:
         """Close all parallel environments and release resources.
 
         It also closes all the existing image viewers, then calls :meth:`close_extras` and set
@@ -233,7 +235,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         self.close_extras(**kwargs)
         self.closed = True
 
-    def close_extras(self, **kwargs: Any):
+    def close_extras(self) -> None:
         """Clean up the extra resources e.g. beyond what's in this base class."""
         pass
 
@@ -249,7 +251,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         return self._np_random
 
     @np_random.setter
-    def np_random(self, value: np.random.Generator):
+    def np_random(self, value: np.random.Generator) -> None:
         self._np_random = value
         self._np_random_seed = -1
 
@@ -268,7 +270,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
         return self._np_random_seed
 
     @property
-    def unwrapped(self):
+    def unwrapped(self) -> Self:
         """Return the base environment."""
         return self
 
@@ -360,7 +362,9 @@ class VectorWrapper(VectorEnv):
         Don't forget to call ``super().__init__(env)`` if the subclass overrides :meth:`__init__`.
     """
 
-    def __init__(self, env: VectorEnv):
+    env: VectorEnv
+
+    def __init__(self, env: VectorEnv) -> None:
         """Initialize the vectorized environment wrapper.
 
         Args:
@@ -378,10 +382,7 @@ class VectorWrapper(VectorEnv):
         self._metadata: dict[str, Any] | None = None
 
     def reset(
-        self,
-        *,
-        seed: int | list[int] | None = None,
-        options: dict[str, Any] | None = None,
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[ObsType, dict[str, Any]]:
         """Reset all environment using seed and options."""
         return self.env.reset(seed=seed, options=options)
@@ -396,20 +397,20 @@ class VectorWrapper(VectorEnv):
         """Returns the render mode from the base vector environment."""
         return self.env.render()
 
-    def close(self, **kwargs: Any):
+    def close(self, **kwargs: Any) -> None:
         """Close all environments."""
         return self.env.close(**kwargs)
 
-    def close_extras(self, **kwargs: Any):
+    def close_extras(self, **kwargs: Any) -> None:
         """Close all extra resources."""
         return self.env.close_extras(**kwargs)
 
     @property
-    def unwrapped(self):
+    def unwrapped(self) -> VectorEnv:
         """Return the base non-wrapped environment."""
         return self.env.unwrapped
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return the string representation of the vectorized environment."""
         return f"<{self.__class__.__name__}, {self.env}>"
 
@@ -421,7 +422,7 @@ class VectorWrapper(VectorEnv):
         return self._observation_space
 
     @observation_space.setter
-    def observation_space(self, space: gym.Space):
+    def observation_space(self, space: gym.Space) -> None:
         """Sets the observation space of the vector environment."""
         self._observation_space = space
 
@@ -433,7 +434,7 @@ class VectorWrapper(VectorEnv):
         return self._action_space
 
     @action_space.setter
-    def action_space(self, space: gym.Space):
+    def action_space(self, space: gym.Space) -> None:
         """Sets the action space of the vector environment."""
         self._action_space = space
 
@@ -445,7 +446,7 @@ class VectorWrapper(VectorEnv):
         return self._single_observation_space
 
     @single_observation_space.setter
-    def single_observation_space(self, space: gym.Space):
+    def single_observation_space(self, space: gym.Space) -> None:
         """Sets the single observation space of the vector environment."""
         self._single_observation_space = space
 
@@ -457,7 +458,7 @@ class VectorWrapper(VectorEnv):
         return self._single_action_space
 
     @single_action_space.setter
-    def single_action_space(self, space):
+    def single_action_space(self, space: gym.Space) -> None:
         """Sets the single action space of the vector environment."""
         self._single_action_space = space
 
@@ -476,7 +477,7 @@ class VectorWrapper(VectorEnv):
         return self.env.np_random
 
     @np_random.setter
-    def np_random(self, value: np.random.Generator):
+    def np_random(self, value: np.random.Generator) -> None:
         self.env.np_random = value
 
     @property
@@ -485,14 +486,14 @@ class VectorWrapper(VectorEnv):
         return self.env.np_random_seed
 
     @property
-    def metadata(self):
+    def metadata(self) -> dict[str, Any]:
         """The metadata of the vector environment."""
         if self._metadata is not None:
             return self._metadata
         return self.env.metadata
 
     @metadata.setter
-    def metadata(self, value):
+    def metadata(self, value: dict[str, Any]) -> None:
         self._metadata = value
 
     @property
@@ -506,12 +507,12 @@ class VectorWrapper(VectorEnv):
         return self.env.render_mode
 
     @property
-    def closed(self):
+    def closed(self) -> bool:
         """If the environment has closes."""
         return self.env.closed
 
     @closed.setter
-    def closed(self, value: bool):
+    def closed(self, value: bool) -> None:
         self.env.closed = value
 
 
@@ -521,7 +522,7 @@ class VectorObservationWrapper(VectorWrapper):
     Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.
     """
 
-    def __init__(self, env: VectorEnv):
+    def __init__(self, env: VectorEnv) -> None:
         """Vector observation wrapper that batch transforms observations.
 
         Args:
@@ -539,10 +540,7 @@ class VectorObservationWrapper(VectorWrapper):
             )
 
     def reset(
-        self,
-        *,
-        seed: int | list[int] | None = None,
-        options: dict[str, Any] | None = None,
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[ObsType, dict[str, Any]]:
         """Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""
         observations, infos = self.env.reset(seed=seed, options=options)
