@@ -45,7 +45,7 @@ class MujocoEnv(gym.Env):
         height: int = DEFAULT_SIZE,
         camera_id: int | None = None,
         camera_name: str | None = None,
-        default_camera_config: dict[str, float | int] | None = None,
+        default_camera_config: dict[str, float] | None = None,
         max_geom: int = 1000,
         visual_options: dict[int, bool] | None = None,
     ):
