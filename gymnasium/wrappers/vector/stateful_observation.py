@@ -10,7 +10,6 @@ from typing import Any
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import ObsType
 from gymnasium.logger import warn
 from gymnasium.spaces import Box
 from gymnasium.vector.utils import batch_space
@@ -63,7 +62,13 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         >>> envs.close()
     """
 
-    def __init__(self, env: VectorEnv, epsilon: float = 1e-8):
+    single_observation_space: Box  # f32
+    observation_space: Box  # f32
+    obs_rms: RunningMeanStd  # f32
+    epsilon: float
+    _update_running_mean: bool
+
+    def __init__(self, env: VectorEnv, epsilon: float = 1e-8) -> None:
         """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
         Args:
@@ -87,7 +92,8 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
             dtype=np.float32,
         )
         self.single_observation_space = new_single_space
-        self.observation_space = batch_space(new_single_space, self.num_envs)
+        # ty doesn't support `@single_dispatch` (yet?)
+        self.observation_space = batch_space(new_single_space, self.num_envs)  # ty:ignore[invalid-assignment]
 
         self.obs_rms = RunningMeanStd(
             shape=self.single_observation_space.shape,
@@ -102,7 +108,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         return self._update_running_mean
 
     @update_running_mean.setter
-    def update_running_mean(self, setting: bool):
+    def update_running_mean(self, setting: bool) -> None:
         """Sets the property to freeze/continue the running mean calculation of the observation statistics."""
         self._update_running_mean = setting
 
@@ -111,7 +117,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         *,
         seed: int | list[int] | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+    ) -> tuple[np.ndarray, dict[str, Any]]:
         """Reset function for `NormalizeObservationWrapper` which is disabled for partial resets."""
         assert (
             options is None
@@ -120,7 +126,9 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         )
         return super().reset(seed=seed, options=options)
 
-    def observations(self, observations: ObsType) -> ObsType:
+    def observations(
+        self, observations: np.ndarray[tuple[int], np.dtype[np.floating]]
+    ) -> np.ndarray[tuple[int], np.dtype[np.float32]]:
         """Defines the vector observation normalization function.
 
         Args:
