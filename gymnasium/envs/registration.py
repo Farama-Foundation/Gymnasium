@@ -8,11 +8,10 @@ import dataclasses
 import difflib
 import importlib
 import importlib.metadata as metadata
-import importlib.util
 import json
 import re
 from collections import defaultdict
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Generator, Iterable, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from types import ModuleType
@@ -115,7 +114,7 @@ class EnvSpec:
     # Vectorized environment entry point
     vector_entry_point: VectorEnvCreator | str | None = field(default=None)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Calls after the spec is created to extract the namespace, name and version from the environment id."""
         self.namespace, self.name, self.version = parse_env_id(self.id)
 
@@ -141,7 +140,7 @@ class EnvSpec:
         return json.dumps(env_spec_dict)
 
     @staticmethod
-    def _check_can_jsonify(env_spec: dict[str, Any]):
+    def _check_can_jsonify(env_spec: dict[str, Any]) -> None:
         """Warns the user about serialisation failing if the spec contains a callable.
 
         Args:
@@ -321,7 +320,7 @@ def find_highest_version(ns: str | None, name: str) -> int | None:
     return max(version, default=None)
 
 
-def _check_namespace_exists(ns: str | None):
+def _check_namespace_exists(ns: str | None) -> None:
     """Check if a namespace exists. If it doesn't, print a helpful error message."""
     # If the namespace is none, then the namespace does exist
     if ns is None:
@@ -348,7 +347,7 @@ def _check_namespace_exists(ns: str | None):
     raise error.NamespaceNotFound(f"Namespace {ns} not found. {suggestion_msg}")
 
 
-def _check_name_exists(ns: str | None, name: str):
+def _check_name_exists(ns: str | None, name: str) -> None:
     """Check if an env exists in a namespace. If it doesn't, print a helpful error message."""
     # First check if the namespace exists
     _check_namespace_exists(ns)
@@ -370,7 +369,7 @@ def _check_name_exists(ns: str | None, name: str):
     )
 
 
-def _check_version_exists(ns: str | None, name: str, version: int | None):
+def _check_version_exists(ns: str | None, name: str, version: int | None) -> None:
     """Check if an env version exists in a namespace. If it doesn't, print a helpful error message.
 
     This is a complete test whether an environment identifier is valid, and will provide the best available hints.
@@ -430,7 +429,7 @@ def _check_version_exists(ns: str | None, name: str, version: int | None):
         )
 
 
-def _check_spec_register(testing_spec: EnvSpec):
+def _check_spec_register(testing_spec: EnvSpec) -> None:
     """Checks whether the spec is valid to be registered. Helper function for `register`."""
     latest_versioned_spec = max(
         (
@@ -469,7 +468,7 @@ def _check_spec_register(testing_spec: EnvSpec):
         )
 
 
-def _check_metadata(testing_metadata: dict[str, Any]):
+def _check_metadata(testing_metadata: dict[str, Any]) -> None:
     """Check the metadata of an environment."""
     if not isinstance(testing_metadata, dict):
         raise error.InvalidMetadata(
@@ -547,13 +546,13 @@ def load_env_creator(name: str) -> EnvCreator | VectorEnvCreator:
     return fn
 
 
-def register_envs(env_module: ModuleType):
+def register_envs(env_module: ModuleType) -> None:
     """A No-op function such that it can appear to IDEs that a module is used."""
     pass
 
 
 @contextlib.contextmanager
-def namespace(ns: str):
+def namespace(ns: str) -> Generator[None, None, None]:
     """Context manager for modifying the current namespace."""
     global current_namespace
     old_namespace = current_namespace
@@ -573,7 +572,7 @@ def register(
     additional_wrappers: tuple[WrapperSpec, ...] = (),
     vector_entry_point: VectorEnvCreator | str | None = None,
     kwargs: dict | None = None,
-):
+) -> None:
     """Registers an environment in gymnasium with an ``id`` to use with :meth:`gymnasium.make` with the ``entry_point`` being a string or callable for creating the environment.
 
     The ``id`` parameter corresponds to the name of the environment, with the syntax as follows:
@@ -835,7 +834,7 @@ def make_vec(
     vectorization_mode: VectorizeMode | str | None = None,
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> gym.vector.VectorEnv:
     """Create a vector environment according to the given ID.
 
