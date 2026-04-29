@@ -511,7 +511,7 @@ def _create_empty_array_graph(
 ) -> tuple[GraphInstance, ...]:
     if space.edge_space is not None:
         assert space.node_space.shape is not None
-        assert space.edge_space.shape
+        assert space.edge_space.shape is not None
         return tuple(
             GraphInstance(
                 nodes=fn((1,) + space.node_space.shape, dtype=space.node_space.dtype),
