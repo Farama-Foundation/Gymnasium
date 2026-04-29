@@ -1,7 +1,7 @@
 """Wrappers for vector environments."""
 
 # pyright: reportUnsupportedDunderAll=false
-import importlib
+from typing import TYPE_CHECKING
 
 from gymnasium.wrappers.vector.common import RecordEpisodeStatistics
 from gymnasium.wrappers.vector.dict_info_to_list import DictInfoToList
@@ -72,38 +72,44 @@ __all__ = [
     "NumpyToTorch",
 ]
 
+if TYPE_CHECKING:
+    from .array_conversion import ArrayConversion
+    from .jax_to_numpy import JaxToNumpy
+    from .jax_to_torch import JaxToTorch
+    from .numpy_to_torch import NumpyToTorch
+else:
+    import importlib
 
-# As these wrappers requires `jax` or `torch`, they are loaded by runtime on users trying to access them
-#   to avoid `import jax` or `import torch` on `import gymnasium`.
-_wrapper_to_class = {
-    # data converters
-    "ArrayConversion": "array_conversion",
-    "JaxToNumpy": "jax_to_numpy",
-    "JaxToTorch": "jax_to_torch",
-    "NumpyToTorch": "numpy_to_torch",
-}
+    # As these wrappers requires `jax` or `torch`, they are loaded by runtime on users trying to access them
+    #   to avoid `import jax` or `import torch` on `import gymnasium`.
+    _wrapper_to_class = {
+        # data converters
+        "ArrayConversion": "array_conversion",
+        "JaxToNumpy": "jax_to_numpy",
+        "JaxToTorch": "jax_to_torch",
+        "NumpyToTorch": "numpy_to_torch",
+    }
 
+    def __getattr__(wrapper_name: str):
+        """Load a wrapper by name.
 
-def __getattr__(wrapper_name: str):
-    """Load a wrapper by name.
+        This optimizes the loading of gymnasium wrappers by only loading the wrapper if it is used.
+        Errors will be raised if the wrapper does not exist or if the version is not the latest.
 
-    This optimizes the loading of gymnasium wrappers by only loading the wrapper if it is used.
-    Errors will be raised if the wrapper does not exist or if the version is not the latest.
+        Args:
+            wrapper_name: The name of a wrapper to load.
 
-    Args:
-        wrapper_name: The name of a wrapper to load.
+        Returns:
+            The specified wrapper.
 
-    Returns:
-        The specified wrapper.
+        Raises:
+            AttributeError: If the wrapper does not exist.
+            DeprecatedWrapper: If the version is not the latest.
+        """
+        # Check if the requested wrapper is in the _wrapper_to_class dictionary
+        if wrapper_name in _wrapper_to_class:
+            import_stmt = f"gymnasium.wrappers.vector.{_wrapper_to_class[wrapper_name]}"
+            module = importlib.import_module(import_stmt)
+            return getattr(module, wrapper_name)
 
-    Raises:
-        AttributeError: If the wrapper does not exist.
-        DeprecatedWrapper: If the version is not the latest.
-    """
-    # Check if the requested wrapper is in the _wrapper_to_class dictionary
-    if wrapper_name in _wrapper_to_class:
-        import_stmt = f"gymnasium.wrappers.vector.{_wrapper_to_class[wrapper_name]}"
-        module = importlib.import_module(import_stmt)
-        return getattr(module, wrapper_name)
-
-    raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")
+        raise AttributeError(f"module {__name__!r} has no attribute {wrapper_name!r}")
