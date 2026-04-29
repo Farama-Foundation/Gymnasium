@@ -6,7 +6,7 @@ import gc
 import os
 from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import Any, SupportsFloat
+from typing import TYPE_CHECKING, Any, SupportsFloat
 
 import numpy as np
 
@@ -18,6 +18,9 @@ from gymnasium.logger import warn
 from gymnasium.vector import VectorEnv, VectorWrapper
 from gymnasium.vector.vector_env import ArrayType
 
+if TYPE_CHECKING:
+    import pygame
+
 
 class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
     """Adds support for Human-based Rendering for Vector-based environments."""
@@ -28,6 +31,14 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
         "depth_array",
         "depth_array_list",
     ]
+
+    screen_size: tuple[int, int] | None
+    scaled_subenv_size: tuple[int, int] | None
+    num_rows: int | None
+    num_cols: int | None
+    window: pygame.Surface | None
+    clock: pygame.time.Clock | None
+    metadata: dict[str, Any]
 
     def __init__(self, env: VectorEnv, screen_size: tuple[int, int] | None = None):
         """Constructor for Human Rendering of Vector-based environments.
@@ -155,6 +166,8 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
             ) from e
 
         merged_rgb_array = np.zeros(self.screen_size + (3,), dtype=np.uint8)
+        assert self.num_cols is not None
+        assert self.num_rows is not None
         cols, rows = np.meshgrid(np.arange(self.num_cols), np.arange(self.num_rows))
 
         for i, col, row in zip(range(self.num_envs), cols.flatten(), rows.flatten()):  # noqa: B905
@@ -181,7 +194,7 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
         self.clock.tick(self.metadata["render_fps"])
         pygame.display.flip()
 
-    def close(self):
+    def close(self) -> None:
         """Close the rendering window."""
         if self.window is not None:
             import pygame
@@ -222,6 +235,27 @@ class RecordVideo(
     >>> len(os.listdir("save_videos_5envs"))
     2
     """
+
+    autoreset_mode: gym.vector.AutoresetMode
+    has_autoreset: bool
+    episode_trigger: Callable[[int], bool] | None
+    step_trigger: Callable[[int], bool] | None
+    gc_trigger: Callable[[int], bool] | None
+    disable_logger: bool
+    record_first_only: bool
+    video_aspect_ratio: tuple[int, int]
+    frame_cols: int
+    frame_rows: int
+    video_folder: str
+    frames_per_sec: int
+    name_prefix: str
+    _video_name: str | None
+    video_length: float
+    recording: bool
+    recorded_frames: list[np.ndarray]
+    render_history: list[np.ndarray]
+    step_id: int
+    episode_id: int
 
     def __init__(
         self,
@@ -315,13 +349,13 @@ class RecordVideo(
 
         if fps is None:
             fps = self.metadata.get("render_fps", 30)
-        self.frames_per_sec: int = fps
-        self.name_prefix: str = name_prefix
-        self._video_name: str | None = None
-        self.video_length: int = video_length if video_length != 0 else float("inf")
-        self.recording: bool = False
-        self.recorded_frames: list[np.ndarray] = []
-        self.render_history: list[np.ndarray] = []
+        self.frames_per_sec = fps
+        self.name_prefix = name_prefix
+        self._video_name = None
+        self.video_length = video_length if video_length != 0 else float("inf")
+        self.recording = False
+        self.recorded_frames = []
+        self.render_history = []
 
         self.step_id = -1
         self.episode_id = -1
@@ -353,7 +387,7 @@ class RecordVideo(
         self.frame_rows = best_rows
         self.frame_cols = best_cols
 
-    def _concat_frames(self, frames):
+    def _concat_frames(self, frames: np.typing.ArrayLike) -> np.ndarray:
         """Concatenates a list of frames into one large frame."""
         frames = np.array(frames)
         n_frames, h, w, c = frames.shape
@@ -366,7 +400,7 @@ class RecordVideo(
             grid[r * h : (r + 1) * h, c_ * w : (c_ + 1) * w] = frames[idx]
         return grid
 
-    def _capture_frame(self):
+    def _capture_frame(self) -> None:
         assert self.recording, "Cannot capture a frame, recording wasn't started."
 
         envs_frame = self.env.render()
@@ -460,13 +494,13 @@ class RecordVideo(
         else:
             return render_out
 
-    def close(self):
+    def close(self) -> None:
         """Closes the wrapper then the video recorder."""
         super().close()
         if self.recording:
             self.stop_recording()
 
-    def start_recording(self, video_name: str):
+    def start_recording(self, video_name: str) -> None:
         """Start a new recording. If it is already recording, stops the current recording before starting the new one."""
         if self.recording:
             self.stop_recording()
@@ -474,7 +508,7 @@ class RecordVideo(
         self.recording = True
         self._video_name = video_name
 
-    def stop_recording(self):
+    def stop_recording(self) -> None:
         """Stop current recording and saves the video."""
         assert self.recording, "stop_recording was called, but no recording was started"
         if len(self.recorded_frames) == 0:
@@ -501,7 +535,7 @@ class RecordVideo(
         if self.gc_trigger and self.gc_trigger(self.episode_id):
             gc.collect()
 
-    def __del__(self):
+    def __del__(self) -> None:
         """Warn the user in case last video wasn't saved."""
         if len(self.recorded_frames) > 0:
             logger.warn("Unable to save last video! Did you call close()?")
