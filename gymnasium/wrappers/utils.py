@@ -7,6 +7,7 @@ from functools import singledispatch
 
 import numpy as np
 
+import gymnasium as gym
 from gymnasium import Space
 from gymnasium.error import CustomSpaceError
 from gymnasium.spaces import (
@@ -139,11 +140,12 @@ def _create_text_zero_array(space: Text):
 
 @create_zero_array.register(Graph)
 def _create_graph_zero_array(space: Graph):
-    nodes = np.expand_dims(create_zero_array(space.node_space), axis=0)
+    nodes = create_zero_array(gym.vector.utils.batch_space(space.node_space, 1))
+
     if space.edge_space is None:
         return GraphInstance(nodes=nodes, edges=None, edge_links=None)
     else:
-        edges = np.expand_dims(create_zero_array(space.edge_space), axis=0)
+        edges = create_zero_array(gym.vector.utils.batch_space(space.edge_space, 1))
         edge_links = np.zeros((1, 2), dtype=np.int64)
         return GraphInstance(nodes=nodes, edges=edges, edge_links=edge_links)
 
