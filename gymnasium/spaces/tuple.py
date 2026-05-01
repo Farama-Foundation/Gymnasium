@@ -4,14 +4,16 @@ from __future__ import annotations
 
 import typing
 from collections.abc import Iterable
-from typing import Any
+from typing import Any, TypeVar, overload
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
+_T_co = TypeVar("_T_co", covariant=True)
 
-class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
+
+class Tuple(Space[tuple[_T_co, ...]], typing.Sequence[_T_co]):
     """A tuple (more precisely: the cartesian product) of :class:`Space` instances.
 
     Elements of this space are tuples of elements of the constituent spaces.
@@ -23,11 +25,13 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         (np.int64(0), array([-0.3991573 ,  0.21649833], dtype=float32))
     """
 
+    spaces: tuple[Space[_T_co], ...]
+
     def __init__(
         self,
-        spaces: Iterable[Space[Any]],
-        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
-    ):
+        spaces: Iterable[Space[_T_co]],
+        seed: int | np.random.Generator | None = None,
+    ) -> None:
         r"""Constructor of :class:`Tuple` space.
 
         The generated instance will represent the cartesian product :math:`\text{spaces}[0] \times ... \times \text{spaces}[-1]`.
@@ -41,10 +45,10 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
             assert isinstance(space, Space), (
                 f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
             )
-        super().__init__(None, None, seed)  # type: ignore
+        super().__init__(None, None, seed)
 
     @property
-    def is_np_flattenable(self):
+    def is_np_flattenable(self) -> bool:
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return all(space.is_np_flattenable for space in self.spaces)
 
@@ -93,7 +97,7 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         self,
         mask: tuple[Any | None, ...] | None = None,
         probability: tuple[Any | None, ...] | None = None,
-    ) -> tuple[Any, ...]:
+    ) -> tuple[_T_co, ...]:
         """Generates a single random sample inside this space.
 
         This method draws independent samples from the subspaces.
@@ -159,9 +163,7 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         """Gives a string representation of this space."""
         return "Tuple(" + ", ".join([str(s) for s in self.spaces]) + ")"
 
-    def to_jsonable(
-        self, sample_n: typing.Sequence[tuple[Any, ...]]
-    ) -> list[list[Any]]:
+    def to_jsonable(self, sample_n: Iterable[tuple[Any, ...]]) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         # serialize as list-repr of tuple of vectors
         return [
@@ -182,7 +184,13 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
             )
         ]
 
-    def __getitem__(self, index: int) -> Space[Any]:
+    @overload
+    def __getitem__(self, index: int) -> Space[_T_co]: ...
+    @overload
+    def __getitem__(self, index: slice) -> tuple[Space[_T_co], ...]: ...
+    def __getitem__(
+        self, index: int | slice
+    ) -> Space[_T_co] | tuple[Space[_T_co], ...]:
         """Get the subspace at specific `index`."""
         return self.spaces[index]
 
@@ -190,6 +198,6 @@ class Tuple(Space[tuple[Any, ...]], typing.Sequence[Any]):
         """Get the number of subspaces that are involved in the cartesian product."""
         return len(self.spaces)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object, /) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return isinstance(other, Tuple) and self.spaces == other.spaces
