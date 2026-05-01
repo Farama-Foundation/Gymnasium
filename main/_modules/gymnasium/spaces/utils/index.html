@@ -397,7 +397,8 @@
     <span class="n">Text</span><span class="p">,</span>
     <span class="n">Tuple</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces.discrete</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntType</span>
+
+<span class="n">_IntegerT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_IntegerT&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="flatdim">
@@ -541,7 +542,7 @@
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">IntType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">IntType</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_flatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">_IntegerT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">_IntegerT</span><span class="p">]:</span>
     <span class="n">onehot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
     <span class="n">onehot</span><span class="p">[</span><span class="n">x</span> <span class="o">-</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">onehot</span>
@@ -686,7 +687,9 @@
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">IntType</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">IntType</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_unflatten_discrete</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">_IntegerT</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_IntegerT</span><span class="p">:</span>
     <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonzero</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -894,6 +897,7 @@
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
 <span class="nd">@flatten_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_flatten_space_binary</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="n">MultiBinary</span> <span class="o">|</span> <span class="n">MultiDiscrete</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">flatdim</span><span class="p">(</span><span class="n">space</span><span class="p">),),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
 

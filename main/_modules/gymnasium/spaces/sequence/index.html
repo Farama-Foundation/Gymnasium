@@ -371,8 +371,8 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
@@ -405,12 +405,16 @@
 <span class="sd">               [0.19049619]], dtype=float32)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">feature_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
+    <span class="n">stack</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">stacked_feature_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">stack</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor of the :class:`Sequence` space.</span>
 
 <span class="sd">        Args:</span>
@@ -424,7 +428,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">feature_space</span> <span class="o">=</span> <span class="n">space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stack</span> <span class="o">=</span> <span class="n">stack</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stacked_feature_space</span><span class="p">:</span> <span class="n">Space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">batch_space</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stacked_feature_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">batch_space</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">feature_space</span><span class="p">,</span> <span class="mi">1</span>
             <span class="p">)</span>
 
@@ -469,7 +473,7 @@
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">is_np_flattenable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_np_flattenable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether this space can be flattened to a :class:`spaces.Box`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">False</span>
 
@@ -477,21 +481,9 @@
 <a class="viewcode-back" href="../../../../api/spaces/composite/#gymnasium.spaces.Sequence.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">mask</span><span class="p">:</span> <span class="kc">None</span>
-        <span class="o">|</span> <span class="p">(</span>
-            <span class="nb">tuple</span><span class="p">[</span>
-                <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">],</span>
-                <span class="n">Any</span><span class="p">,</span>
-            <span class="p">]</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">probability</span><span class="p">:</span> <span class="kc">None</span>
-        <span class="o">|</span> <span class="p">(</span>
-            <span class="nb">tuple</span><span class="p">[</span>
-                <span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">],</span>
-                <span class="n">Any</span><span class="p">,</span>
-            <span class="p">]</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">mask</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">probability</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="kc">None</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a single random sample from this space.</span>
 
 <span class="sd">        Args:</span>
@@ -590,9 +582,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Gives a string representation of this space.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Sequence(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_space</span><span class="si">}</span><span class="s2">, stack=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="si">}</span><span class="s2">)&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">to_jsonable</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">Any</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jsonable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a batch of samples from this space to a JSONable data type.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacked_feature_space</span><span class="o">.</span><span class="n">to_jsonable</span><span class="p">(</span><span class="n">sample_n</span><span class="p">)</span>
@@ -608,7 +598,7 @@
                 <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_space</span><span class="o">.</span><span class="n">from_jsonable</span><span class="p">(</span><span class="n">sample</span><span class="p">))</span> <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">sample_n</span>
             <span class="p">]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">/</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether ``other`` is equivalent to this instance.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span>

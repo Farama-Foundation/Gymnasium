@@ -374,17 +374,30 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">collections.abc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">KeysView</span><span class="p">,</span> <span class="n">Sequence</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">KeysView</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces.space</span><span class="w"> </span><span class="kn">import</span> <span class="n">Space</span>
 
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
+
+    <span class="n">_T_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T_co&quot;</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
+
+    <span class="n">_T_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T_co&quot;</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
 
 <div class="viewcode-block" id="Dict">
 <a class="viewcode-back" href="../../../../api/spaces/composite/#gymnasium.spaces.Dict">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">Dict</span><span class="p">(</span><span class="n">Space</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">]]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Dict</span><span class="p">(</span>
+    <span class="n">Space</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">[</span><span class="n">_T_co</span><span class="p">]]],</span>
+    <span class="n">typing</span><span class="o">.</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">[</span><span class="n">_T_co</span><span class="p">]],</span>
+    <span class="n">Generic</span><span class="p">[</span><span class="n">_T_co</span><span class="p">],</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A dictionary of :class:`Space` instances.</span>
 
 <span class="sd">    Elements of this space are (ordered) dictionaries of elements from the constituent spaces.</span>
@@ -422,12 +435,16 @@
 <span class="sd">    Similar wrappers can be implemented to deal with :class:`Dict` actions.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">spaces</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">[</span><span class="n">_T_co</span><span class="p">]]</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">spaces</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">]</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">spaces</span><span class="p">:</span> <span class="p">(</span>
+            <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">[</span><span class="n">_T_co</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">[</span><span class="n">_T_co</span><span class="p">]]]</span> <span class="o">|</span> <span class="kc">None</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">spaces_kwargs</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor of :class:`Dict` space.</span>
 
 <span class="sd">        This space can be instantiated in one of two ways: Either you pass a dictionary</span>
@@ -440,20 +457,20 @@
 <span class="sd">            **spaces_kwargs: If ``spaces`` is ``None``, you need to pass the constituent spaces as keyword arguments, as described above.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">):</span>
-            <span class="n">spaces</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
             <span class="c1"># for legacy reasons, we need to preserve the sorted dictionary items.</span>
             <span class="c1"># as this could matter for projects flatten the dictionary.</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">spaces</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+                <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
             <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
                 <span class="c1"># Incomparable types (e.g. `int` vs. `str`, or user-defined types) found.</span>
                 <span class="c1"># The keys remain in the insertion order.</span>
-                <span class="n">spaces</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+                <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
-            <span class="n">spaces</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
+            <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">spaces</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">spaces</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Unexpected Dict space input, expecting dict, OrderedDict or Sequence, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -461,14 +478,14 @@
 
         <span class="c1"># Add kwargs to spaces to allow both dictionary and keywords to be used</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">:</span>
-                <span class="n">spaces</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">space</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spaces_dict</span><span class="p">:</span>
+                <span class="n">spaces_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">space</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Dict space keyword &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; already exists in the spaces dictionary.&quot;</span>
                 <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">spaces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="s2">&quot;dict[str, Space[_T_co]]&quot;</span><span class="p">,</span> <span class="n">spaces_dict</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">space</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">Space</span><span class="p">),</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Dict space element is not an instance of Space: key=&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39;, space=</span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -478,7 +495,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">is_np_flattenable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_np_flattenable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether this space can be flattened to a :class:`spaces.Box`.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">is_np_flattenable</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
@@ -594,7 +611,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterator through the keys of the subspaces.&quot;&quot;&quot;</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span>
 
@@ -616,7 +633,7 @@
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">spaces</span>  <span class="c1"># OrderedDict.__eq__</span>
         <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">to_jsonable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jsonable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a batch of samples from this space to a JSONable data type.&quot;&quot;&quot;</span>
         <span class="c1"># serialize as dict-repr of vectors</span>
         <span class="k">return</span> <span class="p">{</span>
@@ -624,7 +641,7 @@
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">space</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_jsonable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_jsonable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>  <span class="c1"># ty:ignore[invalid-method-override]</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a JSONable data type to a batch of samples from this space.&quot;&quot;&quot;</span>
         <span class="n">dict_of_list</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">key</span><span class="p">:</span> <span class="n">space</span><span class="o">.</span><span class="n">from_jsonable</span><span class="p">(</span><span class="n">sample_n</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
