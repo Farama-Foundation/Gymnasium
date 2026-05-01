@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping, Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any, Generic, Literal, overload
 
 import numpy as np
 from numpy.typing import NDArray
@@ -12,8 +12,22 @@ import gymnasium as gym
 from gymnasium.spaces.discrete import Discrete
 from gymnasium.spaces.space import MaskNDArray, Space
 
+if TYPE_CHECKING:
+    from typing_extensions import TypeVar
 
-class MultiDiscrete(Space[NDArray[np.integer]]):
+    _IntegerT_co = TypeVar(
+        "_IntegerT_co",
+        bound=np.integer[Any],
+        covariant=True,
+        default=np.int64,
+    )
+else:
+    from typing import TypeVar
+
+    _IntegerT_co = TypeVar("_IntegerT_co", bound=np.integer[Any], covariant=True)
+
+
+class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
     """This represents the cartesian product of arbitrary :class:`Discrete` spaces.
 
     It is useful to represent game controllers or keyboards where each key can be represented as a discrete action space.
@@ -41,13 +55,41 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
                [2, 2]])
     """
 
+    dtype: np.dtype[_IntegerT_co]
+    nvec: NDArray[_IntegerT_co]
+    start: NDArray[_IntegerT_co]
+
+    @overload
+    def __init__(
+        self: MultiDiscrete[np.int64],
+        nvec: NDArray[np.integer[Any]] | list[int],
+        dtype: type[np.int64] = np.int64,
+        seed: int | np.random.Generator | None = None,
+        start: NDArray[np.integer[Any]] | list[int] | None = None,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self,
+        nvec: NDArray[np.integer[Any]] | list[int],
+        dtype: type[_IntegerT_co] | np.dtype[_IntegerT_co],
+        seed: int | np.random.Generator | None = None,
+        start: NDArray[np.integer[Any]] | list[int] | None = None,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self: MultiDiscrete[Any],
+        nvec: NDArray[np.integer[Any]] | list[int],
+        dtype: str,
+        seed: int | np.random.Generator | None = None,
+        start: NDArray[np.integer[Any]] | list[int] | None = None,
+    ) -> None: ...
     def __init__(
         self,
         nvec: NDArray[np.integer[Any]] | list[int],
         dtype: str | type[np.integer[Any]] = np.int64,
         seed: int | np.random.Generator | None = None,
         start: NDArray[np.integer[Any]] | list[int] | None = None,
-    ):
+    ) -> None:
         """Constructor of :class:`MultiDiscrete` space.
 
         The argument ``nvec`` will determine the number of values each categorical variable can take. If
@@ -92,7 +134,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         return self._shape  # type: ignore
 
     @property
-    def is_np_flattenable(self):
+    def is_np_flattenable(self) -> Literal[True]:
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
@@ -100,7 +142,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         self,
         mask: tuple[MaskNDArray, ...] | None = None,
         probability: tuple[MaskNDArray, ...] | None = None,
-    ) -> NDArray[np.integer[Any]]:
+    ) -> NDArray[_IntegerT_co]:
         """Generates a single random sample from this space.
 
         Args:
@@ -148,6 +190,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             assert len(sub_mask) == len(sub_nvec), (
                 f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, nvec length: {len(sub_nvec)}"
             )
+            assert isinstance(sub_start, np.ndarray)
             return [
                 self._apply_mask(new_mask, new_nvec, new_start, mask_type)
                 for new_mask, new_nvec, new_start in zip(
@@ -217,14 +260,14 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
         )
 
     def to_jsonable(
-        self, sample_n: Sequence[NDArray[np.integer[Any]]]
+        self, sample_n: Iterable[NDArray[np.integer[Any]]]
     ) -> list[Sequence[int]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [sample.tolist() for sample in sample_n]
 
     def from_jsonable(
         self, sample_n: list[Sequence[int]]
-    ) -> list[NDArray[np.integer[Any]]]:
+    ) -> list[NDArray[_IntegerT_co]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [np.array(sample, dtype=self.dtype) for sample in sample_n]
 
@@ -234,10 +277,13 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             return f"MultiDiscrete({self.nvec}, start={self.start})"
         return f"MultiDiscrete({self.nvec})"
 
-    def __getitem__(self, index: int | tuple[int, ...]):
+    def __getitem__(
+        self, index: int | tuple[int, ...]
+    ) -> Discrete[_IntegerT_co] | MultiDiscrete[_IntegerT_co]:
         """Extract a subspace from this ``MultiDiscrete`` space."""
         nvec = self.nvec[index]
         start = self.start[index]
+
         if nvec.ndim == 0:
             subspace = Discrete(nvec, start=start, dtype=self.dtype)
         else:
@@ -248,7 +294,7 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
 
         return subspace
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Gives the ``len`` of samples from this space."""
         if self.nvec.ndim >= 2:
             gym.logger.warn(
@@ -266,7 +312,9 @@ class MultiDiscrete(Space[NDArray[np.integer]]):
             and np.all(self.start == other.start)
         )
 
-    def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
+    def __setstate__(
+        self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]
+    ) -> None:
         """Used when loading a pickled space.
 
         This method has to be implemented explicitly to allow for loading of legacy states.

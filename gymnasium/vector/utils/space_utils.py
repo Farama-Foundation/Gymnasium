@@ -13,7 +13,7 @@ import typing
 from collections.abc import Callable, Iterable, Iterator
 from copy import deepcopy
 from functools import singledispatch
-from typing import Any
+from typing import Any, TypeVar
 
 import numpy as np
 
@@ -32,7 +32,6 @@ from gymnasium.spaces import (
     Text,
     Tuple,
 )
-from gymnasium.spaces.space import T_cov
 
 __all__ = [
     "batch_space",
@@ -41,6 +40,8 @@ __all__ = [
     "concatenate",
     "create_empty_array",
 ]
+
+_T = TypeVar("_T")
 
 
 @singledispatch
@@ -275,7 +276,7 @@ def _batch_spaces_undefined(spaces: list[Graph | Text | Sequence | OneOf]):
 
 
 @singledispatch
-def iterate(space: Space[T_cov], items: T_cov) -> Iterator:
+def iterate(space: Space[_T], items: _T) -> Iterator:
     """Iterate over the elements of a (batched) space.
 
     Args:

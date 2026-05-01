@@ -2,17 +2,29 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping, Sequence
-from typing import Any, TypeVar
+from collections.abc import Iterable, Mapping
+from typing import TYPE_CHECKING, Any, Generic, Literal, overload
 
 import numpy as np
 
 from gymnasium.spaces.space import MaskNDArray, Space
 
-IntType = TypeVar("IntType", bound=np.integer)
+if TYPE_CHECKING:
+    from typing_extensions import TypeVar
+
+    _IntegerT_co = TypeVar(
+        "_IntegerT_co",
+        bound=np.integer[Any],
+        covariant=True,
+        default=np.int64,
+    )
+else:
+    from typing import TypeVar
+
+    _IntegerT_co = TypeVar("_IntegerT_co", bound=np.integer[Any], covariant=True)
 
 
-class Discrete(Space[IntType]):
+class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
     r"""A space consisting of finitely many elements.
 
     This class represents a finite subset of integers, more specifically a set of the form :math:`\{ a, a+1, \dots, a+n-1 \}`.
@@ -36,13 +48,43 @@ class Discrete(Space[IntType]):
         np.int32(0)
     """
 
+    dtype: np.dtype[_IntegerT_co]
+    n: _IntegerT_co
+    start: _IntegerT_co
+
+    @overload
+    def __init__(
+        self,
+        n: int | np.integer[Any],
+        seed: int | np.random.Generator | None = None,
+        start: int | np.integer[Any] = 0,
+        *,
+        dtype: type[_IntegerT_co] | np.dtype[_IntegerT_co],
+    ) -> None: ...
+    @overload
+    def __init__(
+        self: Discrete[Any],
+        n: int | np.integer[Any],
+        seed: int | np.random.Generator | None = None,
+        start: int | np.integer[Any] = 0,
+        *,
+        dtype: str,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self: Discrete[np.int64],
+        n: int | np.integer[Any],
+        seed: int | np.random.Generator | None = None,
+        start: int | np.integer[Any] = 0,
+        dtype: type[np.int64] = np.int64,
+    ) -> None: ...
     def __init__(
         self,
         n: int | np.integer[Any],
         seed: int | np.random.Generator | None = None,
         start: int | np.integer[Any] = 0,
         dtype: str | type[np.integer[Any]] = np.int64,
-    ):
+    ) -> None:
         r"""Constructor of :class:`Discrete` space.
 
         This will construct the space :math:`\{\text{start}, ..., \text{start} + n - 1\}`.
@@ -77,13 +119,13 @@ class Discrete(Space[IntType]):
         super().__init__((), self.dtype, seed)
 
     @property
-    def is_np_flattenable(self):
+    def is_np_flattenable(self) -> Literal[True]:
         """Checks whether this space can be flattened to a :class:`spaces.Box`."""
         return True
 
     def sample(
         self, mask: MaskNDArray | None = None, probability: MaskNDArray | None = None
-    ) -> IntType:
+    ) -> _IntegerT_co:
         """Generates a single random sample from this space.
 
         A sample will be chosen uniformly at random with the mask if provided, or it will be chosen according to a specified probability distribution if the probability mask is provided.
@@ -190,7 +232,9 @@ class Discrete(Space[IntType]):
             and self.dtype == other.dtype
         )
 
-    def __setstate__(self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]):
+    def __setstate__(
+        self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]
+    ) -> None:
         """Used when loading a pickled space.
 
         This method has to be implemented explicitly to allow for loading of legacy states.
@@ -208,10 +252,10 @@ class Discrete(Space[IntType]):
 
         super().__setstate__(state)
 
-    def to_jsonable(self, sample_n: Sequence[IntType]) -> list[int]:
+    def to_jsonable(self, sample_n: Iterable[int | np.integer]) -> list[int]:
         """Converts a list of samples to a list of ints."""
         return [int(x) for x in sample_n]
 
-    def from_jsonable(self, sample_n: list[int]) -> list[IntType]:
+    def from_jsonable(self, sample_n: list[int]) -> list[_IntegerT_co]:
         """Converts a list of json samples to a list of numpy integer scalars."""
         return [self.dtype.type(x) for x in sample_n]

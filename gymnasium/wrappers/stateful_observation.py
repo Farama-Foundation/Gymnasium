@@ -165,6 +165,8 @@ class TimeAwareObservation(
      * v1.0.0 - Remove vector environment support, add ``flatten`` and ``normalize_time`` parameters
     """
 
+    max_timesteps: int
+
     def __init__(
         self,
         env: gym.Env[ObsType, ActType],

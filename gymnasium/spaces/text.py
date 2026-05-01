@@ -37,7 +37,7 @@ class Text(Space[str]):
         min_length: int = 1,
         charset: frozenset[str] | str = alphanumeric,
         seed: int | np.random.Generator | None = None,
-    ):
+    ) -> None:
         r"""Constructor of :class:`Text` space.
 
         Both bounds for text length are inclusive.
@@ -148,7 +148,7 @@ class Text(Space[str]):
     def _validate_mask(
         self,
         mask: tuple[int | None, NDArray[np.int8] | NDArray[np.float64] | None],
-        expected_dtype: np.dtype,
+        expected_dtype: np.dtype | type[np.generic],
         mask_type: str,
     ) -> tuple[int | None, NDArray[np.int8] | NDArray[np.float64] | None]:
         assert isinstance(mask, tuple), (
@@ -190,7 +190,7 @@ class Text(Space[str]):
         """Gives a string representation of this space."""
         return f"Text({self.min_length}, {self.max_length}, charset={self.characters})"
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object, /) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return (
             isinstance(other, Text)

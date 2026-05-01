@@ -28,7 +28,8 @@ from gymnasium.spaces import (
     Text,
     Tuple,
 )
-from gymnasium.spaces.discrete import IntType
+
+_IntegerT = TypeVar("_IntegerT", bound=np.integer)
 
 
 @singledispatch
@@ -166,7 +167,7 @@ def _flatten_box_multibinary(space: Box | MultiBinary, x: NDArray[Any]) -> NDArr
 
 
 @flatten.register(Discrete)
-def _flatten_discrete(space: Discrete, x: IntType) -> NDArray[IntType]:
+def _flatten_discrete(space: Discrete, x: _IntegerT) -> NDArray[_IntegerT]:
     onehot = np.zeros(space.n, dtype=space.dtype)
     onehot[x - space.start] = 1
     return onehot
@@ -308,7 +309,9 @@ def _unflatten_box_multibinary(
 
 
 @unflatten.register(Discrete)
-def _unflatten_discrete(space: Discrete, x: NDArray[IntType | np.float64]) -> IntType:
+def _unflatten_discrete(
+    space: Discrete, x: NDArray[_IntegerT | np.float64]
+) -> _IntegerT:
     nonzero = np.nonzero(x)
     if len(nonzero[0]) == 0:
         raise ValueError(
@@ -513,6 +516,7 @@ def _flatten_space_box(space: Box) -> Box:
 @flatten_space.register(MultiBinary)
 @flatten_space.register(MultiDiscrete)
 def _flatten_space_binary(space: Discrete | MultiBinary | MultiDiscrete) -> Box:
+    assert space.dtype is not None
     return Box(low=0, high=1, shape=(flatdim(space),), dtype=space.dtype)
 
 
