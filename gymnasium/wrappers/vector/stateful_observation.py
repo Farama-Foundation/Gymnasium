@@ -92,7 +92,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
             dtype=np.float32,
         )
         self.single_observation_space = new_single_space
-        # ty doesn't support `@single_dispatch` (yet?)
+        # TODO: remove ignore comment once `ty` supports `@single_dispatch`
         self.observation_space = batch_space(new_single_space, self.num_envs)  # ty:ignore[invalid-assignment]
 
         self.obs_rms = RunningMeanStd(
