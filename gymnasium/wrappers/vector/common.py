@@ -151,7 +151,7 @@ class RecordEpisodeStatistics(VectorWrapper):
     ) -> tuple[
         np.ndarray,
         npt.NDArray[np.float64],
-        npt.NDArray[np.int_],
+        npt.NDArray[np.bool_],
         npt.NDArray[np.bool_],
         dict[str, Any],
     ]:
