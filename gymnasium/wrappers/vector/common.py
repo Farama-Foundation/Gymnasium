@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import time
 from collections import deque
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
-from gymnasium.core import ActType, ObsType
 from gymnasium.logger import warn
 from gymnasium.vector.vector_env import (
-    ArrayType,
     AutoresetMode,
     VectorEnv,
     VectorWrapper,
@@ -64,12 +64,24 @@ class RecordEpisodeStatistics(VectorWrapper):
                      't': array([0.007812, 0.      , 0.      ], dtype=float32)},
     """
 
+    episode_count: int
+
+    # 1-d arrays
+    episode_start_times: np.ndarray[tuple[int], np.dtype[np.float64]]
+    episode_returns: np.ndarray[tuple[int], np.dtype[np.float64]]
+    episode_lengths: np.ndarray[tuple[int], np.dtype[np.int_]]
+    prev_dones: np.ndarray[tuple[int], np.dtype[np.bool_]]
+
+    time_queue: deque[np.float64]
+    return_queue: deque[np.float64]
+    length_queue: deque[np.int_]
+
     def __init__(
         self,
         env: VectorEnv,
         buffer_length: int = 100,
         stats_key: str = "episode",
-    ):
+    ) -> None:
         """This wrapper will keep track of cumulative rewards and episode lengths.
 
         Args:
@@ -90,10 +102,10 @@ class RecordEpisodeStatistics(VectorWrapper):
 
         self.episode_count = 0
 
-        self.episode_start_times: np.ndarray = np.zeros((self.num_envs,))
-        self.episode_returns: np.ndarray = np.zeros((self.num_envs,))
-        self.episode_lengths: np.ndarray = np.zeros((self.num_envs,), dtype=int)
-        self.prev_dones: np.ndarray = np.zeros((self.num_envs,), dtype=bool)
+        self.episode_start_times = np.zeros((self.num_envs,))
+        self.episode_returns = np.zeros((self.num_envs,))
+        self.episode_lengths = np.zeros((self.num_envs,), dtype=int)
+        self.prev_dones = np.zeros((self.num_envs,), dtype=bool)
 
         self.time_queue = deque(maxlen=buffer_length)
         self.return_queue = deque(maxlen=buffer_length)
@@ -102,8 +114,8 @@ class RecordEpisodeStatistics(VectorWrapper):
     def reset(
         self,
         seed: int | list[int] | None = None,
-        options: dict | None = None,
-    ):
+        options: dict[str, Any] | None = None,
+    ) -> tuple[np.ndarray, dict[str, Any]]:
         """Resets the environment using kwargs and resets the episode returns and lengths."""
         obs, info = super().reset(seed=seed, options=options)
 
@@ -135,8 +147,14 @@ class RecordEpisodeStatistics(VectorWrapper):
         return obs, info
 
     def step(
-        self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
+        self, actions: np.ndarray
+    ) -> tuple[
+        np.ndarray,
+        npt.NDArray[np.float64],
+        npt.NDArray[np.bool_],
+        npt.NDArray[np.bool_],
+        dict[str, Any],
+    ]:
         """Steps through the environment, recording the episode statistics."""
         (
             observations,
@@ -180,7 +198,6 @@ class RecordEpisodeStatistics(VectorWrapper):
                 infos[f"_{self._stats_key}"] = dones
 
             self.episode_count += num_dones
-
             for i in np.where(dones):
                 self.time_queue.extend(episode_time_length[i])
                 self.return_queue.extend(self.episode_returns[i])

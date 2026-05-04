@@ -5,13 +5,12 @@
 
 from __future__ import annotations
 
-from typing import Any, SupportsFloat
+from typing import Any
 
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import ActType, ObsType
-from gymnasium.vector.vector_env import ArrayType, VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
 __all__ = ["NormalizeReward"]
@@ -64,12 +63,19 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         np.float64(0.2780030923586878)
     """
 
+    return_rms: RunningMeanStd
+    accumulated_reward: np.ndarray[tuple[int], np.dtype[np.float32]]
+    gamma: float
+    epsilon: float
+    _update_running_mean: bool
+    _prev_dones: np.ndarray[tuple[int], np.dtype[np.float32]]
+
     def __init__(
         self,
         env: VectorEnv,
         gamma: float = 0.99,
         epsilon: float = 1e-8,
-    ):
+    ) -> None:
         """This wrapper will normalize immediate rewards s.t. their exponential moving average has an approximately fixed variance.
 
         Args:
@@ -93,7 +99,7 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         return self._update_running_mean
 
     @update_running_mean.setter
-    def update_running_mean(self, setting: bool):
+    def update_running_mean(self, setting: bool) -> None:
         """Sets the property to freeze/continue the running mean calculation of the reward statistics."""
         self._update_running_mean = setting
 
@@ -102,15 +108,21 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         *,
         seed: int | list[int] | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+    ) -> tuple[np.ndarray, dict[str, Any]]:
         """Resets the environment and clears accumulated reward tracking state."""
         self.accumulated_reward[:] = 0
         self._prev_dones[:] = 0
         return super().reset(seed=seed, options=options)
 
     def step(
-        self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        self, actions: np.ndarray
+    ) -> tuple[
+        np.ndarray,
+        np.ndarray[tuple[int], np.dtype[np.float64]],
+        np.ndarray[tuple[int], np.dtype[np.bool_]],
+        np.ndarray[tuple[int], np.dtype[np.bool_]],
+        dict[str, Any],
+    ]:
         """Steps through the environment, normalizing the reward returned."""
         obs, reward, terminated, truncated, info = super().step(actions)
         active = ~self._prev_dones.astype(bool)
@@ -129,7 +141,7 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
             info,
         )
 
-    def normalize(self, reward: SupportsFloat):
+    def normalize(self, reward: float | np.floating | np.integer) -> np.float64:
         """Normalizes the rewards with the running mean rewards and their variance."""
         if self._update_running_mean:
             self.return_rms.update(self.accumulated_reward)
