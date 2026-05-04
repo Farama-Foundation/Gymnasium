@@ -81,7 +81,7 @@ class DictInfoToList(VectorWrapper):
         np.ndarray,
         npt.NDArray[np.float64],
         npt.NDArray[np.bool_],
-        npt.NDArray[np.bool],
+        npt.NDArray[np.bool_],
         list[dict[str, Any]],
     ]:  # ty:ignore[invalid-method-override]
         """Steps through the environment, convert dict info to list."""
