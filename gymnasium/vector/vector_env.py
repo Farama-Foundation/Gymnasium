@@ -121,7 +121,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
     metadata: dict[str, Any] = {}
     spec: EnvSpec | None = None
-    render_mode: tuple[RenderFrame, ...] | None = None
+    render_mode: str | None = None
     closed: bool = False
 
     observation_space: gym.Space
@@ -502,7 +502,7 @@ class VectorWrapper(VectorEnv):
         return self.env.spec
 
     @property
-    def render_mode(self) -> tuple[RenderFrame, ...] | None:
+    def render_mode(self) -> str | None:
         """Returns the `render_mode` from the base environment."""
         return self.env.render_mode
 
