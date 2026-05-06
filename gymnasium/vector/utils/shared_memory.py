@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import multiprocessing as mp
-from ctypes import c_bool
+from collections.abc import Mapping
+from ctypes import c_bool, c_int32, c_int64
 from functools import singledispatch
 from multiprocessing.sharedctypes import SynchronizedArray
-from typing import Any
+from types import ModuleType
+from typing import TYPE_CHECKING, Any, TypeAlias
 
 import numpy as np
 
@@ -26,13 +28,23 @@ from gymnasium.spaces import (
     flatten,
 )
 
+if TYPE_CHECKING:
+    from typing_extensions import Never, Unpack
+
 __all__ = ["create_shared_memory", "read_from_shared_memory", "write_to_shared_memory"]
+
+
+_SharedMemory: TypeAlias = dict[str, Any] | tuple[Any, ...] | SynchronizedArray
+_SharedMemoryOneOf: TypeAlias = tuple[
+    "SynchronizedArray[c_int64]",
+    "Unpack[tuple[SynchronizedArray[Any], ...]]",
+]
 
 
 @singledispatch
 def create_shared_memory(
-    space: Space[Any], n: int = 1, ctx=mp
-) -> dict[str, Any] | tuple[Any, ...] | SynchronizedArray:
+    space: Space[Any], n: int = 1, ctx: ModuleType = mp
+) -> _SharedMemory:
     """Create a shared memory object, to be shared across processes.
 
     This eventually contains the observations from the vectorized environment.
@@ -63,8 +75,10 @@ def create_shared_memory(
 @create_shared_memory.register(MultiDiscrete)
 @create_shared_memory.register(MultiBinary)
 def _create_base_shared_memory(
-    space: Box | Discrete | MultiDiscrete | MultiBinary, n: int = 1, ctx=mp
-):
+    space: Box | Discrete | MultiDiscrete | MultiBinary,
+    n: int = 1,
+    ctx: ModuleType = mp,
+) -> SynchronizedArray[Any]:
     assert space.dtype is not None
     assert space.shape is not None
     dtype = space.dtype.char
@@ -74,14 +88,18 @@ def _create_base_shared_memory(
 
 
 @create_shared_memory.register(Tuple)
-def _create_tuple_shared_memory(space: Tuple, n: int = 1, ctx=mp):
+def _create_tuple_shared_memory(
+    space: Tuple, n: int = 1, ctx: ModuleType = mp
+) -> tuple[Any, ...]:
     return tuple(
         create_shared_memory(subspace, n=n, ctx=ctx) for subspace in space.spaces
     )
 
 
 @create_shared_memory.register(Dict)
-def _create_dict_shared_memory(space: Dict, n: int = 1, ctx=mp):
+def _create_dict_shared_memory(
+    space: Dict, n: int = 1, ctx: ModuleType = mp
+) -> dict[str, Any]:
     return {
         key: create_shared_memory(subspace, n=n, ctx=ctx)
         for (key, subspace) in space.spaces.items()
@@ -89,12 +107,16 @@ def _create_dict_shared_memory(space: Dict, n: int = 1, ctx=mp):
 
 
 @create_shared_memory.register(Text)
-def _create_text_shared_memory(space: Text, n: int = 1, ctx=mp):
+def _create_text_shared_memory(
+    space: Text, n: int = 1, ctx: ModuleType = mp
+) -> SynchronizedArray[c_int32]:
     return ctx.Array(np.dtype(np.int32).char, n * space.max_length)
 
 
 @create_shared_memory.register(OneOf)
-def _create_oneof_shared_memory(space: OneOf, n: int = 1, ctx=mp):
+def _create_oneof_shared_memory(
+    space: OneOf, n: int = 1, ctx: ModuleType = mp
+) -> _SharedMemoryOneOf:
     return (ctx.Array(np.dtype(np.int64).char, n),) + tuple(
         create_shared_memory(subspace, n=n, ctx=ctx) for subspace in space.spaces
     )
@@ -102,7 +124,9 @@ def _create_oneof_shared_memory(space: OneOf, n: int = 1, ctx=mp):
 
 @create_shared_memory.register(Graph)
 @create_shared_memory.register(Sequence)
-def _create_dynamic_shared_memory(space: Graph | Sequence, n: int = 1, ctx=mp):
+def _create_dynamic_shared_memory(
+    space: Graph | Sequence, n: int = 1, ctx: ModuleType = mp
+) -> Never:
     raise TypeError(
         f"As {space} has a dynamic shape so its not possible to make a static shared memory. For `AsyncVectorEnv`, disable `shared_memory`."
     )
@@ -110,7 +134,7 @@ def _create_dynamic_shared_memory(space: Graph | Sequence, n: int = 1, ctx=mp):
 
 @singledispatch
 def read_from_shared_memory(
-    space: Space, shared_memory: dict | tuple | SynchronizedArray, n: int = 1
+    space: Space, shared_memory: _SharedMemory, n: int = 1
 ) -> dict[str, Any] | tuple[Any, ...] | np.ndarray:
     """Read the batch of observations from shared memory as a numpy array.
 
@@ -146,15 +170,22 @@ def read_from_shared_memory(
 @read_from_shared_memory.register(MultiDiscrete)
 @read_from_shared_memory.register(MultiBinary)
 def _read_base_from_shared_memory(
-    space: Box | Discrete | MultiDiscrete | MultiBinary, shared_memory, n: int = 1
-):
-    return np.frombuffer(shared_memory.get_obj(), dtype=space.dtype).reshape(
-        (n,) + space.shape
-    )
+    space: Box | Discrete | MultiDiscrete | MultiBinary,
+    shared_memory: SynchronizedArray[Any],
+    n: int = 1,
+) -> np.ndarray:
+    assert space.shape is not None
+    # the `ty:ignore` is needed because of a bug in the typeshed `multiprocessing` stubs
+    return np.frombuffer(  # ty:ignore[no-matching-overload]
+        shared_memory.get_obj(),
+        dtype=space.dtype,
+    ).reshape((n,) + space.shape)
 
 
 @read_from_shared_memory.register(Tuple)
-def _read_tuple_from_shared_memory(space: Tuple, shared_memory, n: int = 1):
+def _read_tuple_from_shared_memory(
+    space: Tuple, shared_memory: tuple[_SharedMemory, ...], n: int = 1
+) -> tuple[Any, ...]:
     return tuple(
         read_from_shared_memory(subspace, memory, n=n)
         for (memory, subspace) in zip(shared_memory, space.spaces, strict=True)
@@ -162,7 +193,9 @@ def _read_tuple_from_shared_memory(space: Tuple, shared_memory, n: int = 1):
 
 
 @read_from_shared_memory.register(Dict)
-def _read_dict_from_shared_memory(space: Dict, shared_memory, n: int = 1):
+def _read_dict_from_shared_memory(
+    space: Dict, shared_memory: dict[str, _SharedMemory], n: int = 1
+) -> dict[str, Any]:
     return {
         key: read_from_shared_memory(subspace, shared_memory[key], n=n)
         for (key, subspace) in space.spaces.items()
@@ -171,11 +204,13 @@ def _read_dict_from_shared_memory(space: Dict, shared_memory, n: int = 1):
 
 @read_from_shared_memory.register(Text)
 def _read_text_from_shared_memory(
-    space: Text, shared_memory, n: int = 1
+    space: Text, shared_memory: SynchronizedArray[c_int32], n: int = 1
 ) -> tuple[str, ...]:
-    data = np.frombuffer(shared_memory.get_obj(), dtype=np.int32).reshape(
-        (n, space.max_length)
-    )
+    # the `ty:ignore` is needed because of a bug in the typeshed `multiprocessing` stubs
+    data = np.frombuffer(  # ty:ignore[no-matching-overload]
+        shared_memory.get_obj(),
+        dtype=np.int32,
+    ).reshape((n, space.max_length))
 
     return tuple(
         "".join(
@@ -191,7 +226,7 @@ def _read_text_from_shared_memory(
 
 @read_from_shared_memory.register(OneOf)
 def _read_one_of_from_shared_memory(
-    space: OneOf, shared_memory, n: int = 1
+    space: OneOf, shared_memory: _SharedMemoryOneOf, n: int = 1
 ) -> tuple[Any, ...]:
     sample_indexes = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)
 
@@ -211,7 +246,7 @@ def write_to_shared_memory(
     index: int,
     value: np.ndarray,
     shared_memory: dict[str, Any] | tuple[Any, ...] | SynchronizedArray,
-):
+) -> None:
     """Write the observation of a single environment into shared memory.
 
     Args:
@@ -241,12 +276,13 @@ def write_to_shared_memory(
 def _write_base_to_shared_memory(
     space: Box | Discrete | MultiDiscrete | MultiBinary,
     index: int,
-    value,
-    shared_memory,
-):
+    value: np.typing.ArrayLike,
+    shared_memory: SynchronizedArray[Any],
+) -> None:
     assert space.shape is not None
     size = int(np.prod(space.shape))
-    destination = np.frombuffer(shared_memory.get_obj(), dtype=space.dtype)
+    # the `ty:ignore` is needed because of a bug in the typeshed `multiprocessing` stubs
+    destination = np.frombuffer(shared_memory.get_obj(), dtype=space.dtype)  # ty:ignore[no-matching-overload]
     np.copyto(
         destination[index * size : (index + 1) * size],
         np.asarray(value, dtype=space.dtype).flatten(),
@@ -255,8 +291,11 @@ def _write_base_to_shared_memory(
 
 @write_to_shared_memory.register(Tuple)
 def _write_tuple_to_shared_memory(
-    space: Tuple, index: int, values: tuple[Any, ...], shared_memory
-):
+    space: Tuple,
+    index: int,
+    values: tuple[Any, ...],
+    shared_memory: tuple[_SharedMemory, ...],
+) -> None:
     for value, memory, subspace in zip(
         values, shared_memory, space.spaces, strict=True
     ):
@@ -265,26 +304,29 @@ def _write_tuple_to_shared_memory(
 
 @write_to_shared_memory.register(Dict)
 def _write_dict_to_shared_memory(
-    space: Dict, index: int, values: dict[str, Any], shared_memory
-):
+    space: Dict, index: int, values: dict[str, Any], shared_memory: Mapping[str, Any]
+) -> None:
     for key, subspace in space.spaces.items():
         write_to_shared_memory(subspace, index, values[key], shared_memory[key])
 
 
 @write_to_shared_memory.register(Text)
-def _write_text_to_shared_memory(space: Text, index: int, values: str, shared_memory):
+def _write_text_to_shared_memory(
+    space: Text, index: int, values: str, shared_memory: SynchronizedArray[c_int32]
+) -> None:
     size = space.max_length
-    destination = np.frombuffer(shared_memory.get_obj(), dtype=np.int32)
+    # the `ty:ignore` is needed because of a bug in the typeshed `multiprocessing` stubs
+    destination = np.frombuffer(shared_memory.get_obj(), dtype=np.int32)  # ty:ignore[no-matching-overload]
     np.copyto(
         destination[index * size : (index + 1) * size],
-        flatten(space, values),
+        flatten(space, values),  # ty:ignore[invalid-argument-type]
     )
 
 
 @write_to_shared_memory.register(OneOf)
 def _write_oneof_to_shared_memory(
-    space: OneOf, index: int, values: tuple[int, Any], shared_memory
-):
+    space: OneOf, index: int, values: tuple[int, Any], shared_memory: _SharedMemoryOneOf
+) -> None:
     subspace_idx, space_value = values
 
     destination = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)
