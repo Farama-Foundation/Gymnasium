@@ -372,10 +372,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">ctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">c_bool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">c_bool</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">,</span> <span class="n">c_int64</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">singledispatch</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.sharedctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynchronizedArray</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeAlias</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -395,15 +397,25 @@
     <span class="n">flatten</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Never</span><span class="p">,</span> <span class="n">Unpack</span>
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;create_shared_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;read_from_shared_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;write_to_shared_memory&quot;</span><span class="p">]</span>
+
+
+<span class="n">_SharedMemory</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">SynchronizedArray</span>
+<span class="n">_SharedMemoryOneOf</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="s2">&quot;SynchronizedArray[c_int64]&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Unpack[tuple[SynchronizedArray[Any], ...]]&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="create_shared_memory">
 <a class="viewcode-back" href="../../../../../api/vector/utils/#gymnasium.vector.utils.create_shared_memory">[docs]</a>
 <span class="nd">@singledispatch</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_shared_memory</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mp</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">SynchronizedArray</span><span class="p">:</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">mp</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_SharedMemory</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a shared memory object, to be shared across processes.</span>
 
 <span class="sd">    This eventually contains the observations from the vectorized environment.</span>
@@ -435,8 +447,10 @@
 <span class="nd">@create_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
 <span class="nd">@create_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_create_base_shared_memory</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="n">MultiDiscrete</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mp</span>
-<span class="p">):</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="n">MultiDiscrete</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">,</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">ctx</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">mp</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SynchronizedArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">dtype</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span>
@@ -446,14 +460,18 @@
 
 
 <span class="nd">@create_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_tuple_shared_memory</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mp</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_tuple_shared_memory</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">mp</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
         <span class="n">create_shared_memory</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span> <span class="k">for</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span>
     <span class="p">)</span>
 
 
 <span class="nd">@create_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_dict_shared_memory</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mp</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_dict_shared_memory</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">mp</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="n">key</span><span class="p">:</span> <span class="n">create_shared_memory</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">subspace</span><span class="p">)</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -461,12 +479,16 @@
 
 
 <span class="nd">@create_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_text_shared_memory</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mp</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_text_shared_memory</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">mp</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SynchronizedArray</span><span class="p">[</span><span class="n">c_int32</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">char</span><span class="p">,</span> <span class="n">n</span> <span class="o">*</span> <span class="n">space</span><span class="o">.</span><span class="n">max_length</span><span class="p">)</span>
 
 
 <span class="nd">@create_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_oneof_shared_memory</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mp</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_oneof_shared_memory</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">mp</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_SharedMemoryOneOf</span><span class="p">:</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span><span class="o">.</span><span class="n">char</span><span class="p">,</span> <span class="n">n</span><span class="p">),)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span>
         <span class="n">create_shared_memory</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span> <span class="k">for</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span>
     <span class="p">)</span>
@@ -474,7 +496,9 @@
 
 <span class="nd">@create_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Graph</span><span class="p">)</span>
 <span class="nd">@create_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_dynamic_shared_memory</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">mp</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_dynamic_shared_memory</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Graph</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">mp</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Never</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;As </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2"> has a dynamic shape so its not possible to make a static shared memory. For `AsyncVectorEnv`, disable `shared_memory`.&quot;</span>
     <span class="p">)</span>
@@ -484,7 +508,7 @@
 <a class="viewcode-back" href="../../../../../api/vector/utils/#gymnasium.vector.utils.read_from_shared_memory">[docs]</a>
 <span class="nd">@singledispatch</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">read_from_shared_memory</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">tuple</span> <span class="o">|</span> <span class="n">SynchronizedArray</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="n">_SharedMemory</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the batch of observations from shared memory as a numpy array.</span>
 
@@ -521,15 +545,22 @@
 <span class="nd">@read_from_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
 <span class="nd">@read_from_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_base_from_shared_memory</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="n">MultiDiscrete</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">shared_memory</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">n</span><span class="p">,)</span> <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span>
-    <span class="p">)</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="n">MultiDiscrete</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">,</span>
+    <span class="n">shared_memory</span><span class="p">:</span> <span class="n">SynchronizedArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="c1"># the `ty:ignore` is needed because of a bug in the typeshed `multiprocessing` stubs</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span>  <span class="c1"># ty:ignore[no-matching-overload]</span>
+        <span class="n">shared_memory</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,)</span> <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
 
 <span class="nd">@read_from_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_read_tuple_from_shared_memory</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_tuple_from_shared_memory</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">_SharedMemory</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
         <span class="n">read_from_shared_memory</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">memory</span><span class="p">,</span> <span class="n">subspace</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">shared_memory</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -537,7 +568,9 @@
 
 
 <span class="nd">@read_from_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_read_dict_from_shared_memory</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_dict_from_shared_memory</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_SharedMemory</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="n">key</span><span class="p">:</span> <span class="n">read_from_shared_memory</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">subspace</span><span class="p">)</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
@@ -546,11 +579,13 @@
 
 <span class="nd">@read_from_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_text_from_shared_memory</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="n">SynchronizedArray</span><span class="p">[</span><span class="n">c_int32</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">shared_memory</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">max_length</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="c1"># the `ty:ignore` is needed because of a bug in the typeshed `multiprocessing` stubs</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span>  <span class="c1"># ty:ignore[no-matching-overload]</span>
+        <span class="n">shared_memory</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">max_length</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
         <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -566,7 +601,7 @@
 
 <span class="nd">@read_from_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_read_one_of_from_shared_memory</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="n">_SharedMemoryOneOf</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
     <span class="n">sample_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">shared_memory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
 
@@ -588,7 +623,7 @@
     <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">shared_memory</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">SynchronizedArray</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Write the observation of a single environment into shared memory.</span>
 
 <span class="sd">    Args:</span>
@@ -619,12 +654,13 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_write_base_to_shared_memory</span><span class="p">(</span>
     <span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="n">MultiDiscrete</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">,</span>
     <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">value</span><span class="p">,</span>
-    <span class="n">shared_memory</span><span class="p">,</span>
-<span class="p">):</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">shared_memory</span><span class="p">:</span> <span class="n">SynchronizedArray</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-    <span class="n">destination</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">shared_memory</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="c1"># the `ty:ignore` is needed because of a bug in the typeshed `multiprocessing` stubs</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">shared_memory</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>  <span class="c1"># ty:ignore[no-matching-overload]</span>
     <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span>
         <span class="n">destination</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="n">size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">size</span><span class="p">],</span>
         <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
@@ -633,8 +669,11 @@
 
 <span class="nd">@write_to_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_write_tuple_to_shared_memory</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">shared_memory</span>
-<span class="p">):</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">values</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">shared_memory</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">_SharedMemory</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">memory</span><span class="p">,</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
         <span class="n">values</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">):</span>
@@ -643,26 +682,29 @@
 
 <span class="nd">@write_to_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_write_dict_to_shared_memory</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">shared_memory</span>
-<span class="p">):</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">write_to_shared_memory</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">shared_memory</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
 
 <span class="nd">@write_to_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_write_text_to_shared_memory</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_write_text_to_shared_memory</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="n">SynchronizedArray</span><span class="p">[</span><span class="n">c_int32</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">max_length</span>
-    <span class="n">destination</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">shared_memory</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="c1"># the `ty:ignore` is needed because of a bug in the typeshed `multiprocessing` stubs</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">shared_memory</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>  <span class="c1"># ty:ignore[no-matching-overload]</span>
     <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span>
         <span class="n">destination</span><span class="p">[</span><span class="n">index</span> <span class="o">*</span> <span class="n">size</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">size</span><span class="p">],</span>
-        <span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">values</span><span class="p">),</span>
+        <span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">values</span><span class="p">),</span>  <span class="c1"># ty:ignore[invalid-argument-type]</span>
     <span class="p">)</span>
 
 
 <span class="nd">@write_to_shared_memory</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_write_oneof_to_shared_memory</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">shared_memory</span>
-<span class="p">):</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="n">_SharedMemoryOneOf</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">subspace_idx</span><span class="p">,</span> <span class="n">space_value</span> <span class="o">=</span> <span class="n">values</span>
 
     <span class="n">destination</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">shared_memory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
