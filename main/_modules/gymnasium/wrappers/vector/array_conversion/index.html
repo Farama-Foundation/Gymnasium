@@ -408,11 +408,11 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
-        <span class="n">env_xp</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">target_xp</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">|</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">env_xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span>
+        <span class="n">target_xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span>
         <span class="n">env_device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">target_device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper class to change inputs and outputs of environment to any Array API framework.</span>
 
 <span class="sd">        Args:</span>
@@ -479,7 +479,7 @@
             <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the object pickle state with args and kwargs.&quot;&quot;&quot;</span>
         <span class="n">env_xp_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;array_api_compat.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">target_xp_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;array_api_compat.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -493,7 +493,7 @@
             <span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
         <span class="p">}</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the object pickle state using d.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;env&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span> <span class="o">=</span> <span class="n">module_name_to_namespace</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;env_xp_name&quot;</span><span class="p">])</span>
