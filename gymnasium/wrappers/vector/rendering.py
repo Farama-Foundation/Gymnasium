@@ -6,23 +6,43 @@ import gc
 import os
 from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Generic
 
 import numpy as np
+import numpy.typing as npt
 
 import gymnasium as gym
 from gymnasium import error, logger
-from gymnasium.core import ActType, ObsType, RenderFrame
+from gymnasium.core import RenderFrame
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.logger import warn
 from gymnasium.vector import VectorEnv, VectorWrapper
-from gymnasium.vector.vector_env import ArrayType
 
 if TYPE_CHECKING:
     import pygame
 
 
-class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
+if TYPE_CHECKING:
+    from typing_extensions import TypeVar
+
+    _ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
+    _ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
+    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
+    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
+else:
+    from typing import TypeVar
+
+    _ObsT_co = TypeVar("_ObsT_co", covariant=True)
+    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
+    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True)
+    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True)
+
+
+class HumanRendering(
+    VectorWrapper[_ObsT_co, _ActT_contra, _RewardArrT_co, _BoolArrT_co],
+    gym.utils.RecordConstructorArgs,
+    Generic[_ObsT_co, _ActT_contra, _RewardArrT_co, _BoolArrT_co],
+):
     """Adds support for Human-based Rendering for Vector-based environments."""
 
     ACCEPTED_RENDER_MODES = [
@@ -40,7 +60,11 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
     clock: pygame.time.Clock | None
     metadata: dict[str, Any]
 
-    def __init__(self, env: VectorEnv, screen_size: tuple[int, int] | None = None):
+    def __init__(
+        self,
+        env: VectorEnv[_ObsT_co, _ActT_contra, _RewardArrT_co, _BoolArrT_co],
+        screen_size: tuple[int, int] | None = None,
+    ) -> None:
         """Constructor for Human Rendering of Vector-based environments.
 
         Args:
@@ -72,8 +96,8 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
         return "human"
 
     def step(
-        self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        self, actions: _ActT_contra
+    ) -> tuple[_ObsT_co, _RewardArrT_co, _BoolArrT_co, _BoolArrT_co, dict[str, Any]]:
         """Perform a step in the base environment and render a frame to the screen."""
         result = super().step(actions)
         self._render_frame()
@@ -84,7 +108,7 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
         *,
         seed: int | list[int] | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+    ) -> tuple[_ObsT_co, dict[str, Any]]:
         """Reset the base environment and render a frame to the screen."""
         result = super().reset(seed=seed, options=options)
         self._render_frame()
@@ -205,8 +229,9 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
 
 
 class RecordVideo(
-    gym.vector.VectorWrapper,
+    VectorWrapper[_ObsT_co, _ActT_contra, _RewardArrT_co, npt.NDArray[np.bool_]],
     gym.utils.RecordConstructorArgs,
+    Generic[_ObsT_co, _ActT_contra, _RewardArrT_co],
 ):
     """Adds support for video recording for Vector-based environments.
 
@@ -259,7 +284,7 @@ class RecordVideo(
 
     def __init__(
         self,
-        env: gym.vector.VectorEnv,
+        env: VectorEnv[_ObsT_co, _ActT_contra, _RewardArrT_co, _BoolArrT_co],
         video_folder: str,
         video_aspect_ratio: tuple[int, int] = (1, 1),
         record_first_only: bool = False,
@@ -270,7 +295,7 @@ class RecordVideo(
         fps: int | None = None,
         disable_logger: bool = True,
         gc_trigger: Callable[[int], bool] | None = lambda episode: True,
-    ):
+    ) -> None:
         """Wrapper records videos of environment rollouts.
 
         Args:
@@ -387,7 +412,7 @@ class RecordVideo(
         self.frame_rows = best_rows
         self.frame_cols = best_cols
 
-    def _concat_frames(self, frames: np.typing.ArrayLike) -> np.ndarray:
+    def _concat_frames(self, frames: npt.ArrayLike) -> np.ndarray:
         """Concatenates a list of frames into one large frame."""
         frames = np.array(frames)
         n_frames, h, w, c = frames.shape
@@ -420,7 +445,7 @@ class RecordVideo(
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[ObsType, dict[str, Any]]:
+    ) -> tuple[_ObsT_co, dict[str, Any]]:
         """Reset the environment and eventually starts a new recording."""
         if options is None or "reset_mask" not in options or options["reset_mask"][0]:
             self.episode_id += 1
@@ -443,8 +468,14 @@ class RecordVideo(
         return obs, info
 
     def step(
-        self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        self, actions: _ActT_contra
+    ) -> tuple[
+        _ObsT_co,
+        _RewardArrT_co,
+        npt.NDArray[np.bool_],
+        npt.NDArray[np.bool_],
+        dict[str, Any],
+    ]:
         """Steps through the environment using action, recording observations if :attr:`self.recording`."""
         obs, rewards, terminations, truncations, info = self.env.step(actions)
         self.step_id += 1
@@ -494,7 +525,7 @@ class RecordVideo(
         else:
             return render_out
 
-    def close(self) -> None:
+    def close(self, **kwargs: Any) -> None:
         """Closes the wrapper then the video recorder."""
         super().close()
         if self.recording:
