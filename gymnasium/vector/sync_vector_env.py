@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator, Sequence
+from collections.abc import Callable, Sequence
 from copy import deepcopy
 from typing import Any
 
@@ -60,13 +60,26 @@ class SyncVectorEnv(VectorEnv):
         >>> envs.close()
     """
 
+    env_fns: Sequence[Callable[[], Env]]
+    copy: bool
+    observation_mode: str | tuple[Space, Space]
+    autoreset_mode: AutoresetMode
+    envs: list[Env]
+    num_envs: int
+    metadata: dict[str, Any]
+    render_mode: str | None
+    single_action_space: Space
+    action_space: Space
+    single_observation_space: Space
+    observation_space: Space
+
     def __init__(
         self,
-        env_fns: Iterator[Callable[[], Env]] | Sequence[Callable[[], Env]],
+        env_fns: Sequence[Callable[[], Env]],
         copy: bool = True,
-        observation_mode: str | Space = "same",
+        observation_mode: str | tuple[Space, Space] = "same",
         autoreset_mode: str | AutoresetMode = AutoresetMode.NEXT_STEP,
-    ):
+    ) -> None:
         """Vectorized environment that serially runs multiple environments.
 
         Args:
@@ -310,7 +323,7 @@ class SyncVectorEnv(VectorEnv):
             infos,
         )
 
-    def render(self) -> tuple[RenderFrame, ...] | None:
+    def render(self) -> tuple[RenderFrame, ...]:
         """Returns the rendered frames from the environments."""
         return tuple(env.render() for env in self.envs)
 
@@ -347,7 +360,7 @@ class SyncVectorEnv(VectorEnv):
         """
         return self.call(name)
 
-    def set_attr(self, name: str, values: list[Any] | tuple[Any, ...] | Any):
+    def set_attr(self, name: str, values: list[Any] | tuple[Any, ...] | Any) -> None:
         """Sets an attribute of the sub-environments.
 
         Args:
@@ -371,7 +384,7 @@ class SyncVectorEnv(VectorEnv):
         for env, value in zip(self.envs, values, strict=True):
             env.set_wrapper_attr(name, value)
 
-    def close_extras(self, **kwargs: Any):
+    def close_extras(self, **kwargs: Any) -> None:
         """Close the environments."""
         if hasattr(self, "envs"):
             [env.close() for env in self.envs]
