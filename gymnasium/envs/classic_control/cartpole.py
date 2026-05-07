@@ -5,7 +5,7 @@ permalink: https://perma.cc/C9ZM-652R
 """
 
 import math
-from typing import Any
+from typing import Any, TypeAlias
 
 import numpy as np
 
@@ -15,6 +15,11 @@ from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.vector import AutoresetMode, VectorEnv
 from gymnasium.vector.utils import batch_space
+
+_VecBool: TypeAlias = np.ndarray[tuple[int], np.dtype[np.bool_]]
+_VecInt: TypeAlias = np.ndarray[tuple[int], np.dtype[np.integer]]
+_VecF32: TypeAlias = np.ndarray[tuple[int], np.dtype[np.float32]]
+_MatF32: TypeAlias = np.ndarray[tuple[int, int], np.dtype[np.float32]]
 
 
 class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
@@ -229,8 +234,8 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
         self,
         *,
         seed: int | None = None,
-        options: dict | None = None,
-    ):
+        options: dict[str, Any] | None = None,
+    ) -> tuple[_VecF32, dict[str, Any]]:
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.
@@ -352,7 +357,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
             self.isopen = False
 
 
-class CartPoleVectorEnv(VectorEnv):
+class CartPoleVectorEnv(VectorEnv[_MatF32, _VecInt, _VecF32, _VecBool]):
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 50,
@@ -419,8 +424,8 @@ class CartPoleVectorEnv(VectorEnv):
         self.steps_beyond_terminated = None
 
     def step(
-        self, action: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
+        self, action: _VecInt
+    ) -> tuple[_MatF32, _VecF32, _VecBool, _VecBool, dict[str, Any]]:
         assert self.action_space.contains(action), (
             f"{action!r} ({type(action)}) invalid"
         )
@@ -488,8 +493,8 @@ class CartPoleVectorEnv(VectorEnv):
         self,
         *,
         seed: int | None = None,
-        options: dict | None = None,
-    ):
+        options: dict[str, Any] | None = None,
+    ) -> tuple[_MatF32, dict[str, Any]]:
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.

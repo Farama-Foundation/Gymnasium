@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any, Generic
+
 import jax.numpy as jnp
 import numpy as np
 
@@ -12,7 +14,26 @@ from gymnasium.wrappers.vector.array_conversion import ArrayConversion
 __all__ = ["JaxToNumpy"]
 
 
-class JaxToNumpy(ArrayConversion):
+if TYPE_CHECKING:
+    from typing_extensions import TypeVar
+
+    _ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
+    _ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
+    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
+    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
+else:
+    from typing import TypeVar
+
+    _ObsT_co = TypeVar("_ObsT_co", covariant=True)
+    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
+    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True)
+    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True)
+
+
+class JaxToNumpy(
+    ArrayConversion[_ObsT_co, _ActT_contra, _RewardArrT_co, _BoolArrT_co],
+    Generic[_ObsT_co, _ActT_contra, _RewardArrT_co, _BoolArrT_co],
+):
     """Wraps a jax vector environment so that it can be interacted with through numpy arrays.
 
     Notes:
@@ -26,7 +47,10 @@ class JaxToNumpy(ArrayConversion):
         >>> envs = JaxToNumpy(envs)                                         # doctest: +SKIP
     """
 
-    def __init__(self, env: VectorEnv):
+    def __init__(
+        self,
+        env: VectorEnv[_ObsT_co, _ActT_contra, _RewardArrT_co, _BoolArrT_co],
+    ) -> None:
         """Wraps an environment such that the input and outputs are numpy arrays.
 
         Args:
