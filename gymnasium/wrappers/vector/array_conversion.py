@@ -37,11 +37,11 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
     def __init__(
         self,
         env: VectorEnv,
-        env_xp: ModuleType | str,
-        target_xp: ModuleType | str,
+        env_xp: ModuleType,
+        target_xp: ModuleType,
         env_device: Device | None = None,
         target_device: Device | None = None,
-    ):
+    ) -> None:
         """Wrapper class to change inputs and outputs of environment to any Array API framework.
 
         Args:
@@ -108,7 +108,7 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
             device=self._target_device,
         )
 
-    def __getstate__(self):
+    def __getstate__(self) -> dict[str, Any]:
         """Returns the object pickle state with args and kwargs."""
         env_xp_name = self._env_xp.__name__.replace("array_api_compat.", "")
         target_xp_name = self._target_xp.__name__.replace("array_api_compat.", "")
@@ -122,7 +122,7 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
             "env": self.env,
         }
 
-    def __setstate__(self, d):
+    def __setstate__(self, d: dict[str, Any]) -> None:
         """Sets the object pickle state using d."""
         self.env = d["env"]
         self._env_xp = module_name_to_namespace(d["env_xp_name"])
