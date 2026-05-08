@@ -475,7 +475,7 @@
     <span class="n">disable_env_checker</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Environment arguments</span>
-    <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
 
     <span class="c1"># post-init attributes</span>
     <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -799,7 +799,7 @@
 
     <span class="n">latest_spec</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
         <span class="n">versioned_specs</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">env_spec</span><span class="p">:</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
-    <span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="p">)</span>
     <span class="k">if</span> <span class="n">latest_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">version</span> <span class="o">&gt;</span> <span class="n">latest_spec</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
         <span class="n">version_list_msg</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;`v</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">`&quot;</span> <span class="k">for</span> <span class="n">env_spec</span> <span class="ow">in</span> <span class="n">env_specs</span><span class="p">)</span>
         <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; It provides versioned environments: [ </span><span class="si">{</span><span class="n">version_list_msg</span><span class="si">}</span><span class="s2"> ].&quot;</span>
@@ -823,7 +823,7 @@
             <span class="ow">and</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">testing_spec</span><span class="o">.</span><span class="n">name</span>
             <span class="ow">and</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">),</span>
-        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">spec_</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">spec_</span><span class="o">.</span><span class="n">version</span><span class="p">),</span>  <span class="c1"># type: ignore</span>
+        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">spec_</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">spec_</span><span class="o">.</span><span class="n">version</span><span class="p">),</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -1126,7 +1126,7 @@
             <span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">env_creator</span><span class="p">(</span><span class="o">**</span><span class="n">env_spec_kwargs</span><span class="p">)</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">env_creator</span><span class="p">(</span><span class="o">**</span><span class="n">env_spec_kwargs</span><span class="p">)</span>  <span class="c1"># ty:ignore[call-top-callable]</span>
     <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;got an unexpected keyword argument &#39;render_mode&#39;&quot;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
@@ -1312,7 +1312,7 @@
             <span class="p">)</span>
 
         <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">SyncVectorEnv</span><span class="p">(</span>
-            <span class="n">env_fns</span><span class="o">=</span><span class="p">(</span><span class="n">create_single_env</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_envs</span><span class="p">)),</span>
+            <span class="n">env_fns</span><span class="o">=</span><span class="p">[</span><span class="n">create_single_env</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_envs</span><span class="p">)],</span>
             <span class="o">**</span><span class="n">vector_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">elif</span> <span class="n">vectorization_mode</span> <span class="o">==</span> <span class="n">VectorizeMode</span><span class="o">.</span><span class="n">ASYNC</span><span class="p">:</span>
@@ -1356,7 +1356,7 @@
         <span class="p">):</span>
             <span class="n">env_spec_kwargs</span><span class="p">[</span><span class="s2">&quot;max_episode_steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
 
-        <span class="n">env</span> <span class="o">=</span> <span class="n">env_creator</span><span class="p">(</span><span class="n">num_envs</span><span class="o">=</span><span class="n">num_envs</span><span class="p">,</span> <span class="o">**</span><span class="n">env_spec_kwargs</span><span class="p">)</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">env_creator</span><span class="p">(</span><span class="n">num_envs</span><span class="o">=</span><span class="n">num_envs</span><span class="p">,</span> <span class="o">**</span><span class="n">env_spec_kwargs</span><span class="p">)</span>  <span class="c1"># ty:ignore[call-top-callable]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown vectorization mode: </span><span class="si">{</span><span class="n">vectorization_mode</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
