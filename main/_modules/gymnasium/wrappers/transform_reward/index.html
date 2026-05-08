@@ -483,7 +483,9 @@
             <span class="bp">self</span><span class="p">,</span> <span class="n">min_reward</span><span class="o">=</span><span class="n">min_reward</span><span class="p">,</span> <span class="n">max_reward</span><span class="o">=</span><span class="n">max_reward</span>
         <span class="p">)</span>
         <span class="n">TransformReward</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="n">min_reward</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="n">max_reward</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="n">min_reward</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="n">max_reward</span><span class="p">),</span>  <span class="c1"># ty:ignore[no-matching-overload]</span>
         <span class="p">)</span></div>
 
 </pre></div>

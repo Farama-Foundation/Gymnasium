@@ -396,9 +396,9 @@
 <div class="viewcode-block" id="convert_to_terminated_truncated_step_api">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_to_terminated_truncated_step_api</span><span class="p">(</span>
-    <span class="n">step_returns</span><span class="p">:</span> <span class="n">DoneStepType</span> <span class="o">|</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">,</span>
+    <span class="n">step_returns</span><span class="p">:</span> <span class="n">DoneStepType</span><span class="p">[</span><span class="n">ObsType</span><span class="p">]</span> <span class="o">|</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">[</span><span class="n">ObsType</span><span class="p">],</span>
     <span class="n">is_vector_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">[</span><span class="n">ObsType</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to transform step returns to new step API irrespective of input API.</span>
 
 <span class="sd">    .. py:currentmodule:: gymnasium.Env</span>
@@ -415,7 +415,7 @@
 
         <span class="c1"># Cases to handle - info single env /  info vector env (list) / info vector env (dict)</span>
         <span class="k">if</span> <span class="n">is_vector_env</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="n">truncated</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># ty:ignore[no-matching-overload,too-many-positional-arguments]</span>
+            <span class="n">truncated</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># ty:ignore[too-many-positional-arguments]</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">observations</span><span class="p">,</span>
                 <span class="n">rewards</span><span class="p">,</span>
@@ -484,7 +484,7 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">info</span><span class="p">,</span> <span class="n">env_truncated</span><span class="p">,</span> <span class="n">env_terminated</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
                 <span class="n">infos</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span>
-            <span class="p">):</span>
+            <span class="p">):</span>  <span class="c1"># ty:ignore[not-iterable]</span>
                 <span class="k">if</span> <span class="n">env_truncated</span> <span class="ow">or</span> <span class="n">env_terminated</span><span class="p">:</span>
                     <span class="n">info</span><span class="p">[</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_truncated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">env_terminated</span>
             <span class="k">return</span> <span class="p">(</span>
