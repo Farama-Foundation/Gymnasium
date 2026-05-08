@@ -293,7 +293,7 @@ def play(
         if isinstance(key_combination, int):
             key_combination = (key_combination,)
         key_code = tuple(
-            sorted(ord(key) if isinstance(key, str) else key for key in key_combination)  # ty:ignore[not-iterable]
+            sorted(ord(key) if isinstance(key, str) else key for key in key_combination)
         )
         key_code_to_action[key_code] = action
 
