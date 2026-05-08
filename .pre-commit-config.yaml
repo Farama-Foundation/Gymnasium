@@ -53,4 +53,4 @@ repos:
         language: python
         pass_filenames: false
         types: [python]
-        additional_dependencies: ["ty==0.0.9"]
+        additional_dependencies: ["ty==0.0.34", "numpy", "cloudpickle"]
