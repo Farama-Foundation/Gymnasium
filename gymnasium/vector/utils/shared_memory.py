@@ -228,7 +228,8 @@ def _read_text_from_shared_memory(
 def _read_one_of_from_shared_memory(
     space: OneOf, shared_memory: _SharedMemoryOneOf, n: int = 1
 ) -> tuple[Any, ...]:
-    sample_indexes = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)
+    # typeshed bug: `Array[_SimpleCData[c_int64]]` is missing `__buffer__` method stubs
+    sample_indexes = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)  # ty:ignore[no-matching-overload]
 
     subspace_samples = tuple(
         read_from_shared_memory(subspace, memory, n=n)
@@ -329,7 +330,8 @@ def _write_oneof_to_shared_memory(
 ) -> None:
     subspace_idx, space_value = values
 
-    destination = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)
+    # typeshed bug: `Array[_SimpleCData[c_int64]]` is missing `__buffer__` method stubs
+    destination = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)  # ty:ignore[no-matching-overload]
     np.copyto(destination[index : index + 1], subspace_idx)
 
     # only the subspace's memory is updated with the sample value, ignoring the other memories as data might not match

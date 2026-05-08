@@ -164,6 +164,10 @@ convention = "google"
 include = ["gymnasium"]
 exclude = ["tests", "**/node_modules", "**/__pycache__"]
 
+[tool.ty.analysis]
+replace-imports-with-any = ["Box2D.**", "mujoco.**", "glfw.**"]
+respect-type-ignore-comments = false
+
 [tool.ty.environment]
 python-version = "3.10"
 python-platform = "all"
