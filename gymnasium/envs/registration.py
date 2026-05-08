@@ -101,7 +101,7 @@ class EnvSpec:
     disable_env_checker: bool = field(default=False)
 
     # Environment arguments
-    kwargs: dict = field(default_factory=dict)
+    kwargs: dict[str, Any] = field(default_factory=dict)
 
     # post-init attributes
     namespace: str | None = field(init=False)
@@ -415,7 +415,7 @@ def _check_version_exists(ns: str | None, name: str, version: int | None) -> Non
 
     latest_spec = max(
         versioned_specs, key=lambda env_spec: env_spec.version, default=None
-    )  # type: ignore
+    )
     if latest_spec is not None and version > latest_spec.version:
         version_list_msg = ", ".join(f"`v{env_spec.version}`" for env_spec in env_specs)
         message += f" It provides versioned environments: [ {version_list_msg} ]."
@@ -439,7 +439,7 @@ def _check_spec_register(testing_spec: EnvSpec) -> None:
             and env_spec.name == testing_spec.name
             and env_spec.version is not None
         ),
-        key=lambda spec_: int(spec_.version),  # type: ignore
+        key=lambda spec_: int(spec_.version),
         default=None,
     )
 
@@ -731,7 +731,7 @@ def make(
             )
 
     try:
-        env = env_creator(**env_spec_kwargs)
+        env = env_creator(**env_spec_kwargs)  # ty:ignore[call-top-callable]
     except TypeError as e:
         if (
             str(e).find("got an unexpected keyword argument 'render_mode'") >= 0
@@ -914,7 +914,7 @@ def make_vec(
             )
 
         env = gym.vector.SyncVectorEnv(
-            env_fns=(create_single_env for _ in range(num_envs)),
+            env_fns=[create_single_env for _ in range(num_envs)],
             **vector_kwargs,
         )
     elif vectorization_mode == VectorizeMode.ASYNC:
@@ -958,7 +958,7 @@ def make_vec(
         ):
             env_spec_kwargs["max_episode_steps"] = env_spec.max_episode_steps
 
-        env = env_creator(num_envs=num_envs, **env_spec_kwargs)
+        env = env_creator(num_envs=num_envs, **env_spec_kwargs)  # ty:ignore[call-top-callable]
     else:
         raise error.Error(f"Unknown vectorization mode: {vectorization_mode}")
 

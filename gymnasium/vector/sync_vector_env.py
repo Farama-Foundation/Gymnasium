@@ -258,10 +258,10 @@ class SyncVectorEnv(VectorEnv):
         Returns:
             The batched environment step results
         """
-        actions = iterate(self.action_space, actions)
+        actions_iter = iterate(self.action_space, actions)
 
         infos = {}
-        for i, (action, _) in enumerate(zip(actions, self.envs, strict=True)):
+        for i, (action, _) in enumerate(zip(actions_iter, self.envs, strict=True)):
             if self.autoreset_mode == AutoresetMode.NEXT_STEP:
                 if self._autoreset_envs[i]:
                     self._env_obs[i], env_info = self.envs[i].reset()

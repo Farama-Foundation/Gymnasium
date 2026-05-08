@@ -25,9 +25,9 @@ TerminatedTruncatedStepType = tuple[
 
 
 def convert_to_terminated_truncated_step_api(
-    step_returns: DoneStepType | TerminatedTruncatedStepType,
+    step_returns: DoneStepType[ObsType] | TerminatedTruncatedStepType[ObsType],
     is_vector_env: bool = False,
-) -> TerminatedTruncatedStepType:
+) -> TerminatedTruncatedStepType[ObsType]:
     """Function to transform step returns to new step API irrespective of input API.
 
     .. py:currentmodule:: gymnasium.Env
@@ -44,7 +44,7 @@ def convert_to_terminated_truncated_step_api(
 
         # Cases to handle - info single env /  info vector env (list) / info vector env (dict)
         if is_vector_env is False:
-            truncated = infos.pop("TimeLimit.truncated", False)  # ty:ignore[no-matching-overload,too-many-positional-arguments]
+            truncated = infos.pop("TimeLimit.truncated", False)  # ty:ignore[too-many-positional-arguments]
             return (
                 observations,
                 rewards,
@@ -110,7 +110,7 @@ def convert_to_done_step_api(
         elif isinstance(infos, list):
             for info, env_truncated, env_terminated in zip(
                 infos, truncated, terminated, strict=True
-            ):
+            ):  # ty:ignore[not-iterable]
                 if env_truncated or env_terminated:
                     info["TimeLimit.truncated"] = env_truncated and not env_terminated
             return (
