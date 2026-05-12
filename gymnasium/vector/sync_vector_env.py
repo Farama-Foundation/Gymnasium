@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic, TypeAlias, cast
+from typing import Any, Generic, TypeAlias, cast
 
 import numpy as np
+from typing_extensions import TypeVar
 
 from gymnasium import Env, Space
 from gymnasium.core import RenderFrame
@@ -23,16 +24,8 @@ from gymnasium.vector.vector_env import AutoresetMode, VectorEnv
 __all__ = ["SyncVectorEnv"]
 
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _ObsT = TypeVar("_ObsT", default=Any)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
-else:
-    from typing import TypeVar
-
-    _ObsT = TypeVar("_ObsT")
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
+_ObsT = TypeVar("_ObsT", default=Any)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
 
 
 _VecBool: TypeAlias = np.ndarray[tuple[int], np.dtype[np.bool_]]

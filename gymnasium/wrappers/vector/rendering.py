@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Generic
 
 import numpy as np
 import numpy.typing as npt
+from typing_extensions import TypeVar
 
 import gymnasium as gym
 from gymnasium import error, logger
@@ -22,20 +23,10 @@ if TYPE_CHECKING:
     import pygame
 
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
-else:
-    from typing import TypeVar
-
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True)
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True)
+_ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
+_RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
+_BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
 
 
 class HumanRendering(

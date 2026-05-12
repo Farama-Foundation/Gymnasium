@@ -6,6 +6,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Generic
 
 import numpy as np
+from typing_extensions import TypeVar
 
 from gymnasium import Env
 from gymnasium.vector import VectorEnv, VectorRewardWrapper
@@ -14,31 +15,20 @@ from gymnasium.wrappers import transform_reward
 if TYPE_CHECKING:
     from typing import Protocol, type_check_only
 
-    from typing_extensions import TypeVar
-
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
-    _RewardArrT_contra = TypeVar(
-        "_RewardArrT_contra", contravariant=True, default=_RewardArrT_co
-    )
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
-
     @type_check_only
     class _CanIterAndSetItem(Protocol):
         def __iter__(self) -> Any: ...
         def __setitem__(self, key: int, value: Any) -> None: ...
 
-    _RewardVecT = TypeVar("_RewardVecT", bound=_CanIterAndSetItem, default=Any)
-else:
-    from typing import TypeVar
 
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True)
-    _RewardArrT_contra = TypeVar("_RewardArrT_contra", contravariant=True)
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True)
-    _RewardVecT = TypeVar("_RewardVecT")
+_RewardVecT = TypeVar("_RewardVecT", bound="_CanIterAndSetItem", default=Any)
+_ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
+_RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
+_RewardArrT_contra = TypeVar(
+    "_RewardArrT_contra", contravariant=True, default=_RewardArrT_co
+)
+_BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
 
 
 class TransformReward(

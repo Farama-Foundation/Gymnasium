@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic
+from typing import Any, Generic
 
 import numpy as np
+from typing_extensions import TypeVar
 
 from gymnasium import Space
 from gymnasium.core import Env
@@ -16,24 +17,12 @@ from gymnasium.vector.utils import batch_space, concatenate, create_empty_array,
 from gymnasium.vector.vector_env import AutoresetMode
 from gymnasium.wrappers import transform_observation
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _ObsT = TypeVar("_ObsT", default=Any)
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
-    _ObsT_contra = TypeVar("_ObsT_contra", contravariant=True, default=_ObsT_co)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
-else:
-    from typing import TypeVar
-
-    _ObsT = TypeVar("_ObsT")
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True)
-    _ObsT_contra = TypeVar("_ObsT_contra", contravariant=True)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True)
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True)
+_ObsT = TypeVar("_ObsT", default=Any)
+_ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
+_ObsT_contra = TypeVar("_ObsT_contra", contravariant=True, default=_ObsT_co)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
+_RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
+_BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
 
 
 class TransformObservation(

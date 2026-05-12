@@ -2,29 +2,20 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic
+from typing import Any, Generic
 
 import numpy as np
+from typing_extensions import TypeVar
 
 from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
 
 __all__ = ["DictInfoToList"]
 
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
-else:
-    from typing import TypeVar
-
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True)
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True)
+_ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
+_RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
+_BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
 
 
 class DictInfoToList(
