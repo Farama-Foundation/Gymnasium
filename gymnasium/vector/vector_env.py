@@ -6,6 +6,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any, Generic
 
 import numpy as np
+from typing_extensions import Self, TypeVar
 
 import gymnasium as gym
 from gymnasium.core import RenderFrame
@@ -13,30 +14,7 @@ from gymnasium.logger import warn
 from gymnasium.utils import seeding
 
 if TYPE_CHECKING:
-    from typing_extensions import Self, TypeVar
-
     from gymnasium.envs.registration import EnvSpec
-
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
-    _ObsT_contra = TypeVar("_ObsT_contra", contravariant=True, default=_ObsT_co)
-    _ActT = TypeVar("_ActT", default=Any)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
-    _RewardArrT_contra = TypeVar(
-        "_RewardArrT_contra", contravariant=True, default=_RewardArrT_co
-    )
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
-else:
-    from typing import TypeVar
-
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True)
-    _ObsT_contra = TypeVar("_ObsT_contra", contravariant=True)
-    _ActT = TypeVar("_ActT")
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True)
-    _RewardArrT_contra = TypeVar("_RewardArrT_contra", contravariant=True)
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True)
-
 
 __all__ = [
     "VectorEnv",
@@ -46,6 +24,16 @@ __all__ = [
     "VectorRewardWrapper",
     "AutoresetMode",
 ]
+
+_ObsT_co = TypeVar("_ObsT_co", covariant=True, default=Any)
+_ObsT_contra = TypeVar("_ObsT_contra", contravariant=True, default=_ObsT_co)
+_ActT = TypeVar("_ActT", default=Any)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
+_RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
+_RewardArrT_contra = TypeVar(
+    "_RewardArrT_contra", contravariant=True, default=_RewardArrT_co
+)
+_BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
 
 
 class AutoresetMode(Enum):
