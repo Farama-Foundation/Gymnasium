@@ -5,9 +5,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, TypeAlias
+from typing import Any, Generic, TypeAlias
 
 import numpy as np
+from typing_extensions import TypeVar
 
 import gymnasium as gym
 from gymnasium.logger import warn
@@ -23,18 +24,9 @@ from gymnasium.wrappers.utils import RunningMeanStd
 __all__ = ["NormalizeObservation"]
 
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
-else:
-    from typing import TypeVar
-
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
-    _RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True)
-    _BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
+_RewardArrT_co = TypeVar("_RewardArrT_co", covariant=True, default=Any)
+_BoolArrT_co = TypeVar("_BoolArrT_co", covariant=True, default=Any)
 
 _VecF32: TypeAlias = np.ndarray[tuple[int], np.dtype[np.float32]]
 _VecFloat: TypeAlias = np.ndarray[tuple[int], np.dtype[np.floating]]

@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import time
 from collections import deque
-from typing import TYPE_CHECKING, Any, Generic
+from typing import Any, Generic
 
 import numpy as np
 import numpy.typing as npt
+from typing_extensions import TypeVar
 
 from gymnasium.logger import warn
 from gymnasium.vector.vector_env import AutoresetMode, VectorEnv, VectorWrapper
@@ -15,22 +16,11 @@ from gymnasium.vector.vector_env import AutoresetMode, VectorEnv, VectorWrapper
 __all__ = ["RecordEpisodeStatistics"]
 
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _ObsT = TypeVar("_ObsT", bound=np.ndarray, covariant=True, default=Any)
-    _ActT_contra = TypeVar(
-        "_ActT_contra", bound=np.ndarray, contravariant=True, default=Any
-    )
-    _RewardsT_co = TypeVar(
-        "_RewardsT_co", bound=np.ndarray, covariant=True, default=Any
-    )
-else:
-    from typing import TypeVar
-
-    _ObsT = TypeVar("_ObsT", bound=np.ndarray, covariant=True)
-    _ActT_contra = TypeVar("_ActT_contra", bound=np.ndarray, contravariant=True)
-    _RewardsT_co = TypeVar("_RewardsT_co", bound=np.ndarray, covariant=True)
+_ObsT = TypeVar("_ObsT", bound=np.ndarray, covariant=True, default=Any)
+_ActT_contra = TypeVar(
+    "_ActT_contra", bound=np.ndarray, contravariant=True, default=Any
+)
+_RewardsT_co = TypeVar("_RewardsT_co", bound=np.ndarray, covariant=True, default=Any)
 
 
 class RecordEpisodeStatistics(

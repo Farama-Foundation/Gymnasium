@@ -12,9 +12,10 @@ from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
 from multiprocessing.sharedctypes import SynchronizedArray
-from typing import TYPE_CHECKING, Any, Generic, TypeAlias
+from typing import Any, Generic, TypeAlias
 
 import numpy as np
+from typing_extensions import TypeVar
 
 from gymnasium import Space, logger
 from gymnasium.core import Env, RenderFrame
@@ -42,16 +43,8 @@ from gymnasium.vector.vector_env import AutoresetMode, VectorEnv
 __all__ = ["AsyncVectorEnv", "AsyncState"]
 
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _ObsT = TypeVar("_ObsT", default=Any)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
-else:
-    from typing import TypeVar
-
-    _ObsT = TypeVar("_ObsT")
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
+_ObsT = TypeVar("_ObsT", default=Any)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
 
 
 _VecBool: TypeAlias = np.ndarray[tuple[int], np.dtype[np.bool_]]

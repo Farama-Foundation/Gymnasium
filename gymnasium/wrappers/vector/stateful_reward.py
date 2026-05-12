@@ -5,10 +5,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, TypeAlias
+from typing import Any, Generic, TypeAlias
 
 import numpy as np
 import numpy.typing as npt
+from typing_extensions import TypeVar
 
 import gymnasium as gym
 from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
@@ -17,17 +18,8 @@ from gymnasium.wrappers.utils import RunningMeanStd
 __all__ = ["NormalizeReward"]
 
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
-else:
-    from typing import TypeVar
-
-    _ObsT_co = TypeVar("_ObsT_co", covariant=True)
-    _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
-
+_ObsT_co = TypeVar("_ObsT_co", covariant=True)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True)
 
 _VecBool: TypeAlias = np.ndarray[tuple[int], np.dtype[np.bool_]]
 _VecF64: TypeAlias = np.ndarray[tuple[int], np.dtype[np.float64]]
