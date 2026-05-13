@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>External Environments - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=5b1a364e" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
@@ -462,6 +462,11 @@ goal-RL (<a class="reference external" href="https://robotics.farama.org/">Gymna
 <ul>
 <li><p><a class="reference external" href="https://github.com/AminHP/gym-anytrading">gym-anytrading: Financial trading environments for FOREX and STOCKS</a></p>
 <p>AnyTrading is a collection of Gym environments for reinforcement learning-based trading algorithms with a great focus on simplicity, flexibility, and comprehensiveness.</p>
+</li>
+<li><p><a class="reference external" href="https://github.com/r2barati/gym-invmgmt">gym-invmgmt: Inventory management and supply chain optimization environments</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-%3E%3D0.26.0-blue" />
+<img alt="GitHub stars" src="https://img.shields.io/github/stars/r2barati/gym-invmgmt" /></p>
+<p>gym-invmgmt provides Gymnasium-compatible multi-echelon inventory-management environments for supply-chain optimization research. It includes configurable network topologies, production capacities, lead times, backlog penalties, non-stationary demand generation, YAML-defined custom networks, and tools for evaluating optimization, heuristic, and reinforcement-learning controllers.</p>
 </li>
 <li><p><a class="reference external" href="https://github.com/AminHP/gym-mtsim">gym-mtsim: Financial trading for MetaTrader 5 platform</a></p>
 <p>MtSim is a simulator for the <a class="reference external" href="https://www.metatrader5.com/">MetaTrader 5</a> trading platform for reinforcement learning-based trading algorithms.</p>
@@ -1064,14 +1069,6 @@ Many of these can be adapted to work with gymnasium (see <a class="reference ext
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -1085,7 +1082,14 @@ Many of these can be adapted to work with gymnasium (see <a class="reference ext
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -1101,8 +1105,6 @@ Many of these can be adapted to work with gymnasium (see <a class="reference ext
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -1114,6 +1116,13 @@ Many of these can be adapted to work with gymnasium (see <a class="reference ext
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -1158,7 +1167,14 @@ Many of these can be adapted to work with gymnasium (see <a class="reference ext
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 
