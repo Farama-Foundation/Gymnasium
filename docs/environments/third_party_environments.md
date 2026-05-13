@@ -95,6 +95,12 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   AnyTrading is a collection of Gym environments for reinforcement learning-based trading algorithms with a great focus on simplicity, flexibility, and comprehensiveness.
 
+- [gym-invmgmt: Inventory management and supply chain optimization environments](https://github.com/r2barati/gym-invmgmt)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-%3E%3D0.26.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/r2barati/gym-invmgmt)
+
+  gym-invmgmt provides Gymnasium-compatible multi-echelon inventory-management environments for supply-chain optimization research. It includes configurable network topologies, production capacities, lead times, backlog penalties, non-stationary demand generation, YAML-defined custom networks, and tools for evaluating optimization, heuristic, and reinforcement-learning controllers.
 - [gym-mtsim: Financial trading for MetaTrader 5 platform](https://github.com/AminHP/gym-mtsim)
 
   MtSim is a simulator for the [MetaTrader 5](https://www.metatrader5.com/) trading platform for reinforcement learning-based trading algorithms.
