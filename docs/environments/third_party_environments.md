@@ -43,8 +43,6 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 - Name your PR something like "Add external environment X"
 -->
 
-
-
 ### Autonomous Driving environments
 *Autonomous Vehicle and traffic management.*
 
@@ -101,6 +99,7 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
   ![GitHub stars](https://img.shields.io/github/stars/r2barati/gym-invmgmt)
 
   gym-invmgmt provides Gymnasium-compatible multi-echelon inventory-management environments for supply-chain optimization research. It includes configurable network topologies, production capacities, lead times, backlog penalties, non-stationary demand generation, YAML-defined custom networks, and tools for evaluating optimization, heuristic, and reinforcement-learning controllers.
+
 - [gym-mtsim: Financial trading for MetaTrader 5 platform](https://github.com/AminHP/gym-mtsim)
 
   MtSim is a simulator for the [MetaTrader 5](https://www.metatrader5.com/) trading platform for reinforcement learning-based trading algorithms.
@@ -226,7 +225,6 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
-
 ### Mathematics / Computational
 *Reduce computational compute, prove math theorems, and more.*
 
@@ -243,7 +241,6 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
   ![GitHub stars](https://img.shields.io/github/stars/inpefess/gym-saturation)
 
   An environment for guiding automated theorem provers based on saturation algorithms (e.g. [Vampire](https://github.com/vprover/vampire)).
-
 
 ### Robotics environments
 *Autonomous Robots.*
@@ -366,7 +363,6 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   Highly scalable and customizable Safe Reinforcement Learning library.
 
-
 ### Telecommunication Systems environments
 *Interact and/or manage wireless and/or wired telecommunication systems.*
 - [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
@@ -375,7 +371,6 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
   ![GitHub stars](https://img.shields.io/github/stars/stefanbschneider/mobile-env)
 
   An open, minimalist Gymnasium environment for autonomous coordination in wireless mobile networks.
-
 
 ### Other
 - [Buffalo-Gym: Multi-Armed Bandit Gymnasium](https://github.com/foreverska/buffalo-gym)
@@ -418,16 +413,9 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
    ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.1.1-blue)
   ![GitHub stars](https://img.shields.io/github/stars/Daveonwave/gym4ReaL)
 
-
   Gym4ReaL is a comprehensive suite of realistic environments designed to support the development and evaluation of RL algorithms that can operate in real-world scenarios.
 The suite includes a diverse set of tasks exposing RL algorithms to a variety of practical challenges, such as water management, energy management in microgrids, financial trading, and more.
 
-- [gym-invmgmt: Inventory management and supply chain optimization environments](https://github.com/r2barati/gym-invmgmt)
-
-  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-%3E%3D0.26.0-blue)
-  ![GitHub stars](https://img.shields.io/github/stars/r2barati/gym-invmgmt)
-
-  gym-invmgmt provides Gymnasium-compatible multi-echelon inventory-management environments for supply-chain optimization research. It includes configurable network topologies, production capacities, lead times, backlog penalties, non-stationary demand generation, YAML-defined custom networks, and tools for evaluating optimization, heuristic, and reinforcement-learning controllers.
 - [LineFlow: Active control of production lines](https://github.com/hs-kempten/lineflow)
 
   ![GitHub stars](https://img.shields.io/github/stars/hs-kempten/lineflow)
@@ -447,7 +435,6 @@ The suite includes a diverse set of tasks exposing RL algorithms to a variety of
   ![GitHub stars](https://img.shields.io/github/stars/damat-le/gym-simplegrid)
 
   SimpleGrid is a super simple and minimal grid environment for Gymnasium. It is easy to use and customise and it is intended to offer an environment for rapidly testing and prototyping different RL algorithms.
-
 
 ## Third-Party Environments using Gym
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
@@ -514,7 +501,6 @@ Many of these can be adapted to work with gymnasium (see [Compatibility with Gym
 - [l2r: Multimodal control environment where agents learn how to race](https://github.com/learn-to-race/l2r/)
 
   An open-source reinforcement learning environment for autonomous racing.
-
 
 ### Other environments
 
