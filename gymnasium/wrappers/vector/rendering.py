@@ -6,7 +6,7 @@ import gc
 import os
 from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, SupportsFloat
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -444,7 +444,7 @@ class RecordVideo(
 
     def step(
         self, actions: ActType
-    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
+    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
         """Steps through the environment using action, recording observations if :attr:`self.recording`."""
         obs, rewards, terminations, truncations, info = self.env.step(actions)
         self.step_id += 1
