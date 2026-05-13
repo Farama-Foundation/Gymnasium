@@ -416,6 +416,12 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
   Gym4ReaL is a comprehensive suite of realistic environments designed to support the development and evaluation of RL algorithms that can operate in real-world scenarios.
 The suite includes a diverse set of tasks exposing RL algorithms to a variety of practical challenges, such as water management, energy management in microgrids, financial trading, and more.
 
+- [gym-invmgmt: Inventory management and supply chain optimization environments](https://github.com/r2barati/gym-invmgmt)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-%3E%3D0.26.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/r2barati/gym-invmgmt)
+
+  gym-invmgmt provides Gymnasium-compatible multi-echelon inventory-management environments for supply-chain optimization research. It includes configurable network topologies, production capacities, lead times, backlog penalties, non-stationary demand generation, YAML-defined custom networks, and tools for evaluating optimization, heuristic, and reinforcement-learning controllers.
 - [LineFlow: Active control of production lines](https://github.com/hs-kempten/lineflow)
 
   ![GitHub stars](https://img.shields.io/github/stars/hs-kempten/lineflow)
