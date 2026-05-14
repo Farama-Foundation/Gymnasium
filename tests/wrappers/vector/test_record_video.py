@@ -206,3 +206,47 @@ def test_video_length(autoreset_mode, video_length: int = 10, n_envs=10):
     mp4_files = [file for file in os.listdir("videos") if file.endswith(".mp4")]
     shutil.rmtree("videos")
     assert len(mp4_files) == 1
+
+
+def test_record_video_step_returns_arrays_not_scalars():
+    """Regression test for https://github.com/Farama-Foundation/Gymnasium/issues/1580.
+
+    ``RecordVideo.step`` previously declared a return type of
+    ``tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]``, which
+    misled static type checkers (Pyright/Pylance) into thinking that
+    ``terminations`` / ``truncations`` were Python ``bool``s rather than
+    numpy arrays. At runtime they are arrays of shape ``(num_envs,)``, the
+    same as the underlying :class:`VectorEnv.step`, so the annotation now
+    matches the runtime contract.
+    """
+    envs = gym.make_vec(
+        "CartPole-v1",
+        num_envs=4,
+        render_mode="rgb_array",
+        vectorization_mode=gym.VectorizeMode.SYNC,
+    )
+    envs = RecordVideo(envs, "videos", video_aspect_ratio=(1, 1))
+
+    envs.reset(seed=42)
+    envs.action_space.seed(42)
+    obs, rewards, terminations, truncations, info = envs.step(
+        envs.action_space.sample()
+    )
+
+    try:
+        assert isinstance(rewards, np.ndarray)
+        assert rewards.shape == (4,)
+        assert isinstance(terminations, np.ndarray)
+        assert terminations.shape == (4,)
+        assert isinstance(truncations, np.ndarray)
+        assert truncations.shape == (4,)
+        # The caller pattern from the original bug report — calling array
+        # methods on the returned terminations/truncations — must work.
+        done = terminations | truncations
+        assert isinstance(done, np.ndarray)
+        assert done.shape == (4,)
+        _ = done.any()
+    finally:
+        envs.close()
+        if os.path.isdir("videos"):
+            shutil.rmtree("videos")
