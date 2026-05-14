@@ -6,8 +6,10 @@ from gymnasium.experimental.functional import FuncEnv
 
 
 class BasicTestEnv(FuncEnv):
-    def __init__(self, options: dict[str, Any] | None = None):
-        super().__init__(options)
+    def __init__(
+        self, options: dict[str, Any] | None = None, params: Any | None = None
+    ):
+        super().__init__(options, params)
 
     def initial(self, rng: Any) -> np.ndarray:
         return np.array([0, 0], dtype=np.float32)
