@@ -131,6 +131,21 @@ TESTING_COMPOSITE_SPACES = [
     ),
     # Note: Text, Sequence, Graph, and OneOf as node/edge spaces have broken
     # JSON serialization in Graph.to_jsonable/from_jsonable
+    # Graph(node_space=Sequence(Discrete(3)), edge_space=None),
+    # Graph(node_space=Discrete(3), edge_space=Sequence(Box(0, 1, shape=(2,)))),
+    # Graph(
+    #     node_space=Graph(node_space=Box(-1, 1, shape=(2,)), edge_space=None),
+    #     edge_space=None,
+    # ),
+    # Graph(
+    #     node_space=Discrete(3),
+    #     edge_space=Graph(node_space=Box(-1, 1, shape=(2,)), edge_space=None),
+    # ),
+    # Graph(node_space=OneOf([Discrete(3), Box(0, 1)]), edge_space=None),
+    # Graph(node_space=Discrete(3), edge_space=OneOf([Discrete(3), Box(0, 1)])),
+    # Graph(node_space=Text(6), edge_space=None),
+    # Graph(node_space=Discrete(3), edge_space=Text(6)),
+    #
     # Sequence spaces
     Sequence(Discrete(4)),
     Sequence(Dict({"feature": Box(0, 1, (3,))})),
