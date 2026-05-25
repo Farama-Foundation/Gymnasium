@@ -10,6 +10,7 @@ The tutorial covers:
 2. Inspecting the action space, observation space, and info dictionary.
 3. Changing ``ctrl_cost_weight``.
 4. Comparing reward components using the same seed and same action.
+5. Discussing how the parameter can affect training behavior.
 
 Changing environment parameters can affect learning behavior and benchmark
 comparability, so these changes should be made intentionally.
@@ -113,7 +114,7 @@ base_env.reset(seed=123)
 action = base_env.action_space.sample()
 base_env.close()
 
-for cost_weight in [0.1, 1.0]:
+for cost_weight in [0.05, 0.1, 1.0]:
     env = gym.make("HalfCheetah-v5", ctrl_cost_weight=cost_weight)
     obs, info = env.reset(seed=123)
 
@@ -139,22 +140,73 @@ for cost_weight in [0.1, 1.0]:
 #
 # .. code-block:: text
 #
+#    ctrl_cost_weight=0.05
+#    Reward: 0.16536146457629186
+#    reward_forward: 0.25364641155438405
+#    reward_ctrl: -0.08828495
+#
 #    ctrl_cost_weight=0.1
-#    Reward: -0.23198439616510758
-#    reward_forward: 0.09567696910550705
-#    reward_ctrl: -0.32766137
+#    Reward: 0.07707651759819967
+#    reward_forward: 0.25364641155438405
+#    reward_ctrl: -0.1765699
 #
 #    ctrl_cost_weight=1.0
-#    Reward: -3.180936504786705
-#    reward_forward: 0.09567696910550705
-#    reward_ctrl: -3.2766135
+#    Reward: -1.5120524982051373
+#    reward_forward: 0.25364641155438405
+#    reward_ctrl: -1.7656989
 #
-# Notice that ``reward_forward`` is the same in both runs, while
-# ``reward_ctrl`` becomes ten times larger when ``ctrl_cost_weight`` increases
-# from ``0.1`` to ``1.0``.
+# Notice that ``reward_forward`` is the same in each run, while
+# ``reward_ctrl`` scales with ``ctrl_cost_weight``. Increasing
+# ``ctrl_cost_weight`` makes the same action more costly, which lowers the
+# total reward.
 #
 # This shows that ``ctrl_cost_weight`` changes the reward structure without
 # requiring changes to the environment source code.
+
+# %%
+# Training behavior analysis
+# --------------------------
+#
+# Changing ``ctrl_cost_weight`` changes the reward signal used during training,
+# so it can affect both the scale of rewards and the type of policy the agent
+# learns.
+#  As an illustrative experiment, the same SAC configuration was trained on
+# ``HalfCheetah-v5`` for 50,000 timesteps using three different values of
+# ``ctrl_cost_weight``. The algorithm, training timesteps, evaluation procedure,
+# and set of random seeds were kept fixed.
+#
+# .. list-table::
+#    :header-rows: 1
+#
+#    * - ``ctrl_cost_weight``
+#      - seeds
+#      - mean evaluation reward
+#      - standard deviation across seeds
+#    * - ``0.05``
+#      - ``3``
+#      - ``1848.54``
+#      - ``646.98``
+#    * - ``0.1``
+#      - ``3``
+#      - ``2032.82``
+#      - ``215.76``
+#    * - ``1.0``
+#      - ``3``
+#      - ``1221.41``
+#      - ``175.09``
+#
+# In this small multi-seed comparison, ``ctrl_cost_weight=0.1`` achieved the
+# highest average evaluation reward. The lower value, ``0.05``, produced strong
+# results for some seeds but had higher variability across runs. The larger
+# value, ``1.0``, consistently produced lower evaluation rewards, suggesting
+# that a much stronger control penalty can make learning more conservative in
+# this setup.
+#
+# These results are illustrative rather than a full benchmark, but they show
+# that changing ``ctrl_cost_weight`` can affect training behavior in a
+# non-trivial way. Since this parameter changes the reward function, customized
+# environment results should be reported separately from standard benchmark
+# results.
 
 
 # %%
@@ -172,7 +224,7 @@ def main():
     action = base_env.action_space.sample()
     base_env.close()
 
-    for cost_weight in [0.1, 1.0]:
+    for cost_weight in [0.05, 0.1, 1.0]:
         env = gym.make("HalfCheetah-v5", ctrl_cost_weight=cost_weight)
         obs, info = env.reset(seed=123)
 
@@ -204,4 +256,3 @@ if __name__ == "__main__":
 # that environment parameter changes can affect reproducibility and make results
 # harder to compare against standard benchmarks.
 #
-# Author: Daniel Lonneman
