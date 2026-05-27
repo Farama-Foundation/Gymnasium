@@ -602,7 +602,6 @@ class CarRacing(gym.Env, EzPickle):
 
         pygame.font.init()
         if self.screen is None and mode == "human":
-            pygame.init()
             pygame.display.init()
             self.screen = pygame.display.set_mode((WINDOW_W, WINDOW_H))
         if self.clock is None:
