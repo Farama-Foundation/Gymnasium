@@ -371,10 +371,9 @@ class FrozenLakeEnv(Env):
             ) from e
 
         if self.window_surface is None:
-            pygame.init()
+            pygame.display.init()
 
             if mode == "human":
-                pygame.display.init()
                 pygame.display.set_caption("Frozen Lake")
                 self.window_surface = pygame.display.set_mode(self.window_size)
             elif mode == "rgb_array":

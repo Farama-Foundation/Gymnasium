@@ -232,7 +232,7 @@ class CliffWalkingFunctional(
             12 * cell_size[1],
         )
 
-        pygame.init()
+        pygame.display.init()
         screen = pygame.Surface((window_size[1], window_size[0]))
 
         shape = (4, 12)

@@ -498,7 +498,7 @@ class TaxiEnv(Env):
             ) from e
 
         if self.window is None:
-            pygame.init()
+            pygame.display.init()
             pygame.display.set_caption("Taxi")
             if mode == "human":
                 self.window = pygame.display.set_mode(WINDOW_SIZE)
