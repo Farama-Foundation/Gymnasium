@@ -181,7 +181,6 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
             ] = scaled_render
 
         if self.window is None:
-            pygame.init()
             pygame.display.init()
             self.window = pygame.display.set_mode(self.screen_size)
 

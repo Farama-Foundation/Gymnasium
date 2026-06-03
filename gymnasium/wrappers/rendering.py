@@ -558,7 +558,6 @@ class HumanRendering(
         )
 
         if self.window is None:
-            pygame.init()
             pygame.display.init()
             self.window = pygame.display.set_mode(self.screen_size)
 

@@ -264,9 +264,8 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
             ) from e
 
         if self.screen is None:
-            pygame.init()
+            pygame.display.init()
             if self.render_mode == "human":
-                pygame.display.init()
                 self.screen = pygame.display.set_mode(
                     (self.screen_width, self.screen_height)
                 )
@@ -523,7 +522,7 @@ class CartPoleVectorEnv(VectorEnv):
             ) from e
 
         if self.screens is None:
-            pygame.init()
+            pygame.display.init()
 
             self.screens = [
                 pygame.Surface((self.screen_width, self.screen_height))
