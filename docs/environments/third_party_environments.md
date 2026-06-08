@@ -367,8 +367,8 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-%3E%3D0.29-blue)
   ![GitHub stars](https://img.shields.io/github/stars/ludwigstr/WireHarness-MultiAgent-RL)
-  
-  MuJoCo-based  environment for multi-agent wire harness routing. Five planar movers must coordinate to navigate cable harnesses to predefined target configurations on an assembly board without causing cable collisions.
+
+  MuJoCo-based environment for multi-agent wire harness routing. Five planar movers must coordinate to navigate cable harnesses to predefined target configurations on an assembly board without causing cable collisions.
 
 ### Telecommunication Systems environments
 *Interact and/or manage wireless and/or wired telecommunication systems.*
