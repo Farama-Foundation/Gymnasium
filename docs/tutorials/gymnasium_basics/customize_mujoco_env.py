@@ -101,11 +101,11 @@ env.close()
 # - ``reward_ctrl``: penalizes the agent for using large actions
 #
 # The ``ctrl_cost_weight`` parameter controls how strongly large actions are
-# penalized. A larger value encourages the agent to use smaller, more efficient
-# actions.
+# penalized. A larger value places a stronger penalty on larger actions,encouraging
+# the policy to reduce control effort
 #
 # To make a clean comparison, we will use the same seed and the same action in
-# two environments. The only difference will be the value of
+# all environments. The only difference will be the value of
 # ``ctrl_cost_weight``.
 
 
@@ -167,46 +167,64 @@ for cost_weight in [0.05, 0.1, 1.0]:
 # Training behavior analysis
 # --------------------------
 #
-# Changing ``ctrl_cost_weight`` changes the reward signal used during training,
-# so it can affect both the scale of rewards and the type of policy the agent
-# learns.
-#  As an illustrative experiment, the same SAC configuration was trained on
-# ``HalfCheetah-v5`` for 50,000 timesteps using three different values of
-# ``ctrl_cost_weight``. The algorithm, training timesteps, evaluation procedure,
-# and set of random seeds were kept fixed.
+# Changing `ctrl_cost_weight` changes the reward signal used during training,
+# so it can affect both evaluation performance and the movement strategy learned
+# by the policy.
+#
+# As an illustrative experiment, the same SAC configuration was trained on
+# `HalfCheetah-v5` for 50,000 timesteps using three values of
+# `ctrl_cost_weight`. The algorithm, number of training timesteps, evaluation
+# procedure, and random seeds were kept fixed.
 #
 # .. list-table::
-#    :header-rows: 1
+# :header-rows: 1
 #
-#    * - ``ctrl_cost_weight``
-#      - seeds
-#      - mean evaluation reward
-#      - standard deviation across seeds
-#    * - ``0.05``
-#      - ``3``
-#      - ``1848.54``
-#      - ``646.98``
-#    * - ``0.1``
-#      - ``3``
-#      - ``2032.82``
-#      - ``215.76``
-#    * - ``1.0``
-#      - ``3``
-#      - ``1221.41``
-#      - ``175.09``
+# * - `ctrl_cost_weight`
+# - seeds
+# - mean evaluation reward
+# - standard deviation across seeds
+# * - `0.05`
+# - `3`
+# - `1848.54`
+# - `646.98`
+# * - `0.1`
+# - `3`
+# - `2032.82`
+# - `215.76`
+# * - `1.0`
+# - `3`
+# - `1221.41`
+# - `175.09`
 #
-# In this small multi-seed comparison, ``ctrl_cost_weight=0.1`` achieved the
-# highest average evaluation reward. The lower value, ``0.05``, produced strong
-# results for some seeds but had higher variability across runs. The larger
-# value, ``1.0``, consistently produced lower evaluation rewards, suggesting
-# that a much stronger control penalty can make learning more conservative in
-# this setup.
+# In this small multi-seed comparison, `ctrl_cost_weight=0.1` achieved the
+# highest mean evaluation reward. The lower value, `0.05`, produced more
+# variable results across seeds, while `1.0` produced the lowest mean
+# evaluation reward.
 #
-# These results are illustrative rather than a full benchmark, but they show
-# that changing ``ctrl_cost_weight`` can affect training behavior in a
-# non-trivial way. Since this parameter changes the reward function, customized
-# environment results should be reported separately from standard benchmark
-# results.
+# To examine the learned behavior more directly, deterministic evaluation
+# rollouts were also analyzed using forward velocity and action-magnitude
+# metrics. Lower control-cost weights produced substantially larger actions and
+# more active movement. By contrast, the policy trained with
+# `ctrl_cost_weight=1.0` quickly reduced its action magnitude and converged to
+# low-motion behavior.
+#
+# Rendered rollouts from a representative seed showed corresponding kinematic
+# differences. With `ctrl_cost_weight=0.05`, the agent flipped over and used
+# large, rapid ground movements to produce limited forward displacement. With
+# `ctrl_cost_weight=0.1`, the agent reared upright, flipped over, and did not
+# sustain forward progress. With `ctrl_cost_weight=1.0`, the agent made a few
+# small movements and then became nearly stationary.
+#
+# These results show that `ctrl_cost_weight` affects more than the numerical
+# scale of the reward. It changes the tradeoff between forward movement and
+# control effort, which can lead to different trajectories and learned movement
+# strategies.
+#
+# Because the agents were trained for only 50,000 timesteps, these observations
+# should be interpreted as qualitative examples of early learned behavior
+# rather than fully converged HalfCheetah locomotion. Customized environment
+# results should also be reported separately from standard benchmark results
+# because changing `ctrl_cost_weight` changes the reward function.
 
 
 # %%
