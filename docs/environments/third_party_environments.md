@@ -84,7 +84,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 - [Security-Gym](https://github.com/j-klawson/security-gym)
 [![Gymnasium](https://img.shields.io/badge/Gymnasium-%E2%89%A51.0.0-blue)](https://gymnasium.farama.org/)
 
-A gymnasium environment that sends continuous Linux server log data and kernel events to simulate an environment where an agent runs continually on the Linux server. The action space supports actions an agent can take to react to cybersecurity attacks on the server.
+  A gymnasium environment that sends continuous Linux server log data and kernel events to simulate an environment where an agent runs continually on the Linux server. The action space supports actions an agent can take to react to cybersecurity attacks on the server.
 
 ### Economic / Financial environments
 *Everything Economics related.*
