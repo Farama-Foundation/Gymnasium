@@ -84,7 +84,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 - [Security-Gym](https://github.com/j-klawson/security-gym)
 [![Gymnasium](https://img.shields.io/badge/Gymnasium-%E2%89%A51.0.0-blue)](https://gymnasium.farama.org/)
 
-A gymnasium environment that sends continuous Linux server log data and kernel events to simulate an environment where an agent runs continually on the Linux server. The action space supports actions an agent can take to react to cybersecurity attacks on the server.
+  A gymnasium environment that sends continuous Linux server log data and kernel events to simulate an environment where an agent runs continually on the Linux server. The action space supports actions an agent can take to react to cybersecurity attacks on the server.
 
 ### Economic / Financial environments
 *Everything Economics related.*
@@ -107,7 +107,7 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 - [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/en/latest/)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
-  ![Github stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)
+  ![GitHub stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)
 
   Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
 
@@ -132,7 +132,7 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
   A Gymnasium-compatible wildfire simulation environment that models fire spread using physics-based dynamics and incorporates helicopter firefighting strategies. It's built on real terrain data, including land cover and elevation, and supports customizable observation and reward wrappers.
 
 ### Game environments
-*Board Games, Video Games and all other interactive entrainment mediums.*
+*Board Games, Video Games and all other interactive entertainment mediums.*
 
 - [Advanced Minesweeper Environment](https://github.com/markov-labs/RL-Minesweeper)
 
