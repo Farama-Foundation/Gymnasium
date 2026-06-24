@@ -23,7 +23,7 @@ else:
 
 
 class Dict(
-    Space[dict[str, Space[_T_co]]],
+    Space[dict[str, Space]],
     typing.Mapping[str, Space[_T_co]],
     Generic[_T_co],
 ):
