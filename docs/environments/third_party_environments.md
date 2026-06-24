@@ -107,7 +107,7 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
 - [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/en/latest/)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
-  ![Github stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)
+  ![GitHub stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)
 
   Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
 
