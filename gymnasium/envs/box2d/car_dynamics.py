@@ -8,6 +8,8 @@ Created by Oleg Klimov
 """
 
 import math
+from dataclasses import dataclass
+from typing import Any
 
 import Box2D
 import numpy as np
@@ -334,14 +336,18 @@ class Car:
                 pygame.draw.polygon(surface, color=WHEEL_WHITE, points=white_poly)
 
     def _create_particle(self, point1, point2, grass):
+        @dataclass(slots=True)
         class Particle:
-            pass
+            color: tuple[int, int, int]
+            poly: list[tuple[int, int]]
+            grass: Any
+            ttl: int = 1
 
-        p = Particle()
-        p.color = WHEEL_COLOR if not grass else MUD_COLOR
-        p.ttl = 1
-        p.poly = [(point1[0], point1[1]), (point2[0], point2[1])]
-        p.grass = grass
+        p = Particle(
+            color=WHEEL_COLOR if not grass else MUD_COLOR,
+            poly=[(point1[0], point1[1]), (point2[0], point2[1])],
+            grass=grass,
+        )
         self.particles.append(p)
         while len(self.particles) > 30:
             self.particles.pop(0)
