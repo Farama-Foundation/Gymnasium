@@ -132,7 +132,7 @@ A gymnasium environment that sends continuous Linux server log data and kernel e
   A Gymnasium-compatible wildfire simulation environment that models fire spread using physics-based dynamics and incorporates helicopter firefighting strategies. It's built on real terrain data, including land cover and elevation, and supports customizable observation and reward wrappers.
 
 ### Game environments
-*Board Games, Video Games and all other interactive entrainment mediums.*
+*Board Games, Video Games and all other interactive entertainment mediums.*
 
 - [Advanced Minesweeper Environment](https://github.com/markov-labs/RL-Minesweeper)
 
