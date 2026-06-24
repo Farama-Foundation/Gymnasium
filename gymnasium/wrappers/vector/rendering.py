@@ -82,7 +82,7 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Reset the base environment and render a frame to the screen."""

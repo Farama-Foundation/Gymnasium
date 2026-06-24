@@ -106,7 +106,7 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[np.ndarray, dict[str, Any]]:
         """Resets the environment and clears accumulated reward tracking state."""
