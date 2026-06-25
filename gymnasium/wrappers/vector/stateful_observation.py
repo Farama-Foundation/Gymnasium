@@ -115,7 +115,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[np.ndarray, dict[str, Any]]:
         """Reset function for `NormalizeObservationWrapper` which is disabled for partial resets."""

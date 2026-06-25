@@ -1,6 +1,7 @@
 from contextlib import closing
 from io import StringIO
 from os import path
+from typing import Any
 
 import numpy as np
 
@@ -366,6 +367,7 @@ class TaxiEnv(Env):
         self.render_mode = render_mode
         self.fickle_passenger = fickle_passenger
         self.fickle_step = False
+        self.lastaction: Any = None
 
         # pygame utils
         self.window = None

@@ -82,7 +82,7 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Reset the base environment and render a frame to the screen."""
@@ -193,14 +193,14 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
         self.clock.tick(self.metadata["render_fps"])
         pygame.display.flip()
 
-    def close(self) -> None:
+    def close(self, **kwargs: Any) -> None:
         """Close the rendering window."""
         if self.window is not None:
             import pygame
 
             pygame.display.quit()
             pygame.quit()
-        super().close()
+        super().close(**kwargs)
 
 
 class RecordVideo(
@@ -493,9 +493,9 @@ class RecordVideo(
         else:
             return render_out
 
-    def close(self) -> None:
+    def close(self, **kwargs: Any) -> None:
         """Closes the wrapper then the video recorder."""
-        super().close()
+        super().close(**kwargs)
         if self.recording:
             self.stop_recording()
 
