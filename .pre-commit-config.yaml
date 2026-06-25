@@ -4,5 +4,5 @@ repos:
     hooks:
       - id: unresolved-import
         additional_dependencies:
-          - gymnasium
-          - gymnasium["optional_module"]
+          - 'optional-module-name'
+          - 'another-optional-module-name'
