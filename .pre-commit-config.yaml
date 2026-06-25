@@ -3,5 +3,6 @@ repos:
     rev: v2.3.0
     hooks:
       - id: unresolved-import
-        name: unresolved-import
-        args: [--skip]
+        additional_dependencies:
+          - gymnasium
+          - gymnasium["optional_module"]
