@@ -5,6 +5,7 @@ permalink: https://perma.cc/C9ZM-652R
 """
 
 import math
+from typing import Any
 
 import numpy as np
 
@@ -596,7 +597,7 @@ class CartPoleVectorEnv(VectorEnv):
             for screen in self.screens
         ]
 
-    def close(self):
+    def close(self, **kwargs: Any):
         if self.screens is not None:
             import pygame
 

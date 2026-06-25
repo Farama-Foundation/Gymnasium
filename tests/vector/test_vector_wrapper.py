@@ -23,7 +23,7 @@ class DummyVectorWrapper(VectorWrapper):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Updates the ``counter`` each time at ``reset`` is called."""
