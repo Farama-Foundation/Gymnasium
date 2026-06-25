@@ -12,9 +12,11 @@ from gymnasium.experimental.functional import FuncEnv
 class GenericTestFuncEnv(FuncEnv):
     """Generic testing functional environment."""
 
-    def __init__(self, options: dict[str, Any] | None = None):
+    def __init__(
+        self, options: dict[str, Any] | None = None, params: Any | None = None
+    ):
         """Constructor that allows generic options to be set on the environment."""
-        super().__init__(options)
+        super().__init__(options, params)
 
     def initial(self, rng: Any, params=None) -> np.ndarray:
         """Testing initial function."""
