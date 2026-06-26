@@ -135,6 +135,9 @@ exclude = ["tests", "**/node_modules", "**/__pycache__"]
 replace-imports-with-any = ["Box2D.**", "mujoco.**", "glfw.**"]
 respect-type-ignore-comments = false
 
+[tool.ty.terminal]
+error-on-warning = false
+
 [tool.ty.environment]
 python-version = "3.10"
 python-platform = "all"
