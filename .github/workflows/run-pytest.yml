@@ -29,7 +29,11 @@ jobs:
       - name: Run tests
         run: docker run gymnasium-all-docker pytest tests/*
       - name: Run doctests
-        run: docker run gymnasium-all-docker pytest --doctest-modules gymnasium/
+        # box2d has no Python 3.14 wheel, so it is not installed there and its modules raise on
+        # import; skip its doctests on 3.14 (its unit tests are skipped via a marker).
+        run: |
+          docker run gymnasium-all-docker pytest --doctest-modules gymnasium/ \
+            ${{ matrix.python-version == '3.14' && '--ignore=gymnasium/envs/box2d' || '' }}
 
   build-necessary:
     runs-on:

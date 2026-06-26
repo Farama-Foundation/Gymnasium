@@ -2,13 +2,23 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.envs.box2d import BipedalWalker, CarRacing
-from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
 from gymnasium.envs.toy_text import CliffWalkingEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
-from gymnasium.error import InvalidAction
+from gymnasium.error import DependencyNotInstalled, InvalidAction
+
+try:
+    from gymnasium.envs.box2d import BipedalWalker, CarRacing
+    from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
+
+    BOX2D_INSTALLED = True
+except DependencyNotInstalled:
+    # box2d has no wheel for Python >= 3.14, so its tests are skipped there.
+    BOX2D_INSTALLED = False
+
+needs_box2d = pytest.mark.skipif(not BOX2D_INSTALLED, reason="box2d is not installed")
 
 
+@needs_box2d
 def test_lunar_lander_heuristics():
     """Tests the LunarLander environment by checking if the heuristic lander works."""
     lunar_lander = gym.make("LunarLander-v3", disable_env_checker=True)
@@ -16,6 +26,7 @@ def test_lunar_lander_heuristics():
     assert total_reward > 100
 
 
+@needs_box2d
 @pytest.mark.parametrize("seed", [0, 10, 20, 30, 40])
 def test_lunar_lander_random_wind_seed(seed: int):
     """Test that the wind_idx and torque are correctly drawn when setting a seed"""
@@ -47,6 +58,7 @@ def test_lunar_lander_random_wind_seed(seed: int):
         )
 
 
+@needs_box2d
 def test_carracing_domain_randomize():
     """Tests the CarRacing Environment domain randomization.
 
@@ -104,6 +116,7 @@ def test_cliffwalking():
             assert all([r[0] == 1.0 for r in transitions])
 
 
+@needs_box2d
 @pytest.mark.parametrize("seed", range(5))
 def test_bipedal_walker_hardcore_creation(seed: int):
     """Test BipedalWalker hardcore creation.
@@ -321,6 +334,7 @@ def test_cartpole_vector_equiv():
     envs.close()
 
 
+@needs_box2d
 @pytest.mark.parametrize("env_id", ["CarRacing-v3", "LunarLander-v3"])
 def test_discrete_action_validation(env_id):
     # get continuous action
