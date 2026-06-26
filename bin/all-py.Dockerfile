@@ -1,6 +1,6 @@
 # A Dockerfile that sets up a full Gymnasium install with test dependencies
 ARG PYTHON_VERSION
-ARG NUMPY_VERSION=">=1.21,<2.0"
+ARG NUMPY_VERSION=">=2.0"
 FROM python:$PYTHON_VERSION
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -18,7 +18,7 @@ RUN pip install uv
 COPY . /usr/local/gymnasium/
 WORKDIR /usr/local/gymnasium/
 
-# Specify the numpy version to cover both 1.x and 2.x
+# Install numpy (>= 2.0; --upgrade resolves to the latest compatible release per Python version)
 RUN uv pip install --system --upgrade "numpy$NUMPY_VERSION"
 
 # Test with PyTorch CPU build, since CUDA is not available in CI anyway
