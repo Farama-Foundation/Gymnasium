@@ -25,7 +25,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
-    "numpy >=1.21.0",
+    "numpy >=1.22.0",
     "cloudpickle >=1.2.0",
     "typing-extensions >=4.3.0",
     "farama-notifications >=0.0.1",
@@ -49,10 +49,9 @@ jax = [
     "jaxlib >=0.4.16",
     "flax >=0.5.0",
     "array-api-compat >=1.11.0",
-    "numpy>=2.1",
 ]
-torch = ["torch >=1.13.0", "array-api-compat >=1.11.0", "numpy>=2.1"]
-array-api = ["array-api-compat >=1.11.0", "numpy>=2.1", "packaging >=23.0"]
+torch = ["torch >=1.13.0", "array-api-compat >=1.11.0"]
+array-api = ["array-api-compat >=1.11.0", "packaging >=23.0"]
 other = [
     "moviepy >=1.0.0",
     "matplotlib >=3.0",
