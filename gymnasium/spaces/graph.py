@@ -9,6 +9,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 import gymnasium as gym
+from gymnasium.spaces import Box, Discrete
 from gymnasium.spaces.space import Space
 
 

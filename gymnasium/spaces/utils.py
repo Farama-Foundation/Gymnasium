@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import operator as op
 from functools import reduce, singledispatch
-from typing import Any, TypeVar
+from typing import Any, TypeAlias, TypeVar
 
 import numpy as np
 from numpy.typing import NDArray
@@ -110,7 +110,7 @@ def _flatdim_oneof(space: OneOf) -> int:
 
 
 T = TypeVar("T")
-FlatType = NDArray[Any] | dict[str, Any] | tuple[Any, ...] | GraphInstance
+FlatType: TypeAlias = NDArray[Any] | dict[str, Any] | tuple[Any, ...] | GraphInstance
 
 
 @singledispatch
