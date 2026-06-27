@@ -26,7 +26,9 @@ jobs:
             --tag gymnasium-all-docker .
       - name: Run tests
         run: docker run gymnasium-all-docker pytest tests/*
-      - name: Run doctests
+      # NumPy 1.x and 2.x have different scalar reprs and floating-point promotion behaviour
+      - name: Run doctests for numpy >= 2.1
+        if: matrix.numpy-version == '>=2.1'
         run: docker run gymnasium-all-docker pytest --doctest-modules gymnasium/
 
   build-necessary:
