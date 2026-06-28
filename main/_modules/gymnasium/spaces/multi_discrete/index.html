@@ -587,7 +587,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Expects the mask dtype to be np.int8, actual dtype: </span><span class="si">{</span><span class="n">sub_mask</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-            <span class="n">valid_action_mask</span> <span class="o">=</span> <span class="n">sub_mask</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="n">valid_action_mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_mask</span> <span class="o">==</span> <span class="mi">1</span>
             <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">sub_mask</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">valid_action_mask</span><span class="p">)),</span> <span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Expects all masks values to 0 or 1, actual values: </span><span class="si">{</span><span class="n">sub_mask</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
