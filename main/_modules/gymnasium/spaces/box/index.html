@@ -458,8 +458,8 @@
     <span class="n">low</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">_ScalarT_co</span><span class="p">]</span>
     <span class="n">high</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">_ScalarT_co</span><span class="p">]</span>
 
-    <span class="n">bounded_below</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">]</span>
-    <span class="n">bounded_above</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">]</span>
+    <span class="n">bounded_below</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]</span>
+    <span class="n">bounded_above</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]</span>
 
     <span class="n">low_repr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">high_repr</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
@@ -605,7 +605,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_cast_low</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">:</span> <span class="n">_RealArrayLike</span><span class="p">,</span> <span class="n">dtype_min</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">_ScalarT_co</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">_ScalarT_co</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Casts the input Box low value to ndarray with provided dtype.</span>
 
 <span class="sd">        Args:</span>
@@ -672,7 +672,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_cast_high</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">:</span> <span class="n">_RealArrayLike</span><span class="p">,</span> <span class="n">dtype_max</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">_ScalarT_co</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">[</span><span class="n">_ScalarT_co</span><span class="p">],</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Casts the input Box high value to ndarray with provided dtype.</span>
 
 <span class="sd">        Args:</span>
