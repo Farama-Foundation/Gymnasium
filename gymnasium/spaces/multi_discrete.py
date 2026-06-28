@@ -213,7 +213,7 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
                 f"Expects the mask dtype to be np.int8, actual dtype: {sub_mask.dtype}"
             )
 
-            valid_action_mask = sub_mask == 1
+            valid_action_mask: np.typing.NDArray[np.bool_] = sub_mask == 1
             assert np.all(np.logical_or(sub_mask == 0, valid_action_mask)), (
                 f"Expects all masks values to 0 or 1, actual values: {sub_mask}"
             )

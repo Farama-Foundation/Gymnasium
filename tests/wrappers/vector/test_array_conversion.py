@@ -63,6 +63,9 @@ def test_array_conversion_wrapper(env_xp, target_xp):
     env_xp_compat = module_namespace(env_xp)
     env = create_vector_env(env_xp_compat)
 
+    # NumPy's "bool" type was deprecated in 1.20 and restored in 2.0, but "bool_" is always valid
+    target_xp_bool = getattr(target_xp, "bool", None) or target_xp.bool_
+
     # Check that the reset and step for env_xp environment are as expected
     obs, info = env.reset()
     # env_xp is automatically converted to the compatible namespace by array_namespace, so we need
@@ -89,9 +92,9 @@ def test_array_conversion_wrapper(env_xp, target_xp):
     assert array_namespace(obs) is target_xp_compat
     assert array_namespace(reward) is target_xp_compat
     assert array_namespace(terminated) is target_xp_compat
-    assert terminated.dtype == target_xp.bool
+    assert terminated.dtype == target_xp_bool
     assert array_namespace(truncated) is target_xp_compat
-    assert truncated.dtype == target_xp.bool
+    assert truncated.dtype == target_xp_bool
     assert isinstance(info, dict) and array_namespace(info["data"]) is target_xp_compat
 
     # Check that the wrapped environment can render. This implicitly returns None and requires  a
@@ -99,33 +102,39 @@ def test_array_conversion_wrapper(env_xp, target_xp):
     wrapped_env.render()
 
 
-@pytest.mark.parametrize("wrapper", ["JaxToNumpy", "JaxToTorch", "NumpyToTorch"])
-def test_specialized_wrappers(wrapper: str):
+@pytest.mark.parametrize("wrapper_str", ["JaxToNumpy", "JaxToTorch", "NumpyToTorch"])
+def test_specialized_wrappers(wrapper_str: str):
     # Imports need to happen inside the function to avoid loading dependencies that may not be
     # installed (i.e. jax and torch)
-    if wrapper == "JaxToNumpy":
+    if wrapper_str == "JaxToNumpy":
         jax = pytest.importorskip("jax")
         from gymnasium.wrappers.vector import JaxToNumpy  # noqa: E402
 
         env_xp, target_xp = jax.numpy, np
         wrapper = JaxToNumpy
-    elif wrapper == "JaxToTorch":
+    elif wrapper_str == "JaxToTorch":
         jax = pytest.importorskip("jax")
         torch = pytest.importorskip("torch")
         from gymnasium.wrappers.vector import JaxToTorch  # noqa: E402
 
         env_xp, target_xp = jax.numpy, torch
         wrapper = JaxToTorch
-    elif wrapper == "NumpyToTorch":
+    elif wrapper_str == "NumpyToTorch":
         torch = pytest.importorskip("torch")
         from gymnasium.wrappers.vector import NumpyToTorch  # noqa: E402
 
         env_xp, target_xp = np, torch
         wrapper = NumpyToTorch
     else:
-        raise TypeError(f"Unknown specialized conversion wrapper {type(wrapper)}")
+        raise TypeError(f"Unknown specialized conversion wrapper {wrapper_str}")
     env_xp_compat = module_namespace(env_xp)
     target_xp_compat = module_namespace(target_xp)
+
+    # NumPy's "bool" type was deprecated in 1.20 and restored in 2.0, but "bool_" is always valid
+    target_xp_bool = getattr(
+        target_xp,
+        "bool_" if wrapper_str.endswith("Numpy") else "bool",
+    )
 
     # The unwrapped test env sanity check is already covered by test_array_conversion_wrapper for
     # all known frameworks, including the specialized ones.
@@ -142,9 +151,9 @@ def test_specialized_wrappers(wrapper: str):
     assert array_namespace(obs) is target_xp_compat
     assert array_namespace(reward) is target_xp_compat
     assert array_namespace(terminated) is target_xp_compat
-    assert terminated.dtype == target_xp.bool
+    assert terminated.dtype == target_xp_bool
     assert array_namespace(truncated) is target_xp_compat
-    assert truncated.dtype == target_xp.bool
+    assert truncated.dtype == target_xp_bool
     assert isinstance(info, dict) and array_namespace(info["data"]) is target_xp_compat
 
     # Check that the wrapped environment can render. This implicitly returns None and requires a
