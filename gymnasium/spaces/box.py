@@ -87,8 +87,8 @@ class Box(Space[NDArray[_ScalarT_co]]):
     low: NDArray[_ScalarT_co]
     high: NDArray[_ScalarT_co]
 
-    bounded_below: NDArray[np.bool]
-    bounded_above: NDArray[np.bool]
+    bounded_below: NDArray[np.bool_]
+    bounded_above: NDArray[np.bool_]
 
     low_repr: str | None
     high_repr: str | None
@@ -234,7 +234,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
 
     def _cast_low(
         self, low: _RealArrayLike, dtype_min: float
-    ) -> tuple[NDArray[_ScalarT_co], NDArray[np.bool]]:
+    ) -> tuple[NDArray[_ScalarT_co], NDArray[np.bool_]]:
         """Casts the input Box low value to ndarray with provided dtype.
 
         Args:
@@ -301,7 +301,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
 
     def _cast_high(
         self, high: _RealArrayLike, dtype_max: float
-    ) -> tuple[NDArray[_ScalarT_co], NDArray[np.bool]]:
+    ) -> tuple[NDArray[_ScalarT_co], NDArray[np.bool_]]:
         """Casts the input Box high value to ndarray with provided dtype.
 
         Args:
