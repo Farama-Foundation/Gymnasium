@@ -1,12 +1,14 @@
 """Prototype LunarLander physics implementation using Pymunk.
 
-This script is intentionally not a Gymnasium environment. It is a small
+This script keeps the standalone physics demonstration and an unregistered
+experimental Gymnasium Env wrapper for controlled draft comparisons. It is a
 proof-of-concept for the physics pieces that would be needed to port
 LunarLander from Box2D to Pymunk.
 """
 
 from __future__ import annotations
 
+import importlib
 from dataclasses import dataclass
 
 import numpy as np
@@ -32,6 +34,10 @@ LEG_CATEGORY = 0b0100
 
 # Draft Pymunk values selected to exercise the prototype mechanics. They are
 # not calibrated Box2D equivalents.
+INITIAL_RANDOM_IMPULSE = 2.0
+INITIAL_RANDOM_ANGLE = 0.05
+MAX_EPISODE_STEPS = 1000
+
 MAIN_ENGINE_IMPULSE = 0.35
 MAIN_ENGINE_OFFSET = 4 / SCALE
 
@@ -44,6 +50,11 @@ LEG_DOWN = 18 / SCALE
 LEG_WIDTH = 4 / SCALE
 LEG_HEIGHT = 16 / SCALE
 
+STABLE_LANDING_STEPS = 25
+STABLE_VELOCITY_LIMIT = 0.12
+STABLE_ANGLE_LIMIT = 0.2
+STABLE_ANGULAR_VELOCITY_LIMIT = 0.12
+
 LANDER_POLY = [
     (-14, 17),
     (-17, 0),
@@ -52,6 +63,10 @@ LANDER_POLY = [
     (17, 0),
     (14, 17),
 ]
+
+_gymnasium = importlib.import_module("gymnasium")
+spaces = importlib.import_module("gymnasium.spaces")
+GymEnv = _gymnasium.Env
 
 
 @dataclass
@@ -232,11 +247,16 @@ def create_leg(
 class PymunkLunarLanderDemo:
     """Small action-driven Pymunk LunarLander physics demonstration."""
 
-    def __init__(self, seed: int = 42):
+    def __init__(
+        self,
+        seed: int = 42,
+        rng: np.random.Generator | None = None,
+        randomize_initial_state: bool = False,
+    ):
         """Create a seeded Pymunk LunarLander demonstration world."""
         self.world_width = VIEWPORT_WIDTH / SCALE
         self.world_height = VIEWPORT_HEIGHT / SCALE
-        rng = np.random.default_rng(seed)
+        rng = np.random.default_rng(seed) if rng is None else rng
         self.space = pymunk.Space()
         self.space.gravity = (0.0, -10.0)
         self.terrain = create_terrain(
@@ -268,7 +288,23 @@ class PymunkLunarLanderDemo:
             collision_type=RIGHT_LEG_COLLISION_TYPE,
         )
 
+        if randomize_initial_state:
+            self._randomize_initial_state(rng)
+
         self._add_collision_handlers()
+
+    def _randomize_initial_state(self, rng: np.random.Generator) -> None:
+        """Apply seeded draft reset variation to avoid identical rollouts."""
+        self.lander_body.apply_impulse_at_world_point(
+            (
+                float(rng.uniform(-INITIAL_RANDOM_IMPULSE, INITIAL_RANDOM_IMPULSE)),
+                float(rng.uniform(-INITIAL_RANDOM_IMPULSE, INITIAL_RANDOM_IMPULSE)),
+            ),
+            self.lander_body.position,
+        )
+        self.lander_body.angle = float(
+            rng.uniform(-INITIAL_RANDOM_ANGLE, INITIAL_RANDOM_ANGLE)
+        )
 
     @property
     def left_leg_contact(self) -> bool:
@@ -387,6 +423,169 @@ class PymunkLunarLanderDemo:
             right_leg_contact=self.right_leg_contact,
             crashed=self.crashed,
         )
+
+
+class ExperimentalPymunkLunarLanderEnv(GymEnv):
+    """Private experimental Gymnasium wrapper for the Pymunk prototype.
+
+    This environment is only for controlled draft comparisons against the
+    existing Box2D LunarLander. It is not registered, does not render, and does
+    not claim numerical trajectory parity with Box2D.
+
+    Temporary stable-landing termination: because this prototype does not map
+    Box2D's sleeping behavior exactly, an episode is treated as a successful
+    landing after both legs remain in contact while normalized linear velocity,
+    absolute angle, and normalized angular velocity stay below small thresholds
+    for ``STABLE_LANDING_STEPS`` consecutive simulation steps.
+    """
+
+    metadata = {"render_modes": [], "render_fps": FPS}
+
+    def __init__(self):
+        """Create the unregistered experimental Pymunk LunarLander env."""
+        self.action_space = spaces.Discrete(4)
+
+        low = np.array(
+            [
+                -2.5,
+                -2.5,
+                -10.0,
+                -10.0,
+                -2 * np.pi,
+                -10.0,
+                -0.0,
+                -0.0,
+            ],
+            dtype=np.float32,
+        )
+        high = np.array(
+            [
+                2.5,
+                2.5,
+                10.0,
+                10.0,
+                2 * np.pi,
+                10.0,
+                1.0,
+                1.0,
+            ],
+            dtype=np.float32,
+        )
+        self.observation_space = spaces.Box(low, high)
+
+        self.demo: PymunkLunarLanderDemo | None = None
+        self.prev_shaping: float | None = None
+        self.stable_landing_steps = 0
+        self.elapsed_steps = 0
+
+    def reset(
+        self,
+        *,
+        seed: int | None = None,
+        options: dict | None = None,
+    ) -> tuple[np.ndarray, dict]:
+        """Reset the experimental Pymunk env."""
+        super().reset(seed=seed)
+        self.demo = PymunkLunarLanderDemo(
+            rng=self.np_random,
+            randomize_initial_state=True,
+        )
+        self.prev_shaping = None
+        self.stable_landing_steps = 0
+        self.elapsed_steps = 0
+        observation, _, _, _, _ = self.step(0)
+        return observation, {}
+
+    def _get_observation(self) -> np.ndarray:
+        assert self.demo is not None
+
+        pos = self.demo.lander_body.position
+        vel = self.demo.lander_body.velocity
+        state = [
+            (pos.x - VIEWPORT_WIDTH / SCALE / 2) / (VIEWPORT_WIDTH / SCALE / 2),
+            (pos.y - (self.demo.terrain.helipad_y + LEG_DOWN))
+            / (VIEWPORT_HEIGHT / SCALE / 2),
+            vel.x * (VIEWPORT_WIDTH / SCALE / 2) / FPS,
+            vel.y * (VIEWPORT_HEIGHT / SCALE / 2) / FPS,
+            self.demo.lander_body.angle,
+            20.0 * self.demo.lander_body.angular_velocity / FPS,
+            1.0 if self.demo.left_leg_contact else 0.0,
+            1.0 if self.demo.right_leg_contact else 0.0,
+        ]
+        return np.array(state, dtype=np.float32)
+
+    def _update_stable_landing_steps(self, observation: np.ndarray) -> None:
+        assert self.demo is not None
+
+        stable = (
+            self.demo.left_leg_contact
+            and self.demo.right_leg_contact
+            and not self.demo.crashed
+            and abs(float(observation[2])) < STABLE_VELOCITY_LIMIT
+            and abs(float(observation[3])) < STABLE_VELOCITY_LIMIT
+            and abs(float(observation[4])) < STABLE_ANGLE_LIMIT
+            and abs(float(observation[5])) < STABLE_ANGULAR_VELOCITY_LIMIT
+        )
+        if stable:
+            self.stable_landing_steps += 1
+        else:
+            self.stable_landing_steps = 0
+
+    def step(self, action: int):
+        """Step the private experimental Pymunk env."""
+        assert self.demo is not None, "You forgot to call reset()"
+        assert self.action_space.contains(action), (
+            f"{action!r} ({type(action)}) invalid"
+        )
+
+        self.elapsed_steps += 1
+        self.demo.step(action)
+        observation = self._get_observation()
+
+        shaping = (
+            -100
+            * np.sqrt(observation[0] * observation[0] + observation[1] * observation[1])
+            - 100
+            * np.sqrt(observation[2] * observation[2] + observation[3] * observation[3])
+            - 100 * abs(observation[4])
+            + 10 * observation[6]
+            + 10 * observation[7]
+        )
+
+        reward = 0.0
+        if self.prev_shaping is not None:
+            reward = float(shaping - self.prev_shaping)
+        self.prev_shaping = float(shaping)
+
+        reward -= 0.30 if action == 2 else 0.0
+        reward -= 0.03 if action in (1, 3) else 0.0
+
+        terminated = False
+        truncated = False
+        termination_reason = None
+        is_success = False
+        if self.demo.crashed or abs(float(observation[0])) >= 1.0:
+            terminated = True
+            reward = -100.0
+            termination_reason = "crash" if self.demo.crashed else "viewport_exit"
+
+        self._update_stable_landing_steps(observation)
+        if not terminated and self.stable_landing_steps >= STABLE_LANDING_STEPS:
+            terminated = True
+            reward = 100.0
+            termination_reason = "stable_landing"
+            is_success = True
+
+        if not terminated and self.elapsed_steps >= MAX_EPISODE_STEPS:
+            truncated = True
+            termination_reason = "time_limit"
+
+        info = {
+            "termination_reason": termination_reason,
+            "is_success": is_success,
+        }
+
+        return observation, reward, terminated, truncated, info
 
 
 def main() -> None:
