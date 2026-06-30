@@ -257,10 +257,10 @@ for seed in [1, 2, 3, 5, 8]:  # Fibonacci seeds
     agent = REINFORCE(obs_space_dims, action_space_dims)
     reward_over_episodes = []
 
-    for episode in range(total_num_episodes):
-        # gymnasium v26 requires users to set seed while resetting the environment
-        obs, info = wrapped_env.reset(seed=seed)
+    # Reset the environment with set seed to obtain initial observation
+    obs, info = wrapped_env.reset(seed=seed)
 
+    for episode in range(total_num_episodes):
         done = False
         while not done:
             action = agent.sample_action(obs)
@@ -279,6 +279,7 @@ for seed in [1, 2, 3, 5, 8]:  # Fibonacci seeds
             done = terminated or truncated
 
         reward_over_episodes.append(wrapped_env.return_queue[-1])
+        obs, info = wrapped_env.reset()
         agent.update()
 
         if episode % 1000 == 0:
