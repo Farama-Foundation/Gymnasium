@@ -185,7 +185,7 @@ def run_env():
 
     for run in range(params.n_runs):  # Run several times to account for stochasticity
         learner.reset_qtable()  # Reset the Q-table between runs
-        state = env.reset(seed=params.seed)[0]  # Reset the environment with set seed
+        state, info = env.reset(seed=params.seed)  # Reset the environment with set seed
 
         for episode in tqdm(
             episodes, desc=f"Run {run}/{params.n_runs} - Episodes", leave=False
@@ -223,7 +223,7 @@ def run_env():
             steps[episode, run] = step
 
             # Reset the environment
-            state = env.reset()[0]
+            state, info = env.reset()
         qtables[run, :, :] = learner.qtable
 
     return rewards, steps, episodes, qtables, all_states, all_actions
