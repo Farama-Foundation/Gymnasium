@@ -543,11 +543,11 @@ stochasticity, we will also run our environment a few times.</p>
 
     <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">n_runs</span><span class="p">):</span>  <span class="c1"># Run several times to account for stochasticity</span>
         <span class="n">learner</span><span class="o">.</span><span class="n">reset_qtable</span><span class="p">()</span>  <span class="c1"># Reset the Q-table between runs</span>
+        <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># Reset the environment with set seed</span>
 
         <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span>
             <span class="n">episodes</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Run </span><span class="si">{</span><span class="n">run</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">n_runs</span><span class="si">}</span><span class="s2"> - Episodes&quot;</span><span class="p">,</span> <span class="n">leave</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">):</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">seed</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Reset the environment</span>
             <span class="n">step</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">total_rewards</span> <span class="o">=</span> <span class="mi">0</span>
@@ -579,6 +579,9 @@ stochasticity, we will also run our environment a few times.</p>
             <span class="c1"># Log all rewards and steps</span>
             <span class="n">rewards</span><span class="p">[</span><span class="n">episode</span><span class="p">,</span> <span class="n">run</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_rewards</span>
             <span class="n">steps</span><span class="p">[</span><span class="n">episode</span><span class="p">,</span> <span class="n">run</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
+
+            <span class="c1"># Reset the environment</span>
+            <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="n">qtables</span><span class="p">[</span><span class="n">run</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">qtable</span>
 
     <span class="k">return</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">episodes</span><span class="p">,</span> <span class="n">qtables</span><span class="p">,</span> <span class="n">all_states</span><span class="p">,</span> <span class="n">all_actions</span>
