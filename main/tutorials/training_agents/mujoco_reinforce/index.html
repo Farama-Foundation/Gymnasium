@@ -611,15 +611,16 @@ Hence it is important to test out various seeds, which we will be doing.</p>
     <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--------- Random Seed </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2"> ---------&quot;</span><span class="p">)</span>
 
     <span class="c1"># Reinitialize agent every seed</span>
     <span class="n">agent</span> <span class="o">=</span> <span class="n">REINFORCE</span><span class="p">(</span><span class="n">obs_space_dims</span><span class="p">,</span> <span class="n">action_space_dims</span><span class="p">)</span>
     <span class="n">reward_over_episodes</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_num_episodes</span><span class="p">):</span>
-        <span class="c1"># gymnasium v26 requires users to set seed while resetting the environment</span>
-        <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="c1"># Reset the environment with set seed to obtain initial observation</span>
+    <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
 
+    <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">total_num_episodes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">sample_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
@@ -638,6 +639,7 @@ Hence it is important to test out various seeds, which we will be doing.</p>
             <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
 
         <span class="n">reward_over_episodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="n">agent</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">episode</span> <span class="o">%</span> <span class="mi">1000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
