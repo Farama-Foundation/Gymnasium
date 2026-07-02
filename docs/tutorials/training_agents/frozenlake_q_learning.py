@@ -32,8 +32,6 @@ from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
 sns.set_theme()
 
-# %load_ext lab_black
-
 
 # %%
 # Parameters we'll use
