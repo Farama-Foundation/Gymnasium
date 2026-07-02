@@ -405,8 +405,6 @@ Q-learning algorithm.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.toy_text.frozen_lake</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_random_map</span>
 
 <span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">()</span>
-
-<span class="c1"># %load_ext lab_black</span>
 </pre></div>
 </div>
 <section id="parameters-we-ll-use">
@@ -580,8 +578,9 @@ stochasticity, we will also run our environment a few times.</p>
             <span class="n">rewards</span><span class="p">[</span><span class="n">episode</span><span class="p">,</span> <span class="n">run</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_rewards</span>
             <span class="n">steps</span><span class="p">[</span><span class="n">episode</span><span class="p">,</span> <span class="n">run</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
 
-            <span class="c1"># Reset the environment</span>
-            <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+            <span class="c1"># Reset the environment if this is not the last episode</span>
+            <span class="k">if</span> <span class="n">episode</span> <span class="o">!=</span> <span class="n">episodes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="n">qtables</span><span class="p">[</span><span class="n">run</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">learner</span><span class="o">.</span><span class="n">qtable</span>
 
     <span class="k">return</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">steps</span><span class="p">,</span> <span class="n">episodes</span><span class="p">,</span> <span class="n">qtables</span><span class="p">,</span> <span class="n">all_states</span><span class="p">,</span> <span class="n">all_actions</span>
