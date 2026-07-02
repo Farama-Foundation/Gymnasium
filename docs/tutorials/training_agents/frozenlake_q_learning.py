@@ -32,8 +32,6 @@ from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 
 sns.set_theme()
 
-# %load_ext lab_black
-
 
 # %%
 # Parameters we'll use
@@ -222,8 +220,9 @@ def run_env():
             rewards[episode, run] = total_rewards
             steps[episode, run] = step
 
-            # Reset the environment
-            state, info = env.reset()
+            # Reset the environment if this is not the last episode
+            if episode != episodes[-1]:
+                state, info = env.reset()
         qtables[run, :, :] = learner.qtable
 
     return rewards, steps, episodes, qtables, all_states, all_actions
