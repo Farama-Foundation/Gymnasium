@@ -82,7 +82,7 @@ def test_seeds(space, seed):
     ],
 )
 def test_bad_space_calls(space_fn):
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
         space_fn()
 
 

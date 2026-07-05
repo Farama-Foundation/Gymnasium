@@ -83,7 +83,7 @@ class TestVectorEnvObservationModes:
     def test_obs_mode_different_different_shapes(self, vector_env_fn, observation_mode):
         spaces = [Box(low=0, high=1, shape=(i + 1,)) for i in range(3)]
         with pytest.raises(
-            (AssertionError, RuntimeError),
+            (AssertionError, RuntimeError, ValueError),
             # match=re.escape(
             #     "Expected all Box.low shape to be equal, actually [(1,), (2,), (3,)]"
             # ),
@@ -109,7 +109,7 @@ class TestVectorEnvObservationModes:
         ]
 
         with pytest.raises(
-            (AssertionError, RuntimeError),
+            (AssertionError, RuntimeError, TypeError),
             # match=re.escape(
             #     "Expects all spaces to be the same shape, actual types: [<class 'gymnasium.spaces.box.Box'>, <class 'gymnasium.spaces.discrete.Discrete'>, <class 'gymnasium.spaces.dict.Dict'>]"
             # ),

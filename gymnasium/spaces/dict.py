@@ -116,9 +116,10 @@ class Dict(
 
         self.spaces = cast("dict[str, Space[_T_co]]", spaces_dict)
         for key, space in self.spaces.items():
-            assert isinstance(space, Space), (
-                f"Dict space element is not an instance of Space: key='{key}', space={space}"
-            )
+            if not isinstance(space, Space):
+                raise TypeError(
+                    f"Dict space element is not an instance of Space: key='{key}', space={space}"
+                )
 
         # None for shape and dtype, since it'll require special handling
         super().__init__(None, None, seed)  # type: ignore
@@ -229,9 +230,10 @@ class Dict(
 
     def __setitem__(self, key: str, value: Space[Any]):
         """Set the space that is associated to `key`."""
-        assert isinstance(value, Space), (
-            f"Trying to set {key} to Dict space with value that is not a gymnasium space, actual type: {type(value)}"
-        )
+        if not isinstance(value, Space):
+            raise TypeError(
+                f"Trying to set {key} to Dict space with value that is not a gymnasium space, actual type: {type(value)}"
+            )
         self.spaces[key] = value
 
     def __iter__(self) -> Iterator[str]:

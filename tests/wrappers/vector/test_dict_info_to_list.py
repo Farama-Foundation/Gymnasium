@@ -21,7 +21,7 @@ def test_usage_in_vector_env(env_id: str = "CartPole-v1", num_envs: int = 3):
 
     DictInfoToList(vector_env)
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
         DictInfoToList(env)
 
 

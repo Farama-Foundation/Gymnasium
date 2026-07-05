@@ -166,28 +166,34 @@ def batch_differing_spaces(spaces: _PySequence[Space]) -> Space:
         >>> batch_differing_spaces(spaces)
         MultiDiscrete([3 5 4 8])
     """
-    assert len(spaces) > 0, "Expects a non-empty list of spaces"
-    assert all(isinstance(space, type(spaces[0])) for space in spaces), (
-        f"Expects all spaces to be the same shape, actual types: {[type(space) for space in spaces]}"
-    )
-    assert type(spaces[0]) in batch_differing_spaces.registry, (
-        f"Requires the Space type to have a registered `batch_differing_space`, current list: {batch_differing_spaces.registry}"
-    )
+    if len(spaces) == 0:
+        raise ValueError("Expects a non-empty list of spaces")
+    if not all(isinstance(space, type(spaces[0])) for space in spaces):
+        raise TypeError(
+            f"Expects all spaces to be of the same type, actual types: {[type(space) for space in spaces]}"
+        )
+    if type(spaces[0]) not in batch_differing_spaces.registry:
+        raise TypeError(
+            f"Requires the Space type to have a registered `batch_differing_space`, current list: {batch_differing_spaces.registry}"
+        )
 
     return batch_differing_spaces.dispatch(type(spaces[0]))(spaces)
 
 
 @batch_differing_spaces.register(Box)
 def _batch_differing_spaces_box(spaces: _PySequence[Box]) -> Box:
-    assert all(spaces[0].dtype == space.dtype for space in spaces), (
-        f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
-    )
-    assert all(spaces[0].low.shape == space.low.shape for space in spaces), (
-        f"Expected all Box.low shape to be equal, actually {[space.low.shape for space in spaces]}"
-    )
-    assert all(spaces[0].high.shape == space.high.shape for space in spaces), (
-        f"Expected all Box.high shape to be equal, actually {[space.high.shape for space in spaces]}"
-    )
+    if not all(spaces[0].dtype == space.dtype for space in spaces):
+        raise ValueError(
+            f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
+        )
+    if not all(spaces[0].low.shape == space.low.shape for space in spaces):
+        raise ValueError(
+            f"Expected all Box.low shape to be equal, actually {[space.low.shape for space in spaces]}"
+        )
+    if not all(spaces[0].high.shape == space.high.shape for space in spaces):
+        raise ValueError(
+            f"Expected all Box.high shape to be equal, actually {[space.high.shape for space in spaces]}"
+        )
 
     return Box(
         low=np.array([space.low for space in spaces]),
@@ -213,15 +219,18 @@ def _batch_differing_spaces_discrete(spaces: _PySequence[Discrete]) -> MultiDisc
 
 @batch_differing_spaces.register(MultiDiscrete)
 def _batch_differing_spaces_multi_discrete(spaces: _PySequence[MultiDiscrete]) -> Box:
-    assert all(spaces[0].dtype == space.dtype for space in spaces), (
-        f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
-    )
-    assert all(spaces[0].nvec.shape == space.nvec.shape for space in spaces), (
-        f"Expects all MultiDiscrete.nvec shape, actually {[space.nvec.shape for space in spaces]}"
-    )
-    assert all(spaces[0].start.shape == space.start.shape for space in spaces), (
-        f"Expects all MultiDiscrete.start shape, actually {[space.start.shape for space in spaces]}"
-    )
+    if not all(spaces[0].dtype == space.dtype for space in spaces):
+        raise ValueError(
+            f"Expected all dtypes to be equal, actually {[space.dtype for space in spaces]}"
+        )
+    if not all(spaces[0].nvec.shape == space.nvec.shape for space in spaces):
+        raise ValueError(
+            f"Expects all MultiDiscrete.nvec shape, actually {[space.nvec.shape for space in spaces]}"
+        )
+    if not all(spaces[0].start.shape == space.start.shape for space in spaces):
+        raise ValueError(
+            f"Expects all MultiDiscrete.start shape, actually {[space.start.shape for space in spaces]}"
+        )
 
     return Box(
         low=np.array([space.start for space in spaces]),
@@ -233,7 +242,10 @@ def _batch_differing_spaces_multi_discrete(spaces: _PySequence[MultiDiscrete]) -
 
 @batch_differing_spaces.register(MultiBinary)
 def _batch_differing_spaces_multi_binary(spaces: _PySequence[MultiBinary]) -> Box:
-    assert all(spaces[0].shape == space.shape for space in spaces)
+    if not all(spaces[0].shape == space.shape for space in spaces):
+        raise ValueError(
+            f"Expected all MultiBinary shapes to be equal, actually {[space.shape for space in spaces]}"
+        )
 
     return Box(
         low=0,
@@ -257,7 +269,10 @@ def _batch_differing_spaces_tuple(spaces: _PySequence[Tuple]) -> Tuple:
 
 @batch_differing_spaces.register(Dict)
 def _batch_differing_spaces_dict(spaces: _PySequence[Dict]) -> Dict:
-    assert all(spaces[0].keys() == space.keys() for space in spaces)
+    if not all(spaces[0].keys() == space.keys() for space in spaces):
+        raise ValueError(
+            f"Expected all Dict spaces to have the same keys, actually {[list(space.keys()) for space in spaces]}"
+        )
 
     return Dict(
         {

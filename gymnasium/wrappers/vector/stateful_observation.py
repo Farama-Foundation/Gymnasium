@@ -83,7 +83,10 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
                 f"{self} is missing `autoreset_mode` data. Assuming that the vector environment it follows the `NextStep` autoreset api or autoreset is disabled. Read https://farama.org/Vector-Autoreset-Mode for more details."
             )
         else:
-            assert self.env.metadata["autoreset_mode"] in {AutoresetMode.NEXT_STEP}
+            if self.env.metadata["autoreset_mode"] not in {AutoresetMode.NEXT_STEP}:
+                raise ValueError(
+                    f"Expected env.metadata['autoreset_mode'] to be AutoresetMode.NEXT_STEP, got {self.env.metadata['autoreset_mode']}"
+                )
 
         new_single_space = Box(
             low=-np.inf,
@@ -119,11 +122,11 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         options: dict[str, Any] | None = None,
     ) -> tuple[np.ndarray, dict[str, Any]]:
         """Reset function for `NormalizeObservationWrapper` which is disabled for partial resets."""
-        assert (
-            options is None
-            or "reset_mask" not in options
-            or np.all(options["reset_mask"])
-        )
+        if options is not None and "reset_mask" in options:
+            if not np.all(options["reset_mask"]):
+                raise ValueError(
+                    "NormalizeObservation does not support partial resets. The 'reset_mask' must contain all True values."
+                )
         return super().reset(seed=seed, options=options)
 
     def observations(

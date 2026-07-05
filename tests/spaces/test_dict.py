@@ -23,7 +23,7 @@ def test_dict_init():
         Dict({"a": Discrete(3)}, a=Box(0, 1))
 
     with pytest.raises(
-        AssertionError,
+        TypeError,
         match="Dict space element is not an instance of Space: key='b', space=Box",
     ):
         Dict(a=Discrete(2), b="Box")
@@ -145,7 +145,7 @@ def test_mapping():
     assert DICT_SPACE["a"] == b
 
     with pytest.raises(
-        AssertionError,
+        TypeError,
         match="Trying to set a to Dict space with value that is not a gymnasium space, actual type: <class 'int'>",
     ):
         DICT_SPACE["a"] = 5

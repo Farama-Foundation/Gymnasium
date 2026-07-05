@@ -43,7 +43,7 @@ def test_oneof_seeds(spaces, seed):
     ],
 )
 def test_bad_oneof_calls(spaces_fn):
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
         spaces_fn()
 
 

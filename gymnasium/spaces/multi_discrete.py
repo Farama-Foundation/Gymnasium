@@ -121,10 +121,12 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
         else:
             self.start = np.zeros(self.nvec.shape, dtype=dtype)
 
-        assert self.start.shape == self.nvec.shape, (
-            "start and nvec (counts) should have the same shape"
-        )
-        assert (self.nvec > 0).all(), "nvec (counts) have to be positive"
+        if self.start.shape != self.nvec.shape:
+            raise ValueError(
+                f"start and nvec (counts) should have the same shape, got {self.start.shape} and {self.nvec.shape}"
+            )
+        if not (self.nvec > 0).all():
+            raise ValueError("nvec (counts) have to be positive")
 
         super().__init__(self.nvec.shape, self.dtype, seed)
 

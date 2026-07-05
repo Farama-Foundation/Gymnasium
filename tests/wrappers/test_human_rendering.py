@@ -25,7 +25,7 @@ def test_human_rendering():
 
     env = gym.make("CartPole-v1", render_mode="human")
     with pytest.raises(
-        AssertionError,
+        ValueError,
         match=re.escape(
             "Expected env.render_mode to be one of ['rgb_array', 'rgb_array_list', 'depth_array', 'depth_array_list'] but got 'human'"
         ),

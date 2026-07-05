@@ -97,7 +97,10 @@ class RecordEpisodeStatistics(VectorWrapper):
             )
             self._autoreset_mode = AutoresetMode.NEXT_STEP
         else:
-            assert isinstance(self.env.metadata["autoreset_mode"], AutoresetMode)
+            if not isinstance(self.env.metadata["autoreset_mode"], AutoresetMode):
+                raise TypeError(
+                    f"Expected env.metadata['autoreset_mode'] to be an AutoresetMode, got {type(self.env.metadata['autoreset_mode'])}"
+                )
             self._autoreset_mode = self.env.metadata["autoreset_mode"]
 
         self.episode_count = 0
@@ -121,18 +124,22 @@ class RecordEpisodeStatistics(VectorWrapper):
 
         if options is not None and "reset_mask" in options:
             reset_mask = options.pop("reset_mask")
-            assert isinstance(reset_mask, np.ndarray), (
-                f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
-            )
-            assert reset_mask.shape == (self.num_envs,), (
-                f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
-            )
-            assert reset_mask.dtype == np.bool_, (
-                f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
-            )
-            assert np.any(reset_mask), (
-                f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
-            )
+            if not isinstance(reset_mask, np.ndarray):
+                raise TypeError(
+                    f"`options['reset_mask']` must be a numpy array, got {type(reset_mask)}"
+                )
+            if reset_mask.shape != (self.num_envs,):
+                raise ValueError(
+                    f"`options['reset_mask']` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
+                )
+            if reset_mask.dtype != np.bool_:
+                raise TypeError(
+                    f"`options['reset_mask']` must have `dtype=np.bool_`, got {reset_mask.dtype}"
+                )
+            if not np.any(reset_mask):
+                raise ValueError(
+                    f"`options['reset_mask']` must contain a boolean array with at least one True value, got reset_mask={reset_mask}"
+                )
 
             self.episode_start_times[reset_mask] = time.perf_counter()
             self.episode_returns[reset_mask] = 0

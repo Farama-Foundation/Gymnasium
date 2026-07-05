@@ -200,8 +200,12 @@ class AsyncVectorEnv(VectorEnv):
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
         if isinstance(observation_mode, tuple) and len(observation_mode) == 2:
-            assert isinstance(observation_mode[0], Space)
-            assert isinstance(observation_mode[1], Space)
+            if not isinstance(observation_mode[0], Space) or not isinstance(
+                observation_mode[1], Space
+            ):
+                raise TypeError(
+                    f"Expected both elements of observation_mode to be Spaces, got {type(observation_mode[0])} and {type(observation_mode[1])}"
+                )
             self.observation_space, self.single_observation_space = observation_mode
         else:
             if observation_mode == "same":
@@ -327,9 +331,10 @@ class AsyncVectorEnv(VectorEnv):
             seed = [None for _ in range(self.num_envs)]
         elif isinstance(seed, int):
             seed = [seed + i for i in range(self.num_envs)]
-        assert len(seed) == self.num_envs, (
-            f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
-        )
+        if len(seed) != self.num_envs:
+            raise ValueError(
+                f"If seeds are passed as a list the length must match num_envs={self.num_envs} but got length={len(seed)}."
+            )
 
         if self._state != AsyncState.DEFAULT:
             raise AlreadyPendingCallError(
@@ -339,18 +344,22 @@ class AsyncVectorEnv(VectorEnv):
 
         if options is not None and "reset_mask" in options:
             reset_mask = options.pop("reset_mask")
-            assert isinstance(reset_mask, np.ndarray), (
-                f"`options['reset_mask': mask]` must be a numpy array, got {type(reset_mask)}"
-            )
-            assert reset_mask.shape == (self.num_envs,), (
-                f"`options['reset_mask': mask]` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
-            )
-            assert reset_mask.dtype == np.bool_, (
-                f"`options['reset_mask': mask]` must have `dtype=np.bool_`, got {reset_mask.dtype}"
-            )
-            assert np.any(reset_mask), (
-                f"`options['reset_mask': mask]` must contain a boolean array, got reset_mask={reset_mask}"
-            )
+            if not isinstance(reset_mask, np.ndarray):
+                raise TypeError(
+                    f"`options['reset_mask']` must be a numpy array, got {type(reset_mask)}"
+                )
+            if reset_mask.shape != (self.num_envs,):
+                raise ValueError(
+                    f"`options['reset_mask']` must have shape `({self.num_envs},)`, got {reset_mask.shape}"
+                )
+            if reset_mask.dtype != np.bool_:
+                raise TypeError(
+                    f"`options['reset_mask']` must have `dtype=np.bool_`, got {reset_mask.dtype}"
+                )
+            if not np.any(reset_mask):
+                raise ValueError(
+                    f"`options['reset_mask']` must contain a boolean array with at least one True value, got reset_mask={reset_mask}"
+                )
 
             for pipe, env_seed, env_reset in zip(
                 self.parent_pipes, seed, reset_mask, strict=True
