@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import typing
+from typing_extensions import assert_type
 
 import numpy as np
 import pytest
@@ -57,7 +57,7 @@ def test_tuple_generic_typing():
     assert isinstance(obs_space, Tuple)
     assert len(obs_space.spaces) == 2
 
-    typing.assert_type(obs_space.spaces, tuple[MultiDiscrete, Box])
+    assert_type(obs_space.spaces, tuple[MultiDiscrete, Box])
 
 
 @pytest.mark.parametrize(
