@@ -2,29 +2,28 @@
 
 from __future__ import annotations
 
+import sys
 import typing
 from collections.abc import Iterable
-from typing import Any, TYPE_CHECKING, overload
+from typing import Any, overload
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
-try:
-    # Python 3.11+
+if sys.version_info >= (3, 11):
     from typing import TypeVarTuple, Unpack
-except ImportError:  # pragma: no cover
-    # For older Python versions supported by Gymnasium
+else:
     from typing_extensions import TypeVarTuple, Unpack
 
 
-_TSpaces = TypeVarTuple("_TSpaces")
+_SpacesT = TypeVarTuple("_SpacesT")
 
 
 class Tuple(
     Space[tuple[Any, ...]],
     typing.Sequence[Space[Any]],
-    typing.Generic[Unpack[_TSpaces]],
+    typing.Generic[Unpack[_SpacesT]],
 ):
     """A tuple (more precisely: the cartesian product) of :class:`Space` instances.
 
@@ -37,19 +36,14 @@ class Tuple(
         (np.int64(0), array([-0.3991573 ,  0.21649833], dtype=float32))
     """
 
-    # Help type-checkers understand that Tuple[Box, Discrete].spaces is (Box, Discrete)
-    if TYPE_CHECKING:
-        spaces: tuple[Unpack[_TSpaces]]
-    else:
-        spaces: tuple[Space[Any], ...]
+    spaces: tuple[Unpack[_SpacesT]]
 
     @overload
     def __init__(
         self,
-        spaces: tuple[Unpack[_TSpaces]],
+        spaces: tuple[Unpack[_SpacesT]],
         seed: int | typing.Sequence[int] | np.random.Generator | None = None,
     ): ...
-
     @overload
     def __init__(
         self,
@@ -179,8 +173,7 @@ class Tuple(
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, (list, np.ndarray)):
-            # Promote list and ndarray to tuple for contains check
-            x = tuple(x)
+            x = tuple(x)  # Promote list and ndarray to tuple for contains check
 
         return (
             isinstance(x, tuple)
