@@ -988,9 +988,10 @@
 <span class="sd">    Changelogs:</span>
 <span class="sd">        v1.0.0 - `autoreset` and `apply_api_compatibility` parameter was removed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="n">entry_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">vector_entry_point</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
-        <span class="s2">&quot;Either `entry_point` or `vector_entry_point` (or both) must be provided&quot;</span>
-    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">entry_point</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">vector_entry_point</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Either `entry_point` or `vector_entry_point` (or both) must be provided&quot;</span>
+        <span class="p">)</span>
     <span class="n">ns</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">parse_env_id</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1070,7 +1071,8 @@
             <span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span> <span class="o">=</span> <span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># For string id&#39;s, load the environment spec from the registry then make the environment spec</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected id to be a string or EnvSpec, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># The environment name can include an unloaded module in &quot;module:env_name&quot; style</span>
         <span class="n">env_spec</span> <span class="o">=</span> <span class="n">_find_spec</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>

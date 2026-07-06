@@ -563,7 +563,10 @@
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">=</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;autoreset_mode&quot;</span><span class="p">],</span> <span class="n">AutoresetMode</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;autoreset_mode&quot;</span><span class="p">],</span> <span class="n">AutoresetMode</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Expected env.metadata[&#39;autoreset_mode&#39;] to be an AutoresetMode, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autoreset_mode&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;autoreset_mode&quot;</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span><span class="p">(</span>

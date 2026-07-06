@@ -441,13 +441,16 @@
 <span class="sd">            edge_space (Union[None, Box, Discrete]): space of the edge features.</span>
 <span class="sd">            seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_space</span><span class="p">,</span> <span class="p">(</span><span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">)),</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Values of the node_space should be instances of Box or Discrete, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">node_space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edge_space</span><span class="p">,</span> <span class="p">(</span><span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">)),</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Values of the edge_space should be instances of None Box or Discrete, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">edge_space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_space</span><span class="p">,</span> <span class="p">(</span><span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Values of the node_space should be instances of Box or Discrete, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">node_space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edge_space</span><span class="p">,</span> <span class="p">(</span><span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Values of the edge_space should be instances of None, Box or Discrete, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">edge_space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">node_space</span> <span class="o">=</span> <span class="n">node_space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="o">=</span> <span class="n">edge_space</span>
