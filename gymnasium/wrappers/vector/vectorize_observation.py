@@ -189,7 +189,10 @@ class VectorizeTransformObservation(VectorObservationWrapper):
             )
             self.autoreset_mode = AutoresetMode.NEXT_STEP
         else:
-            assert isinstance(env.metadata["autoreset_mode"], AutoresetMode)
+            if not isinstance(env.metadata["autoreset_mode"], AutoresetMode):
+                raise TypeError(
+                    f"Expected env.metadata['autoreset_mode'] to be an AutoresetMode, got {type(env.metadata['autoreset_mode'])}"
+                )
             self.autoreset_mode = env.metadata["autoreset_mode"]
 
         self.wrapper = wrapper(

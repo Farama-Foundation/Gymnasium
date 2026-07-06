@@ -41,7 +41,7 @@ def check_environments_match(
     skip_render = (
         skip_render
         or env_a.unwrapped.render_mode in [None, "human"]
-        or env_b.unwrapped.render in [None, "human"]
+        or env_b.unwrapped.render_mode in [None, "human"]
     )
 
     assert info_comparison in [
@@ -71,7 +71,7 @@ def check_environments_match(
             assert data_equivalence(info_a[key], info_b[key]), (
                 f"resetting info is not a superset, key {key} present in info_a with value = {info_a[key]}, in info_b with value = {info_b[key]}"
             )
-    elif info_comparison == "keys-equivalance":
+    elif info_comparison == "keys-equivalence":
         assert info_a.keys() == info_b.keys(), (
             f"resetting info keys are not equivalent, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
         )
@@ -110,7 +110,7 @@ def check_environments_match(
                 assert data_equivalence(info_a[key], info_b[key]), (
                     f"stepping info is not a superset in step = {step}, key {key} present in info_a with value = {info_a[key]}, in info_b with value = {info_b[key]}"
                 )
-        elif info_comparison == "keys-equivalance":
+        elif info_comparison == "keys-equivalence":
             assert info_a.keys() == info_b.keys(), (
                 f"stepping info keys are not equivalent in step = {step}, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
             )
@@ -138,7 +138,7 @@ def check_environments_match(
                     assert data_equivalence(info_a[key], info_b[key]), (
                         f"resetting info is not a superset in step = {step}, key {key} present in info_a with value = {info_a[key]}, in info_b with value = {info_b[key]}"
                     )
-            elif info_comparison == "keys-equivalance":
+            elif info_comparison == "keys-equivalence":
                 assert info_a.keys() == info_b.keys(), (
                     f"resetting info keys are not equivalent in step = {step}, info_a's keys are {info_a.keys()}, info_b's keys are {info_b.keys()}"
                 )

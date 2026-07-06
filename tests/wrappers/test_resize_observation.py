@@ -61,15 +61,15 @@ def test_resize_shapes(shape: tuple[int, int]):
 def test_invalid_input():
     env = gym.make("CarRacing-v3")
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         ResizeObservation(env, ())
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         ResizeObservation(env, (1,))
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         ResizeObservation(env, (1, 1, 1, 1))
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         ResizeObservation(env, (-1, 1))
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         ResizeObservation(gym.make("CartPole-v1"), (1, 1))
-    with pytest.raises(AssertionError):
+    with pytest.raises(TypeError):
         ResizeObservation(gym.make("Blackjack-v1"), (1, 1))

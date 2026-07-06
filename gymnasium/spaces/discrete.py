@@ -95,13 +95,14 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
             start (int): The smallest element of this space.
             dtype: The space type, for example, ``int``, ``np.int64``, ``np.int32``, or ``np.uint8``.
         """
-        assert np.issubdtype(type(n), np.integer), (
-            f"Expects `n` to be an integer, actual dtype: {type(n)}"
-        )
-        assert n > 0, "n (counts) have to be positive"
-        assert np.issubdtype(type(start), np.integer), (
-            f"Expects `start` to be an integer, actual type: {type(start)}"
-        )
+        if not np.issubdtype(type(n), np.integer):
+            raise TypeError(f"Expects `n` to be an integer, actual dtype: {type(n)}")
+        if n <= 0:
+            raise ValueError(f"n (counts) have to be positive, actual value: {n}")
+        if not np.issubdtype(type(start), np.integer):
+            raise TypeError(
+                f"Expects `start` to be an integer, actual type: {type(start)}"
+            )
 
         # determine dtype
         if dtype is None:

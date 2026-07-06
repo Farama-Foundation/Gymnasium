@@ -42,9 +42,10 @@ class Tuple(Space[tuple[_T_co, ...]], typing.Sequence[_T_co]):
         """
         self.spaces = tuple(spaces)
         for space in self.spaces:
-            assert isinstance(space, Space), (
-                f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
-            )
+            if not isinstance(space, Space):
+                raise TypeError(
+                    f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
+                )
         super().__init__(None, None, seed)
 
     @property

@@ -36,7 +36,7 @@ def test_render_modes():
 
     # HumanRenderer on human renderer should not work
     with pytest.raises(
-        AssertionError,
+        ValueError,
         match=re.escape(
             "Expected env.render_mode to be one of ['rgb_array', 'rgb_array_list', 'depth_array', 'depth_array_list'] but got 'human'"
         ),

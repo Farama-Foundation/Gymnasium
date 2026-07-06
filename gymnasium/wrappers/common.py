@@ -97,9 +97,14 @@ class TimeLimit(
             env: The environment to apply the wrapper
             max_episode_steps: the environment step after which the episode is truncated (``elapsed >= max_episode_steps``)
         """
-        assert isinstance(max_episode_steps, int) and max_episode_steps > 0, (
-            f"Expect the `max_episode_steps` to be positive, actually: {max_episode_steps}"
-        )
+        if not isinstance(max_episode_steps, int):
+            raise TypeError(
+                f"Expect the `max_episode_steps` to be an integer, actually: {type(max_episode_steps)}"
+            )
+        if max_episode_steps <= 0:
+            raise ValueError(
+                f"Expect the `max_episode_steps` to be positive, actually: {max_episode_steps}"
+            )
         gym.utils.RecordConstructorArgs.__init__(
             self, max_episode_steps=max_episode_steps
         )

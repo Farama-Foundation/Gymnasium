@@ -268,7 +268,7 @@ def test_partial_reset_failure(vectoriser):
     )
 
     # Test first reset using a mask
-    # with pytest.raises(AssertionError):
+    # with pytest.raises(ValueError):
     #     envs.reset(options={"reset_mask": np.array([True, True, False])})
 
     # Reset with all trues
@@ -276,44 +276,43 @@ def test_partial_reset_failure(vectoriser):
 
     # Reset with mask of an incorrect shape
     with pytest.raises(
-        AssertionError,
-        match=re.escape(
-            "`options['reset_mask': mask]` must have shape `(3,)`, got (1,)"
-        ),
+        ValueError,
+        match=re.escape("`options['reset_mask']` must have shape `(3,)`, got (1,)"),
     ):
         envs.reset(options={"reset_mask": np.array([True])})
+
     with pytest.raises(
-        AssertionError,
-        match=re.escape(
-            "options['reset_mask': mask]` must have shape `(3,)`, got (4,)"
-        ),
+        ValueError,
+        match=re.escape("`options['reset_mask']` must have shape `(3,)`, got (4,)"),
     ):
         envs.reset(options={"reset_mask": np.array([True, True, False, False])})
+
     with pytest.raises(
-        AssertionError,
-        match=re.escape(
-            "`options['reset_mask': mask]` must have shape `(3,)`, got (1, 3)"
-        ),
+        ValueError,
+        match=re.escape("`options['reset_mask']` must have shape `(3,)`, got (1, 3)"),
     ):
         envs.reset(options={"reset_mask": np.array([[True, True, True]])})
+
     with pytest.raises(
-        AssertionError,
+        ValueError,
         match=re.escape(
-            "`options['reset_mask': mask]` must contain a boolean array, got reset_mask=[False False False]"
+            "`options['reset_mask']` must contain a boolean array with at least one True value, got reset_mask=[False False False]"
         ),
     ):
         envs.reset(options={"reset_mask": np.array([False, False, False])})
+
     with pytest.raises(
-        AssertionError,
+        TypeError,
         match=re.escape(
-            "`options['reset_mask': mask]` must have `dtype=np.bool_`, got int64"
+            "`options['reset_mask']` must have `dtype=np.bool_`, got int64"
         ),
     ):
         envs.reset(options={"reset_mask": np.array([1, 1, 0])})
+
     with pytest.raises(
-        AssertionError,
+        TypeError,
         match=re.escape(
-            "`options['reset_mask': mask]` must have `dtype=np.bool_`, got float64"
+            "`options['reset_mask']` must have `dtype=np.bool_`, got float64"
         ),
     ):
         envs.reset(options={"reset_mask": np.array([1.0, 1.0, 0.0])})

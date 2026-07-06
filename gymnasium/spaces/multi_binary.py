@@ -46,10 +46,12 @@ class MultiBinary(Space[NDArray[np.int8]]):
         if isinstance(n, int):
             self.n = n = int(n)
             input_n = (n,)
-            assert (np.asarray(input_n) > 0).all()  # n (counts) have to be positive
+            if not (np.asarray(input_n) > 0).all():
+                raise ValueError(f"n (counts) have to be positive, got {n}")
         elif isinstance(n, (Sequence, np.ndarray)):
             self.n = input_n = tuple(int(i) for i in n)
-            assert (np.asarray(input_n) > 0).all()  # n (counts) have to be positive
+            if not (np.asarray(input_n) > 0).all():
+                raise ValueError(f"n (counts) have to be positive, got {n}")
         else:
             raise ValueError(
                 f"Expected n to be an int or a sequence of ints, actual type: {type(n)}"

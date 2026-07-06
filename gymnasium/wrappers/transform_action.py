@@ -105,7 +105,10 @@ class ClipAction(
         Args:
             env: The environment to wrap
         """
-        assert isinstance(env.action_space, Box)
+        if not isinstance(env.action_space, Box):
+            raise TypeError(
+                f"ClipAction requires a Box action space, got {type(env.action_space)}"
+            )
 
         gym.utils.RecordConstructorArgs.__init__(self)
         TransformAction.__init__(
@@ -165,7 +168,10 @@ class RescaleAction(
             min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
         """
-        assert isinstance(env.action_space, Box)
+        if not isinstance(env.action_space, Box):
+            raise TypeError(
+                f"RescaleAction requires a Box action space, got {type(env.action_space)}"
+            )
 
         gym.utils.RecordConstructorArgs.__init__(
             self, min_action=min_action, max_action=max_action
@@ -274,9 +280,10 @@ class DiscretizeAction(
         if isinstance(bins, int):
             self.bins = np.array([bins] * self.n_dims)
         else:
-            assert len(bins) == self.n_dims, (
-                f"bins must match action dimensions: expected {self.n_dims}, got {len(bins)}"
-            )
+            if len(bins) != self.n_dims:
+                raise ValueError(
+                    f"bins must match action dimensions: expected {self.n_dims}, got {len(bins)}"
+                )
             self.bins = np.array(bins)
 
         self.bin_centers = [
