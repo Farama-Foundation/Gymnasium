@@ -8,11 +8,10 @@ import dataclasses
 import difflib
 import importlib
 import importlib.metadata as metadata
-import importlib.util
 import json
 import re
 from collections import defaultdict
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Generator, Iterable, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from types import ModuleType
@@ -102,7 +101,7 @@ class EnvSpec:
     disable_env_checker: bool = field(default=False)
 
     # Environment arguments
-    kwargs: dict = field(default_factory=dict)
+    kwargs: dict[str, Any] = field(default_factory=dict)
 
     # post-init attributes
     namespace: str | None = field(init=False)
@@ -115,7 +114,7 @@ class EnvSpec:
     # Vectorized environment entry point
     vector_entry_point: VectorEnvCreator | str | None = field(default=None)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Calls after the spec is created to extract the namespace, name and version from the environment id."""
         self.namespace, self.name, self.version = parse_env_id(self.id)
 
@@ -141,7 +140,7 @@ class EnvSpec:
         return json.dumps(env_spec_dict)
 
     @staticmethod
-    def _check_can_jsonify(env_spec: dict[str, Any]):
+    def _check_can_jsonify(env_spec: dict[str, Any]) -> None:
         """Warns the user about serialisation failing if the spec contains a callable.
 
         Args:
@@ -321,7 +320,7 @@ def find_highest_version(ns: str | None, name: str) -> int | None:
     return max(version, default=None)
 
 
-def _check_namespace_exists(ns: str | None):
+def _check_namespace_exists(ns: str | None) -> None:
     """Check if a namespace exists. If it doesn't, print a helpful error message."""
     # If the namespace is none, then the namespace does exist
     if ns is None:
@@ -348,7 +347,7 @@ def _check_namespace_exists(ns: str | None):
     raise error.NamespaceNotFound(f"Namespace {ns} not found. {suggestion_msg}")
 
 
-def _check_name_exists(ns: str | None, name: str):
+def _check_name_exists(ns: str | None, name: str) -> None:
     """Check if an env exists in a namespace. If it doesn't, print a helpful error message."""
     # First check if the namespace exists
     _check_namespace_exists(ns)
@@ -370,7 +369,7 @@ def _check_name_exists(ns: str | None, name: str):
     )
 
 
-def _check_version_exists(ns: str | None, name: str, version: int | None):
+def _check_version_exists(ns: str | None, name: str, version: int | None) -> None:
     """Check if an env version exists in a namespace. If it doesn't, print a helpful error message.
 
     This is a complete test whether an environment identifier is valid, and will provide the best available hints.
@@ -416,7 +415,7 @@ def _check_version_exists(ns: str | None, name: str, version: int | None):
 
     latest_spec = max(
         versioned_specs, key=lambda env_spec: env_spec.version, default=None
-    )  # type: ignore
+    )
     if latest_spec is not None and version > latest_spec.version:
         version_list_msg = ", ".join(f"`v{env_spec.version}`" for env_spec in env_specs)
         message += f" It provides versioned environments: [ {version_list_msg} ]."
@@ -430,7 +429,7 @@ def _check_version_exists(ns: str | None, name: str, version: int | None):
         )
 
 
-def _check_spec_register(testing_spec: EnvSpec):
+def _check_spec_register(testing_spec: EnvSpec) -> None:
     """Checks whether the spec is valid to be registered. Helper function for `register`."""
     latest_versioned_spec = max(
         (
@@ -440,7 +439,7 @@ def _check_spec_register(testing_spec: EnvSpec):
             and env_spec.name == testing_spec.name
             and env_spec.version is not None
         ),
-        key=lambda spec_: int(spec_.version),  # type: ignore
+        key=lambda spec_: int(spec_.version),
         default=None,
     )
 
@@ -469,7 +468,7 @@ def _check_spec_register(testing_spec: EnvSpec):
         )
 
 
-def _check_metadata(testing_metadata: dict[str, Any]):
+def _check_metadata(testing_metadata: dict[str, Any]) -> None:
     """Check the metadata of an environment."""
     if not isinstance(testing_metadata, dict):
         raise error.InvalidMetadata(
@@ -547,13 +546,13 @@ def load_env_creator(name: str) -> EnvCreator | VectorEnvCreator:
     return fn
 
 
-def register_envs(env_module: ModuleType):
+def register_envs(env_module: ModuleType) -> None:
     """A No-op function such that it can appear to IDEs that a module is used."""
     pass
 
 
 @contextlib.contextmanager
-def namespace(ns: str):
+def namespace(ns: str) -> Generator[None, None, None]:
     """Context manager for modifying the current namespace."""
     global current_namespace
     old_namespace = current_namespace
@@ -573,7 +572,7 @@ def register(
     additional_wrappers: tuple[WrapperSpec, ...] = (),
     vector_entry_point: VectorEnvCreator | str | None = None,
     kwargs: dict | None = None,
-):
+) -> None:
     """Registers an environment in gymnasium with an ``id`` to use with :meth:`gymnasium.make` with the ``entry_point`` being a string or callable for creating the environment.
 
     The ``id`` parameter corresponds to the name of the environment, with the syntax as follows:
@@ -732,7 +731,7 @@ def make(
             )
 
     try:
-        env = env_creator(**env_spec_kwargs)
+        env = env_creator(**env_spec_kwargs)  # ty:ignore[call-top-callable]
     except TypeError as e:
         if (
             str(e).find("got an unexpected keyword argument 'render_mode'") >= 0
@@ -835,7 +834,7 @@ def make_vec(
     vectorization_mode: VectorizeMode | str | None = None,
     vector_kwargs: dict[str, Any] | None = None,
     wrappers: Sequence[Callable[[Env], Wrapper]] | None = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> gym.vector.VectorEnv:
     """Create a vector environment according to the given ID.
 
@@ -915,7 +914,7 @@ def make_vec(
             )
 
         env = gym.vector.SyncVectorEnv(
-            env_fns=(create_single_env for _ in range(num_envs)),
+            env_fns=[create_single_env for _ in range(num_envs)],
             **vector_kwargs,
         )
     elif vectorization_mode == VectorizeMode.ASYNC:
@@ -959,7 +958,7 @@ def make_vec(
         ):
             env_spec_kwargs["max_episode_steps"] = env_spec.max_episode_steps
 
-        env = env_creator(num_envs=num_envs, **env_spec_kwargs)
+        env = env_creator(num_envs=num_envs, **env_spec_kwargs)  # ty:ignore[call-top-callable]
     else:
         raise error.Error(f"Unknown vectorization mode: {vectorization_mode}")
 
@@ -1032,7 +1031,7 @@ def pprint_registry(
     """
     # Defaultdict to store environment ids according to namespace.
     namespace_envs: dict[str, list[str]] = defaultdict(list)
-    max_justify = float("-inf")
+    max_justify = 0
 
     # Find the namespace associated with each environment spec
     for env_spec in print_registry.values():

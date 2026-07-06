@@ -11,7 +11,7 @@ Setup
 Recommended solution
 ~~~~~~~~~~~~~~~~~~~~
 
-1. Install ``pipx`` following the `pipx documentation <https://pypa.github.io/pipx/installation/>`_.
+1. Install ``pipx`` following the `pipx documentation <https://pipx.pypa.io/stable/how-to/install-pipx/>`_.
 2. Then install Copier:
 
 .. code:: console

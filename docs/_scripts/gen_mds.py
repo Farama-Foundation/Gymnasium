@@ -11,6 +11,7 @@ filtered_envs = defaultdict(list)
 exclude_env_names = [
     "GymV21Environment",
     "GymV26Environment",
+    "CliffWalkingSlippery",
     "FrozenLake8x8",
     "LunarLanderContinuous",
     "BipedalWalkerHardcore",

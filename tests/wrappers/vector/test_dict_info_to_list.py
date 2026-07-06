@@ -31,7 +31,7 @@ class ResetOptionAsInfo(VectorEnv):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,  # options are passed are the info output
     ) -> tuple[ObsType, dict[str, Any]]:
         return None, options

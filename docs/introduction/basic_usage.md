@@ -215,7 +215,7 @@ Common wrappers that beginners find useful:
 - :class:`TimeAwareObservation`: Adds information about the current timestep to the observation (sometimes helps with learning).
 ```
 
-For a full list of implemented wrappers in Gymnasium, see [wrappers](/api/wrappers).
+For a full list of implemented wrappers in Gymnasium, see [wrappers](/api/wrappers/table).
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.Env

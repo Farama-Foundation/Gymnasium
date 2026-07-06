@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from os import path
-from typing import Any, TypeAlias
+from typing import TYPE_CHECKING, Any, TypeAlias
 
 import jax
 import jax.numpy as jnp
@@ -17,9 +17,13 @@ from gymnasium.experimental.functional import ActType, FuncEnv
 from gymnasium.utils import EzPickle
 from gymnasium.vector import AutoresetMode
 
+if TYPE_CHECKING:
+    import pygame
+
+
 PRNGKeyType: TypeAlias = jax.Array
 StateType: TypeAlias = jax.Array
-RenderStateType = tuple["pygame.Surface", "pygame.time.Clock", float | None]  # type: ignore  # noqa: F821
+RenderStateType = tuple["pygame.Surface", "pygame.time.Clock", float | None]
 
 
 @struct.dataclass
@@ -47,7 +51,9 @@ class PendulumFunctional(
     action_space = gym.spaces.Box(-max_torque, max_torque, shape=(1,), dtype=np.float32)
 
     def initial(
-        self, rng: PRNGKeyType, params: PendulumParams = PendulumParams
+        self,
+        rng: PRNGKeyType,
+        params: PendulumParams | type[PendulumParams] = PendulumParams,
     ) -> StateType:
         """Initial state generation."""
         high = jnp.array([params.high_x, params.high_y])
@@ -58,7 +64,7 @@ class PendulumFunctional(
         state: StateType,
         action: int | jax.Array,
         rng: None = None,
-        params: PendulumParams = PendulumParams,
+        params: PendulumParams | type[PendulumParams] = PendulumParams,
     ) -> StateType:
         """Pendulum transition."""
         th, thdot = state  # th := theta
@@ -79,7 +85,10 @@ class PendulumFunctional(
         return new_state
 
     def observation(
-        self, state: StateType, rng: Any, params: PendulumParams = PendulumParams
+        self,
+        state: StateType,
+        rng: Any,
+        params: PendulumParams | type[PendulumParams] = PendulumParams,
     ) -> jax.Array:
         """Generates an observation based on the state."""
         theta, thetadot = state
@@ -91,7 +100,7 @@ class PendulumFunctional(
         action: ActType,
         next_state: StateType,
         rng: Any,
-        params: PendulumParams = PendulumParams,
+        params: PendulumParams | type[PendulumParams] = PendulumParams,
     ) -> float:
         """Generates the reward based on the state, action and next state."""
         th, thdot = state  # th := theta
@@ -105,7 +114,10 @@ class PendulumFunctional(
         return -costs
 
     def terminal(
-        self, state: StateType, rng: Any, params: PendulumParams = PendulumParams
+        self,
+        state: StateType,
+        rng: Any,
+        params: PendulumParams | type[PendulumParams] = PendulumParams,
     ) -> bool:
         """Determines if the state is a terminal state."""
         return False
@@ -114,7 +126,7 @@ class PendulumFunctional(
         self,
         state: StateType,
         render_state: RenderStateType,
-        params: PendulumParams = PendulumParams,
+        params: PendulumParams | type[PendulumParams] = PendulumParams,
     ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an RGB image."""
         try:
@@ -189,7 +201,7 @@ class PendulumFunctional(
         self,
         screen_width: int = 600,
         screen_height: int = 400,
-        params: PendulumParams = PendulumParams,
+        params: PendulumParams | type[PendulumParams] = PendulumParams,
     ) -> RenderStateType:
         """Initialises the render state."""
         try:
@@ -199,7 +211,7 @@ class PendulumFunctional(
                 'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
 
-        pygame.init()
+        pygame.display.init()
         screen = pygame.Surface((screen_width, screen_height))
         clock = pygame.time.Clock()
 
@@ -208,7 +220,7 @@ class PendulumFunctional(
     def render_close(
         self,
         render_state: RenderStateType,
-        params: PendulumParams = PendulumParams,
+        params: PendulumParams | type[PendulumParams] = PendulumParams,
     ):
         """Closes the render state."""
         try:

@@ -47,7 +47,7 @@ class BaseRender:
         width: int,
         height: int,
         max_geom: int = 1000,
-        visual_options: dict[int, bool] = None,
+        visual_options: dict[int, bool] | None = None,
     ):
         """Render context superclass for offscreen and window rendering."""
         self.model = model
@@ -180,7 +180,7 @@ class OffScreenViewer(BaseRender):
         width: int,
         height: int,
         max_geom: int = 1000,
-        visual_options: dict[int, bool] = None,
+        visual_options: dict[int, bool] | None = None,
     ):
         # We must make GLContext before MjrContext
         self._get_opengl_backend(width, height)
@@ -341,7 +341,7 @@ class WindowViewer(BaseRender):
         width: int | None = None,
         height: int | None = None,
         max_geom: int = 1000,
-        visual_options: dict[int, bool] = None,
+        visual_options: dict[int, bool] | None = None,
     ):
         glfw.init()
 

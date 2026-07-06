@@ -5,6 +5,38 @@ from gymnasium.logger import warn
 from tests.envs.utils import all_testing_env_specs
 
 
+def test_pygame_selective_init():
+    """Rendering must use pygame.display.init(), not pygame.init().
+
+    pygame.init() initialises every subsystem including audio (mixer),
+    which is unnecessary and can fail in headless CI environments.
+    After rendering an rgb_array frame the display subsystem must be
+    initialised while the mixer must remain uninitialised.
+    """
+    try:
+        import pygame
+    except ImportError:
+        pytest.skip("pygame not installed")
+
+    import os
+
+    os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
+    os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
+
+    import gymnasium as gym
+
+    env = gym.make("CartPole-v1", render_mode="rgb_array")
+    env.reset(seed=0)
+    env.render()
+
+    assert pygame.display.get_init(), "pygame.display must be initialised after render"
+    assert pygame.mixer.get_init() is None, (
+        "pygame.mixer must NOT be initialised by render (use pygame.display.init() "
+        "not pygame.init())"
+    )
+    env.close()
+
+
 def check_rendered(rendered_frame, mode: str):
     """Check that the rendered frame is as expected."""
     if mode == "rgb_array_list":

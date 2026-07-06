@@ -16,6 +16,7 @@ These projects are covered by the MIT License.
 
 import inspect
 from copy import deepcopy
+from typing import Any
 
 import numpy as np
 
@@ -30,7 +31,7 @@ from gymnasium.utils.passive_env_checker import (
 )
 
 
-def data_equivalence(data_1, data_2, exact: bool = False) -> bool:
+def data_equivalence(data_1: Any, data_2: Any, exact: bool = False) -> bool:
     """Assert equality between data 1 and 2, i.e. observations, actions, info.
 
     Args:
@@ -61,16 +62,19 @@ def data_equivalence(data_1, data_2, exact: bool = False) -> bool:
                 )
             else:
                 if exact:
-                    return np.all(data_1 == data_2)
+                    # `np.all` returns `np.bool_`, which is incompatible with `bool`
+                    return bool(np.all(data_1 == data_2))
                 else:
                     return np.allclose(data_1, data_2, rtol=1e-5, atol=1e-5)
         else:
             return False
     else:
-        return data_1 == data_2
+        # `__eq__` doesn't always return `bool`; e.g. `np.int8() == np.int8()` returns
+        # a `np.bool_`, which is incompatible with `bool`
+        return bool(data_1 == data_2)
 
 
-def check_reset_seed_determinism(env: gym.Env):
+def check_reset_seed_determinism(env: gym.Env) -> None:
     """Check that the environment can be reset with a seed.
 
     Args:
@@ -163,7 +167,7 @@ def check_reset_seed_determinism(env: gym.Env):
         )
 
 
-def check_reset_options(env: gym.Env):
+def check_reset_options(env: gym.Env) -> None:
     """Check that the environment can be reset with options.
 
     Args:
@@ -191,7 +195,7 @@ def check_reset_options(env: gym.Env):
         )
 
 
-def check_step_determinism(env: gym.Env, seed=123):
+def check_step_determinism(env: gym.Env, seed: int = 123) -> None:
     """Check that the environment steps deterministically after reset.
 
     Note: This check assumes that seeded `reset()` is deterministic (it must have passed `check_reset_seed`) and that `step()` returns valid values (passed `env_step_passive_checker`).
@@ -209,15 +213,17 @@ def check_step_determinism(env: gym.Env, seed=123):
 
     env.reset(seed=seed)
     obs_0, rew_0, term_0, trunc_0, info_0 = env.step(action)
-    seeded_rng: np.random.Generator = deepcopy(env.unwrapped._np_random)
+
+    orig_rng = env.unwrapped._np_random
+    assert orig_rng is not None, "env.reset() should have initialized env._np_random"
+    seeded_rng: np.random.Generator = deepcopy(orig_rng)
 
     env.reset(seed=seed)
     obs_1, rew_1, term_1, trunc_1, info_1 = env.step(action)
 
-    assert (
-        env.unwrapped._np_random.bit_generator.state  # pyright: ignore [reportOptionalMemberAccess]
-        == seeded_rng.bit_generator.state
-    ), "The `.np_random` is not properly been updated after step."
+    assert orig_rng.bit_generator.state == seeded_rng.bit_generator.state, (
+        "The `.np_random` is not properly been updated after step."
+    )
 
     assert data_equivalence(obs_0, obs_1), (
         "Deterministic step observations are not equivalent for the same seed and action"
@@ -252,7 +258,7 @@ def check_step_determinism(env: gym.Env, seed=123):
         )
 
 
-def check_reset_return_info_deprecation(env: gym.Env):
+def check_reset_return_info_deprecation(env: gym.Env) -> None:
     """Makes sure support for deprecated `return_info` argument is dropped.
 
     Args:
@@ -269,7 +275,7 @@ def check_reset_return_info_deprecation(env: gym.Env):
         )
 
 
-def check_seed_deprecation(env: gym.Env):
+def check_seed_deprecation(env: gym.Env) -> None:
     """Makes sure support for deprecated function `seed` is dropped.
 
     Args:
@@ -285,7 +291,7 @@ def check_seed_deprecation(env: gym.Env):
         )
 
 
-def check_reset_return_type(env: gym.Env):
+def check_reset_return_type(env: gym.Env) -> None:
     """Checks that :meth:`reset` correctly returns a tuple of the form `(obs , info)`.
 
     Args:
@@ -310,7 +316,7 @@ def check_reset_return_type(env: gym.Env):
     )
 
 
-def check_space_limit(space, space_type: str):
+def check_space_limit(space: spaces.Space[object], space_type: str) -> None:
     """Check the space limit for only the Box space as a test that only runs as part of `check_env`."""
     if isinstance(space, spaces.Box):
         if np.any(np.equal(space.low, -np.inf)):
@@ -350,10 +356,10 @@ def check_space_limit(space, space_type: str):
 
 def check_env(
     env: gym.Env,
-    warn: bool = None,
+    warn: bool | None = None,
     skip_render_check: bool = False,
     skip_close_check: bool = False,
-):
+) -> None:
     """Check that an environment follows Gymnasium's API.
 
     .. py:currentmodule:: gymnasium.Env

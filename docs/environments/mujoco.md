@@ -36,7 +36,7 @@ pip install gymnasium[mujoco]
 
 As of October 2021, DeepMind has acquired MuJoCo and has open-sourced it in 2022, making it free for everyone.
 Using MuJoCo with Gymnasium requires the framework `mujoco` be installed (this dependency is installed with the above command).
-Instructions for installing the MuJoCo engine can be found on their [website](https://mujoco.org) and [GitHub repository](https://github.com/deepmind/mujoco).
+Instructions for installing the MuJoCo engine can be found on their [website](https://mujoco.org) and [GitHub repository](https://github.com/google-deepmind/mujoco).
 
 MuJoCo `v3` environments and older, which relied on the `mujoco-py` framework, were migrated to the `gymnasium-robotics` package starting with `gymnasium` v1.2. For information on using these older versions, please refer to the `gymnasium-robotics` documentation. The original `mujoco-py` framework can be found in its [GitHub repository](https://github.com/openai/mujoco-py/tree/master/mujoco_py).
 
@@ -68,7 +68,7 @@ There are eleven MuJoCo environments (in roughly increasing complexity):
 | HumanoidStandup        | 3d humanoid with the goal of standing up                             |
 
 All of these environments are stochastic in terms of their initial state, with a Gaussian noise added to a fixed initial state in order to add stochasticity.
-The state spaces for MuJoCo environments in Gymnasium consist of two parts that are flattened and concatenated together: the position of the body part and joints (`mujoco.MjData.qpos`) and their corresponding velocity (`mujoco.MjData.qvel`) (more information in the [MuJoCo Physics State Documentation](https://mujoco.readthedocs.io/en/stable/computation/index.html#physics-state)).
+The state spaces for MuJoCo environments in Gymnasium consist of two parts that are flattened and concatenated together: the position of the body part and joints (`mujoco.MjData.qpos`) and their corresponding velocity (`mujoco.MjData.qvel`) (more information in the [MuJoCo Physics State Documentation](https://mujoco.readthedocs.io/en/stable/computation/index.html#the-state)).
 <!--
 Often some of the first positional elements are omitted from the state space since the reward is calculated based on their values, leaving it up to the algorithm to infer these hidden values indirectly.
 -->
@@ -81,12 +81,12 @@ Environments can be configured by changing the `xml_file` argument and/or by twe
 ## Versions
 Gymnasium includes the following versions of the environments:
 
-| Version | Simulator       | Notes                                                                                                |
-|---------|-----------------|------------------------------------------------------------------------------------------------------|
-| `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)                                                          |
-| `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                                                                       |
-| `v3`    | `mujoco-py`     | Migrated to `gymnasium-robotics` (from `gymnasium` v1.2). Deprecated, Kept for reproducibility.        |
-| `v2`    | `mujoco-py`     | Migrated to `gymnasium-robotics` (from `gymnasium` v1.2). Deprecated, Kept for reproducibility.        |
+| Version | Simulator       | Notes                                                                                           |
+|---------|-----------------|-------------------------------------------------------------------------------------------------|
+| `v5`    | `mujoco=>2.3.3` | Recommended (most features, the least bugs)                                                     |
+| `v4`    | `mujoco=>2.1.3` | Maintained for reproducibility                                                                  |
+| `v3`    | `mujoco-py`     | Migrated to `gymnasium-robotics` (from `gymnasium` v1.2). Deprecated, Kept for reproducibility. |
+| `v2`    | `mujoco-py`     | Migrated to `gymnasium-robotics` (from `gymnasium` v1.2). Deprecated, Kept for reproducibility. |
 
 For more information, see the section "Version History" for each environment.
 
@@ -100,7 +100,7 @@ The training performance of `v2`/`v3` and `v4` are not directly comparable becau
 The Training performance of `v4` and `v5` is different because of the many changes in the environments, but the Half Cheetah and Swimmer exhibits identical behaviour, Pusher and Swimmer are close (for more information see [GitHub Issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
 
 ### Exact reproducibility
-Note: The exact behavior of the MuJoCo simulator changes slightly between `mujoco` versions due to floating point operation ordering (more information of their [Documentation]( https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility)), if exact reproducibility is need besides using the `seed` for experiments the same simulator version should be used.
+Note: The exact behavior of the MuJoCo simulator changes slightly between `mujoco` versions due to floating point operation ordering (more information of their [Documentation](https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility)), if exact reproducibility is need besides using the `seed` for experiments the same simulator version should be used.
 
 ## Rendering Arguments
 All of the MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:
@@ -111,7 +111,7 @@ env = gymnasium.make("Ant-v5", render_mode="rgb_array", width=1280, height=720)
 
 | Parameter               | Type                                | Default | Description                                                                                                                                                                                                                                              |
 |-------------------------|-------------------------------------|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `render_mode`           | **str**                             | `None`   | The modality of the render result. Must be one of `human`, `rgb_array`, `depth_array`, or `rgbd_tuple`. Note that `human` does not return a rendered image, but renders directly to the window                                                                                                                                                                                                                   |
+| `render_mode`           | **str**                             | `None`  | The modality of the render result. Must be one of `human`, `rgb_array`, `depth_array`, or `rgbd_tuple`. Note that `human` does not return a rendered image, but renders directly to the window                                                           |
 | `width`                 | **int**                             | `480`   | The width of the render window                                                                                                                                                                                                                           |
 | `height`                | **int**                             | `480`   | The height of the render window                                                                                                                                                                                                                          |
 | `camera_id`             | **int \| None**                     | `None`  | The camera ID used for the render window                                                                                                                                                                                                                 |

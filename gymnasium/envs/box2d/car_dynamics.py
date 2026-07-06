@@ -8,6 +8,9 @@ Created by Oleg Klimov
 """
 
 import math
+from collections import deque
+from dataclasses import dataclass
+from typing import Any
 
 import Box2D
 import numpy as np
@@ -47,6 +50,14 @@ HULL_POLY4 = [(-50, -120), (+50, -120), (+50, -90), (-50, -90)]
 WHEEL_COLOR = (0, 0, 0)
 WHEEL_WHITE = (77, 77, 77)
 MUD_COLOR = (102, 102, 0)
+
+
+@dataclass(slots=True)
+class Particle:
+    color: tuple[int, int, int]
+    poly: list[tuple[int, int]]
+    grass: Any
+    ttl: int = 1
 
 
 class Car:
@@ -135,7 +146,7 @@ class Car:
             w.userData = w
             self.wheels.append(w)
         self.drawlist = self.wheels + [self.hull]
-        self.particles = []
+        self.particles = deque(maxlen=30)
 
     def gas(self, gas):
         """control: rear wheel drive
@@ -334,17 +345,12 @@ class Car:
                 pygame.draw.polygon(surface, color=WHEEL_WHITE, points=white_poly)
 
     def _create_particle(self, point1, point2, grass):
-        class Particle:
-            pass
-
-        p = Particle()
-        p.color = WHEEL_COLOR if not grass else MUD_COLOR
-        p.ttl = 1
-        p.poly = [(point1[0], point1[1]), (point2[0], point2[1])]
-        p.grass = grass
+        p = Particle(
+            color=WHEEL_COLOR if not grass else MUD_COLOR,
+            poly=[(point1[0], point1[1]), (point2[0], point2[1])],
+            grass=grass,
+        )
         self.particles.append(p)
-        while len(self.particles) > 30:
-            self.particles.pop(0)
         return p
 
     def destroy(self):

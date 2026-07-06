@@ -68,6 +68,8 @@ wrapper in the page on the wrapper type
       - Reshapes Array based observations to a specified shape.
     * - :class:`ResizeObservation`
       - Resizes image observations using OpenCV to a specified shape.
+    * - :class:`RepeatAction`
+      - Repeats an action ``N`` times, returning the cumulative reward and last observation / info.
     * - :class:`StickyAction`
       - Adds a probability that the action is repeated for the same ``step`` function.
     * - :class:`TimeAwareObservation`

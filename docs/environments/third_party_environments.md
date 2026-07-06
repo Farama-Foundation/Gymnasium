@@ -43,8 +43,6 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 - Name your PR something like "Add external environment X"
 -->
 
-
-
 ### Autonomous Driving environments
 *Autonomous Vehicle and traffic management.*
 
@@ -80,6 +78,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   ICU-Sepsis is a tabular reinforcement learning environment that simulates the treatment of sepsis in an intensive care unit (ICU). Introduced in the paper [ICU-Sepsis: A Benchmark MDP Built from Real Medical Data](https://arxiv.org/abs/2406.05646), the environment is lightweight and easy to use, yet challenging for most reinforcement learning algorithms.
 
+### Cybersecurity environments
+*Interacting with systems and cybersecurity tools.*
+
+- [Security-Gym](https://github.com/j-klawson/security-gym)
+[![Gymnasium](https://img.shields.io/badge/Gymnasium-%E2%89%A51.0.0-blue)](https://gymnasium.farama.org/)
+
+  A gymnasium environment that sends continuous Linux server log data and kernel events to simulate an environment where an agent runs continually on the Linux server. The action space supports actions an agent can take to react to cybersecurity attacks on the server.
 
 ### Economic / Financial environments
 *Everything Economics related.*
@@ -88,14 +93,21 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   AnyTrading is a collection of Gym environments for reinforcement learning-based trading algorithms with a great focus on simplicity, flexibility, and comprehensiveness.
 
+- [gym-invmgmt: Inventory management and supply chain optimization environments](https://github.com/r2barati/gym-invmgmt)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-%3E%3D0.26.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/r2barati/gym-invmgmt)
+
+  gym-invmgmt provides Gymnasium-compatible multi-echelon inventory-management environments for supply-chain optimization research. It includes configurable network topologies, production capacities, lead times, backlog penalties, non-stationary demand generation, YAML-defined custom networks, and tools for evaluating optimization, heuristic, and reinforcement-learning controllers.
+
 - [gym-mtsim: Financial trading for MetaTrader 5 platform](https://github.com/AminHP/gym-mtsim)
 
   MtSim is a simulator for the [MetaTrader 5](https://www.metatrader5.com/) trading platform for reinforcement learning-based trading algorithms.
 
-- [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/)
+- [gym-trading-env: Trading Environment](https://gym-trading-env.readthedocs.io/en/latest/)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
-  ![Github stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)
+  ![GitHub stars](https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env)
 
   Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
 
@@ -109,8 +121,18 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   EV2Gym is a fully customizable and easily configurable environment for Electric Vehicle (EV) smart charging simulations on a small and large scale. Also, includes non-RL baseline implementations such as mathematical programming, model predictive control, and heuristics.
 
+### Environmental / Climate environments
+*Simulation of natural phenomena, disaster management, and ecological systems.*
+
+- [FirecastRL: Wildfire Suppression Environment](https://github.com/aisystems-lab/wildfire-env)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.29.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/aisystems-lab/wildfire-env)
+
+  A Gymnasium-compatible wildfire simulation environment that models fire spread using physics-based dynamics and incorporates helicopter firefighting strategies. It's built on real terrain data, including land cover and elevation, and supports customizable observation and reward wrappers.
+
 ### Game environments
-*Board Games, Video Games and all other interactive entrainment mediums.*
+*Board Games, Video Games and all other interactive entertainment mediums.*
 
 - [Advanced Minesweeper Environment](https://github.com/markov-labs/RL-Minesweeper)
 
@@ -118,6 +140,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![GitHub stars](https://img.shields.io/github/stars/markov-labs/RL-Minesweeper)
 
   This is a custom minesweeper gymnasium environment that allows for an optional custom mask for added complexity. Fully customizable with board size, mine density and custom masks.
+
+- [BoltCrypt: Procedural Dungeon RL Environment](https://github.com/foreverska/BoltCrypt/)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/foreverska/BoltCrypt)
+
+  BoltCrypt is a lightweight environment featuring procedurally generated dungeons. It challenges Reinforcement Learning agents to navigate complex layouts, solve sokoban-style boulder puzzles, and manage inventory items like keys to reach the exit. BoltCrypt also contains a Natural Language wrapper to enable testing LLM's long term planning.
 
 - [Craftium: an extensible framework for creating RL environments](https://github.com/mikelma/craftium)
 
@@ -146,6 +175,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![GitHub stars](https://img.shields.io/github/stars/strakam/generals-bots)
 
   Generals.io is a fast-paced strategy game on a 2D grid. We make bot development accessible via the Gymnasium/PettingZoo API.
+
+- [Hill Climb Racing Env: A Hill Climb Racing RL environment](https://github.com/alexzh3/hillclimbracing)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26+-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/alexzh3/hillclimbracing)
+
+  An environment inspired by the mobile game Hill Climb Racing, featuring Box2D physics, Pygame rendering, procedurally generated Perlin noise terrain, discrete and continuous action spaces, five reward functions, and 13 pre-trained PPO baseline models.
 
 - [Pickomino (Heckmeck): Dice and Tile game](https://github.com/smallgig/Pickomino)
 
@@ -189,7 +225,6 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
-
 ### Mathematics / Computational
 *Reduce computational compute, prove math theorems, and more.*
 
@@ -207,7 +242,6 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   An environment for guiding automated theorem provers based on saturation algorithms (e.g. [Vampire](https://github.com/vprover/vampire)).
 
-
 ### Robotics environments
 *Autonomous Robots.*
 
@@ -217,6 +251,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![GitHub stars](https://img.shields.io/github/stars/JacopoPan/aerial-autonomy-stack)
 
   Multi-drone PX4 and ArduPilot ROS2 control of quadrotors and VTOL planes in Gazebo Sim, with YOLO, LiDAR, Dockerized Gym simulation, and JetPack deployment.
+
+- [Balloon Popping Challenge: A 6-DoF Rocket GNC Simulation Gymnasium Environment](https://github.com/ARRC-Rocket/BalloonPoppingChallenge)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/ARRC-Rocket/BalloonPoppingChallenge)
+
+  Balloon Popping Challenge is a 6-DoF rocket guidance, navigation, and control (GNC) simulation environment. The environment is designed to simulate an active controlled rocket to pop balloons scattered in the sky. The simulator incorporates realistic physics, including atmospheric conditions and rocket dynamics, to provide a challenging platform for developing and testing GNC algorithms. This project is based on [ActiveRocketPy](https://github.com/ARRC-Rocket/BalloonPoppingChallenge), a fork of open-source software [RocketPy](https://github.com/RocketPy-Team/RocketPy).
 
 - [BSK-RL: Environments for Spacecraft Planning and Scheduling](https://avslab.github.io/bsk_rl/)
 
@@ -228,6 +269,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 - [Connect-4-gym : An environment for practicing self playing](https://github.com/lucasBertola/Connect-4-Gym-env-Reinforcement-learning)
 
   Connect-4-Gym is an environment designed for creating AIs that learn by playing against themselves and assigning them an Elo rating. This environment can be used to train and evaluate reinforcement learning agents on the classic board game Connect Four.
+
+- [deformable_gym: RL environments for grasping deformable objects](https://github.com/dfki-ric/deformable_gym)
+
+  A collection of gymnasium environments for learning to grasp 3D deformable objects built with PyBullet and Mujoco.
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.0.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/dfki-ric/deformable_gym)
 
 - [FlyCraft: A Fixed-wing UAV Environment](https://github.com/GongXudong/fly-craft)
 
@@ -247,7 +295,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   gym-jiminy presents an extension of the initial Gym for robotics using [Jiminy](https://github.com/duburcqa/jiminy), an extremely fast and light-weight simulator for poly-articulated systems using Pinocchio for physics evaluation and Meshcat for web-based 3D rendering.
 
-- [gym-pybullet-drones: Environments for quadcopter control](https://github.com/JacopoPan/gym-pybullet-drones)
+- [gym-pybullet-drones: Environments for quadcopter control](https://github.com/utiasDSL/gym-pybullet-drones)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.2-blue)
   ![GitHub stars](https://img.shields.io/github/stars/JacopoPan/gym-pybullet-drones)
@@ -268,9 +316,23 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Itomori is an environment for risk-aware UAV flight, it provides tools to solve Chance-Constrained Markov Decision Processes (CCMDP). The env allows to simulate, visualize, and evaluate UAV navigation in complex and risky environments, incorporating variables like GPS uncertainty, collision risk, and adaptive flight planning. Itomori is intended to support UAV path-planning research by offering adjustable parameters, detailed visualizations, and insights into agent behavior in uncertain environments.
 
-- [OmniIsaacGymEnvs: Gym environments for NVIDIA Omniverse Isaac ](https://github.com/NVIDIA-Omniverse/OmniIsaacGymEnvs/)
+- [MarsExplorer-Gymnasium: Gymnasium-compatible Mars rover exploration environment](https://github.com/markub3327/MarsExplorer-Gymnasium)
 
-  Reinforcement Learning Environments for [Omniverse Isaac simulator](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/overview.html).
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/markub3327/MarsExplorer-Gymnasium)
+
+  MarsExplorer-Gymnasium is a fully Gymnasium-compatible environment for autonomous Mars rover exploration. It enables research on terrain coverage, navigation, and exploration efficiency in unknown, procedurally generated landscapes, supporting modern deep reinforcement learning algorithms through the standard Gymnasium API.
+
+- [Mesozoic Labs: Robotic Dinosaur Locomotion](https://github.com/kuds/mesozoic-labs)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/kuds/mesozoic-labs)
+
+  Mesozoic Labs is a reinforcement learning research project that trains robotic dinosaurs (Velociraptor, T-Rex, Brachiosaurus) to walk, run, and hunt using MuJoCo physics simulation, curriculum learning, and algorithms like PPO and SAC.
+
+- [OmniIsaacGymEnvs: Gym environments for NVIDIA Omniverse Isaac](https://github.com/isaac-sim/OmniIsaacGymEnvs)
+
+  Reinforcement Learning Environments for [Omniverse Isaac simulator](https://developer.nvidia.com/isaac/sim).
 
 - [panda-gym: Robotics environments using the PyBullet physics engine](https://github.com/qgallouedec/panda-gym/)
 
@@ -279,7 +341,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   PyBullet based simulations of a robotic arm moving objects.
 
-- [PyFlyt: UAV Flight Simulator Environments for Reinforcement Learning Research](https://jjshoots.github.io/PyFlyt/index.html#)
+- [PyFlyt: UAV Flight Simulator Environments for Reinforcement Learning Research](https://taijunjet.com/PyFlyt/index.html)
 
   A library for testing reinforcement learning algorithms on various UAVs.
   It is built on the [Bullet](https://github.com/bulletphysics/bullet3) physics engine, offers flexible rendering options, time-discrete steppable physics, Python bindings, and support for custom drones of any configuration, be it biplanes, quadcopters, rockets, and anything you can think of.
@@ -294,19 +356,20 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Evaluate safety, robustness and generalization via PyBullet based CartPole and Quadrotor environments—with [CasADi](https://web.casadi.org) (symbolic) *a priori* dynamics and constraints.
 
-- [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-MARL/safety-gymnasium)
+- [Safety-Gymnasium: Ensuring safety in real-world RL scenarios](https://github.com/PKU-Alignment/safety-gymnasium)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
   ![GitHub stars](https://img.shields.io/github/stars/PKU-MARL/safety-gymnasium)
 
   Highly scalable and customizable Safe Reinforcement Learning library.
 
-- [deformable_gym: RL environments for grasping deformable objects](https://github.com/dfki-ric/deformable_gym)
+- [WireHarness-MultiAgent-RL: Centralized multi-robot wire handling in MuJoCo](https://github.com/ludwigstr/WireHarness-MultiAgent-RL)
 
-  A collection of gymnasium environments for learning to grasp 3D deformable objects built with PyBullet and Mujoco.
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-%3E%3D0.29-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/ludwigstr/WireHarness-MultiAgent-RL)
 
-  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.0.0-blue)
-  ![GitHub stars](https://img.shields.io/github/stars/dfki-ric/deformable_gym)
+  MuJoCo-based Gymnasium environment for centralized multi-robot wire handling. A single policy controls five planar movers via a joint action space to navigate cable harnesses to target configurations on an assembly board without causing collisions.
+
 ### Telecommunication Systems environments
 *Interact and/or manage wireless and/or wired telecommunication systems.*
 - [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
@@ -315,7 +378,6 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![GitHub stars](https://img.shields.io/github/stars/stefanbschneider/mobile-env)
 
   An open, minimalist Gymnasium environment for autonomous coordination in wireless mobile networks.
-
 
 ### Other
 - [Buffalo-Gym: Multi-Armed Bandit Gymnasium](https://github.com/foreverska/buffalo-gym)
@@ -358,7 +420,6 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
    ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.1.1-blue)
   ![GitHub stars](https://img.shields.io/github/stars/Daveonwave/gym4ReaL)
 
-
   Gym4ReaL is a comprehensive suite of realistic environments designed to support the development and evaluation of RL algorithms that can operate in real-world scenarios.
 The suite includes a diverse set of tasks exposing RL algorithms to a variety of practical challenges, such as water management, energy management in microgrids, financial trading, and more.
 
@@ -382,10 +443,9 @@ The suite includes a diverse set of tasks exposing RL algorithms to a variety of
 
   SimpleGrid is a super simple and minimal grid environment for Gymnasium. It is easy to use and customise and it is intended to offer an environment for rapidly testing and prototyping different RL algorithms.
 
-
 ## Third-Party Environments using Gym
 There are a large number of third-party environments using various versions of [Gym](https://github.com/openai/gym).
-Many of these can be adapted to work with gymnasium (see [Compatibility with Gym](https://gymnasium.farama.org/content/gym_compatibility/)), but are not guaranteed to be fully functional.
+Many of these can be adapted to work with gymnasium (see [Compatibility with Gym](https://gymnasium.farama.org/introduction/migration_guide/)), but are not guaranteed to be fully functional.
 
 ### Video Game environments
 
@@ -403,7 +463,7 @@ Many of these can be adapted to work with gymnasium (see [Compatibility with Gym
 
 - [PGE: Parallel Game Engine](https://github.com/222464/PGE)
 
-  Uses The [Open 3D Engine](https://www.o3de.org/) for AI simulations and can interoperate with the Gym. Uses [PyBullet](https://github.com/bulletphysics/bullet3) physics.
+  Uses The [Open 3D Engine](https://o3de.org) for AI simulations and can interoperate with the Gym. Uses [PyBullet](https://github.com/bulletphysics/bullet3) physics.
 
 ### Robotics environments
 
@@ -435,7 +495,7 @@ Many of these can be adapted to work with gymnasium (see [Compatibility with Gym
 
 - [gym-duckietown: Lane-following for self-driving cars](https://github.com/duckietown/gym-duckietown)
 
-  A lane-following simulator built for the [Duckietown](http://duckietown.org/) project (small-scale self-driving car course).
+  A lane-following simulator built for the [Duckietown](https://duckietown.com/) project (small-scale self-driving car course).
 
 - [CommonRoad-RL: Motion planning for traffic scenarios ](https://commonroad.in.tum.de/tools/commonroad-rl)
 
@@ -448,7 +508,6 @@ Many of these can be adapted to work with gymnasium (see [Compatibility with Gym
 - [l2r: Multimodal control environment where agents learn how to race](https://github.com/learn-to-race/l2r/)
 
   An open-source reinforcement learning environment for autonomous racing.
-
 
 ### Other environments
 

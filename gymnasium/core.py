@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeAlias, TypeVar
 
 import numpy as np
 
@@ -12,11 +12,14 @@ from gymnasium import spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from gymnasium.envs.registration import EnvSpec, WrapperSpec
 
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
-RenderFrame = TypeVar("RenderFrame")
+
+RenderFrame: TypeAlias = str | np.ndarray | tuple[np.ndarray, np.ndarray]
 
 
 class Env(Generic[ObsType, ActType]):
@@ -115,7 +118,7 @@ class Env(Generic[ObsType, ActType]):
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:  # type: ignore
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment to an initial internal state, returning an initial observation and info.
 
         This method generates a new starting state often with some randomness to ensure that the agent explores the
@@ -254,11 +257,11 @@ class Env(Generic[ObsType, ActType]):
         else:
             return f"<{type(self).__name__}<{self.spec.id}>>"
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         """Support with-statement for the environment."""
         return self
 
-    def __exit__(self, *args: Any):
+    def __exit__(self, *args: Any) -> bool:
         """Support with-statement for the environment and closes the environment."""
         self.close()
         # propagate exception
@@ -302,7 +305,9 @@ class Wrapper(
         If you inherit from :class:`Wrapper`, don't forget to call ``super().__init__(env)``
     """
 
-    def __init__(self, env: Env[ObsType, ActType]):
+    env: Env[WrapperObsType, WrapperActType]
+
+    def __init__(self, env: Env[WrapperObsType, WrapperActType]):
         """Wraps an environment to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.
 
         Args:

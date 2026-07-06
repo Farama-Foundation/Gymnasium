@@ -1,12 +1,14 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+from typing import Any, Final
+
 import numpy as np
 
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
 
-DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0}
+DEFAULT_CAMERA_CONFIG: Final[dict[str, float]] = {"trackbodyid": 0}
 
 
 class ReacherEnv(MujocoEnv, utils.EzPickle):
@@ -133,7 +135,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     * v0: Initial versions release
     """
 
-    metadata = {
+    metadata: dict[str, Any] = {
         "render_modes": [
             "human",
             "rgb_array",
@@ -146,7 +148,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         self,
         xml_file: str = "reacher.xml",
         frame_skip: int = 2,
-        default_camera_config: dict[str, float | int] = DEFAULT_CAMERA_CONFIG,
+        default_camera_config: dict[str, float] = DEFAULT_CAMERA_CONFIG,
         reward_dist_weight: float = 1,
         reward_control_weight: float = 1,
         **kwargs,

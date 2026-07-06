@@ -2,7 +2,7 @@
 
 import math
 import os
-from typing import NamedTuple, TypeAlias
+from typing import TYPE_CHECKING, NamedTuple, TypeAlias
 
 import jax
 import jax.numpy as jnp
@@ -17,6 +17,10 @@ from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle, seeding
 from gymnasium.vector import AutoresetMode
 from gymnasium.wrappers import HumanRendering
+
+if TYPE_CHECKING:
+    import pygame
+
 
 PRNGKeyType: TypeAlias = jax.Array
 RenderStateType = tuple["pygame.Surface", str, int]  # type: ignore  # noqa: F821
@@ -247,7 +251,7 @@ class BlackjackFunctional(
         state: EnvState,
         action: int | jax.Array,
         key: PRNGKeyType,
-        params: BlackJackParams = BlackJackParams,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> EnvState:
         """The blackjack environment's state transition function."""
         env_state = jax.lax.cond(action, take, notake, (state, key))
@@ -273,7 +277,9 @@ class BlackjackFunctional(
         return new_state
 
     def initial(
-        self, rng: PRNGKeyType, params: BlackJackParams = BlackJackParams
+        self,
+        rng: PRNGKeyType,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> EnvState:
         """Blackjack initial observataion function."""
         player_hand = jnp.zeros(21)
@@ -297,7 +303,7 @@ class BlackjackFunctional(
         self,
         state: EnvState,
         rng: PRNGKeyType,
-        params: BlackJackParams = BlackJackParams,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> jax.Array:
         """Blackjack observation."""
         return jnp.array(
@@ -313,7 +319,7 @@ class BlackjackFunctional(
         self,
         state: EnvState,
         rng: PRNGKeyType,
-        params: BlackJackParams = BlackJackParams,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> jax.Array:
         """Determines if a particular Blackjack observation is terminal."""
         return (state.done) > 0
@@ -324,7 +330,7 @@ class BlackjackFunctional(
         action: ActType,
         next_state: EnvState,
         rng: PRNGKeyType,
-        params: BlackJackParams = BlackJackParams,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> jax.Array:
         """Calculates reward from a state."""
         state = next_state
@@ -370,7 +376,8 @@ class BlackjackFunctional(
         suits = ["C", "D", "H", "S"]
         dealer_top_card_suit = rng.choice(suits)
         dealer_top_card_value_str = rng.choice(["J", "Q", "K"])
-        pygame.init()
+        pygame.display.init()
+        pygame.font.init()
         screen = pygame.Surface((screen_width, screen_height))
 
         return screen, dealer_top_card_value_str, dealer_top_card_suit
@@ -379,7 +386,7 @@ class BlackjackFunctional(
         self,
         state: StateType,
         render_state: RenderStateType,
-        params: BlackJackParams = BlackJackParams,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> tuple[RenderStateType, np.ndarray]:
         """Renders an image from a state."""
         try:
@@ -487,7 +494,9 @@ class BlackjackFunctional(
         )
 
     def render_close(
-        self, render_state: RenderStateType, params: BlackJackParams = BlackJackParams
+        self,
+        render_state: RenderStateType,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> None:
         """Closes the render state."""
         try:

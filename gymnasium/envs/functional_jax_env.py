@@ -266,7 +266,7 @@ class FunctionalJaxVectorEnv(
         else:
             raise NotImplementedError
 
-    def close(self):
+    def close(self, **kwargs: Any):
         """Closes the environments and render state if set."""
         if self.render_state is not None:
             self.func_env.render_close(self.render_state, params=self._params)

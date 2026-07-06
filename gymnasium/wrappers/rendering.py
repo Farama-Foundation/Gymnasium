@@ -13,7 +13,7 @@ import gc
 import os
 from collections.abc import Callable
 from copy import deepcopy
-from typing import Any, Generic, SupportsFloat
+from typing import Any, Generic, SupportsFloat, cast
 
 import numpy as np
 
@@ -33,7 +33,7 @@ __all__ = [
 
 class RenderCollection(
     gym.Wrapper[ObsType, ActType, ObsType, ActType],
-    Generic[ObsType, ActType, RenderFrame],
+    Generic[ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
@@ -161,7 +161,7 @@ class RenderCollection(
 
 class RecordVideo(
     gym.Wrapper[ObsType, ActType, ObsType, ActType],
-    Generic[ObsType, ActType, RenderFrame],
+    Generic[ObsType, ActType],
     gym.utils.RecordConstructorArgs,
 ):
     """Records videos of environment episodes using the environment's render function.
@@ -558,7 +558,6 @@ class HumanRendering(
         )
 
         if self.window is None:
-            pygame.init()
             pygame.display.init()
             self.window = pygame.display.set_mode(self.screen_size)
 
@@ -626,9 +625,9 @@ class AddWhiteNoise(
         self.probability_of_noise_per_pixel = probability_of_noise_per_pixel
         self.is_noise_grayscale = is_noise_grayscale
 
-    def render(self) -> RenderFrame:
+    def render(self) -> np.ndarray:
         """Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise."""
-        render_out = super().render()
+        render_out = cast(np.ndarray, super().render())
 
         if self.is_noise_grayscale:
             noise = (
@@ -715,7 +714,7 @@ class ObstructView(
 
     def render(self) -> RenderFrame:
         """Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise patches."""
-        render_out = super().render()
+        render_out = cast(np.ndarray, super().render())
 
         render_shape = render_out.shape
         n_pixels = render_shape[0] * render_shape[1]

@@ -72,6 +72,8 @@ class DeprecatedWrapper(ImportError):
 class AlreadyPendingCallError(Exception):
     """Raised when `reset`, or `step` is called asynchronously (e.g. with `reset_async`, or `step_async` respectively), and `reset_async`, or `step_async` (respectively) is called again (without a complete call to `reset_wait`, or `step_wait` respectively)."""
 
+    name: str
+
     def __init__(self, message: str, name: str):
         """Initialises the exception with name attributes."""
         super().__init__(message)
@@ -80,6 +82,8 @@ class AlreadyPendingCallError(Exception):
 
 class NoAsyncCallError(Exception):
     """Raised when an asynchronous `reset`, or `step` is not running, but `reset_wait`, or `step_wait` (respectively) is called."""
+
+    name: str
 
     def __init__(self, message: str, name: str):
         """Initialises the exception with name attributes."""
