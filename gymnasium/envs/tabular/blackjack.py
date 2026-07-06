@@ -376,7 +376,8 @@ class BlackjackFunctional(
         suits = ["C", "D", "H", "S"]
         dealer_top_card_suit = rng.choice(suits)
         dealer_top_card_value_str = rng.choice(["J", "Q", "K"])
-        pygame.init()
+        pygame.display.init()
+        pygame.font.init()
         screen = pygame.Surface((screen_width, screen_height))
 
         return screen, dealer_top_card_value_str, dealer_top_card_suit

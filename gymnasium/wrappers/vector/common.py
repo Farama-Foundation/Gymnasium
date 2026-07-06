@@ -113,7 +113,7 @@ class RecordEpisodeStatistics(VectorWrapper):
 
     def reset(
         self,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[np.ndarray, dict[str, Any]]:
         """Resets the environment using kwargs and resets the episode returns and lengths."""

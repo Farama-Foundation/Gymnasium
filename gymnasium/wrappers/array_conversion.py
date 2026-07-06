@@ -41,8 +41,8 @@ except ImportError as e:
     ) from e
 
 
-if Version(np.__version__) < Version("2.1.0"):
-    raise DependencyNotInstalled("Array API functionality requires numpy >= 2.1.0")
+if Version(np.__version__) < Version("1.22.0"):
+    raise DependencyNotInstalled("Array API functionality requires numpy >= 1.22")
 
 
 __all__ = ["ArrayConversion", "array_conversion"]

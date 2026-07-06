@@ -85,7 +85,7 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
     def reset(
         self,
         *,
-        seed: int | list[int] | None = None,
+        seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment returning xp-based observation and info.

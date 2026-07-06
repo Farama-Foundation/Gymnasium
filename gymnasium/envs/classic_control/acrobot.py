@@ -297,9 +297,8 @@ class AcrobotEnv(Env):
             ) from e
 
         if self.screen is None:
-            pygame.init()
+            pygame.display.init()
             if self.render_mode == "human":
-                pygame.display.init()
                 self.screen = pygame.display.set_mode(
                     (self.SCREEN_DIM, self.SCREEN_DIM)
                 )

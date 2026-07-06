@@ -211,7 +211,7 @@ class PendulumFunctional(
                 'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
 
-        pygame.init()
+        pygame.display.init()
         screen = pygame.Surface((screen_width, screen_height))
         clock = pygame.time.Clock()
 
