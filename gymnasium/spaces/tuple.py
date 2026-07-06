@@ -44,6 +44,7 @@ class Tuple(
         spaces: tuple[Unpack[_SpacesT]],
         seed: int | typing.Sequence[int] | np.random.Generator | None = None,
     ): ...
+
     @overload
     def __init__(
         self,
@@ -173,7 +174,8 @@ class Tuple(
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, (list, np.ndarray)):
-            x = tuple(x)  # Promote list and ndarray to tuple for contains check
+            # Promote list and ndarray to tuple for contains check
+            x = tuple(x)
 
         return (
             isinstance(x, tuple)
@@ -212,11 +214,9 @@ class Tuple(
     @overload
     def __getitem__(self, index: int) -> Space[_T_co]: ...
     @overload
-    def __getitem__(self, index: slice) -> tuple[Space[_T_co], ...]: ...
+    def __getitem__(self, index: slice) -> tuple[Space, ...]: ...
 
-    def __getitem__(
-        self, index: int | slice
-    ) -> Space[_T_co] | tuple[Space[_T_co], ...]:
+    def __getitem__(self, index: int | slice) -> Space | tuple[Space, ...]:
         """Get the subspace at specific `index`."""
         return self.spaces[index]
 
