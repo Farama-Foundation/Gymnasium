@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing_extensions import assert_type
-
 import numpy as np
 import pytest
+from typing_extensions import assert_type
 
 import gymnasium as gym
 from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
