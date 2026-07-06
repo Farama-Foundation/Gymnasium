@@ -596,9 +596,10 @@ def register(
     Changelogs:
         v1.0.0 - `autoreset` and `apply_api_compatibility` parameter was removed
     """
-    assert entry_point is not None or vector_entry_point is not None, (
-        "Either `entry_point` or `vector_entry_point` (or both) must be provided"
-    )
+    if entry_point is None and vector_entry_point is None:
+        raise ValueError(
+            "Either `entry_point` or `vector_entry_point` (or both) must be provided"
+        )
     ns, name, version = parse_env_id(id)
 
     if kwargs is None:
@@ -675,7 +676,8 @@ def make(
             env_spec.additional_wrappers = ()
     else:
         # For string id's, load the environment spec from the registry then make the environment spec
-        assert isinstance(id, str)
+        if not isinstance(id, str):
+            raise TypeError(f"Expected id to be a string or EnvSpec, got {type(id)}")
 
         # The environment name can include an unloaded module in "module:env_name" style
         env_spec = _find_spec(id)

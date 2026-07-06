@@ -51,9 +51,10 @@ class Sequence(Space[tuple[Any, ...] | Any]):
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
             stack: If ``True`` then the resulting samples would be stacked.
         """
-        assert isinstance(space, Space), (
-            f"Expects the feature space to be instance of a gym Space, actual type: {type(space)}"
-        )
+        if not isinstance(space, Space):
+            raise TypeError(
+                f"Expects the feature space to be instance of a gym Space, actual type: {type(space)}"
+            )
         self.feature_space = space
         self.stack = stack
         if self.stack:

@@ -226,7 +226,10 @@ class TimeAwareObservation(
 
         # Find the observation space
         if isinstance(env.observation_space, Dict):
-            assert dict_time_key not in env.observation_space.keys()
+            if dict_time_key in env.observation_space.keys():
+                raise ValueError(
+                    f"The `dict_time_key` ({dict_time_key!r}) already exists in the observation space."
+                )
             observation_space = Dict(
                 {dict_time_key: time_space, **env.observation_space.spaces}
             )
@@ -509,7 +512,11 @@ class NormalizeObservation(
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
         gym.ObservationWrapper.__init__(self, env)
 
-        assert env.observation_space.shape is not None
+        if env.observation_space.shape is None:
+            raise ValueError(
+                "NormalizeObservation wrapper requires the observation space to have a shape."
+            )
+
         self.observation_space = gym.spaces.Box(
             low=-np.inf,
             high=np.inf,

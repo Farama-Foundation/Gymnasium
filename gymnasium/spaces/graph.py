@@ -70,13 +70,16 @@ class Graph(Space[GraphInstance]):
             edge_space (Union[None, Box, Discrete]): space of the edge features.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
         """
-        assert isinstance(node_space, (Box, Discrete)), (
-            f"Values of the node_space should be instances of Box or Discrete, got {type(node_space)}"
-        )
-        if edge_space is not None:
-            assert isinstance(edge_space, (Box, Discrete)), (
-                f"Values of the edge_space should be instances of None Box or Discrete, got {type(edge_space)}"
+        if not isinstance(node_space, (Box, Discrete)):
+            raise TypeError(
+                f"Values of the node_space should be instances of Box or Discrete, got {type(node_space)}"
             )
+
+        if edge_space is not None:
+            if not isinstance(edge_space, (Box, Discrete)):
+                raise TypeError(
+                    f"Values of the edge_space should be instances of None, Box or Discrete, got {type(edge_space)}"
+                )
 
         self.node_space = node_space
         self.edge_space = edge_space

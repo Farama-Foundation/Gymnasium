@@ -47,13 +47,16 @@ class OneOf(Space[tuple[int, _T_co]], Generic[_T_co]):
             spaces (Iterable[Space]): The spaces that are involved in the cartesian product.
             seed: Optionally, you can use this argument to seed the RNGs of the ``spaces`` to ensure reproducible sampling.
         """
-        assert isinstance(spaces, Iterable), f"{spaces} is not an iterable"
+        if not isinstance(spaces, Iterable):
+            raise TypeError(f"{spaces} is not an iterable")
         self.spaces = tuple(spaces)
-        assert len(self.spaces) > 0, "Empty `OneOf` spaces are not supported."
+        if len(self.spaces) == 0:
+            raise ValueError("Empty `OneOf` spaces are not supported.")
         for space in self.spaces:
-            assert isinstance(space, Space), (
-                f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
-            )
+            if not isinstance(space, Space):
+                raise TypeError(
+                    f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
+                )
         super().__init__(None, None, seed)
 
     @property

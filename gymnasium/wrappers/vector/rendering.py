@@ -55,12 +55,14 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
         self.window = None  # Has to be initialized before asserts, as self.window is used in auto close
         self.clock = None
 
-        assert self.env.render_mode in self.ACCEPTED_RENDER_MODES, (
-            f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{env.render_mode}'"
-        )
-        assert "render_fps" in self.env.metadata, (
-            "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
-        )
+        if self.env.render_mode not in self.ACCEPTED_RENDER_MODES:
+            raise ValueError(
+                f"Expected env.render_mode to be one of {self.ACCEPTED_RENDER_MODES} but got '{self.env.render_mode}'"
+            )
+        if "render_fps" not in self.env.metadata:
+            raise ValueError(
+                "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
+            )
 
         if "human" not in self.metadata["render_modes"]:
             self.metadata = deepcopy(self.env.metadata)

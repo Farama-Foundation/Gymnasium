@@ -98,7 +98,10 @@ class PlayableGame:
                     f"{self.env.spec.id} does not have explicit key to action mapping, "
                     "please specify one manually, `play(env, keys_to_action=...)`"
                 )
-        assert isinstance(keys_to_action, dict)
+        if not isinstance(keys_to_action, dict):
+            raise TypeError(
+                f"keys_to_action must be a dictionary, got {type(keys_to_action)}"
+            )
         relevant_keys = set(sum((list(k) for k in keys_to_action.keys()), []))
         return relevant_keys
 
@@ -269,24 +272,44 @@ def play(
         if env.has_wrapper_attr("get_keys_to_action"):
             keys_to_action = env.get_wrapper_attr("get_keys_to_action")()
         else:
-            assert env.spec is not None
+            if env.spec is None:
+                raise ValueError(
+                    "The environment must have an `env.spec` to auto-detect missing keys to action mappings."
+                )
             raise MissingKeysToAction(
                 f"{env.spec.id} does not have explicit key to action mapping, "
                 "please specify one manually"
             )
 
-    assert keys_to_action is not None
+    if keys_to_action is None:
+        raise ValueError("keys_to_action dictionary cannot be None")
 
     # validate the `keys_to_action` set provided
-    assert isinstance(keys_to_action, dict)
+    if not isinstance(keys_to_action, dict):
+        raise TypeError(
+            f"keys_to_action must be a dictionary, got {type(keys_to_action)}"
+        )
+
     for key, action in keys_to_action.items():
         if isinstance(key, tuple):
-            assert len(key) > 0
-            assert all(isinstance(k, (str, int)) for k in key)
+            if len(key) == 0:
+                raise ValueError(
+                    "Key combinations in keys_to_action tuples cannot be empty"
+                )
+            if not all(isinstance(k, (str, int)) for k in key):
+                raise TypeError(
+                    f"All keys in key combination tuple must be integers or strings, got {key}"
+                )
         else:
-            assert isinstance(key, (str, int))
+            if not isinstance(key, (str, int)):
+                raise TypeError(
+                    f"Keys in keys_to_action must be integers or strings, got {type(key)}"
+                )
 
-        assert action in env.action_space
+        if action not in env.action_space:
+            raise ValueError(
+                f"Action {action} is not a valid action in the environment action space: {env.action_space}"
+            )
 
     key_code_to_action = {}
     for key_combination, action in keys_to_action.items():
@@ -301,7 +324,10 @@ def play(
 
     if fps is None:
         fps = env.metadata.get("render_fps", 30)
-        assert isinstance(fps, int)
+        if not isinstance(fps, int):
+            raise TypeError(
+                f"Expected env.metadata['render_fps'] to be an integer, got {type(fps)}"
+            )
 
     done, obs = True, None
     clock = pygame.time.Clock()

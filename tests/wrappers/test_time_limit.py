@@ -66,14 +66,14 @@ def test_max_episode_steps():
     assert TimeLimit(env, max_episode_steps=10).spec.max_episode_steps == 10
 
     with pytest.raises(
-        AssertionError,
+        (TypeError, ValueError),
         match="Expect the `max_episode_steps` to be positive, actually: -1",
     ):
         TimeLimit(env, max_episode_steps=-1)
 
     with pytest.raises(
-        AssertionError,
-        match="Expect the `max_episode_steps` to be positive, actually: None",
+        (TypeError, ValueError),
+        match="Expect the `max_episode_steps` to be an integer",
     ):
         TimeLimit(env, max_episode_steps=None)
 

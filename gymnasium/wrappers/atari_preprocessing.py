@@ -99,20 +99,39 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
                 'opencv-python package not installed, run `pip install "gymnasium[other]"` to get dependencies for atari'
             ) from e
 
-        assert frame_skip > 0
-        assert (isinstance(screen_size, int) and screen_size > 0) or (
-            isinstance(screen_size, tuple)
-            and len(screen_size) == 2
-            and all(isinstance(size, int) and size > 0 for size in screen_size)
-        ), f"Expect the `screen_size` to be positive, actually: {screen_size}"
+        if frame_skip <= 0:
+            raise ValueError(
+                f"Expect the `frame_skip` to be positive, actually: {frame_skip}"
+            )
+
+        if not (
+            (isinstance(screen_size, int) and screen_size > 0)
+            or (
+                isinstance(screen_size, tuple)
+                and len(screen_size) == 2
+                and all(isinstance(size, int) and size > 0 for size in screen_size)
+            )
+        ):
+            raise ValueError(
+                f"Expect the `screen_size` to be positive, actually: {screen_size}"
+            )
+
         if frame_skip > 1 and getattr(env.unwrapped, "_frameskip", None) != 1:
             raise ValueError(
                 "Disable frame-skipping in the original env. Otherwise, more than one frame-skip will happen as through this wrapper"
             )
-        assert noop_max >= 0
+
+        if noop_max < 0:
+            raise ValueError(
+                f"Expect the `noop_max` to be non-negative, actually: {noop_max}"
+            )
+
         self.noop_max = noop_max
         if noop_max > 0:
-            assert env.unwrapped.get_action_meanings()[0] == "NOOP"
+            if env.unwrapped.get_action_meanings()[0] != "NOOP":
+                raise ValueError(
+                    "When noop_max > 0, the first action meaning must be 'NOOP'"
+                )
 
         self.frame_skip = frame_skip
         self.screen_size: tuple[int, int] = (
@@ -126,7 +145,10 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         self.scale_obs = scale_obs
 
         # buffer of most recent two observations for max pooling
-        assert isinstance(env.observation_space, Box)
+        if not isinstance(env.observation_space, Box):
+            raise TypeError(
+                f"AtariPreprocessing wrapper requires a Box observation space, got {type(env.observation_space)}"
+            )
         if grayscale_obs:
             self.obs_buffer = [
                 np.empty(env.observation_space.shape[:2], dtype=np.uint8),

@@ -371,9 +371,10 @@ class VectorWrapper(VectorEnv):
             env: The environment to wrap
         """
         self.env = env
-        assert isinstance(env, VectorEnv), (
-            f"Expected env to be a `gymnasium.vector.VectorEnv` but got {type(env)}"
-        )
+        if not isinstance(env, VectorEnv):
+            raise TypeError(
+                f"Expected env to be a `gymnasium.vector.VectorEnv` but got {type(env)}"
+            )
 
         self._observation_space: gym.Space | None = None
         self._action_space: gym.Space | None = None
@@ -534,10 +535,13 @@ class VectorObservationWrapper(VectorWrapper):
                 f"Vector environment ({env}) is missing `autoreset_mode` metadata key."
             )
         else:
-            assert (
-                env.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP
-                or env.metadata["autoreset_mode"] == AutoresetMode.DISABLED
-            )
+            if env.metadata["autoreset_mode"] not in (
+                AutoresetMode.NEXT_STEP,
+                AutoresetMode.DISABLED,
+            ):
+                raise ValueError(
+                    f"Expected autoreset_mode to be NEXT_STEP or DISABLED, got {env.metadata['autoreset_mode']}"
+                )
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None

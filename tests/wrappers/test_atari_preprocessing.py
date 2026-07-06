@@ -106,12 +106,13 @@ def test_screen_size():
     assert AtariPreprocessing(env, screen_size=(100, 120)).screen_size == (100, 120)
 
     with pytest.raises(
-        AssertionError, match="Expect the `screen_size` to be positive, actually: -1"
+        ValueError,
+        match="Expect the `screen_size` to be positive, actually: -1",
     ):
         AtariPreprocessing(env, screen_size=-1)
 
     with pytest.raises(
-        AssertionError,
+        ValueError,
         match=re.escape("Expect the `screen_size` to be positive, actually: (-1, 10)"),
     ):
         AtariPreprocessing(env, screen_size=(-1, 10))

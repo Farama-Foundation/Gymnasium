@@ -48,18 +48,22 @@ class Text(Space[str]):
             charset (Union[set], str): Character set, defaults to the lower and upper english alphabet plus latin digits.
             seed: The seed for sampling from the space.
         """
-        assert np.issubdtype(type(min_length), np.integer), (
-            f"Expects the min_length to be an integer, actual type: {type(min_length)}"
-        )
-        assert np.issubdtype(type(max_length), np.integer), (
-            f"Expects the max_length to be an integer, actual type: {type(max_length)}"
-        )
-        assert 0 <= min_length, (
-            f"Minimum text length must be non-negative, actual value: {min_length}"
-        )
-        assert min_length <= max_length, (
-            f"The min_length must be less than or equal to the max_length, min_length: {min_length}, max_length: {max_length}"
-        )
+        if not np.issubdtype(type(min_length), np.integer):
+            raise TypeError(
+                f"Expects the min_length to be an integer, actual type: {type(min_length)}"
+            )
+        if not np.issubdtype(type(max_length), np.integer):
+            raise TypeError(
+                f"Expects the max_length to be an integer, actual type: {type(max_length)}"
+            )
+        if min_length < 0:
+            raise ValueError(
+                f"Minimum text length must be non-negative, actual value: {min_length}"
+            )
+        if min_length > max_length:
+            raise ValueError(
+                f"The min_length must be less than or equal to the max_length, min_length: {min_length}, max_length: {max_length}"
+            )
 
         self.min_length: int = int(min_length)
         self.max_length: int = int(max_length)
