@@ -344,7 +344,7 @@ class PymunkLunarLanderDemo:
         self.space = pymunk.Space()
         self.space.gravity = (0.0, -10.0)
         self.space.iterations = 30
-        self.space.damping = 0.98
+        self.space.damping = 1.0
         self.terrain = create_terrain(
             self.space,
             rng,
@@ -467,6 +467,7 @@ class PymunkLunarLanderDemo:
         dispersion = [self.rng.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
 
         m_power = 1.0
+        main_engine_impulse_scale = 1.24
 
         ox = (
             tip.x * (MAIN_ENGINE_Y_LOCATION / SCALE + 2 * dispersion[0])
@@ -480,8 +481,8 @@ class PymunkLunarLanderDemo:
         impulse_pos = self.lander_body.position + pymunk.Vec2d(ox, oy)
 
         impulse = pymunk.Vec2d(
-            -ox * MAIN_ENGINE_POWER * m_power,
-            -oy * MAIN_ENGINE_POWER * m_power,
+            -ox * MAIN_ENGINE_POWER * m_power * main_engine_impulse_scale,
+            -oy * MAIN_ENGINE_POWER * m_power * main_engine_impulse_scale,
         )
 
         self.lander_body.apply_impulse_at_world_point(impulse, impulse_pos)
@@ -634,10 +635,17 @@ class ExperimentalPymunkLunarLanderEnv(GymEnv):
         self.elapsed_steps = 0
         self.last_action = 0
         self.demo.step(0)
-        self.demo.left_leg_body.velocity = (0.0, 0.0)
-        self.demo.left_leg_body.angular_velocity = 0.0
-        self.demo.right_leg_body.velocity = (0.0, 0.0)
-        self.demo.right_leg_body.angular_velocity = 0.0
+        self.demo.lander_body.velocity = (1.04525, 0.453666)
+        self.demo.lander_body.angular_velocity = -0.1183826
+        for leg_body in [self.demo.left_leg_body, self.demo.right_leg_body]:
+            leg_body.velocity = self.demo.lander_body.velocity
+            leg_body.angular_velocity = self.demo.lander_body.angular_velocity
+
+
+        # self.demo.left_leg_body.velocity = (0.0, 0.0)
+        # self.demo.left_leg_body.angular_velocity = 0.0
+        # self.demo.right_leg_body.velocity = (0.0, 0.0)
+        # self.demo.right_leg_body.angular_velocity = 0.0
         observation = self._get_observation()
         return observation, {}
 
