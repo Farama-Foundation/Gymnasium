@@ -9,6 +9,7 @@ LunarLander from Box2D to Pymunk.
 from __future__ import annotations
 
 import importlib
+import math
 from dataclasses import dataclass
 
 import numpy as np
@@ -32,28 +33,26 @@ GROUND_CATEGORY = 0b0001
 LANDER_CATEGORY = 0b0010
 LEG_CATEGORY = 0b0100
 
-# Draft Pymunk values selected to exercise the prototype mechanics. They are
-# not calibrated Box2D equivalents.
-INITIAL_RANDOM_IMPULSE = 2.0
+
+INITIAL_RANDOM = 1000.0
 INITIAL_RANDOM_ANGLE = 0.05
 MAX_EPISODE_STEPS = 1000
 
-MAIN_ENGINE_IMPULSE = 0.35
-MAIN_ENGINE_OFFSET = 4 / SCALE
-
-SIDE_ENGINE_IMPULSE = 0.03
-SIDE_ENGINE_AWAY = 12 / SCALE
-SIDE_ENGINE_HEIGHT = 14 / SCALE
+MAIN_ENGINE_POWER = 14.1
+MAIN_ENGINE_Y_LOCATION = 4
+MAIN_ENGINE_OFFSET = MAIN_ENGINE_Y_LOCATION / SCALE
+SIDE_ENGINE_POWER = 0.6
+SIDE_ENGINE_HEIGHT = 14
+SIDE_ENGINE_AWAY = 12
 
 LEG_AWAY = 20 / SCALE
 LEG_DOWN = 18 / SCALE
 LEG_WIDTH = 4 / SCALE
 LEG_HEIGHT = 16 / SCALE
 
-STABLE_LANDING_STEPS = 25
-STABLE_VELOCITY_LIMIT = 0.12
-STABLE_ANGLE_LIMIT = 0.2
-STABLE_ANGULAR_VELOCITY_LIMIT = 0.12
+# Energy threshold to mimic Box2D's "sleep" state.
+# Tune this if the agent still terminates while slightly sliding.
+SLEEP_ENERGY_THRESHOLD = 0.05
 
 LANDER_POLY = [
     (-14, 17),
@@ -136,19 +135,71 @@ def create_terrain(
         [0.33 * (height[i - 1] + height[i] + height[i + 1]) for i in range(CHUNKS)],
         dtype=np.float64,
     )
+    helipad_x1_debug = chunk_x[CHUNKS // 2 - 1]
+    helipad_x2_debug = chunk_x[CHUNKS // 2 + 1]
 
+    # print("\n=== PYMUNK LUNAR LANDER TERRAIN DEBUG ===")
+    # print("world_width:", world_width)
+    # print("world_height:", world_height)
+    # print("CHUNKS:", CHUNKS)
+
+    # print("helipad_x1:", helipad_x1_debug)
+    # print("helipad_x2:", helipad_x2_debug)
+    # print("helipad_y:", helipad_y)
+
+    # print("chunk_x:")
+    # for i, x in enumerate(chunk_x):
+    #     print(i, x)
+
+    # print("height:")
+    # for i, y in enumerate(height):
+    #     print(i, y)
+
+    # print("smooth_y:")
+    # for i, y in enumerate(smooth_y):
+    #     print(i, y)
+
+    # print("terrain segments:")
+    # for i in range(CHUNKS - 1):
+    #     print(
+    #         i,
+    #         "from",
+    #         (chunk_x[i], smooth_y[i]),
+    #         "to",
+    #         (chunk_x[i + 1], smooth_y[i + 1]),
+    #     )
+
+    # print("=== END PYMUNK TERRAIN DEBUG ===\n")
+
+    terrain_segments = []
     for i in range(CHUNKS - 1):
         segment = pymunk.Segment(
             space.static_body,
             (float(chunk_x[i]), float(smooth_y[i])),
             (float(chunk_x[i + 1]), float(smooth_y[i + 1])),
-            radius=0.02,
+            radius=0.05,
         )
         segment.friction = 0.1
         segment.elasticity = 0.0
         segment.collision_type = GROUND_COLLISION_TYPE
-        segment.filter = pymunk.ShapeFilter(categories=GROUND_CATEGORY)
+        segment.filter = pymunk.ShapeFilter(
+            categories=GROUND_CATEGORY,
+            mask=LANDER_CATEGORY | LEG_CATEGORY,
+        )
         space.add(segment)
+        terrain_segments.append(segment)
+
+    # print("\n=== PYMUNK TERRAIN COLLISION SHAPES ===")
+    # for i, shape in enumerate(terrain_segments):
+    #     print(
+    #         i,
+    #         "a:", shape.a,
+    #         "b:", shape.b,
+    #         "radius:", shape.radius,
+    #         "friction:", shape.friction,
+    #         "elasticity:", shape.elasticity,
+    #         )
+    # print("=== END PYMUNK TERRAIN COLLISION SHAPES ===\n")
 
     return Terrain(
         chunk_x=chunk_x,
@@ -164,8 +215,9 @@ def _create_lander_body(
     position: tuple[float, float],
 ) -> pymunk.Body:
     vertices = [(x / SCALE, y / SCALE) for x, y in LANDER_POLY]
-    mass = 1.0
-    moment = pymunk.moment_for_poly(mass, vertices)
+    # Match Box2D debug output for the lander body as closely as possible.
+    mass = 4.816666603088379
+    moment = 0.8333148956298828
 
     lander_body = pymunk.Body(mass, moment)
     lander_body.position = position
@@ -180,6 +232,28 @@ def _create_lander_body(
     )
     lander_shape.collision_type = LANDER_COLLISION_TYPE
 
+    # print("\n=== PYMUNK LANDER DEBUG ===")
+    # print("initial_position:", position)
+    # print("initial_x:", position[0])
+    # print("initial_y:", position[1])
+    # print("body position:", lander_body.position)
+    # print("body angle:", lander_body.angle)
+    # print("body velocity:", lander_body.velocity)
+    # print("body angular_velocity:", lander_body.angular_velocity)
+    # print("body mass:", lander_body.mass)
+    # print("body moment:", lander_body.moment)
+
+    # print("lander polygon vertices:")
+    # for v in lander_shape.get_vertices():
+    #     print(v)
+
+    # for shape in lander_body.shapes:
+    #     print("shape friction:", lander_shape.friction)
+    #     print("shape elasticity:", lander_shape.elasticity)
+    #     print("shape collision_type:", lander_shape.collision_type)
+    #     print("shape filter:", lander_shape.filter)
+
+    # print("=== END PYMUNK LANDER DEBUG ===\n")
     space.add(lander_body, lander_shape)
     return lander_body
 
@@ -194,7 +268,7 @@ def create_leg(
     if side not in (-1, 1):
         raise ValueError("side must be -1 or +1")
 
-    leg_mass = 0.25
+    leg_mass = 1.0
     leg_moment = pymunk.moment_for_box(leg_mass, (LEG_WIDTH, LEG_HEIGHT))
 
     leg_body = pymunk.Body(leg_mass, leg_moment)
@@ -222,13 +296,13 @@ def create_leg(
     )
 
     if side == -1:
-        minimum_angle = -0.9
-        maximum_angle = 0.4
-        motor_speed = -0.3
+        minimum_angle = -1.2
+        maximum_angle = 1.2
+        motor_speed = -0.0
     else:
-        minimum_angle = -0.4
-        maximum_angle = 0.9
-        motor_speed = 0.3
+        minimum_angle = -1.2
+        maximum_angle = 1.2
+        motor_speed = 0.0
 
     rotation_limit = pymunk.RotaryLimitJoint(
         lander_body,
@@ -237,10 +311,19 @@ def create_leg(
         maximum_angle,
     )
 
-    motor = pymunk.SimpleMotor(lander_body, leg_body, motor_speed)
-    motor.max_force = 40.0
+    # spring = pymunk.DampedRotarySpring(
+    #     lander_body,
+    #     leg_body,
+    #     rest_angle=side * 0.05,
+    #     stiffness=2.0,
+    #     damping=0.5,
+    # )
 
-    space.add(pivot, rotation_limit, motor)
+    # motor = pymunk.SimpleMotor(lander_body, leg_body, motor_speed)
+    # motor.max_force = 5.0
+
+    # space.add(pivot, rotation_limit, motor)
+    space.add(pivot, rotation_limit)
     return leg_body
 
 
@@ -253,6 +336,7 @@ class PymunkLunarLanderDemo:
         rng: np.random.Generator | None = None,
         randomize_initial_state: bool = False,
     ):
+        self.rng = rng
         """Create a seeded Pymunk LunarLander demonstration world."""
         self.world_width = VIEWPORT_WIDTH / SCALE
         self.world_height = VIEWPORT_HEIGHT / SCALE
@@ -273,7 +357,7 @@ class PymunkLunarLanderDemo:
 
         self.lander_body = _create_lander_body(
             self.space,
-            (self.world_width / 2.0, self.world_height - 1.0),
+            (self.world_width / 2.0, self.world_height),
         )
         self.left_leg_body = create_leg(
             self.space,
@@ -294,17 +378,20 @@ class PymunkLunarLanderDemo:
         self._add_collision_handlers()
 
     def _randomize_initial_state(self, rng: np.random.Generator) -> None:
-        """Apply seeded draft reset variation to avoid identical rollouts."""
-        self.lander_body.apply_impulse_at_world_point(
-            (
-                float(rng.uniform(-INITIAL_RANDOM_IMPULSE, INITIAL_RANDOM_IMPULSE)),
-                float(rng.uniform(-INITIAL_RANDOM_IMPULSE, INITIAL_RANDOM_IMPULSE)),
-            ),
-            self.lander_body.position,
+        """Apply Box2D-style initial random force and small angle perturbation."""
+        force = pymunk.Vec2d(
+            float(rng.uniform(-INITIAL_RANDOM, INITIAL_RANDOM)),
+            float(rng.uniform(-INITIAL_RANDOM, INITIAL_RANDOM)),
         )
-        self.lander_body.angle = float(
-            rng.uniform(-INITIAL_RANDOM_ANGLE, INITIAL_RANDOM_ANGLE)
+
+        self.lander_body.apply_force_at_world_point(
+            force,
+            tuple(self.lander_body.position),
         )
+        # Box2d starts at angle 0
+        # self.lander_body.angle = float(
+        # rng.uniform(-INITIAL_RANDOM_ANGLE, INITIAL_RANDOM_ANGLE)
+        # )
 
     @property
     def left_leg_contact(self) -> bool:
@@ -332,6 +419,7 @@ class PymunkLunarLanderDemo:
         ) -> bool:
             collision_type = data["collision_type"]
             self.leg_contacts[collision_type] += 1
+
             return True
 
         def separate_leg_contact(
@@ -366,28 +454,70 @@ class PymunkLunarLanderDemo:
         )
 
     def fire_main_engine(self) -> None:
-        """Apply an upward main-engine impulse in the lander's local frame."""
-        local_impulse = pymunk.Vec2d(0.0, MAIN_ENGINE_IMPULSE)
-        impulse = local_impulse.rotated(self.lander_body.angle)
-        point = self.lander_body.local_to_world((0.0, -MAIN_ENGINE_OFFSET))
-        self.lander_body.apply_impulse_at_world_point(impulse, point)
+        """Apply main-engine impulse using Box2D-style LunarLander math."""
+        tip = pymunk.Vec2d(
+            math.sin(self.lander_body.angle),
+            math.cos(self.lander_body.angle),
+        )
+        side = pymunk.Vec2d(-tip.y, tip.x)
+
+        dispersion = [self.rng.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
+
+        m_power = 1.0
+
+        ox = (
+            tip.x * (MAIN_ENGINE_Y_LOCATION / SCALE + 2 * dispersion[0])
+            + side.x * dispersion[1]
+        )
+        oy = (
+            -tip.y * (MAIN_ENGINE_Y_LOCATION / SCALE + 2 * dispersion[0])
+            - side.y * dispersion[1]
+        )
+
+        impulse_pos = self.lander_body.position + pymunk.Vec2d(ox, oy)
+
+        impulse = pymunk.Vec2d(
+            -ox * MAIN_ENGINE_POWER * m_power,
+            -oy * MAIN_ENGINE_POWER * m_power,
+        )
+
+        self.lander_body.apply_impulse_at_world_point(impulse, impulse_pos)
 
     def fire_orientation_engine(self, direction: int) -> None:
-        """Apply one side-engine impulse.
+        """Apply Box2D-style side-engine impulse.
 
-        direction=-1 and direction=+1 represent opposite orientation engines.
+        direction should be:
+            -1 for action 1
+            +1 for action 3
         """
-        if direction not in (-1, 1):
-            raise ValueError("direction must be -1 or +1")
-
-        point = self.lander_body.local_to_world(
-            (direction * SIDE_ENGINE_AWAY, SIDE_ENGINE_HEIGHT)
+        tip = pymunk.Vec2d(
+            math.sin(self.lander_body.angle),
+            math.cos(self.lander_body.angle),
         )
+        side = pymunk.Vec2d(-tip.y, tip.x)
+
+        dispersion = [self.rng.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
+
+        s_power = 1.0
+
+        ox = tip.x * dispersion[0] + side.x * (
+            3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
+        )
+        oy = -tip.y * dispersion[0] - side.y * (
+            3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
+        )
+
+        impulse_pos = pymunk.Vec2d(
+            self.lander_body.position.x + ox - tip.x * 17 / SCALE,
+            self.lander_body.position.y + oy + tip.y * SIDE_ENGINE_HEIGHT / SCALE,
+        )
+
         impulse = pymunk.Vec2d(
-            -direction * SIDE_ENGINE_IMPULSE,
-            0.0,
-        ).rotated(self.lander_body.angle)
-        self.lander_body.apply_impulse_at_world_point(impulse, point)
+            -ox * SIDE_ENGINE_POWER * s_power,
+            -oy * SIDE_ENGINE_POWER * s_power,
+        )
+
+        self.lander_body.apply_impulse_at_world_point(impulse, impulse_pos)
 
     def step(self, action: int) -> DemoState:
         """Advance the prototype by one step.
@@ -439,10 +569,14 @@ class ExperimentalPymunkLunarLanderEnv(GymEnv):
     for ``STABLE_LANDING_STEPS`` consecutive simulation steps.
     """
 
-    metadata = {"render_modes": [], "render_fps": FPS}
+    metadata = {"render_modes": ["rgb_array"], "render_fps": FPS}
 
-    def __init__(self):
+    def __init__(self, render_mode: str | None = None):
         """Create the unregistered experimental Pymunk LunarLander env."""
+        if render_mode is not None and render_mode not in self.metadata["render_modes"]:
+            raise ValueError(f"Unsupported render_mode: {render_mode}")
+
+        self.render_mode = render_mode
         self.action_space = spaces.Discrete(4)
 
         low = np.array(
@@ -475,8 +609,10 @@ class ExperimentalPymunkLunarLanderEnv(GymEnv):
 
         self.demo: PymunkLunarLanderDemo | None = None
         self.prev_shaping: float | None = None
-        self.stable_landing_steps = 0
+
         self.elapsed_steps = 0
+        self.last_action = 0
+        self._pygame = None
 
     def reset(
         self,
@@ -491,9 +627,15 @@ class ExperimentalPymunkLunarLanderEnv(GymEnv):
             randomize_initial_state=True,
         )
         self.prev_shaping = None
-        self.stable_landing_steps = 0
+
         self.elapsed_steps = 0
-        observation, _, _, _, _ = self.step(0)
+        self.last_action = 0
+        self.demo.step(0)
+        self.demo.left_leg_body.velocity = (0.0, 0.0)
+        self.demo.left_leg_body.angular_velocity = 0.0
+        self.demo.right_leg_body.velocity = (0.0, 0.0)
+        self.demo.right_leg_body.angular_velocity = 0.0
+        observation = self._get_observation()
         return observation, {}
 
     def _get_observation(self) -> np.ndarray:
@@ -514,23 +656,6 @@ class ExperimentalPymunkLunarLanderEnv(GymEnv):
         ]
         return np.array(state, dtype=np.float32)
 
-    def _update_stable_landing_steps(self, observation: np.ndarray) -> None:
-        assert self.demo is not None
-
-        stable = (
-            self.demo.left_leg_contact
-            and self.demo.right_leg_contact
-            and not self.demo.crashed
-            and abs(float(observation[2])) < STABLE_VELOCITY_LIMIT
-            and abs(float(observation[3])) < STABLE_VELOCITY_LIMIT
-            and abs(float(observation[4])) < STABLE_ANGLE_LIMIT
-            and abs(float(observation[5])) < STABLE_ANGULAR_VELOCITY_LIMIT
-        )
-        if stable:
-            self.stable_landing_steps += 1
-        else:
-            self.stable_landing_steps = 0
-
     def step(self, action: int):
         """Step the private experimental Pymunk env."""
         assert self.demo is not None, "You forgot to call reset()"
@@ -538,6 +663,7 @@ class ExperimentalPymunkLunarLanderEnv(GymEnv):
             f"{action!r} ({type(action)}) invalid"
         )
 
+        self.last_action = action
         self.elapsed_steps += 1
         self.demo.step(action)
         observation = self._get_observation()
@@ -569,12 +695,15 @@ class ExperimentalPymunkLunarLanderEnv(GymEnv):
             reward = -100.0
             termination_reason = "crash" if self.demo.crashed else "viewport_exit"
 
-        self._update_stable_landing_steps(observation)
-        if not terminated and self.stable_landing_steps >= STABLE_LANDING_STEPS:
-            terminated = True
-            reward = 100.0
-            termination_reason = "stable_landing"
-            is_success = True
+        # Mimic Box2D sleep state by checking total kinetic energy
+        if not terminated and not self.demo.crashed:
+            if self.demo.left_leg_contact and self.demo.right_leg_contact:
+                # kinetic_energy accounts for both linear and angular velocity
+                if self.demo.lander_body.kinetic_energy < SLEEP_ENERGY_THRESHOLD:
+                    terminated = True
+                    reward = 100.0
+                    termination_reason = "stable_landing"
+                    is_success = True
 
         if not terminated and self.elapsed_steps >= MAX_EPISODE_STEPS:
             truncated = True
@@ -586,6 +715,111 @@ class ExperimentalPymunkLunarLanderEnv(GymEnv):
         }
 
         return observation, reward, terminated, truncated, info
+
+    def _world_to_screen(self, point: tuple[float, float]) -> tuple[int, int]:
+        return (
+            int(point[0] * SCALE),
+            int(VIEWPORT_HEIGHT - point[1] * SCALE),
+        )
+
+    def _body_poly_points(self, body: pymunk.Body) -> list[tuple[int, int]]:
+        shape = next(iter(body.shapes))
+        return [
+            self._world_to_screen(body.local_to_world(vertex))
+            for vertex in shape.get_vertices()
+        ]
+
+    def _draw_engine_flames(self, pygame, surface) -> None:
+        assert self.demo is not None
+
+        if self.last_action == 2:
+            points = [
+                self.demo.lander_body.local_to_world((0.0, -MAIN_ENGINE_OFFSET - 0.5)),
+                self.demo.lander_body.local_to_world((-0.18, -MAIN_ENGINE_OFFSET)),
+                self.demo.lander_body.local_to_world((0.18, -MAIN_ENGINE_OFFSET)),
+            ]
+            pygame.draw.polygon(
+                surface,
+                (255, 120, 20),
+                [self._world_to_screen(point) for point in points],
+            )
+        elif self.last_action in (1, 3):
+            direction = -1 if self.last_action == 1 else 1
+            points = [
+                self.demo.lander_body.local_to_world(
+                    (direction * SIDE_ENGINE_AWAY, SIDE_ENGINE_HEIGHT)
+                ),
+                self.demo.lander_body.local_to_world(
+                    (
+                        direction * SIDE_ENGINE_AWAY + direction * 0.35,
+                        SIDE_ENGINE_HEIGHT + 0.16,
+                    )
+                ),
+                self.demo.lander_body.local_to_world(
+                    (
+                        direction * SIDE_ENGINE_AWAY + direction * 0.35,
+                        SIDE_ENGINE_HEIGHT - 0.16,
+                    )
+                ),
+            ]
+            pygame.draw.polygon(
+                surface,
+                (255, 150, 30),
+                [self._world_to_screen(point) for point in points],
+            )
+
+    def render(self):
+        """Render a headless RGB frame for qualitative prototype comparison."""
+        if self.render_mode != "rgb_array":
+            return None
+        assert self.demo is not None, "You forgot to call reset()"
+
+        if self._pygame is None:
+            self._pygame = importlib.import_module("pygame")
+
+        pygame = self._pygame
+        surface = pygame.Surface((VIEWPORT_WIDTH, VIEWPORT_HEIGHT))
+        surface.fill((255, 255, 255))
+
+        terrain_points = [
+            self._world_to_screen((float(x), float(y)))
+            for x, y in zip(
+                self.demo.terrain.chunk_x,
+                self.demo.terrain.smooth_y,
+                strict=True,
+            )
+        ]
+        pygame.draw.polygon(
+            surface,
+            (20, 20, 20),
+            terrain_points + [(VIEWPORT_WIDTH, VIEWPORT_HEIGHT), (0, VIEWPORT_HEIGHT)],
+        )
+        pygame.draw.lines(surface, (0, 0, 0), False, terrain_points, width=2)
+
+        helipad_start = self._world_to_screen(
+            (self.demo.terrain.helipad_x1, self.demo.terrain.helipad_y)
+        )
+        helipad_end = self._world_to_screen(
+            (self.demo.terrain.helipad_x2, self.demo.terrain.helipad_y)
+        )
+        pygame.draw.line(surface, (40, 180, 80), helipad_start, helipad_end, width=4)
+
+        self._draw_engine_flames(pygame, surface)
+
+        hull_points = self._body_poly_points(self.demo.lander_body)
+        pygame.draw.polygon(surface, (128, 102, 230), hull_points)
+        pygame.draw.lines(surface, (77, 77, 128), True, hull_points, width=2)
+
+        for leg_body in [self.demo.left_leg_body, self.demo.right_leg_body]:
+            leg_points = self._body_poly_points(leg_body)
+            pygame.draw.polygon(surface, (128, 102, 230), leg_points)
+            pygame.draw.lines(surface, (77, 77, 128), True, leg_points, width=2)
+
+        return np.transpose(pygame.surfarray.array3d(surface), axes=(1, 0, 2))
+
+    def close(self):
+        """Close rendering resources. Safe to call multiple times."""
+        self._pygame = None
 
 
 def main() -> None:
