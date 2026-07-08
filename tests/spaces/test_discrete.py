@@ -166,6 +166,24 @@ def test_contains(element, dtype, expected_is_in):
 
 
 @pytest.mark.parametrize(
+    "n, start, dtype, element",
+    [
+        (3, 125, np.int8, 125),
+        (3, 125, np.int8, 127),
+        (6, 250, np.uint8, 250),
+        (6, 250, np.uint8, 255),
+    ],
+)
+def test_contains_small_dtype_no_overflow(n, start, dtype, element):
+    """The exclusive upper bound must not overflow the space dtype (e.g. int8/uint8)."""
+    space = Discrete(n, start=start, dtype=dtype)
+    assert space.contains(element)
+    assert space.contains(dtype(element))
+    for _ in range(50):
+        assert space.contains(space.sample())  # space must contain its own samples
+
+
+@pytest.mark.parametrize(
     "dtype",
     [
         None,

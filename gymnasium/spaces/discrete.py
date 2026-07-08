@@ -210,7 +210,9 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
         else:
             return False
 
-        value_is_in = bool(self.start <= as_np < self.start + self.n)
+        value_is_in = bool(
+            int(self.start) <= int(as_np) < int(self.start) + int(self.n)
+        )
 
         return value_is_in and np.can_cast(as_np.dtype, self.dtype)
 
