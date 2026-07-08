@@ -57,8 +57,8 @@ SLEEP_ENERGY_THRESHOLD = 0.05
 LANDER_POLY = [
     (-14, 17),
     (-17, 0),
-    (-17, -10),
-    (17, -10),
+    (-17, -8),
+    (17, -8),
     (17, 0),
     (14, 17),
 ]
@@ -278,7 +278,7 @@ def create_leg(
     leg_body.angle = lander_body.angle + side * 0.05
 
     leg_shape = pymunk.Poly.create_box(leg_body, (LEG_WIDTH, LEG_HEIGHT))
-    leg_shape.friction = 0.1
+    leg_shape.friction = 0.0
     leg_shape.elasticity = 0.0
     leg_shape.filter = pymunk.ShapeFilter(
         categories=LEG_CATEGORY,
@@ -296,12 +296,12 @@ def create_leg(
     )
 
     if side == -1:
-        minimum_angle = -1.2
-        maximum_angle = 1.2
+        minimum_angle = -0.7
+        maximum_angle = 0.7
         motor_speed = -0.0
     else:
-        minimum_angle = -1.2
-        maximum_angle = 1.2
+        minimum_angle = -0.7
+        maximum_angle = 0.7
         motor_speed = 0.0
 
     rotation_limit = pymunk.RotaryLimitJoint(
@@ -343,6 +343,8 @@ class PymunkLunarLanderDemo:
         rng = np.random.default_rng(seed) if rng is None else rng
         self.space = pymunk.Space()
         self.space.gravity = (0.0, -10.0)
+        self.space.iterations = 30
+        self.space.damping = 0.98
         self.terrain = create_terrain(
             self.space,
             rng,
@@ -405,11 +407,12 @@ class PymunkLunarLanderDemo:
 
     def _add_collision_handlers(self) -> None:
         def begin_lander_contact(
-            _arbiter: pymunk.Arbiter,
+            arbiter: pymunk.Arbiter,
             _collision_space: pymunk.Space,
             _data: dict,
         ) -> bool:
             self.crashed = True
+            
             return True
 
         def begin_leg_contact(
