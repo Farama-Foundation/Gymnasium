@@ -454,7 +454,9 @@ class Box(Space[NDArray[_ScalarT_co]]):
         )
 
         sample[bounded] = self.np_random.uniform(
-            low=self.low[bounded], high=high[bounded], size=bounded[bounded].shape  # type: ignore[arg-type]
+            low=self.low[bounded],
+            high=high[bounded],
+            size=bounded[bounded].shape,  # type: ignore[arg-type]
         )
 
         if self.dtype.kind in ["i", "u", "b"]:

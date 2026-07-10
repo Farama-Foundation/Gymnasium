@@ -93,9 +93,7 @@ class Space(Generic[_T_co]):
         """Checks whether this space can be flattened to a :class:`gymnasium.spaces.Box`."""
         raise NotImplementedError
 
-    def sample(
-        self, mask: Any | None = None, probability: Any | None = None
-    ) -> _T_co:
+    def sample(self, mask: Any | None = None, probability: Any | None = None) -> _T_co:
         """Randomly sample an element of this space.
 
         Can be uniform or non-uniform sampling based on boundedness of space.

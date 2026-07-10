@@ -19,7 +19,9 @@ if TYPE_CHECKING:
 ObsType = TypeVar("ObsType")
 ActType = TypeVar("ActType")
 
-RenderFrame: TypeAlias = str | np.ndarray[Any, Any] | tuple[np.ndarray[Any, Any], np.ndarray[Any, Any]]
+RenderFrame: TypeAlias = (
+    str | np.ndarray[Any, Any] | tuple[np.ndarray[Any, Any], np.ndarray[Any, Any]]
+)
 
 
 class Env(Generic[ObsType, ActType]):
