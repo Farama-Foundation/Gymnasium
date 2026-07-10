@@ -30,7 +30,7 @@ Gymnasium includes the following families of environments along with a wide vari
 
 To install the base Gymnasium library, use `pip install gymnasium`
 
-This does not include dependencies for all families of environments (there's a massive number, and some can be problematic to install on certain systems). You can install these dependencies for one family like `pip install "gymnasium[atari]"` or use `pip install "gymnasium[all]"` to install all dependencies.
+This does not include dependencies for all families of environments (there's a massive number, and some can be problematic to install on certain systems). You can install these dependencies for one family like `pip install "gymnasium[atari]"` or use `pip install "gymnasium[all]"` to install all dependencies. Note: `[all]` does not include PyTorch. Install it with `pip install "gymnasium[all,torch]"` if you need it.
 
 We support and test for Python 3.10, 3.11, 3.12, 3.13 and 3.14 on Linux and macOS. We will accept PRs related to Windows, but do not officially support it.
 

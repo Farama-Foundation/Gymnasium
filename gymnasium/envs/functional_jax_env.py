@@ -4,22 +4,16 @@ from __future__ import annotations
 
 from typing import Any, Generic, TypeAlias
 
+import jax
+import jax.numpy as jnp
+import jax.random as jrng
+
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, ObsType, StateType
 from gymnasium.utils import seeding
 from gymnasium.vector import AutoresetMode
 from gymnasium.vector.utils import batch_space
-
-try:
-    import jax
-    import jax.numpy as jnp
-    import jax.random as jrng
-except ImportError as e:
-    raise DependencyNotInstalled(
-        "Jax is not installed. Install it with `pip install jax`."
-    ) from e
 
 PRNGKeyType: TypeAlias = jax.Array
 
