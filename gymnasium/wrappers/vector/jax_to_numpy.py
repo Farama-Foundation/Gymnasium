@@ -2,12 +2,18 @@
 
 from __future__ import annotations
 
-import jax.numpy as jnp
 import numpy as np
 
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.vector import VectorEnv
 from gymnasium.wrappers.vector.array_conversion import ArrayConversion
+
+try:
+    import jax.numpy as jnp
+except ImportError as e:
+    raise DependencyNotInstalled(
+        "Jax is not installed. Install it with `pip install jax`."
+    ) from e
 
 __all__ = ["JaxToNumpy"]
 

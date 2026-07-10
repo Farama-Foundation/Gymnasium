@@ -2,12 +2,24 @@
 
 from __future__ import annotations
 
-import jax.numpy as jnp
-import torch
-
+from gymnasium.error import DependencyNotInstalled
 from gymnasium.vector import VectorEnv
 from gymnasium.wrappers.jax_to_torch import Device
 from gymnasium.wrappers.vector.array_conversion import ArrayConversion
+
+try:
+    import jax.numpy as jnp
+except ImportError as e:
+    raise DependencyNotInstalled(
+        "Jax is not installed. Install it with `pip install jax`."
+    ) from e
+
+try:
+    import torch
+except ImportError as e:
+    raise DependencyNotInstalled(
+        "Torch is not installed. Install it with `pip install torch`."
+    ) from e
 
 __all__ = ["JaxToTorch"]
 
