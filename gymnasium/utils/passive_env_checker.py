@@ -3,7 +3,7 @@
 import inspect
 from collections.abc import Callable
 from functools import partial
-from typing import Any, SupportsFloat, TypeVar, cast, overload
+from typing import Any, SupportsFloat, TypeVar, overload
 
 import numpy as np
 
@@ -258,18 +258,19 @@ def env_step_passive_checker(
 
     check_obs(obs, env.observation_space, "step")
 
-    if not (
-        np.issubdtype(type(reward), np.integer)
-        or np.issubdtype(type(reward), np.floating)
-    ):
+    # `step()` declares its reward as `SupportsFloat`, so accept anything that
+    # can be converted to a float (this covers python float/int/bool, numpy
+    # integer/floating, and objects implementing `__float__` such as Decimal),
+    # rather than only numpy integer/floating dtypes (see GH-1341).
+    if not isinstance(reward, SupportsFloat):
         logger.warn(
             f"The reward returned by `step()` must be a float, int, np.integer or np.floating, actual type: {type(reward)}"
         )
     else:
-        reward = cast("float | np.integer | np.floating", reward)
-        if np.isnan(reward):
+        float_reward = float(reward)
+        if np.isnan(float_reward):
             logger.warn("The reward is a NaN value.")
-        if np.isinf(reward):
+        if np.isinf(float_reward):
             logger.warn("The reward is an inf value.")
 
     assert isinstance(info, dict), (

@@ -1,6 +1,7 @@
 import re
 import warnings
 from collections.abc import Callable
+from decimal import Decimal
 
 import numpy as np
 import pytest
@@ -386,6 +387,59 @@ def test_passive_env_step_checker(
             with pytest.raises(test, match=f"^{re.escape(message)}$"):
                 env_step_passive_checker(GenericTestEnv(step_func=func), 0)
         assert len(caught_warnings) == 0, caught_warnings
+
+
+class _CustomFloatReward:
+    """A reward object that is only ``SupportsFloat`` via ``__float__``."""
+
+    def __init__(self, value: float):
+        self.value = value
+
+    def __float__(self) -> float:
+        return self.value
+
+
+@pytest.mark.parametrize(
+    "reward",
+    [
+        1.0,
+        1,
+        True,
+        np.float32(1.0),
+        np.int64(2),
+        Decimal("1.5"),
+        _CustomFloatReward(3.0),
+    ],
+)
+def test_passive_env_step_checker_supportsfloat_reward(reward):
+    """Any ``SupportsFloat`` reward is valid and must not warn (GH-1341).
+
+    ``step()`` types its reward as ``SupportsFloat``, so bools, ``Decimal`` and
+    custom ``__float__`` objects are legal rewards even though they are neither
+    ``np.integer`` nor ``np.floating``. The checker used to warn for these.
+    """
+
+    def step(self, _):
+        return self.observation_space.sample(), reward, False, False, {}
+
+    with warnings.catch_warnings(record=True) as caught_warnings:
+        warnings.simplefilter("always")
+        env_step_passive_checker(GenericTestEnv(step_func=step), 0)
+    reward_warnings = [
+        w for w in caught_warnings if "reward returned by `step()`" in str(w.message)
+    ]
+    assert reward_warnings == [], reward_warnings
+
+
+@pytest.mark.parametrize("reward", [float("nan"), Decimal("NaN")])
+def test_passive_env_step_checker_nan_reward_still_warns(reward):
+    """The NaN/inf checks must keep working for ``SupportsFloat`` rewards."""
+
+    def step(self, _):
+        return self.observation_space.sample(), reward, False, False, {}
+
+    with pytest.warns(UserWarning, match="The reward is a NaN value."):
+        env_step_passive_checker(GenericTestEnv(step_func=step), 0)
 
 
 @pytest.mark.parametrize(
