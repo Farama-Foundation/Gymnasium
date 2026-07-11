@@ -123,7 +123,7 @@ def test_keyboard_relevant_keydown_event():
     game = PlayableGame(env, dummy_keys_to_action())
     event = Event(pygame.KEYDOWN, {"key": RELEVANT_KEY_1})
     game.process_event(event)
-    assert game.pressed_keys == [RELEVANT_KEY_1]
+    assert game.pressed_keys == {RELEVANT_KEY_1}
 
 
 def test_keyboard_irrelevant_keydown_event():
@@ -131,7 +131,7 @@ def test_keyboard_irrelevant_keydown_event():
     game = PlayableGame(env, dummy_keys_to_action())
     event = Event(pygame.KEYDOWN, {"key": IRRELEVANT_KEY})
     game.process_event(event)
-    assert game.pressed_keys == []
+    assert game.pressed_keys == set()
 
 
 def test_keyboard_keyup_event():
@@ -141,7 +141,7 @@ def test_keyboard_keyup_event():
     game.process_event(event)
     event = Event(pygame.KEYUP, {"key": RELEVANT_KEY_1})
     game.process_event(event)
-    assert game.pressed_keys == []
+    assert game.pressed_keys == set()
 
 
 def test_play_loop_real_env():
@@ -262,3 +262,31 @@ def test_pygame_window_resize():
         game.process_event(Event(pygame.WINDOWRESIZED, {"x": 15, "y": 15}))
 
     assert game.video_size == (15, 15)
+
+
+def test_keyboard_keyup_unpressed_key_no_crash():
+    """Simulates a window focus mismatch or OS key-bounce where a KEYUP event is received without a preceding KEYDOWN."""
+    env = PlayableEnv(render_mode="rgb_array")
+    game = PlayableGame(env, dummy_keys_to_action())
+
+    assert len(game.pressed_keys) == 0
+
+    event = Event(pygame.KEYUP, {"key": RELEVANT_KEY_1})
+    game.process_event(event)
+
+    assert len(game.pressed_keys) == 0
+
+
+def test_keyboard_duplicate_keydown_event():
+    """Simulates keyboard auto-repeat (holding down a key) which dispatches multiple KEYDOWN events but only one KEYUP."""
+    env = PlayableEnv(render_mode="rgb_array")
+    game = PlayableGame(env, dummy_keys_to_action())
+
+    event_down = Event(pygame.KEYDOWN, {"key": RELEVANT_KEY_1})
+    game.process_event(event_down)
+    game.process_event(event_down)
+
+    event_up = Event(pygame.KEYUP, {"key": RELEVANT_KEY_1})
+    game.process_event(event_up)
+
+    assert len(game.pressed_keys) == 0

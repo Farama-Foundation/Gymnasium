@@ -84,7 +84,7 @@ class PlayableGame:
         self.original_video_size = self._get_video_size(zoom)
         self.video_size = self.original_video_size
         self.screen = pygame.display.set_mode(self.video_size, pygame.RESIZABLE)
-        self.pressed_keys = []
+        self.pressed_keys = set()
         self.running = True
 
     def _get_relevant_keys(
@@ -129,12 +129,12 @@ class PlayableGame:
         """
         if event.type == pygame.KEYDOWN:
             if event.key in self.relevant_keys:
-                self.pressed_keys.append(event.key)
+                self.pressed_keys.add(event.key)
             elif event.key == pygame.K_ESCAPE:
                 self.running = False
         elif event.type == pygame.KEYUP:
             if event.key in self.relevant_keys:
-                self.pressed_keys.remove(event.key)
+                self.pressed_keys.discard(event.key)
         elif event.type == pygame.QUIT:
             self.running = False
         elif event.type == pygame.WINDOWRESIZED:
