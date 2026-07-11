@@ -241,3 +241,24 @@ def test_wrong_render_mode():
         match=r"PlayableGame wrapper works only with rgb_array and rgb_array_list render modes",
     ):
         play(gym.make("CartPole-v1"), keys_to_action={})
+
+
+def test_pygame_window_resize():
+    env = PlayableEnv(render_mode="rgb_array")
+    game = PlayableGame(env, dummy_keys_to_action())
+
+    assert game.original_video_size == (10, 10)
+
+    event = Event(pygame.WINDOWRESIZED, {"x": 25, "y": 30})
+    game.process_event(event)
+
+    assert isinstance(game.video_size[0], int)
+    assert isinstance(game.video_size[1], int)
+
+    assert game.video_size == (25, 25)
+
+    for _ in range(10):
+        game.process_event(Event(pygame.WINDOWRESIZED, {"x": 50, "y": 50}))
+        game.process_event(Event(pygame.WINDOWRESIZED, {"x": 15, "y": 15}))
+
+    assert game.video_size == (15, 15)
