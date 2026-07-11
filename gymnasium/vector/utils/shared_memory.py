@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import multiprocessing as mp
+from array import typecodes
 from collections.abc import Mapping
-from ctypes import c_bool, c_int32, c_int64
+from ctypes import c_bool, c_int32, c_int64, c_uint8
 from functools import singledispatch
 from multiprocessing.sharedctypes import SynchronizedArray
 from types import ModuleType
@@ -81,10 +82,16 @@ def _create_base_shared_memory(
 ) -> SynchronizedArray[Any]:
     assert space.dtype is not None
     assert space.shape is not None
+    size = n * int(np.prod(space.shape))
     dtype = space.dtype.char
-    if dtype in "?":
-        dtype = c_bool
-    return ctx.Array(dtype, n * int(np.prod(space.shape)))
+    if dtype == "?":
+        return ctx.Array(c_bool, size)
+    elif dtype in typecodes:
+        return ctx.Array(dtype, size)
+    else:
+        # Some dtypes (e.g. float16) have no `array` typecode, allocate the equivalent
+        # number of bytes as read / write reinterpret the raw buffer with `space.dtype`.
+        return ctx.Array(c_uint8, size * space.dtype.itemsize)
 
 
 @create_shared_memory.register(Tuple)
