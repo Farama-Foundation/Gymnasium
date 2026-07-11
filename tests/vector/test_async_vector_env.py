@@ -349,6 +349,24 @@ def test_custom_space_async_vector_env_shared_memory():
         env.close(terminate=True)
 
 
+def test_float16_async_vector_env_shared_memory():
+    """Test observation dtypes without an `array` typecode (e.g. float16) with shared memory."""
+    obs_space = Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float16)
+    envs = AsyncVectorEnv(
+        [lambda: GenericTestEnv(observation_space=obs_space)] * 2, shared_memory=True
+    )
+
+    observations, _ = envs.reset(seed=0)
+    assert observations.dtype == np.float16
+    assert observations.shape == (2, 3)
+
+    observations, *_ = envs.step(envs.action_space.sample())
+    assert observations.dtype == np.float16
+    assert observations.shape == (2, 3)
+
+    envs.close()
+
+
 def raise_error_reset(self, seed, options):
     super(GenericTestEnv, self).reset(seed=seed, options=options)
     if seed == 1:
