@@ -290,3 +290,16 @@ def test_keyboard_duplicate_keydown_event():
     game.process_event(event_up)
 
     assert len(game.pressed_keys) == 0
+
+
+def test_invalid_zoom_validation():
+    """Verify that passing an invalid zoom factor raises a ValueError at the API boundary."""
+    env = PlayableEnv(render_mode="rgb_array")
+
+    # Test negative zoom
+    with pytest.raises(ValueError, match="Zoom must be a positive float"):
+        PlayableGame(env, dummy_keys_to_action(), zoom=-1.5)
+
+    # Test zero zoom
+    with pytest.raises(ValueError, match="Zoom must be a positive float"):
+        PlayableGame(env, dummy_keys_to_action(), zoom=0.0)
