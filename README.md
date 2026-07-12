@@ -85,3 +85,7 @@ You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032
   year={2024}
 }
 ```
+
+---
+
+*[Mukller](https://github.com/Mukller)*
