@@ -77,6 +77,9 @@ class PlayableGame:
                 f"but your environment render_mode = {env.render_mode}."
             )
 
+        if zoom is not None and zoom <= 0:
+            raise ValueError(f"Zoom must be a positive float, got {zoom}")
+
         self.env = env
         self.relevant_keys = self._get_relevant_keys(keys_to_action)
         # self.video_size is the size of the video that is being displayed.
