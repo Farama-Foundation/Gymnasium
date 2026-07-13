@@ -20,6 +20,8 @@ permissions:
 
 jobs:
   build-wheels:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
 
     steps:
@@ -38,6 +40,8 @@ jobs:
         path: dist
 
   publish:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     needs:
     - build-wheels
