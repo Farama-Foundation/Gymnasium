@@ -1,3 +1,5 @@
+"""Compare Box2D and Pymunk LunarLander under fixed action sequences."""
+
 from __future__ import annotations
 
 import argparse
@@ -11,10 +13,13 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from scripts.pymunk_lunar_lander_terrain import ExperimentalPymunkLunarLanderEnv
+from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
+    ExperimentalPymunkLunarLanderEnv,
+)
 
 
 def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=100)
     parser.add_argument("--max-steps", type=int, default=300)
@@ -27,20 +32,24 @@ def parse_args() -> argparse.Namespace:
 
 
 def make_box2d_env():
+    """Create the registered Box2D LunarLander environment."""
     gym = importlib.import_module("gymnasium")
     return gym.make("LunarLander-v3", disable_env_checker=True)
 
 
 def make_pymunk_env():
+    """Create the experimental Pymunk LunarLander environment."""
     return ExperimentalPymunkLunarLanderEnv()
 
 
 def repeat_to_length(pattern: list[int], max_steps: int) -> list[int]:
+    """Repeat and truncate an action pattern to the requested length."""
     repeats = (max_steps // len(pattern)) + 1
     return (pattern * repeats)[:max_steps]
 
 
 def fixed_action_sequences(max_steps: int) -> dict[str, list[int]]:
+    """Build the fixed action sequences used by the comparison."""
     return {
         "do_nothing": [0] * max_steps,
         "main_engine_only": [2] * max_steps,
@@ -157,8 +166,9 @@ def run_fixed_sequence(
     actions: list[int],
     seed: int,
 ) -> list[dict[str, Any]]:
+    """Run one fixed action sequence and return step diagnostics."""
     env = env_factory()
-    observation, _ = env.reset(seed=seed)
+    env.reset(seed=seed)
 
     if sequence_name == "do_nothing":
         print_initial_debug(env, engine)
@@ -226,8 +236,6 @@ def run_fixed_sequence(
             }
         )
 
-        observation = next_observation
-
         if terminated or truncated:
             break
 
@@ -236,6 +244,7 @@ def run_fixed_sequence(
 
 
 def write_csv(rows: list[dict[str, Any]], output_csv: Path) -> None:
+    """Write fixed-action diagnostics to CSV."""
     output_csv.parent.mkdir(parents=True, exist_ok=True)
 
     fieldnames = [
@@ -279,6 +288,7 @@ def write_csv(rows: list[dict[str, Any]], output_csv: Path) -> None:
 
 
 def main() -> None:
+    """Run all fixed-action comparisons and write their diagnostics."""
     args = parse_args()
 
     envs = {
