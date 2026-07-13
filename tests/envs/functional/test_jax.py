@@ -141,3 +141,55 @@ def test_vectorized(env_class):
         assert "final_info" not in info
         assert "_final_observation" not in info
         assert "_final_info" not in info
+
+
+@pytest.mark.parametrize(
+    "env_class, options",
+    [
+        (CartPoleJaxVectorEnv, {"gravity": 15.0}),
+        (PendulumJaxVectorEnv, {}),  # Pendulum has no gravity param
+    ],
+)
+def test_jax_vector_env_reset_accepts_options(env_class, options):
+    env = env_class(num_envs=4)
+
+    # Should not raise
+    obs, info = env.reset(seed=0, options=options)
+
+    assert isinstance(obs, jax.Array)
+    assert isinstance(info, dict)
+
+
+@pytest.mark.parametrize("env_class", [CartPoleJaxVectorEnv, PendulumJaxVectorEnv])
+def test_jax_vector_env_reset_without_options_is_stable(env_class):
+    env = env_class(num_envs=4)
+
+    obs1, _ = env.reset(seed=123)
+    obs2, _ = env.reset(seed=123)
+
+    assert jnp.allclose(obs1, obs2)
+
+
+def test_jax_vector_env_reset_options_change_params():
+    env = CartPoleJaxVectorEnv(num_envs=4)
+
+    obs1, _ = env.reset(seed=123, options={"x_init": 0.05})
+    obs2, _ = env.reset(seed=123, options={"x_init": 0.5})
+
+    assert not jnp.allclose(obs1, obs2)
+
+
+def test_jax_vector_env_reset_uses_generate_params(monkeypatch):
+    env = CartPoleJaxVectorEnv(num_envs=4)
+
+    called = {"count": 0}
+
+    def _generate_params(**kwargs):
+        called["count"] += 1
+        return env.func_env.get_default_params(**kwargs)
+
+    monkeypatch.setattr(env.func_env, "generate_params", _generate_params)
+
+    env.reset(seed=0, options={"gravity": 15.0})
+
+    assert called["count"] == 1
