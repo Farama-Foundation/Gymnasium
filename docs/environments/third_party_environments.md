@@ -370,6 +370,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   MuJoCo-based Gymnasium environment for centralized multi-robot wire handling. A single policy controls five planar movers via a joint action space to navigate cable harnesses to target configurations on an assembly board without causing collisions.
 
+- [WireHarness-MultiGripper-RL: Multi-branch wire-harness picking with a multi-gripper in MuJoCo](https://github.com/KishanThummar007/WireHarness-MultiGripper-RL)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-%3E%3D1.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/KishanThummar007/WireHarness-MultiGripper-RL)
+
+  MuJoCo-based Gymnasium environment with deformable cable physics for robotic wire-harness picking. A multi-gripper end-effector navigates a dense multi-branch harness to reach and grasp connector housings while minimizing induced wire stress and collisions.
+
 ### Telecommunication Systems environments
 *Interact and/or manage wireless and/or wired telecommunication systems.*
 - [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
