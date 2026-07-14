@@ -175,15 +175,24 @@ class RecordEpisodeStatistics(VectorWrapper):
             f"`vector.RecordEpisodeStatistics` requires `info` type to be `dict`, its actual type is {type(infos)}. This may be due to usage of other wrappers in the wrong order."
         )
 
-        self.episode_returns[self.prev_dones] = 0
-        self.episode_returns[np.logical_not(self.prev_dones)] += rewards[
-            np.logical_not(self.prev_dones)
-        ]
+        if self._autoreset_mode == AutoresetMode.SAME_STEP:
+            # Sub-environments reset within the same step as they terminate or
+            # truncate, therefore, every step counts towards an episode.
+            self.episode_returns += rewards
+            self.episode_lengths += 1
+        else:
+            # For `NEXT_STEP` autoreset, the step after a termination or
+            # truncation resets the sub-environment and doesn't count towards
+            # the next episode's statistics.
+            self.episode_returns[self.prev_dones] = 0
+            self.episode_returns[np.logical_not(self.prev_dones)] += rewards[
+                np.logical_not(self.prev_dones)
+            ]
 
-        self.episode_lengths[self.prev_dones] = 0
-        self.episode_lengths[~self.prev_dones] += 1
+            self.episode_lengths[self.prev_dones] = 0
+            self.episode_lengths[~self.prev_dones] += 1
 
-        self.episode_start_times[self.prev_dones] = time.perf_counter()
+            self.episode_start_times[self.prev_dones] = time.perf_counter()
 
         self.prev_dones = dones = np.logical_or(terminations, truncations)
         num_dones = np.sum(dones)
@@ -209,6 +218,13 @@ class RecordEpisodeStatistics(VectorWrapper):
                 self.time_queue.extend(episode_time_length[i])
                 self.return_queue.extend(self.episode_returns[i])
                 self.length_queue.extend(self.episode_lengths[i])
+
+            if self._autoreset_mode == AutoresetMode.SAME_STEP:
+                # The done sub-environments have already been reset, restart
+                # their statistics immediately rather than on the next step.
+                self.episode_returns[dones] = 0
+                self.episode_lengths[dones] = 0
+                self.episode_start_times[dones] = time.perf_counter()
 
         return (
             observations,
