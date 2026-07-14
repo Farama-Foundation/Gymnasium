@@ -377,7 +377,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">op</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduce</span><span class="p">,</span> <span class="n">singledispatch</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
@@ -468,9 +468,7 @@
 
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Graph</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_flatdim_graph</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-        <span class="s2">&quot;Cannot get flattened size as the Graph Space in Gym has a dynamic size.&quot;</span>
-    <span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot get flattened size as the Graph Space has a dynamic size.&quot;</span><span class="p">)</span>
 
 
 <span class="nd">@flatdim</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
@@ -484,7 +482,7 @@
 
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
-<span class="n">FlatType</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">GraphInstance</span>
+<span class="n">FlatType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">GraphInstance</span>
 
 
 <div class="viewcode-block" id="flatten">
@@ -583,32 +581,36 @@
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Graph</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_flatten_graph</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">GraphInstance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GraphInstance</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;We&#39;re not using ``.unflatten()`` for :class:`Box` and :class:`Discrete` because a graph is not a homogeneous space, see `.flatten` docstring.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The nodes and edges should be an instances of a batched of a flattened node/edge space.&quot;&quot;&quot;</span>
+    <span class="n">flat_node_space</span> <span class="o">=</span> <span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">)</span>
+    <span class="n">flattened_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">batch_node_space</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">node_out</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">create_empty_array</span><span class="p">(</span>
+        <span class="n">flat_node_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">flattened_nodes</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">concat_flat_nodes</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+        <span class="n">flat_node_space</span><span class="p">,</span> <span class="n">flattened_nodes</span><span class="p">,</span> <span class="n">node_out</span>
+    <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_graph_unflatten</span><span class="p">(</span>
-        <span class="n">unflatten_space</span><span class="p">:</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="n">Box</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">unflatten_x</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">ret</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">unflatten_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">unflatten_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unflatten_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="n">unflatten_x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">unflatten_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unflatten_space</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">)</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">unflatten_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">unflatten_space</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="n">unflatten_space</span><span class="o">.</span><span class="n">start</span><span class="p">),</span>
-                    <span class="n">dtype</span><span class="o">=</span><span class="n">unflatten_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">ret</span><span class="p">[</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">unflatten_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">unflatten_x</span> <span class="o">-</span> <span class="n">unflatten_space</span><span class="o">.</span><span class="n">start</span>
-                <span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">ret</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">flat_edge_space</span> <span class="o">=</span> <span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="p">)</span>
+        <span class="n">flattened_edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">flatten</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">edge</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">batch_edge_space</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">edge_out</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">create_empty_array</span><span class="p">(</span>
+            <span class="n">flat_edge_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">flattened_edges</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">concat_flat_edges</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="n">flat_edge_space</span><span class="p">,</span> <span class="n">flattened_edges</span><span class="p">,</span> <span class="n">edge_out</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">concat_flat_edges</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">nodes</span> <span class="o">=</span> <span class="n">_graph_unflatten</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-    <span class="n">edges</span> <span class="o">=</span> <span class="n">_graph_unflatten</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">GraphInstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">GraphInstance</span><span class="p">(</span><span class="n">concat_flat_nodes</span><span class="p">,</span> <span class="n">concat_flat_edges</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span><span class="p">)</span>
 
 
 <span class="nd">@flatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
@@ -767,20 +769,33 @@
 <span class="sd">    The size of the outcome is actually not fixed, but determined based on the number of</span>
 <span class="sd">    nodes and edges in the graph.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flat_nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">unflat_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">unflatten</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">flat_node</span><span class="p">)</span> <span class="k">for</span> <span class="n">flat_node</span> <span class="ow">in</span> <span class="n">flat_nodes</span><span class="p">]</span>
+    <span class="n">node_out</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">create_empty_array</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">flat_nodes</span><span class="p">))</span>
+    <span class="n">concat_unflat_nodes</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+        <span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">unflat_nodes</span><span class="p">,</span> <span class="n">node_out</span>
+    <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_graph_unflatten</span><span class="p">(</span><span class="n">unflatten_space</span><span class="p">,</span> <span class="n">unflatten_x</span><span class="p">):</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">unflatten_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">unflatten_x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unflatten_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">unflatten_x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">unflatten_space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">unflatten_space</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">):</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">unflatten_x</span><span class="p">))[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">flat_edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">flatten_space</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">unflat_edges</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">unflatten</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">flat_node</span><span class="p">)</span> <span class="k">for</span> <span class="n">flat_node</span> <span class="ow">in</span> <span class="n">flat_edges</span>
+        <span class="p">]</span>
+        <span class="n">edge_out</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">create_empty_array</span><span class="p">(</span>
+            <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">unflat_edges</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">concat_unflat_edges</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">unflat_edges</span><span class="p">,</span> <span class="n">edge_out</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">concat_unflat_edges</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">nodes</span> <span class="o">=</span> <span class="n">_graph_unflatten</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
-    <span class="n">edges</span> <span class="o">=</span> <span class="n">_graph_unflatten</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">GraphInstance</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">GraphInstance</span><span class="p">(</span><span class="n">concat_unflat_nodes</span><span class="p">,</span> <span class="n">concat_unflat_edges</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span><span class="p">)</span>
 
 
 <span class="nd">@unflatten</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>

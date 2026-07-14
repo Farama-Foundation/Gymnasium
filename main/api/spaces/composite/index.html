@@ -610,30 +610,30 @@ Depending on if mask or probability is used will affect what argument is used.</
 
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.spaces.Graph">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.box.Box"><span class="pre">Box</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.discrete.Discrete"><span class="pre">Discrete</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.box.Box"><span class="pre">Box</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.discrete.Discrete"><span class="pre">Discrete</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/spaces/graph/#Graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Graph" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.spaces.</span></span><span class="sig-name descname"><span class="pre">Graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Generator</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/spaces/graph/#Graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.spaces.Graph" title="Link to this definition">¶</a></dt>
 <dd><p>A space representing graph information as a series of <code class="docutils literal notranslate"><span class="pre">nodes</span></code> connected with <code class="docutils literal notranslate"><span class="pre">edges</span></code> according to an adjacency matrix represented as a series of <code class="docutils literal notranslate"><span class="pre">edge_links</span></code>.</p>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">node_space</span><span class="o">=</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">100</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,)),</span> <span class="n">edge_space</span><span class="o">=</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">num_nodes</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">num_edges</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-<span class="go">GraphInstance(nodes=array([[ 36.47037 , -89.235794, -55.928024],</span>
-<span class="go">       [-63.125637, -64.81882 ,  62.4189  ],</span>
-<span class="go">       [ 84.669   , -44.68512 ,  63.950912],</span>
-<span class="go">       [ 77.97854 ,   2.594091, -51.00708 ]], dtype=float32), edges=array([2, 0, 2, 1, 2, 0, 2, 1]), edge_links=array([[3, 0],</span>
-<span class="go">       [0, 0],</span>
-<span class="go">       [0, 1],</span>
-<span class="go">       [0, 2],</span>
+<span class="go">GraphInstance(nodes=array([[-50.143734, -89.37025 , -42.120003],</span>
+<span class="go">       [ 31.519672, -96.5817  ,  85.16244 ],</span>
+<span class="go">       [ 97.65833 ,  92.20077 ,  75.31062 ],</span>
+<span class="go">       [-21.80443 , -73.790115,  39.97857 ]], dtype=float32), edges=array([1, 0, 2, 0, 2, 1, 1, 2]), edge_links=array([[0, 2],</span>
+<span class="go">       [2, 0],</span>
+<span class="go">       [3, 0],</span>
 <span class="go">       [1, 0],</span>
 <span class="go">       [1, 0],</span>
-<span class="go">       [0, 1],</span>
-<span class="go">       [0, 2]], dtype=int32))</span>
+<span class="go">       [1, 3],</span>
+<span class="go">       [1, 3],</span>
+<span class="go">       [1, 1]], dtype=int32))</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>node_space</strong> (<em>Union</em><em>[</em><a class="reference internal" href="../fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><em>Box</em></a><em>, </em><a class="reference internal" href="../fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><em>Discrete</em></a><em>]</em>) – space of the node features.</p></li>
-<li><p><strong>edge_space</strong> (<em>Union</em><em>[</em><em>None</em><em>, </em><a class="reference internal" href="../fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><em>Box</em></a><em>, </em><a class="reference internal" href="../fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><em>Discrete</em></a><em>]</em>) – space of the edge features.</p></li>
+<li><p><strong>node_space</strong> (<a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><em>Space</em></a><em>[</em><em>Any</em><em>]</em>) – space of the node features.</p></li>
+<li><p><strong>edge_space</strong> (<em>None</em><em> | </em><a class="reference internal" href="../#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><em>Space</em></a><em>[</em><em>Any</em><em>]</em>) – space of the edge features.</p></li>
 <li><p><strong>seed</strong> – Optionally, you can use this argument to seed the RNG that is used to sample from the space.</p></li>
 </ul>
 </dd>
@@ -645,10 +645,10 @@ Depending on if mask or probability is used will affect what argument is used.</
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mask</strong> – An optional tuple of optional node and edge mask that is only possible with Discrete spaces
+<li><p><strong>mask</strong> – An optional tuple of optional node and edge mask
 (Box spaces don’t support sample masks).
 If no <code class="docutils literal notranslate"><span class="pre">num_edges</span></code> is provided then the <code class="docutils literal notranslate"><span class="pre">edge_mask</span></code> is multiplied by the number of edges</p></li>
-<li><p><strong>probability</strong> – An optional tuple of optional node and edge probability mask that is only possible with Discrete spaces
+<li><p><strong>probability</strong> – An optional tuple of optional node and edge probability mask
 (Box spaces don’t support sample probability masks).
 If no <code class="docutils literal notranslate"><span class="pre">num_edges</span></code> is provided then the <code class="docutils literal notranslate"><span class="pre">edge_mask</span></code> is multiplied by the number of edges</p></li>
 <li><p><strong>num_nodes</strong> – The number of nodes that will be sampled, the default is <cite>10</cite> nodes</p></li>

@@ -860,8 +860,9 @@
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Box, Dict</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; space = Dict({</span>
-<span class="sd">        ... &#39;position&#39;: Box(low=0, high=1, shape=(3,), dtype=np.float32),</span>
-<span class="sd">        ... &#39;velocity&#39;: Box(low=0, high=1, shape=(2,), dtype=np.float32)})</span>
+<span class="sd">        ...     &#39;position&#39;: Box(low=0, high=1, shape=(3,), dtype=np.float32),</span>
+<span class="sd">        ...     &#39;velocity&#39;: Box(low=0, high=1, shape=(2,), dtype=np.float32),</span>
+<span class="sd">        ... })</span>
 <span class="sd">        &gt;&gt;&gt; create_empty_array(space, n=2, fn=np.zeros)</span>
 <span class="sd">        {&#39;position&#39;: array([[0., 0., 0.],</span>
 <span class="sd">               [0., 0., 0.]], dtype=float32), &#39;velocity&#39;: array([[0., 0.],</span>
@@ -905,27 +906,20 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_graph</span><span class="p">(</span>
     <span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">GraphInstance</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-    <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="n">GraphInstance</span><span class="p">(</span>
-                <span class="n">nodes</span><span class="o">=</span><span class="n">fn</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
-                <span class="n">edges</span><span class="o">=</span><span class="n">fn</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
-                <span class="n">edge_links</span><span class="o">=</span><span class="n">fn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
-            <span class="p">)</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+        <span class="n">GraphInstance</span><span class="p">(</span>
+            <span class="n">nodes</span><span class="o">=</span><span class="n">create_empty_array</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">),</span>
+            <span class="n">edges</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">create_empty_array</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">),</span>
+            <span class="n">edge_links</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">fn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">),</span>
         <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="n">GraphInstance</span><span class="p">(</span>
-                <span class="n">nodes</span><span class="o">=</span><span class="n">fn</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
-                <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">edge_links</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="p">)</span>
 
 
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
