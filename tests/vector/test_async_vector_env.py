@@ -13,7 +13,7 @@ from gymnasium.error import (
     NoAsyncCallError,
 )
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
-from gymnasium.vector import AsyncVectorEnv
+from gymnasium.vector import AsyncVectorEnv, AutoresetMode
 from tests.testing_env import GenericTestEnv
 from tests.vector.testing_utils import (
     CustomSpace,
@@ -31,6 +31,26 @@ def test_create_async_vector_env(shared_memory):
     env = AsyncVectorEnv(env_fns, shared_memory=shared_memory)
     assert env.num_envs == 8
     env.close()
+
+
+def test_metadata_async_vector_env():
+    """Tests that the vector env's metadata doesn't mutate the sub-environment's (class-level) metadata."""
+    envs_1 = AsyncVectorEnv(
+        [make_env("CartPole-v1", 0)], autoreset_mode=AutoresetMode.NEXT_STEP
+    )
+    envs_2 = AsyncVectorEnv(
+        [make_env("CartPole-v1", 1)], autoreset_mode=AutoresetMode.SAME_STEP
+    )
+
+    assert envs_1.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP
+    assert envs_2.metadata["autoreset_mode"] == AutoresetMode.SAME_STEP
+
+    env = make_env("CartPole-v1", 0)()
+    assert "autoreset_mode" not in env.metadata
+
+    env.close()
+    envs_1.close()
+    envs_2.close()
 
 
 @pytest.mark.parametrize("shared_memory", [True, False])

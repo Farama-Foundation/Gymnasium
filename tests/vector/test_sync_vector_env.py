@@ -7,7 +7,7 @@ import pytest
 
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
-from gymnasium.vector import SyncVectorEnv
+from gymnasium.vector import AutoresetMode, SyncVectorEnv
 from tests.envs.utils import all_testing_env_specs
 from tests.vector.testing_utils import (
     CustomSpace,
@@ -24,6 +24,23 @@ def test_create_sync_vector_env():
     env.close()
 
     assert env.num_envs == 8
+
+
+def test_metadata_sync_vector_env():
+    """Tests that the vector env's metadata doesn't mutate the sub-environment's (class-level) metadata."""
+    envs_1 = SyncVectorEnv(
+        [make_env("CartPole-v1", 0)], autoreset_mode=AutoresetMode.NEXT_STEP
+    )
+    envs_2 = SyncVectorEnv(
+        [make_env("CartPole-v1", 1)], autoreset_mode=AutoresetMode.SAME_STEP
+    )
+
+    assert envs_1.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP
+    assert envs_2.metadata["autoreset_mode"] == AutoresetMode.SAME_STEP
+    assert "autoreset_mode" not in envs_1.envs[0].metadata
+
+    envs_1.close()
+    envs_2.close()
 
 
 def test_reset_sync_vector_env():
