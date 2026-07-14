@@ -203,7 +203,8 @@ class AsyncVectorEnv(
         dummy_env = env_fns[0]()
 
         # As we support `make_vec(spec)` then we can't include a `spec = dummy_env.spec` as this doesn't guarantee we can actual recreate the vector env.
-        self.metadata = dummy_env.metadata
+        # Copy the metadata such that we don't modify the sub-environment's (class-level) metadata
+        self.metadata = dict(dummy_env.metadata)
         self.metadata["autoreset_mode"] = self.autoreset_mode
         self.render_mode = dummy_env.render_mode
 

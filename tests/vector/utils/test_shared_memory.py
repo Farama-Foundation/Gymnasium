@@ -3,10 +3,12 @@
 import multiprocessing as mp
 import re
 
+import numpy as np
 import pytest
 
 from gymnasium import Space
 from gymnasium.error import CustomSpaceError
+from gymnasium.spaces import Box
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import (
     batch_space,
@@ -52,6 +54,33 @@ def test_shared_memory_create_read_write(space, num, ctx):
     for read_sample, sample in zip(
         iterate(batched_space, read_samples), samples, strict=True
     ):
+        assert data_equivalence(read_sample, sample)
+
+
+@pytest.mark.parametrize(
+    "dtype",
+    [np.float16] + ([np.float128] if hasattr(np, "float128") else []),
+    ids=lambda dtype: np.dtype(dtype).name,
+)
+def test_shared_memory_no_array_typecode_dtypes(dtype):
+    """Test dtypes without an `array` module typecode (e.g. float16) roundtrip through shared memory."""
+    space = Box(low=-1.0, high=1.0, shape=(2, 3), dtype=dtype)
+    num = 8
+
+    shared_memory = create_shared_memory(space, n=num)
+
+    # `Box.sample` does not support float128, generate the samples directly
+    rng = np.random.default_rng(seed=123)
+    samples = [
+        rng.uniform(-1.0, 1.0, size=space.shape).astype(dtype) for _ in range(num)
+    ]
+    for i, sample in enumerate(samples):
+        write_to_shared_memory(space, i, sample, shared_memory)
+
+    read_samples = read_from_shared_memory(space, shared_memory, n=num)
+    assert read_samples.dtype == dtype
+    assert read_samples.shape == (num,) + space.shape
+    for read_sample, sample in zip(read_samples, samples, strict=True):
         assert data_equivalence(read_sample, sample)
 
 
