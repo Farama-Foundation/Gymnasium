@@ -625,14 +625,15 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Promote list to array for contains check</span>
 
-        <span class="c1"># if nvec is uint32 and space dtype is uint32, then 0 &lt;= x &lt; self.nvec guarantees that x</span>
-        <span class="c1"># is within correct bounds for space dtype (even though x does not have to be unsigned)</span>
+        <span class="c1"># `x - self.start` can overflow the space dtype and wrap around (e.g. for int8 or a</span>
+        <span class="c1"># negative start), so compare against the largest element instead; for a valid space,</span>
+        <span class="c1"># `start + (nvec - 1)` always fits the dtype and comparisons never overflow</span>
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
             <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span>
             <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">can_cast</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
             <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvec</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvec</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">to_jsonable</span><span class="p">(</span>
