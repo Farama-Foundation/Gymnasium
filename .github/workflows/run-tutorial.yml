@@ -14,6 +14,9 @@ on:
   # Allow manual trigger
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   test-tutorials:
     runs-on: ubuntu-latest
