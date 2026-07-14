@@ -424,6 +424,7 @@
 
     <span class="n">env</span><span class="p">:</span> <span class="n">Env</span>
     <span class="n">relevant_keys</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">original_video_size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
     <span class="n">video_size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
     <span class="n">screen</span><span class="p">:</span> <span class="n">Surface</span>
     <span class="n">pressed_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
@@ -448,13 +449,16 @@
                 <span class="sa">f</span><span class="s2">&quot;but your environment render_mode = </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">zoom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">zoom</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zoom must be a positive float, got </span><span class="si">{</span><span class="n">zoom</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">relevant_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_relevant_keys</span><span class="p">(</span><span class="n">keys_to_action</span><span class="p">)</span>
-        <span class="c1"># self.video_size is the size of the video that is being displayed.</span>
-        <span class="c1"># The window size may be larger, in that case we will add black bars</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_video_size</span><span class="p">(</span><span class="n">zoom</span><span class="p">)</span>
+        <span class="c1"># Store the immutable base video size to prevent cumulative scaling drift</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_video_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_video_size</span><span class="p">(</span><span class="n">zoom</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_video_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">screen</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">,</span> <span class="n">pygame</span><span class="o">.</span><span class="n">RESIZABLE</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pressed_keys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pressed_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_relevant_keys</span><span class="p">(</span>
@@ -501,20 +505,26 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">relevant_keys</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pressed_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pressed_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">K_ESCAPE</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYUP</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">relevant_keys</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pressed_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pressed_keys</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">QUIT</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">WINDOWRESIZED</span><span class="p">:</span>
             <span class="c1"># Compute the maximum video size that fits into the new window</span>
-            <span class="n">scale_width</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">scale_height</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># Scale relative to the immutable original size to prevent cumulative drift</span>
+            <span class="n">scale_width</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">x</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_video_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">scale_height</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">y</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_video_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">scale</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">scale_height</span><span class="p">,</span> <span class="n">scale_width</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+            <span class="c1"># Map scale back to original size and round to ensure integer pixel dimensions</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">video_size</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">round</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_video_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                <span class="nb">round</span><span class="p">(</span><span class="n">scale</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_video_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="p">)</span></div>
 </div>
 
 
