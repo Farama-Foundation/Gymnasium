@@ -68,12 +68,20 @@ class Text(Space[str]):
         self.min_length: int = int(min_length)
         self.max_length: int = int(max_length)
 
-        self._char_set: frozenset[str] = frozenset(charset)
-        self._char_list: tuple[str, ...] = tuple(charset)
+        if isinstance(charset, (set, frozenset)):
+            # Set iteration order depends on hash randomization (PYTHONHASHSEED),
+            # sort to keep sampling, masks and flattening consistent across processes.
+            char_list = sorted(charset)
+        else:
+            # Preserve the given ordering, dropping duplicate characters
+            char_list = list(dict.fromkeys(charset))
+
+        self._char_set: frozenset[str] = frozenset(char_list)
+        self._char_list: tuple[str, ...] = tuple(char_list)
         self._char_index: dict[str, np.int32] = {
-            val: np.int32(i) for i, val in enumerate(tuple(charset))
+            val: np.int32(i) for i, val in enumerate(char_list)
         }
-        self._char_str: str = "".join(sorted(tuple(charset)))
+        self._char_str: str = "".join(sorted(char_list))
 
         # As the shape is dynamic (between min_length and max_length) then None
         super().__init__(dtype=str, seed=seed)
