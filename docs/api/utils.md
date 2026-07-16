@@ -56,6 +56,7 @@ These tests require manual inspection of its outputs:
 
 ```{eval-rst}
 .. autofunction:: gymnasium.utils.performance.benchmark_step
+.. autofunction:: gymnasium.utils.performance.benchmark_step_vector
 .. autofunction:: gymnasium.utils.performance.benchmark_init
 .. autofunction:: gymnasium.utils.performance.benchmark_render
 ```
