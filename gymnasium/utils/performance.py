@@ -78,10 +78,16 @@ def benchmark_step_vector(
     steps = 0
     start = time.time()
     autoreset_mode = env.metadata.get("autoreset_mode", AutoresetMode.NEXT_STEP)
+    previous_done = np.zeros(env.num_envs, dtype=np.bool_)
 
     while True:
         _, _, terminated, truncated, _ = env.step(env.action_space.sample())
-        steps += env.num_envs
+
+        if autoreset_mode == AutoresetMode.NEXT_STEP:
+            steps += env.num_envs - int(np.count_nonzero(previous_done))
+            previous_done = np.logical_or(terminated, truncated)
+        else:
+            steps += env.num_envs
 
         if autoreset_mode == AutoresetMode.DISABLED:
             done = np.logical_or(terminated, truncated)
