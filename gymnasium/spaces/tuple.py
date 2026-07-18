@@ -54,8 +54,8 @@ class Tuple(
 
     def __init__(
         self,
-        spaces: Iterable[Space[_T_co]],
-        seed: int | np.random.Generator | None = None,
+        spaces: Iterable[Space[Any]],
+        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
     ) -> None:
         r"""Constructor of :class:`Tuple` space.
 
@@ -71,7 +71,9 @@ class Tuple(
                 raise TypeError(
                     f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
                 )
-        super().__init__(None, None, seed)
+        super().__init__(
+            None, None, typing.cast(int | np.random.Generator | None, seed)
+        )
 
     @property
     def is_np_flattenable(self) -> bool:
@@ -123,7 +125,7 @@ class Tuple(
         self,
         mask: tuple[Any | None, ...] | None = None,
         probability: tuple[Any | None, ...] | None = None,
-    ) -> tuple[_T_co, ...]:
+    ) -> tuple[Any, ...]:
         """Generates a single random sample inside this space.
 
         This method draws independent samples from the subspaces.
@@ -212,7 +214,7 @@ class Tuple(
         ]
 
     @overload
-    def __getitem__(self, index: int) -> Space[_T_co]: ...
+    def __getitem__(self, index: int) -> Space[Any]: ...
     @overload
     def __getitem__(self, index: slice) -> tuple[Space, ...]: ...
 
