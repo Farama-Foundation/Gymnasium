@@ -806,7 +806,11 @@ def _async_worker(
                 if autoreset_mode == AutoresetMode.NEXT_STEP:
                     if autoreset:
                         observation, info = env.reset()
-                        reward, terminated, truncated = 0, False, False
+                        # Use numpy scalars so step_wait can stack rewards / done flags
+                        # when only some workers are in the autoreset path (issue #1445).
+                        reward = np.float64(0.0)
+                        terminated = np.bool_(False)
+                        truncated = np.bool_(False)
                     else:
                         (
                             observation,

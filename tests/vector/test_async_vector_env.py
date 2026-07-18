@@ -472,3 +472,45 @@ def test_async_vector_subenv_error():
         caught_warnings[4].message.args[0]
         == "\x1b[31mERROR: Raising the last exception back to the main process.\x1b[0m"
     )
+
+
+@pytest.mark.parametrize("shared_memory", [True, False])
+def test_async_vector_env_next_step_autoreset_homogeneous_types(shared_memory):
+    """Autoreset path must return numpy-compatible reward/done types (issue #1445).
+
+    When only some workers take the NEXT_STEP autoreset branch, mixing Python
+    ints/bools with numpy scalars from normal steps made np.array(...) raise
+    due to inhomogeneous sequences.
+    """
+    env_fns = [make_env("CartPole-v1", i) for i in range(4)]
+    envs = AsyncVectorEnv(
+        env_fns,
+        shared_memory=shared_memory,
+        autoreset_mode=AutoresetMode.NEXT_STEP,
+    )
+    try:
+        envs.reset(seed=0)
+        # Drive until at least one env ends so the next step uses the autoreset branch.
+        for _ in range(500):
+            actions = envs.action_space.sample()
+            _obs, rewards, terminations, truncations, _infos = envs.step(actions)
+            assert isinstance(rewards, np.ndarray)
+            assert rewards.dtype == np.float64
+            assert isinstance(terminations, np.ndarray)
+            assert terminations.dtype == np.bool_
+            assert isinstance(truncations, np.ndarray)
+            assert truncations.dtype == np.bool_
+            if np.any(terminations) or np.any(truncations):
+                # Next step forces the autoreset worker path for ended envs.
+                _obs, rewards, terminations, truncations, _infos = envs.step(
+                    envs.action_space.sample()
+                )
+                assert isinstance(rewards, np.ndarray)
+                assert rewards.shape == (4,)
+                assert terminations.shape == (4,)
+                assert truncations.shape == (4,)
+                break
+        else:
+            pytest.fail("CartPole did not terminate within 500 steps for any env")
+    finally:
+        envs.close()
