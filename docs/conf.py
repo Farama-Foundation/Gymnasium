@@ -17,7 +17,7 @@ import time
 
 import sphinx_gallery.gen_rst
 import sphinx_gallery.sorting
-from furo.gen_tutorials import generate_tutorials
+from celshast.gen_tutorials import generate_tutorials
 
 # Path setup for building from source tree
 sys.path.insert(0, os.path.abspath("."))  # For building from root
@@ -45,7 +45,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.coverage",
     "myst_parser",
-    "furo.gen_tutorials",
+    "celshast.gen_tutorials",
     "sphinx_gallery.gen_gallery",
     "sphinx_github_changelog",
 ]
@@ -90,7 +90,7 @@ def setup(app):
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "furo"
+html_theme = "celshast"
 html_title = "Gymnasium Documentation"
 html_baseurl = "https://gymnasium.farama.org"
 html_copy_source = False
