@@ -4,12 +4,13 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import Any
+from typing import Any, Generic, TypeAlias, cast
 
 import numpy as np
+from typing_extensions import TypeVar
 
 from gymnasium import Env, Space
-from gymnasium.core import ActType, ObsType, RenderFrame
+from gymnasium.core import RenderFrame
 from gymnasium.spaces.utils import is_space_dtype_shape_equiv
 from gymnasium.vector.utils import (
     batch_differing_spaces,
@@ -18,12 +19,23 @@ from gymnasium.vector.utils import (
     create_empty_array,
     iterate,
 )
-from gymnasium.vector.vector_env import ArrayType, AutoresetMode, VectorEnv
+from gymnasium.vector.vector_env import AutoresetMode, VectorEnv
 
 __all__ = ["SyncVectorEnv"]
 
 
-class SyncVectorEnv(VectorEnv):
+_ObsT = TypeVar("_ObsT", default=Any)
+_ActT_contra = TypeVar("_ActT_contra", contravariant=True, default=Any)
+
+
+_VecBool: TypeAlias = np.ndarray[tuple[int], np.dtype[np.bool_]]
+_VecF64: TypeAlias = np.ndarray[tuple[int], np.dtype[np.float64]]
+
+
+class SyncVectorEnv(
+    VectorEnv[_ObsT, _ActT_contra, _VecF64, _VecBool],
+    Generic[_ObsT, _ActT_contra],
+):
     """Vectorized environment that serially runs multiple environments.
 
     Example:
@@ -62,22 +74,24 @@ class SyncVectorEnv(VectorEnv):
 
     env_fns: Sequence[Callable[[], Env]]
     copy: bool
-    observation_mode: str | tuple[Space, Space]
+    observation_mode: str | tuple[Space[_ObsT], Space[_ObsT]]
     autoreset_mode: AutoresetMode
     envs: list[Env]
     num_envs: int
     metadata: dict[str, Any]
     render_mode: str | None
     single_action_space: Space
-    action_space: Space
+    action_space: Space[_ActT_contra]
     single_observation_space: Space
-    observation_space: Space
+    observation_space: Space[_ObsT]
+
+    _observations: _ObsT
 
     def __init__(
         self,
         env_fns: Sequence[Callable[[], Env]],
         copy: bool = True,
-        observation_mode: str | tuple[Space, Space] = "same",
+        observation_mode: str | tuple[Space[_ObsT], Space[_ObsT]] = "same",
         autoreset_mode: str | AutoresetMode = AutoresetMode.NEXT_STEP,
     ) -> None:
         """Vectorized environment that serially runs multiple environments.
@@ -165,8 +179,13 @@ class SyncVectorEnv(VectorEnv):
 
         # Initialise attributes used in `step` and `reset`
         self._env_obs = [None for _ in range(self.num_envs)]
-        self._observations = create_empty_array(
-            self.single_observation_space, n=self.num_envs, fn=np.zeros
+        self._observations = cast(
+            _ObsT,
+            create_empty_array(
+                self.single_observation_space,
+                n=self.num_envs,
+                fn=np.zeros,
+            ),
         )
         self._rewards = np.zeros((self.num_envs,), dtype=np.float64)
         self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
@@ -189,7 +208,7 @@ class SyncVectorEnv(VectorEnv):
         *,
         seed: int | list[int | None] | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+    ) -> tuple[_ObsT, dict[str, Any]]:
         """Resets each of the sub-environments and concatenate the results together.
 
         Args:
@@ -258,14 +277,19 @@ class SyncVectorEnv(VectorEnv):
                 infos = self._add_info(infos, env_info, i)
 
         # Concatenate the observations
-        self._observations = concatenate(
-            self.single_observation_space, self._env_obs, self._observations
+        self._observations = cast(
+            _ObsT,
+            concatenate(
+                self.single_observation_space,
+                self._env_obs,
+                self._observations,
+            ),
         )
         return deepcopy(self._observations) if self.copy else self._observations, infos
 
     def step(
-        self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        self, actions: _ActT_contra
+    ) -> tuple[_ObsT, _VecF64, _VecBool, _VecBool, dict[str, Any]]:
         """Steps through each of the environments returning the batched results.
 
         Returns:
@@ -323,8 +347,13 @@ class SyncVectorEnv(VectorEnv):
             infos = self._add_info(infos, env_info, i)
 
         # Concatenate the observations
-        self._observations = concatenate(
-            self.single_observation_space, self._env_obs, self._observations
+        self._observations = cast(
+            _ObsT,
+            concatenate(
+                self.single_observation_space,
+                self._env_obs,
+                self._observations,
+            ),
         )
         self._autoreset_envs = np.logical_or(self._terminations, self._truncations)
 

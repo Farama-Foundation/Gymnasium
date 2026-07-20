@@ -101,7 +101,8 @@ class FunctionalJaxEnv(gym.Env, Generic[StateType]):
 
 
 class FunctionalJaxVectorEnv(
-    gym.vector.VectorEnv[ObsType, ActType, Any], Generic[ObsType, ActType, StateType]
+    gym.vector.VectorEnv[ObsType, ActType, Any, Any],
+    Generic[ObsType, ActType, StateType],
 ):
     """A vector env implementation for functional Jax envs."""
 
