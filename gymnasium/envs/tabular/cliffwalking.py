@@ -190,13 +190,17 @@ class CliffWalkingFunctional(
         state = EnvState(player_position=player_position, last_action=-1, fallen=False)
         return state
 
-    def observation(self, state: EnvState, params: None = None) -> jax.Array:
+    def observation(
+        self, state: EnvState, rng: PRNGKeyType, params: None = None
+    ) -> jax.Array:
         """Cliffwalking observation."""
         return jnp.array(
             state.player_position[0] * 12 + state.player_position[1]
         ).reshape((1,))
 
-    def terminal(self, state: EnvState, params: None = None) -> jax.Array:
+    def terminal(
+        self, state: EnvState, rng: PRNGKeyType, params: None = None
+    ) -> jax.Array:
         """Determines if a particular Cliffwalking observation is terminal."""
         return jnp.array_equal(state.player_position, jnp.array([3, 11]))
 
@@ -205,6 +209,7 @@ class CliffWalkingFunctional(
         state: EnvState,
         action: ActType,
         next_state: EnvState,
+        rng: PRNGKeyType,
         params: None = None,
     ) -> jax.Array:
         """Calculates reward from a state."""
@@ -216,7 +221,10 @@ class CliffWalkingFunctional(
         return jax.lax.convert_element_type(reward, jnp.float32)
 
     def render_init(
-        self, screen_width: int = 600, screen_height: int = 500
+        self,
+        screen_width: int = 600,
+        screen_height: int = 500,
+        params: None = None,
     ) -> RenderStateType:
         """Returns an initial render state."""
         try:
@@ -348,7 +356,7 @@ class CliffWalkingFunctional(
             np.array(pygame.surfarray.pixels3d(window_surface)), axes=(1, 0, 2)
         )
 
-    def render_close(self, render_state: RenderStateType) -> None:
+    def render_close(self, render_state: RenderStateType, params: None = None) -> None:
         """Closes the render state."""
         try:
             import pygame
