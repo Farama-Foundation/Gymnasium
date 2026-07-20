@@ -495,9 +495,7 @@ def _make_array_reward_env(episode_length: int):
 
         return GenericTestEnv(
             action_space=Discrete(2),
-            observation_space=Box(
-                low=-1.0, high=1.0, shape=(2,), dtype=np.float32
-            ),
+            observation_space=Box(low=-1.0, high=1.0, shape=(2,), dtype=np.float32),
             reset_func=reset_func,
             step_func=step_func,
         )
