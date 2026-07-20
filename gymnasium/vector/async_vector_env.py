@@ -51,6 +51,39 @@ _StepResult: TypeAlias = tuple[
 ]
 
 
+def _batch_rewards(rewards: list[Any]) -> npt.NDArray[np.float64]:
+    """Stack per-env rewards, broadcasting autoreset scalar zeros onto array rewards.
+
+    ``NEXT_STEP`` autoreset returns a scalar zero reward while other workers may
+    still return ndarray rewards (including length-1 vectors). A plain
+    ``np.array(rewards, dtype=np.float64)`` then fails with an inhomogeneous-shape
+    error (see issue #1445). When every non-scalar reward shares one shape, scalar
+    placeholders are expanded to zeros of that shape before stacking.
+    """
+    target_shape: tuple[int, ...] | None = None
+    for reward in rewards:
+        arr = np.asarray(reward)
+        if arr.ndim >= 1:
+            if target_shape is None:
+                target_shape = arr.shape
+            elif arr.shape != target_shape:
+                # Divergent vector rewards: fall back and let NumPy raise.
+                target_shape = None
+                break
+
+    if target_shape is not None:
+        normalized: list[np.ndarray] = []
+        for reward in rewards:
+            arr = np.asarray(reward, dtype=np.float64)
+            if arr.ndim == 0:
+                normalized.append(np.zeros(target_shape, dtype=np.float64))
+            else:
+                normalized.append(np.asarray(arr, dtype=np.float64))
+        return np.stack(normalized, axis=0)
+
+    return np.asarray(rewards, dtype=np.float64)
+
+
 class AsyncState(Enum):
     """The AsyncVectorEnv possible states given the different actions."""
 
@@ -514,7 +547,7 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.DEFAULT
         return (
             deepcopy(self.observations) if self.copy else self.observations,
-            np.array(rewards, dtype=np.float64),
+            _batch_rewards(rewards),
             np.array(terminations, dtype=np.bool_),
             np.array(truncations, dtype=np.bool_),
             infos,
@@ -806,8 +839,9 @@ def _async_worker(
                 if autoreset_mode == AutoresetMode.NEXT_STEP:
                     if autoreset:
                         observation, info = env.reset()
-                        # Use numpy scalars so step_wait can stack rewards / done flags
-                        # when only some workers are in the autoreset path (issue #1445).
+                        # Scalar zero placeholder. ``step_wait`` broadcasts this to the
+                        # other workers' reward shape when they return ndarray rewards
+                        # (issue #1445 / array-vs-scalar autoreset mix).
                         reward = np.float64(0.0)
                         terminated = np.bool_(False)
                         truncated = np.bool_(False)

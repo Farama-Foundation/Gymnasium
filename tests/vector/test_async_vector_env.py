@@ -474,14 +474,81 @@ def test_async_vector_subenv_error():
     )
 
 
-@pytest.mark.parametrize("shared_memory", [True, False])
-def test_async_vector_env_next_step_autoreset_homogeneous_types(shared_memory):
-    """Autoreset path must return numpy-compatible reward/done types (issue #1445).
+def _make_array_reward_env(episode_length: int):
+    """Env whose reward is a length-1 float32 vector (reproduces issue #1445)."""
 
-    When only some workers take the NEXT_STEP autoreset branch, mixing Python
-    ints/bools with numpy scalars from normal steps made np.array(...) raise
-    due to inhomogeneous sequences.
+    def _thunk():
+        step_count = {"n": 0}
+
+        def reset_func(self, *, seed=None, options=None):
+            super(GenericTestEnv, self).reset(seed=seed)
+            step_count["n"] = 0
+            return np.zeros(self.observation_space.shape, dtype=np.float32), {}
+
+        def step_func(self, action):
+            step_count["n"] += 1
+            terminated = step_count["n"] >= episode_length
+            # 1-d array reward: mixes with autoreset scalar 0 and broke stacking.
+            reward = np.array([1.0], dtype=np.float32)
+            obs = np.zeros(self.observation_space.shape, dtype=np.float32)
+            return obs, reward, terminated, False, {}
+
+        return GenericTestEnv(
+            action_space=Discrete(2),
+            observation_space=Box(
+                low=-1.0, high=1.0, shape=(2,), dtype=np.float32
+            ),
+            reset_func=reset_func,
+            step_func=step_func,
+        )
+
+    return _thunk
+
+
+@pytest.mark.parametrize("shared_memory", [True, False])
+def test_async_vector_env_next_step_autoreset_array_reward(shared_memory):
+    """NEXT_STEP autoreset must stack when some rewards are ndarray (issue #1445).
+
+    On main, workers that autoreset return a scalar 0 reward while siblings still
+    return length-1 float32 arrays. ``np.array(rewards, dtype=float64)`` then raises
+    ValueError (inhomogeneous shape). This test fails on main and passes with the fix.
     """
+    # Stagger episode lengths so only a subset of workers autoreset each step.
+    env_fns = [_make_array_reward_env(ep_len) for ep_len in (2, 3, 4, 5)]
+    envs = AsyncVectorEnv(
+        env_fns,
+        shared_memory=shared_memory,
+        autoreset_mode=AutoresetMode.NEXT_STEP,
+    )
+    try:
+        envs.reset(seed=0)
+        saw_mixed_autoreset = False
+        for _ in range(20):
+            _obs, rewards, terminations, truncations, _infos = envs.step(
+                envs.action_space.sample()
+            )
+            assert isinstance(rewards, np.ndarray)
+            assert rewards.dtype == np.float64
+            # Batched shape: (num_envs, reward_dim)
+            assert rewards.shape == (4, 1)
+            assert isinstance(terminations, np.ndarray)
+            assert terminations.dtype == np.bool_
+            assert terminations.shape == (4,)
+            assert isinstance(truncations, np.ndarray)
+            assert truncations.dtype == np.bool_
+            assert truncations.shape == (4,)
+            # Autoreset zero-reward rows appear as all-zeros after a done.
+            if np.any(rewards == 0.0):
+                saw_mixed_autoreset = True
+                break
+        assert saw_mixed_autoreset, "expected at least one autoreset zero-reward step"
+    finally:
+        envs.close()
+
+
+@pytest.mark.parametrize("shared_memory", [True, False])
+def test_async_vector_env_next_step_autoreset_scalar_reward(shared_memory):
+    """Scalar rewards still batch to shape (num_envs,) under NEXT_STEP autoreset."""
     env_fns = [make_env("CartPole-v1", i) for i in range(4)]
     envs = AsyncVectorEnv(
         env_fns,
@@ -490,22 +557,19 @@ def test_async_vector_env_next_step_autoreset_homogeneous_types(shared_memory):
     )
     try:
         envs.reset(seed=0)
-        # Drive until at least one env ends so the next step uses the autoreset branch.
         for _ in range(500):
-            actions = envs.action_space.sample()
-            _obs, rewards, terminations, truncations, _infos = envs.step(actions)
+            _obs, rewards, terminations, truncations, _infos = envs.step(
+                envs.action_space.sample()
+            )
             assert isinstance(rewards, np.ndarray)
             assert rewards.dtype == np.float64
-            assert isinstance(terminations, np.ndarray)
-            assert terminations.dtype == np.bool_
-            assert isinstance(truncations, np.ndarray)
-            assert truncations.dtype == np.bool_
+            assert rewards.shape == (4,)
+            assert terminations.shape == (4,)
+            assert truncations.shape == (4,)
             if np.any(terminations) or np.any(truncations):
-                # Next step forces the autoreset worker path for ended envs.
                 _obs, rewards, terminations, truncations, _infos = envs.step(
                     envs.action_space.sample()
                 )
-                assert isinstance(rewards, np.ndarray)
                 assert rewards.shape == (4,)
                 assert terminations.shape == (4,)
                 assert truncations.shape == (4,)
