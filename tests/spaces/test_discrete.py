@@ -184,6 +184,21 @@ def test_contains_small_dtype_no_overflow(n, start, dtype, element):
 
 
 @pytest.mark.parametrize(
+    "element",
+    [10**20, -(10**20), 2**63, -(2**63) - 1],
+)
+def test_contains_out_of_dtype_range_returns_false(element):
+    """A Python int outside the space dtype's range is not a member, not an error.
+
+    Regression: ``Discrete.contains(10**20)`` raised ``OverflowError`` while
+    casting the input to the space's dtype, instead of returning ``False``
+    (companion to the comparison-overflow fix in #1616).
+    """
+    space = Discrete(5)  # int64, members {0, 1, 2, 3, 4}
+    assert space.contains(element) is False
+
+
+@pytest.mark.parametrize(
     "dtype",
     [
         None,

@@ -201,7 +201,10 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
         Also checks if the given value, when provided as an int, can be cast to the space's dtype.
         """
         if isinstance(x, int):
-            as_np = np.dtype(self.dtype).type(x)
+            try:
+                as_np = np.dtype(self.dtype).type(x)
+            except OverflowError:
+                return False
 
         elif isinstance(x, (np.generic, np.ndarray)) and (
             np.issubdtype(x.dtype, np.integer) and x.shape == ()
