@@ -201,6 +201,9 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
         Also checks if the given value, when provided as an int, can be cast to the space's dtype.
         """
         if isinstance(x, int):
+            dtype_info = np.iinfo(self.dtype)
+            if not (dtype_info.min <= x <= dtype_info.max):
+                return False
             as_np = np.dtype(self.dtype).type(x)
 
         elif isinstance(x, (np.generic, np.ndarray)) and (
