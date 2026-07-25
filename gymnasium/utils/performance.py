@@ -54,7 +54,7 @@ def benchmark_step(
     return steps_per_time
 
 
-def benchmark_step_vector(
+def benchmark_vector_step(
     env: VectorEnv, target_duration: int = 5, seed: int | None = None
 ) -> float:
     """Measure the step throughput of a vector environment.
