@@ -69,6 +69,7 @@ def benchmark_vector_step(
         The number of individual environment steps per second.
     """
     env.action_space.seed(seed)
+    # Some environments lazily initialize during their first reset.
     env.reset(seed=seed)
 
     # Warm up lazy initialization, including JIT compilation, outside the benchmark.
