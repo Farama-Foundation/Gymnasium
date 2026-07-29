@@ -77,6 +77,7 @@ def benchmark_vector_step(
     env.reset(seed=seed)
 
     steps = 0
+    end = 0.0
     start = time.time()
     autoreset_mode = env.metadata.get("autoreset_mode", AutoresetMode.NEXT_STEP)
     previous_done = np.zeros(env.num_envs, dtype=np.bool_)
@@ -95,8 +96,8 @@ def benchmark_vector_step(
             if np.any(done):
                 env.reset(options={"reset_mask": done})
 
-        if time.time() - start > target_duration:
-            end = time.time()
+        end = time.time()
+        if end - start > target_duration:
             break
 
     return steps / (end - start)

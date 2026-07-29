@@ -18,8 +18,8 @@ def test_benchmark_vector_step(autoreset_mode, expected_steps_per_second, monkey
         [lambda: gym.make("CartPole-v1", max_episode_steps=1) for _ in range(2)],
         autoreset_mode=autoreset_mode,
     )
-    timestamps = iter([0.0, 0.0, 1.0, 1.0])
-    monkeypatch.setattr(performance.time, "time", lambda: next(timestamps, 1.0))
+    timestamps = iter([0.0, 0.0, 1.0])
+    monkeypatch.setattr(performance.time, "time", lambda: next(timestamps))
 
     try:
         assert (
