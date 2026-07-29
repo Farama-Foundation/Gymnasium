@@ -41,8 +41,8 @@ def benchmark_step(
         if terminal or truncated:
             env.reset()
 
-        if time.time() - start > target_duration:
-            end = time.time()
+        end = time.time()
+        if end - start > target_duration:
             break
 
     length = end - start
@@ -71,8 +71,8 @@ def benchmark_init(
         env = env_lambda()
         env.reset(seed=seed)
 
-        if time.time() - start > target_duration:
-            end = time.time()
+        end = time.time()
+        if end - start > target_duration:
             break
     length = end - start
 
@@ -96,8 +96,8 @@ def benchmark_render(env: gymnasium.Env, target_duration: int = 5) -> float:
         renders += 1
         env.render()
 
-        if time.time() - start > target_duration:
-            end = time.time()
+        end = time.time()
+        if end - start > target_duration:
             break
     length = end - start
 
