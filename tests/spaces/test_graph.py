@@ -39,7 +39,7 @@ def test_node_space_sample():
     with pytest.raises(
         TypeError,
         match=re.escape(
-            "Expects base space to be Box and Discrete, actual space: <class 'str'>"
+            "The space provided to `batch_space` is not a gymnasium Space instance, type: <class 'str'>, abc"
         ),
     ):
         space.node_space = "abc"

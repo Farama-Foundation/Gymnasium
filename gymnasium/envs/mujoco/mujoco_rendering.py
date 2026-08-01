@@ -742,6 +742,14 @@ class MujocoRenderer:
                 mujoco.mjtObj.mjOBJ_CAMERA,
                 camera_name,
             )
+
+            # If a model camera was resolved (camera_id != -1), using it as a
+            # FIXED camera ignores any user-provided default_camera_config values
+            # (distance, elevation, etc.). Force FREE camera so that the config
+            # takes effect, and rely on default_camera_config (e.g. trackbodyid)
+            # for tracking behaviour.
+            if no_camera_specified and self.camera_id != -1:
+                self.camera_id = -1
         else:
             self.camera_id = camera_id
 

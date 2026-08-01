@@ -131,3 +131,48 @@ def test_reset_info():
 
     _, info = env.reset()
     assert info["works"] is True
+
+
+OFFSCREEN_BUFFER_XML = """<mujoco model="offscreen_buffer_env">
+  <visual>
+    <global offwidth="1920" offheight="1080"/>
+  </visual>
+  <worldbody>
+    <geom type="plane" size="1 1 0.1"/>
+    <body name="torso" pos="0 0 1">
+      <joint name="slide" type="slide" axis="1 0 0"/>
+      <geom type="sphere" size="0.1"/>
+    </body>
+  </worldbody>
+  <actuator>
+    <motor joint="slide" ctrlrange="-1 1" ctrllimited="true"/>
+  </actuator>
+</mujoco>
+"""
+
+
+def test_offscreen_framebuffer_not_shrunk(tmp_path):
+    """Verify that an XML-declared offscreen framebuffer is not shrunk.
+
+    Regression test for https://github.com/Farama-Foundation/Gymnasium/issues/1607:
+    `MujocoEnv._initialize_simulation` used to unconditionally overwrite the
+    `offwidth`/`offheight` requested through `<visual><global .../></visual>`
+    with the (smaller) `width`/`height` render-window size, which broke a
+    user-supplied high-resolution `mujoco.Renderer`.
+    """
+    xml_path = tmp_path / "offscreen_buffer_env.xml"
+    xml_path.write_text(OFFSCREEN_BUFFER_XML)
+
+    # The XML requests a framebuffer larger than the default render window
+    # (480x480), so the XML-declared size must survive `__init__`.
+    env = PointEnv(xml_file=str(xml_path)).unwrapped
+    assert env.model.vis.global_.offwidth == 1920
+    assert env.model.vis.global_.offheight == 1080
+    env.close()
+
+    # When the requested render window is larger than the XML declaration, the
+    # larger window size wins so that on-screen rendering still fits the buffer.
+    env = PointEnv(xml_file=str(xml_path), width=2560, height=1440).unwrapped
+    assert env.model.vis.global_.offwidth == 2560
+    assert env.model.vis.global_.offheight == 1440
+    env.close()

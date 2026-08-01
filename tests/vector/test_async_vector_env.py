@@ -13,7 +13,7 @@ from gymnasium.error import (
     NoAsyncCallError,
 )
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
-from gymnasium.vector import AsyncVectorEnv
+from gymnasium.vector import AsyncVectorEnv, AutoresetMode
 from tests.testing_env import GenericTestEnv
 from tests.vector.testing_utils import (
     CustomSpace,
@@ -31,6 +31,26 @@ def test_create_async_vector_env(shared_memory):
     env = AsyncVectorEnv(env_fns, shared_memory=shared_memory)
     assert env.num_envs == 8
     env.close()
+
+
+def test_metadata_async_vector_env():
+    """Tests that the vector env's metadata doesn't mutate the sub-environment's (class-level) metadata."""
+    envs_1 = AsyncVectorEnv(
+        [make_env("CartPole-v1", 0)], autoreset_mode=AutoresetMode.NEXT_STEP
+    )
+    envs_2 = AsyncVectorEnv(
+        [make_env("CartPole-v1", 1)], autoreset_mode=AutoresetMode.SAME_STEP
+    )
+
+    assert envs_1.metadata["autoreset_mode"] == AutoresetMode.NEXT_STEP
+    assert envs_2.metadata["autoreset_mode"] == AutoresetMode.SAME_STEP
+
+    env = make_env("CartPole-v1", 0)()
+    assert "autoreset_mode" not in env.metadata
+
+    env.close()
+    envs_1.close()
+    envs_2.close()
 
 
 @pytest.mark.parametrize("shared_memory", [True, False])
@@ -347,6 +367,24 @@ def test_custom_space_async_vector_env_shared_memory():
     with pytest.raises(ValueError):
         env = AsyncVectorEnv(env_fns, shared_memory=True)
         env.close(terminate=True)
+
+
+def test_float16_async_vector_env_shared_memory():
+    """Test observation dtypes without an `array` typecode (e.g. float16) with shared memory."""
+    obs_space = Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float16)
+    envs = AsyncVectorEnv(
+        [lambda: GenericTestEnv(observation_space=obs_space)] * 2, shared_memory=True
+    )
+
+    observations, _ = envs.reset(seed=0)
+    assert observations.dtype == np.float16
+    assert observations.shape == (2, 3)
+
+    observations, *_ = envs.step(envs.action_space.sample())
+    assert observations.dtype == np.float16
+    assert observations.shape == (2, 3)
+
+    envs.close()
 
 
 def raise_error_reset(self, seed, options):

@@ -251,14 +251,15 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
         if isinstance(x, Sequence):
             x = np.array(x)  # Promote list to array for contains check
 
-        # if nvec is uint32 and space dtype is uint32, then 0 <= x < self.nvec guarantees that x
-        # is within correct bounds for space dtype (even though x does not have to be unsigned)
+        # `x - self.start` can overflow the space dtype and wrap around (e.g. for int8 or a
+        # negative start), so compare against the largest element instead; for a valid space,
+        # `start + (nvec - 1)` always fits the dtype and comparisons never overflow
         return bool(
             isinstance(x, np.ndarray)
             and x.shape == self.shape
             and np.can_cast(x.dtype, self.dtype)
             and np.all(self.start <= x)
-            and np.all(x - self.start < self.nvec)
+            and np.all(x <= self.start + (self.nvec - 1))
         )
 
     def to_jsonable(

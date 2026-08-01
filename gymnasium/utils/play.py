@@ -53,6 +53,7 @@ class PlayableGame:
 
     env: Env
     relevant_keys: set[int]
+    original_video_size: tuple[int, int]
     video_size: tuple[int, int]
     screen: Surface
     pressed_keys: list[int]
@@ -77,13 +78,16 @@ class PlayableGame:
                 f"but your environment render_mode = {env.render_mode}."
             )
 
+        if zoom is not None and zoom <= 0:
+            raise ValueError(f"Zoom must be a positive float, got {zoom}")
+
         self.env = env
         self.relevant_keys = self._get_relevant_keys(keys_to_action)
-        # self.video_size is the size of the video that is being displayed.
-        # The window size may be larger, in that case we will add black bars
-        self.video_size = self._get_video_size(zoom)
+        # Store the immutable base video size to prevent cumulative scaling drift
+        self.original_video_size = self._get_video_size(zoom)
+        self.video_size = self.original_video_size
         self.screen = pygame.display.set_mode(self.video_size, pygame.RESIZABLE)
-        self.pressed_keys = []
+        self.pressed_keys = set()
         self.running = True
 
     def _get_relevant_keys(
@@ -128,20 +132,26 @@ class PlayableGame:
         """
         if event.type == pygame.KEYDOWN:
             if event.key in self.relevant_keys:
-                self.pressed_keys.append(event.key)
+                self.pressed_keys.add(event.key)
             elif event.key == pygame.K_ESCAPE:
                 self.running = False
         elif event.type == pygame.KEYUP:
             if event.key in self.relevant_keys:
-                self.pressed_keys.remove(event.key)
+                self.pressed_keys.discard(event.key)
         elif event.type == pygame.QUIT:
             self.running = False
         elif event.type == pygame.WINDOWRESIZED:
             # Compute the maximum video size that fits into the new window
-            scale_width = event.x / self.video_size[0]
-            scale_height = event.y / self.video_size[1]
+            # Scale relative to the immutable original size to prevent cumulative drift
+            scale_width = event.x / self.original_video_size[0]
+            scale_height = event.y / self.original_video_size[1]
             scale = min(scale_height, scale_width)
-            self.video_size = (scale * self.video_size[0], scale * self.video_size[1])
+
+            # Map scale back to original size and round to ensure integer pixel dimensions
+            self.video_size = (
+                round(scale * self.original_video_size[0]),
+                round(scale * self.original_video_size[1]),
+            )
 
 
 def display_arr(

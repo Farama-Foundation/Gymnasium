@@ -181,6 +181,30 @@ def test_multidiscrete_start_contains():
     assert [13, 23, 34] not in space
 
 
+@pytest.mark.parametrize(
+    "nvec, start, dtype, element, expected_is_in",
+    [
+        # int8 space covering [-100, 19], `x - start` wraps for large x
+        ([120], [-100], np.int8, [19], True),
+        ([120], [-100], np.int8, [20], False),
+        ([120], [-100], np.int8, [50], False),
+        ([120], [-100], np.int8, [127], False),
+        # spaces ending exactly at the dtype's maximum value
+        ([3], [125], np.int8, [127], True),
+        ([6], [250], np.uint8, [255], True),
+        # default int64 dtype with negative start, `x - start` wraps for large x
+        ([5], [-10], np.int64, [-6], True),
+        ([5], [-10], np.int64, [np.iinfo(np.int64).max], False),
+    ],
+)
+def test_contains_no_overflow(nvec, start, dtype, element, expected_is_in):
+    """The upper-bound check must not overflow the space dtype (e.g. int8 or negative start)."""
+    space = MultiDiscrete(nvec, start=start, dtype=dtype)
+    assert space.contains(np.array(element, dtype=dtype)) == expected_is_in
+    for _ in range(50):
+        assert space.contains(space.sample())  # space must contain its own samples
+
+
 def test_multidiscrete_equality():
     # Check if two spaces are equivalent.
     space_a = MultiDiscrete(nvec=[2, 3, 4], start=[0, 0, 1])

@@ -1,4 +1,7 @@
+import os
 import re
+import subprocess
+import sys
 
 import numpy as np
 import pytest
@@ -77,3 +80,41 @@ def test_sample_probability():
     sample = space.sample(probability=(2, np.array([0.5, 0.5, 0, 0], dtype=np.float64)))
     assert sample in space
     assert sample in ["aa", "bb", "ab", "ba"]
+
+
+def test_charset_ordering():
+    # set-based charsets have no inherent order so they are sorted
+    space = Text(5, charset=frozenset("dcba"))
+    assert space.character_list == ("a", "b", "c", "d")
+    assert [space.character_index(c) for c in "abcd"] == [0, 1, 2, 3]
+
+    # string charsets keep the given order, dropping duplicate characters
+    space = Text(5, charset="dcbad")
+    assert space.character_list == ("d", "c", "b", "a")
+    assert [space.character_index(c) for c in "dcba"] == [0, 1, 2, 3]
+
+
+def test_deterministic_across_hash_seeds():
+    """Seeded samples and flatten encodings must not depend on PYTHONHASHSEED.
+
+    The default charset is a frozenset whose iteration order changes with hash
+    randomization, so the character ordering must be normalized.
+    """
+    code = (
+        "from gymnasium.spaces import Text\n"
+        "from gymnasium.spaces.utils import flatten\n"
+        "space = Text(5, seed=42)\n"
+        "print(space.sample())\n"
+        "print(flatten(Text(5), 'abc').tolist())\n"
+    )
+    outputs = {
+        subprocess.run(
+            [sys.executable, "-c", code],
+            env={**os.environ, "PYTHONHASHSEED": str(hash_seed)},
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout
+        for hash_seed in (1, 2)
+    }
+    assert len(outputs) == 1, f"Outputs differ across hash seeds: {outputs}"
