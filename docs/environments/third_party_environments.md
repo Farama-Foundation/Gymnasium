@@ -131,6 +131,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   A Gymnasium-compatible wildfire simulation environment that models fire spread using physics-based dynamics and incorporates helicopter firefighting strategies. It's built on real terrain data, including land cover and elevation, and supports customizable observation and reward wrappers.
 
+- [Ignis: 3D Structural & Wildfire Fire Suppression](https://github.com/Tyronita/ignis)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.0.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/Tyronita/ignis)
+
+  A Gymnasium environment for fire suppression that extends cellular-automaton wildfire RL to 3D indoor / structural fire. A single JSON scene config (geometry, obstacles, materials, ignition, budgets) defines the world; `Ignis-Indoor-v0` operates zoned ceiling sprinklers to contain a fire spreading through a 3D voxel building, while `Ignis-Wildfire-v0` is a 2D wildfire air-tanker variant. It is pure-NumPy and CPU-only, ships CEM and PPO baselines, and includes evacuation and safe-building-design tooling.
+
 ### Game environments
 *Board Games, Video Games and all other interactive entertainment mediums.*
 
