@@ -341,3 +341,67 @@ def test_same_step_final_obs(obs_space):
     obs, rewards, terminations, truncations, info = envs.step([1, 2, 3])
     assert info["final_obs"][1] in envs.single_observation_space
     assert info["final_obs"][2] in envs.single_observation_space
+
+
+def single_element_reward_reset(
+    self: GenericTestEnv, seed: int | None = None, options: dict | None = None
+):
+    super(GenericTestEnv, self).reset(seed=seed)
+
+    self.count = 0
+    return self.count, {}
+
+
+def single_element_reward_step(self: GenericTestEnv, action: int):
+    self.count += 1
+    # A reward of shape (1,) rather than a bare scalar. `SyncVectorEnv` assigns
+    # this into its preallocated reward buffer without complaint, so
+    # `AsyncVectorEnv` must accept it too.
+    reward = np.array([1.0], dtype=np.float32)
+    return self.count, reward, self.count >= self.max_count, False, {}
+
+
+@pytest.mark.parametrize(
+    "vectoriser",
+    [
+        SyncVectorEnv,
+        AsyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=False),
+    ],
+    ids=["Sync", "Async(shared_memory=True)", "Async(shared_memory=False)"],
+)
+def test_autoreset_next_step_non_scalar_reward(vectoriser):
+    """Environments returning a shape-(1,) reward must survive an autoreset step.
+
+    On an autoreset step the worker substitutes the scalar `0` for the reward.
+    Building the batch with `np.array([...])` then mixes a shape-(1,) array with
+    a scalar, which NumPy rejects as inhomogeneous -- so `AsyncVectorEnv` raised
+    while `SyncVectorEnv`, which assigns per index, did not.
+
+    Regression test for #1445.
+    """
+    envs = vectoriser(
+        [
+            lambda: GenericTestEnv(
+                action_space=Discrete(5),
+                observation_space=Discrete(5),
+                reset_func=single_element_reward_reset,
+                step_func=single_element_reward_step,
+            )
+            for _ in range(2)
+        ],
+        autoreset_mode=AutoresetMode.NEXT_STEP,
+    )
+    # Staggered horizons, so one sub-env autoresets while the other steps.
+    envs.set_attr("max_count", [2, 3])
+    envs.reset(seed=0)
+
+    for _ in range(4):
+        _, reward, terminated, truncated, _ = envs.step(envs.action_space.sample())
+
+        assert reward.shape == (2,), reward.shape
+        assert reward.dtype == np.float64, reward.dtype
+        assert terminated.shape == (2,) and terminated.dtype == np.bool_
+        assert truncated.shape == (2,) and truncated.dtype == np.bool_
+
+    envs.close()

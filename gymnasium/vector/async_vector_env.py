@@ -512,11 +512,29 @@ class AsyncVectorEnv(VectorEnv):
             )
 
         self._state = AsyncState.DEFAULT
+
+        # Build these the way `SyncVectorEnv` does -- preallocate, then assign
+        # per sub-environment -- rather than `np.array(list_of_values)`.
+        # On an autoreset step the worker substitutes the scalars `0`, `False`,
+        # `False`, so a list-based conversion sees a mix of those scalars and
+        # whatever the environment actually returns. If an environment returns a
+        # single-element array reward (shape `(1,)`), that list is inhomogeneous
+        # and NumPy raises, even though `SyncVectorEnv` accepts the same
+        # environment. Per-index assignment coerces each value identically to
+        # `SyncVectorEnv`, so both vector backends now behave the same.
+        rewards_arr = np.zeros((self.num_envs,), dtype=np.float64)
+        terminations_arr = np.zeros((self.num_envs,), dtype=np.bool_)
+        truncations_arr = np.zeros((self.num_envs,), dtype=np.bool_)
+        for i in range(self.num_envs):
+            rewards_arr[i] = rewards[i]
+            terminations_arr[i] = terminations[i]
+            truncations_arr[i] = truncations[i]
+
         return (
             deepcopy(self.observations) if self.copy else self.observations,
-            np.array(rewards, dtype=np.float64),
-            np.array(terminations, dtype=np.bool_),
-            np.array(truncations, dtype=np.bool_),
+            rewards_arr,
+            terminations_arr,
+            truncations_arr,
             infos,
         )
 
