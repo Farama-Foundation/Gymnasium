@@ -703,8 +703,8 @@ class AddRenderObservation(
         """
         gym.utils.RecordConstructorArgs.__init__(
             self,
-            pixels_only=render_only,
-            pixels_key=render_key,
+            render_only=render_only,
+            render_key=render_key,
             obs_key=obs_key,
         )
 

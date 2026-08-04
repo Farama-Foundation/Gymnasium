@@ -184,6 +184,30 @@ def test_contains_small_dtype_no_overflow(n, start, dtype, element):
 
 
 @pytest.mark.parametrize(
+    "n, start, dtype, element",
+    [
+        (5, 0, np.int64, 10**20),
+        (5, 0, np.int64, -(10**20)),
+        (5, 0, np.int64, 2**63),
+        (5, 0, np.int64, -(2**63) - 1),
+        (3, 125, np.int8, -129),  # below int8 min; numpy 1.x wraps -129 -> 127
+        (3, 125, np.int8, 200),  # above int8 max; wraps -> -56
+        (6, 250, np.uint8, -1),  # below uint8 min
+        (6, 250, np.uint8, 300),  # above uint8 max
+    ],
+)
+def test_contains_out_of_dtype_range_returns_false(n, start, dtype, element):
+    """A Python int outside the space dtype's range is not a member, not an error.
+
+    On numpy 2.x the cast raised ``OverflowError``; on numpy 1.x a too-small/large
+    int silently wrapped into range and was wrongly reported as contained. The
+    dtype bounds are checked before the cast so both paths return ``False``.
+    """
+    space = Discrete(n, start=start, dtype=dtype)
+    assert space.contains(element) is False
+
+
+@pytest.mark.parametrize(
     "dtype",
     [
         None,
