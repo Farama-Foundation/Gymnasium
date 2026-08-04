@@ -27,7 +27,7 @@ classifiers = [
 dependencies = [
     "numpy >=1.22.0",
     "cloudpickle >=1.2.0",
-    "typing-extensions >=4.3.0",
+    "typing-extensions >=4.6.0",
     "farama-notifications >=0.0.1",
 ]
 dynamic = ["version"]

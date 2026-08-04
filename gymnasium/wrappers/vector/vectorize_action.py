@@ -4,30 +4,45 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic
+from typing import Any, Generic
 
 import numpy as np
+from typing_extensions import TypeVar
 
 from gymnasium import Space
 from gymnasium.core import Env
 from gymnasium.logger import warn
+from gymnasium.typing import (
+    VectorActType,
+    VectorBoolType,
+    VectorObsType,
+    VectorRewardType,
+)
 from gymnasium.vector import VectorActionWrapper, VectorEnv
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.wrappers import transform_action
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _T_contra = TypeVar("_T_contra", contravariant=True, default=Any)
-    _T_co = TypeVar("_T_co", covariant=True, default=_T_contra)
-else:
-    from typing import TypeVar
-
-    _T_contra = TypeVar("_T_contra", contravariant=True)
-    _T_co = TypeVar("_T_co", covariant=True)
+# The wrapped (inner) environment's action type; defaults to this wrapper's own
+# invariant `VectorActType`.
+VectorWrappedActType = TypeVar("VectorWrappedActType", default=VectorActType)
 
 
-class TransformAction(VectorActionWrapper, Generic[_T_contra, _T_co]):
+class TransformAction(
+    VectorActionWrapper[
+        VectorObsType,
+        VectorActType,
+        VectorRewardType,
+        VectorBoolType,
+        VectorWrappedActType,
+    ],
+    Generic[
+        VectorObsType,
+        VectorActType,
+        VectorRewardType,
+        VectorBoolType,
+        VectorWrappedActType,
+    ],
+):
     """Transforms an action via a function provided to the wrapper.
 
     The function :attr:`func` will be applied to all vector actions.
@@ -70,14 +85,16 @@ class TransformAction(VectorActionWrapper, Generic[_T_contra, _T_co]):
     """
 
     single_action_space: Space
-    action_space: Space
-    func: Callable[[_T_contra], _T_co]
+    action_space: Space[VectorActType]
+    func: Callable[[VectorActType], VectorWrappedActType]
 
     def __init__(
         self,
-        env: VectorEnv,
-        func: Callable[[_T_contra], _T_co],
-        action_space: Space | None = None,
+        env: VectorEnv[
+            VectorObsType, VectorWrappedActType, VectorRewardType, VectorBoolType
+        ],
+        func: Callable[[VectorActType], VectorWrappedActType],
+        action_space: Space[VectorActType] | None = None,
         single_action_space: Space | None = None,
     ) -> None:
         """Constructor for the lambda action wrapper.
@@ -106,12 +123,17 @@ class TransformAction(VectorActionWrapper, Generic[_T_contra, _T_co]):
 
         self.func = func
 
-    def actions(self, actions: _T_contra) -> _T_co:
+    def actions(self, actions: VectorActType) -> VectorWrappedActType:
         """Applies the :attr:`func` to the actions."""
         return self.func(actions)
 
 
-class VectorizeTransformAction(VectorActionWrapper):
+class VectorizeTransformAction(
+    VectorActionWrapper[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType, VectorActType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Vectorizes a single-agent transform action wrapper for vector environments.
 
     Example - Without action transformation:
@@ -152,14 +174,14 @@ class VectorizeTransformAction(VectorActionWrapper):
 
     wrapper: transform_action.TransformAction
     single_action_space: Space
-    action_space: Space
+    action_space: Space[VectorActType]
 
     same_out: bool
     out: np.ndarray
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
         wrapper: type[transform_action.TransformAction],
         **kwargs: Any,
     ) -> None:
@@ -180,7 +202,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         # ty doesn't support `@single_dispatch` yet
         self.out = create_empty_array(self.env.single_action_space, self.num_envs)  # ty:ignore[invalid-assignment]
 
-    def actions(self, actions: np.ndarray) -> np.ndarray:
+    def actions(self, actions: VectorActType) -> VectorActType:
         """Applies the wrapper to each of the action.
 
         Args:
@@ -213,7 +235,12 @@ class VectorizeTransformAction(VectorActionWrapper):
         return actions_out  # ty:ignore[invalid-return-type]
 
 
-class ClipAction(VectorizeTransformAction):
+class ClipAction(
+    VectorizeTransformAction[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example - Passing an out-of-bounds action to the environment to be clipped.
@@ -231,7 +258,10 @@ class ClipAction(VectorizeTransformAction):
                [-0.42884544,  0.00080468]], dtype=float32)
     """
 
-    def __init__(self, env: VectorEnv) -> None:
+    def __init__(
+        self,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    ) -> None:
         """Constructor for the Clip Action wrapper.
 
         Args:
@@ -240,7 +270,12 @@ class ClipAction(VectorizeTransformAction):
         super().__init__(env, transform_action.ClipAction)
 
 
-class RescaleAction(VectorizeTransformAction):
+class RescaleAction(
+    VectorizeTransformAction[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     Example - Without action scaling:
@@ -277,7 +312,7 @@ class RescaleAction(VectorizeTransformAction):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
         min_action: float | int | np.ndarray,
         max_action: float | int | np.ndarray,
     ) -> None:

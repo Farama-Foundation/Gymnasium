@@ -3,12 +3,19 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeAlias, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat
 
 import numpy as np
 
 import gymnasium
 from gymnasium import spaces
+from gymnasium.typing import (
+    ActType,
+    ObsType,
+    RenderFrame,
+    WrapperActType,
+    WrapperObsType,
+)
 from gymnasium.utils import RecordConstructorArgs, seeding
 
 if TYPE_CHECKING:
@@ -16,10 +23,19 @@ if TYPE_CHECKING:
 
     from gymnasium.envs.registration import EnvSpec, WrapperSpec
 
-ObsType = TypeVar("ObsType")
-ActType = TypeVar("ActType")
-
-RenderFrame: TypeAlias = str | np.ndarray | tuple[np.ndarray, np.ndarray]
+# single-environment TypeVars are re-exported from `gymnasium.typing`
+__all__ = [
+    "Env",
+    "Wrapper",
+    "ObservationWrapper",
+    "ActionWrapper",
+    "RewardWrapper",
+    "ObsType",
+    "ActType",
+    "RenderFrame",
+    "WrapperObsType",
+    "WrapperActType",
+]
 
 
 class Env(Generic[ObsType, ActType]):
@@ -281,10 +297,6 @@ class Env(Generic[ObsType, ActType]):
             setattr(self, name, value)
             return True
         return False
-
-
-WrapperObsType = TypeVar("WrapperObsType")
-WrapperActType = TypeVar("WrapperActType")
 
 
 class Wrapper(
