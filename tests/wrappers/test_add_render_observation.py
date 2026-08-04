@@ -94,3 +94,28 @@ def test_single_array_observation(pixels_only):
     # assert rendered_obs.shape == (height, width, 3)
     assert rendered_obs.ndim == 3
     assert rendered_obs.dtype == np.uint8
+
+
+def test_record_constructor_args_roundtrip():
+    """Saved constructor args must match the wrapper's own parameter names.
+
+    ``RecordConstructorArgs`` stores these kwargs into the env spec, and
+    reconstructing a wrapped env splats them back into ``__init__``. If the
+    saved names differ from the parameters, that reconstruction raises
+    ``TypeError``.
+    """
+
+    def make_env():
+        return GenericTestEnv(
+            observation_space=spaces.Box(shape=(2,), low=-1, high=1, dtype=np.float32),
+            render_mode="rgb_array",
+            render_func=image_render_func,
+        )
+
+    wrapped_env = AddRenderObservation(make_env(), render_only=True)
+
+    saved_kwargs = wrapped_env._saved_kwargs
+    assert set(saved_kwargs) == {"render_only", "render_key", "obs_key"}
+
+    # Reconstruction (as performed from the env spec) must not raise.
+    AddRenderObservation(make_env(), **saved_kwargs)
