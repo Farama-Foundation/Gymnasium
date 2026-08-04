@@ -2,18 +2,29 @@
 
 from __future__ import annotations
 
+import sys
 import typing
 from collections.abc import Iterable
-from typing import Any, TypeVar, overload
+from typing import Any, overload
 
 import numpy as np
 
 from gymnasium.spaces.space import Space
 
-_T_co = TypeVar("_T_co", covariant=True)
+if sys.version_info >= (3, 11):
+    from typing import TypeVarTuple, Unpack
+else:
+    from typing_extensions import TypeVarTuple, Unpack
 
 
-class Tuple(Space[tuple[_T_co, ...]], typing.Sequence[_T_co]):
+_SpacesT = TypeVarTuple("_SpacesT")
+
+
+class Tuple(
+    Space[tuple[Any, ...]],
+    typing.Sequence[Space[Any]],
+    typing.Generic[Unpack[_SpacesT]],
+):
     """A tuple (more precisely: the cartesian product) of :class:`Space` instances.
 
     Elements of this space are tuples of elements of the constituent spaces.
@@ -25,12 +36,26 @@ class Tuple(Space[tuple[_T_co, ...]], typing.Sequence[_T_co]):
         (np.int64(0), array([-0.3991573 ,  0.21649833], dtype=float32))
     """
 
-    spaces: tuple[Space[_T_co], ...]
+    spaces: tuple[Unpack[_SpacesT]]
+
+    @overload
+    def __init__(
+        self,
+        spaces: tuple[Unpack[_SpacesT]],
+        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
+    ): ...
+
+    @overload
+    def __init__(
+        self,
+        spaces: Iterable[Space[Any]],
+        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
+    ): ...
 
     def __init__(
         self,
-        spaces: Iterable[Space[_T_co]],
-        seed: int | np.random.Generator | None = None,
+        spaces: Iterable[Space[Any]],
+        seed: int | typing.Sequence[int] | np.random.Generator | None = None,
     ) -> None:
         r"""Constructor of :class:`Tuple` space.
 
@@ -46,7 +71,9 @@ class Tuple(Space[tuple[_T_co, ...]], typing.Sequence[_T_co]):
                 raise TypeError(
                     f"{space} does not inherit from `gymnasium.Space`. Actual Type: {type(space)}"
                 )
-        super().__init__(None, None, seed)
+        super().__init__(
+            None, None, typing.cast(int | np.random.Generator | None, seed)
+        )
 
     @property
     def is_np_flattenable(self) -> bool:
@@ -98,7 +125,7 @@ class Tuple(Space[tuple[_T_co, ...]], typing.Sequence[_T_co]):
         self,
         mask: tuple[Any | None, ...] | None = None,
         probability: tuple[Any | None, ...] | None = None,
-    ) -> tuple[_T_co, ...]:
+    ) -> tuple[Any, ...]:
         """Generates a single random sample inside this space.
 
         This method draws independent samples from the subspaces.
@@ -149,7 +176,8 @@ class Tuple(Space[tuple[_T_co, ...]], typing.Sequence[_T_co]):
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, (list, np.ndarray)):
-            x = tuple(x)  # Promote list and ndarray to tuple for contains check
+            # Promote list and ndarray to tuple for contains check
+            x = tuple(x)
 
         return (
             isinstance(x, tuple)
@@ -186,12 +214,11 @@ class Tuple(Space[tuple[_T_co, ...]], typing.Sequence[_T_co]):
         ]
 
     @overload
-    def __getitem__(self, index: int) -> Space[_T_co]: ...
+    def __getitem__(self, index: int) -> Space[Any]: ...
     @overload
-    def __getitem__(self, index: slice) -> tuple[Space[_T_co], ...]: ...
-    def __getitem__(
-        self, index: int | slice
-    ) -> Space[_T_co] | tuple[Space[_T_co], ...]:
+    def __getitem__(self, index: slice) -> tuple[Space, ...]: ...
+
+    def __getitem__(self, index: int | slice) -> Space | tuple[Space, ...]:
         """Get the subspace at specific `index`."""
         return self.spaces[index]
 
