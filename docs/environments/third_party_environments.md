@@ -190,6 +190,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   An environment inspired by the mobile game Hill Climb Racing, featuring Box2D physics, Pygame rendering, procedurally generated Perlin noise terrain, discrete and continuous action spaces, five reward functions, and 13 pre-trained PPO baseline models.
 
+- [Kraken Crossing: A dark, stochastic nautical environment](https://github.com/4l3xv33/kraken-crossing)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-%3E%3D1.3-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/4l3xv33/kraken-crossing)
+
+  Kraken Crossing is a dark, stochastic 8x8 nautical navigation game designed for tabular reinforcement learning. An agent steers a pirate ship in eight directions and fires port or starboard cannons while learning to avoid hidden whirlpools, defeat a Kraken, and reach treasure. The package includes animated agent and omniscient rendering, a reproducible Q-learning baseline, examples, tests, and a companion Jupyter notebook.
+
 - [Pickomino (Heckmeck): Dice and Tile game](https://github.com/smallgig/Pickomino)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
