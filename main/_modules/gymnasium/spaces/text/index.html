@@ -417,7 +417,11 @@
 <span class="sd">            min_length (int): Minimum text length (in characters). Defaults to 1 to prevent empty strings.</span>
 <span class="sd">            max_length (int): Maximum text length (in characters).</span>
 <span class="sd">            charset (Union[set], str): Character set, defaults to the lower and upper english alphabet plus latin digits.</span>
+<span class="sd">                Each element must be a single character.</span>
 <span class="sd">            seed: The seed for sampling from the space.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If any element of ``charset`` is not a single character.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">min_length</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
@@ -446,6 +450,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Preserve the given ordering, dropping duplicate characters</span>
             <span class="n">char_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">charset</span><span class="p">))</span>
+
+        <span class="c1"># Each element of the charset must be a single character, otherwise `sample`</span>
+        <span class="c1"># concatenates multi-character elements and produces strings that are longer</span>
+        <span class="c1"># than `max_length` and that `contains` rejects.</span>
+        <span class="n">invalid_chars</span> <span class="o">=</span> <span class="p">[</span><span class="n">char</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">char_list</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">char</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">invalid_chars</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Expects all charset elements to be a single character, actual invalid &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;elements: </span><span class="si">{</span><span class="n">invalid_chars</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_char_set</span><span class="p">:</span> <span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">char_list</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_char_list</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">char_list</span><span class="p">)</span>

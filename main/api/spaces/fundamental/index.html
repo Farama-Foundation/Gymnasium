@@ -720,9 +720,13 @@ Only probability mask values within <code class="docutils literal notranslate"><
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>min_length</strong> (<em>int</em>) – Minimum text length (in characters). Defaults to 1 to prevent empty strings.</p></li>
 <li><p><strong>max_length</strong> (<em>int</em>) – Maximum text length (in characters).</p></li>
-<li><p><strong>charset</strong> (<em>Union</em><em>[</em><em>set</em><em>]</em><em>, </em><em>str</em>) – Character set, defaults to the lower and upper english alphabet plus latin digits.</p></li>
+<li><p><strong>charset</strong> (<em>Union</em><em>[</em><em>set</em><em>]</em><em>, </em><em>str</em>) – Character set, defaults to the lower and upper english alphabet plus latin digits.
+Each element must be a single character.</p></li>
 <li><p><strong>seed</strong> – The seed for sampling from the space.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If any element of <code class="docutils literal notranslate"><span class="pre">charset</span></code> is not a single character.</p>
 </dd>
 </dl>
 <dl class="py method">
