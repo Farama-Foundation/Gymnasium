@@ -47,8 +47,15 @@ class FuncEnv(
     observation_space: Space
     action_space: Space
 
-    def __init__(self, options: dict[str, Any] | None = None):
-        """Initialize the environment constants."""
+    def __init__(
+        self, options: dict[str, Any] | None = None, params: Params | None = None
+    ):
+        """Initialize the environment constants.
+
+        Args:
+            options: Optional mapping of attributes to set on the environment.
+            params: Optional parameters instance to use for this environment.
+        """
         self.__dict__.update(options or {})
         self.default_params = self.get_default_params()
 

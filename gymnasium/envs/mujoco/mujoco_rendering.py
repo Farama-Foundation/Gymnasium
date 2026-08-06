@@ -830,3 +830,14 @@ class MujocoRenderer:
         """Close the OpenGL rendering contexts of all viewer modes"""
         for _, viewer in self._viewers.items():
             viewer.close()
+
+    def set_data(self, data: "mujoco.MjData"):
+        """Set the MjData used for rendering.
+
+        This updates the renderer's internal data and also sets the data attribute
+        on any active viewer contexts so they render the most recent simulation frame.
+        """
+        self.data = data
+        for _, viewer in self._viewers.items():
+            # viewer implementations expect a .data attribute to be present
+            viewer.data = data
