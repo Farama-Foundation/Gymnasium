@@ -121,7 +121,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
         dtype: _ToDType[_ScalarT],
         seed: _ToSeed | None = None,
     ) -> None: ...
-    def __init__(
+    def __init__(  # type: ignore[misc]
         self,
         low: _RealArrayLike,
         high: _RealArrayLike,
@@ -152,7 +152,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
         # determine dtype
         if dtype is None:
             raise ValueError("Box dtype must be explicitly provided, cannot be None.")
-        self.dtype = np.dtype(dtype)
+        self.dtype = np.dtype(dtype)  # type: ignore[assignment,arg-type]
 
         #  * check that dtype is an accepted dtype
         if self.dtype.kind not in ("i", "u", "f", "b"):
@@ -199,7 +199,8 @@ class Box(Space[NDArray[_ScalarT_co]]):
         #  * unsign int inf and -inf - special case that is disallowed
 
         if self.dtype.kind == "b":
-            dtype_min, dtype_max = 0, 1
+            dtype_min: float | int = 0
+            dtype_max: float | int = 1
         elif self.dtype.kind == "f":
             finfo = np.finfo(cast(np.dtype[np.floating], self.dtype))
             dtype_min, dtype_max = float(finfo.min), float(finfo.max)
@@ -233,7 +234,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
         super().__init__(self.shape, self.dtype, seed)
 
     def _cast_low(
-        self, low: _RealArrayLike, dtype_min: float
+        self, low: _RealArrayLike, dtype_min: float | int
     ) -> tuple[NDArray[_ScalarT_co], NDArray[np.bool_]]:
         """Casts the input Box low value to ndarray with provided dtype.
 
@@ -277,7 +278,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
 
             bounded_below = -np.inf < low
 
-            neginf = np.isneginf(low)
+            neginf = np.isneginf(low)  # type: ignore[arg-type]
             if np.any(neginf):
                 if self.dtype.kind == "i":  # signed int
                     low[neginf] = dtype_min
@@ -300,7 +301,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
             return low.astype(self.dtype), bounded_below
 
     def _cast_high(
-        self, high: _RealArrayLike, dtype_max: float
+        self, high: _RealArrayLike, dtype_max: float | int
     ) -> tuple[NDArray[_ScalarT_co], NDArray[np.bool_]]:
         """Casts the input Box high value to ndarray with provided dtype.
 
@@ -344,7 +345,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
 
             bounded_above = high < np.inf
 
-            posinf = np.isposinf(high)
+            posinf = np.isposinf(high)  # type: ignore[arg-type]
             if np.any(posinf):
                 if self.dtype.kind == "i":  # signed int
                     high[posinf] = dtype_max
@@ -453,7 +454,9 @@ class Box(Space[NDArray[_ScalarT_co]]):
         )
 
         sample[bounded] = self.np_random.uniform(
-            low=self.low[bounded], high=high[bounded], size=bounded[bounded].shape
+            low=self.low[bounded],
+            high=high[bounded],
+            size=bounded[bounded].shape,  # type: ignore[arg-type]
         )
 
         if self.dtype.kind in ["i", "u", "b"]:
@@ -475,9 +478,9 @@ class Box(Space[NDArray[_ScalarT_co]]):
         if self.dtype == np.int64:
             sample = sample.clip(min=self.low, max=self.high)
 
-        return sample
+        return sample  # type: ignore[return-value]
 
-    def contains(self, x: np.ndarray | Any) -> bool:
+    def contains(self, x: np.ndarray[Any, Any] | Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if not isinstance(x, np.ndarray):
             gym.logger.warn("Casting input x to numpy array.")
@@ -493,12 +496,12 @@ class Box(Space[NDArray[_ScalarT_co]]):
             and np.all(x <= self.high)
         )
 
-    def to_jsonable(self, sample_n: Iterable[np.ndarray]) -> list[list]:
+    def to_jsonable(self, sample_n: Iterable[np.ndarray[Any, Any]]) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [sample.tolist() for sample in sample_n]
 
     def from_jsonable(
-        self, sample_n: Iterable[float | list]
+        self, sample_n: Iterable[float | list[Any]]
     ) -> list[NDArray[_ScalarT_co]]:
         """Convert a JSONable data type to a batch of samples from this space."""
         return [np.asarray(sample, dtype=self.dtype) for sample in sample_n]

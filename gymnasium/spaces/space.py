@@ -41,9 +41,9 @@ class Space(Generic[_T_co]):
         not handle custom spaces properly. Use custom spaces with care.
     """
 
-    dtype: np.dtype | None
+    dtype: np.dtype[Any] | None
     _shape: tuple[int, ...] | None
-    _np_random: np.random.Generator
+    _np_random: np.random.Generator | None = None
 
     def __init__(
         self,
@@ -60,7 +60,7 @@ class Space(Generic[_T_co]):
         """
         self._shape = None if shape is None else tuple(shape)
         self.dtype = None if dtype is None else np.dtype(dtype)
-        self._np_random = None  # ty:ignore[invalid-assignment]
+        self._np_random = None
         if seed is not None:
             if isinstance(seed, np.random.Generator):
                 self._np_random = seed
