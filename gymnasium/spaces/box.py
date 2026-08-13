@@ -483,7 +483,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
             gym.logger.warn("Casting input x to numpy array.")
             try:
                 x = np.asarray(x, dtype=self.dtype)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, OverflowError):
                 return False
 
         return bool(

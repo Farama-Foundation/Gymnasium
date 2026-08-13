@@ -296,6 +296,28 @@ def test_contains_dtype():
 
 
 @pytest.mark.parametrize(
+    "dtype, element",
+    [
+        (np.int8, 300),
+        (np.int8, -300),
+        (np.uint8, -1),
+        (np.uint8, 300),
+        (np.int64, 10**20),
+    ],
+)
+def test_contains_out_of_dtype_range_returns_false(dtype, element):
+    """A value outside the space dtype's range is not a member, not an error.
+
+    Regression: ``Box.contains([300, 0])`` on an ``int8`` space cast the input
+    to the space's dtype before the membership check; on numpy 2.x that cast
+    raised ``OverflowError`` instead of returning ``False`` (companion to the
+    ``Discrete.contains`` fix in #1648).
+    """
+    space = Box(low=0, high=10, shape=(2,), dtype=dtype)
+    assert space.contains([element, 0]) is False
+
+
+@pytest.mark.parametrize(
     "low, high, shape",
     [
         (0, np.inf, (2,)),
