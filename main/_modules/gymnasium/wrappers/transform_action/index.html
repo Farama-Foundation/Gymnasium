@@ -383,6 +383,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidBound</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">MultiDiscrete</span><span class="p">,</span> <span class="n">Space</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TransformAction&quot;</span><span class="p">,</span> <span class="s2">&quot;ClipAction&quot;</span><span class="p">,</span> <span class="s2">&quot;RescaleAction&quot;</span><span class="p">]</span>
@@ -544,6 +545,9 @@
 <span class="sd">            env (Env): The environment to wrap</span>
 <span class="sd">            min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.</span>
 <span class="sd">            max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            InvalidBound: If a component of ``min_action`` equals the matching component of ``max_action``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
@@ -555,6 +559,14 @@
         <span class="p">)</span>
 
         <span class="n">act_space</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">func</span> <span class="o">=</span> <span class="n">rescale_box</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">min_action</span><span class="p">,</span> <span class="n">max_action</span><span class="p">)</span>
+        <span class="c1"># The wrapper applies the inverse of the rescaling, and a component that is</span>
+        <span class="c1"># rescaled onto a single point has no inverse.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">act_space</span><span class="o">.</span><span class="n">low</span> <span class="o">==</span> <span class="n">act_space</span><span class="o">.</span><span class="n">high</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Min action (</span><span class="si">{</span><span class="n">min_action</span><span class="si">}</span><span class="s2">) must be strictly smaller than max action &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">max_action</span><span class="si">}</span><span class="s2">), the rescaling has no inverse where they are equal&quot;</span>
+            <span class="p">)</span>
+
         <span class="n">TransformAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
