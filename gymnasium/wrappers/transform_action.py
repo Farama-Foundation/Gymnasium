@@ -14,6 +14,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType, WrapperActType
+from gymnasium.error import InvalidBound
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Space
 
 __all__ = ["TransformAction", "ClipAction", "RescaleAction"]
@@ -167,6 +168,9 @@ class RescaleAction(
             env (Env): The environment to wrap
             min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
+
+        Raises:
+            InvalidBound: If a component of ``min_action`` equals the matching component of ``max_action``.
         """
         if not isinstance(env.action_space, Box):
             raise TypeError(
@@ -178,6 +182,14 @@ class RescaleAction(
         )
 
         act_space, _, func = rescale_box(env.action_space, min_action, max_action)
+        # The wrapper applies the inverse of the rescaling, and a component that is
+        # rescaled onto a single point has no inverse.
+        if np.any(act_space.low == act_space.high):
+            raise InvalidBound(
+                f"Min action ({min_action}) must be strictly smaller than max action "
+                f"({max_action}), the rescaling has no inverse where they are equal"
+            )
+
         TransformAction.__init__(
             self,
             env=env,
