@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 from types import ModuleType
-from typing import Any
+from typing import Any, Generic
 
 import gymnasium as gym
-from gymnasium.core import ActType, ObsType
+from gymnasium.typing import (
+    VectorActType,
+    VectorBoolType,
+    VectorObsType,
+    VectorRewardType,
+)
 from gymnasium.vector import VectorEnv, VectorWrapper
-from gymnasium.vector.vector_env import ArrayType
 from gymnasium.wrappers.array_conversion import (
     Device,
     array_conversion,
@@ -18,7 +22,11 @@ from gymnasium.wrappers.array_conversion import (
 __all__ = ["ArrayConversion"]
 
 
-class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
+class ArrayConversion(
+    VectorWrapper[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    gym.utils.RecordConstructorArgs,
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Wraps a vector environment returning Array API compatible arrays so that it can be interacted with through a specific framework.
 
     Popular Array API frameworks include ``numpy``, ``torch``, ``jax.numpy``, ``cupy`` etc. With this wrapper, you can convert outputs from your environment to
@@ -36,7 +44,7 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
         env_xp: ModuleType,
         target_xp: ModuleType,
         env_device: Device | None = None,
@@ -59,8 +67,10 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
         self._target_device = target_device
 
     def step(
-        self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
+        self, actions: VectorActType
+    ) -> tuple[
+        VectorObsType, VectorRewardType, VectorBoolType, VectorBoolType, dict[str, Any]
+    ]:
         """Transforms the action to the specified xp module array type.
 
         Args:
@@ -87,7 +97,7 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+    ) -> tuple[VectorObsType, dict[str, Any]]:
         """Resets the environment returning xp-based observation and info.
 
         Args:

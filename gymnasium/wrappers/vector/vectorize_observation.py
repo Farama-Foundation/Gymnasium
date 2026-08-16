@@ -4,32 +4,45 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic
+from typing import Any, Generic
 
 import numpy as np
-import numpy.typing as npt
+from typing_extensions import TypeVar
 
 from gymnasium import Space
 from gymnasium.core import Env
 from gymnasium.logger import warn
+from gymnasium.typing import (
+    VectorActType,
+    VectorBoolType,
+    VectorObsType,
+    VectorRewardType,
+)
 from gymnasium.vector import VectorEnv, VectorObservationWrapper
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import AutoresetMode
 from gymnasium.wrappers import transform_observation
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _T_contra = TypeVar("_T_contra", contravariant=True, default=Any)
-    _T_co = TypeVar("_T_co", covariant=True, default=_T_contra)
-else:
-    from typing import TypeVar
-
-    _T_contra = TypeVar("_T_contra", contravariant=True)
-    _T_co = TypeVar("_T_co", covariant=True)
+# The wrapped (inner) environment's observation type; defaults to this wrapper's own invariant `VectorObsType`.
+VectorWrappedObsType = TypeVar("VectorWrappedObsType", default=VectorObsType)
 
 
-class TransformObservation(VectorObservationWrapper, Generic[_T_contra, _T_co]):
+class TransformObservation(
+    VectorObservationWrapper[
+        VectorObsType,
+        VectorActType,
+        VectorRewardType,
+        VectorBoolType,
+        VectorWrappedObsType,
+    ],
+    Generic[
+        VectorObsType,
+        VectorActType,
+        VectorRewardType,
+        VectorBoolType,
+        VectorWrappedObsType,
+    ],
+):
     """Transforms an observation via a function provided to the wrapper.
 
     This function allows the manual specification of the vector-observation function as well as the single-observation function.
@@ -66,14 +79,16 @@ class TransformObservation(VectorObservationWrapper, Generic[_T_contra, _T_co]):
     """
 
     single_observation_space: Space
-    observation_space: Space
-    func: Callable[[_T_contra], _T_co]
+    observation_space: Space[VectorObsType]
+    func: Callable[[VectorWrappedObsType], VectorObsType]
 
     def __init__(
         self,
-        env: VectorEnv,
-        func: Callable[[_T_contra], _T_co],
-        observation_space: Space | None = None,
+        env: VectorEnv[
+            VectorWrappedObsType, VectorActType, VectorRewardType, VectorBoolType
+        ],
+        func: Callable[[VectorWrappedObsType], VectorObsType],
+        observation_space: Space[VectorObsType] | None = None,
         single_observation_space: Space | None = None,
     ) -> None:
         """Constructor for the transform observation wrapper.
@@ -106,12 +121,17 @@ class TransformObservation(VectorObservationWrapper, Generic[_T_contra, _T_co]):
 
         self.func = func
 
-    def observations(self, observations: _T_contra) -> _T_co:
+    def observations(self, observations: VectorWrappedObsType) -> VectorObsType:
         """Apply function to the vector observation."""
         return self.func(observations)
 
 
-class VectorizeTransformObservation(VectorObservationWrapper):
+class VectorizeTransformObservation(
+    VectorObservationWrapper[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType, VectorObsType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Vectorizes a single-agent transform observation wrapper for vector environments.
 
     Most of the lambda observation wrappers for single agent environments have vectorized implementations,
@@ -164,13 +184,13 @@ class VectorizeTransformObservation(VectorObservationWrapper):
     autoreset_mode: AutoresetMode
     wrapper: transform_observation.TransformObservation
     single_observation_space: Space
-    observation_space: Space
+    observation_space: Space[VectorObsType]
     same_out: bool
     out: np.ndarray
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
         wrapper: type[transform_observation.TransformObservation],
         **kwargs: Any,
     ) -> None:
@@ -208,13 +228,9 @@ class VectorizeTransformObservation(VectorObservationWrapper):
         self.out = create_empty_array(self.single_observation_space, self.num_envs)  # ty:ignore[invalid-assignment]
 
     def step(
-        self, actions: np.ndarray
+        self, actions: VectorActType
     ) -> tuple[
-        np.ndarray,
-        npt.NDArray[np.float64],
-        npt.NDArray[np.bool_],
-        npt.NDArray[np.bool_],
-        dict[str, Any],
+        VectorObsType, VectorRewardType, VectorBoolType, VectorBoolType, dict[str, Any]
     ]:
         """Steps through the vector environments, transforming the observation and for final obs individually transformed."""
         obs, rewards, terminations, truncations, infos = self.env.step(actions)
@@ -231,7 +247,7 @@ class VectorizeTransformObservation(VectorObservationWrapper):
 
         return obs, rewards, terminations, truncations, infos
 
-    def observations(self, observations: np.ndarray) -> np.ndarray:
+    def observations(self, observations: VectorObsType) -> VectorObsType:
         """Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again."""
         if self.same_out:
             observations_out = concatenate(
@@ -257,7 +273,12 @@ class VectorizeTransformObservation(VectorObservationWrapper):
         return observations_out  # ty:ignore[invalid-return-type]
 
 
-class FilterObservation(VectorizeTransformObservation):
+class FilterObservation(
+    VectorizeTransformObservation[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Vector wrapper for filtering dict or tuple observation spaces.
 
     Example - Create a vectorized environment with a Dict space to demonstrate how to filter keys:
@@ -280,7 +301,11 @@ class FilterObservation(VectorizeTransformObservation):
               dtype=float32)}
     """
 
-    def __init__(self, env: VectorEnv, filter_keys: Sequence[str | int]) -> None:
+    def __init__(
+        self,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        filter_keys: Sequence[str | int],
+    ) -> None:
         """Constructor for the filter observation wrapper.
 
         Args:
@@ -292,7 +317,12 @@ class FilterObservation(VectorizeTransformObservation):
         )
 
 
-class FlattenObservation(VectorizeTransformObservation):
+class FlattenObservation(
+    VectorizeTransformObservation[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Observation wrapper that flattens the observation.
 
     Example:
@@ -308,7 +338,10 @@ class FlattenObservation(VectorizeTransformObservation):
         >>> envs.close()
     """
 
-    def __init__(self, env: VectorEnv) -> None:
+    def __init__(
+        self,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    ) -> None:
         """Constructor for any environment's observation space that implements ``spaces.utils.flatten_space`` and ``spaces.utils.flatten``.
 
         Args:
@@ -317,7 +350,12 @@ class FlattenObservation(VectorizeTransformObservation):
         super().__init__(env, transform_observation.FlattenObservation)
 
 
-class GrayscaleObservation(VectorizeTransformObservation):
+class GrayscaleObservation(
+    VectorizeTransformObservation[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Observation wrapper that converts an RGB image to grayscale.
 
     Example:
@@ -333,7 +371,11 @@ class GrayscaleObservation(VectorizeTransformObservation):
         >>> envs.close()
     """
 
-    def __init__(self, env: VectorEnv, keep_dim: bool = False) -> None:
+    def __init__(
+        self,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        keep_dim: bool = False,
+    ) -> None:
         """Constructor for an RGB image based environments to make the image grayscale.
 
         Args:
@@ -345,7 +387,12 @@ class GrayscaleObservation(VectorizeTransformObservation):
         )
 
 
-class ResizeObservation(VectorizeTransformObservation):
+class ResizeObservation(
+    VectorizeTransformObservation[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Resizes image observations using OpenCV to shape.
 
     Example:
@@ -361,7 +408,11 @@ class ResizeObservation(VectorizeTransformObservation):
         >>> envs.close()
     """
 
-    def __init__(self, env: VectorEnv, shape: tuple[int, ...]) -> None:
+    def __init__(
+        self,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        shape: tuple[int, ...],
+    ) -> None:
         """Constructor that requires an image environment observation space with a shape.
 
         Args:
@@ -371,7 +422,12 @@ class ResizeObservation(VectorizeTransformObservation):
         super().__init__(env, transform_observation.ResizeObservation, shape=shape)
 
 
-class ReshapeObservation(VectorizeTransformObservation):
+class ReshapeObservation(
+    VectorizeTransformObservation[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Reshapes array based observations to shapes.
 
     Example:
@@ -387,7 +443,11 @@ class ReshapeObservation(VectorizeTransformObservation):
         >>> envs.close()
     """
 
-    def __init__(self, env: VectorEnv, shape: int | tuple[int, ...]) -> None:
+    def __init__(
+        self,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        shape: int | tuple[int, ...],
+    ) -> None:
         """Constructor for env with Box observation space that has a shape product equal to the new shape product.
 
         Args:
@@ -397,7 +457,12 @@ class ReshapeObservation(VectorizeTransformObservation):
         super().__init__(env, transform_observation.ReshapeObservation, shape=shape)
 
 
-class RescaleObservation(VectorizeTransformObservation):
+class RescaleObservation(
+    VectorizeTransformObservation[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Linearly rescales observation to between a minimum and maximum value.
 
     Example:
@@ -419,7 +484,7 @@ class RescaleObservation(VectorizeTransformObservation):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
         min_obs: float | np.floating | np.integer | np.ndarray,
         max_obs: float | np.floating | np.integer | np.ndarray,
     ) -> None:
@@ -438,7 +503,12 @@ class RescaleObservation(VectorizeTransformObservation):
         )
 
 
-class DtypeObservation(VectorizeTransformObservation):
+class DtypeObservation(
+    VectorizeTransformObservation[
+        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+    ],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Observation wrapper for transforming the dtype of an observation.
 
     Example:
@@ -455,7 +525,11 @@ class DtypeObservation(VectorizeTransformObservation):
         >>> envs.close()
     """
 
-    def __init__(self, env: VectorEnv, dtype: Any) -> None:
+    def __init__(
+        self,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        dtype: Any,
+    ) -> None:
         """Constructor for Dtype observation wrapper.
 
         Args:

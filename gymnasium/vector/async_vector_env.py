@@ -12,10 +12,9 @@ from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
 from multiprocessing.sharedctypes import SynchronizedArray
-from typing import Any, TypeAlias
+from typing import Any, Generic, TypeAlias
 
 import numpy as np
-import numpy.typing as npt
 
 from gymnasium import Space, logger
 from gymnasium.core import Env, RenderFrame
@@ -26,6 +25,7 @@ from gymnasium.error import (
     NoAsyncCallError,
 )
 from gymnasium.spaces.utils import is_space_dtype_shape_equiv
+from gymnasium.typing import VectorActType, VectorObsType
 from gymnasium.vector.utils import (
     CloudpickleWrapper,
     batch_differing_spaces,
@@ -42,13 +42,11 @@ from gymnasium.vector.vector_env import AutoresetMode, VectorEnv
 
 __all__ = ["AsyncVectorEnv", "AsyncState"]
 
-_StepResult: TypeAlias = tuple[
-    np.ndarray,
-    npt.NDArray[np.float64],
-    npt.NDArray[np.bool_],
-    npt.NDArray[np.bool_],
-    dict[str, Any],
-]
+
+VectorBoolArray: TypeAlias = np.ndarray[tuple[int], np.dtype[np.bool_]]
+VectorFloat32Array: TypeAlias = np.ndarray[tuple[int], np.dtype[np.float64]]
+
+ErrorInfo: TypeAlias = tuple[int, type[BaseException], BaseException, str]
 
 
 class AsyncState(Enum):
@@ -60,7 +58,10 @@ class AsyncState(Enum):
     WAITING_CALL = "call"
 
 
-class AsyncVectorEnv(VectorEnv):
+class AsyncVectorEnv(
+    VectorEnv[VectorObsType, VectorActType, VectorFloat32Array, VectorBoolArray],
+    Generic[VectorObsType, VectorActType],
+):
     """Vectorized environment that runs multiple environments in parallel.
 
     It uses ``multiprocessing`` processes, and pipes for communication.
@@ -116,14 +117,19 @@ class AsyncVectorEnv(VectorEnv):
     render_mode: str | None
 
     single_action_space: Space
-    action_space: Space
+    action_space: Space[VectorActType]
     single_observation_space: Space
-    observation_space: Space
-    observations: np.ndarray
+    observation_space: Space[VectorObsType]
+    observations: VectorObsType
 
-    parent_pipes: list[Connection]
+    parent_pipes: list[
+        Connection[
+            tuple[str, dict[str, Any] | tuple[Any, ...] | None],
+            tuple[tuple[Any, Any, bool, bool, dict[str, Any]], bool],
+        ],
+    ]
     processes: list[multiprocessing.Process]
-    error_queue: Queue
+    error_queue: Queue[ErrorInfo]
 
     def __init__(
         self,
@@ -134,7 +140,8 @@ class AsyncVectorEnv(VectorEnv):
         daemon: bool = True,
         worker: (
             Callable[
-                [int, Callable[[], Env], Connection, Connection, bool, Queue], None
+                [int, Callable[[], Env], Connection, Connection, bool, Queue],
+                None,
             ]
             | None
         ) = None,
@@ -294,7 +301,7 @@ class AsyncVectorEnv(VectorEnv):
         *,
         seed: int | list[int | None] | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[np.ndarray, dict[str, Any]]:
+    ) -> tuple[VectorObsType, dict[str, Any]]:
         """Resets all sub-environments in parallel and return a batch of concatenated observations and info.
 
         Args:
@@ -380,7 +387,7 @@ class AsyncVectorEnv(VectorEnv):
     def reset_wait(
         self,
         timeout: float | None = None,
-    ) -> tuple[np.ndarray, dict[str, Any]]:
+    ) -> tuple[VectorObsType, dict[str, Any]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
@@ -425,7 +432,15 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.DEFAULT
         return (deepcopy(self.observations) if self.copy else self.observations), infos
 
-    def step(self, actions: np.ndarray) -> _StepResult:
+    def step(
+        self, actions: VectorActType
+    ) -> tuple[
+        VectorObsType,
+        VectorFloat32Array,
+        VectorBoolArray,
+        VectorBoolArray,
+        dict[str, Any],
+    ]:
         """Take an action for each parallel environment.
 
         Args:
@@ -462,7 +477,15 @@ class AsyncVectorEnv(VectorEnv):
             pipe.send(("step", action))
         self._state = AsyncState.WAITING_STEP
 
-    def step_wait(self, timeout: float | None = None) -> _StepResult:
+    def step_wait(
+        self, timeout: float | None = None
+    ) -> tuple[
+        VectorObsType,
+        VectorFloat32Array,
+        VectorBoolArray,
+        VectorBoolArray,
+        dict[str, Any],
+    ]:
         """Wait for the calls to :obj:`step` in each sub-environment to finish.
 
         Args:
@@ -772,11 +795,11 @@ class AsyncVectorEnv(VectorEnv):
 
 def _async_worker(
     index: int,
-    env_fn: Callable,
+    env_fn: Callable[[], Env],
     pipe: Connection,
     parent_pipe: Connection,
     shared_memory: SynchronizedArray | dict[str, Any] | tuple[Any, ...],
-    error_queue: Queue,
+    error_queue: Queue[ErrorInfo],
     autoreset_mode: AutoresetMode,
 ) -> None:
     env = env_fn()
@@ -896,6 +919,9 @@ def _async_worker(
                 )
     except (KeyboardInterrupt, Exception):
         error_type, error_message, _ = sys.exc_info()
+        assert error_type is not None
+        assert error_message is not None
+
         trace = traceback.format_exc()
 
         error_queue.put((index, error_type, error_message, trace))

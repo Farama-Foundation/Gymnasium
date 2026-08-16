@@ -2,17 +2,25 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Generic
 
 import numpy as np
-import numpy.typing as npt
 
+from gymnasium.typing import (
+    VectorActType,
+    VectorBoolType,
+    VectorObsType,
+    VectorRewardType,
+)
 from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
 
 __all__ = ["DictInfoToList"]
 
 
-class DictInfoToList(VectorWrapper):
+class DictInfoToList(
+    VectorWrapper[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+):
     """Converts infos of vectorized environments from ``dict`` to ``List[dict]``.
 
     This wrapper converts the info format of a
@@ -66,7 +74,10 @@ class DictInfoToList(VectorWrapper):
      * v1.0.0 - Renamed to ``DictInfoToList``
     """
 
-    def __init__(self, env: VectorEnv) -> None:
+    def __init__(
+        self,
+        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    ) -> None:
         """This wrapper will convert the info into the list format.
 
         Args:
@@ -76,12 +87,12 @@ class DictInfoToList(VectorWrapper):
 
     # ty reports an error because the last return is a `dict` in super but a `list` here
     def step(
-        self, actions: np.ndarray
+        self, actions: VectorActType
     ) -> tuple[
-        np.ndarray,
-        npt.NDArray[np.float64],
-        npt.NDArray[np.bool_],
-        npt.NDArray[np.bool_],
+        VectorObsType,
+        VectorRewardType,
+        VectorBoolType,
+        VectorBoolType,
         list[dict[str, Any]],
     ]:  # ty:ignore[invalid-method-override]
         """Steps through the environment, convert dict info to list."""
@@ -94,7 +105,7 @@ class DictInfoToList(VectorWrapper):
     # ty reports an error because the last return is a `dict` in super but a `list` here
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[np.ndarray, list[dict[str, Any]]]:  # ty:ignore[invalid-method-override]
+    ) -> tuple[VectorObsType, list[dict[str, Any]]]:  # ty:ignore[invalid-method-override]
         """Resets the environment using kwargs."""
         obs, infos = self.env.reset(seed=seed, options=options)
         assert isinstance(infos, dict)

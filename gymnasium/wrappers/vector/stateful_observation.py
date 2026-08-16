@@ -5,13 +5,15 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Generic, TypeAlias
 
 import numpy as np
+import numpy.typing as npt
 
 import gymnasium as gym
 from gymnasium.logger import warn
 from gymnasium.spaces import Box
+from gymnasium.typing import VectorActType, VectorBoolType, VectorRewardType
 from gymnasium.vector.utils import batch_space
 from gymnasium.vector.vector_env import (
     AutoresetMode,
@@ -23,7 +25,24 @@ from gymnasium.wrappers.utils import RunningMeanStd
 __all__ = ["NormalizeObservation"]
 
 
-class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructorArgs):
+# Shape-generic: the batched vector observation is (num_envs, *obs_shape), so
+# the rank depends on the sub-environment's observation (2-D for CartPole,
+# higher for images).
+VectorFloat32Array: TypeAlias = npt.NDArray[np.float32]
+VectorFloatingArray: TypeAlias = npt.NDArray[np.floating]
+
+
+class NormalizeObservation(
+    VectorObservationWrapper[
+        VectorFloat32Array,
+        VectorActType,
+        VectorRewardType,
+        VectorBoolType,
+        VectorFloatingArray,
+    ],
+    gym.utils.RecordConstructorArgs,
+    Generic[VectorActType, VectorRewardType, VectorBoolType],
+):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation
@@ -68,7 +87,13 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
     epsilon: float
     _update_running_mean: bool
 
-    def __init__(self, env: VectorEnv, epsilon: float = 1e-8) -> None:
+    def __init__(
+        self,
+        env: VectorEnv[
+            VectorFloatingArray, VectorActType, VectorRewardType, VectorBoolType
+        ],
+        epsilon: float = 1e-8,
+    ) -> None:
         """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
         Args:
@@ -120,7 +145,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[np.ndarray, dict[str, Any]]:
+    ) -> tuple[VectorFloat32Array, dict[str, Any]]:
         """Reset function for `NormalizeObservationWrapper` which is disabled for partial resets."""
         if options is not None and "reset_mask" in options:
             if not np.all(options["reset_mask"]):
@@ -129,9 +154,7 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
                 )
         return super().reset(seed=seed, options=options)
 
-    def observations(
-        self, observations: np.ndarray[tuple[int], np.dtype[np.floating]]
-    ) -> np.ndarray[tuple[int], np.dtype[np.float32]]:
+    def observations(self, observations: VectorFloatingArray) -> VectorFloat32Array:
         """Defines the vector observation normalization function.
 
         Args:
