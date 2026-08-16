@@ -49,23 +49,7 @@ def constructor_argument_names(wrapper: type) -> set[str]:
     }
 
 
-@pytest.mark.parametrize(
-    "wrapper_name",
-    [
-        (
-            pytest.param(
-                name,
-                marks=pytest.mark.xfail(
-                    strict=True,
-                    reason="Array API namespaces are modules, which RecordConstructorArgs cannot deepcopy",
-                ),
-            )
-            if name == "ArrayConversion"
-            else name
-        )
-        for name in WRAPPER_NAMES
-    ],
-)
+@pytest.mark.parametrize("wrapper_name", WRAPPER_NAMES)
 def test_wrappers_record_every_constructor_argument(wrapper_name: str):
     """Every constructor argument of a wrapper is passed on to `RecordConstructorArgs`.
 
