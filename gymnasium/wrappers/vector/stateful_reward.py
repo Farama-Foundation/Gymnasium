@@ -10,6 +10,7 @@ from typing import Any
 import numpy as np
 
 import gymnasium as gym
+from gymnasium.error import InvalidBound
 from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
@@ -82,7 +83,25 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
             env (env): The environment to apply the wrapper
             epsilon (float): A stability parameter
             gamma (float): The discount factor that is used in the exponential moving average.
+
+        Raises:
+            InvalidBound: If ``gamma`` is outside ``[0, 1]``, or if ``epsilon`` is not strictly positive.
         """
+        # The exponential moving average multiplies the accumulator by `gamma` on
+        # every step, so a value above one makes it diverge instead of converging,
+        # and a negative one alternates its sign.
+        if not 0 <= gamma <= 1:
+            raise InvalidBound(
+                f"`gamma` should be in the interval [0, 1]. Received {gamma}"
+            )
+        # `epsilon` is added under the square root to keep the division away from
+        # zero, so a non-positive value defeats its purpose and, once it exceeds
+        # the variance, silently turns every normalized reward into NaN.
+        if epsilon <= 0:
+            raise InvalidBound(
+                f"`epsilon` should be strictly positive. Received {epsilon}"
+            )
+
         gym.utils.RecordConstructorArgs.__init__(self, gamma=gamma, epsilon=epsilon)
         VectorWrapper.__init__(self, env)
 
