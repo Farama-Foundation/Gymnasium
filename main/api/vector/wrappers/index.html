@@ -1063,6 +1063,9 @@ newly instantiated or the policy was changed recently.</p>
 <li><p><strong>epsilon</strong> – A stability parameter that is used when scaling the observations.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>InvalidBound</strong> – If <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is not strictly positive.</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1331,6 +1334,9 @@ instantiated or the policy was changed recently.</p>
 <li><p><strong>epsilon</strong> (<em>float</em>) – A stability parameter</p></li>
 <li><p><strong>gamma</strong> (<em>float</em>) – The discount factor that is used in the exponential moving average.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>InvalidBound</strong> – If <code class="docutils literal notranslate"><span class="pre">gamma</span></code> is outside <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, or if <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is not strictly positive.</p>
 </dd>
 </dl>
 </dd></dl>

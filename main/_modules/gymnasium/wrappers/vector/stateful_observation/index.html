@@ -379,6 +379,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidBound</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">batch_space</span>
@@ -445,7 +446,18 @@
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to apply the wrapper</span>
 <span class="sd">            epsilon: A stability parameter that is used when scaling the observations.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            InvalidBound: If ``epsilon`` is not strictly positive.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># `epsilon` is added under the square root to keep the division away from</span>
+        <span class="c1"># zero, so a non-positive value defeats its purpose and, once it exceeds</span>
+        <span class="c1"># the variance, silently turns every normalized observation into NaN.</span>
+        <span class="k">if</span> <span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`epsilon` should be strictly positive. Received </span><span class="si">{</span><span class="n">epsilon</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">)</span>
         <span class="n">VectorObservationWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 

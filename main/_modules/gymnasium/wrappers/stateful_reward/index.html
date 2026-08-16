@@ -380,6 +380,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidBound</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunningMeanStd</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NormalizeReward&quot;</span><span class="p">]</span>
@@ -456,7 +457,25 @@
 <span class="sd">            env (env): The environment to apply the wrapper</span>
 <span class="sd">            epsilon (float): A stability parameter</span>
 <span class="sd">            gamma (float): The discount factor that is used in the exponential moving average.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            InvalidBound: If ``gamma`` is outside ``[0, 1]``, or if ``epsilon`` is not strictly positive.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># The exponential moving average multiplies the accumulator by `gamma` on</span>
+        <span class="c1"># every step, so a value above one makes it diverge instead of converging,</span>
+        <span class="c1"># and a negative one alternates its sign.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">gamma</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`gamma` should be in the interval [0, 1]. Received </span><span class="si">{</span><span class="n">gamma</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># `epsilon` is added under the square root to keep the division away from</span>
+        <span class="c1"># zero, so a non-positive value defeats its purpose and, once it exceeds</span>
+        <span class="c1"># the variance, silently turns every normalized reward into NaN.</span>
+        <span class="k">if</span> <span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;`epsilon` should be strictly positive. Received </span><span class="si">{</span><span class="n">epsilon</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
