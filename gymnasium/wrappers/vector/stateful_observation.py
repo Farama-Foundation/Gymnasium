@@ -10,6 +10,7 @@ from typing import Any
 import numpy as np
 
 import gymnasium as gym
+from gymnasium.error import InvalidBound
 from gymnasium.logger import warn
 from gymnasium.spaces import Box
 from gymnasium.vector.utils import batch_space
@@ -74,7 +75,18 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
         Args:
             env (Env): The environment to apply the wrapper
             epsilon: A stability parameter that is used when scaling the observations.
+
+        Raises:
+            InvalidBound: If ``epsilon`` is not strictly positive.
         """
+        # `epsilon` is added under the square root to keep the division away from
+        # zero, so a non-positive value defeats its purpose and, once it exceeds
+        # the variance, silently turns every normalized observation into NaN.
+        if epsilon <= 0:
+            raise InvalidBound(
+                f"`epsilon` should be strictly positive. Received {epsilon}"
+            )
+
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
         VectorObservationWrapper.__init__(self, env)
 
