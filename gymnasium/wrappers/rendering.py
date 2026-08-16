@@ -271,7 +271,9 @@ class RecordVideo(
             step_trigger=step_trigger,
             video_length=video_length,
             name_prefix=name_prefix,
+            fps=fps,
             disable_logger=disable_logger,
+            gc_trigger=gc_trigger,
         )
         gym.Wrapper.__init__(self, env)
 
