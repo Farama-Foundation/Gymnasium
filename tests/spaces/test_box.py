@@ -277,6 +277,28 @@ def test_valid_low_high(low, high, dtype):
             raise Exception(warn)
 
 
+@pytest.mark.parametrize(
+    "dtype",
+    [np.int8, np.int16, np.int32, np.uint8],
+    ids=["int8", "int16", "int32", "uint8"],
+)
+def test_sample_dtype_edge_reachability(dtype):
+    """Tests that a bounded integer Box can sample every value in ``[low, high]``.
+
+    Regression test for the cast guard in ``Box.sample`` clipping signed
+    samples to ``[dtype_min + 2, dtype_max - 2]``, which made the values within
+    2 of a signed dtype's limits impossible to sample even though
+    ``contains`` accepts them (e.g. ``Box(125, 127, dtype=np.int8)`` could
+    only ever return 125).
+    """
+    info = np.iinfo(dtype)
+    for low, high in [(info.max - 2, info.max), (info.min, info.min + 2)]:
+        space = Box(low=low, high=high, dtype=dtype, seed=0)
+        expected = set(range(low, high + 1))
+        observed = {int(x) for _ in range(1000) for x in space.sample()}
+        assert observed == expected
+
+
 def test_contains_dtype():
     """Tests the Box contains function with different dtypes."""
     # Related Issues:
