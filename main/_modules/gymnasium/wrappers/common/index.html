@@ -879,7 +879,9 @@
 <span class="sd">            buffer_length: The size of the buffers :attr:`return_queue`, :attr:`length_queue` and :attr:`time_queue`</span>
 <span class="sd">            stats_key: The info key for the episode statistics</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">buffer_length</span><span class="o">=</span><span class="n">buffer_length</span><span class="p">,</span> <span class="n">stats_key</span><span class="o">=</span><span class="n">stats_key</span>
+        <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_stats_key</span> <span class="o">=</span> <span class="n">stats_key</span>

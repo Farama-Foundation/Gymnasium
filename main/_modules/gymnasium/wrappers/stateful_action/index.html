@@ -435,33 +435,40 @@
                 <span class="sa">f</span><span class="s2">&quot;`repeat_action_probability` should be in the interval [0,1). Received </span><span class="si">{</span><span class="n">repeat_action_probability</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
+        <span class="c1"># The pair of bounds that the number of repeats is drawn from.</span>
+        <span class="c1"># `repeat_action_duration` keeps the value the caller gave, which is what</span>
+        <span class="c1"># `RecordConstructorArgs` stores for the env spec.</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">repeat_action_duration</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">repeat_action_duration</span> <span class="o">=</span> <span class="p">(</span><span class="n">repeat_action_duration</span><span class="p">,</span> <span class="n">repeat_action_duration</span><span class="p">)</span>
+            <span class="n">duration_range</span> <span class="o">=</span> <span class="p">(</span><span class="n">repeat_action_duration</span><span class="p">,</span> <span class="n">repeat_action_duration</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">duration_range</span> <span class="o">=</span> <span class="n">repeat_action_duration</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">repeat_action_duration</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">duration_range</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` should be either an integer or a tuple. Received </span><span class="si">{</span><span class="n">repeat_action_duration</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` should be either an integer or a tuple. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">repeat_action_duration</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">duration_range</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` should be a tuple or a list of two integers. Received </span><span class="si">{</span><span class="n">repeat_action_duration</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` should be a tuple or a list of two integers. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">repeat_action_duration</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">repeat_action_duration</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">elif</span> <span class="n">duration_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">duration_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` is not a valid bound. Received </span><span class="si">{</span><span class="n">repeat_action_duration</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` is not a valid bound. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">repeat_action_duration</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">duration_range</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` should be larger or equal than 1. Received </span><span class="si">{</span><span class="n">repeat_action_duration</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` should be larger or equal than 1. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">repeat_action_probability</span><span class="o">=</span><span class="n">repeat_action_probability</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">repeat_action_probability</span><span class="o">=</span><span class="n">repeat_action_probability</span><span class="p">,</span>
+            <span class="n">repeat_action_duration</span><span class="o">=</span><span class="n">repeat_action_duration</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">ActionWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">repeat_action_probability</span> <span class="o">=</span> <span class="n">repeat_action_probability</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">repeat_action_duration_range</span> <span class="o">=</span> <span class="n">repeat_action_duration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">repeat_action_duration_range</span> <span class="o">=</span> <span class="n">duration_range</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">last_action</span><span class="p">:</span> <span class="n">ActType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_sticky_actions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># if sticky actions are taken</span>
