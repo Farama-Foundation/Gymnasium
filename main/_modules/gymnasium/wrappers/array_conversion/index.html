@@ -381,7 +381,7 @@
 <span class="c1"># https://github.com/google/brax/blob/9d6b7ced2a13da0d074b5e9fbd3aad8311e26997/brax/io/torch.py</span>
 <span class="c1"># Under the Apache 2.0 license. Copyright is held by the authors</span>
 
-<span class="sd">&quot;&quot;&quot;Helper functions and wrapper class for converting between arbitrary Array API compatible frameworks and a target framework.&quot;&quot;&quot;</span>
+<span class="sd">"""Helper functions and wrapper class for converting between arbitrary Array API compatible frameworks and a target framework."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -406,32 +406,32 @@
 
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-        <span class="s1">&#39;Array API packages are not installed therefore cannot call `array_conversion`, run `pip install &quot;gymnasium[array-api]&quot;`&#39;</span>
+        <span class="s1">'Array API packages are not installed therefore cannot call `array_conversion`, run `pip install "gymnasium[array-api]"`'</span>
     <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 
-<span class="k">if</span> <span class="n">Version</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;1.22.0&quot;</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span><span class="s2">&quot;Array API functionality requires numpy &gt;= 1.22&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">Version</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Version</span><span class="p">(</span><span class="s2">"1.22.0"</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span><span class="s2">"Array API functionality requires numpy &gt;= 1.22"</span><span class="p">)</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ArrayConversion&quot;</span><span class="p">,</span> <span class="s2">&quot;array_conversion&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"ArrayConversion"</span><span class="p">,</span> <span class="s2">"array_conversion"</span><span class="p">]</span>
 
 <span class="n">Array</span> <span class="o">=</span> <span class="n">Any</span>  <span class="c1"># TODO: Switch to ArrayAPI type once https://github.com/data-apis/array-api/pull/589 is merged</span>
 <span class="n">Device</span> <span class="o">=</span> <span class="n">Any</span>  <span class="c1"># TODO: Switch to ArrayAPI type if available</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">module_namespace</span><span class="p">(</span><span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine the Array API compatible namespace of the given module.</span>
+<span class="w">    </span><span class="sd">"""Determine the Array API compatible namespace of the given module.</span>
 
 <span class="sd">    This function is closely linked to the `array_api_compat.array_namespace` function. It returns</span>
 <span class="sd">    the compatible namespace for a module directly instead of from an array object of that module.</span>
 
 <span class="sd">    See https://data-apis.org/array-api-compat/helper-functions.html#array_api_compat.array_namespace</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">array_namespace</span><span class="p">(</span><span class="n">xp</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
     <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Module </span><span class="si">{</span><span class="n">xp</span><span class="si">}</span><span class="s2"> is not an Array API compatible module.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Module </span><span class="si">{</span><span class="n">xp</span><span class="si">}</span><span class="s2"> is not an Array API compatible module."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">module_name_to_namespace</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleType</span><span class="p">:</span>
@@ -440,9 +440,9 @@
 
 <span class="nd">@functools</span><span class="o">.</span><span class="n">singledispatch</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">array_conversion</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a value into the specified xp module array type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Convert a value into the specified xp module array type."""</span>
     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;No known conversion for (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">) to xp module (</span><span class="si">{</span><span class="n">xp</span><span class="si">}</span><span class="s2">) registered. Report as issue on github.&quot;</span>
+        <span class="sa">f</span><span class="s2">"No known conversion for (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">) to xp module (</span><span class="si">{</span><span class="n">xp</span><span class="si">}</span><span class="s2">) registered. Report as issue on github."</span>
     <span class="p">)</span>
 
 
@@ -450,7 +450,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_number_array_conversion</span><span class="p">(</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">,</span> <span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a python number (int, float, complex) to an Array API framework array.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Convert a python number (int, float, complex) to an Array API framework array."""</span>
     <span class="k">return</span> <span class="n">xp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
 
@@ -458,7 +458,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_mapping_array_conversion</span><span class="p">(</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a mapping of Arrays into a Dictionary of the specified xp module array type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Convert a mapping of Arrays into a Dictionary of the specified xp module array type."""</span>
     <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">array_conversion</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
 
 
@@ -466,14 +466,14 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_iterable_array_conversion</span><span class="p">(</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an Iterable from Arrays to an iterable of the specified xp module array type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Convert an Iterable from Arrays to an iterable of the specified xp module array type."""</span>
     <span class="c1"># There is currently no type for ArrayAPI compatible objects, so they fall through to this</span>
     <span class="c1"># function registered for any Iterable. If they are arrays, we can convert them directly.</span>
     <span class="c1"># We currently cannot pass the device to the from_dlpack function, since it is not supported</span>
     <span class="c1"># for some frameworks (see e.g. https://github.com/data-apis/array-api-compat/issues/204)</span>
     <span class="k">if</span> <span class="n">is_array_api_obj</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_array_api_array_conversion</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;_make&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"_make"</span><span class="p">):</span>
         <span class="c1"># namedtuple - underline used to prevent potential name conflicts</span>
         <span class="c1"># noinspection PyProtectedMember</span>
         <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">_make</span><span class="p">(</span><span class="n">array_conversion</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
@@ -483,8 +483,8 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_array_api_array_conversion</span><span class="p">(</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Array</span><span class="p">,</span> <span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an Array API compatible array to the specified xp module array type.&quot;&quot;&quot;</span>
-    <span class="n">device</span> <span class="o">=</span> <span class="n">device</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_numpy_namespace</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+<span class="w">    </span><span class="sd">"""Convert an Array API compatible array to the specified xp module array type."""</span>
+    <span class="n">device</span> <span class="o">=</span> <span class="n">device</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_numpy_namespace</span><span class="p">(</span><span class="n">xp</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"cpu"</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">xp</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
@@ -503,7 +503,7 @@
             <span class="c1"># Case 2: Tried to convert to a different framework from a torch tensor</span>
             <span class="c1"># without compatible devices. We first move the tensor to the cpu and then</span>
             <span class="c1"># call from_dlpack</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">to_device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;cpu&quot;</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">xp</span><span class="o">.</span><span class="n">from_dlpack</span><span class="p">(</span><span class="n">to_device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s2">"cpu"</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">to_device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span> <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">value</span>
     <span class="k">except</span> <span class="ne">BufferError</span><span class="p">:</span>
         <span class="c1"># Buffer was readonly. In the future, this should be handled automatically by</span>
@@ -518,14 +518,14 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_none_array_conversion</span><span class="p">(</span>
     <span class="n">value</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Passes through None values.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Passes through None values."""</span>
     <span class="k">return</span> <span class="n">value</span>
 
 
 <div class="viewcode-block" id="ArrayConversion">
 <a class="viewcode-back" href="../../../../api/wrappers/misc_wrappers/#gymnasium.wrappers.ArrayConversion">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ArrayConversion</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps an Array API compatible environment so that it can be interacted with with another Array API framework.</span>
+<span class="w">    </span><span class="sd">"""Wraps an Array API compatible environment so that it can be interacted with with another Array API framework.</span>
 
 <span class="sd">    Popular Array API frameworks include ``numpy``, ``torch``, ``jax.numpy``, ``cupy`` etc. With this wrapper, you can convert outputs from your environment to</span>
 <span class="sd">    any of these frameworks. Conversely, actions are automatically mapped back to the environment framework, if possible without moving the</span>
@@ -537,25 +537,25 @@
 <span class="sd">        &gt;&gt;&gt; import torch                                                # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; import jax.numpy as jnp                                     # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym                                     # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;JaxEnv-vx&quot;)                                 # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("JaxEnv-vx")                                 # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; env = ArrayConversion(env, env_xp=jnp, target_xp=torch)     # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=123)                                # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; type(obs)                                                   # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="sd">        &lt;class 'torch.Tensor'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; action = torch.tensor(env.action_space.sample())            # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; obs, reward, terminated, truncated, info = env.step(action) # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; type(obs)                                                   # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="sd">        &lt;class 'torch.Tensor'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; type(reward)                                                # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;float&#39;&gt;</span>
+<span class="sd">        &lt;class 'float'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; type(terminated)                                            # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;bool&#39;&gt;</span>
+<span class="sd">        &lt;class 'bool'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; type(truncated)                                             # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;bool&#39;&gt;</span>
+<span class="sd">        &lt;class 'bool'&gt;</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v1.2.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -565,7 +565,7 @@
         <span class="n">env_device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">target_device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper class to change inputs and outputs of environment to any Array API framework.</span>
+<span class="w">        </span><span class="sd">"""Wrapper class to change inputs and outputs of environment to any Array API framework.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The Array API compatible environment to wrap</span>
@@ -573,8 +573,19 @@
 <span class="sd">            target_xp: The Array API framework to convert to</span>
 <span class="sd">            env_device: The device the environment is on</span>
 <span class="sd">            target_device: The device on which Arrays should be returned</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="c1"># An Array API namespace is a module, and `deepcopy` cannot copy one, so</span>
+        <span class="c1"># the recording has to skip it. Without these four saved, `Wrapper.spec`</span>
+        <span class="c1"># carries no kwargs and `gym.make(env.spec)` raises `TypeError` for the</span>
+        <span class="c1"># two that have no default.</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">_disable_deepcopy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">env_xp</span><span class="o">=</span><span class="n">env_xp</span><span class="p">,</span>
+            <span class="n">target_xp</span><span class="o">=</span><span class="n">target_xp</span><span class="p">,</span>
+            <span class="n">env_device</span><span class="o">=</span><span class="n">env_device</span><span class="p">,</span>
+            <span class="n">target_device</span><span class="o">=</span><span class="n">target_device</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span> <span class="o">=</span> <span class="n">module_namespace</span><span class="p">(</span><span class="n">env_xp</span><span class="p">)</span>
@@ -585,14 +596,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs the given action within the environment.</span>
+<span class="w">        </span><span class="sd">"""Performs the given action within the environment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            action: The action to perform as any Array API compatible array</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The next observation, reward, termination, truncation, and extra info</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">array_conversion</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_device</span><span class="p">)</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
@@ -607,7 +618,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment returning observation and info as Array from any Array API compatible framework.</span>
+<span class="w">        </span><span class="sd">"""Resets the environment returning observation and info as Array from any Array API compatible framework.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            seed: The seed for resetting the environment</span>
@@ -615,7 +626,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            xp-based observations and info</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">options</span><span class="p">:</span>
             <span class="n">options</span> <span class="o">=</span> <span class="n">array_conversion</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_device</span><span class="p">)</span>
 
@@ -626,30 +637,30 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the rendered frames as an xp Array.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the rendered frames as an xp Array."""</span>
         <span class="k">return</span> <span class="n">array_conversion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the object pickle state with args and kwargs.&quot;&quot;&quot;</span>
-        <span class="n">env_xp_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;array_api_compat.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="n">target_xp_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;array_api_compat.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">"""Returns the object pickle state with args and kwargs."""</span>
+        <span class="n">env_xp_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"array_api_compat."</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
+        <span class="n">target_xp_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"array_api_compat."</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
         <span class="n">env_device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_env_device</span>
         <span class="n">target_device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;env_xp_name&quot;</span><span class="p">:</span> <span class="n">env_xp_name</span><span class="p">,</span>
-            <span class="s2">&quot;target_xp_name&quot;</span><span class="p">:</span> <span class="n">target_xp_name</span><span class="p">,</span>
-            <span class="s2">&quot;env_device&quot;</span><span class="p">:</span> <span class="n">env_device</span><span class="p">,</span>
-            <span class="s2">&quot;target_device&quot;</span><span class="p">:</span> <span class="n">target_device</span><span class="p">,</span>
-            <span class="s2">&quot;env&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
+            <span class="s2">"env_xp_name"</span><span class="p">:</span> <span class="n">env_xp_name</span><span class="p">,</span>
+            <span class="s2">"target_xp_name"</span><span class="p">:</span> <span class="n">target_xp_name</span><span class="p">,</span>
+            <span class="s2">"env_device"</span><span class="p">:</span> <span class="n">env_device</span><span class="p">,</span>
+            <span class="s2">"target_device"</span><span class="p">:</span> <span class="n">target_device</span><span class="p">,</span>
+            <span class="s2">"env"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
         <span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the object pickle state using d.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;env&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span> <span class="o">=</span> <span class="n">module_name_to_namespace</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;env_xp_name&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span> <span class="o">=</span> <span class="n">module_name_to_namespace</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;target_xp_name&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_env_device</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;env_device&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;target_device&quot;</span><span class="p">]</span></div>
+<span class="w">        </span><span class="sd">"""Sets the object pickle state using d."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">"env"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_xp</span> <span class="o">=</span> <span class="n">module_name_to_namespace</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"env_xp_name"</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_xp</span> <span class="o">=</span> <span class="n">module_name_to_namespace</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">"target_xp_name"</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_device</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">"env_device"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_device</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s2">"target_device"</span><span class="p">]</span></div>
 
 </pre></div>
           </article>

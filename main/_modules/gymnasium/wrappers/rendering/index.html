@@ -367,14 +367,14 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.rendering</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A collections of rendering-based wrappers.</span>
+<span></span><span class="sd">"""A collections of rendering-based wrappers.</span>
 
 <span class="sd">* ``RenderCollection`` - Collects rendered frames into a list</span>
 <span class="sd">* ``RecordVideo`` - Records a video of the environments</span>
-<span class="sd">* ``HumanRendering`` - Provides human rendering of environments with ``&quot;rgb_array&quot;``</span>
+<span class="sd">* ``HumanRendering`` - Provides human rendering of environments with ``"rgb_array"``</span>
 <span class="sd">* ``AddWhiteNoise`` - Randomly replaces pixels with white noise</span>
 <span class="sd">* ``ObstructView`` - Randomly places patches of white noise to obstruct the pixel rendering</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -392,11 +392,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">DependencyNotInstalled</span><span class="p">,</span> <span class="n">InvalidProbability</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;RenderCollection&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;RecordVideo&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;HumanRendering&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;AddWhiteNoise&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ObstructView&quot;</span><span class="p">,</span>
+    <span class="s2">"RenderCollection"</span><span class="p">,</span>
+    <span class="s2">"RecordVideo"</span><span class="p">,</span>
+    <span class="s2">"HumanRendering"</span><span class="p">,</span>
+    <span class="s2">"AddWhiteNoise"</span><span class="p">,</span>
+    <span class="s2">"ObstructView"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -407,13 +407,13 @@
     <span class="n">Generic</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.</span>
+<span class="w">    </span><span class="sd">"""Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.</span>
 
 <span class="sd">    No vector version of the wrapper exists.</span>
 
-<span class="sd">    Example - Return the list of frames for the number of steps ``render`` wasn&#39;t called.</span>
+<span class="sd">    Example - Return the list of frames for the number of steps ``render`` wasn't called.</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("LunarLander-v3", render_mode="rgb_array")</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; for _ in range(5):</span>
@@ -429,7 +429,7 @@
 
 <span class="sd">    Example - Return the list of frames for the number of steps the episode was running.</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("LunarLander-v3", render_mode="rgb_array")</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env, pop_frames=False)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; for _ in range(5):</span>
@@ -445,7 +445,7 @@
 
 <span class="sd">    Example - Collect all frames for all episodes, without clearing them when render is called</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("LunarLander-v3", render_mode="rgb_array")</span>
 <span class="sd">        &gt;&gt;&gt; env = RenderCollection(env, pop_frames=False, reset_clean=False)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; for _ in range(5):</span>
@@ -465,7 +465,7 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.26.2 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -473,23 +473,23 @@
         <span class="n">pop_frames</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">reset_clean</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a :class:`RenderCollection` instance.</span>
+<span class="w">        </span><span class="sd">"""Initialize a :class:`RenderCollection` instance.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment that is being wrapped</span>
 <span class="sd">            pop_frames (bool): If true, clear the collection frames after ``meth:render`` is called. Default value is ``True``.</span>
 <span class="sd">            reset_clean (bool): If true, clear the collection frames when ``meth:reset`` is called. Default value is ``True``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">pop_frames</span><span class="o">=</span><span class="n">pop_frames</span><span class="p">,</span> <span class="n">reset_clean</span><span class="o">=</span><span class="n">reset_clean</span>
         <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected env.render_mode to be not None&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_list&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Expected env.render_mode to be not None"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"_list"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected env.render_mode to not end with &#39;_list&#39;, got &#39;</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">"Expected env.render_mode to not end with '_list', got '</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">'"</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -497,18 +497,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_clean</span> <span class="o">=</span> <span class="n">reset_clean</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-        <span class="k">if</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">_list&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_modes&quot;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_modes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">_list&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">_list"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"render_modes"</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"render_modes"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">_list"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the collection render_mode name.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">_list&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the collection render_mode name."""</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">_list"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform a step in the base environment and collect a frame.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Perform a step in the base environment and collect a frame."""</span>
         <span class="n">output</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frame_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">output</span>
@@ -516,7 +516,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the base environment, eventually clear the frame_list, and collect a frame.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Reset the base environment, eventually clear the frame_list, and collect a frame."""</span>
         <span class="n">output</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reset_clean</span><span class="p">:</span>
@@ -526,7 +526,7 @@
         <span class="k">return</span> <span class="n">output</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the collection of frames and, if pop_frames = True, clears it.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the collection of frames and, if pop_frames = True, clears it."""</span>
         <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_list</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop_frames</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">frame_list</span> <span class="o">=</span> <span class="p">[]</span>
@@ -542,7 +542,7 @@
     <span class="n">Generic</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Records videos of environment episodes using the environment&#39;s render function.</span>
+<span class="w">    </span><span class="sd">"""Records videos of environment episodes using the environment's render function.</span>
 
 <span class="sd">    .. py:currentmodule:: gymnasium.utils.save_video</span>
 
@@ -562,9 +562,9 @@
 <span class="sd">    Examples - Run the environment for 50 episodes, and save the video every 10 episodes starting from the 0th:</span>
 <span class="sd">        &gt;&gt;&gt; import os</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("LunarLander-v3", render_mode="rgb_array")</span>
 <span class="sd">        &gt;&gt;&gt; trigger = lambda t: t % 10 == 0</span>
-<span class="sd">        &gt;&gt;&gt; env = RecordVideo(env, video_folder=&quot;./save_videos1&quot;, episode_trigger=trigger, disable_logger=True)</span>
+<span class="sd">        &gt;&gt;&gt; env = RecordVideo(env, video_folder="./save_videos1", episode_trigger=trigger, disable_logger=True)</span>
 <span class="sd">        &gt;&gt;&gt; for i in range(50):</span>
 <span class="sd">        ...     termination, truncation = False, False</span>
 <span class="sd">        ...     _ = env.reset(seed=123)</span>
@@ -572,15 +572,15 @@
 <span class="sd">        ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())</span>
 <span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; env.close()</span>
-<span class="sd">        &gt;&gt;&gt; len(os.listdir(&quot;./save_videos1&quot;))</span>
+<span class="sd">        &gt;&gt;&gt; len(os.listdir("./save_videos1"))</span>
 <span class="sd">        5</span>
 
 <span class="sd">    Examples - Run the environment for 5 episodes, start a recording every 200th step, making sure each video is 100 frames long:</span>
 <span class="sd">        &gt;&gt;&gt; import os</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("LunarLander-v3", render_mode="rgb_array")</span>
 <span class="sd">        &gt;&gt;&gt; trigger = lambda t: t % 200 == 0</span>
-<span class="sd">        &gt;&gt;&gt; env = RecordVideo(env, video_folder=&quot;./save_videos2&quot;, step_trigger=trigger, video_length=100, disable_logger=True)</span>
+<span class="sd">        &gt;&gt;&gt; env = RecordVideo(env, video_folder="./save_videos2", step_trigger=trigger, video_length=100, disable_logger=True)</span>
 <span class="sd">        &gt;&gt;&gt; for i in range(5):</span>
 <span class="sd">        ...     termination, truncation = False, False</span>
 <span class="sd">        ...     _ = env.reset(seed=123)</span>
@@ -589,14 +589,14 @@
 <span class="sd">        ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())</span>
 <span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; env.close()</span>
-<span class="sd">        &gt;&gt;&gt; len(os.listdir(&quot;./save_videos2&quot;))</span>
+<span class="sd">        &gt;&gt;&gt; len(os.listdir("./save_videos2"))</span>
 <span class="sd">        2</span>
 
 <span class="sd">    Examples - Run 3 episodes, record everything, but in chunks of 1000 frames:</span>
 <span class="sd">        &gt;&gt;&gt; import os</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; env = RecordVideo(env, video_folder=&quot;./save_videos3&quot;, video_length=1000, disable_logger=True)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("LunarLander-v3", render_mode="rgb_array")</span>
+<span class="sd">        &gt;&gt;&gt; env = RecordVideo(env, video_folder="./save_videos3", video_length=1000, disable_logger=True)</span>
 <span class="sd">        &gt;&gt;&gt; for i in range(3):</span>
 <span class="sd">        ...     termination, truncation = False, False</span>
 <span class="sd">        ...     _ = env.reset(seed=123)</span>
@@ -604,12 +604,12 @@
 <span class="sd">        ...         obs, rew, termination, truncation, info = env.step(env.action_space.sample())</span>
 <span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; env.close()</span>
-<span class="sd">        &gt;&gt;&gt; len(os.listdir(&quot;./save_videos3&quot;))</span>
+<span class="sd">        &gt;&gt;&gt; len(os.listdir("./save_videos3"))</span>
 <span class="sd">        2</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.25.0 - Initially added to replace ``wrappers.monitoring.VideoRecorder``</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -618,12 +618,12 @@
         <span class="n">episode_trigger</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">step_trigger</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">video_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="n">name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rl-video&quot;</span><span class="p">,</span>
+        <span class="n">name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"rl-video"</span><span class="p">,</span>
         <span class="n">fps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">disable_logger</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">gc_trigger</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">episode</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper records videos of rollouts.</span>
+<span class="w">        </span><span class="sd">"""Wrapper records videos of rollouts.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment that will be wrapped</span>
@@ -637,7 +637,7 @@
 <span class="sd">                the environment metadata ``render_fps`` key is used if it exists, otherwise a default value of 30 is used.</span>
 <span class="sd">            disable_logger (bool): Whether to disable moviepy logger or not, default it is disabled</span>
 <span class="sd">            gc_trigger: Function that accepts an integer and returns ``True`` iff garbage collection should be performed after this episode</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">video_folder</span><span class="o">=</span><span class="n">video_folder</span><span class="p">,</span>
@@ -651,10 +651,10 @@
         <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="ow">in</span> <span class="p">{</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;human&quot;</span><span class="p">,</span> <span class="s2">&quot;ansi&quot;</span><span class="p">}:</span>
+        <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="ow">in</span> <span class="p">{</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"human"</span><span class="p">,</span> <span class="s2">"ansi"</span><span class="p">}:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Render mode is </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">, which is incompatible with RecordVideo.&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;Initialize your environment with a render_mode that returns an image, such as rgb_array.&quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"Render mode is </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">, which is incompatible with RecordVideo."</span><span class="p">,</span>
+                <span class="s2">"Initialize your environment with a render_mode that returns an image, such as rgb_array."</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">episode_trigger</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">step_trigger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -670,17 +670,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">video_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">video_folder</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_folder</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Overwriting existing videos at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">video_folder</span><span class="si">}</span><span class="s2"> folder &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(try specifying a different `video_folder` for the `RecordVideo` wrapper if this is not desired)&quot;</span>
+                <span class="sa">f</span><span class="s2">"Overwriting existing videos at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">video_folder</span><span class="si">}</span><span class="s2"> folder "</span>
+                <span class="sa">f</span><span class="s2">"(try specifying a different `video_folder` for the `RecordVideo` wrapper if this is not desired)"</span>
             <span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_folder</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">fps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">fps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_fps&quot;</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+            <span class="n">fps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"render_fps"</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frames_per_sec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">fps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name_prefix</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_video_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">video_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">video_length</span> <span class="k">if</span> <span class="n">video_length</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">video_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">video_length</span> <span class="k">if</span> <span class="n">video_length</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">render_history</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -692,17 +692,17 @@
             <span class="kn">import</span><span class="w"> </span><span class="nn">moviepy</span>  <span class="c1"># noqa: F401</span>
         <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">DependencyNotInstalled</span><span class="p">(</span>
-                <span class="s1">&#39;MoviePy is not installed, run `pip install &quot;gymnasium[other]&quot;`&#39;</span>
+                <span class="s1">'MoviePy is not installed, run `pip install "gymnasium[other]"`'</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_capture_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">,</span> <span class="s2">&quot;Cannot capture a frame, recording wasn&#39;t started.&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">,</span> <span class="s2">"Cannot capture a frame, recording wasn't started."</span>
 
         <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;Trying to capture render frame but &#39;env.render()&#39; has just been called. The frame cannot be captured.&quot;</span>
+                    <span class="s2">"Trying to capture render frame but 'env.render()' has just been called. The frame cannot be captured."</span>
                 <span class="p">)</span>
                 <span class="k">return</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_history</span> <span class="o">+=</span> <span class="n">frame</span>
@@ -713,21 +713,21 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stop_recording</span><span class="p">()</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Recording stopped: expected type of frame returned by render to be a numpy array, got instead </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Recording stopped: expected type of frame returned by render to be a numpy array, got instead </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the environment and eventually starts a new recording.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Reset the environment and eventually starts a new recording."""</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_id</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_length</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_length</span> <span class="o">==</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stop_recording</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_trigger</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_trigger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_id</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">start_recording</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_prefix</span><span class="si">}</span><span class="s2">-episode-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_recording</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_prefix</span><span class="si">}</span><span class="s2">-episode-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_capture_frame</span><span class="p">()</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">video_length</span><span class="p">:</span>
@@ -738,12 +738,12 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment using action, recording observations if :attr:`self.recording`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment using action, recording observations if :attr:`self.recording`."""</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step_id</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_trigger</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_trigger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">start_recording</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_prefix</span><span class="si">}</span><span class="s2">-step-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_recording</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_prefix</span><span class="si">}</span><span class="s2">-step-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_capture_frame</span><span class="p">()</span>
 
@@ -753,7 +753,7 @@
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the render frames as specified by render_mode attribute during initialization of the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Compute the render frames as specified by render_mode attribute during initialization of the environment."""</span>
         <span class="n">render_out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">render_out</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span> <span class="o">+=</span> <span class="n">render_out</span>
@@ -766,13 +766,13 @@
             <span class="k">return</span> <span class="n">render_out</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the wrapper then the video recorder.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Closes the wrapper then the video recorder."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stop_recording</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">start_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">video_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start a new recording. If it is already recording, stops the current recording before starting the new one.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Start a new recording. If it is already recording, stops the current recording before starting the new one."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stop_recording</span><span class="p">()</span>
 
@@ -780,22 +780,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_video_name</span> <span class="o">=</span> <span class="n">video_name</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">stop_recording</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop current recording and saves the video.&quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">,</span> <span class="s2">&quot;stop_recording was called, but no recording was started&quot;</span>
+<span class="w">        </span><span class="sd">"""Stop current recording and saves the video."""</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">recording</span><span class="p">,</span> <span class="s2">"stop_recording was called, but no recording was started"</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Ignored saving a video as there were zero frames to save.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Ignored saving a video as there were zero frames to save."</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="kn">from</span><span class="w"> </span><span class="nn">moviepy.video.io.ImageSequenceClip</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageSequenceClip</span>
             <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">DependencyNotInstalled</span><span class="p">(</span>
-                    <span class="s1">&#39;MoviePy is not installed, run `pip install &quot;gymnasium[other]&quot;`&#39;</span>
+                    <span class="s1">'MoviePy is not installed, run `pip install "gymnasium[other]"`'</span>
                 <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
             <span class="n">clip</span> <span class="o">=</span> <span class="n">ImageSequenceClip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">frames_per_sec</span><span class="p">)</span>
-            <span class="n">moviepy_logger</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_logger</span> <span class="k">else</span> <span class="s2">&quot;bar&quot;</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_video_name</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">)</span>
+            <span class="n">moviepy_logger</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_logger</span> <span class="k">else</span> <span class="s2">"bar"</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">video_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_video_name</span><span class="si">}</span><span class="s2">.mp4"</span><span class="p">)</span>
             <span class="n">clip</span><span class="o">.</span><span class="n">write_videofile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">moviepy_logger</span><span class="p">)</span>
             <span class="k">del</span> <span class="n">clip</span>
 
@@ -808,9 +808,9 @@
             <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Warn the user in case last video wasn&#39;t saved.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Warn the user in case last video wasn't saved."""</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Unable to save last video! Did you call close()?&quot;</span><span class="p">)</span></div>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Unable to save last video! Did you call close()?"</span><span class="p">)</span></div>
 
 
 
@@ -819,35 +819,35 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">HumanRendering</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Allows human like rendering for environments that support &quot;rgb_array&quot; rendering.</span>
+<span class="w">    </span><span class="sd">"""Allows human like rendering for environments that support "rgb_array" rendering.</span>
 
 <span class="sd">    This wrapper is particularly useful when you have implemented an environment that can produce</span>
-<span class="sd">    RGB images but haven&#39;t implemented any code to render the images to the screen.</span>
-<span class="sd">    If you want to use this wrapper with your environments, remember to specify ``&quot;render_fps&quot;``</span>
+<span class="sd">    RGB images but haven't implemented any code to render the images to the screen.</span>
+<span class="sd">    If you want to use this wrapper with your environments, remember to specify ``"render_fps"``</span>
 <span class="sd">    in the metadata of your environment.</span>
 
-<span class="sd">    The ``render_mode`` of the wrapped environment must be either ``&#39;rgb_array&#39;`` or ``&#39;rgb_array_list&#39;``.</span>
+<span class="sd">    The ``render_mode`` of the wrapped environment must be either ``'rgb_array'`` or ``'rgb_array_list'``.</span>
 
 <span class="sd">    No vector version of the wrapper exists.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import HumanRendering</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("LunarLander-v3", render_mode="rgb_array")</span>
 <span class="sd">        &gt;&gt;&gt; wrapped = HumanRendering(env)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = wrapped.reset()     # This will start rendering to the screen</span>
 
 <span class="sd">        The wrapper can also be applied directly when the environment is instantiated, simply by passing</span>
-<span class="sd">        ``render_mode=&quot;human&quot;`` to ``make``. The wrapper will only be applied if the environment does not</span>
-<span class="sd">        implement human-rendering natively (i.e. ``render_mode`` does not contain ``&quot;human&quot;``).</span>
+<span class="sd">        ``render_mode="human"`` to ``make``. The wrapper will only be applied if the environment does not</span>
+<span class="sd">        implement human-rendering natively (i.e. ``render_mode`` does not contain ``"human"``).</span>
 
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;phys2d/CartPole-v1&quot;, render_mode=&quot;human&quot;)      # CartPoleJax-v1 doesn&#39;t implement human-rendering natively</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("phys2d/CartPole-v1", render_mode="human")      # CartPoleJax-v1 doesn't implement human-rendering natively</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset()     # This will start rendering to the screen</span>
 
-<span class="sd">        Warning: If the base environment uses ``render_mode=&quot;rgb_array_list&quot;``, its (i.e. the *base environment&#39;s*) render method</span>
+<span class="sd">        Warning: If the base environment uses ``render_mode="rgb_array_list"``, its (i.e. the *base environment's*) render method</span>
 <span class="sd">        will always return an empty list:</span>
 
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array_list&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("LunarLander-v3", render_mode="rgb_array_list")</span>
 <span class="sd">        &gt;&gt;&gt; wrapped = HumanRendering(env)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = wrapped.reset()</span>
 <span class="sd">        &gt;&gt;&gt; env.render() # env.render() will always return an empty list!</span>
@@ -855,21 +855,21 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.25.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">ACCEPTED_RENDER_MODES</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;rgb_array_list&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;depth_array&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;depth_array_list&quot;</span><span class="p">,</span>
+        <span class="s2">"rgb_array"</span><span class="p">,</span>
+        <span class="s2">"rgb_array_list"</span><span class="p">,</span>
+        <span class="s2">"depth_array"</span><span class="p">,</span>
+        <span class="s2">"depth_array_list"</span><span class="p">,</span>
     <span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a :class:`HumanRendering` instance.</span>
+<span class="w">        </span><span class="sd">"""Initialize a :class:`HumanRendering` instance.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment that is being wrapped</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
@@ -879,24 +879,24 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACCEPTED_RENDER_MODES</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected env.render_mode to be one of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ACCEPTED_RENDER_MODES</span><span class="si">}</span><span class="s2"> but got &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">"Expected env.render_mode to be one of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ACCEPTED_RENDER_MODES</span><span class="si">}</span><span class="s2"> but got '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">'"</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;render_fps&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"render_fps"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;The base environment must specify &#39;render_fps&#39; to be used with the HumanRendering wrapper&quot;</span>
+                <span class="s2">"The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="s2">&quot;human&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_modes&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s2">"human"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"render_modes"</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_modes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"render_modes"</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"human"</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Always returns ``&#39;human&#39;``.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s2">&quot;human&quot;</span>
+<span class="w">        </span><span class="sd">"""Always returns ``'human'``."""</span>
+        <span class="k">return</span> <span class="s2">"human"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform a step in the base environment and render a frame to the screen.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Perform a step in the base environment and render a frame to the screen."""</span>
         <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_render_frame</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">result</span>
@@ -904,25 +904,25 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the base environment and render a frame to the screen.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Reset the base environment and render a frame to the screen."""</span>
         <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_render_frame</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This method doesn&#39;t do much, actual rendering is performed in :meth:`step` and :meth:`reset`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""This method doesn't do much, actual rendering is performed in :meth:`step` and :meth:`reset`."""</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_render_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fetch the last frame from the base environment and render it to the screen.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Fetch the last frame from the base environment and render it to the screen."""</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">pygame</span>
         <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-                <span class="s1">&#39;pygame is not installed, run `pip install &quot;gymnasium[classic-control]&quot;`&#39;</span>
+                <span class="s1">'pygame is not installed, run `pip install "gymnasium[classic-control]"`'</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_list&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"_list"</span><span class="p">):</span>
             <span class="n">last_rgb_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">last_rgb_array</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
             <span class="n">last_rgb_array</span> <span class="o">=</span> <span class="n">last_rgb_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -930,7 +930,7 @@
             <span class="n">last_rgb_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">last_rgb_array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">),</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Expected `env.render()` to return a numpy array, actually returned </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">last_rgb_array</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"Expected `env.render()` to return a numpy array, actually returned </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">last_rgb_array</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
         <span class="n">rgb_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">last_rgb_array</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
@@ -939,7 +939,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span> <span class="o">=</span> <span class="n">rgb_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span> <span class="o">==</span> <span class="n">rgb_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The shape of the rgb array has changed from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">rgb_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"The shape of the rgb array has changed from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_size</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">rgb_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -952,11 +952,11 @@
         <span class="n">surf</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">surfarray</span><span class="o">.</span><span class="n">make_surface</span><span class="p">(</span><span class="n">rgb_array</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="n">surf</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
         <span class="n">pygame</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">pump</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_fps&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"render_fps"</span><span class="p">])</span>
         <span class="n">pygame</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the rendering window.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Close the rendering window."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="kn">import</span><span class="w"> </span><span class="nn">pygame</span>
 
@@ -969,19 +969,19 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">AddWhiteNoise</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Randomly replaces pixels with white noise.</span>
+<span class="w">    </span><span class="sd">"""Randomly replaces pixels with white noise.</span>
 
-<span class="sd">    If used with ``render_mode=&quot;rgb_array&quot;`` and ``AddRenderObservation``, it will</span>
+<span class="sd">    If used with ``render_mode="rgb_array"`` and ``AddRenderObservation``, it will</span>
 <span class="sd">    make observations noisy.</span>
 <span class="sd">    The environment may also become partially-observable, turning the MDP into a POMDP.</span>
 
 <span class="sd">    Example - Every pixel will be replaced by white noise with probability 0.5:</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("LunarLander-v3", render_mode="rgb_array")</span>
 <span class="sd">        &gt;&gt;&gt; env = AddWhiteNoise(env, probability_of_noise_per_pixel=0.5)</span>
 <span class="sd">        &gt;&gt;&gt; env = HumanRendering(env)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, *_ = env.step(env.action_space.sample())</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -989,16 +989,16 @@
         <span class="n">probability_of_noise_per_pixel</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">is_noise_grayscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper replaces random pixels with white noise.</span>
+<span class="w">        </span><span class="sd">"""Wrapper replaces random pixels with white noise.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment that is being wrapped</span>
 <span class="sd">            probability_of_noise_per_pixel: the probability that a pixel is white noise</span>
 <span class="sd">            is_noise_grayscale: if True, RGB noise is converted to grayscale</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">probability_of_noise_per_pixel</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidProbability</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;probability_of_noise_per_pixel should be in the interval [0,1). Received </span><span class="si">{</span><span class="n">probability_of_noise_per_pixel</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"probability_of_noise_per_pixel should be in the interval [0,1). Received </span><span class="si">{</span><span class="n">probability_of_noise_per_pixel</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -1012,7 +1012,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">is_noise_grayscale</span> <span class="o">=</span> <span class="n">is_noise_grayscale</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise."""</span>
         <span class="n">render_out</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_noise_grayscale</span><span class="p">:</span>
@@ -1045,21 +1045,21 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">ObstructView</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Randomly obstructs rendering with white noise patches.</span>
+<span class="w">    </span><span class="sd">"""Randomly obstructs rendering with white noise patches.</span>
 
-<span class="sd">    If used with ``render_mode=&quot;rgb_array&quot;`` and ``AddRenderObservation``, it will</span>
+<span class="sd">    If used with ``render_mode="rgb_array"`` and ``AddRenderObservation``, it will</span>
 <span class="sd">    make observations noisy.</span>
 <span class="sd">    The number of patches depends on how many pixels we want to obstruct.</span>
 <span class="sd">    Depending on the size of the patches, the environment may become</span>
 <span class="sd">    partially-observable, turning the MDP into a POMDP.</span>
 
 <span class="sd">    Example - Obstruct 50% of the pixels with patches of size 50x50 pixels:</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;LunarLander-v3&quot;, render_mode=&quot;rgb_array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("LunarLander-v3", render_mode="rgb_array")</span>
 <span class="sd">        &gt;&gt;&gt; env = ObstructView(env, obstructed_pixels_ratio=0.5, obstruction_width=50)</span>
 <span class="sd">        &gt;&gt;&gt; env = HumanRendering(env)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, *_ = env.step(env.action_space.sample())</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -1068,22 +1068,22 @@
         <span class="n">obstruction_width</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">is_noise_grayscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper obstructs pixels with white noise patches.</span>
+<span class="w">        </span><span class="sd">"""Wrapper obstructs pixels with white noise patches.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment that is being wrapped</span>
 <span class="sd">            obstructed_pixels_ratio: the percentage of pixels obstructed with white noise</span>
 <span class="sd">            obstruction_width: the width of the obstruction patches</span>
 <span class="sd">            is_noise_grayscale: if True, RGB noise is converted to grayscale</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">obstructed_pixels_ratio</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;obstructed_pixels_ratio should be in the interval [0,1). Received </span><span class="si">{</span><span class="n">obstructed_pixels_ratio</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"obstructed_pixels_ratio should be in the interval [0,1). Received </span><span class="si">{</span><span class="n">obstructed_pixels_ratio</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">obstruction_width</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;obstruction_width should be larger or equal than 1. Received </span><span class="si">{</span><span class="n">obstruction_width</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"obstruction_width should be larger or equal than 1. Received </span><span class="si">{</span><span class="n">obstruction_width</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -1099,7 +1099,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">is_noise_grayscale</span> <span class="o">=</span> <span class="n">is_noise_grayscale</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise patches.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Compute the render frames as specified by render_mode attribute during initialization of the environment, then add white noise patches."""</span>
         <span class="n">render_out</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">())</span>
 
         <span class="n">render_shape</span> <span class="o">=</span> <span class="n">render_out</span><span class="o">.</span><span class="n">shape</span>

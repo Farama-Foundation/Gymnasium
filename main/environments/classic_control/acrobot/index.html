@@ -519,10 +519,10 @@ uniformly between -0.1 and 0.1. This means both links are pointing downwards wit
 <p>Acrobot only has <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> as a keyword for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.
 On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine the new random state.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Acrobot-v1&#39;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'Acrobot-v1'</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
 <span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;AcrobotEnv&lt;Acrobot-v1&gt;&gt;&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;low&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})</span>  <span class="c1"># default low=-0.1, high=0.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"low"</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="s2">"high"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})</span>  <span class="c1"># default low=-0.1, high=0.1</span>
 <span class="go">(array([ 0.997341  ,  0.07287608,  0.9841162 , -0.17752565, -0.11185605,</span>
 <span class="go">       -0.12625128], dtype=float32), {})</span>
 
@@ -533,7 +533,7 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
 However, a <code class="docutils literal notranslate"><span class="pre">book_or_nips</span></code> parameter can be modified to change the pendulum dynamics to those described
 in the original <a class="reference external" href="https://papers.nips.cc/paper/1995/hash/8f1d43620bc6bb580df6e80b0dc05c48-Abstract.html">NeurIPS paper</a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># To change the dynamics as described above</span>
-<span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">book_or_nips</span> <span class="o">=</span> <span class="s1">&#39;nips&#39;</span>
+<span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">book_or_nips</span> <span class="o">=</span> <span class="s1">'nips'</span>
 </pre></div>
 </div>
 <p>See the following note for details:</p>

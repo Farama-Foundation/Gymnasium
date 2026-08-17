@@ -483,7 +483,7 @@
         <span class="n">final_epsilon</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Q-Learning agent.</span>
+<span class="w">        </span><span class="sd">"""Initialize a Q-Learning agent.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The training environment</span>
@@ -492,7 +492,7 @@
 <span class="sd">            epsilon_decay: How much to reduce epsilon each episode</span>
 <span class="sd">            final_epsilon: Minimum exploration rate (usually 0.1)</span>
 <span class="sd">            discount_factor: How much to value future rewards (0-1)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
 
         <span class="c1"># Q-table: maps (state, action) to expected reward</span>
@@ -511,11 +511,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">training_error</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Choose an action using epsilon-greedy strategy.</span>
+<span class="w">        </span><span class="sd">"""Choose an action using epsilon-greedy strategy.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            action: 0 (stand) or 1 (hit)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># With probability epsilon: explore (random action)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
@@ -532,11 +532,11 @@
         <span class="n">terminated</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">next_obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update Q-value based on experience.</span>
+<span class="w">        </span><span class="sd">"""Update Q-value based on experience.</span>
 
 <span class="sd">        This is the heart of Q-learning: learn from (state, action, reward, next_state)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># What&#39;s the best we could do from the next state?</span>
+<span class="sd">        """</span>
+        <span class="c1"># What's the best we could do from the next state?</span>
         <span class="c1"># (Zero if episode terminated - no future rewards possible)</span>
         <span class="n">future_q_value</span> <span class="o">=</span> <span class="p">(</span><span class="ow">not</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
 
@@ -556,7 +556,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">training_error</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temporal_difference</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">decay_epsilon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reduce exploration rate after each episode.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Reduce exploration rate after each episode."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_epsilon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon_decay</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -597,7 +597,7 @@
 <span class="n">final_epsilon</span> <span class="o">=</span> <span class="mf">0.1</span>         <span class="c1"># Always keep some exploration</span>
 
 <span class="c1"># Create environment and agent</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Blackjack-v1&quot;</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Blackjack-v1"</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">buffer_length</span><span class="o">=</span><span class="n">n_episodes</span><span class="p">)</span>
 
 <span class="n">agent</span> <span class="o">=</span> <span class="n">BlackjackAgent</span><span class="p">(</span>
@@ -666,7 +666,7 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">get_moving_avgs</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">convolution_mode</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute moving average to smooth noisy data.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Compute moving average to smooth noisy data."""</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
         <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">window</span><span class="p">),</span>
@@ -678,37 +678,37 @@
 <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 
 <span class="c1"># Episode rewards (win/loss performance)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Episode rewards&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Episode rewards"</span><span class="p">)</span>
 <span class="n">reward_moving_average</span> <span class="o">=</span> <span class="n">get_moving_avgs</span><span class="p">(</span>
     <span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">,</span>
     <span class="n">rolling_length</span><span class="p">,</span>
-    <span class="s2">&quot;valid&quot;</span>
+    <span class="s2">"valid"</span>
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">reward_moving_average</span><span class="p">)),</span> <span class="n">reward_moving_average</span><span class="p">)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Average Reward&quot;</span><span class="p">)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Average Reward"</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Episode"</span><span class="p">)</span>
 
 <span class="c1"># Episode lengths (how many actions per hand)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Episode lengths&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Episode lengths"</span><span class="p">)</span>
 <span class="n">length_moving_average</span> <span class="o">=</span> <span class="n">get_moving_avgs</span><span class="p">(</span>
     <span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">,</span>
     <span class="n">rolling_length</span><span class="p">,</span>
-    <span class="s2">&quot;valid&quot;</span>
+    <span class="s2">"valid"</span>
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">length_moving_average</span><span class="p">)),</span> <span class="n">length_moving_average</span><span class="p">)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Average Episode Length&quot;</span><span class="p">)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Average Episode Length"</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Episode"</span><span class="p">)</span>
 
-<span class="c1"># Training error (how much we&#39;re still learning)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Training Error&quot;</span><span class="p">)</span>
+<span class="c1"># Training error (how much we're still learning)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Training Error"</span><span class="p">)</span>
 <span class="n">training_error_moving_average</span> <span class="o">=</span> <span class="n">get_moving_avgs</span><span class="p">(</span>
     <span class="n">agent</span><span class="o">.</span><span class="n">training_error</span><span class="p">,</span>
     <span class="n">rolling_length</span><span class="p">,</span>
-    <span class="s2">&quot;same&quot;</span>
+    <span class="s2">"same"</span>
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">training_error_moving_average</span><span class="p">)),</span> <span class="n">training_error_moving_average</span><span class="p">)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Temporal Difference Error&quot;</span><span class="p">)</span>
-<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Step&quot;</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Temporal Difference Error"</span><span class="p">)</span>
+<span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Step"</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -773,7 +773,7 @@
 <p>Once training is complete, test your agent’s performance:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Test the trained agent</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">test_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">num_episodes</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test agent performance without learning or exploration.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Test agent performance without learning or exploration."""</span>
     <span class="n">total_rewards</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="c1"># Temporarily disable exploration for testing</span>
@@ -799,10 +799,10 @@
     <span class="n">win_rate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">total_rewards</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">average_reward</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">total_rewards</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Test Results over </span><span class="si">{</span><span class="n">num_episodes</span><span class="si">}</span><span class="s2"> episodes:&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Win Rate: </span><span class="si">{</span><span class="n">win_rate</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Average Reward: </span><span class="si">{</span><span class="n">average_reward</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Standard Deviation: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">total_rewards</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Test Results over </span><span class="si">{</span><span class="n">num_episodes</span><span class="si">}</span><span class="s2"> episodes:"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Win Rate: </span><span class="si">{</span><span class="n">win_rate</span><span class="si">:</span><span class="s2">.1%</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Average Reward: </span><span class="si">{</span><span class="n">average_reward</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Standard Deviation: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">total_rewards</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="c1"># Test your agent</span>
 <span class="n">test_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>

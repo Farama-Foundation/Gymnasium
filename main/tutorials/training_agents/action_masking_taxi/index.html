@@ -430,7 +430,7 @@ This mask is a binary array where 1 indicates a valid action and 0 indicates an 
     <span class="n">discount_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
     <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Train a Q-learning agent with or without action masking.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Train a Q-learning agent with or without action masking."""</span>
     <span class="c1"># Set random seeds for reproducibility</span>
     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -452,7 +452,7 @@ This mask is a binary array where 1 indicates a valid action and 0 indicates an 
 
         <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">done</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">):</span>
             <span class="c1"># Get action mask if using it</span>
-            <span class="n">action_mask</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;action_mask&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">use_action_mask</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">action_mask</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">"action_mask"</span><span class="p">]</span> <span class="k">if</span> <span class="n">use_action_mask</span> <span class="k">else</span> <span class="kc">None</span>
 
             <span class="c1"># Epsilon-greedy action selection with masking</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
@@ -485,7 +485,7 @@ This mask is a binary array where 1 indicates a valid action and 0 indicates an 
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">done</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">use_action_mask</span><span class="p">:</span>
                     <span class="c1"># Only consider valid next actions for bootstrapping</span>
-                    <span class="n">next_mask</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;action_mask&quot;</span><span class="p">]</span>
+                    <span class="n">next_mask</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">"action_mask"</span><span class="p">]</span>
                     <span class="n">valid_next_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">next_mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_next_actions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="n">next_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q_table</span><span class="p">[</span><span class="n">next_state</span><span class="p">,</span> <span class="n">valid_next_actions</span><span class="p">])</span>
@@ -505,9 +505,9 @@ This mask is a binary array where 1 indicates a valid action and 0 indicates an 
         <span class="n">episode_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">total_reward</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;episode_rewards&quot;</span><span class="p">:</span> <span class="n">episode_rewards</span><span class="p">,</span>
-        <span class="s2">&quot;mean_reward&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">),</span>
-        <span class="s2">&quot;std_reward&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">),</span>
+        <span class="s2">"episode_rewards"</span><span class="p">:</span> <span class="n">episode_rewards</span><span class="p">,</span>
+        <span class="s2">"mean_reward"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">),</span>
+        <span class="s2">"std_reward"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">),</span>
     <span class="p">}</span>
 </pre></div>
 </div>
@@ -537,10 +537,10 @@ We’ll use multiple random seeds to ensure robust statistical comparison.</p>
 
 <span class="c1"># Run experiments with different seeds</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seed</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">seeds</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_runs</span><span class="si">}</span><span class="s2"> with seed </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Run </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">n_runs</span><span class="si">}</span><span class="s2"> with seed </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="c1"># Train agent WITH action masking</span>
-    <span class="n">env_masked</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Taxi-v4&quot;</span><span class="p">)</span>
+    <span class="n">env_masked</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Taxi-v4"</span><span class="p">)</span>
     <span class="n">masked_results</span> <span class="o">=</span> <span class="n">train_q_learning</span><span class="p">(</span>
         <span class="n">env_masked</span><span class="p">,</span>
         <span class="n">use_action_mask</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -554,7 +554,7 @@ We’ll use multiple random seeds to ensure robust statistical comparison.</p>
     <span class="n">masked_results_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">masked_results</span><span class="p">)</span>
 
     <span class="c1"># Train agent WITHOUT action masking</span>
-    <span class="n">env_unmasked</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;Taxi-v4&quot;</span><span class="p">)</span>
+    <span class="n">env_unmasked</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Taxi-v4"</span><span class="p">)</span>
     <span class="n">unmasked_results</span> <span class="o">=</span> <span class="n">train_q_learning</span><span class="p">(</span>
         <span class="n">env_unmasked</span><span class="p">,</span>
         <span class="n">use_action_mask</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -573,8 +573,8 @@ We’ll use multiple random seeds to ensure robust statistical comparison.</p>
 <h1>Visualizing Results<a class="headerlink" href="#visualizing-results" title="Link to this heading">¶</a></h1>
 <p>After running all experiments, we calculate statistics and create visualizations to compare the performance of both approaches.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate statistics across runs</span>
-<span class="n">masked_mean_rewards</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;mean_reward&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">masked_results_list</span><span class="p">]</span>
-<span class="n">unmasked_mean_rewards</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;mean_reward&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">unmasked_results_list</span><span class="p">]</span>
+<span class="n">masked_mean_rewards</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">"mean_reward"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">masked_results_list</span><span class="p">]</span>
+<span class="n">unmasked_mean_rewards</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">"mean_reward"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">unmasked_results_list</span><span class="p">]</span>
 
 <span class="n">masked_overall_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">masked_mean_rewards</span><span class="p">)</span>
 <span class="n">masked_overall_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">masked_mean_rewards</span><span class="p">)</span>
@@ -589,46 +589,46 @@ We’ll use multiple random seeds to ensure robust statistical comparison.</p>
     <span class="nb">zip</span><span class="p">(</span><span class="n">masked_results_list</span><span class="p">,</span> <span class="n">unmasked_results_list</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="p">):</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">masked_results</span><span class="p">[</span><span class="s2">&quot;episode_rewards&quot;</span><span class="p">],</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;With Action Masking&quot;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="n">masked_results</span><span class="p">[</span><span class="s2">"episode_rewards"</span><span class="p">],</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"With Action Masking"</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-        <span class="n">unmasked_results</span><span class="p">[</span><span class="s2">&quot;episode_rewards&quot;</span><span class="p">],</span>
-        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Without Action Masking&quot;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="n">unmasked_results</span><span class="p">[</span><span class="s2">"episode_rewards"</span><span class="p">],</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"Without Action Masking"</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
     <span class="p">)</span>
 
 <span class="c1"># Calculate and plot mean curves across all runs</span>
-<span class="n">masked_mean_curve</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;episode_rewards&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">masked_results_list</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">masked_mean_curve</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">r</span><span class="p">[</span><span class="s2">"episode_rewards"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">masked_results_list</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">unmasked_mean_curve</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span>
-    <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">&quot;episode_rewards&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">unmasked_results_list</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+    <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">"episode_rewards"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">unmasked_results_list</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
 <span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-    <span class="n">masked_mean_curve</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;With Action Masking (Mean)&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span>
+    <span class="n">masked_mean_curve</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"With Action Masking (Mean)"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"blue"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span>
 <span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
     <span class="n">unmasked_mean_curve</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Without Action Masking (Mean)&quot;</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"Without Action Masking (Mean)"</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
     <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Episode&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Total Reward&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Training Performance: Q-Learning with vs without Action Masking&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Episode"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"Total Reward"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">"Training Performance: Q-Learning with vs without Action Masking"</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 
 <span class="c1"># Save the figure</span>
-<span class="n">savefig_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;_static/img/tutorials/&quot;</span><span class="p">)</span>
+<span class="n">savefig_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"_static/img/tutorials/"</span><span class="p">)</span>
 <span class="n">savefig_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
-    <span class="n">savefig_folder</span> <span class="o">/</span> <span class="s2">&quot;taxi_v3_action_masking_comparison.png&quot;</span><span class="p">,</span>
-    <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span>
+    <span class="n">savefig_folder</span> <span class="o">/</span> <span class="s2">"taxi_v3_action_masking_comparison.png"</span><span class="p">,</span>
+    <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">"tight"</span><span class="p">,</span>
     <span class="n">dpi</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>

@@ -454,7 +454,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
 
         <span class="c1"># Initialize positions - will be set randomly in reset()</span>
-        <span class="c1"># Using -1,-1 as &quot;uninitialized&quot; state</span>
+        <span class="c1"># Using -1,-1 as "uninitialized" state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 
@@ -462,8 +462,8 @@
         <span class="c1"># Dict space gives us structured, human-readable observations</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>   <span class="c1"># [x, y] coordinates</span>
-                <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>  <span class="c1"># [x, y] coordinates</span>
+                <span class="s2">"agent"</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>   <span class="c1"># [x, y] coordinates</span>
+                <span class="s2">"target"</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>  <span class="c1"># [x, y] coordinates</span>
             <span class="p">}</span>
         <span class="p">)</span>
 
@@ -485,23 +485,23 @@
 <h2>Constructing Observations<a class="headerlink" href="#constructing-observations" title="Link to this heading">¶</a></h2>
 <p>Since we need to compute observations in both <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code></a> and <a class="reference internal" href="../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code></a>, it’s convenient to have a helper method <code class="docutils literal notranslate"><span class="pre">_get_obs</span></code> that translates the environment’s internal state into the observation format. This keeps our code DRY (Don’t Repeat Yourself) and makes it easier to modify the observation format later.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert internal state to observation format.</span>
+<span class="w">        </span><span class="sd">"""Convert internal state to observation format.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: Observation with agent and target positions</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">}</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"agent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>We can also implement a similar method for auxiliary information returned by <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code></a> and <a class="reference internal" href="../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code></a>. In our case, we’ll provide the Manhattan distance between agent and target - this can be useful for debugging and understanding agent progress, but shouldn’t be used by the learning algorithm itself.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute auxiliary information for debugging.</span>
+<span class="w">        </span><span class="sd">"""Compute auxiliary information for debugging.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: Info with distance between agent and target</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;distance&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+            <span class="s2">"distance"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">1</span>
             <span class="p">)</span>
         <span class="p">}</span>
@@ -514,7 +514,7 @@
 <p>The <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> method starts a new episode. It takes two optional parameters: <code class="docutils literal notranslate"><span class="pre">seed</span></code> for reproducible random generation and <code class="docutils literal notranslate"><span class="pre">options</span></code> for additional configuration. On the first line, you must call <code class="docutils literal notranslate"><span class="pre">super().reset(seed=seed)</span></code> to properly initialize the random number generator.</p>
 <p>In our GridWorld environment, <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> randomly places the agent and target on the grid, ensuring they don’t start in the same location. We return both the initial observation and info as a tuple.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start a new episode.</span>
+<span class="w">        </span><span class="sd">"""Start a new episode.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            seed: Random seed for reproducible episodes</span>
@@ -522,14 +522,14 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple: (observation, info) for the initial state</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># IMPORTANT: Must call this first to seed the random number generator</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
 
         <span class="c1"># Randomly place the agent anywhere on the grid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
-        <span class="c1"># Randomly place target, ensuring it&#39;s different from agent position</span>
+        <span class="c1"># Randomly place target, ensuring it's different from agent position</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span>
         <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
@@ -553,14 +553,14 @@
 4. Determine if the episode should end
 5. Return all the required information</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute one timestep within the environment.</span>
+<span class="w">        </span><span class="sd">"""Execute one timestep within the environment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            action: The action to take (0-3 for directions)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple: (observation, reward, terminated, truncated, info)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Map the discrete action (0-3) to a movement direction</span>
         <span class="n">direction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_to_direction</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
 
@@ -573,7 +573,7 @@
         <span class="c1"># Check if agent reached the target</span>
         <span class="n">terminated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">)</span>
 
-        <span class="c1"># We don&#39;t use truncation in this simple environment</span>
+        <span class="c1"># We don't use truncation in this simple environment</span>
         <span class="c1"># (could add a step limit here if desired)</span>
         <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -611,23 +611,23 @@
 <section id="state-representation-problems">
 <h3>State Representation Problems<a class="headerlink" href="#state-representation-problems" title="Link to this heading">¶</a></h3>
 <p><strong>Problem</strong>: Including irrelevant information or missing crucial details</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Too much info - agent doesn&#39;t need grid size in every observation</span>
-<span class="n">obs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Too much info - agent doesn't need grid size in every observation</span>
+<span class="n">obs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"agent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">}</span>
 
-<span class="c1"># Too little info - agent can&#39;t distinguish different positions</span>
-<span class="n">obs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;distance&quot;</span><span class="p">:</span> <span class="n">distance</span><span class="p">}</span>  <span class="c1"># Missing actual positions!</span>
+<span class="c1"># Too little info - agent can't distinguish different positions</span>
+<span class="n">obs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"distance"</span><span class="p">:</span> <span class="n">distance</span><span class="p">}</span>  <span class="c1"># Missing actual positions!</span>
 </pre></div>
 </div>
 <p><strong>Better</strong>: Include exactly what’s needed for optimal decisions</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Just right - positions are sufficient for navigation</span>
-<span class="n">obs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">}</span>
+<span class="n">obs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"agent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">}</span>
 </pre></div>
 </div>
 </section>
 <section id="action-space-issues">
 <h3>Action Space Issues<a class="headerlink" href="#action-space-issues" title="Link to this heading">¶</a></h3>
 <p><strong>Problem</strong>: Actions that don’t make sense or are impossible to execute</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bad: Agent can move diagonally but environment doesn&#39;t support it</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bad: Agent can move diagonally but environment doesn't support it</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>  <span class="c1"># 8 directions including diagonals</span>
 
 <span class="c1"># Bad: Continuous actions for discrete movement</span>
@@ -662,7 +662,7 @@
 <p>Since this tutorial isn’t part of a Python package, we pass the class directly as the entry point. In real projects, you’d typically use a string like <code class="docutils literal notranslate"><span class="pre">&quot;my_package.envs:GridWorldEnv&quot;</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register the environment so we can create it with gym.make()</span>
 <span class="n">gym</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-    <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;gymnasium_env/GridWorld-v0&quot;</span><span class="p">,</span>
+    <span class="nb">id</span><span class="o">=</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">,</span>
     <span class="n">entry_point</span><span class="o">=</span><span class="n">GridWorldEnv</span><span class="p">,</span>
     <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>  <span class="c1"># Prevent infinite episodes</span>
 <span class="p">)</span>
@@ -673,16 +673,16 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 
 <span class="c1"># Create the environment like any built-in environment</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;gymnasium_env/GridWorld-v0&quot;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">)</span>
 <span class="o">&lt;</span><span class="n">OrderEnforcing</span><span class="o">&lt;</span><span class="n">PassiveEnvChecker</span><span class="o">&lt;</span><span class="n">GridWorld</span><span class="o">&lt;</span><span class="n">gymnasium_env</span><span class="o">/</span><span class="n">GridWorld</span><span class="o">-</span><span class="n">v0</span><span class="o">&gt;&gt;&gt;&gt;</span>
 
 <span class="c1"># Customize environment parameters</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;gymnasium_env/GridWorld-v0&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">size</span>
 <span class="mi">10</span>
 
 <span class="c1"># Create multiple environments for parallel training</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">vec_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">&quot;gymnasium_env/GridWorld-v0&quot;</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">vec_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="n">SyncVectorEnv</span><span class="p">(</span><span class="n">gymnasium_env</span><span class="o">/</span><span class="n">GridWorld</span><span class="o">-</span><span class="n">v0</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -697,27 +697,27 @@
 <span class="c1"># This will catch many common issues</span>
 <span class="k">try</span><span class="p">:</span>
     <span class="n">check_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Environment passes all checks!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Environment passes all checks!"</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Environment has issues: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Environment has issues: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="manual-testing-with-known-actions">
 <h3>Manual Testing with Known Actions<a class="headerlink" href="#manual-testing-with-known-actions" title="Link to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Test specific action sequences to verify behavior</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;gymnasium_env/GridWorld-v0&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">)</span>
 <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># Use seed for reproducible testing</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting position - Agent: </span><span class="si">{</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;agent&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, Target: </span><span class="si">{</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Starting position - Agent: </span><span class="si">{</span><span class="n">obs</span><span class="p">[</span><span class="s1">'agent'</span><span class="p">]</span><span class="si">}</span><span class="s2">, Target: </span><span class="si">{</span><span class="n">obs</span><span class="p">[</span><span class="s1">'target'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="c1"># Test each action type</span>
 <span class="n">actions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>  <span class="c1"># right, up, left, down</span>
 <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
-    <span class="n">old_pos</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;agent&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">old_pos</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">'agent'</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-    <span class="n">new_pos</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;agent&#39;</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Action </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">old_pos</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">new_pos</span><span class="si">}</span><span class="s2">, reward=</span><span class="si">{</span><span class="n">reward</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">new_pos</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">'agent'</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Action </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">old_pos</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">new_pos</span><span class="si">}</span><span class="s2">, reward=</span><span class="si">{</span><span class="n">reward</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -732,8 +732,8 @@
 <span class="c1"># Using Cartesian [x, y] instead of NumPy [row, col] causes visual confusion</span>
 <span class="c1"># when rendering, since row 0 is at the top of the screen:</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">_action_to_direction</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="mi">0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>   <span class="c1"># Intended as &quot;right&quot; but this changes row</span>
-    <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>   <span class="c1"># Intended as &quot;up&quot; but this changes column</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>   <span class="c1"># Intended as "right" but this changes row</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>   <span class="c1"># Intended as "up" but this changes column</span>
 <span class="p">}</span>
 
 <span class="c1"># Issue 3: Not handling boundaries properly</span>
@@ -749,13 +749,13 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlattenObservation</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Original observation is a dictionary</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;gymnasium_env/GridWorld-v0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'gymnasium_env/GridWorld-v0'</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-<span class="go">Dict(&#39;agent&#39;: Box(0, 4, (2,), int64), &#39;target&#39;: Box(0, 4, (2,), int64))</span>
+<span class="go">Dict('agent': Box(0, 4, (2,), int64), 'target': Box(0, 4, (2,), int64))</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
-<span class="go">{&#39;agent&#39;: array([4, 1]), &#39;target&#39;: array([2, 4])}</span>
+<span class="go">{'agent': array([4, 1]), 'target': array([2, 4])}</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Wrap it to flatten observations into a single array</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">FlattenObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -775,18 +775,18 @@
 <section id="adding-rendering">
 <h3>Adding Rendering<a class="headerlink" href="#adding-rendering" title="Link to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render the environment for human viewing.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;human&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Render the environment for human viewing."""</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">"human"</span><span class="p">:</span>
         <span class="c1"># Print a simple ASCII representation</span>
         <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>  <span class="c1"># Top to bottom</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="s2">""</span>
             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">):</span>
-                    <span class="n">row</span> <span class="o">+=</span> <span class="s2">&quot;A &quot;</span>  <span class="c1"># Agent</span>
+                    <span class="n">row</span> <span class="o">+=</span> <span class="s2">"A "</span>  <span class="c1"># Agent</span>
                 <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">):</span>
-                    <span class="n">row</span> <span class="o">+=</span> <span class="s2">&quot;T &quot;</span>  <span class="c1"># Target</span>
+                    <span class="n">row</span> <span class="o">+=</span> <span class="s2">"T "</span>  <span class="c1"># Target</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">row</span> <span class="o">+=</span> <span class="s2">&quot;. &quot;</span>  <span class="c1"># Empty</span>
+                    <span class="n">row</span> <span class="o">+=</span> <span class="s2">". "</span>  <span class="c1"># Empty</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">()</span>
 </pre></div>

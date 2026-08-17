@@ -367,10 +367,10 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.stateful_reward</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A collection of wrappers for modifying the reward with an internal state.</span>
+<span></span><span class="sd">"""A collection of wrappers for modifying the reward with an internal state.</span>
 
 <span class="sd">* ``NormalizeReward`` - Normalizes the rewards to a mean and standard deviation</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -383,7 +383,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidBound</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunningMeanStd</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NormalizeReward&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"NormalizeReward"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="NormalizeReward">
@@ -391,7 +391,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">NormalizeReward</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Normalizes immediate rewards such that their exponential moving average has an approximately fixed variance.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Normalizes immediate rewards such that their exponential moving average has an approximately fixed variance.</span>
 
 <span class="sd">    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward</span>
 <span class="sd">    statistics. If `True` (default), the `RunningMeanStd` will get updated every time `self.normalize()` is called.</span>
@@ -410,7 +410,7 @@
 <span class="sd">    Example without the normalize reward wrapper:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;MountainCarContinuous-v0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("MountainCarContinuous-v0")</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; episode_rewards = []</span>
@@ -426,7 +426,7 @@
 <span class="sd">    Example with the normalize reward wrapper:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;MountainCarContinuous-v0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("MountainCarContinuous-v0")</span>
 <span class="sd">        &gt;&gt;&gt; env = NormalizeReward(env, gamma=0.99, epsilon=1e-8)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.action_space.seed(123)</span>
@@ -443,7 +443,7 @@
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.21.0 - Initially added</span>
 <span class="sd">     * v1.0.0 - Add `update_running_mean` attribute to allow disabling of updating the running mean / standard</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -451,7 +451,7 @@
         <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.99</span><span class="p">,</span>
         <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will normalize immediate rewards s.t. their exponential moving average has an approximately fixed variance.</span>
+<span class="w">        </span><span class="sd">"""This wrapper will normalize immediate rewards s.t. their exponential moving average has an approximately fixed variance.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (env): The environment to apply the wrapper</span>
@@ -460,20 +460,20 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            InvalidBound: If ``gamma`` is outside ``[0, 1]``, or if ``epsilon`` is not strictly positive.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># The exponential moving average multiplies the accumulator by `gamma` on</span>
         <span class="c1"># every step, so a value above one makes it diverge instead of converging,</span>
         <span class="c1"># and a negative one alternates its sign.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">gamma</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`gamma` should be in the interval [0, 1]. Received </span><span class="si">{</span><span class="n">gamma</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"`gamma` should be in the interval [0, 1]. Received </span><span class="si">{</span><span class="n">gamma</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="c1"># `epsilon` is added under the square root to keep the division away from</span>
         <span class="c1"># zero, so a non-positive value defeats its purpose and, once it exceeds</span>
         <span class="c1"># the variance, silently turns every normalized reward into NaN.</span>
         <span class="k">if</span> <span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`epsilon` should be strictly positive. Received </span><span class="si">{</span><span class="n">epsilon</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"`epsilon` should be strictly positive. Received </span><span class="si">{</span><span class="n">epsilon</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">)</span>
@@ -487,18 +487,18 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_running_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Property to freeze/continue the running mean calculation of the reward statistics.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Property to freeze/continue the running mean calculation of the reward statistics."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span>
 
     <span class="nd">@update_running_mean</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_running_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setting</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the property to freeze/continue the running mean calculation of the reward statistics.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Sets the property to freeze/continue the running mean calculation of the reward statistics."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span> <span class="o">=</span> <span class="n">setting</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, normalizing the reward returned.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment, normalizing the reward returned."""</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
         <span class="c1"># Using the `discounted_reward` rather than `reward` makes no sense but for backward compatibility, it is being kept</span>
@@ -508,7 +508,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">return_rms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">discounted_reward</span><span class="p">)</span>
 
-        <span class="c1"># We don&#39;t (reward - self.return_rms.mean) see https://github.com/openai/baselines/issues/538</span>
+        <span class="c1"># We don't (reward - self.return_rms.mean) see https://github.com/openai/baselines/issues/538</span>
         <span class="n">normalized_reward</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">return_rms</span><span class="o">.</span><span class="n">var</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">normalized_reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span></div>
 

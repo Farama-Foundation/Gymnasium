@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.utils.seeding</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Set of random number generator functions: seeding, generator, hashing seeds.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Set of random number generator functions: seeding, generator, hashing seeds."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -379,14 +379,14 @@
 <div class="viewcode-block" id="np_random">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.seeding.np_random">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">np_random</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a NumPy random number generator (RNG) along with seed value from the inputted seed.</span>
+<span class="w">    </span><span class="sd">"""Returns a NumPy random number generator (RNG) along with seed value from the inputted seed.</span>
 
-<span class="sd">    If ``seed`` is ``None`` then a **random** seed will be generated as the RNG&#39;s initial seed.</span>
+<span class="sd">    If ``seed`` is ``None`` then a **random** seed will be generated as the RNG's initial seed.</span>
 <span class="sd">    This randomly selected seed is returned as the second value of the tuple.</span>
 
 <span class="sd">    .. py:currentmodule:: gymnasium.Env</span>
 
-<span class="sd">    This function is called in :meth:`reset` to reset an environment&#39;s initial RNG.</span>
+<span class="sd">    This function is called in :meth:`reset` to reset an environment's initial RNG.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        seed: The seed used to create the generator</span>
@@ -396,15 +396,15 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        Error: Seed must be a non-negative integer</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">seed</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Seed must be a python integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Seed must be a python integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Seed must be greater or equal to zero, actual value: </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Seed must be greater or equal to zero, actual value: </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
     <span class="n">seed_seq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">SeedSequence</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>

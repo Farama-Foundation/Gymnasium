@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.utils.env_checker</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A set of functions for checking an environment implementation.</span>
+<span></span><span class="sd">"""A set of functions for checking an environment implementation.</span>
 
 <span class="sd">This file is originally from the Stable Baselines3 repository hosted on GitHub</span>
 <span class="sd">(https://github.com/DLR-RM/stable-baselines3/)</span>
@@ -377,11 +377,11 @@
 <span class="sd">(https://github.com/PettingZoo-Team/PettingZoo)</span>
 <span class="sd">Original Author: J K Terry</span>
 
-<span class="sd">This was rewritten and split into &quot;env_checker.py&quot; and &quot;passive_env_checker.py&quot; for invasive and passive environment checking</span>
+<span class="sd">This was rewritten and split into "env_checker.py" and "passive_env_checker.py" for invasive and passive environment checking</span>
 <span class="sd">Original Author: Mark Towers</span>
 
 <span class="sd">These projects are covered by the MIT License.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
@@ -401,7 +401,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">data_equivalence</span><span class="p">(</span><span class="n">data_1</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">data_2</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">exact</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assert equality between data 1 and 2, i.e. observations, actions, info.</span>
+<span class="w">    </span><span class="sd">"""Assert equality between data 1 and 2, i.e. observations, actions, info.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data_1: data structure 1</span>
@@ -410,7 +410,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        If observation 1 and 2 are equivalent</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">data_1</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">type</span><span class="p">(</span><span class="n">data_2</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -438,13 +438,13 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># `__eq__` doesn&#39;t always return `bool`; e.g. `np.int8() == np.int8()` returns</span>
+        <span class="c1"># `__eq__` doesn't always return `bool`; e.g. `np.int8() == np.int8()` returns</span>
         <span class="c1"># a `np.bool_`, which is incompatible with `bool`</span>
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">data_1</span> <span class="o">==</span> <span class="n">data_2</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">check_reset_seed_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the environment can be reset with a seed.</span>
+<span class="w">    </span><span class="sd">"""Check that the environment can be reset with a seed.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        env: The environment to check</span>
@@ -452,92 +452,92 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        AssertionError: The environment cannot be reset with a random seed,</span>
 <span class="sd">            even though `seed` or `kwargs` appear in the signature.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;seed&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="s2">&quot;kwargs&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span>
-        <span class="ow">and</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">kind</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span>
+    <span class="k">if</span> <span class="s2">"seed"</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="s2">"kwargs"</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="ow">and</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"kwargs"</span><span class="p">]</span><span class="o">.</span><span class="n">kind</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span>
     <span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">obs_1</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">obs_1</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;The observation returned by `env.reset(seed=123)` is not within the observation space.&quot;</span>
+                <span class="s2">"The observation returned by `env.reset(seed=123)` is not within the observation space."</span>
             <span class="p">)</span>
             <span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`.&quot;</span>
+                <span class="s2">"Expects the random number generator to have been generated given a seed was passed to reset. Most likely the environment reset function does not call `super().reset(seed=seed)`."</span>
             <span class="p">)</span>
             <span class="n">seed_123_rng_1</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="p">)</span>
 
             <span class="n">obs_2</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="k">assert</span> <span class="n">obs_2</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;The observation returned by `env.reset()` is not within the observation space.&quot;</span>
+                <span class="s2">"The observation returned by `env.reset()` is not within the observation space."</span>
             <span class="p">)</span>
 
             <span class="n">obs_3</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">obs_3</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;The observation returned by `env.reset(seed=123)` is not within the observation space.&quot;</span>
+                <span class="s2">"The observation returned by `env.reset(seed=123)` is not within the observation space."</span>
             <span class="p">)</span>
             <span class="n">seed_123_rng_3</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="p">)</span>
 
             <span class="n">obs_4</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="k">assert</span> <span class="n">obs_4</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;The observation returned by `env.reset()` is not within the observation space.&quot;</span>
+                <span class="s2">"The observation returned by `env.reset()` is not within the observation space."</span>
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">nondeterministic</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_3</span><span class="p">),</span> <span class="p">(</span>
-                    <span class="s2">&quot;Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent.&quot;</span>
+                    <span class="s2">"Using `env.reset(seed=123)` is non-deterministic as the observations are not equivalent."</span>
                 <span class="p">)</span>
                 <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_2</span><span class="p">,</span> <span class="n">obs_4</span><span class="p">),</span> <span class="p">(</span>
-                    <span class="s2">&quot;Using `env.reset(seed=123)` then `env.reset()` is non-deterministic as the observations are not equivalent.&quot;</span>
+                    <span class="s2">"Using `env.reset(seed=123)` then `env.reset()` is non-deterministic as the observations are not equivalent."</span>
                 <span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_1</span><span class="p">,</span> <span class="n">obs_3</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                        <span class="s2">&quot;Using `env.reset(seed=123)` observations are not equal although similar.&quot;</span>
+                        <span class="s2">"Using `env.reset(seed=123)` observations are not equal although similar."</span>
                     <span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_2</span><span class="p">,</span> <span class="n">obs_4</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                        <span class="s2">&quot;Using `env.reset(seed=123)` then `env.reset()` observations are not equal although similar.&quot;</span>
+                        <span class="s2">"Using `env.reset(seed=123)` then `env.reset()` observations are not equal although similar."</span>
                     <span class="p">)</span>
 
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">seed_123_rng_1</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">seed_123_rng_3</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
             <span class="p">),</span> <span class="p">(</span>
-                <span class="s2">&quot;Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`.&quot;</span>
+                <span class="s2">"Most likely the environment reset function does not call `super().reset(seed=seed)` as the random generates are not same when the same seeds are passed to `env.reset`."</span>
             <span class="p">)</span>
 
             <span class="n">obs_5</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">456</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">obs_5</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
-                <span class="s2">&quot;The observation returned by `env.reset(seed=456)` is not within the observation space.&quot;</span>
+                <span class="s2">"The observation returned by `env.reset(seed=456)` is not within the observation space."</span>
             <span class="p">)</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
                 <span class="o">!=</span> <span class="n">seed_123_rng_1</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span>
             <span class="p">),</span> <span class="p">(</span>
-                <span class="s2">&quot;Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`.&quot;</span>
+                <span class="s2">"Most likely the environment reset function does not call `super().reset(seed=seed)` as the random number generators are not different when different seeds are passed to `env.reset`."</span>
             <span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-                <span class="s2">&quot;The environment cannot be reset with a random seed, even though `seed` or `kwargs` appear in the signature. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;This should never happen, please report this issue. The error was: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"The environment cannot be reset with a random seed, even though `seed` or `kwargs` appear in the signature. "</span>
+                <span class="sa">f</span><span class="s2">"This should never happen, please report this issue. The error was: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
-        <span class="n">seed_param</span> <span class="o">=</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">)</span>
+        <span class="n">seed_param</span> <span class="o">=</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"seed"</span><span class="p">)</span>
         <span class="c1"># Check the default value is None</span>
         <span class="k">if</span> <span class="n">seed_param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">seed_param</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Actual default: </span><span class="si">{</span><span class="n">seed_param</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"The default seed argument in reset should be `None`, otherwise the environment will by default always be deterministic. "</span>
+                <span class="sa">f</span><span class="s2">"Actual default: </span><span class="si">{</span><span class="n">seed_param</span><span class="o">.</span><span class="n">default</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">gym</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
-            <span class="s2">&quot;The `reset` method does not provide a `seed` or `**kwargs` keyword argument.&quot;</span>
+            <span class="s2">"The `reset` method does not provide a `seed` or `**kwargs` keyword argument."</span>
         <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">check_reset_options</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the environment can be reset with options.</span>
+<span class="w">    </span><span class="sd">"""Check that the environment can be reset with options.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        env: The environment to check</span>
@@ -545,27 +545,27 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        AssertionError: The environment cannot be reset with options,</span>
 <span class="sd">            even though `options` or `kwargs` appear in the signature.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;options&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span> <span class="ow">or</span> <span class="p">(</span>
-        <span class="s2">&quot;kwargs&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span>
-        <span class="ow">and</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;kwargs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">kind</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span>
+    <span class="k">if</span> <span class="s2">"options"</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="s2">"kwargs"</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span>
+        <span class="ow">and</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"kwargs"</span><span class="p">]</span><span class="o">.</span><span class="n">kind</span> <span class="ow">is</span> <span class="n">inspect</span><span class="o">.</span><span class="n">Parameter</span><span class="o">.</span><span class="n">VAR_KEYWORD</span>
     <span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="p">{})</span>
         <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-                <span class="s2">&quot;The environment cannot be reset with options, even though `options` or `**kwargs` appear in the signature. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;This should never happen, please report this issue. The error was: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"The environment cannot be reset with options, even though `options` or `**kwargs` appear in the signature. "</span>
+                <span class="sa">f</span><span class="s2">"This should never happen, please report this issue. The error was: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">gym</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
-            <span class="s2">&quot;The `reset` method does not provide an `options` or `**kwargs` keyword argument.&quot;</span>
+            <span class="s2">"The `reset` method does not provide an `options` or `**kwargs` keyword argument."</span>
         <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">check_step_determinism</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">123</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the environment steps deterministically after reset.</span>
+<span class="w">    </span><span class="sd">"""Check that the environment steps deterministically after reset.</span>
 
 <span class="sd">    Note: This check assumes that seeded `reset()` is deterministic (it must have passed `check_reset_seed`) and that `step()` returns valid values (passed `env_step_passive_checker`).</span>
 <span class="sd">    Note: A single step should be enough to assert that the state transition function is deterministic (at least for most environments).</span>
@@ -573,7 +573,7 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        AssertionError: The environment cannot be step deterministically after resetting with a random seed,</span>
 <span class="sd">            or it truncates after 1 step.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">nondeterministic</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
         <span class="k">return</span>
 
@@ -584,121 +584,121 @@
     <span class="n">obs_0</span><span class="p">,</span> <span class="n">rew_0</span><span class="p">,</span> <span class="n">term_0</span><span class="p">,</span> <span class="n">trunc_0</span><span class="p">,</span> <span class="n">info_0</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
     <span class="n">orig_rng</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span>
-    <span class="k">assert</span> <span class="n">orig_rng</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;env.reset() should have initialized env._np_random&quot;</span>
+    <span class="k">assert</span> <span class="n">orig_rng</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"env.reset() should have initialized env._np_random"</span>
     <span class="n">seeded_rng</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">orig_rng</span><span class="p">)</span>
 
     <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">obs_1</span><span class="p">,</span> <span class="n">rew_1</span><span class="p">,</span> <span class="n">term_1</span><span class="p">,</span> <span class="n">trunc_1</span><span class="p">,</span> <span class="n">info_1</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">orig_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">seeded_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="p">(</span>
-        <span class="s2">&quot;The `.np_random` is not properly been updated after step.&quot;</span>
+        <span class="s2">"The `.np_random` is not properly been updated after step."</span>
     <span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_0</span><span class="p">,</span> <span class="n">obs_1</span><span class="p">),</span> <span class="p">(</span>
-        <span class="s2">&quot;Deterministic step observations are not equivalent for the same seed and action&quot;</span>
+        <span class="s2">"Deterministic step observations are not equivalent for the same seed and action"</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">obs_0</span><span class="p">,</span> <span class="n">obs_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;Step observations are not equal although similar given the same seed and action&quot;</span>
+            <span class="s2">"Step observations are not equal although similar given the same seed and action"</span>
         <span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">rew_0</span><span class="p">,</span> <span class="n">rew_1</span><span class="p">),</span> <span class="p">(</span>
-        <span class="s2">&quot;Deterministic step rewards are not equivalent for the same seed and action&quot;</span>
+        <span class="s2">"Deterministic step rewards are not equivalent for the same seed and action"</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">rew_0</span><span class="p">,</span> <span class="n">rew_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;Step rewards are not equal although similar given the same seed and action&quot;</span>
+            <span class="s2">"Step rewards are not equal although similar given the same seed and action"</span>
         <span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">term_0</span><span class="p">,</span> <span class="n">term_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="p">(</span>
-        <span class="s2">&quot;Deterministic step termination are not equivalent for the same seed and action&quot;</span>
+        <span class="s2">"Deterministic step termination are not equivalent for the same seed and action"</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="n">trunc_0</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">trunc_1</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span>
-        <span class="s2">&quot;Environment truncates after 1 step, something has gone very wrong.&quot;</span>
+        <span class="s2">"Environment truncates after 1 step, something has gone very wrong."</span>
     <span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span>
         <span class="n">info_0</span><span class="p">,</span>
         <span class="n">info_1</span><span class="p">,</span>
-    <span class="p">),</span> <span class="s2">&quot;Deterministic step info are not equivalent for the same seed and action&quot;</span>
+    <span class="p">),</span> <span class="s2">"Deterministic step info are not equivalent for the same seed and action"</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">info_0</span><span class="p">,</span> <span class="n">info_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;Step info are not equal although similar given the same seed and action&quot;</span>
+            <span class="s2">"Step info are not equal although similar given the same seed and action"</span>
         <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">check_reset_return_info_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Makes sure support for deprecated `return_info` argument is dropped.</span>
+<span class="w">    </span><span class="sd">"""Makes sure support for deprecated `return_info` argument is dropped.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        env: The environment to check</span>
 <span class="sd">    Raises:</span>
 <span class="sd">        UserWarning</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;return_info&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"return_info"</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;`return_info` is deprecated as an optional argument to `reset`. `reset`&quot;</span>
-            <span class="s2">&quot;should now always return `obs, info` where `obs` is an observation, and `info` is a dictionary&quot;</span>
-            <span class="s2">&quot;containing additional information.&quot;</span>
+            <span class="s2">"`return_info` is deprecated as an optional argument to `reset`. `reset`"</span>
+            <span class="s2">"should now always return `obs, info` where `obs` is an observation, and `info` is a dictionary"</span>
+            <span class="s2">"containing additional information."</span>
         <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">check_seed_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Makes sure support for deprecated function `seed` is dropped.</span>
+<span class="w">    </span><span class="sd">"""Makes sure support for deprecated function `seed` is dropped.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        env: The environment to check</span>
 <span class="sd">    Raises:</span>
 <span class="sd">        UserWarning</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">seed_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">seed_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">"seed"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">seed_fn</span><span class="p">):</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;Official support for the `seed` function is dropped. &quot;</span>
-            <span class="s2">&quot;Standard practice is to reset gymnasium environments using `env.reset(seed=&lt;desired seed&gt;)`&quot;</span>
+            <span class="s2">"Official support for the `seed` function is dropped. "</span>
+            <span class="s2">"Standard practice is to reset gymnasium environments using `env.reset(seed=&lt;desired seed&gt;)`"</span>
         <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">check_reset_return_type</span><span class="p">(</span><span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks that :meth:`reset` correctly returns a tuple of the form `(obs , info)`.</span>
+<span class="w">    </span><span class="sd">"""Checks that :meth:`reset` correctly returns a tuple of the form `(obs , info)`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        env: The environment to check</span>
 <span class="sd">    Raises:</span>
 <span class="sd">        AssertionError depending on spec violation</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;The result returned by `env.reset()` was not a tuple of the form `(obs, info)`, where `obs` is a observation and `info` is a dictionary containing additional information. Actual type: `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span>
+        <span class="sa">f</span><span class="s2">"The result returned by `env.reset()` was not a tuple of the form `(obs, info)`, where `obs` is a observation and `info` is a dictionary containing additional information. Actual type: `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">`"</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Calling the reset method did not return a 2-tuple, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">"Calling the reset method did not return a 2-tuple, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
     <span class="p">)</span>
 
     <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">result</span>
     <span class="k">assert</span> <span class="n">obs</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="p">(</span>
-        <span class="s2">&quot;The first element returned by `env.reset()` is not within the observation space.&quot;</span>
+        <span class="s2">"The first element returned by `env.reset()` is not within the observation space."</span>
     <span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;The second element returned by `env.reset()` was not a dictionary, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">"The second element returned by `env.reset()` was not a dictionary, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">info</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
     <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">check_space_limit</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">[</span><span class="nb">object</span><span class="p">],</span> <span class="n">space_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check the space limit for only the Box space as a test that only runs as part of `check_env`.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Check the space limit for only the Box space as a test that only runs as part of `check_env`."""</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;A Box </span><span class="si">{</span><span class="n">space_type</span><span class="si">}</span><span class="s2"> space minimum value is -infinity. This is probably too low.&quot;</span>
+                <span class="sa">f</span><span class="s2">"A Box </span><span class="si">{</span><span class="n">space_type</span><span class="si">}</span><span class="s2"> space minimum value is -infinity. This is probably too low."</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;A Box </span><span class="si">{</span><span class="n">space_type</span><span class="si">}</span><span class="s2"> space maximum value is infinity. This is probably too high.&quot;</span>
+                <span class="sa">f</span><span class="s2">"A Box </span><span class="si">{</span><span class="n">space_type</span><span class="si">}</span><span class="s2"> space maximum value is infinity. This is probably too high."</span>
             <span class="p">)</span>
 
         <span class="c1"># Check that the Box space is normalized</span>
-        <span class="k">if</span> <span class="n">space_type</span> <span class="o">==</span> <span class="s2">&quot;action&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">space_type</span> <span class="o">==</span> <span class="s2">"action"</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># for vector boxes</span>
                 <span class="k">if</span> <span class="p">(</span>
                     <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
@@ -712,8 +712,8 @@
                 <span class="p">):</span>
                     <span class="c1"># todo - Add to gymlibrary.ml?</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                        <span class="s2">&quot;For Box action spaces, we recommend using a symmetric and normalized space (range=[-1, 1] or [0, 1]). &quot;</span>
-                        <span class="s2">&quot;See https://stable-baselines3.readthedocs.io/en/master/guide/rl_tips.html for more information.&quot;</span>
+                        <span class="s2">"For Box action spaces, we recommend using a symmetric and normalized space (range=[-1, 1] or [0, 1]). "</span>
+                        <span class="s2">"See https://stable-baselines3.readthedocs.io/en/master/guide/rl_tips.html for more information."</span>
                     <span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Tuple</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">:</span>
@@ -731,62 +731,62 @@
     <span class="n">skip_render_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">skip_close_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that an environment follows Gymnasium&#39;s API.</span>
+<span class="w">    </span><span class="sd">"""Check that an environment follows Gymnasium's API.</span>
 
 <span class="sd">    .. py:currentmodule:: gymnasium.Env</span>
 
-<span class="sd">    To ensure that an environment is implemented &quot;correctly&quot;, ``check_env`` checks that the :attr:`observation_space` and :attr:`action_space` are correct.</span>
+<span class="sd">    To ensure that an environment is implemented "correctly", ``check_env`` checks that the :attr:`observation_space` and :attr:`action_space` are correct.</span>
 <span class="sd">    Furthermore, the function will call the :meth:`reset`, :meth:`step` and :meth:`render` functions with a variety of values.</span>
 
-<span class="sd">    We highly recommend users call this function after an environment is constructed and within a project&#39;s continuous integration to keep an environment update with Gymnasium&#39;s API.</span>
+<span class="sd">    We highly recommend users call this function after an environment is constructed and within a project's continuous integration to keep an environment update with Gymnasium's API.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        env: The Gym environment that will be checked</span>
 <span class="sd">        warn: Ignored, previously silenced particular warnings</span>
 <span class="sd">        skip_render_check: Whether to skip the checks for the render method. False by default (useful for the CI)</span>
 <span class="sd">        skip_close_check: Whether to skip the checks for the close method. False by default</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">warn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;`check_env(warn=...)` parameter is now ignored.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"`check_env(warn=...)` parameter is now ignored."</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&lt;class &#39;gym.core.Env&#39;&gt;&quot;</span>
-            <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&lt;class &#39;gym.core.Wrapper&#39;&gt;&quot;</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"&lt;class 'gym.core.Env'&gt;"</span>
+            <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"&lt;class 'gym.core.Wrapper'&gt;"</span>
         <span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s2">&quot;Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. &quot;</span>
-                <span class="s2">&quot;See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+                <span class="s2">"Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "</span>
+                <span class="s2">"See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The environment must inherit from the gymnasium.Env class, actual class: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
-                <span class="s2">&quot;See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+                <span class="sa">f</span><span class="s2">"The environment must inherit from the gymnasium.Env class, actual class: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">. "</span>
+                <span class="s2">"See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."</span>
             <span class="p">)</span>
     <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">env</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The environment (</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">) is different from the unwrapped version (</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="si">}</span><span class="s2">). This could effect the environment checker as the environment most likely has a wrapper applied to it. We recommend using the raw environment for `check_env` using `env.unwrapped`.&quot;</span>
+            <span class="sa">f</span><span class="s2">"The environment (</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">) is different from the unwrapped version (</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="si">}</span><span class="s2">). This could effect the environment checker as the environment most likely has a wrapper applied to it. We recommend using the raw environment for `check_env` using `env.unwrapped`."</span>
         <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jax&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"jax"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">JaxToNumpy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"torch"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TorchToNumpy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
     <span class="c1"># ============= Check the spaces (observation and action) ================</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;action_space&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">"action_space"</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-            <span class="s2">&quot;The environment must specify an action space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+            <span class="s2">"The environment must specify an action space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."</span>
         <span class="p">)</span>
     <span class="n">check_action_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
-    <span class="n">check_space_limit</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">)</span>
+    <span class="n">check_space_limit</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="s2">"action"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;observation_space&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">"observation_space"</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-            <span class="s2">&quot;The environment must specify an observation space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+            <span class="s2">"The environment must specify an observation space. See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."</span>
         <span class="p">)</span>
     <span class="n">check_observation_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
-    <span class="n">check_space_limit</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="s2">&quot;observation&quot;</span><span class="p">)</span>
+    <span class="n">check_space_limit</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="s2">"observation"</span><span class="p">)</span>
 
     <span class="c1"># ==== Check the reset method ====</span>
     <span class="n">check_seed_deprecation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
@@ -808,14 +808,14 @@
             <span class="n">env_render_passive_checker</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">render_mode</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;render_modes&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">render_mode</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"render_modes"</span><span class="p">]:</span>
                 <span class="n">new_env</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">render_mode</span><span class="o">=</span><span class="n">render_mode</span><span class="p">)</span>
                 <span class="n">new_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
                 <span class="n">env_render_passive_checker</span><span class="p">(</span><span class="n">new_env</span><span class="p">)</span>
                 <span class="n">new_env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Not able to test alternative render modes due to the environment not having a spec. Try instantiating the environment through `gymnasium.make`&quot;</span>
+                <span class="s2">"Not able to test alternative render modes due to the environment not having a spec. Try instantiating the environment through `gymnasium.make`"</span>
             <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_close_check</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -825,7 +825,7 @@
             <span class="n">new_env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Calling `env.close()` on the closed environment should be allowed, but it raised an exception: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Calling `env.close()` on the closed environment should be allowed, but it raised an exception: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span></div>
 
 </pre></div>

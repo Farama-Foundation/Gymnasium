@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.stateful_action</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Stateful action wrappers - ``StickyAction`` and ``RepeatAction``.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Stateful action wrappers - ``StickyAction`` and ``RepeatAction``."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -379,7 +379,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">WrapperObsType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidBound</span><span class="p">,</span> <span class="n">InvalidProbability</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;StickyAction&quot;</span><span class="p">,</span> <span class="s2">&quot;RepeatAction&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"StickyAction"</span><span class="p">,</span> <span class="s2">"RepeatAction"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="StickyAction">
@@ -387,7 +387,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">StickyAction</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">ActionWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds a probability that the action is repeated for the same ``step`` function.</span>
+<span class="w">    </span><span class="sd">"""Adds a probability that the action is repeated for the same ``step`` function.</span>
 
 <span class="sd">    This wrapper follows the implementation proposed by `Machado et al., 2018 &lt;https://arxiv.org/pdf/1709.06009.pdf&gt;`_</span>
 <span class="sd">    in Section 5.2 on page 12, and adds the possibility to repeat the action for</span>
@@ -397,7 +397,7 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env = StickyAction(env, repeat_action_probability=0.9)</span>
 <span class="sd">        &gt;&gt;&gt; env.reset(seed=123)</span>
 <span class="sd">        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})</span>
@@ -413,7 +413,7 @@
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v1.0.0 - Initially added</span>
 <span class="sd">     * v1.1.0 - Add `repeat_action_duration` argument for dynamic number of sticky actions</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -421,7 +421,7 @@
         <span class="n">repeat_action_probability</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">repeat_action_duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize StickyAction wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize StickyAction wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): the wrapped environment,</span>
@@ -429,10 +429,10 @@
 <span class="sd">            repeat_action_duration (int | tuple[int, int]): the number of steps</span>
 <span class="sd">                the action is repeated. It can be either an int (for deterministic</span>
 <span class="sd">                repeats) or a tuple[int, int] for a range of stochastic number of repeats.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">repeat_action_probability</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidProbability</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`repeat_action_probability` should be in the interval [0,1). Received </span><span class="si">{</span><span class="n">repeat_action_probability</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"`repeat_action_probability` should be in the interval [0,1). Received </span><span class="si">{</span><span class="n">repeat_action_probability</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="c1"># The pair of bounds that the number of repeats is drawn from.</span>
@@ -445,19 +445,19 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">duration_range</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` should be either an integer or a tuple. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"`repeat_action_duration` should be either an integer or a tuple. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">duration_range</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` should be a tuple or a list of two integers. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"`repeat_action_duration` should be a tuple or a list of two integers. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">duration_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">duration_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` is not a valid bound. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"`repeat_action_duration` is not a valid bound. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">duration_range</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`repeat_action_duration` should be larger or equal than 1. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"`repeat_action_duration` should be larger or equal than 1. Received </span><span class="si">{</span><span class="n">duration_range</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -478,7 +478,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Reset the environment."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_action</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_sticky_actions</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_repeats</span> <span class="o">=</span> <span class="mi">0</span>
@@ -487,8 +487,8 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the action.&quot;&quot;&quot;</span>
-        <span class="c1"># either the agent was already &quot;stuck&quot; into repeats, or a new series of repeats is triggered</span>
+<span class="w">        </span><span class="sd">"""Execute the action."""</span>
+        <span class="c1"># either the agent was already "stuck" into repeats, or a new series of repeats is triggered</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_sticky_actions</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">last_action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">repeat_action_probability</span>
@@ -503,7 +503,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">is_sticky_actions</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">repeats_taken</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="c1"># repeats are done, reset &quot;stuck&quot; status</span>
+        <span class="c1"># repeats are done, reset "stuck" status</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_sticky_actions</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_repeats</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">repeats_taken</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">is_sticky_actions</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_repeats</span> <span class="o">=</span> <span class="mi">0</span>
@@ -519,14 +519,14 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">RepeatAction</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Repeats the given action for ``num_repeats`` steps, accumulating the reward.</span>
+<span class="w">    </span><span class="sd">"""Repeats the given action for ``num_repeats`` steps, accumulating the reward.</span>
 
 <span class="sd">    This is useful for environments where the agent does not need to make</span>
 <span class="sd">    a decision at every time step. By repeating actions, the effective</span>
 <span class="sd">    decision frequency is reduced, which can speed up training and make</span>
 <span class="sd">    exploration more efficient.</span>
 
-<span class="sd">    Unlike :class:`StickyAction`, which *stochastically* replaces the agent&#39;s</span>
+<span class="sd">    Unlike :class:`StickyAction`, which *stochastically* replaces the agent's</span>
 <span class="sd">    action with the *previous* action, ``ActionRepeat`` *deterministically*</span>
 <span class="sd">    executes the *current* action multiple times and returns the accumulated</span>
 <span class="sd">    reward together with the final observation. If the episode terminates or</span>
@@ -536,7 +536,7 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env = RepeatAction(env, num_repeats=4)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, reward, terminated, truncated, info = env.step(1)</span>
@@ -545,22 +545,22 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v1.3.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">num_repeats</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize ActionRepeat wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize ActionRepeat wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The wrapped environment.</span>
 <span class="sd">            num_repeats (int): The number of times to repeat each action.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">num_repeats</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The num_repeats is expected to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">num_repeats</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"The num_repeats is expected to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">num_repeats</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">num_repeats</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The num_repeats value needs to be equal or greater than one, actual value: </span><span class="si">{</span><span class="n">num_repeats</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"The num_repeats value needs to be equal or greater than one, actual value: </span><span class="si">{</span><span class="n">num_repeats</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_repeats</span><span class="o">=</span><span class="n">num_repeats</span><span class="p">)</span>
@@ -571,7 +571,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Step the environment, repeating the action for ``num_repeats`` steps.</span>
+<span class="w">        </span><span class="sd">"""Step the environment, repeating the action for ``num_repeats`` steps.</span>
 
 <span class="sd">        The reward returned is the sum of rewards from all inner steps.</span>
 <span class="sd">        If the episode terminates or is truncated during repetition,</span>
@@ -582,7 +582,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The last observation, accumulated reward, terminated, truncated, and info.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">total_reward</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">terminated</span> <span class="o">=</span> <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>

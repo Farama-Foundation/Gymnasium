@@ -367,11 +367,11 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.transform_reward</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A collection of wrappers for modifying the reward.</span>
+<span></span><span class="sd">"""A collection of wrappers for modifying the reward.</span>
 
 <span class="sd">* ``TransformReward`` - Transforms the reward by a function</span>
 <span class="sd">* ``ClipReward`` - Clips the reward between a minimum and maximum value</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -384,7 +384,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidBound</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TransformReward&quot;</span><span class="p">,</span> <span class="s2">&quot;ClipReward&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"TransformReward"</span><span class="p">,</span> <span class="s2">"ClipReward"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="TransformReward">
@@ -392,14 +392,14 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">TransformReward</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies a function to the ``reward`` received from the environment&#39;s ``step``.</span>
+<span class="w">    </span><span class="sd">"""Applies a function to the ``reward`` received from the environment's ``step``.</span>
 
 <span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.TransformReward`.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import TransformReward</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env = TransformReward(env, lambda r: 2 * r + 1)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset()</span>
 <span class="sd">        &gt;&gt;&gt; _, rew, _, _, _ = env.step(0)</span>
@@ -408,30 +408,30 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.15.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">SupportsFloat</span><span class="p">],</span> <span class="n">SupportsFloat</span><span class="p">],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize TransformReward wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize TransformReward wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to wrap</span>
 <span class="sd">            func: (Callable): The function to apply to reward</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">SupportsFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SupportsFloat</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to reward.</span>
+<span class="w">        </span><span class="sd">"""Apply function to reward.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            reward (Union[float, int, np.ndarray]): environment&#39;s reward</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            reward (Union[float, int, np.ndarray]): environment's reward</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span></div>
 
 
@@ -439,14 +439,14 @@
 <div class="viewcode-block" id="ClipReward">
 <a class="viewcode-back" href="../../../../api/wrappers/reward_wrappers/#gymnasium.wrappers.ClipReward">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ClipReward</span><span class="p">(</span><span class="n">TransformReward</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clips the rewards for an environment between an upper and lower bound.</span>
+<span class="w">    </span><span class="sd">"""Clips the rewards for an environment between an upper and lower bound.</span>
 
 <span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.ClipReward`.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import ClipReward</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env = ClipReward(env, 0, 0.5)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset()</span>
 <span class="sd">        &gt;&gt;&gt; _, rew, _, _, _ = env.step(1)</span>
@@ -455,7 +455,7 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v1.0.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -463,20 +463,20 @@
         <span class="n">min_reward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_reward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize ClipRewards wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize ClipRewards wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to wrap</span>
 <span class="sd">            min_reward (Union[float, np.ndarray]): lower bound to apply</span>
 <span class="sd">            max_reward (Union[float, np.ndarray]): higher bound to apply</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">min_reward</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_reward</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span><span class="s2">&quot;Both `min_reward` and `max_reward` cannot be None&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span><span class="s2">"Both `min_reward` and `max_reward` cannot be None"</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">max_reward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">min_reward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">max_reward</span> <span class="o">-</span> <span class="n">min_reward</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Min reward (</span><span class="si">{</span><span class="n">min_reward</span><span class="si">}</span><span class="s2">) must be smaller than max reward (</span><span class="si">{</span><span class="n">max_reward</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Min reward (</span><span class="si">{</span><span class="n">min_reward</span><span class="si">}</span><span class="s2">) must be smaller than max reward (</span><span class="si">{</span><span class="n">max_reward</span><span class="si">}</span><span class="s2">)"</span>
                 <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>

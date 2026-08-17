@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.vector.utils.shared_memory</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utility functions for vector environments to share memory between processes.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Utility functions for vector environments to share memory between processes."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -401,13 +401,13 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Never</span><span class="p">,</span> <span class="n">Unpack</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;create_shared_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;read_from_shared_memory&quot;</span><span class="p">,</span> <span class="s2">&quot;write_to_shared_memory&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"create_shared_memory"</span><span class="p">,</span> <span class="s2">"read_from_shared_memory"</span><span class="p">,</span> <span class="s2">"write_to_shared_memory"</span><span class="p">]</span>
 
 
 <span class="n">_SharedMemory</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">SynchronizedArray</span>
 <span class="n">_SharedMemoryOneOf</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span>
-    <span class="s2">&quot;SynchronizedArray[c_int64]&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Unpack[tuple[SynchronizedArray[Any], ...]]&quot;</span><span class="p">,</span>
+    <span class="s2">"SynchronizedArray[c_int64]"</span><span class="p">,</span>
+    <span class="s2">"Unpack[tuple[SynchronizedArray[Any], ...]]"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -417,7 +417,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">create_shared_memory</span><span class="p">(</span>
     <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">mp</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_SharedMemory</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a shared memory object, to be shared across processes.</span>
+<span class="w">    </span><span class="sd">"""Create a shared memory object, to be shared across processes.</span>
 
 <span class="sd">    This eventually contains the observations from the vectorized environment.</span>
 
@@ -431,14 +431,14 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        CustomSpaceError: Space is not a valid :class:`gymnasium.Space` instance</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">Space</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">CustomSpaceError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Space of type `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` doesn&#39;t have an registered `create_shared_memory` function. Register `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` for `create_shared_memory` to support it.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Space of type `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` doesn't have an registered `create_shared_memory` function. Register `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` for `create_shared_memory` to support it."</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The space provided to `create_shared_memory` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"The space provided to `create_shared_memory` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span></div>
 
 
@@ -456,7 +456,7 @@
     <span class="k">assert</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">n</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
     <span class="n">dtype</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span>
-    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;?&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">"?"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="n">c_bool</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">typecodes</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
@@ -507,7 +507,7 @@
     <span class="n">space</span><span class="p">:</span> <span class="n">Graph</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ModuleType</span> <span class="o">=</span> <span class="n">mp</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Never</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;As </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2"> has a dynamic shape so its not possible to make a static shared memory. For `AsyncVectorEnv`, disable `shared_memory`.&quot;</span>
+        <span class="sa">f</span><span class="s2">"As </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2"> has a dynamic shape so its not possible to make a static shared memory. For `AsyncVectorEnv`, disable `shared_memory`."</span>
     <span class="p">)</span>
 
 
@@ -517,7 +517,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">read_from_shared_memory</span><span class="p">(</span>
     <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">:</span> <span class="n">_SharedMemory</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the batch of observations from shared memory as a numpy array.</span>
+<span class="w">    </span><span class="sd">"""Read the batch of observations from shared memory as a numpy array.</span>
 
 <span class="sd">    ..notes::</span>
 <span class="sd">        The numpy array objects returned by `read_from_shared_memory` shares the</span>
@@ -535,14 +535,14 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        CustomSpaceError: Space is not a valid :class:`gymnasium.Space` instance</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">Space</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">CustomSpaceError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Space of type `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` doesn&#39;t have an registered `read_from_shared_memory` function. Register `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` for `read_from_shared_memory` to support it.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Space of type `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` doesn't have an registered `read_from_shared_memory` function. Register `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` for `read_from_shared_memory` to support it."</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The space provided to `read_from_shared_memory` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"The space provided to `read_from_shared_memory` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span></div>
 
 
@@ -595,7 +595,7 @@
     <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">space</span><span class="o">.</span><span class="n">max_length</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-        <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">space</span><span class="o">.</span><span class="n">character_list</span><span class="p">[</span><span class="n">val</span><span class="p">]</span>
                 <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span>
@@ -632,7 +632,7 @@
     <span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">shared_memory</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">SynchronizedArray</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write the observation of a single environment into shared memory.</span>
+<span class="w">    </span><span class="sd">"""Write the observation of a single environment into shared memory.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        space: Observation space of a single environment in the vectorized environment.</span>
@@ -643,14 +643,14 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">        CustomSpaceError: Space is not a valid :class:`gymnasium.Space` instance</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">Space</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">CustomSpaceError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Space of type `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` doesn&#39;t have an registered `write_to_shared_memory` function. Register `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` for `write_to_shared_memory` to support it.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Space of type `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` doesn't have an registered `write_to_shared_memory` function. Register `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` for `write_to_shared_memory` to support it."</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The space provided to `write_to_shared_memory` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"The space provided to `write_to_shared_memory` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span></div>
 
 
@@ -719,7 +719,7 @@
     <span class="n">destination</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">shared_memory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_obj</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>  <span class="c1"># ty:ignore[no-matching-overload]</span>
     <span class="n">np</span><span class="o">.</span><span class="n">copyto</span><span class="p">(</span><span class="n">destination</span><span class="p">[</span><span class="n">index</span> <span class="p">:</span> <span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span> <span class="n">subspace_idx</span><span class="p">)</span>
 
-    <span class="c1"># only the subspace&#39;s memory is updated with the sample value, ignoring the other memories as data might not match</span>
+    <span class="c1"># only the subspace's memory is updated with the sample value, ignoring the other memories as data might not match</span>
     <span class="n">write_to_shared_memory</span><span class="p">(</span>
         <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">[</span><span class="n">subspace_idx</span><span class="p">],</span> <span class="n">index</span><span class="p">,</span> <span class="n">space_value</span><span class="p">,</span> <span class="n">shared_memory</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="n">subspace_idx</span><span class="p">]</span>
     <span class="p">)</span>

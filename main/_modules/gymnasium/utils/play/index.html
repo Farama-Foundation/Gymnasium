@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.utils.play</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utilities of visualising an environment.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Utilities of visualising an environment."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -395,32 +395,32 @@
     <span class="kn">from</span><span class="w"> </span><span class="nn">pygame.event</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">gym</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">DependencyNotInstalled</span><span class="p">(</span>
-        <span class="s1">&#39;pygame is not installed, run `pip install &quot;gymnasium[classic_control]&quot;`&#39;</span>
+        <span class="s1">'pygame is not installed, run `pip install "gymnasium[classic_control]"`'</span>
     <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
 
-    <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;TkAgg&quot;</span><span class="p">)</span>
+    <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">"TkAgg"</span><span class="p">)</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;matplotlib is not installed, run `pip install &quot;gymnasium[other]&quot;`&#39;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">'matplotlib is not installed, run `pip install "gymnasium[other]"`'</span><span class="p">)</span>
     <span class="n">matplotlib</span><span class="p">,</span> <span class="n">plt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
 
-<span class="n">_ObsT_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_ObsT_contra&quot;</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">_ActT_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_ActT_contra&quot;</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">_ActionKey</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_ActionKey&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span>
+<span class="n">_ObsT_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_ObsT_contra"</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">_ActT_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_ActT_contra"</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">_ActionKey</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_ActionKey"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MissingKeysToAction</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raised when the environment does not have a default ``keys_to_action`` mapping.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Raised when the environment does not have a default ``keys_to_action`` mapping."""</span>
 
 
 <div class="viewcode-block" id="PlayableGame">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayableGame">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PlayableGame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps an environment allowing keyboard inputs to interact with the environment.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Wraps an environment allowing keyboard inputs to interact with the environment."""</span>
 
     <span class="n">env</span><span class="p">:</span> <span class="n">Env</span>
     <span class="n">relevant_keys</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
@@ -436,21 +436,21 @@
         <span class="n">keys_to_action</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">zoom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wraps an environment with a dictionary of keyboard buttons to action and if to zoom in on the environment.</span>
+<span class="w">        </span><span class="sd">"""Wraps an environment with a dictionary of keyboard buttons to action and if to zoom in on the environment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to play</span>
 <span class="sd">            keys_to_action: The dictionary of keyboard tuples and action value</span>
 <span class="sd">            zoom: If to zoom in on the environment render</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span> <span class="s2">&quot;rgb_array_list&quot;</span><span class="p">}:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"rgb_array"</span><span class="p">,</span> <span class="s2">"rgb_array_list"</span><span class="p">}:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;PlayableGame wrapper works only with rgb_array and rgb_array_list render modes, &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;but your environment render_mode = </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="s2">"PlayableGame wrapper works only with rgb_array and rgb_array_list render modes, "</span>
+                <span class="sa">f</span><span class="s2">"but your environment render_mode = </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">zoom</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">zoom</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zoom must be a positive float, got </span><span class="si">{</span><span class="n">zoom</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Zoom must be a positive float, got </span><span class="si">{</span><span class="n">zoom</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">relevant_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_relevant_keys</span><span class="p">(</span><span class="n">keys_to_action</span><span class="p">)</span>
@@ -465,17 +465,17 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">keys_to_action</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">keys_to_action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">has_wrapper_attr</span><span class="p">(</span><span class="s2">&quot;get_keys_to_action&quot;</span><span class="p">):</span>
-                <span class="n">keys_to_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="s2">&quot;get_keys_to_action&quot;</span><span class="p">)()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">has_wrapper_attr</span><span class="p">(</span><span class="s2">"get_keys_to_action"</span><span class="p">):</span>
+                <span class="n">keys_to_action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="s2">"get_keys_to_action"</span><span class="p">)()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="k">raise</span> <span class="n">MissingKeysToAction</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> does not have explicit key to action mapping, &quot;</span>
-                    <span class="s2">&quot;please specify one manually, `play(env, keys_to_action=...)`&quot;</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> does not have explicit key to action mapping, "</span>
+                    <span class="s2">"please specify one manually, `play(env, keys_to_action=...)`"</span>
                 <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keys_to_action</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;keys_to_action must be a dictionary, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">keys_to_action</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"keys_to_action must be a dictionary, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">keys_to_action</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="n">relevant_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">sum</span><span class="p">((</span><span class="nb">list</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys_to_action</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="p">[]))</span>
         <span class="k">return</span> <span class="n">relevant_keys</span>
@@ -495,14 +495,14 @@
 <div class="viewcode-block" id="PlayableGame.process_event">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayableGame.process_event">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">process_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Event</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Processes a PyGame event.</span>
+<span class="w">        </span><span class="sd">"""Processes a PyGame event.</span>
 
 <span class="sd">        In particular, this function is used to keep track of which buttons are currently pressed</span>
 <span class="sd">        and to exit the :func:`play` function when the PyGame window is closed.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            event: The event to process</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">pygame</span><span class="o">.</span><span class="n">KEYDOWN</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">relevant_keys</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pressed_keys</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
@@ -535,14 +535,14 @@
     <span class="n">video_size</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="n">transpose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Displays a numpy array on screen.</span>
+<span class="w">    </span><span class="sd">"""Displays a numpy array on screen.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        screen: The screen to show the array on</span>
 <span class="sd">        arr: The array to show</span>
 <span class="sd">        video_size: The video size of the screen</span>
 <span class="sd">        transpose: If to transpose the array on the screen</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arr</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
     <span class="n">pyg_img</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">surfarray</span><span class="o">.</span><span class="n">make_surface</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">transpose</span> <span class="k">else</span> <span class="n">arr</span><span class="p">)</span>
     <span class="n">pyg_img</span> <span class="o">=</span> <span class="n">pygame</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">pyg_img</span><span class="p">,</span> <span class="n">video_size</span><span class="p">)</span>
@@ -568,7 +568,7 @@
     <span class="n">noop</span><span class="p">:</span> <span class="n">ActType</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">wait_on_player</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Allows the user to play the environment using a keyboard.</span>
+<span class="w">    </span><span class="sd">"""Allows the user to play the environment using a keyboard.</span>
 
 <span class="sd">    If playing in a turn-based environment, set wait_on_player to True.</span>
 
@@ -576,7 +576,7 @@
 <span class="sd">        env: Environment to use for playing.</span>
 <span class="sd">        transpose: If this is ``True``, the output of observation is transposed. Defaults to ``True``.</span>
 <span class="sd">        fps: Maximum number of steps of the environment executed every second. If ``None`` (the default),</span>
-<span class="sd">            ``env.metadata[&quot;render_fps&quot;&quot;]`` (or 30, if the environment does not specify &quot;render_fps&quot;) is used.</span>
+<span class="sd">            ``env.metadata["render_fps""]`` (or 30, if the environment does not specify "render_fps") is used.</span>
 <span class="sd">        zoom: Zoom the observation in, ``zoom`` amount, should be positive float</span>
 <span class="sd">        callback: If a callback is provided, it will be executed after every step. It takes the following input:</span>
 
@@ -591,12 +591,12 @@
 <span class="sd">            Different formats are supported: Key combinations can either be expressed as a tuple of unicode code</span>
 <span class="sd">            points of the keys, as a tuple of characters, or as a string where each character of the string represents</span>
 <span class="sd">            one key.</span>
-<span class="sd">            For example if pressing &#39;w&#39; and space at the same time is supposed</span>
+<span class="sd">            For example if pressing 'w' and space at the same time is supposed</span>
 <span class="sd">            to trigger action number 2 then ``key_to_action`` dict could look like this:</span>
 
 <span class="sd">                &gt;&gt;&gt; key_to_action = {</span>
 <span class="sd">                ...    # ...</span>
-<span class="sd">                ...    (ord(&#39;w&#39;), ord(&#39; &#39;)): 2</span>
+<span class="sd">                ...    (ord('w'), ord(' ')): 2</span>
 <span class="sd">                ...    # ...</span>
 <span class="sd">                ... }</span>
 
@@ -604,7 +604,7 @@
 
 <span class="sd">                &gt;&gt;&gt; key_to_action = {</span>
 <span class="sd">                ...    # ...</span>
-<span class="sd">                ...    (&quot;w&quot;, &quot; &quot;): 2</span>
+<span class="sd">                ...    ("w", " "): 2</span>
 <span class="sd">                ...    # ...</span>
 <span class="sd">                ... }</span>
 
@@ -612,7 +612,7 @@
 
 <span class="sd">                &gt;&gt;&gt; key_to_action = {</span>
 <span class="sd">                ...    # ...</span>
-<span class="sd">                ...    &quot;w &quot;: 2</span>
+<span class="sd">                ...    "w ": 2</span>
 <span class="sd">                ...    # ...</span>
 <span class="sd">                ... }</span>
 
@@ -625,77 +625,77 @@
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.utils.play import play</span>
-<span class="sd">        &gt;&gt;&gt; play(gym.make(&quot;CarRacing-v3&quot;, render_mode=&quot;rgb_array&quot;),  # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; play(gym.make("CarRacing-v3", render_mode="rgb_array"),  # doctest: +SKIP</span>
 <span class="sd">        ...     keys_to_action={</span>
-<span class="sd">        ...         &quot;w&quot;: np.array([0, 0.7, 0], dtype=np.float32),</span>
-<span class="sd">        ...         &quot;a&quot;: np.array([-1, 0, 0], dtype=np.float32),</span>
-<span class="sd">        ...         &quot;s&quot;: np.array([0, 0, 1], dtype=np.float32),</span>
-<span class="sd">        ...         &quot;d&quot;: np.array([1, 0, 0], dtype=np.float32),</span>
-<span class="sd">        ...         &quot;wa&quot;: np.array([-1, 0.7, 0], dtype=np.float32),</span>
-<span class="sd">        ...         &quot;dw&quot;: np.array([1, 0.7, 0], dtype=np.float32),</span>
-<span class="sd">        ...         &quot;ds&quot;: np.array([1, 0, 1], dtype=np.float32),</span>
-<span class="sd">        ...         &quot;as&quot;: np.array([-1, 0, 1], dtype=np.float32),</span>
+<span class="sd">        ...         "w": np.array([0, 0.7, 0], dtype=np.float32),</span>
+<span class="sd">        ...         "a": np.array([-1, 0, 0], dtype=np.float32),</span>
+<span class="sd">        ...         "s": np.array([0, 0, 1], dtype=np.float32),</span>
+<span class="sd">        ...         "d": np.array([1, 0, 0], dtype=np.float32),</span>
+<span class="sd">        ...         "wa": np.array([-1, 0.7, 0], dtype=np.float32),</span>
+<span class="sd">        ...         "dw": np.array([1, 0.7, 0], dtype=np.float32),</span>
+<span class="sd">        ...         "ds": np.array([1, 0, 1], dtype=np.float32),</span>
+<span class="sd">        ...         "as": np.array([-1, 0, 1], dtype=np.float32),</span>
 <span class="sd">        ...     },</span>
 <span class="sd">        ...     noop=np.array([0, 0, 0], dtype=np.float32)</span>
 <span class="sd">        ... )</span>
 
-<span class="sd">        Above code works also if the environment is wrapped, so it&#39;s particularly useful in</span>
+<span class="sd">        Above code works also if the environment is wrapped, so it's particularly useful in</span>
 <span class="sd">        verifying that the frame-level preprocessing does not render the game</span>
 <span class="sd">        unplayable.</span>
 
 <span class="sd">        If you wish to plot real time statistics as you play, you can use</span>
-<span class="sd">        :class:`PlayPlot`. Here&#39;s a sample code for plotting the reward</span>
+<span class="sd">        :class:`PlayPlot`. Here's a sample code for plotting the reward</span>
 <span class="sd">        for last 150 steps.</span>
 
 <span class="sd">        &gt;&gt;&gt; from gymnasium.utils.play import PlayPlot, play</span>
 <span class="sd">        &gt;&gt;&gt; def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):</span>
 <span class="sd">        ...        return [rew,]</span>
-<span class="sd">        &gt;&gt;&gt; plotter = PlayPlot(callback, 150, [&quot;reward&quot;])             # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; play(gym.make(&quot;CartPole-v1&quot;), callback=plotter.callback)  # doctest: +SKIP</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; plotter = PlayPlot(callback, 150, ["reward"])             # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; play(gym.make("CartPole-v1"), callback=plotter.callback)  # doctest: +SKIP</span>
+<span class="sd">    """</span>
     <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">keys_to_action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">has_wrapper_attr</span><span class="p">(</span><span class="s2">&quot;get_keys_to_action&quot;</span><span class="p">):</span>
-            <span class="n">keys_to_action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="s2">&quot;get_keys_to_action&quot;</span><span class="p">)()</span>
+        <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">has_wrapper_attr</span><span class="p">(</span><span class="s2">"get_keys_to_action"</span><span class="p">):</span>
+            <span class="n">keys_to_action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="s2">"get_keys_to_action"</span><span class="p">)()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;The environment must have an `env.spec` to auto-detect missing keys to action mappings.&quot;</span>
+                    <span class="s2">"The environment must have an `env.spec` to auto-detect missing keys to action mappings."</span>
                 <span class="p">)</span>
             <span class="k">raise</span> <span class="n">MissingKeysToAction</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> does not have explicit key to action mapping, &quot;</span>
-                <span class="s2">&quot;please specify one manually&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> does not have explicit key to action mapping, "</span>
+                <span class="s2">"please specify one manually"</span>
             <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">keys_to_action</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;keys_to_action dictionary cannot be None&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"keys_to_action dictionary cannot be None"</span><span class="p">)</span>
 
     <span class="c1"># validate the `keys_to_action` set provided</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">keys_to_action</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;keys_to_action must be a dictionary, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">keys_to_action</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"keys_to_action must be a dictionary, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">keys_to_action</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">keys_to_action</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Key combinations in keys_to_action tuples cannot be empty&quot;</span>
+                    <span class="s2">"Key combinations in keys_to_action tuples cannot be empty"</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;All keys in key combination tuple must be integers or strings, got </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"All keys in key combination tuple must be integers or strings, got </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Keys in keys_to_action must be integers or strings, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Keys in keys_to_action must be integers or strings, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">action</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Action </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2"> is not a valid action in the environment action space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Action </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2"> is not a valid action in the environment action space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
     <span class="n">key_code_to_action</span> <span class="o">=</span> <span class="p">{}</span>
@@ -710,10 +710,10 @@
     <span class="n">game</span> <span class="o">=</span> <span class="n">PlayableGame</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">key_code_to_action</span><span class="p">,</span> <span class="n">zoom</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">fps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">fps</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_fps&quot;</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+        <span class="n">fps</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"render_fps"</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fps</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected env.metadata[&#39;render_fps&#39;] to be an integer, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">fps</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Expected env.metadata['render_fps'] to be an integer, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">fps</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
     <span class="n">done</span><span class="p">,</span> <span class="n">obs</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">None</span>
@@ -752,7 +752,7 @@
 <div class="viewcode-block" id="PlayPlot">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.play.PlayPlot">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PlayPlot</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">_ObsT_contra</span><span class="p">,</span> <span class="n">_ActT_contra</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provides a callback to create live plots of arbitrary metrics when using :func:`play`.</span>
+<span class="w">    </span><span class="sd">"""Provides a callback to create live plots of arbitrary metrics when using :func:`play`.</span>
 
 <span class="sd">    This class is instantiated with a function that accepts information about a single environment transition:</span>
 <span class="sd">        - obs_t: observation before performing action</span>
@@ -767,7 +767,7 @@
 <span class="sd">    For instance, the function may look like this::</span>
 
 <span class="sd">        &gt;&gt;&gt; def compute_metrics(obs_t, obs_tp, action, reward, terminated, truncated, info):</span>
-<span class="sd">        ...     return [reward, info[&quot;cumulative_reward&quot;], np.linalg.norm(action)]</span>
+<span class="sd">        ...     return [reward, info["cumulative_reward"], np.linalg.norm(action)]</span>
 
 <span class="sd">    :class:`PlayPlot` provides the method :meth:`callback` which will pass its arguments along to that function</span>
 <span class="sd">    and uses the returned values to update live plots of the metrics.</span>
@@ -775,9 +775,9 @@
 <span class="sd">    Typically, this :meth:`callback` will be used in conjunction with :func:`play` to see how the metrics evolve as you play::</span>
 
 <span class="sd">        &gt;&gt;&gt; plotter = PlayPlot(compute_metrics, horizon_timesteps=200,                               # doctest: +SKIP</span>
-<span class="sd">        ...                    plot_names=[&quot;Immediate Rew.&quot;, &quot;Cumulative Rew.&quot;, &quot;Action Magnitude&quot;])</span>
+<span class="sd">        ...                    plot_names=["Immediate Rew.", "Cumulative Rew.", "Action Magnitude"])</span>
 <span class="sd">        &gt;&gt;&gt; play(your_env, callback=plotter.callback)                                                # doctest: +SKIP</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">data_callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span>
         <span class="p">[</span><span class="n">_ObsT_contra</span><span class="p">,</span> <span class="n">_ObsT_contra</span><span class="p">,</span> <span class="n">_ActT_contra</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
@@ -800,7 +800,7 @@
         <span class="n">horizon_timesteps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">plot_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor of :class:`PlayPlot`.</span>
+<span class="w">        </span><span class="sd">"""Constructor of :class:`PlayPlot`.</span>
 
 <span class="sd">        The function ``callback`` that is passed to this constructor should return</span>
 <span class="sd">        a list of metrics that is of length ``len(plot_names)``.</span>
@@ -812,14 +812,14 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            DependencyNotInstalled: If matplotlib is not installed</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_callback</span> <span class="o">=</span> <span class="n">callback</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">horizon_timesteps</span> <span class="o">=</span> <span class="n">horizon_timesteps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plot_names</span> <span class="o">=</span> <span class="n">plot_names</span>
 
         <span class="k">if</span> <span class="n">plt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-                <span class="s1">&#39;matplotlib is not installed, run `pip install &quot;gymnasium[other]&quot;`&#39;</span>
+                <span class="s1">'matplotlib is not installed, run `pip install "gymnasium[other]"`'</span>
             <span class="p">)</span>
 
         <span class="n">num_plots</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_names</span><span class="p">)</span>
@@ -846,7 +846,7 @@
         <span class="n">truncated</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
         <span class="n">info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The callback that calls the provided data callback and adds the data to the plots.</span>
+<span class="w">        </span><span class="sd">"""The callback that calls the provided data callback and adds the data to the plots.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            obs_t: The observation at time step t</span>
@@ -856,7 +856,7 @@
 <span class="sd">            terminated: If the environment is terminated</span>
 <span class="sd">            truncated: If the environment is truncated</span>
 <span class="sd">            info: The information from the environment</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_callback</span><span class="p">(</span>
             <span class="n">obs_t</span><span class="p">,</span> <span class="n">obs_tp1</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
         <span class="p">)</span>
@@ -870,13 +870,13 @@
             <span class="k">if</span> <span class="n">plot</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">plot</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cur_plot</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
-                <span class="nb">range</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span>
+                <span class="nb">range</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">c</span><span class="o">=</span><span class="s2">"blue"</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">plt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-                <span class="s1">&#39;matplotlib is not installed, run `pip install &quot;gymnasium[other]&quot;`&#39;</span>
+                <span class="s1">'matplotlib is not installed, run `pip install "gymnasium[other]"`'</span>
             <span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">pause</span><span class="p">(</span><span class="mf">0.000001</span><span class="p">)</span></div>
 </div>

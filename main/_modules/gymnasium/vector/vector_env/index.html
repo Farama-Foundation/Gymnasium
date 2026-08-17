@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.vector.vector_env</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Base class for vectorized environments.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Base class for vectorized environments."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -386,32 +386,32 @@
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvSpec</span>
 
-<span class="n">ArrayType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ArrayType&quot;</span><span class="p">)</span>
+<span class="n">ArrayType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ArrayType"</span><span class="p">)</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;VectorEnv&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;VectorWrapper&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;VectorObservationWrapper&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;VectorActionWrapper&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;VectorRewardWrapper&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ArrayType&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;AutoresetMode&quot;</span><span class="p">,</span>
+    <span class="s2">"VectorEnv"</span><span class="p">,</span>
+    <span class="s2">"VectorWrapper"</span><span class="p">,</span>
+    <span class="s2">"VectorObservationWrapper"</span><span class="p">,</span>
+    <span class="s2">"VectorActionWrapper"</span><span class="p">,</span>
+    <span class="s2">"VectorRewardWrapper"</span><span class="p">,</span>
+    <span class="s2">"ArrayType"</span><span class="p">,</span>
+    <span class="s2">"AutoresetMode"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">AutoresetMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum representing the different autoreset modes, next step, same step and disabled.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Enum representing the different autoreset modes, next step, same step and disabled."""</span>
 
-    <span class="n">NEXT_STEP</span> <span class="o">=</span> <span class="s2">&quot;NextStep&quot;</span>
-    <span class="n">SAME_STEP</span> <span class="o">=</span> <span class="s2">&quot;SameStep&quot;</span>
-    <span class="n">DISABLED</span> <span class="o">=</span> <span class="s2">&quot;Disabled&quot;</span>
+    <span class="n">NEXT_STEP</span> <span class="o">=</span> <span class="s2">"NextStep"</span>
+    <span class="n">SAME_STEP</span> <span class="o">=</span> <span class="s2">"SameStep"</span>
+    <span class="n">DISABLED</span> <span class="o">=</span> <span class="s2">"Disabled"</span>
 
 
 <div class="viewcode-block" id="VectorEnv">
 <a class="viewcode-back" href="../../../../api/vector/#gymnasium.vector.VectorEnv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VectorEnv</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for vectorized environments to run multiple independent copies of the same environment in parallel.</span>
+<span class="w">    </span><span class="sd">"""Base class for vectorized environments to run multiple independent copies of the same environment in parallel.</span>
 
 <span class="sd">    Vector environments can provide a linear speed-up in the steps taken per second through sampling multiple</span>
 <span class="sd">    sub-environments at the same time. Gymnasium contains two generalised Vector environments: :class:`AsyncVectorEnv`</span>
@@ -428,8 +428,8 @@
 
 <span class="sd">    To avoid having to wait for all sub-environments to terminated before resetting, implementations can autoreset</span>
 <span class="sd">    sub-environments on episode end (`terminated or truncated is True`). This is crucial for correct implementing training</span>
-<span class="sd">    algorithms with vector environments. By default, Gymnasium&#39;s implementation uses `next-step` autoreset, with</span>
-<span class="sd">    :class:`AutoresetMode` enum as the options. The mode used by vector environment should be available in `metadata[&quot;autoreset_mode&quot;]`.</span>
+<span class="sd">    algorithms with vector environments. By default, Gymnasium's implementation uses `next-step` autoreset, with</span>
+<span class="sd">    :class:`AutoresetMode` enum as the options. The mode used by vector environment should be available in `metadata["autoreset_mode"]`.</span>
 <span class="sd">    Warning, some vector implementations or training algorithms will only support particular autoreset modes.</span>
 <span class="sd">    For more information, read https://farama.org/Vector-Autoreset-Mode.</span>
 
@@ -440,7 +440,7 @@
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;, wrappers=(gym.wrappers.TimeAwareObservation,))</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync", wrappers=(gym.wrappers.TimeAwareObservation,))</span>
 <span class="sd">        &gt;&gt;&gt; envs = gym.wrappers.vector.ClipReward(envs, min_reward=0.2, max_reward=0.8)</span>
 <span class="sd">        &gt;&gt;&gt; envs</span>
 <span class="sd">        &lt;ClipReward, SyncVectorEnv(CartPole-v1, num_envs=3)&gt;</span>
@@ -488,7 +488,7 @@
 <span class="sd">    - :attr:`single_observation_space` - The observation space of a single sub-environment</span>
 <span class="sd">    - :attr:`action_space` - The batched action space of the vector environment</span>
 <span class="sd">    - :attr:`single_action_space` - The action space of a single sub-environment</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -513,7 +513,7 @@
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>  <span class="c1"># type: ignore</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset all parallel environments and return a batch of initial observations and info.</span>
+<span class="w">        </span><span class="sd">"""Reset all parallel environments and return a batch of initial observations and info.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            seed: The environment reset seed</span>
@@ -524,7 +524,7 @@
 
 <span class="sd">        Example:</span>
 <span class="sd">            &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">            &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">            &gt;&gt;&gt; observations, infos = envs.reset(seed=42)</span>
 <span class="sd">            &gt;&gt;&gt; observations</span>
 <span class="sd">            array([[ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ],</span>
@@ -533,7 +533,7 @@
 <span class="sd">                  dtype=float32)</span>
 <span class="sd">            &gt;&gt;&gt; infos</span>
 <span class="sd">            {}</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
 
@@ -543,7 +543,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Take an action for each parallel environment.</span>
+<span class="w">        </span><span class="sd">"""Take an action for each parallel environment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            actions: Batch of actions with the :attr:`action_space` shape.</span>
@@ -558,7 +558,7 @@
 <span class="sd">        Example:</span>
 <span class="sd">            &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">            &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">            &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">            &gt;&gt;&gt; _ = envs.reset(seed=42)</span>
 <span class="sd">            &gt;&gt;&gt; actions = np.array([1, 0, 1], dtype=np.int32)</span>
 <span class="sd">            &gt;&gt;&gt; observations, rewards, terminations, truncations, infos = envs.step(actions)</span>
@@ -575,27 +575,27 @@
 <span class="sd">            array([False, False, False])</span>
 <span class="sd">            &gt;&gt;&gt; infos</span>
 <span class="sd">            {}</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2"> step function is not implemented.&quot;</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2"> step function is not implemented."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VectorEnv.render">
 <a class="viewcode-back" href="../../../../api/vector/#gymnasium.vector.VectorEnv.render">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the rendered frames from the parallel environments.</span>
+<span class="w">        </span><span class="sd">"""Returns the rendered frames from the parallel environments.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A tuple of rendered frames from the parallel environments</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2"> render function is not implemented.&quot;</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2"> render function is not implemented."</span>
         <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VectorEnv.close">
 <a class="viewcode-back" href="../../../../api/vector/#gymnasium.vector.VectorEnv.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close all parallel environments and release resources.</span>
+<span class="w">        </span><span class="sd">"""Close all parallel environments and release resources.</span>
 
 <span class="sd">        It also closes all the existing image viewers, then calls :meth:`close_extras` and set</span>
 <span class="sd">        :attr:`closed` as ``True``.</span>
@@ -610,7 +610,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            **kwargs: Keyword arguments passed to :meth:`close_extras`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
             <span class="k">return</span>
 
@@ -619,16 +619,16 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">close_extras</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean up the extra resources e.g. beyond what&#39;s in this base class.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Clean up the extra resources e.g. beyond what's in this base class."""</span>
         <span class="k">pass</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">np_random</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the environment&#39;s internal :attr:`_np_random` that if not set will initialise with a random seed.</span>
+<span class="w">        </span><span class="sd">"""Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Instances of `np.random.Generator`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span>
@@ -640,27 +640,27 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">np_random_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the environment&#39;s internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.</span>
+<span class="w">        </span><span class="sd">"""Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.</span>
 
 <span class="sd">        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,</span>
 <span class="sd">        the seed will take the value -1.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the base environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the base environment."""</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_add_info</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">vector_infos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">env_info</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">env_num</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add env info to the info dictionary of the vectorized environment.</span>
+<span class="w">        </span><span class="sd">"""Add env info to the info dictionary of the vectorized environment.</span>
 
 <span class="sd">        Given the `info` of a single environment add it to the `infos` dictionary</span>
 <span class="sd">        which represents all the infos of the vectorized environment.</span>
@@ -674,12 +674,12 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            infos (dict): the (updated) infos of the vectorized environment</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">env_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="c1"># It is easier for users to access their `final_obs` in the unbatched array of `obs` objects</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;final_obs&quot;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="s2">&quot;final_obs&quot;</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="p">:</span>
-                    <span class="n">array</span> <span class="o">=</span> <span class="n">vector_infos</span><span class="p">[</span><span class="s2">&quot;final_obs&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"final_obs"</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">"final_obs"</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="p">:</span>
+                    <span class="n">array</span> <span class="o">=</span> <span class="n">vector_infos</span><span class="p">[</span><span class="s2">"final_obs"</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
                 <span class="n">array</span><span class="p">[</span><span class="n">env_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
@@ -688,7 +688,7 @@
                 <span class="n">array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">(</span><span class="n">vector_infos</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{}),</span> <span class="n">value</span><span class="p">,</span> <span class="n">env_num</span><span class="p">)</span>
             <span class="c1"># Otherwise, we are a base case to group the data</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># If the key doesn&#39;t exist in the vector infos, then we can create an array of that batch type</span>
+                <span class="c1"># If the key doesn't exist in the vector infos, then we can create an array of that batch type</span>
                 <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="ow">or</span> <span class="nb">issubclass</span><span class="p">(</span>
                         <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span>
@@ -710,27 +710,27 @@
                 <span class="c1">#   We only want to run this for the base-case data (not recursive data forcing the ugly function structure)</span>
                 <span class="n">array</span><span class="p">[</span><span class="n">env_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-            <span class="c1"># Get the array mask and if it doesn&#39;t already exist then create a zero bool array</span>
+            <span class="c1"># Get the array mask and if it doesn't already exist then create a zero bool array</span>
             <span class="n">array_mask</span> <span class="o">=</span> <span class="n">vector_infos</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+                <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="n">array_mask</span><span class="p">[</span><span class="n">env_num</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
             <span class="c1"># Update the vector info with the updated data and mask information</span>
-            <span class="n">vector_infos</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">vector_infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">,</span> <span class="n">array_mask</span>
+            <span class="n">vector_infos</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">vector_infos</span><span class="p">[</span><span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="p">,</span> <span class="n">array_mask</span>
         <span class="k">return</span> <span class="n">vector_infos</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a string representation of the vector environment.</span>
+<span class="w">        </span><span class="sd">"""Returns a string representation of the vector environment.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A string containing the class name, number of environments and environment spec id</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(num_envs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(num_envs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">)"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">, num_envs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">)&quot;</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">, num_envs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">)"</span>
             <span class="p">)</span></div>
 
 
@@ -738,28 +738,28 @@
 <div class="viewcode-block" id="VectorWrapper">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VectorWrapper</span><span class="p">(</span><span class="n">VectorEnv</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps the vectorized environment to allow a modular transformation.</span>
+<span class="w">    </span><span class="sd">"""Wraps the vectorized environment to allow a modular transformation.</span>
 
 <span class="sd">    This class is the base class for all wrappers for vectorized environments. The subclass</span>
 <span class="sd">    could override some methods to change the behavior of the original vectorized environment</span>
 <span class="sd">    without touching the original code.</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        Don&#39;t forget to call ``super().__init__(env)`` if the subclass overrides :meth:`__init__`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        Don't forget to call ``super().__init__(env)`` if the subclass overrides :meth:`__init__`.</span>
+<span class="sd">    """</span>
 
     <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the vectorized environment wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize the vectorized environment wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to wrap</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">VectorEnv</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expected env to be a `gymnasium.vector.VectorEnv` but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Expected env to be a `gymnasium.vector.VectorEnv` but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_observation_space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -773,7 +773,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset all environment using seed and options.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Reset all environment using seed and options."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span></div>
 
 
@@ -782,97 +782,97 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Step through all environments using the actions returning the batched data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Step through all environments using the actions returning the batched data."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VectorWrapper.render">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorWrapper.render">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the render mode from the base vector environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the render mode from the base vector environment."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="VectorWrapper.close">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorWrapper.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close all environments.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Close all environments."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">close_extras</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close all extra resources.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Close all extra resources."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close_extras</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">VectorEnv</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the base non-wrapped environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the base non-wrapped environment."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the string representation of the vectorized environment.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the string representation of the vectorized environment."""</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2">&gt;"</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">observation_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the observation space of the vector environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Gets the observation space of the vector environment."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation_space</span>
 
     <span class="nd">@observation_space</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">observation_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the observation space of the vector environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Sets the observation space of the vector environment."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_observation_space</span> <span class="o">=</span> <span class="n">space</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">action_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the action space of the vector environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Gets the action space of the vector environment."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_space</span>
 
     <span class="nd">@action_space</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">action_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the action space of the vector environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Sets the action space of the vector environment."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_action_space</span> <span class="o">=</span> <span class="n">space</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">single_observation_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the single observation space of the vector environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Gets the single observation space of the vector environment."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">single_observation_space</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_observation_space</span>
 
     <span class="nd">@single_observation_space</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">single_observation_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the single observation space of the vector environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Sets the single observation space of the vector environment."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_single_observation_space</span> <span class="o">=</span> <span class="n">space</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">single_action_space</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the single action space of the vector environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Gets the single action space of the vector environment."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">single_action_space</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_action_space</span>
 
     <span class="nd">@single_action_space</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">single_action_space</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the single action space of the vector environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Sets the single action space of the vector environment."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_single_action_space</span> <span class="o">=</span> <span class="n">space</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">num_envs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the wrapped vector environment&#39;s num of the sub-environments.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Gets the wrapped vector environment's num of the sub-environments."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">num_envs</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">np_random</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the environment&#39;s internal :attr:`_np_random` that if not set will initialise with a random seed.</span>
+<span class="w">        </span><span class="sd">"""Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Instances of `np.random.Generator`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">np_random</span>
 
     <span class="nd">@np_random</span><span class="o">.</span><span class="n">setter</span>
@@ -881,12 +881,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">np_random_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The seeds of the vector environment&#39;s internal :attr:`_np_random`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The seeds of the vector environment's internal :attr:`_np_random`."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">np_random_seed</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;The metadata of the vector environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""The metadata of the vector environment."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span>
@@ -897,17 +897,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the specification of the wrapped environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Gets the specification of the wrapped environment."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the `render_mode` from the base environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the `render_mode` from the base environment."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">closed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;If the environment has closes.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""If the environment has closes."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">closed</span>
 
     <span class="nd">@closed</span><span class="o">.</span><span class="n">setter</span>
@@ -919,42 +919,42 @@
 <div class="viewcode-block" id="VectorObservationWrapper">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorObservationWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VectorObservationWrapper</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps the vectorized environment to allow a modular transformation of the observation.</span>
+<span class="w">    </span><span class="sd">"""Wraps the vectorized environment to allow a modular transformation of the observation.</span>
 
 <span class="sd">    Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vector observation wrapper that batch transforms observations.</span>
+<span class="w">        </span><span class="sd">"""Vector observation wrapper that batch transforms observations.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: Vector environment.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;autoreset_mode&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"autoreset_mode"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
             <span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Vector environment (</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">) is missing `autoreset_mode` metadata key.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Vector environment (</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">) is missing `autoreset_mode` metadata key."</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;autoreset_mode&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"autoreset_mode"</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
                 <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span><span class="p">,</span>
                 <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">DISABLED</span><span class="p">,</span>
             <span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Expected autoreset_mode to be NEXT_STEP or DISABLED, got </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;autoreset_mode&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Expected autoreset_mode to be NEXT_STEP or DISABLED, got </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">'autoreset_mode'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the observation returned from the environment ``reset`` using the :meth:`observation`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""</span>
         <span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span> <span class="n">infos</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the observation returned from the environment ``step`` using the :meth:`observation`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Modifies the observation returned from the environment ``step`` using the :meth:`observation`."""</span>
         <span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span>
@@ -967,14 +967,14 @@
 <div class="viewcode-block" id="VectorObservationWrapper.observations">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorObservationWrapper.observations">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observations</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Defines the vector observation transformation.</span>
+<span class="w">        </span><span class="sd">"""Defines the vector observation transformation.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            observations: A vector observation from the environment</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            the transformed observation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 
@@ -983,28 +983,28 @@
 <div class="viewcode-block" id="VectorActionWrapper">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorActionWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VectorActionWrapper</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps the vectorized environment to allow a modular transformation of the actions.</span>
+<span class="w">    </span><span class="sd">"""Wraps the vectorized environment to allow a modular transformation of the actions.</span>
 
 <span class="sd">    Equivalent of :class:`gymnasium.ActionWrapper` for vectorized environments.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment using a modified action by :meth:`action`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment using a modified action by :meth:`action`."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">(</span><span class="n">actions</span><span class="p">))</span>
 
 <div class="viewcode-block" id="VectorActionWrapper.actions">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorActionWrapper.actions">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform the actions before sending them to the environment.</span>
+<span class="w">        </span><span class="sd">"""Transform the actions before sending them to the environment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            actions (ActType): the actions to transform</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ActType: the transformed actions</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 
@@ -1013,29 +1013,29 @@
 <div class="viewcode-block" id="VectorRewardWrapper">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorRewardWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VectorRewardWrapper</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps the vectorized environment to allow a modular transformation of the reward.</span>
+<span class="w">    </span><span class="sd">"""Wraps the vectorized environment to allow a modular transformation of the reward.</span>
 
 <span class="sd">    Equivalent of :class:`gymnasium.RewardWrapper` for vectorized environments.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment returning a reward modified by :meth:`reward`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment returning a reward modified by :meth:`reward`."""</span>
         <span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">observations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">(</span><span class="n">rewards</span><span class="p">),</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span>
 
 <div class="viewcode-block" id="VectorRewardWrapper.rewards">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorRewardWrapper.rewards">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rewards</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform the reward before returning it.</span>
+<span class="w">        </span><span class="sd">"""Transform the reward before returning it.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            rewards (array): the reward to transform</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            array: the transformed reward</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 

@@ -367,14 +367,14 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.stateful_observation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A collection of stateful observation wrappers.</span>
+<span></span><span class="sd">"""A collection of stateful observation wrappers.</span>
 
 <span class="sd">* ``DelayObservation`` - A wrapper for delaying the returned observation</span>
 <span class="sd">* ``TimeAwareObservation`` - A wrapper for adding time aware observations to environment observation</span>
 <span class="sd">* ``FrameStackObservation`` - Frame stack the observations</span>
 <span class="sd">* ``NormalizeObservation`` - Normalized the observations to have unit variance with a moving mean</span>
 <span class="sd">* ``MaxAndSkipObservation`` - Return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -393,11 +393,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunningMeanStd</span><span class="p">,</span> <span class="n">create_zero_array</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;DelayObservation&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TimeAwareObservation&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FrameStackObservation&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;NormalizeObservation&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;MaxAndSkipObservation&quot;</span><span class="p">,</span>
+    <span class="s2">"DelayObservation"</span><span class="p">,</span>
+    <span class="s2">"TimeAwareObservation"</span><span class="p">,</span>
+    <span class="s2">"FrameStackObservation"</span><span class="p">,</span>
+    <span class="s2">"NormalizeObservation"</span><span class="p">,</span>
+    <span class="s2">"MaxAndSkipObservation"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -406,7 +406,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">DelayObservation</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds a delay to the returned observation from the environment.</span>
+<span class="w">    </span><span class="sd">"""Adds a delay to the returned observation from the environment.</span>
 
 <span class="sd">    Before reaching the :attr:`delay` number of timesteps, returned observations is an array of zeros with</span>
 <span class="sd">    the same shape as the observation space.</span>
@@ -418,7 +418,7 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env.reset(seed=123)</span>
 <span class="sd">        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})</span>
 
@@ -432,22 +432,22 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v1.0.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">delay</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialises the DelayObservation wrapper with an integer.</span>
+<span class="w">        </span><span class="sd">"""Initialises the DelayObservation wrapper with an integer.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to wrap</span>
 <span class="sd">            delay: The number of timesteps to delay observations</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">delay</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The delay is expected to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"The delay is expected to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">delay</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The delay needs to be greater than zero, actual value: </span><span class="si">{</span><span class="n">delay</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"The delay needs to be greater than zero, actual value: </span><span class="si">{</span><span class="n">delay</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="n">delay</span><span class="p">)</span>
@@ -459,13 +459,13 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment, clearing the observation queue.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Resets the environment, clearing the observation queue."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_queue</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the delayed observation.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the delayed observation."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_queue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">delay</span><span class="p">:</span>
@@ -481,16 +481,16 @@
     <span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Augment the observation with the number of time steps taken within an episode.</span>
+<span class="w">    </span><span class="sd">"""Augment the observation with the number of time steps taken within an episode.</span>
 
 <span class="sd">    The :attr:`normalize_time` if ``True`` represents time as a normalized value between [0,1]</span>
 <span class="sd">    otherwise if ``False``, the current timestep is an integer.</span>
 
 <span class="sd">    For environments with ``Dict`` observation spaces, the time information is automatically</span>
-<span class="sd">    added in the key `&quot;time&quot;` (can be changed through :attr:`dict_time_key`) and for environments with ``Tuple``</span>
+<span class="sd">    added in the key `"time"` (can be changed through :attr:`dict_time_key`) and for environments with ``Tuple``</span>
 <span class="sd">    observation space, the time information is added as the final element in the tuple.</span>
 <span class="sd">    Otherwise, the observation space is transformed into a ``Dict`` observation space with two keys,</span>
-<span class="sd">    `&quot;obs&quot;` for the base environment&#39;s observation and `&quot;time&quot;` for the time information.</span>
+<span class="sd">    `"obs"` for the base environment's observation and `"time"` for the time information.</span>
 
 <span class="sd">    To flatten the observation, use the :attr:`flatten` parameter which will use the</span>
 <span class="sd">    :func:`gymnasium.spaces.utils.flatten` function.</span>
@@ -500,7 +500,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import TimeAwareObservation</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env = TimeAwareObservation(env)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space</span>
 <span class="sd">        Box([-4.80000019        -inf -0.41887903        -inf  0.        ], [4.80000019e+00            inf 4.18879032e-01            inf</span>
@@ -512,7 +512,7 @@
 <span class="sd">        array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476,  1.        ])</span>
 
 <span class="sd">    Normalize time observation space example:</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&#39;CartPole-v1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make('CartPole-v1')</span>
 <span class="sd">        &gt;&gt;&gt; env = TimeAwareObservation(env, normalize_time=True)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space</span>
 <span class="sd">        Box([-4.8               -inf -0.41887903        -inf  0.        ], [4.8               inf 0.41887903        inf 1.        ], (5,), float32)</span>
@@ -525,20 +525,20 @@
 <span class="sd">              dtype=float32)</span>
 
 <span class="sd">    Flatten observation space example:</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env = TimeAwareObservation(env, flatten=False)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space</span>
-<span class="sd">        Dict(&#39;obs&#39;: Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), &#39;time&#39;: Box(0, 500, (1,), int32))</span>
+<span class="sd">        Dict('obs': Box([-4.8               -inf -0.41887903        -inf], [4.8               inf 0.41887903        inf], (4,), float32), 'time': Box(0, 500, (1,), int32))</span>
 <span class="sd">        &gt;&gt;&gt; env.reset(seed=42)[0]</span>
-<span class="sd">        {&#39;obs&#39;: array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), &#39;time&#39;: array([0], dtype=int32)}</span>
+<span class="sd">        {'obs': array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32), 'time': array([0], dtype=int32)}</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.action_space.seed(42)</span>
 <span class="sd">        &gt;&gt;&gt; env.step(env.action_space.sample())[0]</span>
-<span class="sd">        {&#39;obs&#39;: array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), &#39;time&#39;: array([1], dtype=int32)}</span>
+<span class="sd">        {'obs': array([ 0.02727336, -0.20172954,  0.03625453,  0.32351476], dtype=float32), 'time': array([1], dtype=int32)}</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.18.0 - Initially added</span>
 <span class="sd">     * v1.0.0 - Remove vector environment support, add ``flatten`` and ``normalize_time`` parameters</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">max_timesteps</span><span class="p">:</span> <span class="nb">int</span>
 
@@ -548,17 +548,17 @@
         <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">normalize_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">dict_time_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span>
+        <span class="n">dict_time_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"time"</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize :class:`TimeAwareObservation`.</span>
+<span class="w">        </span><span class="sd">"""Initialize :class:`TimeAwareObservation`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to apply the wrapper</span>
 <span class="sd">            flatten: Flatten the observation to a `Box` of a single dimension</span>
 <span class="sd">            normalize_time: if `True` return time in the range [0,1]</span>
 <span class="sd">                otherwise return time as remaining timesteps before truncation</span>
-<span class="sd">            dict_time_key: For environment with a ``Dict`` observation space, the key for the time space. By default, `&quot;time&quot;`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            dict_time_key: For environment with a ``Dict`` observation space, the key for the time space. By default, `"time"`.</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">flatten</span><span class="o">=</span><span class="n">flatten</span><span class="p">,</span>
@@ -570,7 +570,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">flatten</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">normalize_time</span><span class="p">:</span> <span class="n">Final</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">normalize_time</span>
 
-        <span class="c1"># We don&#39;t need to keep if a TimeLimit wrapper exists as `spec` will do that work for us now</span>
+        <span class="c1"># We don't need to keep if a TimeLimit wrapper exists as `spec` will do that work for us now</span>
         <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">max_timesteps</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
         <span class="k">else</span><span class="p">:</span>
@@ -584,7 +584,7 @@
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wrapped_env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">TimeLimit</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`.&quot;</span>
+                    <span class="s2">"The environment must be wrapped by a TimeLimit wrapper or the spec specify a `max_episode_steps`."</span>
                 <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">timesteps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
@@ -603,7 +603,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">Dict</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">dict_time_key</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The `dict_time_key` (</span><span class="si">{</span><span class="n">dict_time_key</span><span class="si">!r}</span><span class="s2">) already exists in the observation space.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"The `dict_time_key` (</span><span class="si">{</span><span class="n">dict_time_key</span><span class="si">!r}</span><span class="s2">) already exists in the observation space."</span>
                 <span class="p">)</span>
             <span class="n">observation_space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span>
                 <span class="p">{</span><span class="n">dict_time_key</span><span class="p">:</span> <span class="n">time_space</span><span class="p">,</span> <span class="o">**</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">spaces</span><span class="p">}</span>
@@ -614,7 +614,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_append_data_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">obs</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">obs</span> <span class="o">+</span> <span class="p">(</span><span class="n">time</span><span class="p">,)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">observation_space</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">(</span><span class="n">obs</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">time_space</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_append_data_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">obs</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;obs&quot;</span><span class="p">:</span> <span class="n">obs</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">time</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_append_data_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">obs</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="p">{</span><span class="s2">"obs"</span><span class="p">:</span> <span class="n">obs</span><span class="p">,</span> <span class="s2">"time"</span><span class="p">:</span> <span class="n">time</span><span class="p">}</span>
 
         <span class="c1"># If to flatten the observation space</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flatten</span><span class="p">:</span>
@@ -629,14 +629,14 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_obs_postprocess_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">obs</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WrapperObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds to the observation with the current time information.</span>
+<span class="w">        </span><span class="sd">"""Adds to the observation with the current time information.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            observation: The observation to add the time step to</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The observation with the time information appended to it</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obs_postprocess_func</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_append_data_func</span><span class="p">(</span>
                 <span class="n">observation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_preprocess_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timesteps</span><span class="p">)</span>
@@ -646,14 +646,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, incrementing the time step.</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment, incrementing the time step.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            action: The action to take</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            The environment&#39;s step using the action with the next observation containing the timestep info</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            The environment's step using the action with the next observation containing the timestep info</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timesteps</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
@@ -661,7 +661,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the environment setting the time to zero.</span>
+<span class="w">        </span><span class="sd">"""Reset the environment setting the time to zero.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            seed: The seed to reset the environment</span>
@@ -669,7 +669,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Resets the environment with the initial timestep info added the observation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timesteps</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span></div>
@@ -682,17 +682,17 @@
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stacks the observations from the last ``N`` time steps in a rolling manner.</span>
+<span class="w">    </span><span class="sd">"""Stacks the observations from the last ``N`` time steps in a rolling manner.</span>
 
 <span class="sd">    For example, if the number of stacks is 4, then the returned observation contains</span>
-<span class="sd">    the most recent 4 observations. For environment &#39;Pendulum-v1&#39;, the original observation</span>
+<span class="sd">    the most recent 4 observations. For environment 'Pendulum-v1', the original observation</span>
 <span class="sd">    is an array with shape [3], so if we stack 4 observations, the processed observation</span>
 <span class="sd">    has shape [4, 3].</span>
 
 <span class="sd">    Users have options for the padded observation used:</span>
 
-<span class="sd">     * &quot;reset&quot; (default) - The reset value is repeated</span>
-<span class="sd">     * &quot;zero&quot; - A &quot;zero&quot;-like instance of the observation space</span>
+<span class="sd">     * "reset" (default) - The reset value is repeated</span>
+<span class="sd">     * "zero" - A "zero"-like instance of the observation space</span>
 <span class="sd">     * custom - An instance of the observation space</span>
 
 <span class="sd">    No vector version of the wrapper exists.</span>
@@ -700,7 +700,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import FrameStackObservation</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CarRacing-v3&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CarRacing-v3")</span>
 <span class="sd">        &gt;&gt;&gt; env = FrameStackObservation(env, stack_size=4)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space</span>
 <span class="sd">        Box(0, 255, (4, 96, 96, 3), uint8)</span>
@@ -709,10 +709,10 @@
 <span class="sd">        (4, 96, 96, 3)</span>
 
 <span class="sd">    Example with different padding observations:</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env.reset(seed=123)</span>
 <span class="sd">        (array([ 0.01823519, -0.0446179 , -0.02796401, -0.03156282], dtype=float32), {})</span>
-<span class="sd">        &gt;&gt;&gt; stacked_env = FrameStackObservation(env, 3)   # the default is padding_type=&quot;reset&quot;</span>
+<span class="sd">        &gt;&gt;&gt; stacked_env = FrameStackObservation(env, 3)   # the default is padding_type="reset"</span>
 <span class="sd">        &gt;&gt;&gt; stacked_env.reset(seed=123)</span>
 <span class="sd">        (array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
 <span class="sd">               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
@@ -720,7 +720,7 @@
 <span class="sd">              dtype=float32), {})</span>
 
 
-<span class="sd">        &gt;&gt;&gt; stacked_env = FrameStackObservation(env, 3, padding_type=&quot;zero&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; stacked_env = FrameStackObservation(env, 3, padding_type="zero")</span>
 <span class="sd">        &gt;&gt;&gt; stacked_env.reset(seed=123)</span>
 <span class="sd">        (array([[ 0.        ,  0.        ,  0.        ,  0.        ],</span>
 <span class="sd">               [ 0.        ,  0.        ,  0.        ,  0.        ],</span>
@@ -738,22 +738,22 @@
 <span class="sd">     * v1.0.0 - Rename to ``FrameStackObservation`` and remove lz4 and ``LazyFrame`` support</span>
 <span class="sd">                along with adding the ``padding_type`` parameter</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
         <span class="n">stack_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">padding_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ObsType</span> <span class="o">=</span> <span class="s2">&quot;reset&quot;</span><span class="p">,</span>
+        <span class="n">padding_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ObsType</span> <span class="o">=</span> <span class="s2">"reset"</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Observation wrapper that stacks the observations in a rolling manner.</span>
+<span class="w">        </span><span class="sd">"""Observation wrapper that stacks the observations in a rolling manner.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to apply the wrapper</span>
 <span class="sd">            stack_size: The number of frames to stack.</span>
-<span class="sd">            padding_type: The padding type to use when stacking the observations, options: &quot;reset&quot;, &quot;zero&quot;, custom obs</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            padding_type: The padding type to use when stacking the observations, options: "reset", "zero", custom obs</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">stack_size</span><span class="o">=</span><span class="n">stack_size</span><span class="p">,</span> <span class="n">padding_type</span><span class="o">=</span><span class="n">padding_type</span>
         <span class="p">)</span>
@@ -761,27 +761,27 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">stack_size</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The stack_size is expected to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stack_size</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"The stack_size is expected to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">stack_size</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">stack_size</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The stack_size needs to be greater than zero, actual value: </span><span class="si">{</span><span class="n">stack_size</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"The stack_size needs to be greater than zero, actual value: </span><span class="si">{</span><span class="n">stack_size</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">padding_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
-            <span class="n">padding_type</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span> <span class="ow">or</span> <span class="n">padding_type</span> <span class="o">==</span> <span class="s2">&quot;zero&quot;</span>
+            <span class="n">padding_type</span> <span class="o">==</span> <span class="s2">"reset"</span> <span class="ow">or</span> <span class="n">padding_type</span> <span class="o">==</span> <span class="s2">"zero"</span>
         <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">padding_value</span><span class="p">:</span> <span class="n">ObsType</span> <span class="o">=</span> <span class="n">create_zero_array</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">padding_type</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">padding_value</span> <span class="o">=</span> <span class="n">padding_type</span>
-            <span class="n">padding_type</span> <span class="o">=</span> <span class="s2">&quot;_custom&quot;</span>
+            <span class="n">padding_type</span> <span class="o">=</span> <span class="s2">"_custom"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">padding_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>  <span class="c1"># we are guessing that the user just entered the &quot;reset&quot; or &quot;zero&quot; wrong</span>
-                    <span class="sa">f</span><span class="s2">&quot;Unexpected `padding_type`, expected &#39;reset&#39;, &#39;zero&#39; or a custom observation space, actual value: </span><span class="si">{</span><span class="n">padding_type</span><span class="si">!r}</span><span class="s2">&quot;</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>  <span class="c1"># we are guessing that the user just entered the "reset" or "zero" wrong</span>
+                    <span class="sa">f</span><span class="s2">"Unexpected `padding_type`, expected 'reset', 'zero' or a custom observation space, actual value: </span><span class="si">{</span><span class="n">padding_type</span><span class="si">!r}</span><span class="s2">"</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Unexpected `padding_type`, expected &#39;reset&#39;, &#39;zero&#39; or a custom observation space, actual value: </span><span class="si">{</span><span class="n">padding_type</span><span class="si">!r}</span><span class="s2"> not an instance of env observation (</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Unexpected `padding_type`, expected 'reset', 'zero' or a custom observation space, actual value: </span><span class="si">{</span><span class="n">padding_type</span><span class="si">!r}</span><span class="s2"> not an instance of env observation (</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">)"</span>
                 <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">stack_size</span><span class="p">)</span>
@@ -796,14 +796,14 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, appending the observation to the frame buffer.</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment, appending the observation to the frame buffer.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            action: The action to step through the environment with</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Stacked observations, reward, terminated, truncated, and info from the environment</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obs_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
 
@@ -815,7 +815,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the environment, returning the stacked observation and info.</span>
+<span class="w">        </span><span class="sd">"""Reset the environment, returning the stacked observation and info.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            seed: The environment seed</span>
@@ -823,10 +823,10 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The stacked observations and info</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding_type</span> <span class="o">==</span> <span class="s2">&quot;reset&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding_type</span> <span class="o">==</span> <span class="s2">"reset"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">padding_value</span> <span class="o">=</span> <span class="n">obs</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">obs_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">padding_value</span><span class="p">)</span>
@@ -845,7 +845,7 @@
     <span class="n">gym</span><span class="o">.</span><span class="n">ObservationWrapper</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalizes observations to be centered at the mean with unit variance.</span>
+<span class="w">    </span><span class="sd">"""Normalizes observations to be centered at the mean with unit variance.</span>
 
 <span class="sd">    The property :attr:`update_running_mean` allows to freeze/continue the running mean calculation of the observation</span>
 <span class="sd">    statistics. If ``True`` (default), the ``RunningMeanStd`` will get updated every time ``step`` or ``reset`` is called.</span>
@@ -860,7 +860,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; term, trunc = False, False</span>
 <span class="sd">        &gt;&gt;&gt; while not (term or trunc):</span>
@@ -868,7 +868,7 @@
 <span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; obs</span>
 <span class="sd">        array([ 0.1511158 ,  1.7183299 , -0.25533703, -2.8914354 ], dtype=float32)</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env = NormalizeObservation(env)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; term, trunc = False, False</span>
@@ -881,10 +881,10 @@
 <span class="sd">     * v0.21.0 - Initially add</span>
 <span class="sd">     * v1.0.0 - Add `update_running_mean` attribute to allow disabling of updating the running mean / standard, particularly useful for evaluation time.</span>
 <span class="sd">        Casts all observations to `np.float32` and sets the observation space with low/high of `-np.inf` and `np.inf` and dtype as `np.float32`</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will normalize observations such that each observation is centered with unit variance.</span>
+<span class="w">        </span><span class="sd">"""This wrapper will normalize observations such that each observation is centered with unit variance.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to apply the wrapper</span>
@@ -892,13 +892,13 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            InvalidBound: If ``epsilon`` is not strictly positive.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># `epsilon` is added under the square root to keep the division away from</span>
         <span class="c1"># zero, so a non-positive value defeats its purpose and, once it exceeds</span>
         <span class="c1"># the variance, silently turns every normalized observation into NaN.</span>
         <span class="k">if</span> <span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;`epsilon` should be strictly positive. Received </span><span class="si">{</span><span class="n">epsilon</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"`epsilon` should be strictly positive. Received </span><span class="si">{</span><span class="n">epsilon</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">)</span>
@@ -906,7 +906,7 @@
 
         <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;NormalizeObservation wrapper requires the observation space to have a shape.&quot;</span>
+                <span class="s2">"NormalizeObservation wrapper requires the observation space to have a shape."</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
@@ -924,16 +924,16 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_running_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Property to freeze/continue the running mean calculation of the observation statistics.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Property to freeze/continue the running mean calculation of the observation statistics."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span>
 
     <span class="nd">@update_running_mean</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_running_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">setting</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the property to freeze/continue the running mean calculation of the observation statistics.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Sets the property to freeze/continue the running mean calculation of the observation statistics."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span> <span class="o">=</span> <span class="n">setting</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WrapperObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalises the observation using the running mean and variance of the observations.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Normalises the observation using the running mean and variance of the observations."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_running_mean</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">obs_rms</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">observation</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span>
@@ -948,7 +948,7 @@
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Skips the N-th frame (observation) and return the max values between the two last observations.</span>
+<span class="w">    </span><span class="sd">"""Skips the N-th frame (observation) and return the max values between the two last observations.</span>
 
 <span class="sd">    No vector version of the wrapper exists.</span>
 
@@ -957,14 +957,14 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; obs0, *_ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs1, *_ = env.step(1)</span>
 <span class="sd">        &gt;&gt;&gt; obs2, *_ = env.step(1)</span>
 <span class="sd">        &gt;&gt;&gt; obs3, *_ = env.step(1)</span>
 <span class="sd">        &gt;&gt;&gt; obs4, *_ = env.step(1)</span>
 <span class="sd">        &gt;&gt;&gt; skip_and_max_obs = np.max(np.stack([obs3, obs4], axis=0), axis=0)</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; wrapped_env = MaxAndSkipObservation(env)</span>
 <span class="sd">        &gt;&gt;&gt; wrapped_obs0, *_ = wrapped_env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; wrapped_obs1, *_ = wrapped_env.step(1)</span>
@@ -975,28 +975,28 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v1.0.0 - Initially add</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">skip</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.</span>
+<span class="w">        </span><span class="sd">"""This wrapper will return only every ``skip``-th frame (frameskipping) and return the max between the two last frames.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to apply the wrapper</span>
 <span class="sd">            skip: The number of frames to skip</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip</span><span class="o">=</span><span class="n">skip</span><span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">skip</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The skip is expected to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">skip</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"The skip is expected to be an integer, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">skip</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">skip</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;The skip value needs to be equal or greater than two, actual value: </span><span class="si">{</span><span class="n">skip</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"The skip value needs to be equal or greater than two, actual value: </span><span class="si">{</span><span class="n">skip</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The observation space must have the shape attribute.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The observation space must have the shape attribute."</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_skip</span> <span class="o">=</span> <span class="n">skip</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_obs_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
@@ -1006,7 +1006,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Step the environment with the given action for ``skip`` steps.</span>
+<span class="w">        </span><span class="sd">"""Step the environment with the given action for ``skip`` steps.</span>
 
 <span class="sd">        Repeat action, sum reward, and max over last observations.</span>
 
@@ -1014,7 +1014,7 @@
 <span class="sd">            action: The action to step through the environment with</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            Max of the last two observations, reward, terminated, truncated, and info from the environment</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">total_reward</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">terminated</span> <span class="o">=</span> <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>

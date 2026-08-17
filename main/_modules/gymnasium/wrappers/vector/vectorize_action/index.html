@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.vector.vectorize_action</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Vectorizes action wrappers to work for `VectorEnv`.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Vectorizes action wrappers to work for `VectorEnv`."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -387,27 +387,27 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
 
-    <span class="n">_T_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T_contra&quot;</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
-    <span class="n">_T_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T_co&quot;</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_T_contra</span><span class="p">)</span>
+    <span class="n">_T_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_T_contra"</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
+    <span class="n">_T_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_T_co"</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_T_contra</span><span class="p">)</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
 
-    <span class="n">_T_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T_contra&quot;</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">_T_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;_T_co&quot;</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_T_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_T_contra"</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">_T_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_T_co"</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="TransformAction">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.TransformAction">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TransformAction</span><span class="p">(</span><span class="n">VectorActionWrapper</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_T_contra</span><span class="p">,</span> <span class="n">_T_co</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transforms an action via a function provided to the wrapper.</span>
+<span class="w">    </span><span class="sd">"""Transforms an action via a function provided to the wrapper.</span>
 
 <span class="sd">    The function :attr:`func` will be applied to all vector actions.</span>
-<span class="sd">    If the observations from :attr:`func` are outside the bounds of the ``env``&#39;s action space,</span>
+<span class="sd">    If the observations from :attr:`func` are outside the bounds of the ``env``'s action space,</span>
 <span class="sd">    provide an :attr:`action_space` which specifies the action space for the vectorized environment.</span>
 
 <span class="sd">    Example - Without action transformation:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; for _ in range(10):</span>
@@ -425,7 +425,7 @@
 <span class="sd">        &gt;&gt;&gt; def shrink_action(act):</span>
 <span class="sd">        ...     return act * 0.3</span>
 <span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)</span>
 <span class="sd">        &gt;&gt;&gt; new_action_space = Box(low=shrink_action(envs.action_space.low), high=shrink_action(envs.action_space.high))</span>
 <span class="sd">        &gt;&gt;&gt; envs = TransformAction(env=envs, func=shrink_action, action_space=new_action_space)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
@@ -438,7 +438,7 @@
 <span class="sd">        array([[-0.48468155, -0.00372536],</span>
 <span class="sd">               [-0.47599354, -0.00545912],</span>
 <span class="sd">               [-0.46543318, -0.00615723]], dtype=float32)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">single_action_space</span><span class="p">:</span> <span class="n">Space</span>
     <span class="n">action_space</span><span class="p">:</span> <span class="n">Space</span>
@@ -451,14 +451,14 @@
         <span class="n">action_space</span><span class="p">:</span> <span class="n">Space</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">single_action_space</span><span class="p">:</span> <span class="n">Space</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the lambda action wrapper.</span>
+<span class="w">        </span><span class="sd">"""Constructor for the lambda action wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
 <span class="sd">            func: A function that will transform an action. If this transformed action is outside the action space of ``env.action_space`` then provide an ``action_space``.</span>
 <span class="sd">            action_space: The action spaces of the wrapper. If None, then it is computed from ``single_action_space``. If ``single_action_space`` is not provided either, then it is assumed to be the same as ``env.action_space``.</span>
 <span class="sd">            single_action_space: The action space of the non-vectorized environment. If None, then it is assumed the same as ``env.single_action_space``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -472,13 +472,13 @@
             <span class="c1"># TODO: We could compute single_action_space from the action_space if only the latter is provided and avoid the warning below.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">!=</span> <span class="n">batch_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">):</span>
             <span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;For </span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">, the action space and the batched single action space don&#39;t match as expected, action_space=</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="si">}</span><span class="s2">, batched single_action_space=</span><span class="si">{</span><span class="n">batch_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"For </span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">, the action space and the batched single action space don't match as expected, action_space=</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="si">}</span><span class="s2">, batched single_action_space=</span><span class="si">{</span><span class="n">batch_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">_T_contra</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_T_co</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies the :attr:`func` to the actions.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Applies the :attr:`func` to the actions."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span></div>
 
 
@@ -486,11 +486,11 @@
 <div class="viewcode-block" id="VectorizeTransformAction">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.VectorizeTransformAction">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VectorizeTransformAction</span><span class="p">(</span><span class="n">VectorActionWrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vectorizes a single-agent transform action wrapper for vector environments.</span>
+<span class="w">    </span><span class="sd">"""Vectorizes a single-agent transform action wrapper for vector environments.</span>
 
 <span class="sd">    Example - Without action transformation:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, rew, term, trunc, info = envs.step(envs.action_space.sample())</span>
@@ -503,7 +503,7 @@
 <span class="sd">    Example - Adding a transform that applies a ReLU to the action:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import TransformAction</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)</span>
 <span class="sd">        &gt;&gt;&gt; envs = VectorizeTransformAction(envs, wrapper=TransformAction, func=lambda x: (x &gt; 0.0) * x, action_space=envs.single_action_space)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
@@ -513,15 +513,15 @@
 <span class="sd">        array([[-4.6343064e-01,  9.8971417e-05],</span>
 <span class="sd">               [-4.4354835e-01, -5.9898634e-04],</span>
 <span class="sd">               [-4.3034542e-01, -6.9532328e-04]], dtype=float32)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">_SingleEnv</span><span class="p">(</span><span class="n">Env</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fake single-agent environment used for the single-agent wrapper.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Fake single-agent environment used for the single-agent wrapper."""</span>
 
         <span class="n">action_space</span><span class="p">:</span> <span class="n">Space</span>
 
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Constructor for the fake environment.&quot;&quot;&quot;</span>
+<span class="w">            </span><span class="sd">"""Constructor for the fake environment."""</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">action_space</span>
 
     <span class="n">wrapper</span><span class="p">:</span> <span class="n">transform_action</span><span class="o">.</span><span class="n">TransformAction</span>
@@ -537,13 +537,13 @@
         <span class="n">wrapper</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">transform_action</span><span class="o">.</span><span class="n">TransformAction</span><span class="p">],</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the vectorized lambda action wrapper.</span>
+<span class="w">        </span><span class="sd">"""Constructor for the vectorized lambda action wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
 <span class="sd">            wrapper: The wrapper to vectorize</span>
 <span class="sd">            **kwargs: Arguments for the LambdaAction wrapper</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_SingleEnv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -551,18 +551,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">batch_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">same_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
-        <span class="c1"># ty doesn&#39;t support `@single_dispatch` yet</span>
+        <span class="c1"># ty doesn't support `@single_dispatch` yet</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">create_empty_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>  <span class="c1"># ty:ignore[invalid-assignment]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Applies the wrapper to each of the action.</span>
+<span class="w">        </span><span class="sd">"""Applies the wrapper to each of the action.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            actions: The actions to apply the function to</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The updated actions using the wrapper func</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">same_out</span><span class="p">:</span>
             <span class="n">actions_out</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">single_action_space</span><span class="p">,</span>
@@ -583,7 +583,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="p">)</span>
-        <span class="c1"># ty doesn&#39;t support `@single_dispatch` yet</span>
+        <span class="c1"># ty doesn't support `@single_dispatch` yet</span>
         <span class="k">return</span> <span class="n">actions_out</span>  <span class="c1"># ty:ignore[invalid-return-type]</span></div>
 
 
@@ -591,12 +591,12 @@
 <div class="viewcode-block" id="ClipAction">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.ClipAction">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ClipAction</span><span class="p">(</span><span class="n">VectorizeTransformAction</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clip the continuous action within the valid :class:`Box` observation space bound.</span>
+<span class="w">    </span><span class="sd">"""Clip the continuous action within the valid :class:`Box` observation space bound.</span>
 
 <span class="sd">    Example - Passing an out-of-bounds action to the environment to be clipped.</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)</span>
 <span class="sd">        &gt;&gt;&gt; envs = ClipAction(envs)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
@@ -606,14 +606,14 @@
 <span class="sd">        array([[-0.4624777 ,  0.00105192],</span>
 <span class="sd">               [-0.44504836, -0.00209899],</span>
 <span class="sd">               [-0.42884544,  0.00080468]], dtype=float32)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the Clip Action wrapper.</span>
+<span class="w">        </span><span class="sd">"""Constructor for the Clip Action wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">transform_action</span><span class="o">.</span><span class="n">ClipAction</span><span class="p">)</span></div>
 
 
@@ -621,12 +621,12 @@
 <div class="viewcode-block" id="RescaleAction">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.RescaleAction">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RescaleAction</span><span class="p">(</span><span class="n">VectorizeTransformAction</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Affinely rescales the continuous action space of the environment to the range [min_action, max_action].</span>
+<span class="w">    </span><span class="sd">"""Affinely rescales the continuous action space of the environment to the range [min_action, max_action].</span>
 
 <span class="sd">    Example - Without action scaling:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; for _ in range(10):</span>
@@ -641,7 +641,7 @@
 <span class="sd">    Example - With action scaling:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCarContinuous-v0&quot;, num_envs=3)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("MountainCarContinuous-v0", num_envs=3)</span>
 <span class="sd">        &gt;&gt;&gt; envs = RescaleAction(envs, 0.0, 1.0)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
@@ -653,7 +653,7 @@
 <span class="sd">        array([[-0.48657528, -0.00395268],</span>
 <span class="sd">               [-0.47377947, -0.00529102],</span>
 <span class="sd">               [-0.46546045, -0.00614867]], dtype=float32)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -661,13 +661,13 @@
         <span class="n">min_action</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">max_action</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the :class:`RescaleAction` wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initializes the :class:`RescaleAction` wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The vector environment to wrap</span>
 <span class="sd">            min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.</span>
 <span class="sd">            max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">env</span><span class="p">,</span>
             <span class="n">transform_action</span><span class="o">.</span><span class="n">RescaleAction</span><span class="p">,</span>

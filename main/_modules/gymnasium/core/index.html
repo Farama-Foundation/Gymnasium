@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.core</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Core API for Environment, Wrapper, ActionWrapper, RewardWrapper and ObservationWrapper."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -385,8 +385,8 @@
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">WrapperSpec</span>
 
-<span class="n">ObsType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ObsType&quot;</span><span class="p">)</span>
-<span class="n">ActType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;ActType&quot;</span><span class="p">)</span>
+<span class="n">ObsType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ObsType"</span><span class="p">)</span>
+<span class="n">ActType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ActType"</span><span class="p">)</span>
 
 <span class="n">RenderFrame</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
 
@@ -394,7 +394,7 @@
 <div class="viewcode-block" id="Env">
 <a class="viewcode-back" href="../../../api/env/#gymnasium.Env">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Env</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;The main Gymnasium class for implementing Reinforcement Learning Agents environments.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""The main Gymnasium class for implementing Reinforcement Learning Agents environments.</span>
 
 <span class="sd">    The class encapsulates an environment with arbitrary behind-the-scenes dynamics through the :meth:`step` and :meth:`reset` functions.</span>
 <span class="sd">    An environment can be partially or fully observed by single agents. For multi-agent environments, see PettingZoo.</span>
@@ -405,7 +405,7 @@
 <span class="sd">      if the environment has terminated or truncated due to the latest action and information from the environment about the step, i.e. metrics, debug info.</span>
 <span class="sd">    - :meth:`reset` - Resets the environment to an initial state, required before calling step.</span>
 <span class="sd">      Returns the first agent observation for an episode and information, i.e. metrics, debug info.</span>
-<span class="sd">    - :meth:`render` - Renders the environments to help visualise what the agent see, examples modes are &quot;human&quot;, &quot;rgb_array&quot;, &quot;ansi&quot; for text.</span>
+<span class="sd">    - :meth:`render` - Renders the environments to help visualise what the agent see, examples modes are "human", "rgb_array", "ansi" for text.</span>
 <span class="sd">    - :meth:`close` - Closes the environment, important when external software is used, i.e. pygame for rendering, databases</span>
 
 <span class="sd">    Environments have additional attributes for users to understand the implementation</span>
@@ -413,7 +413,7 @@
 <span class="sd">    - :attr:`action_space` - The Space object corresponding to valid actions, all valid actions should be contained within the space.</span>
 <span class="sd">    - :attr:`observation_space` - The Space object corresponding to valid observations, all valid observations should be contained within the space.</span>
 <span class="sd">    - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`</span>
-<span class="sd">    - :attr:`metadata` - The metadata of the environment, e.g. `{&quot;render_modes&quot;: [&quot;rgb_array&quot;, &quot;human&quot;], &quot;render_fps&quot;: 30}`. For Jax or Torch, this can be indicated to users with `&quot;jax&quot;=True` or `&quot;torch&quot;=True`.</span>
+<span class="sd">    - :attr:`metadata` - The metadata of the environment, e.g. `{"render_modes": ["rgb_array", "human"], "render_fps": 30}`. For Jax or Torch, this can be indicated to users with `"jax"=True` or `"torch"=True`.</span>
 <span class="sd">    - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during</span>
 <span class="sd">      ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.</span>
 
@@ -425,12 +425,12 @@
 <span class="sd">    Note:</span>
 <span class="sd">        For strict type checking (e.g. mypy or pyright), :class:`Env` is a generic class with two parameterized types: ``ObsType`` and ``ActType``.</span>
 <span class="sd">        The ``ObsType`` and ``ActType`` are the expected types of the observations and actions used in :meth:`reset` and :meth:`step`.</span>
-<span class="sd">        The environment&#39;s :attr:`observation_space` and :attr:`action_space` should have type ``Space[ObsType]`` and ``Space[ActType]``,</span>
-<span class="sd">        see a space&#39;s implementation to find its parameterized type.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        The environment's :attr:`observation_space` and :attr:`action_space` should have type ``Space[ObsType]`` and ``Space[ActType]``,</span>
+<span class="sd">        see a space's implementation to find its parameterized type.</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Set this in SOME subclasses</span>
-    <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;render_modes&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"render_modes"</span><span class="p">:</span> <span class="p">[]}</span>
     <span class="c1"># define render_mode if your environment supports rendering</span>
     <span class="n">render_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -441,7 +441,7 @@
 
     <span class="c1"># Created</span>
     <span class="n">_np_random</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="c1"># will be set to the &quot;invalid&quot; value -1 if the seed of the currently set rng is unknown</span>
+    <span class="c1"># will be set to the "invalid" value -1 if the seed of the currently set rng is unknown</span>
     <span class="n">_np_random_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Env.step">
@@ -449,10 +449,10 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run one timestep of the environment&#39;s dynamics using the agent actions.</span>
+<span class="w">        </span><span class="sd">"""Run one timestep of the environment's dynamics using the agent actions.</span>
 
 <span class="sd">        When the end of an episode is reached (``terminated or truncated``), it is necessary to call :meth:`reset` to</span>
-<span class="sd">        reset this environment&#39;s state for the next episode.</span>
+<span class="sd">        reset this environment's state for the next episode.</span>
 
 <span class="sd">        .. versionchanged:: 0.26</span>
 
@@ -464,7 +464,7 @@
 <span class="sd">            action (ActType): an action provided by the agent to update the environment state.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            observation (ObsType): An element of the environment&#39;s :attr:`observation_space` as the next observation due to the agent actions.</span>
+<span class="sd">            observation (ObsType): An element of the environment's :attr:`observation_space` as the next observation due to the agent actions.</span>
 <span class="sd">                An example is a numpy array containing the positions and velocities of the pole in CartPole.</span>
 <span class="sd">            reward (SupportsFloat): The reward as a result of taking the action.</span>
 <span class="sd">            terminated (bool): Whether the agent reaches the terminal state (as defined under the MDP of the task)</span>
@@ -475,15 +475,15 @@
 <span class="sd">                Can be used to end the episode prematurely before a terminal state is reached.</span>
 <span class="sd">                If true, the user needs to call :meth:`reset`.</span>
 <span class="sd">            info (dict): Contains auxiliary diagnostic information (helpful for debugging, learning, and logging).</span>
-<span class="sd">                This might, for instance, contain: metrics that describe the agent&#39;s performance state, variables that are</span>
+<span class="sd">                This might, for instance, contain: metrics that describe the agent's performance state, variables that are</span>
 <span class="sd">                hidden from observations, or individual reward terms that are combined to produce the total reward.</span>
-<span class="sd">                In OpenAI Gym &lt;v26, it contains &quot;TimeLimit.truncated&quot; to distinguish truncation and termination,</span>
+<span class="sd">                In OpenAI Gym &lt;v26, it contains "TimeLimit.truncated" to distinguish truncation and termination,</span>
 <span class="sd">                however this is deprecated in favour of returning terminated and truncated variables.</span>
 <span class="sd">            done (bool): (Deprecated) A boolean value for if the episode has ended, in which case further :meth:`step` calls will</span>
 <span class="sd">                return undefined results. This was removed in OpenAI Gym v26 in favor of terminated and truncated attributes.</span>
 <span class="sd">                A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,</span>
 <span class="sd">                a certain timelimit was exceeded, or the physics simulation has entered an invalid state.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
@@ -495,7 +495,7 @@
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment to an initial internal state, returning an initial observation and info.</span>
+<span class="w">        </span><span class="sd">"""Resets the environment to an initial internal state, returning an initial observation and info.</span>
 
 <span class="sd">        This method generates a new starting state often with some randomness to ensure that the agent explores the</span>
 <span class="sd">        state space and learns a generalised policy about the environment. This randomness can be controlled</span>
@@ -512,12 +512,12 @@
 <span class="sd">            The ``return_info`` parameter was removed and now info is expected to be returned.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            seed (optional int): The seed that is used to initialize the environment&#39;s PRNG (`np_random`) and</span>
+<span class="sd">            seed (optional int): The seed that is used to initialize the environment's PRNG (`np_random`) and</span>
 <span class="sd">                the read-only attribute `np_random_seed`.</span>
 <span class="sd">                If the environment does not already have a PRNG and ``seed=None`` (the default option) is passed,</span>
 <span class="sd">                a seed will be chosen from some source of entropy (e.g. timestamp or /dev/urandom).</span>
 <span class="sd">                However, if the environment already has a PRNG and ``seed=None`` is passed, the PRNG will *not* be reset</span>
-<span class="sd">                and the env&#39;s :attr:`np_random_seed` will *not* be altered.</span>
+<span class="sd">                and the env's :attr:`np_random_seed` will *not* be altered.</span>
 <span class="sd">                If you pass an integer, the PRNG will be reset even if it already exists.</span>
 <span class="sd">                Usually, you want to pass an integer *right after the environment has been initialized and then never again*.</span>
 <span class="sd">                Please refer to the minimal example above to see this paradigm in action.</span>
@@ -529,7 +529,7 @@
 <span class="sd">                (typically a numpy array) and is analogous to the observation returned by :meth:`step`.</span>
 <span class="sd">            info (dictionary):  This dictionary contains auxiliary information complementing ``observation``. It should be analogous to</span>
 <span class="sd">                the ``info`` returned by :meth:`step`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Initialize the RNG if the seed is manually passed</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
@@ -538,9 +538,9 @@
 <div class="viewcode-block" id="Env.render">
 <a class="viewcode-back" href="../../../api/env/#gymnasium.Env.render">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the render frames as specified by :attr:`render_mode` during the initialization of the environment.</span>
+<span class="w">        </span><span class="sd">"""Compute the render frames as specified by :attr:`render_mode` during the initialization of the environment.</span>
 
-<span class="sd">        The environment&#39;s :attr:`metadata` render modes (`env.metadata[&quot;render_modes&quot;]`) should contain the possible</span>
+<span class="sd">        The environment's :attr:`metadata` render modes (`env.metadata["render_modes"]`) should contain the possible</span>
 <span class="sd">        ways to implement the render modes. In addition, list versions for most render modes is achieved through</span>
 <span class="sd">        `gymnasium.make` which automatically applies a wrapper to collect rendered frames.</span>
 
@@ -551,115 +551,115 @@
 <span class="sd">        By convention, if the :attr:`render_mode` is:</span>
 
 <span class="sd">        - None (default): no render is computed.</span>
-<span class="sd">        - &quot;human&quot;: The environment is continuously rendered in the current display or terminal, usually for human consumption.</span>
-<span class="sd">          This rendering should occur during :meth:`step` and :meth:`render` doesn&#39;t need to be called. Returns ``None``.</span>
-<span class="sd">        - &quot;rgb_array&quot;: Return a single frame representing the current state of the environment.</span>
+<span class="sd">        - "human": The environment is continuously rendered in the current display or terminal, usually for human consumption.</span>
+<span class="sd">          This rendering should occur during :meth:`step` and :meth:`render` doesn't need to be called. Returns ``None``.</span>
+<span class="sd">        - "rgb_array": Return a single frame representing the current state of the environment.</span>
 <span class="sd">          A frame is a ``np.ndarray`` with shape ``(x, y, 3)`` representing RGB values for an x-by-y pixel image.</span>
-<span class="sd">        - &quot;ansi&quot;: Return a strings (``str``) or ``StringIO.StringIO`` containing a terminal-style text representation</span>
+<span class="sd">        - "ansi": Return a strings (``str``) or ``StringIO.StringIO`` containing a terminal-style text representation</span>
 <span class="sd">          for each time step. The text can include newlines and ANSI escape sequences (e.g. for colors).</span>
-<span class="sd">        - &quot;rgb_array_list&quot; and &quot;ansi_list&quot;: List based version of render modes are possible (except Human) through the</span>
-<span class="sd">          wrapper, :py:class:`gymnasium.wrappers.RenderCollection` that is automatically applied during ``gymnasium.make(..., render_mode=&quot;rgb_array_list&quot;)``.</span>
+<span class="sd">        - "rgb_array_list" and "ansi_list": List based version of render modes are possible (except Human) through the</span>
+<span class="sd">          wrapper, :py:class:`gymnasium.wrappers.RenderCollection` that is automatically applied during ``gymnasium.make(..., render_mode="rgb_array_list")``.</span>
 <span class="sd">          The frames collected are popped after :meth:`render` is called or :meth:`reset`.</span>
 
 <span class="sd">        Note:</span>
-<span class="sd">            Make sure that your class&#39;s :attr:`metadata` ``&quot;render_modes&quot;`` key includes the list of supported modes.</span>
+<span class="sd">            Make sure that your class's :attr:`metadata` ``"render_modes"`` key includes the list of supported modes.</span>
 
 <span class="sd">        .. versionchanged:: 0.25.0</span>
 
 <span class="sd">            The render function was changed to no longer accept parameters, rather these parameters should be specified</span>
-<span class="sd">            in the environment initialised, i.e., ``gymnasium.make(&quot;CartPole-v1&quot;, render_mode=&quot;human&quot;)``</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            in the environment initialised, i.e., ``gymnasium.make("CartPole-v1", render_mode="human")``</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="Env.close">
 <a class="viewcode-back" href="../../../api/env/#gymnasium.Env.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;After the user has finished using the environment, close contains the code necessary to &quot;clean up&quot; the environment.</span>
+<span class="w">        </span><span class="sd">"""After the user has finished using the environment, close contains the code necessary to "clean up" the environment.</span>
 
 <span class="sd">        This is critical for closing rendering windows, database or HTTP connections.</span>
-<span class="sd">        Calling ``close`` on an already closed environment has no effect and won&#39;t raise an error.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        Calling ``close`` on an already closed environment has no effect and won't raise an error.</span>
+<span class="sd">        """</span>
         <span class="k">pass</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the base non-wrapped environment.</span>
+<span class="w">        </span><span class="sd">"""Returns the base non-wrapped environment.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Env: The base non-wrapped :class:`gymnasium.Env` instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">np_random_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the environment&#39;s internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.</span>
+<span class="w">        </span><span class="sd">"""Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.</span>
 
 <span class="sd">        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,</span>
 <span class="sd">        the seed will take the value -1.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">np_random</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the environment&#39;s internal :attr:`_np_random` that if not set will initialise with a random seed.</span>
+<span class="w">        </span><span class="sd">"""Returns the environment's internal :attr:`_np_random` that if not set will initialise with a random seed.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Instances of `np.random.Generator`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span>
 
     <span class="nd">@np_random</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">np_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the environment&#39;s internal :attr:`_np_random` with the user-provided Generator.</span>
+<span class="w">        </span><span class="sd">"""Sets the environment's internal :attr:`_np_random` with the user-provided Generator.</span>
 
 <span class="sd">        Since it is generally not possible to extract a seed from an instance of a random number generator,</span>
 <span class="sd">        this will also set the :attr:`_np_random_seed` to `-1`, which is not valid as input for the creation</span>
 <span class="sd">        of a numpy rng.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_np_random</span> <span class="o">=</span> <span class="n">value</span>
         <span class="c1"># Setting a numpy rng with -1 will cause a ValueError</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a string of the environment with :attr:`spec` id&#39;s if :attr:`spec.</span>
+<span class="w">        </span><span class="sd">"""Returns a string of the environment with :attr:`spec` id's if :attr:`spec.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A string identifying the environment</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> instance&gt;&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> instance&gt;"</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&gt;&gt;&quot;</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&gt;&gt;"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Self</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Support with-statement for the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Support with-statement for the environment."""</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Support with-statement for the environment and closes the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Support with-statement for the environment and closes the environment."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="c1"># propagate exception</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">has_wrapper_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if the attribute `name` exists in the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Checks if the attribute `name` exists in the environment."""</span>
         <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_wrapper_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets the attribute `name` from the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Gets the attribute `name` from the environment."""</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">set_wrapper_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the attribute `name` on the environment with `value`, see `Wrapper.set_wrapper_attr` for more info.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Sets the attribute `name` on the environment with `value`, see `Wrapper.set_wrapper_attr` for more info."""</span>
         <span class="k">if</span> <span class="n">force</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -667,8 +667,8 @@
 
 
 
-<span class="n">WrapperObsType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;WrapperObsType&quot;</span><span class="p">)</span>
-<span class="n">WrapperActType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;WrapperActType&quot;</span><span class="p">)</span>
+<span class="n">WrapperObsType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"WrapperObsType"</span><span class="p">)</span>
+<span class="n">WrapperActType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"WrapperActType"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Wrapper">
@@ -677,31 +677,31 @@
     <span class="n">Env</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">],</span>
     <span class="n">Generic</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps a :class:`gymnasium.Env` to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.</span>
+<span class="w">    </span><span class="sd">"""Wraps a :class:`gymnasium.Env` to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.</span>
 
 <span class="sd">    This class is the base class of all wrappers to change the behavior of the underlying environment.</span>
 <span class="sd">    Wrappers that inherit from this class can modify the :attr:`action_space`, :attr:`observation_space`</span>
-<span class="sd">    and :attr:`metadata` attributes, without changing the underlying environment&#39;s attributes.</span>
+<span class="sd">    and :attr:`metadata` attributes, without changing the underlying environment's attributes.</span>
 <span class="sd">    Moreover, the behavior of the :meth:`step` and :meth:`reset` methods can be changed by these wrappers.</span>
 
-<span class="sd">    Some attributes (:attr:`spec`, :attr:`render_mode`, :attr:`np_random`) will point back to the wrapper&#39;s environment</span>
+<span class="sd">    Some attributes (:attr:`spec`, :attr:`render_mode`, :attr:`np_random`) will point back to the wrapper's environment</span>
 <span class="sd">    (i.e. to the corresponding attributes of :attr:`env`).</span>
 
 <span class="sd">    Note:</span>
-<span class="sd">        If you inherit from :class:`Wrapper`, don&#39;t forget to call ``super().__init__(env)``</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        If you inherit from :class:`Wrapper`, don't forget to call ``super().__init__(env)``</span>
+<span class="sd">    """</span>
 
     <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wraps an environment to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.</span>
+<span class="w">        </span><span class="sd">"""Wraps an environment to allow a modular transformation of the :meth:`step` and :meth:`reset` methods.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to wrap</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env</span> <span class="o">=</span> <span class="n">env</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">Env</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected env to be a `gymnasium.Env` but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Expected env to be a `gymnasium.Env` but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_action_space</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">[</span><span class="n">WrapperActType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_observation_space</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -714,7 +714,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Uses the :meth:`step` of the :attr:`env` that can be overwritten to change the returned data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Uses the :meth:`step` of the :attr:`env` that can be overwritten to change the returned data."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div>
 
 
@@ -723,40 +723,40 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Uses the :meth:`reset` of the :attr:`env` that can be overwritten to change the returned data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Uses the :meth:`reset` of the :attr:`env` that can be overwritten to change the returned data."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Wrapper.render">
 <a class="viewcode-back" href="../../../api/wrappers/#gymnasium.Wrapper.render">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Uses the :meth:`render` of the :attr:`env` that can be overwritten to change the returned data."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Wrapper.close">
 <a class="viewcode-back" href="../../../api/wrappers/#gymnasium.Wrapper.close">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the wrapper and :attr:`env`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Closes the wrapper and :attr:`env`."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">np_random_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the base environment&#39;s :attr:`np_random_seed`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the base environment's :attr:`np_random_seed`."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">np_random_seed</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">unwrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the base environment of the wrapper.</span>
+<span class="w">        </span><span class="sd">"""Returns the base environment of the wrapper.</span>
 
 <span class="sd">        This will be the bare :class:`gymnasium.Env` environment, underneath all layers of wrappers.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper inherits from `EzPickle`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper inherits from `EzPickle`."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span>
 
@@ -765,9 +765,9 @@
             <span class="c1"># See if the wrapper inherits from `RecordConstructorArgs` then add the kwargs otherwise use `None` for the wrapper kwargs. This will raise an error in `make`</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">RecordConstructorArgs</span><span class="p">):</span>
                 <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_saved_kwargs</span>
-                <span class="k">if</span> <span class="s2">&quot;env&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">"env"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
                     <span class="n">kwargs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-                    <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;env&quot;</span><span class="p">)</span>
+                    <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"env"</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">kwargs</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -775,7 +775,7 @@
 
             <span class="n">wrapper_spec</span> <span class="o">=</span> <span class="n">WrapperSpec</span><span class="p">(</span>
                 <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">class_name</span><span class="p">(),</span>
-                <span class="n">entry_point</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">entry_point</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
                 <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -785,7 +785,7 @@
                 <span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span> <span class="o">+=</span> <span class="p">(</span><span class="n">wrapper_spec</span><span class="p">,)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">gymnasium</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span>
 
@@ -796,18 +796,18 @@
 <a class="viewcode-back" href="../../../api/wrappers/#gymnasium.Wrapper.wrapper_spec">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrapper_spec</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WrapperSpec</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a `WrapperSpec` for the wrappers.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Generates a `WrapperSpec` for the wrappers."""</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">WrapperSpec</span>
 
         <span class="k">return</span> <span class="n">WrapperSpec</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">class_name</span><span class="p">(),</span>
-            <span class="n">entry_point</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">entry_point</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
             <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">has_wrapper_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks if the given attribute is within the wrapper or its environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Checks if the given attribute is within the wrapper or its environment."""</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
@@ -816,14 +816,14 @@
 <div class="viewcode-block" id="Wrapper.get_wrapper_attr">
 <a class="viewcode-back" href="../../../api/wrappers/#gymnasium.Wrapper.get_wrapper_attr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_wrapper_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets an attribute from the wrapper and lower environments if `name` doesn&#39;t exist in this object.</span>
+<span class="w">        </span><span class="sd">"""Gets an attribute from the wrapper and lower environments if `name` doesn't exist in this object.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name: The variable name to get</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The variable with name in wrapper or lower environments</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -831,14 +831,14 @@
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;wrapper </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">class_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"wrapper </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">class_name</span><span class="p">()</span><span class="si">}</span><span class="s2"> has no attribute </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">"</span>
                 <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
 
 
 <div class="viewcode-block" id="Wrapper.set_wrapper_attr">
 <a class="viewcode-back" href="../../../api/wrappers/#gymnasium.Wrapper.set_wrapper_attr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_wrapper_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets an attribute on this wrapper or lower environment if `name` is already defined.</span>
+<span class="w">        </span><span class="sd">"""Sets an attribute on this wrapper or lower environment if `name` is already defined.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name: The variable name</span>
@@ -848,7 +848,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            If the variable has been set in this or a lower wrapper.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -864,23 +864,23 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the wrapper name and the :attr:`env` representation string.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the wrapper name and the :attr:`env` representation string."""</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"&lt;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="si">}</span><span class="s2">&gt;"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the string representation of the wrapper.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the string representation of the wrapper."""</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the class name of the wrapper.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the class name of the wrapper."""</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">action_space</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">[</span><span class="n">ActType</span><span class="p">]</span> <span class="o">|</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">[</span><span class="n">WrapperActType</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the :attr:`Env` :attr:`action_space` unless overwritten then the wrapper :attr:`action_space` is used.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the :attr:`Env` :attr:`action_space` unless overwritten then the wrapper :attr:`action_space` is used."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_space</span>
@@ -893,7 +893,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">observation_space</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">[</span><span class="n">ObsType</span><span class="p">]</span> <span class="o">|</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the :attr:`Env` :attr:`observation_space` unless overwritten then the wrapper :attr:`observation_space` is used.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the :attr:`Env` :attr:`observation_space` unless overwritten then the wrapper :attr:`observation_space` is used."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observation_space</span>
@@ -904,7 +904,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the :attr:`Env` :attr:`metadata`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the :attr:`Env` :attr:`metadata`."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
@@ -915,12 +915,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">render_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the :attr:`Env` :attr:`render_mode`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the :attr:`Env` :attr:`render_mode`."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">np_random</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the :attr:`Env` :attr:`np_random` attribute.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns the :attr:`Env` :attr:`np_random` attribute."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">np_random</span>
 
     <span class="nd">@np_random</span><span class="o">.</span><span class="n">setter</span>
@@ -929,12 +929,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_np_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This code will never be run due to __getattr__ being called prior this.</span>
+<span class="w">        </span><span class="sd">"""This code will never be run due to __getattr__ being called prior this.</span>
 
 <span class="sd">        It seems that @property overwrites the variable (`_np_random`) meaning that __getattr__ gets called with the missing variable.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-            <span class="s2">&quot;Can&#39;t access `_np_random` of a wrapper, use `.unwrapped._np_random` or `.np_random`.&quot;</span>
+            <span class="s2">"Can't access `_np_random` of a wrapper, use `.unwrapped._np_random` or `.np_random`."</span>
         <span class="p">)</span></div>
 
 
@@ -942,48 +942,48 @@
 <div class="viewcode-block" id="ObservationWrapper">
 <a class="viewcode-back" href="../../../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ObservationWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Modify observations from :meth:`Env.reset` and :meth:`Env.step` using :meth:`observation` function.</span>
+<span class="w">    </span><span class="sd">"""Modify observations from :meth:`Env.reset` and :meth:`Env.step` using :meth:`observation` function.</span>
 
 <span class="sd">    If you would like to apply a function to only the observation before</span>
 <span class="sd">    passing it to the learning code, you can simply inherit from :class:`ObservationWrapper` and overwrite the method</span>
 <span class="sd">    :meth:`observation` to implement that transformation. The transformation defined in that method must be</span>
 <span class="sd">    reflected by the :attr:`env` observation space. Otherwise, you need to specify the new observation space of the</span>
 <span class="sd">    wrapper by setting :attr:`self.observation_space` in the :meth:`__init__` method of your wrapper.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the observation wrapper.</span>
+<span class="w">        </span><span class="sd">"""Constructor for the observation wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: Environment to be wrapped.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the :attr:`env` after calling :meth:`reset`, returning a modified observation using :meth:`self.observation`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Modifies the :attr:`env` after calling :meth:`reset`, returning a modified observation using :meth:`self.observation`."""</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">obs</span><span class="p">),</span> <span class="n">info</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the :attr:`env` after calling :meth:`step` using :meth:`self.observation` on the returned observations.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Modifies the :attr:`env` after calling :meth:`step` using :meth:`self.observation` on the returned observations."""</span>
         <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">observation</span><span class="p">),</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 
 <div class="viewcode-block" id="ObservationWrapper.observation">
 <a class="viewcode-back" href="../../../api/wrappers/observation_wrappers/#gymnasium.ObservationWrapper.observation">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WrapperObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a modified observation.</span>
+<span class="w">        </span><span class="sd">"""Returns a modified observation.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            observation: The :attr:`env` observation</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The modified observation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 
@@ -992,39 +992,39 @@
 <div class="viewcode-block" id="RewardWrapper">
 <a class="viewcode-back" href="../../../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">RewardWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Superclass of wrappers that can modify the returning reward from a step.</span>
+<span class="w">    </span><span class="sd">"""Superclass of wrappers that can modify the returning reward from a step.</span>
 
 <span class="sd">    If you would like to apply a function to the reward that is returned by the base environment before</span>
 <span class="sd">    passing it to learning code, you can simply inherit from :class:`RewardWrapper` and overwrite the method</span>
 <span class="sd">    :meth:`reward` to implement that transformation.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the Reward wrapper.</span>
+<span class="w">        </span><span class="sd">"""Constructor for the Reward wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: Environment to be wrapped.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the :attr:`env` :meth:`step` reward using :meth:`self.reward`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Modifies the :attr:`env` :meth:`step` reward using :meth:`self.reward`."""</span>
         <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward</span><span class="p">(</span><span class="n">reward</span><span class="p">),</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 
 <div class="viewcode-block" id="RewardWrapper.reward">
 <a class="viewcode-back" href="../../../api/wrappers/reward_wrappers/#gymnasium.RewardWrapper.reward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">SupportsFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SupportsFloat</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a modified environment ``reward``.</span>
+<span class="w">        </span><span class="sd">"""Returns a modified environment ``reward``.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            reward: The :attr:`env` :meth:`step` reward</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The modified `reward`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 
@@ -1033,7 +1033,7 @@
 <div class="viewcode-block" id="ActionWrapper">
 <a class="viewcode-back" href="../../../api/wrappers/action_wrappers/#gymnasium.ActionWrapper">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ActionWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Superclass of wrappers that can modify the action before :meth:`step`.</span>
+<span class="w">    </span><span class="sd">"""Superclass of wrappers that can modify the action before :meth:`step`.</span>
 
 <span class="sd">    If you would like to apply a function to the action before passing it to the base environment,</span>
 <span class="sd">    you can simply inherit from :class:`ActionWrapper` and overwrite the method :meth:`action` to implement</span>
@@ -1044,33 +1044,33 @@
 
 <span class="sd">    Among others, Gymnasium provides the action wrappers :class:`gymnasium.wrappers.ClipAction` and</span>
 <span class="sd">    :class:`gymnasium.wrappers.RescaleAction` for clipping and rescaling actions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the action wrapper.</span>
+<span class="w">        </span><span class="sd">"""Constructor for the action wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: Environment to be wrapped.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs the :attr:`env` :meth:`env.step` using the modified ``action`` from :meth:`self.action`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Runs the :attr:`env` :meth:`env.step` using the modified ``action`` from :meth:`self.action`."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="n">action</span><span class="p">))</span>
 
 <div class="viewcode-block" id="ActionWrapper.action">
 <a class="viewcode-back" href="../../../api/wrappers/action_wrappers/#gymnasium.ActionWrapper.action">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a modified action before :meth:`step` is called.</span>
+<span class="w">        </span><span class="sd">"""Returns a modified action before :meth:`step` is called.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            action: The original :meth:`step` actions</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The modified actions</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 

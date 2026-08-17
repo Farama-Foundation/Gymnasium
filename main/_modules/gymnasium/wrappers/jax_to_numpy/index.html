@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.jax_to_numpy</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Helper functions and wrapper class for converting between numpy and Jax.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Helper functions and wrapper class for converting between numpy and Jax."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -388,10 +388,10 @@
     <span class="kn">import</span><span class="w"> </span><span class="nn">jax.numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">jnp</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-        <span class="s1">&#39;Jax is not installed therefore cannot call `numpy_to_jax`, run `pip install &quot;gymnasium[jax]&quot;`&#39;</span>
+        <span class="s1">'Jax is not installed therefore cannot call `numpy_to_jax`, run `pip install "gymnasium[jax]"`'</span>
     <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;JaxToNumpy&quot;</span><span class="p">,</span> <span class="s2">&quot;jax_to_numpy&quot;</span><span class="p">,</span> <span class="s2">&quot;numpy_to_jax&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"JaxToNumpy"</span><span class="p">,</span> <span class="s2">"jax_to_numpy"</span><span class="p">,</span> <span class="s2">"numpy_to_jax"</span><span class="p">]</span>
 
 
 <span class="n">jax_to_numpy</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">array_conversion</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">module_namespace</span><span class="p">(</span><span class="n">np</span><span class="p">))</span>
@@ -402,7 +402,7 @@
 <div class="viewcode-block" id="JaxToNumpy">
 <a class="viewcode-back" href="../../../../api/wrappers/misc_wrappers/#gymnasium.wrappers.JaxToNumpy">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JaxToNumpy</span><span class="p">(</span><span class="n">ArrayConversion</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps a Jax-based environment such that it can be interacted with NumPy arrays.</span>
+<span class="w">    </span><span class="sd">"""Wraps a Jax-based environment such that it can be interacted with NumPy arrays.</span>
 
 <span class="sd">    Actions must be provided as numpy arrays and observations will be returned as numpy arrays.</span>
 <span class="sd">    A vector version of the wrapper exists, :class:`gymnasium.wrappers.vector.JaxToNumpy`.</span>
@@ -413,36 +413,40 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym                                     # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;JaxEnv-vx&quot;)                                 # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("JaxEnv-vx")                                 # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; env = JaxToNumpy(env)                                       # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=123)                                # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; type(obs)                                                   # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;numpy.ndarray&#39;&gt;</span>
+<span class="sd">        &lt;class 'numpy.ndarray'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; action = env.action_space.sample()                          # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; obs, reward, terminated, truncated, info = env.step(action) # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; type(obs)                                                   # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;numpy.ndarray&#39;&gt;</span>
+<span class="sd">        &lt;class 'numpy.ndarray'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; type(reward)                                                # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;float&#39;&gt;</span>
+<span class="sd">        &lt;class 'float'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; type(terminated)                                            # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;bool&#39;&gt;</span>
+<span class="sd">        &lt;class 'bool'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; type(truncated)                                             # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;bool&#39;&gt;</span>
+<span class="sd">        &lt;class 'bool'&gt;</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v1.0.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wraps a jax environment such that the input and outputs are numpy arrays.</span>
+<span class="w">        </span><span class="sd">"""Wraps a jax environment such that the input and outputs are numpy arrays.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: the jax environment to wrap</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">jnp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-                <span class="s1">&#39;Jax is not installed, run `pip install &quot;gymnasium[jax]&quot;`&#39;</span>
+                <span class="s1">'Jax is not installed, run `pip install "gymnasium[jax]"`'</span>
             <span class="p">)</span>
+        <span class="c1"># Recorded here rather than left to `ArrayConversion`, whose four</span>
+        <span class="c1"># arguments this constructor does not take. The first call wins, so</span>
+        <span class="c1"># the one below is ignored.</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">env_xp</span><span class="o">=</span><span class="n">jnp</span><span class="p">,</span> <span class="n">target_xp</span><span class="o">=</span><span class="n">np</span><span class="p">)</span></div>
 
 </pre></div>

@@ -459,7 +459,7 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gym</span>
 
 <span class="c1"># Environment creation and seeding</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"LunarLander-v3"</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
 <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
 <span class="n">observation</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
@@ -468,7 +468,7 @@
 <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
     <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
     <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-    <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>
 
 <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
@@ -476,10 +476,10 @@
 </section>
 <section id="new-v0-26-code-including-v1-0-0">
 <h3>New v0.26+ Code (Including v1.0.0)<a class="headerlink" href="#new-v0-26-code-including-v1-0-0" title="Link to this heading">¶</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>  <span class="c1"># Note: &#39;gymnasium&#39; not &#39;gym&#39;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>  <span class="c1"># Note: 'gymnasium' not 'gym'</span>
 
 <span class="c1"># Environment creation with render mode specified upfront</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;LunarLander-v3&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"LunarLander-v3"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>
 
 <span class="c1"># Reset with seed parameter</span>
 <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{})</span>
@@ -517,13 +517,13 @@
 <h3>2. Seeding and Random Number Generation<a class="headerlink" href="#seeding-and-random-number-generation" title="Link to this heading">¶</a></h3>
 <p>The biggest conceptual change is how randomness is handled.</p>
 <p><strong>Old v0.21</strong>: Separate <code class="docutils literal notranslate"><span class="pre">seed()</span></code> method</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
 <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># Set random seed</span>
 <span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># Reset environment</span>
 </pre></div>
 </div>
 <p><strong>New v0.26+</strong>: Seed passed to <code class="docutils literal notranslate"><span class="pre">reset()</span></code></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
 <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># Seed and reset together</span>
 </pre></div>
 </div>
@@ -557,7 +557,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows episode-specific configuration</p></li>
 </ul>
 <p><strong>Common migration pattern</strong>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># If you don&#39;t need the new features, just unpack the tuple</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># If you don't need the new features, just unpack the tuple</span>
 <span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># Ignore info with underscore</span>
 
 <span class="c1"># If you want to maintain the same random behavior as v0.21</span>
@@ -586,7 +586,7 @@
 <p>This distinction is crucial for value function bootstrapping in RL algorithms:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD (ambiguous)</span>
 <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
-    <span class="c1"># Should we bootstrap? We don&#39;t know if this was natural termination or time limit!</span>
+    <span class="c1"># Should we bootstrap? We don't know if this was natural termination or time limit!</span>
     <span class="n">next_value</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Assumption that may be wrong</span>
 
 <span class="c1"># NEW (clear)</span>
@@ -616,34 +616,34 @@
 <section id="render-mode-changes">
 <h3>5. Render Mode Changes<a class="headerlink" href="#render-mode-changes" title="Link to this heading">¶</a></h3>
 <p><strong>Old v0.21</strong>: Render mode specified each time</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
-<span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>     <span class="c1"># Visual window</span>
-<span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span> <span class="c1"># Get pixel array</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>     <span class="c1"># Visual window</span>
+<span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">)</span> <span class="c1"># Get pixel array</span>
 </pre></div>
 </div>
 <p><strong>New v0.26+</strong>: Render mode fixed at creation</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>     <span class="c1"># For visual display</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span> <span class="c1"># For recording</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>     <span class="c1"># For visual display</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">)</span> <span class="c1"># For recording</span>
 <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>  <span class="c1"># Uses the mode specified at creation</span>
 </pre></div>
 </div>
 <p><strong>Why this changed</strong>: Some environments can’t switch render modes on-the-fly. Fixing the mode at creation enables better optimization and prevents bugs.</p>
 <p><strong>Practical implications</strong>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD: Could switch modes dynamically</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
     <span class="c1"># ... episode code ...</span>
     <span class="k">if</span> <span class="n">episode</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>  <span class="c1"># Show every 10th episode</span>
+        <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>  <span class="c1"># Show every 10th episode</span>
 
 <span class="c1"># NEW: Create separate environments for different purposes</span>
-<span class="n">training_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>  <span class="c1"># No rendering for speed</span>
-<span class="n">eval_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>  <span class="c1"># Visual for evaluation</span>
+<span class="n">training_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>  <span class="c1"># No rendering for speed</span>
+<span class="n">eval_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>  <span class="c1"># Visual for evaluation</span>
 
 <span class="c1"># Or use None for no rendering, then create visual env when needed</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># Fast training</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># Fast training</span>
 <span class="k">if</span> <span class="n">need_visualization</span><span class="p">:</span>
-    <span class="n">visual_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+    <span class="n">visual_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -653,7 +653,7 @@
 <p>The <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.TimeLimit" title="gymnasium.wrappers.TimeLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code></a> wrapper behavior also changed to align with the new termination model.</p>
 <p><strong>Old v0.21</strong>: Added <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code> to info dict</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">done</span> <span class="ow">and</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;TimeLimit.truncated&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">if</span> <span class="n">done</span> <span class="ow">and</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'TimeLimit.truncated'</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
     <span class="c1"># Episode ended due to time limit</span>
     <span class="k">pass</span>
 </pre></div>
@@ -677,7 +677,7 @@
 <p>Some environments were moved or removed:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD: Robotics environments in main gym</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gym</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;FetchReach-v1&quot;</span><span class="p">)</span>  <span class="c1"># No longer available</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"FetchReach-v1"</span><span class="p">)</span>  <span class="c1"># No longer available</span>
 
 <span class="c1"># NEW: Moved to separate package</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
@@ -687,8 +687,8 @@
 
 <span class="n">gymnasium</span><span class="o">.</span><span class="n">register_envs</span><span class="p">((</span><span class="n">gymnasium_robotics</span><span class="p">,</span> <span class="n">ale_py</span><span class="p">))</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;FetchReach-v1&quot;</span><span class="p">)</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;ALE/Pong-v5&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"FetchReach-v1"</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"ALE/Pong-v5"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -705,14 +705,14 @@
 
 
 <span class="c1"># Gym v0.21 style environments</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV21Environment-v0&quot;</span><span class="p">,</span> <span class="n">env_id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"GymV21Environment-v0"</span><span class="p">,</span> <span class="n">env_id</span><span class="o">=</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
 <span class="c1"># or</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV21Environment-v0&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">OldV21Env</span><span class="p">())</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"GymV21Environment-v0"</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">OldV21Env</span><span class="p">())</span>
 
 <span class="c1"># Gym v0.26 style environments</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV26Environment-v0&quot;</span><span class="p">,</span> <span class="n">env_id</span><span class="o">=</span><span class="s2">&quot;Cartpole-v1&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"GymV26Environment-v0"</span><span class="p">,</span> <span class="n">env_id</span><span class="o">=</span><span class="s2">"Cartpole-v1"</span><span class="p">)</span>
 <span class="c1"># or</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;GymV26Environment-v0&quot;</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">OldV26Env</span><span class="p">())</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"GymV26Environment-v0"</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">OldV26Env</span><span class="p">())</span>
 </pre></div>
 </div>
 </section>

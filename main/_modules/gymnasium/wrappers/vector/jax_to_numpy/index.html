@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.vector.jax_to_numpy</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Vector wrapper for converting between NumPy and Jax.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Vector wrapper for converting between NumPy and Jax."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -378,13 +378,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorEnv</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.vector.array_conversion</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayConversion</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;JaxToNumpy&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"JaxToNumpy"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="JaxToNumpy">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.JaxToNumpy">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JaxToNumpy</span><span class="p">(</span><span class="n">ArrayConversion</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps a jax vector environment so that it can be interacted with through numpy arrays.</span>
+<span class="w">    </span><span class="sd">"""Wraps a jax vector environment so that it can be interacted with through numpy arrays.</span>
 
 <span class="sd">    Notes:</span>
 <span class="sd">        A vectorized version of :class:`gymnasium.wrappers.JaxToNumpy`</span>
@@ -393,19 +393,19 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym                                         # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;JaxEnv-vx&quot;, 3)                             # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("JaxEnv-vx", 3)                             # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; envs = JaxToNumpy(envs)                                         # doctest: +SKIP</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wraps an environment such that the input and outputs are numpy arrays.</span>
+<span class="w">        </span><span class="sd">"""Wraps an environment such that the input and outputs are numpy arrays.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: the vector jax environment to wrap</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">jnp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-                <span class="s1">&#39;Jax is not installed, run `pip install &quot;gymnasium[jax]&quot;`&#39;</span>
+                <span class="s1">'Jax is not installed, run `pip install "gymnasium[jax]"`'</span>
             <span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">env_xp</span><span class="o">=</span><span class="n">jnp</span><span class="p">,</span> <span class="n">target_xp</span><span class="o">=</span><span class="n">np</span><span class="p">)</span></div>
 

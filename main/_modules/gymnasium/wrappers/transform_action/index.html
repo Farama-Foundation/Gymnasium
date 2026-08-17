@@ -367,13 +367,13 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.transform_action</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A collection of wrappers that all use the LambdaAction class.</span>
+<span></span><span class="sd">"""A collection of wrappers that all use the LambdaAction class.</span>
 
 <span class="sd">* ``TransformAction`` - Transforms the actions based on a function</span>
 <span class="sd">* ``ClipAction`` - Clips the action within a bounds</span>
 <span class="sd">* ``DiscretizeAction`` - Discretizes a continuous Box action space into a single Discrete space</span>
 <span class="sd">* ``RescaleAction`` - Rescales the action within a minimum and maximum actions</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -386,7 +386,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidBound</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">MultiDiscrete</span><span class="p">,</span> <span class="n">Space</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TransformAction&quot;</span><span class="p">,</span> <span class="s2">&quot;ClipAction&quot;</span><span class="p">,</span> <span class="s2">&quot;RescaleAction&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"TransformAction"</span><span class="p">,</span> <span class="s2">"ClipAction"</span><span class="p">,</span> <span class="s2">"RescaleAction"</span><span class="p">]</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">rescale_box</span>
 
@@ -396,19 +396,19 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">TransformAction</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">ActionWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies a function to the ``action`` before passing the modified value to the environment ``step`` function.</span>
+<span class="w">    </span><span class="sd">"""Applies a function to the ``action`` before passing the modified value to the environment ``step`` function.</span>
 
 <span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.TransformAction`.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;MountainCarContinuous-v0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("MountainCarContinuous-v0")</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, *_= env.step(np.array([0.0, 1.0]))</span>
 <span class="sd">        &gt;&gt;&gt; obs</span>
 <span class="sd">        array([-4.6397772e-01, -4.4808415e-04], dtype=float32)</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;MountainCarContinuous-v0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("MountainCarContinuous-v0")</span>
 <span class="sd">        &gt;&gt;&gt; env = TransformAction(env, lambda a: 0.5 * a + 0.1, env.action_space)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs, *_= env.step(np.array([0.0, 1.0]))</span>
@@ -417,7 +417,7 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v1.0.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -425,13 +425,13 @@
         <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">WrapperActType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">],</span>
         <span class="n">action_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">WrapperActType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize TransformAction.</span>
+<span class="w">        </span><span class="sd">"""Initialize TransformAction.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to wrap</span>
-<span class="sd">            func: Function to apply to the :meth:`step`&#39;s ``action``</span>
+<span class="sd">            func: Function to apply to the :meth:`step`'s ``action``</span>
 <span class="sd">            action_space: The updated action space of the wrapper given the function.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">action_space</span><span class="o">=</span><span class="n">action_space</span>
         <span class="p">)</span>
@@ -443,7 +443,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">WrapperActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to action.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Apply function to action."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">action</span><span class="p">)</span></div>
 
 
@@ -453,7 +453,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">ClipAction</span><span class="p">(</span>
     <span class="n">TransformAction</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clips the ``action`` pass to ``step`` to be within the environment&#39;s `action_space`.</span>
+<span class="w">    </span><span class="sd">"""Clips the ``action`` pass to ``step`` to be within the environment's `action_space`.</span>
 
 <span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.ClipAction`.</span>
 
@@ -461,7 +461,7 @@
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import ClipAction</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;Hopper-v4&quot;, disable_env_checker=True)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("Hopper-v4", disable_env_checker=True)</span>
 <span class="sd">        &gt;&gt;&gt; env = ClipAction(env)</span>
 <span class="sd">        &gt;&gt;&gt; env.action_space</span>
 <span class="sd">        Box(-inf, inf, (3,), float32)</span>
@@ -472,17 +472,17 @@
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.12.6 - Initially added</span>
 <span class="sd">     * v1.0.0 - Action space is updated to infinite bounds as is technically correct</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A wrapper for clipping continuous actions within the valid bound.</span>
+<span class="w">        </span><span class="sd">"""A wrapper for clipping continuous actions within the valid bound.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to wrap</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;ClipAction requires a Box action space, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"ClipAction requires a Box action space, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -507,10 +507,10 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">RescaleAction</span><span class="p">(</span>
     <span class="n">TransformAction</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Affinely (linearly) rescales a ``Box`` action space of the environment to within the range of ``[min_action, max_action]``.</span>
+<span class="w">    </span><span class="sd">"""Affinely (linearly) rescales a ``Box`` action space of the environment to within the range of ``[min_action, max_action]``.</span>
 
 <span class="sd">    The base environment :attr:`env` must have an action space of type :class:`spaces.Box`. If :attr:`min_action`</span>
-<span class="sd">    or :attr:`max_action` are numpy arrays, the shape must match the shape of the environment&#39;s action space.</span>
+<span class="sd">    or :attr:`max_action` are numpy arrays, the shape must match the shape of the environment's action space.</span>
 
 <span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.RescaleAction`.</span>
 
@@ -518,7 +518,7 @@
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import RescaleAction</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;Hopper-v4&quot;, disable_env_checker=True)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("Hopper-v4", disable_env_checker=True)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=42)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _, _, _, _ = env.step(np.array([1, 1, 1], dtype=np.float32))</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=42)</span>
@@ -531,7 +531,7 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.15.4 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -539,7 +539,7 @@
         <span class="n">min_action</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">max_action</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the Rescale Action wrapper.</span>
+<span class="w">        </span><span class="sd">"""Constructor for the Rescale Action wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to wrap</span>
@@ -548,10 +548,10 @@
 
 <span class="sd">        Raises:</span>
 <span class="sd">            InvalidBound: If a component of ``min_action`` equals the matching component of ``max_action``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;RescaleAction requires a Box action space, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"RescaleAction requires a Box action space, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -563,8 +563,8 @@
         <span class="c1"># rescaled onto a single point has no inverse.</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">act_space</span><span class="o">.</span><span class="n">low</span> <span class="o">==</span> <span class="n">act_space</span><span class="o">.</span><span class="n">high</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Min action (</span><span class="si">{</span><span class="n">min_action</span><span class="si">}</span><span class="s2">) must be strictly smaller than max action &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">max_action</span><span class="si">}</span><span class="s2">), the rescaling has no inverse where they are equal&quot;</span>
+                <span class="sa">f</span><span class="s2">"Min action (</span><span class="si">{</span><span class="n">min_action</span><span class="si">}</span><span class="s2">) must be strictly smaller than max action "</span>
+                <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="n">max_action</span><span class="si">}</span><span class="s2">), the rescaling has no inverse where they are equal"</span>
             <span class="p">)</span>
 
         <span class="n">TransformAction</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -580,10 +580,10 @@
     <span class="n">TransformAction</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Uniformly discretizes a continuous Box action space into a single Discrete space.</span>
+<span class="w">    </span><span class="sd">"""Uniformly discretizes a continuous Box action space into a single Discrete space.</span>
 
 <span class="sd">    Example 1 - Discretize Pendulum action space:</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;Pendulum-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("Pendulum-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env.action_space</span>
 <span class="sd">        Box(-2.0, 2.0, (1,), float32)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
@@ -599,7 +599,7 @@
 <span class="sd">        array([-0.17606162,  0.9843792 ,  0.5292768 ], dtype=float32)</span>
 
 <span class="sd">    Example 2 - Discretize Reacher action space:</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;Reacher-v5&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("Reacher-v5")</span>
 <span class="sd">        &gt;&gt;&gt; env.action_space</span>
 <span class="sd">        Box(-1.0, 1.0, (2,), float32)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
@@ -617,7 +617,7 @@
 <span class="sd">                0.11442572, -1.18958118, -1.97979484,  0.1054461 , -0.10896341])</span>
 
 <span class="sd">    Example 2 - Discretize Reacher action space with MultiDiscrete:</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;Reacher-v5&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("Reacher-v5")</span>
 <span class="sd">        &gt;&gt;&gt; env.action_space</span>
 <span class="sd">        Box(-1.0, 1.0, (2,), float32)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
@@ -633,7 +633,7 @@
 <span class="sd">        &gt;&gt;&gt; obs</span>
 <span class="sd">        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
 <span class="sd">                0.11442572, -1.18958118, -1.97979484,  0.1054461 , -0.10896341])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -641,16 +641,16 @@
         <span class="n">bins</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
         <span class="n">multidiscrete</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the discretize action wrapper.</span>
+<span class="w">        </span><span class="sd">"""Constructor for the discretize action wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to wrap.</span>
 <span class="sd">            bins: int or tuple of ints (number of bins per dimension).</span>
 <span class="sd">            multidiscrete: If True, use MultiDiscrete action space instead of flattening to Discrete.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="s2">&quot;DiscretizeAction is only compatible with Box continuous actions.&quot;</span>
+                <span class="s2">"DiscretizeAction is only compatible with Box continuous actions."</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">low</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">low</span>
@@ -659,8 +659,8 @@
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Discretization requires action space to be finite. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Found: low=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="si">}</span><span class="s2">, high=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"Discretization requires action space to be finite. "</span>
+                <span class="sa">f</span><span class="s2">"Found: low=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="si">}</span><span class="s2">, high=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">multidiscrete</span> <span class="o">=</span> <span class="n">multidiscrete</span>
@@ -674,7 +674,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;bins must match action dimensions: expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"bins must match action dimensions: expected </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
 
@@ -693,7 +693,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">Discrete</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">act</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Discretizes the action.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Discretizes the action."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multidiscrete</span><span class="p">:</span>
             <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">act</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -705,7 +705,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">centers</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">revert_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts a discretized action to a possible continuous action (the center of the closest bin).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Converts a discretized action to a possible continuous action (the center of the closest bin)."""</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bin_centers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">action</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="p">)</span>

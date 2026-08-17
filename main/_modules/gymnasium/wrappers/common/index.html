@@ -367,14 +367,14 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.common</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A collection of common wrappers.</span>
+<span></span><span class="sd">"""A collection of common wrappers.</span>
 
 <span class="sd">* ``TimeLimit`` - Provides a time limit on the number of steps for an environment before it truncates</span>
 <span class="sd">* ``Autoreset`` - Auto-resets the environment</span>
 <span class="sd">* ``PassiveEnvChecker`` - Passive environment checker that does not modify any environment data</span>
 <span class="sd">* ``OrderEnforcing`` - Enforces the order of function calls to environments</span>
 <span class="sd">* ``RecordEpisodeStatistics`` - Records the episode statistics</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -400,11 +400,11 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;TimeLimit&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Autoreset&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PassiveEnvChecker&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;OrderEnforcing&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;RecordEpisodeStatistics&quot;</span><span class="p">,</span>
+    <span class="s2">"TimeLimit"</span><span class="p">,</span>
+    <span class="s2">"Autoreset"</span><span class="p">,</span>
+    <span class="s2">"PassiveEnvChecker"</span><span class="p">,</span>
+    <span class="s2">"OrderEnforcing"</span><span class="p">,</span>
+    <span class="s2">"RecordEpisodeStatistics"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -413,7 +413,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">TimeLimit</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Limits the number of steps for an environment through truncating the environment if a maximum number of timesteps is exceeded.</span>
+<span class="w">    </span><span class="sd">"""Limits the number of steps for an environment through truncating the environment if a maximum number of timesteps is exceeded.</span>
 
 <span class="sd">    If a truncation is not defined inside the environment itself, this is the only place that the truncation signal is issued.</span>
 <span class="sd">    Critically, this is different from the `terminated` signal that originates from the underlying environment as part of the MDP.</span>
@@ -423,23 +423,23 @@
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import TimeLimit</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.envs.classic_control import CartPoleEnv</span>
 
-<span class="sd">        &gt;&gt;&gt; spec = gym.spec(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; spec = gym.spec("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; spec.max_episode_steps</span>
 <span class="sd">        500</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env  # TimeLimit is included within the environment stack</span>
 <span class="sd">        &lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v1&gt;&gt;&gt;&gt;&gt;</span>
 <span class="sd">        &gt;&gt;&gt; env.spec  # doctest: +ELLIPSIS</span>
-<span class="sd">        EnvSpec(id=&#39;CartPole-v1&#39;, ..., max_episode_steps=500, ...)</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;, max_episode_steps=3)</span>
+<span class="sd">        EnvSpec(id='CartPole-v1', ..., max_episode_steps=500, ...)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1", max_episode_steps=3)</span>
 <span class="sd">        &gt;&gt;&gt; env.spec  # doctest: +ELLIPSIS</span>
-<span class="sd">        EnvSpec(id=&#39;CartPole-v1&#39;, ..., max_episode_steps=3, ...)</span>
+<span class="sd">        EnvSpec(id='CartPole-v1', ..., max_episode_steps=3, ...)</span>
 <span class="sd">        &gt;&gt;&gt; env = TimeLimit(CartPoleEnv(), max_episode_steps=10)</span>
 <span class="sd">        &gt;&gt;&gt; env</span>
 <span class="sd">        &lt;TimeLimit&lt;CartPoleEnv instance&gt;&gt;</span>
 
 <span class="sd">    Example of `TimeLimit` determining the episode step</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;, max_episode_steps=3)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1", max_episode_steps=3)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; _, _, terminated, truncated, _ = env.step(env.action_space.sample())</span>
@@ -455,26 +455,26 @@
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.10.6 - Initially added</span>
 <span class="sd">     * v0.25.0 - With the step API update, the termination and truncation signal is returned separately.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
         <span class="n">max_episode_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes the :class:`TimeLimit` wrapper with an environment and the number of steps after which truncation will occur.</span>
+<span class="w">        </span><span class="sd">"""Initializes the :class:`TimeLimit` wrapper with an environment and the number of steps after which truncation will occur.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to apply the wrapper</span>
 <span class="sd">            max_episode_steps: the environment step after which the episode is truncated (``elapsed &gt;= max_episode_steps``)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expect the `max_episode_steps` to be an integer, actually: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">max_episode_steps</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Expect the `max_episode_steps` to be an integer, actually: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">max_episode_steps</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">max_episode_steps</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expect the `max_episode_steps` to be positive, actually: </span><span class="si">{</span><span class="n">max_episode_steps</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Expect the `max_episode_steps` to be positive, actually: </span><span class="si">{</span><span class="n">max_episode_steps</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="n">max_episode_steps</span>
@@ -487,7 +487,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment and if the number of steps elapsed exceeds ``max_episode_steps`` then truncate.</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment and if the number of steps elapsed exceeds ``max_episode_steps`` then truncate.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            action: The environment step action</span>
@@ -496,7 +496,7 @@
 <span class="sd">            The environment step ``(observation, reward, terminated, truncated, info)`` with `truncated=True`</span>
 <span class="sd">            if the number of steps elapsed &gt;= max episode steps</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_elapsed_steps</span> <span class="o">+=</span> <span class="mi">1</span>
 
@@ -508,7 +508,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment with :param:`**kwargs` and sets the number of steps elapsed to zero.</span>
+<span class="w">        </span><span class="sd">"""Resets the environment with :param:`**kwargs` and sets the number of steps elapsed to zero.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            seed: Seed for the environment</span>
@@ -516,13 +516,13 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The reset environment</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_elapsed_steps</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the environment spec to include the `max_episode_steps=self._max_episode_steps`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Modifies the environment spec to include the `max_episode_steps=self._max_episode_steps`."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span>
 
@@ -533,7 +533,7 @@
                 <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_episode_steps</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">gym</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span>
 
@@ -547,21 +547,21 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Autoreset</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The wrapped environment is automatically reset when a terminated or truncated state is reached.</span>
+<span class="w">    </span><span class="sd">"""The wrapped environment is automatically reset when a terminated or truncated state is reached.</span>
 
 <span class="sd">    This follows the vector autoreset api where on the step after an episode terminates or truncated then the environment is reset.</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.24.0 - Initially added as `AutoResetWrapper`</span>
-<span class="sd">     * v1.0.0 - renamed to `Autoreset` and autoreset order was changed to reset on the step after the environment terminates or truncates. As a result, `&quot;final_observation&quot;` and `&quot;final_info&quot;` is removed.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">     * v1.0.0 - renamed to `Autoreset` and autoreset order was changed to reset on the step after the environment terminates or truncates. As a result, `"final_observation"` and `"final_info"` is removed.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.</span>
+<span class="w">        </span><span class="sd">"""A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (gym.Env): The environment to apply the wrapper</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
@@ -570,21 +570,21 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment and sets autoreset to False preventing.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Resets the environment and sets autoreset to False preventing."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoreset</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment with action and resets the environment if a terminated or truncated signal is encountered.</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment with action and resets the environment if a terminated or truncated signal is encountered.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            action: The action to take</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The autoreset environment :meth:`step`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoreset</span><span class="p">:</span>
             <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
@@ -601,17 +601,17 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">PassiveEnvChecker</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A passive wrapper that surrounds the ``step``, ``reset`` and ``render`` functions to check they follow Gymnasium&#39;s API.</span>
+<span class="w">    </span><span class="sd">"""A passive wrapper that surrounds the ``step``, ``reset`` and ``render`` functions to check they follow Gymnasium's API.</span>
 
 <span class="sd">    This wrapper is automatically applied during make and can be disabled with `disable_env_checker`.</span>
 <span class="sd">    No vector version of the wrapper exists.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env</span>
 <span class="sd">        &lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CartPoleEnv&lt;CartPole-v1&gt;&gt;&gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;, disable_env_checker=True)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1", disable_env_checker=True)</span>
 <span class="sd">        &gt;&gt;&gt; env</span>
 <span class="sd">        &lt;TimeLimit&lt;OrderEnforcing&lt;CartPoleEnv&lt;CartPole-v1&gt;&gt;&gt;&gt;</span>
 
@@ -619,34 +619,34 @@
 <span class="sd">     * v0.24.1 - Initially added however broken in several ways</span>
 <span class="sd">     * v0.25.0 - Bugs was all fixed</span>
 <span class="sd">     * v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and inregular bound shapes</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialises the wrapper with the environments, run the observation and action space tests.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Initialises the wrapper with the environments, run the observation and action space tests."""</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&lt;class &#39;gym.core.Env&#39;&gt;&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"&lt;class 'gym.core.Env'&gt;"</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="s2">&quot;Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. &quot;</span>
-                    <span class="s2">&quot;See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+                    <span class="s2">"Gym is incompatible with Gymnasium, please update the environment class to `gymnasium.Env`. "</span>
+                    <span class="s2">"See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The environment must inherit from the gymnasium.Env class, actual class: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">. &quot;</span>
-                    <span class="s2">&quot;See https://gymnasium.farama.org/introduction/create_custom_env/ for more info.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"The environment must inherit from the gymnasium.Env class, actual class: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="si">}</span><span class="s2">. "</span>
+                    <span class="s2">"See https://gymnasium.farama.org/introduction/create_custom_env/ for more info."</span>
                 <span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;action_space&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">"action_space"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-                <span class="s2">&quot;The environment must specify an action space. https://gymnasium.farama.org/introduction/create_custom_env/&quot;</span>
+                <span class="s2">"The environment must specify an action space. https://gymnasium.farama.org/introduction/create_custom_env/"</span>
             <span class="p">)</span>
         <span class="n">check_action_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">&quot;observation_space&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="s2">"observation_space"</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
-                <span class="s2">&quot;The environment must specify an observation space. https://gymnasium.farama.org/introduction/create_custom_env/&quot;</span>
+                <span class="s2">"The environment must specify an observation space. https://gymnasium.farama.org/introduction/create_custom_env/"</span>
             <span class="p">)</span>
         <span class="n">check_observation_space</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
 
@@ -658,7 +658,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment that on the first call will run the `passive_env_step_check`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment that on the first call will run the `passive_env_step_check`."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked_step</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">checked_step</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="n">env_step_passive_checker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
@@ -668,7 +668,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment that on the first call will run the `passive_env_reset_check`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Resets the environment that on the first call will run the `passive_env_reset_check`."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked_reset</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">checked_reset</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="n">env_reset_passive_checker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
@@ -676,7 +676,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Renders the environment that on the first call will run the `passive_env_render_check`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Renders the environment that on the first call will run the `passive_env_render_check`."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checked_render</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">checked_render</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="n">env_render_passive_checker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
@@ -685,7 +685,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the environment spec to such that `disable_env_checker=False`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Modifies the environment spec to such that `disable_env_checker=False`."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span>
 
@@ -696,7 +696,7 @@
                 <span class="n">env_spec</span><span class="o">.</span><span class="n">disable_env_checker</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">gym</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span>
 
@@ -704,7 +704,7 @@
         <span class="k">return</span> <span class="n">env_spec</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Warns if calling close on a closed environment fails.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Warns if calling close on a closed environment fails."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">close_called</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">close_called</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -713,7 +713,7 @@
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="s2">&quot;Calling `env.close()` on the closed environment should be allowed, but it raised the following exception.&quot;</span>
+                    <span class="s2">"Calling `env.close()` on the closed environment should be allowed, but it raised the following exception."</span>
                 <span class="p">)</span>
                 <span class="k">raise</span> <span class="n">e</span></div>
 
@@ -724,14 +724,14 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">OrderEnforcing</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Will produce an error if ``step`` or ``render`` is called before ``reset``.</span>
+<span class="w">    </span><span class="sd">"""Will produce an error if ``step`` or ``render`` is called before ``reset``.</span>
 
 <span class="sd">    No vector version of the wrapper exists.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import OrderEnforcing</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;, render_mode=&quot;human&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1", render_mode="human")</span>
 <span class="sd">        &gt;&gt;&gt; env = OrderEnforcing(env)</span>
 <span class="sd">        &gt;&gt;&gt; env.step(0)</span>
 <span class="sd">        Traceback (most recent call last):</span>
@@ -749,19 +749,19 @@
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.22.0 - Initially added</span>
 <span class="sd">     * v0.24.0 - Added order enforcing for the render function</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
         <span class="n">disable_render_order_enforcing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.</span>
+<span class="w">        </span><span class="sd">"""A wrapper that will produce an error if :meth:`step` is called before an initial :meth:`reset`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to wrap</span>
 <span class="sd">            disable_render_order_enforcing: If to disable render order enforcing</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">disable_render_order_enforcing</span><span class="o">=</span><span class="n">disable_render_order_enforcing</span>
         <span class="p">)</span>
@@ -771,35 +771,35 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_disable_render_order_enforcing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">disable_render_order_enforcing</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_reset</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ResetNeeded</span><span class="p">(</span><span class="s2">&quot;Cannot call env.step() before calling env.reset()&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ResetNeeded</span><span class="p">(</span><span class="s2">"Cannot call env.step() before calling env.reset()"</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment with `kwargs`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Resets the environment with `kwargs`."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_has_reset</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderFrame</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">RenderFrame</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Renders the environment with `kwargs`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Renders the environment with `kwargs`."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_render_order_enforcing</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_reset</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ResetNeeded</span><span class="p">(</span>
-                <span class="s2">&quot;Cannot call `env.render()` before calling `env.reset()`, if this is an intended action, &quot;</span>
-                <span class="s2">&quot;set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper.&quot;</span>
+                <span class="s2">"Cannot call `env.render()` before calling `env.reset()`, if this is an intended action, "</span>
+                <span class="s2">"set `disable_render_order_enforcing=True` on the OrderEnforcer wrapper."</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns if the environment has been reset before.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns if the environment has been reset before."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_reset</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Modifies the environment spec to add the `order_enforce=True`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Modifies the environment spec to add the `order_enforce=True`."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_spec</span>
 
@@ -810,7 +810,7 @@
                 <span class="n">env_spec</span><span class="o">.</span><span class="n">order_enforce</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">gym</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"An exception occurred (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">) while copying the environment spec=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span>
 
@@ -824,7 +824,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">RecordEpisodeStatistics</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;This wrapper will keep track of cumulative rewards and episode lengths.</span>
+<span class="w">    </span><span class="sd">"""This wrapper will keep track of cumulative rewards and episode lengths.</span>
 
 <span class="sd">    At the end of an episode, the statistics of the episode will be added to ``info``</span>
 <span class="sd">    using the key ``episode``. If using a vectorized environment also the key</span>
@@ -835,22 +835,22 @@
 <span class="sd">    After the completion of an episode, ``info`` will look like this::</span>
 
 <span class="sd">        &gt;&gt;&gt; info = {</span>
-<span class="sd">        ...     &quot;episode&quot;: {</span>
-<span class="sd">        ...         &quot;r&quot;: &quot;&lt;cumulative reward&gt;&quot;,</span>
-<span class="sd">        ...         &quot;l&quot;: &quot;&lt;episode length&gt;&quot;,</span>
-<span class="sd">        ...         &quot;t&quot;: &quot;&lt;elapsed time since beginning of episode&gt;&quot;</span>
+<span class="sd">        ...     "episode": {</span>
+<span class="sd">        ...         "r": "&lt;cumulative reward&gt;",</span>
+<span class="sd">        ...         "l": "&lt;episode length&gt;",</span>
+<span class="sd">        ...         "t": "&lt;elapsed time since beginning of episode&gt;"</span>
 <span class="sd">        ...     },</span>
 <span class="sd">        ... }</span>
 
 <span class="sd">    For a vectorized environments the output will be in the form of::</span>
 
 <span class="sd">        &gt;&gt;&gt; infos = {</span>
-<span class="sd">        ...     &quot;episode&quot;: {</span>
-<span class="sd">        ...         &quot;r&quot;: &quot;&lt;array of cumulative reward&gt;&quot;,</span>
-<span class="sd">        ...         &quot;l&quot;: &quot;&lt;array of episode length&gt;&quot;,</span>
-<span class="sd">        ...         &quot;t&quot;: &quot;&lt;array of elapsed time since beginning of episode&gt;&quot;</span>
+<span class="sd">        ...     "episode": {</span>
+<span class="sd">        ...         "r": "&lt;array of cumulative reward&gt;",</span>
+<span class="sd">        ...         "l": "&lt;array of episode length&gt;",</span>
+<span class="sd">        ...         "t": "&lt;array of elapsed time since beginning of episode&gt;"</span>
 <span class="sd">        ...     },</span>
-<span class="sd">        ...     &quot;_episode&quot;: &quot;&lt;boolean array of length num-envs&gt;&quot;</span>
+<span class="sd">        ...     "_episode": "&lt;boolean array of length num-envs&gt;"</span>
 <span class="sd">        ... }</span>
 
 <span class="sd">    Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via</span>
@@ -864,21 +864,21 @@
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.15.4 - Initially added</span>
 <span class="sd">     * v1.0.0 - Removed vector environment support (see :class:`gymnasium.wrappers.vector.RecordEpisodeStatistics`) and add attribute ``time_queue``</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
         <span class="n">buffer_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="n">stats_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;episode&quot;</span><span class="p">,</span>
+        <span class="n">stats_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"episode"</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will keep track of cumulative rewards and episode lengths.</span>
+<span class="w">        </span><span class="sd">"""This wrapper will keep track of cumulative rewards and episode lengths.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to apply the wrapper</span>
 <span class="sd">            buffer_length: The size of the buffers :attr:`return_queue`, :attr:`length_queue` and :attr:`time_queue`</span>
 <span class="sd">            stats_key: The info key for the episode statistics</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">buffer_length</span><span class="o">=</span><span class="n">buffer_length</span><span class="p">,</span> <span class="n">stats_key</span><span class="o">=</span><span class="n">stats_key</span>
         <span class="p">)</span>
@@ -898,7 +898,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, recording the episode statistics.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment, recording the episode statistics."""</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span> <span class="o">+=</span> <span class="n">reward</span>
@@ -911,9 +911,9 @@
                 <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_time</span><span class="p">,</span> <span class="mi">6</span>
             <span class="p">)</span>
             <span class="n">info</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_stats_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;r&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">,</span>
-                <span class="s2">&quot;l&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">,</span>
-                <span class="s2">&quot;t&quot;</span><span class="p">:</span> <span class="n">episode_time_length</span><span class="p">,</span>
+                <span class="s2">"r"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">,</span>
+                <span class="s2">"l"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">,</span>
+                <span class="s2">"t"</span><span class="p">:</span> <span class="n">episode_time_length</span><span class="p">,</span>
             <span class="p">}</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">time_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">episode_time_length</span><span class="p">)</span>
@@ -928,7 +928,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment using seed and options and resets the episode rewards and lengths.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Resets the environment using seed and options and resets the episode rewards and lengths."""</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>

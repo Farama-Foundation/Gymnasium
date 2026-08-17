@@ -375,7 +375,7 @@
 <span class="c1"># https://github.com/google/brax/blob/9d6b7ced2a13da0d074b5e9fbd3aad8311e26997/brax/io/torch.py</span>
 <span class="c1"># Under the Apache 2.0 license. Copyright is held by the authors</span>
 
-<span class="sd">&quot;&quot;&quot;Helper functions and wrapper class for converting between PyTorch and Jax.&quot;&quot;&quot;</span>
+<span class="sd">"""Helper functions and wrapper class for converting between PyTorch and Jax."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -394,7 +394,7 @@
 
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-        <span class="s1">&#39;Jax is not installed therefore cannot call `torch_to_jax`, run `pip install &quot;gymnasium[jax]&quot;`&#39;</span>
+        <span class="s1">'Jax is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[jax]"`'</span>
     <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -403,11 +403,11 @@
     <span class="n">Device</span> <span class="o">=</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="k">raise</span> <span class="n">DependencyNotInstalled</span><span class="p">(</span>
-        <span class="s1">&#39;Torch is not installed therefore cannot call `torch_to_jax`, run `pip install &quot;gymnasium[torch]&quot;`&#39;</span>
+        <span class="s1">'Torch is not installed therefore cannot call `torch_to_jax`, run `pip install "gymnasium[torch]"`'</span>
     <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;JaxToTorch&quot;</span><span class="p">,</span> <span class="s2">&quot;jax_to_torch&quot;</span><span class="p">,</span> <span class="s2">&quot;torch_to_jax&quot;</span><span class="p">,</span> <span class="s2">&quot;Device&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"JaxToTorch"</span><span class="p">,</span> <span class="s2">"jax_to_torch"</span><span class="p">,</span> <span class="s2">"torch_to_jax"</span><span class="p">,</span> <span class="s2">"Device"</span><span class="p">]</span>
 
 
 <span class="n">torch_to_jax</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">array_conversion</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="n">module_namespace</span><span class="p">(</span><span class="n">jnp</span><span class="p">))</span>
@@ -418,7 +418,7 @@
 <div class="viewcode-block" id="JaxToTorch">
 <a class="viewcode-back" href="../../../../api/wrappers/misc_wrappers/#gymnasium.wrappers.JaxToTorch">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">JaxToTorch</span><span class="p">(</span><span class="n">ArrayConversion</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps a Jax-based environment so that it can be interacted with PyTorch Tensors.</span>
+<span class="w">    </span><span class="sd">"""Wraps a Jax-based environment so that it can be interacted with PyTorch Tensors.</span>
 
 <span class="sd">    Actions must be provided as PyTorch Tensors and observations will be returned as PyTorch Tensors.</span>
 <span class="sd">    A vector version of the wrapper exists, :class:`gymnasium.wrappers.vector.JaxToTorch`.</span>
@@ -429,33 +429,34 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import torch                                                # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym                                     # doctest: +SKIP</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;JaxEnv-vx&quot;)                                 # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("JaxEnv-vx")                                 # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; env = JaxtoTorch(env)                                       # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=123)                                # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; type(obs)                                                   # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="sd">        &lt;class 'torch.Tensor'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; action = torch.tensor(env.action_space.sample())            # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; obs, reward, terminated, truncated, info = env.step(action) # doctest: +SKIP</span>
 <span class="sd">        &gt;&gt;&gt; type(obs)                                                   # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;torch.Tensor&#39;&gt;</span>
+<span class="sd">        &lt;class 'torch.Tensor'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; type(reward)                                                # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;float&#39;&gt;</span>
+<span class="sd">        &lt;class 'float'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; type(terminated)                                            # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;bool&#39;&gt;</span>
+<span class="sd">        &lt;class 'bool'&gt;</span>
 <span class="sd">        &gt;&gt;&gt; type(truncated)                                             # doctest: +SKIP</span>
-<span class="sd">        &lt;class &#39;bool&#39;&gt;</span>
+<span class="sd">        &lt;class 'bool'&gt;</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v1.0.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper class to change inputs and outputs of environment to PyTorch tensors.</span>
+<span class="w">        </span><span class="sd">"""Wrapper class to change inputs and outputs of environment to PyTorch tensors.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The Jax-based environment to wrap</span>
 <span class="sd">            device: The device the torch Tensors should be moved to</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">env_xp</span><span class="o">=</span><span class="n">jnp</span><span class="p">,</span> <span class="n">target_xp</span><span class="o">=</span><span class="n">torch</span><span class="p">,</span> <span class="n">target_device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
         <span class="c1"># TODO: Device was part of the public API, but should be removed in favor of _env_device and</span>

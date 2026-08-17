@@ -367,7 +367,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.envs.functional_jax_env</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Functional to Environment compatibility.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Functional to Environment compatibility."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -390,7 +390,7 @@
 <div class="viewcode-block" id="FunctionalJaxEnv">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxEnv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FunctionalJaxEnv</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">StateType</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A conversion layer for jax-based environments.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""A conversion layer for jax-based environments."""</span>
 
     <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span>
     <span class="n">rng</span><span class="p">:</span> <span class="n">PRNGKeyType</span>
@@ -402,10 +402,10 @@
         <span class="n">render_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the environment from a FuncEnv.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Initialize the environment from a FuncEnv."""</span>
         <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># metadata.get(&quot;jax&quot;, False) can be used downstream to know that the environment returns jax arrays</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;render_mode&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;jax&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+            <span class="c1"># metadata.get("jax", False) can be used downstream to know that the environment returns jax arrays</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"render_mode"</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">"jax"</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span> <span class="o">=</span> <span class="n">func_env</span>
 
@@ -417,20 +417,20 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">spec</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;rgb_array&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">"rgb_array"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">render_init</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">np_random</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">()</span>
-        <span class="n">seed</span> <span class="o">=</span> <span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint32&quot;</span><span class="p">)</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"uint32"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">jrng</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FunctionalJaxEnv.reset">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment using the seed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Resets the environment using the seed."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">jrng</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -447,7 +447,7 @@
 <div class="viewcode-block" id="FunctionalJaxEnv.step">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment using the action.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment using the action."""</span>
         <span class="n">rng</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">jrng</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="p">)</span>
 
         <span class="n">next_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">transition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">rng</span><span class="p">)</span>
@@ -463,8 +463,8 @@
 <div class="viewcode-block" id="FunctionalJaxEnv.render">
 <a class="viewcode-back" href="../../../../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxEnv.render">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the render state if `render_mode` is &quot;rgb_array&quot;.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;rgb_array&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the render state if `render_mode` is "rgb_array"."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">"rgb_array"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">render_image</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span>
             <span class="p">)</span>
@@ -474,7 +474,7 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the environments and render state if set.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Closes the environments and render state if set."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">render_close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render_state</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="o">=</span> <span class="kc">None</span></div>
@@ -484,7 +484,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">FunctionalJaxVectorEnv</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">StateType</span><span class="p">]</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A vector env implementation for functional Jax envs.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""A vector env implementation for functional Jax envs."""</span>
 
     <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span>
     <span class="n">rng</span><span class="p">:</span> <span class="n">PRNGKeyType</span>
@@ -498,10 +498,10 @@
         <span class="n">render_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the environment from a FuncEnv.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Initialize the environment from a FuncEnv."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;autoreset_mode&quot;</span><span class="p">:</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span><span class="p">}</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"autoreset_mode"</span><span class="p">:</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span> <span class="o">=</span> <span class="n">func_env</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">=</span> <span class="n">num_envs</span>
 
@@ -521,20 +521,20 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">prev_done</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;rgb_array&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">"rgb_array"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">render_init</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">np_random</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">seeding</span><span class="o">.</span><span class="n">np_random</span><span class="p">()</span>
-        <span class="n">seed</span> <span class="o">=</span> <span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;uint32&quot;</span><span class="p">)</span>
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="mi">32</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"uint32"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">jrng</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Resets the environment."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">jrng</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -552,7 +552,7 @@
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment using the action.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment using the action."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">rng</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">jrng</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="p">)</span>
@@ -596,8 +596,8 @@
         <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the render state if `render_mode` is &quot;rgb_array&quot;.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">&quot;rgb_array&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Returns the render state if `render_mode` is "rgb_array"."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">"rgb_array"</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span><span class="p">,</span> <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">render_image</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span>
             <span class="p">)</span>
@@ -606,7 +606,7 @@
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Closes the environments and render state if set.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Closes the environments and render state if set."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">render_close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render_state</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="o">=</span> <span class="kc">None</span>

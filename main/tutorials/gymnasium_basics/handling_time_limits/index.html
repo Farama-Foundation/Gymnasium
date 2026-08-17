@@ -439,7 +439,7 @@ bootstrap or not. However, this is incorrect since it does not differentiate bet
 <p>From v0.26 onwards, Gymnasium’s <code class="docutils literal notranslate"><span class="pre">env.step</span></code> API returns both termination and truncation information explicitly.
 In the previous version truncation information was supplied through the info key <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code>.
 The correct way to handle terminations and truncations now is,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># terminated = done and &#39;TimeLimit.truncated&#39; not in info</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># terminated = done and 'TimeLimit.truncated' not in info</span>
 <span class="c1"># This was needed in previous versions.</span>
 
 <span class="n">vf_target</span> <span class="o">=</span> <span class="n">rew</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">vf_next_state</span>

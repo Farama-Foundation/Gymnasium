@@ -421,7 +421,7 @@
 
 <span class="c1"># Make sure Gymnasium is properly installed</span>
 <span class="c1"># You can run this in your terminal:</span>
-<span class="c1"># pip install &quot;gymnasium&gt;=1.0.0&quot;</span>
+<span class="c1"># pip install "gymnasium&gt;=1.0.0"</span>
 </pre></div>
 </div>
 </section>
@@ -443,15 +443,15 @@ You can view this image at: <a class="reference external" href="https://raw.gith
 <h2>Step 1 - Load the model<a class="headerlink" href="#step-1-load-the-model" title="Link to this heading">¶</a></h2>
 <p>To load the model, all we have to do is use the <cite>xml_file</cite> argument with the <cite>Ant-v5</cite> framework.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic loading (uncomment to use)</span>
-<span class="c1"># env = gym.make(&#39;Ant-v5&#39;, xml_file=&#39;./mujoco_menagerie/unitree_go1/scene.xml&#39;)</span>
+<span class="c1"># env = gym.make('Ant-v5', xml_file='./mujoco_menagerie/unitree_go1/scene.xml')</span>
 
 <span class="c1"># Although this is enough to load the model, we will need to tweak some environment parameters</span>
 <span class="c1"># to get the desired behavior for our environment, so we will also explicitly set the simulation,</span>
 <span class="c1"># termination, reward and observation arguments, which we will tweak in the next step.</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-    <span class="s2">&quot;Ant-v5&quot;</span><span class="p">,</span>
-    <span class="n">xml_file</span><span class="o">=</span><span class="s2">&quot;./mujoco_menagerie/unitree_go1/scene.xml&quot;</span><span class="p">,</span>
+    <span class="s2">"Ant-v5"</span><span class="p">,</span>
+    <span class="n">xml_file</span><span class="o">=</span><span class="s2">"./mujoco_menagerie/unitree_go1/scene.xml"</span><span class="p">,</span>
     <span class="n">forward_reward_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="n">ctrl_cost_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="n">contact_cost_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -495,8 +495,8 @@ the arguments for more detailed information.</p>
 <span class="c1"># but if you need something higher you can set it so.</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-    <span class="s2">&quot;Ant-v5&quot;</span><span class="p">,</span>
-    <span class="n">xml_file</span><span class="o">=</span><span class="s2">&quot;./mujoco_menagerie/unitree_go1/scene.xml&quot;</span><span class="p">,</span>
+    <span class="s2">"Ant-v5"</span><span class="p">,</span>
+    <span class="n">xml_file</span><span class="o">=</span><span class="s2">"./mujoco_menagerie/unitree_go1/scene.xml"</span><span class="p">,</span>
     <span class="n">forward_reward_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="n">ctrl_cost_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="n">contact_cost_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -527,8 +527,8 @@ the arguments for more detailed information.</p>
 <span class="c1"># which is not desirable in the case of `Go1`.</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-    <span class="s2">&quot;Ant-v5&quot;</span><span class="p">,</span>
-    <span class="n">xml_file</span><span class="o">=</span><span class="s2">&quot;./mujoco_menagerie/unitree_go1/scene.xml&quot;</span><span class="p">,</span>
+    <span class="s2">"Ant-v5"</span><span class="p">,</span>
+    <span class="n">xml_file</span><span class="o">=</span><span class="s2">"./mujoco_menagerie/unitree_go1/scene.xml"</span><span class="p">,</span>
     <span class="n">forward_reward_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="n">ctrl_cost_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
     <span class="n">contact_cost_weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -560,18 +560,18 @@ the arguments for more detailed information.</p>
 <span class="c1"># In the case of `Go1` we only change the `ctrl_cost_weight` since it has a higher actuator force range.</span>
 
 <span class="c1"># For the argument `main_body` we have to choose which body part is the main body</span>
-<span class="c1"># (usually called something like &quot;torso&quot; or &quot;trunk&quot; in the model file) for the calculation</span>
-<span class="c1"># of the `forward_reward`, in the case of `Go1` it is the `&quot;trunk&quot;`</span>
+<span class="c1"># (usually called something like "torso" or "trunk" in the model file) for the calculation</span>
+<span class="c1"># of the `forward_reward`, in the case of `Go1` it is the `"trunk"`</span>
 <span class="c1"># (Note: in most cases including this one, it can be left at the default value).</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-    <span class="s2">&quot;Ant-v5&quot;</span><span class="p">,</span>
-    <span class="n">xml_file</span><span class="o">=</span><span class="s2">&quot;./mujoco_menagerie/unitree_go1/scene.xml&quot;</span><span class="p">,</span>
-    <span class="n">forward_reward_weight</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># kept the same as the &#39;Ant&#39; environment</span>
+    <span class="s2">"Ant-v5"</span><span class="p">,</span>
+    <span class="n">xml_file</span><span class="o">=</span><span class="s2">"./mujoco_menagerie/unitree_go1/scene.xml"</span><span class="p">,</span>
+    <span class="n">forward_reward_weight</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># kept the same as the 'Ant' environment</span>
     <span class="n">ctrl_cost_weight</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>  <span class="c1"># changed because of the stronger motors of `Go1`</span>
-    <span class="n">contact_cost_weight</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>  <span class="c1"># kept the same as the &#39;Ant&#39; environment</span>
-    <span class="n">healthy_reward</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># kept the same as the &#39;Ant&#39; environment</span>
-    <span class="n">main_body</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># represents the &quot;trunk&quot; of the `Go1` robot</span>
+    <span class="n">contact_cost_weight</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>  <span class="c1"># kept the same as the 'Ant' environment</span>
+    <span class="n">healthy_reward</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># kept the same as the 'Ant' environment</span>
+    <span class="n">main_body</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># represents the "trunk" of the `Go1` robot</span>
     <span class="n">healthy_z_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.195</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">),</span>
     <span class="n">include_cfrc_ext_in_observation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">exclude_current_positions_from_observation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -592,16 +592,16 @@ the arguments for more detailed information.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Here for `Go1` we have no particular reason to change them.</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-    <span class="s2">&quot;Ant-v5&quot;</span><span class="p">,</span>
-    <span class="n">xml_file</span><span class="o">=</span><span class="s2">&quot;./mujoco_menagerie/unitree_go1/scene.xml&quot;</span><span class="p">,</span>
+    <span class="s2">"Ant-v5"</span><span class="p">,</span>
+    <span class="n">xml_file</span><span class="o">=</span><span class="s2">"./mujoco_menagerie/unitree_go1/scene.xml"</span><span class="p">,</span>
     <span class="n">forward_reward_weight</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">ctrl_cost_weight</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
     <span class="n">contact_cost_weight</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>
     <span class="n">healthy_reward</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">main_body</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">healthy_z_range</span><span class="o">=</span><span class="p">(</span><span class="mf">0.195</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">),</span>
-    <span class="n">include_cfrc_ext_in_observation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># kept the same as the &#39;Ant&#39; environment</span>
-    <span class="n">exclude_current_positions_from_observation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># kept the same as the &#39;Ant&#39; environment</span>
+    <span class="n">include_cfrc_ext_in_observation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># kept the same as the 'Ant' environment</span>
+    <span class="n">exclude_current_positions_from_observation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># kept the same as the 'Ant' environment</span>
     <span class="n">reset_noise_scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
     <span class="n">frame_skip</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
     <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
@@ -620,13 +620,13 @@ Note: If you have followed this guide with your own robot model, you may discove
 during training that some environment parameters were not as desired,
 feel free to go back to step 2 and change anything as needed.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the final Go1 environment setup.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Run the final Go1 environment setup."""</span>
     <span class="c1"># Note: The original tutorial includes an image showing the Go1 robot in the environment.</span>
     <span class="c1"># The image is available at: https://github.com/Kallinteris-Andreas/Gymnasium-kalli/assets/30759571/bf1797a3-264d-47de-b14c-e3c16072f695</span>
 
     <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-        <span class="s2">&quot;Ant-v5&quot;</span><span class="p">,</span>
-        <span class="n">xml_file</span><span class="o">=</span><span class="s2">&quot;./mujoco_menagerie/unitree_go1/scene.xml&quot;</span><span class="p">,</span>
+        <span class="s2">"Ant-v5"</span><span class="p">,</span>
+        <span class="n">xml_file</span><span class="o">=</span><span class="s2">"./mujoco_menagerie/unitree_go1/scene.xml"</span><span class="p">,</span>
         <span class="n">forward_reward_weight</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">ctrl_cost_weight</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
         <span class="n">contact_cost_weight</span><span class="o">=</span><span class="mf">5e-4</span><span class="p">,</span>
@@ -638,26 +638,26 @@ feel free to go back to step 2 and change anything as needed.</p>
         <span class="n">reset_noise_scale</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
         <span class="n">frame_skip</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
         <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
-        <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">,</span>  <span class="c1"># Change to &quot;human&quot; to visualize</span>
+        <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">,</span>  <span class="c1"># Change to "human" to visualize</span>
     <span class="p">)</span>
 
     <span class="c1"># Example of running the environment for a few steps</span>
     <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># Replace with your agent&#39;s action</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># Replace with your agent's action</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
             <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
     <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Environment tested successfully!&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Environment tested successfully!"</span><span class="p">)</span>
 
     <span class="c1"># Now you would typically:</span>
     <span class="c1"># 1. Set up your RL algorithm</span>
     <span class="c1"># 2. Train the agent</span>
-    <span class="c1"># 3. Evaluate the agent&#39;s performance</span>
+    <span class="c1"># 3. Evaluate the agent's performance</span>
 </pre></div>
 </div>
 </section>

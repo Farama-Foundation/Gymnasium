@@ -424,7 +424,7 @@ and returns five variables:</p>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">"figure.figsize"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 <section id="policy-network">
@@ -437,16 +437,16 @@ Further, the single individual linear layers are used to estimate the mean and t
 The following function estimates a mean and standard deviation of a normal distribution from which an action is sampled. Hence it is expected for the policy to learn
 appropriate weights to output means and standard deviation based on the current observation.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Policy_Network</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parametrized Policy Network.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Parametrized Policy Network."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs_space_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">action_space_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes a neural network that estimates the mean and standard deviation</span>
+<span class="w">        </span><span class="sd">"""Initializes a neural network that estimates the mean and standard deviation</span>
 <span class="sd">         of a normal distribution from which an action is sampled from.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            obs_space_dims: Dimension of the observation space</span>
 <span class="sd">            action_space_dims: Dimension of the action space</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="n">hidden_space1</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># Nothing special with 16, feel free to change</span>
@@ -471,7 +471,7 @@ appropriate weights to output means and standard deviation based on the current 
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Conditioned on the observation, returns the mean and standard deviation</span>
+<span class="w">        </span><span class="sd">"""Conditioned on the observation, returns the mean and standard deviation</span>
 <span class="sd">         of a normal distribution from which an action is sampled from.</span>
 
 <span class="sd">        Args:</span>
@@ -480,7 +480,7 @@ appropriate weights to output means and standard deviation based on the current 
 <span class="sd">        Returns:</span>
 <span class="sd">            action_means: predicted mean of the normal distribution</span>
 <span class="sd">            action_stddevs: predicted standard deviation of the normal distribution</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">shared_features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shared_net</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">float</span><span class="p">())</span>
 
         <span class="n">action_means</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy_mean_net</span><span class="p">(</span><span class="n">shared_features</span><span class="p">)</span>
@@ -501,16 +501,16 @@ The algorithm of REINFORCE could be found above. As mentioned before, REINFORCE 
 <p>Note: The choice of hyperparameters is to train a decently performing agent. No extensive hyperparameter
 tuning was done.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">REINFORCE</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;REINFORCE algorithm.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""REINFORCE algorithm."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs_space_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">action_space_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializes an agent that learns a policy via REINFORCE algorithm [1]</span>
+<span class="w">        </span><span class="sd">"""Initializes an agent that learns a policy via REINFORCE algorithm [1]</span>
 <span class="sd">        to solve the task at hand (Inverted Pendulum v4).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            obs_space_dims: Dimension of the observation space</span>
 <span class="sd">            action_space_dims: Dimension of the action space</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Hyperparameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="mf">1e-4</span>  <span class="c1"># Learning rate for policy optimization</span>
@@ -524,14 +524,14 @@ tuning was done.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">sample_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an action, conditioned on the policy and observation.</span>
+<span class="w">        </span><span class="sd">"""Returns an action, conditioned on the policy and observation.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            state: Observation from the environment</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            action: Action to be performed</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">state</span><span class="p">]))</span>
         <span class="n">action_means</span><span class="p">,</span> <span class="n">action_stddevs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
@@ -548,7 +548,7 @@ tuning was done.</p>
         <span class="k">return</span> <span class="n">action</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the policy network&#39;s weights.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Updates the policy network's weights."""</span>
         <span class="n">running_g</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">gs</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -596,7 +596,7 @@ tuning was done.</p>
 <p>Note: Deep RL is fairly brittle concerning random seed in a lot of common use cases (<a class="reference external" href="https://spinningup.openai.com/en/latest/spinningup/spinningup.html">https://spinningup.openai.com/en/latest/spinningup/spinningup.html</a>).
 Hence it is important to test out various seeds, which we will be doing.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create and wrap the environment</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;InvertedPendulum-v4&quot;</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"InvertedPendulum-v4"</span><span class="p">)</span>
 <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>  <span class="c1"># Records episode-reward</span>
 
 <span class="n">total_num_episodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">5e3</span><span class="p">)</span>  <span class="c1"># Total number of episodes</span>
@@ -611,7 +611,7 @@ Hence it is important to test out various seeds, which we will be doing.</p>
     <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;--------- Random Seed </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2"> ---------&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"--------- Random Seed </span><span class="si">{</span><span class="n">seed</span><span class="si">}</span><span class="s2"> ---------"</span><span class="p">)</span>
 
     <span class="c1"># Reinitialize agent every seed</span>
     <span class="n">agent</span> <span class="o">=</span> <span class="n">REINFORCE</span><span class="p">(</span><span class="n">obs_space_dims</span><span class="p">,</span> <span class="n">action_space_dims</span><span class="p">)</span>
@@ -644,7 +644,7 @@ Hence it is important to test out various seeds, which we will be doing.</p>
 
         <span class="k">if</span> <span class="n">episode</span> <span class="o">%</span> <span class="mi">1000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">avg_reward</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Episode:&quot;</span><span class="p">,</span> <span class="n">episode</span><span class="p">,</span> <span class="s2">&quot;Average Reward:&quot;</span><span class="p">,</span> <span class="n">avg_reward</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Episode:"</span><span class="p">,</span> <span class="n">episode</span><span class="p">,</span> <span class="s2">"Average Reward:"</span><span class="p">,</span> <span class="n">avg_reward</span><span class="p">)</span>
 
     <span class="n">rewards_over_seeds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward_over_episodes</span><span class="p">)</span>
 </pre></div>
@@ -653,10 +653,10 @@ Hence it is important to test out various seeds, which we will be doing.</p>
 <section id="plot-learning-curve">
 <h2>Plot learning curve<a class="headerlink" href="#plot-learning-curve" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rewards_over_seeds</span><span class="p">)</span><span class="o">.</span><span class="n">melt</span><span class="p">()</span>
-<span class="n">df1</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;variable&quot;</span><span class="p">:</span> <span class="s2">&quot;episodes&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;reward&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">&quot;darkgrid&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="s2">&quot;talk&quot;</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">&quot;rainbow&quot;</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;episodes&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;reward&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df1</span><span class="p">)</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">&quot;REINFORCE for InvertedPendulum-v4&quot;</span>
+<span class="n">df1</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"variable"</span><span class="p">:</span> <span class="s2">"episodes"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">:</span> <span class="s2">"reward"</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">"darkgrid"</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="s2">"talk"</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">"rainbow"</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"episodes"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">"reward"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df1</span><span class="p">)</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"REINFORCE for InvertedPendulum-v4"</span>
 <span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>

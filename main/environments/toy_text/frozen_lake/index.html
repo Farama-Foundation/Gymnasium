@@ -472,9 +472,9 @@ The number of possible observations is dependent on the size of the map.</p>
 <p>FrozenLake has five parameters:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-    <span class="s1">&#39;FrozenLake-v1&#39;</span><span class="p">,</span>
+    <span class="s1">'FrozenLake-v1'</span><span class="p">,</span>
     <span class="n">desc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">map_name</span><span class="o">=</span><span class="s2">&quot;4x4&quot;</span><span class="p">,</span>
+    <span class="n">map_name</span><span class="o">=</span><span class="s2">"4x4"</span><span class="p">,</span>
     <span class="n">is_slippery</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">success_rate</span><span class="o">=</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span>
     <span class="n">reward_schedule</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -496,27 +496,27 @@ The tile letters denote:</p>
 <p>A random generated map can be specified by calling the function <code class="docutils literal notranslate"><span class="pre">generate_random_map</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.toy_text.frozen_lake</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_random_map</span>
 
-<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;FrozenLake-v1&#39;</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">generate_random_map</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'FrozenLake-v1'</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">generate_random_map</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">))</span>
 </pre></div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">map_name=&quot;4x4&quot;</span></code> - Helps load two predefined map names (<code class="docutils literal notranslate"><span class="pre">4x4</span></code> and <code class="docutils literal notranslate"><span class="pre">8x8</span></code>)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;4x4&quot;</span><span class="p">:[</span>
-    <span class="s2">&quot;SFFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FHFH&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFH&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;HFFG&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"4x4"</span><span class="p">:[</span>
+    <span class="s2">"SFFF"</span><span class="p">,</span>
+    <span class="s2">"FHFH"</span><span class="p">,</span>
+    <span class="s2">"FFFH"</span><span class="p">,</span>
+    <span class="s2">"HFFG"</span>
 <span class="p">]</span>
 
-<span class="s2">&quot;8x8&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s2">&quot;SFFFFFFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFFFFFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFHFFFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFFFHFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFHFFFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FHHFFFHF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FHFFHFHF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFHFFFG&quot;</span><span class="p">,</span>
+<span class="s2">"8x8"</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"SFFFFFFF"</span><span class="p">,</span>
+    <span class="s2">"FFFFFFFF"</span><span class="p">,</span>
+    <span class="s2">"FFFHFFFF"</span><span class="p">,</span>
+    <span class="s2">"FFFFFHFF"</span><span class="p">,</span>
+    <span class="s2">"FFFHFFFF"</span><span class="p">,</span>
+    <span class="s2">"FHHFFFHF"</span><span class="p">,</span>
+    <span class="s2">"FHFFHFHF"</span><span class="p">,</span>
+    <span class="s2">"FFFHFFFG"</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 </div>
