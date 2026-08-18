@@ -203,7 +203,18 @@ class ArrayConversion(gym.Wrapper, gym.utils.RecordConstructorArgs):
             env_device: The device the environment is on
             target_device: The device on which Arrays should be returned
         """
-        gym.utils.RecordConstructorArgs.__init__(self)
+        # An Array API namespace is a module, and `deepcopy` cannot copy one, so
+        # the recording has to skip it. Without these four saved, `Wrapper.spec`
+        # carries no kwargs and `gym.make(env.spec)` raises `TypeError` for the
+        # two that have no default.
+        gym.utils.RecordConstructorArgs.__init__(
+            self,
+            _disable_deepcopy=True,
+            env_xp=env_xp,
+            target_xp=target_xp,
+            env_device=env_device,
+            target_device=target_device,
+        )
         gym.Wrapper.__init__(self, env)
 
         self._env_xp = module_namespace(env_xp)
