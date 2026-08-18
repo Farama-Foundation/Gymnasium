@@ -11,7 +11,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.error import InvalidBound
-from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import AutoresetMode, VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
 __all__ = ["NormalizeReward"]
@@ -70,6 +70,7 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
     epsilon: float
     _update_running_mean: bool
     _prev_dones: np.ndarray[tuple[int], np.dtype[np.float32]]
+    _autoreset_mode: AutoresetMode
 
     def __init__(
         self,
@@ -111,6 +112,9 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         self.epsilon = epsilon
         self._update_running_mean = True
         self._prev_dones = np.zeros((self.num_envs,), dtype=np.float32)
+        self._autoreset_mode = self.env.metadata.get(
+            "autoreset_mode", AutoresetMode.NEXT_STEP
+        )
 
     @property
     def update_running_mean(self) -> bool:
@@ -144,7 +148,13 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
     ]:
         """Steps through the environment, normalizing the reward returned."""
         obs, reward, terminated, truncated, info = super().step(actions)
-        active = ~self._prev_dones.astype(bool)
+        # SAME_STEP resets inside the terminating step, so the following step is
+        # already the first step of a new episode and must update statistics.
+        # NEXT_STEP / DISABLED still skip the autoreset step after a done.
+        if self._autoreset_mode == AutoresetMode.SAME_STEP:
+            active = np.ones((self.num_envs,), dtype=bool)
+        else:
+            active = ~self._prev_dones.astype(bool)
         self.accumulated_reward[active] = (
             self.accumulated_reward[active] * self.gamma * (1 - terminated[active])
             + reward[active]
@@ -152,6 +162,10 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         if self._update_running_mean and np.any(active):
             self.return_rms.update(self.accumulated_reward[active])
         self._prev_dones = np.logical_or(terminated, truncated).astype(np.float32)
+        if self._autoreset_mode == AutoresetMode.SAME_STEP:
+            # The done sub-environments have already been reset; start a new
+            # return immediately rather than carrying the previous episode.
+            self.accumulated_reward[self._prev_dones.astype(bool)] = 0
         return (
             obs,
             reward / np.sqrt(self.return_rms.var + self.epsilon),

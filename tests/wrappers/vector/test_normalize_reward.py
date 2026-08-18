@@ -6,7 +6,7 @@ import pytest
 from gymnasium import wrappers
 from gymnasium.core import ActType
 from gymnasium.error import InvalidBound
-from gymnasium.vector import SyncVectorEnv
+from gymnasium.vector import AutoresetMode, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
 
 
@@ -112,3 +112,42 @@ def test_non_positive_epsilon_is_rejected(epsilon):
     with pytest.raises(InvalidBound, match="`epsilon` should be strictly positive"):
         wrappers.vector.NormalizeReward(vec_env, epsilon=epsilon)
     vec_env.close()
+
+
+def test_same_step_autoreset_updates_return_rms(n_envs=2, episode_length=4, n_steps=12):
+    """SAME_STEP first-after-done rewards must update return_rms and start a new return."""
+
+    def reset_func(self, seed=None, options=None):
+        self.timestep = 0
+        return self.observation_space.sample(), {}
+
+    def step_func(self, action):
+        self.timestep += 1
+        return (
+            self.observation_space.sample(),
+            1.0,
+            self.timestep >= episode_length,
+            False,
+            {},
+        )
+
+    env = wrappers.vector.NormalizeReward(
+        SyncVectorEnv(
+            [
+                lambda: GenericTestEnv(reset_func=reset_func, step_func=step_func)
+                for _ in range(n_envs)
+            ],
+            autoreset_mode=AutoresetMode.SAME_STEP,
+        )
+    )
+
+    env.reset(seed=123)
+    for _ in range(n_steps):
+        _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+        dones = np.logical_or(terminated, truncated)
+        if np.any(dones):
+            assert np.all(env.accumulated_reward[dones] == 0)
+
+    # Every step is a real environment step under SAME_STEP.
+    assert np.isclose(env.return_rms.count, n_steps * n_envs)
+    env.close()
