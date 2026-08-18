@@ -277,6 +277,28 @@ def test_valid_low_high(low, high, dtype):
             raise Exception(warn)
 
 
+@pytest.mark.parametrize(
+    "dtype",
+    [np.int8, np.int16, np.int32, np.uint8],
+    ids=["int8", "int16", "int32", "uint8"],
+)
+def test_sample_dtype_edge_reachability(dtype):
+    """Tests that a bounded integer Box can sample every value in ``[low, high]``.
+
+    Regression test for the cast guard in ``Box.sample`` clipping signed
+    samples to ``[dtype_min + 2, dtype_max - 2]``, which made the values within
+    2 of a signed dtype's limits impossible to sample even though
+    ``contains`` accepts them (e.g. ``Box(125, 127, dtype=np.int8)`` could
+    only ever return 125).
+    """
+    info = np.iinfo(dtype)
+    for low, high in [(info.max - 2, info.max), (info.min, info.min + 2)]:
+        space = Box(low=low, high=high, dtype=dtype, seed=0)
+        expected = set(range(low, high + 1))
+        observed = {int(x) for _ in range(1000) for x in space.sample()}
+        assert observed == expected
+
+
 def test_contains_dtype():
     """Tests the Box contains function with different dtypes."""
     # Related Issues:
@@ -293,6 +315,28 @@ def test_contains_dtype():
 
     # float64 is not in float32 space
     assert np.array(0.5, dtype=np.float64) not in space
+
+
+@pytest.mark.parametrize(
+    "dtype, element",
+    [
+        (np.int8, 300),
+        (np.int8, -300),
+        (np.uint8, -1),
+        (np.uint8, 300),
+        (np.int64, 10**20),
+    ],
+)
+def test_contains_out_of_dtype_range_returns_false(dtype, element):
+    """A value outside the space dtype's range is not a member, not an error.
+
+    Regression: ``Box.contains([300, 0])`` on an ``int8`` space cast the input
+    to the space's dtype before the membership check; on numpy 2.x that cast
+    raised ``OverflowError`` instead of returning ``False`` (companion to the
+    ``Discrete.contains`` fix in #1648).
+    """
+    space = Box(low=0, high=10, shape=(2,), dtype=dtype)
+    assert space.contains([element, 0]) is False
 
 
 @pytest.mark.parametrize(

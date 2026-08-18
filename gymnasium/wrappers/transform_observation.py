@@ -836,7 +836,9 @@ class DiscretizeObservation(
             )
 
         self.multidiscrete = multidiscrete
-        gym.utils.RecordConstructorArgs.__init__(self, bins=bins)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, bins=bins, multidiscrete=multidiscrete
+        )
         gym.ObservationWrapper.__init__(self, env)
 
         if isinstance(bins, int):
