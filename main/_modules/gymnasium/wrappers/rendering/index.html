@@ -653,8 +653,8 @@
 
         <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">render_mode</span> <span class="ow">in</span> <span class="p">{</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"human"</span><span class="p">,</span> <span class="s2">"ansi"</span><span class="p">}:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Render mode is </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">, which is incompatible with RecordVideo."</span><span class="p">,</span>
-                <span class="s2">"Initialize your environment with a render_mode that returns an image, such as rgb_array."</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">"Render mode is </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">render_mode</span><span class="si">}</span><span class="s2">, which is incompatible with RecordVideo. "</span>
+                <span class="s2">"Initialize your environment with a render_mode that returns an image, such as rgb_array."</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">episode_trigger</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">step_trigger</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -809,7 +809,11 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Warn the user in case last video wasn't saved."""</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">recorded_frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># `__init__` can raise before `recorded_frames` is assigned, and `__del__`</span>
+        <span class="c1"># still runs on the half-built wrapper. Reading the attribute directly</span>
+        <span class="c1"># raised an AttributeError that Python reports as "Exception ignored in",</span>
+        <span class="c1"># on top of the error that actually stopped construction.</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"recorded_frames"</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">"Unable to save last video! Did you call close()?"</span><span class="p">)</span></div>
 
 
