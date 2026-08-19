@@ -7,7 +7,6 @@ import copy
 import dataclasses
 import difflib
 import importlib
-import importlib.metadata as metadata
 import json
 import re
 from collections import defaultdict
@@ -472,7 +471,7 @@ def _check_metadata(testing_metadata: dict[str, Any]) -> None:
     """Check the metadata of an environment."""
     if not isinstance(testing_metadata, dict):
         raise error.InvalidMetadata(
-            f"Expect the environment metadata to be dict, actual type: {type(metadata)}"
+            f"Expect the environment metadata to be dict, actual type: {type(testing_metadata)}"
         )
 
     render_modes = testing_metadata.get("render_modes")
@@ -700,8 +699,11 @@ def make(
     # Determine if to use the rendering
     render_modes: list[str] | None = None
     if hasattr(env_creator, "metadata"):
-        _check_metadata(env_creator.metadata)
-        render_modes = env_creator.metadata.get("render_modes")
+        env_creator_metadata = env_creator.metadata
+        # Wrapper classes expose metadata through an instance property.
+        if not isinstance(env_creator_metadata, property):
+            _check_metadata(env_creator_metadata)
+            render_modes = env_creator_metadata.get("render_modes")
     render_mode = env_spec_kwargs.get("render_mode")
     apply_human_rendering = False
     apply_render_collection = False
