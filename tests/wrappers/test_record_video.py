@@ -183,3 +183,26 @@ def test_with_rgb_array_list(n_steps: int = 10):
 
     env.close()
     shutil.rmtree("videos")
+
+
+def test_incompatible_render_mode():
+    """Construction with a render mode that yields no image fails cleanly.
+
+    The message used to be split across two arguments of `ValueError`, so
+    `str(e)` printed a tuple and the sentence telling the user what to do
+    arrived quoted inside it. `__del__` then ran on the half-built wrapper and
+    raised an AttributeError of its own, which Python reports as an ignored
+    exception on top of the real one.
+    """
+    env = gym.make("CartPole-v1")  # render_mode is None
+
+    with pytest.raises(ValueError) as exc_info:
+        RecordVideo(env, "videos")
+
+    assert len(exc_info.value.args) == 1
+    assert "such as rgb_array" in str(exc_info.value)
+
+    env.close()
+
+    # `__del__` on a wrapper whose `__init__` never reached `recorded_frames`.
+    RecordVideo.__new__(RecordVideo).__del__()

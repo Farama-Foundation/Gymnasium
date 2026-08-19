@@ -279,8 +279,8 @@ class RecordVideo(
 
         if env.render_mode in {None, "human", "ansi"}:
             raise ValueError(
-                f"Render mode is {env.render_mode}, which is incompatible with RecordVideo.",
-                "Initialize your environment with a render_mode that returns an image, such as rgb_array.",
+                f"Render mode is {env.render_mode}, which is incompatible with RecordVideo. "
+                "Initialize your environment with a render_mode that returns an image, such as rgb_array."
             )
 
         if episode_trigger is None and step_trigger is None:
@@ -435,7 +435,11 @@ class RecordVideo(
 
     def __del__(self):
         """Warn the user in case last video wasn't saved."""
-        if len(self.recorded_frames) > 0:
+        # `__init__` can raise before `recorded_frames` is assigned, and `__del__`
+        # still runs on the half-built wrapper. Reading the attribute directly
+        # raised an AttributeError that Python reports as "Exception ignored in",
+        # on top of the error that actually stopped construction.
+        if getattr(self, "recorded_frames", None):
             logger.warn("Unable to save last video! Did you call close()?")
 
 
