@@ -92,13 +92,18 @@ class FrictionDetector(contactListener):
                 self.env.reward += 1000.0 / len(self.env.track)
                 self.env.tile_visited_count += 1
 
-                # Lap is considered completed if enough % of the track was covered
-                if (
-                    tile.idx == 0
-                    and self.env.tile_visited_count / len(self.env.track)
-                    > self.lap_complete_percent
-                ):
-                    self.env.new_lap = True
+            # Lap is considered completed if enough % of the track was covered.
+            # This is checked on every contact with the start/finish tile rather
+            # than only the first, because the car starts the episode on top of
+            # tile 0 -- it is already marked visited before the lap begins, so a
+            # check nested inside `if not tile.road_visited` never fires again
+            # when the car comes back round.
+            if (
+                tile.idx == 0
+                and self.env.tile_visited_count / len(self.env.track)
+                > self.lap_complete_percent
+            ):
+                self.env.new_lap = True
         else:
             obj.tiles.remove(tile)
 
@@ -144,8 +149,10 @@ class CarRacing(gym.Env, EzPickle):
     The car starts at rest in the center of the road.
 
     ## Episode Termination
-    The episode finishes when all the tiles are visited. The car can also go outside the playfield -
-     that is, far off the track, in which case it will receive -100 reward and die.
+    The episode finishes when the lap is completed - that is, when the car crosses the start/finish
+     line having visited more than `lap_complete_percent` of the tiles - or when all the tiles are
+     visited. The car can also go outside the playfield - that is, far off the track, in which case
+     it will receive -100 reward and die.
 
     ## Arguments
 
