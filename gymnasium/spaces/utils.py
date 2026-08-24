@@ -557,7 +557,8 @@ def _flatten_space_dict(space: Dict) -> Box | Dict:
             dtype=np.result_type(*[s.dtype for s in space_list]),
         )
     return Dict(
-        spaces={key: flatten_space(space) for key, space in space.spaces.items()}
+        spaces={key: flatten_space(space) for key, space in space.spaces.items()},
+        sort_keys=space.sort_keys,
     )
 
 
