@@ -537,7 +537,8 @@
                 <span class="p">)</span>
 
             <span class="n">new_observation_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
-                <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span><span class="p">}</span>
+                <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">filter_keys</span><span class="p">},</span>
+                <span class="n">sort_keys</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">sort_keys</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_observation_space</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -1127,7 +1128,8 @@
                 <span class="p">)</span>
 
             <span class="n">obs_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
-                <span class="p">{</span><span class="n">render_key</span><span class="p">:</span> <span class="n">pixel_space</span><span class="p">,</span> <span class="o">**</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">spaces</span><span class="p">}</span>
+                <span class="p">{</span><span class="n">render_key</span><span class="p">:</span> <span class="n">pixel_space</span><span class="p">,</span> <span class="o">**</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">spaces</span><span class="p">},</span>
+                <span class="n">sort_keys</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">sort_keys</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
                 <span class="bp">self</span><span class="p">,</span>

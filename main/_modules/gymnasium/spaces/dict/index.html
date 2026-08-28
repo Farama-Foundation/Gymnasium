@@ -436,6 +436,7 @@
 <span class="sd">    """</span>
 
     <span class="n">spaces</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">[</span><span class="n">_T_co</span><span class="p">]]</span>
+    <span class="n">sort_keys</span><span class="p">:</span> <span class="nb">bool</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -443,29 +444,37 @@
             <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">[</span><span class="n">_T_co</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Space</span><span class="p">[</span><span class="n">_T_co</span><span class="p">]]]</span> <span class="o">|</span> <span class="kc">None</span>
         <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">sort_keys</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">spaces_kwargs</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Constructor of :class:`Dict` space.</span>
 
 <span class="sd">        This space can be instantiated in one of two ways: Either you pass a dictionary</span>
 <span class="sd">        of spaces to :meth:`__init__` via the ``spaces`` argument, or you pass the spaces as separate</span>
-<span class="sd">        keyword arguments (where you will need to avoid the keys ``spaces`` and ``seed``)</span>
+<span class="sd">        keyword arguments (where you will need to avoid the keys ``spaces``, ``seed``, and ``sort_keys``)</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            spaces: A dictionary of spaces. This specifies the structure of the :class:`Dict` space</span>
 <span class="sd">            seed: Optionally, you can use this argument to seed the RNGs of the spaces that make up the :class:`Dict` space.</span>
+<span class="sd">            sort_keys: Whether to sort the keys of a standard mapping. This does not affect :class:`OrderedDict` or sequence inputs.</span>
 <span class="sd">            **spaces_kwargs: If ``spaces`` is ``None``, you need to pass the constituent spaces as keyword arguments, as described above.</span>
 <span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sort_keys</span> <span class="o">=</span> <span class="n">sort_keys</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">):</span>
             <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
-            <span class="c1"># for legacy reasons, we need to preserve the sorted dictionary items.</span>
-            <span class="c1"># as this could matter for projects flatten the dictionary.</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
-            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-                <span class="c1"># Incomparable types (e.g. `int` vs. `str`, or user-defined types) found.</span>
-                <span class="c1"># The keys remain in the insertion order.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_keys</span><span class="p">:</span>
+                <span class="c1"># for legacy reasons, we need to preserve the sorted dictionary items.</span>
+                <span class="c1"># as this could matter for projects flatten the dictionary.</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                    <span class="c1"># Incomparable types (e.g. `int` vs. `str`, or user-defined types) found.</span>
+                    <span class="c1"># The keys remain in the insertion order.</span>
+                    <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spaces</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spaces</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
             <span class="n">spaces_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span>
