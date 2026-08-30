@@ -50,6 +50,33 @@ def test_rescale_action_wrapper():
         assert np.all(info["action"] == expected_action)
 
 
+def test_rescale_action_integer_box():
+    """Test rescaling an environment with an integer ``Box`` action space.
+
+    Rescaling maps onto a continuous range, so the rescaled action space and the
+    transform must be floating point. Previously the transform was computed in the
+    integer dtype, which truncated the gradient to zero and cast the float bounds
+    back to integers, so every action collapsed to a constant and the inverse map
+    returned ``nan`` / ``inf``.
+    """
+    env = GenericTestEnv(
+        step_func=record_action_step,
+        action_space=Box(0, 10, shape=(1,), dtype=np.int64),
+    )
+    wrapped_env = RescaleAction(env, min_action=-1.0, max_action=1.0)
+
+    assert wrapped_env.action_space == Box(-1.0, 1.0, shape=(1,), dtype=np.float32)
+
+    for sample_action, expected_action in (
+        (np.array([-1.0], dtype=np.float32), np.array([0.0], dtype=np.float32)),
+        (np.array([0.0], dtype=np.float32), np.array([5.0], dtype=np.float32)),
+        (np.array([1.0], dtype=np.float32), np.array([10.0], dtype=np.float32)),
+    ):
+        assert sample_action in wrapped_env.action_space
+        _, _, _, _, info = wrapped_env.step(sample_action)
+        assert np.allclose(info["action"], expected_action)
+
+
 def test_rescale_action_equal_bounds():
     """Test that a min action equal to the max action is rejected.
 

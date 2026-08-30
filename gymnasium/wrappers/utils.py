@@ -230,6 +230,14 @@ def rescale_box(
     except AttributeError:
         high_low_diff_dtype = np.float64
 
+    # Rescaling maps the box onto a new, continuous range, so the transform and
+    # the resulting space are floating point. An integer input dtype would
+    # truncate the gradient and intercept to integers and cast the new (float)
+    # bounds back to integers, producing a degenerate transform (a constant
+    # forward map, and nan/inf from the inverse's division by a zero gradient).
+    # Promote to float in that case, mirroring NormalizeObservation.
+    dtype = box.dtype if np.issubdtype(box.dtype, np.floating) else np.float32
+
     min_finite = np.isfinite(new_min)
     max_finite = np.isfinite(new_max)
     both_finite = min_finite & max_finite
@@ -238,12 +246,12 @@ def rescale_box(
         box.high[both_finite], dtype=high_low_diff_dtype
     ) - np.array(box.low[both_finite], dtype=high_low_diff_dtype)
 
-    gradient = np.ones_like(new_min, dtype=box.dtype)
+    gradient = np.ones_like(new_min, dtype=dtype)
     gradient[both_finite] = (
         new_max[both_finite] - new_min[both_finite]
     ) / high_low_diff
 
-    intercept = np.zeros_like(new_min, dtype=box.dtype)
+    intercept = np.zeros_like(new_min, dtype=dtype)
     # In cases where both are finite, the lower operation takes precedence
     intercept[max_finite] = new_max[max_finite] - box.high[max_finite]
     intercept[min_finite] = (
@@ -254,7 +262,7 @@ def rescale_box(
         low=new_min,
         high=new_max,
         shape=box.shape,
-        dtype=box.dtype,
+        dtype=dtype,
     )
 
     def forward(obs: np.ndarray) -> np.ndarray:
