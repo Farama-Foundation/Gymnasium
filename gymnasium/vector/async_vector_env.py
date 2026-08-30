@@ -11,6 +11,7 @@ from copy import deepcopy
 from enum import Enum
 from multiprocessing import Queue
 from multiprocessing.connection import Connection
+from multiprocessing.reduction import ForkingPickler
 from multiprocessing.sharedctypes import SynchronizedArray
 from typing import Any, TypeAlias
 
@@ -826,11 +827,15 @@ def _async_worker(
                     ) = env.step(data)
 
                     if terminated or truncated:
+                        # Snapshot the final values before reset can mutate reused buffers.
+                        final_obs, final_info = ForkingPickler.loads(
+                            ForkingPickler.dumps((observation, info))
+                        )
                         reset_observation, reset_info = env.reset()
 
                         info = {
-                            "final_info": info,
-                            "final_obs": observation,
+                            "final_info": final_info,
+                            "final_obs": final_obs,
                             **reset_info,
                         }
                         observation = reset_observation

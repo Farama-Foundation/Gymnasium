@@ -7,12 +7,20 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import VectorizeMode
-from gymnasium.spaces import Discrete
+from gymnasium.spaces import Box, Discrete
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
 from gymnasium.vector.vector_env import AutoresetMode
 from tests.spaces.utils import TESTING_SPACES, TESTING_SPACES_IDS
 from tests.testing_env import GenericTestEnv
+
+
+class PickleOnlyState:
+    def __init__(self):
+        self.value = 0
+
+    def __deepcopy__(self, memo):
+        raise TypeError("PickleOnlyState cannot be deep-copied")
 
 
 def count_reset(
@@ -28,6 +36,25 @@ def count_step(self: GenericTestEnv, action):
     self.count += 1
 
     return self.count, action, self.count == self.max_count, False, {}
+
+
+def reuse_reset_buffers(
+    self: GenericTestEnv, seed: int | None = None, options: dict | None = None
+):
+    super(GenericTestEnv, self).reset(seed=seed)
+
+    if not hasattr(self, "observation"):
+        self.observation = np.zeros(1, dtype=np.int64)
+        self.info = {"pickle_only": PickleOnlyState()}
+    self.observation[:] = 0
+    self.info["pickle_only"].value = 0
+    return self.observation, self.info
+
+
+def reuse_step_buffers(self: GenericTestEnv, action):
+    self.observation[:] = 1
+    self.info["pickle_only"].value = 1
+    return self.observation, action, True, False, self.info
 
 
 @pytest.mark.parametrize(
@@ -172,6 +199,39 @@ def test_autoreset_within_step(vectoriser):
     )
 
     envs.close()
+
+
+@pytest.mark.parametrize(
+    "vectoriser",
+    [
+        AsyncVectorEnv,
+        partial(AsyncVectorEnv, shared_memory=False),
+    ],
+    ids=["shared_memory=True", "shared_memory=False"],
+)
+def test_async_same_step_autoreset_copies_final_transition(vectoriser):
+    envs = vectoriser(
+        [
+            lambda: GenericTestEnv(
+                action_space=Discrete(1),
+                observation_space=Box(0, 1, shape=(1,), dtype=np.int64),
+                reset_func=reuse_reset_buffers,
+                step_func=reuse_step_buffers,
+            )
+        ],
+        autoreset_mode=AutoresetMode.SAME_STEP,
+    )
+
+    try:
+        envs.reset()
+        observations, _, _, _, info = envs.step([0])
+
+        assert observations.tolist() == [[0]]
+        assert info["pickle_only"][0].value == 0
+        assert info["final_obs"][0].tolist() == [1]
+        assert info["final_info"]["pickle_only"][0].value == 1
+    finally:
+        envs.close()
 
 
 @pytest.mark.parametrize(
