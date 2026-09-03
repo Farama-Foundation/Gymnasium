@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import inspect
 import multiprocessing
 import sys
 import time
@@ -156,7 +157,7 @@ class AsyncVectorEnv(VectorEnv):
                 the head process quits. However, ``daemon=True`` prevents subprocesses to spawn children,
                 so for some environments you may want to have it set to ``False``.
             worker: If set, then use that worker in a subprocess instead of a default one.
-                Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled.
+                Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled. See ``_async_worker`` for the expected signature.
             observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
                 'different' defines that there can be multiple observation spaces with different parameters though requires the same shape and dtype,
                 warning, may raise unexpected errors. Passing a ``Tuple[Space, Space]`` object allows defining a custom ``single_observation_space`` and
@@ -166,8 +167,9 @@ class AsyncVectorEnv(VectorEnv):
                 at any one time. If ``None`` (default), no limit is applied and all environments are executed in
                 parallel. When set, a shared semaphore limits how many worker processes can run an environment call
                 simultaneously, which can improve performance when the number of environments exceeds the number of
-                CPU cores (e.g. for physics simulators such as MuJoCo). Note that when using a custom ``worker``
-                with ``max_concurrency`` set, the worker must accept an additional ``semaphore`` argument.
+                CPU cores (e.g. for physics simulators such as MuJoCo). The limit applies only to ``reset``
+                and ``step``; every other call (:meth:`render`, :meth:`call`, :meth:`get_attr` and
+                :meth:`set_attr`) runs in all sub-environments simultaneously.
 
         Warnings:
             worker is an advanced mode option. It provides a high degree of flexibility and a high chance
@@ -179,6 +181,8 @@ class AsyncVectorEnv(VectorEnv):
                 (or, by default, the observation space of the first sub-environment).
             ValueError: If observation_space is a custom space (i.e. not a default space in Gym,
                 such as gymnasium.spaces.Box, gymnasium.spaces.Discrete, or gymnasium.spaces.Dict) and shared_memory is True.
+            ValueError: If ``max_concurrency`` is not a positive integer, or if a custom ``worker`` does not
+                accept the ``semaphore`` keyword argument.
         """
         self.env_fns = env_fns
         self.shared_memory = shared_memory
@@ -192,12 +196,27 @@ class AsyncVectorEnv(VectorEnv):
             if isinstance(autoreset_mode, AutoresetMode)
             else AutoresetMode(autoreset_mode)
         )
+        if max_concurrency is not None:
+            if not isinstance(max_concurrency, (int, np.integer)):
+                raise ValueError(
+                    f"`max_concurrency` must be an integer or None, got {type(max_concurrency)}."
+                )
+            if max_concurrency < 1:
+                raise ValueError(
+                    f"`max_concurrency` must be a positive or None, got {max_concurrency}."
+                )
         self.max_concurrency = max_concurrency
 
-        if max_concurrency is not None and max_concurrency < 1:
-            raise ValueError(
-                f"`max_concurrency` must be a positive integer or `None`, got {max_concurrency}."
-            )
+        if worker is not None:
+            # Checked here as, otherwise, the worker fails with a `TypeError` in the subprocess that the
+            # main process only sees as a bare `EOFError` from the closed pipe.
+            try:
+                inspect.signature(worker).bind(*(None,) * 8)
+            except TypeError as e:
+                raise ValueError(
+                    f"A custom `worker` must accept 8 arguments. Got the signature {inspect.signature(worker)} "
+                    f"which should match {inspect.signature(_async_worker)}."
+                ) from e
 
         self.num_envs = len(env_fns)
 
@@ -275,21 +294,19 @@ class AsyncVectorEnv(VectorEnv):
         with clear_mpi_env_vars():
             for idx, env_fn in enumerate(self.env_fns):
                 parent_pipe, child_pipe = ctx.Pipe()
-                process_args = (
-                    idx,
-                    CloudpickleWrapper(env_fn),
-                    child_pipe,
-                    parent_pipe,
-                    _obs_buffer,
-                    self.error_queue,
-                    self.autoreset_mode,
-                )
-                if semaphore is not None:
-                    process_args = (*process_args, semaphore)
                 process = ctx.Process(  # ty:ignore[unresolved-attribute]
                     target=target,
                     name=f"Worker<{type(self).__name__}>-{idx}",
-                    args=process_args,
+                    args=(
+                        idx,
+                        CloudpickleWrapper(env_fn),
+                        child_pipe,
+                        parent_pipe,
+                        _obs_buffer,
+                        self.error_queue,
+                        self.autoreset_mode,
+                        semaphore,
+                    ),
                 )
 
                 self.parent_pipes.append(parent_pipe)
@@ -801,7 +818,7 @@ def _async_worker(
     shared_memory: SynchronizedArray | dict[str, Any] | tuple[Any, ...],
     error_queue: Queue,
     autoreset_mode: AutoresetMode,
-    semaphore: synchronize.Semaphore | None = None,
+    semaphore: synchronize.Semaphore | None,
 ) -> None:
     env = env_fn()
     observation_space = env.observation_space
@@ -815,7 +832,8 @@ def _async_worker(
         while True:
             command, data = pipe.recv()
 
-            if semaphore is not None and command in ("reset", "step"):
+            permit_held = semaphore is not None and command in ("reset", "step")
+            if permit_held:
                 semaphore.acquire()
             try:
                 if command == "reset":
@@ -826,6 +844,12 @@ def _async_worker(
                         )
                         observation = None
                         autoreset = False
+
+                    # release before `send`, which blocks until the main process reads the pipe
+                    if permit_held:
+                        permit_held = False
+                        semaphore.release()
+
                     pipe.send(((observation, info), True))
                 elif command == "reset-noop":
                     pipe.send(((observation, {}), True))
@@ -879,6 +903,11 @@ def _async_worker(
                         )
                         observation = None
 
+                    # release before `send`, which blocks until the main process reads the pipe
+                    if permit_held:
+                        permit_held = False
+                        semaphore.release()
+
                     pipe.send(
                         ((observation, reward, terminated, truncated, info), True)
                     )
@@ -924,7 +953,7 @@ def _async_worker(
                         f"Received unknown command `{command}`. Must be one of [`reset`, `step`, `close`, `_call`, `_setattr`, `_check_spaces`]."
                     )
             finally:
-                if semaphore is not None and command in ("reset", "step"):
+                if permit_held:
                     semaphore.release()
 
     except (KeyboardInterrupt, Exception):
