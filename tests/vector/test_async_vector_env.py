@@ -485,7 +485,7 @@ def custom_semaphore_worker(
     shared_memory,
     error_queue,
     autoreset_mode,
-    semaphore
+    semaphore,
 ):
     """A custom worker with the signature expected by `AsyncVectorEnv`."""
     _async_worker(
@@ -561,7 +561,6 @@ def test_max_concurrency_one_async_vector_env():
         assert max_active.value == 1
 
 
-
 @pytest.mark.parametrize("max_concurrency", [2.5, "2", 2.0])
 def test_non_integer_max_concurrency_async_vector_env(max_concurrency):
     """Tests that non-integer `max_concurrency` values are rejected rather than silently misused.
@@ -590,8 +589,6 @@ def test_invalid_max_concurrency_async_vector_env(max_concurrency):
         )
 
 
-
-
 @pytest.mark.parametrize("max_concurrency", [None, 2])
 def test_incompatible_custom_worker(max_concurrency):
     """Tests that a custom `worker` not accepting the `semaphore` argument is rejected upfront.
@@ -611,9 +608,7 @@ def test_incompatible_custom_worker(max_concurrency):
     ):
         pass
 
-    with pytest.raises(
-        ValueError, match="A custom `worker` must accept 8 arguments"
-    ):
+    with pytest.raises(ValueError, match="A custom `worker` must accept 8 arguments"):
         AsyncVectorEnv(
             [lambda: GenericTestEnv() for _ in range(2)],
             worker=custom_worker,
