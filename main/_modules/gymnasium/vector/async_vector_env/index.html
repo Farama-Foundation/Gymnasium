@@ -371,6 +371,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
@@ -378,7 +379,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Queue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Queue</span><span class="p">,</span> <span class="n">synchronize</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.connection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.sharedctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynchronizedArray</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeAlias</span>
@@ -482,6 +483,7 @@
     <span class="p">)</span>
     <span class="n">observation_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Space</span>
     <span class="n">autoreset_mode</span><span class="p">:</span> <span class="n">AutoresetMode</span>
+    <span class="n">max_concurrency</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">num_envs</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="n">render_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
@@ -511,6 +513,7 @@
         <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">observation_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Space</span> <span class="o">=</span> <span class="s2">"same"</span><span class="p">,</span>
         <span class="n">autoreset_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">AutoresetMode</span> <span class="o">=</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span><span class="p">,</span>
+        <span class="n">max_concurrency</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Vectorized environment that runs multiple environments in parallel.</span>
 
@@ -525,12 +528,19 @@
 <span class="sd">                the head process quits. However, ``daemon=True`` prevents subprocesses to spawn children,</span>
 <span class="sd">                so for some environments you may want to have it set to ``False``.</span>
 <span class="sd">            worker: If set, then use that worker in a subprocess instead of a default one.</span>
-<span class="sd">                Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled.</span>
+<span class="sd">                Can be useful to override some inner vector env logic, for instance, how resets on termination or truncation are handled. See ``_async_worker`` for the expected signature.</span>
 <span class="sd">            observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.</span>
 <span class="sd">                'different' defines that there can be multiple observation spaces with different parameters though requires the same shape and dtype,</span>
 <span class="sd">                warning, may raise unexpected errors. Passing a ``Tuple[Space, Space]`` object allows defining a custom ``single_observation_space`` and</span>
 <span class="sd">                ``observation_space``, warning, may raise unexpected errors.</span>
 <span class="sd">            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.</span>
+<span class="sd">            max_concurrency: The maximum number of environments that can be executing (i.e. in ``reset`` or ``step``)</span>
+<span class="sd">                at any one time. If ``None`` (default), no limit is applied and all environments are executed in</span>
+<span class="sd">                parallel. When set, a shared semaphore limits how many worker processes can run an environment call</span>
+<span class="sd">                simultaneously, which can improve performance when the number of environments exceeds the number of</span>
+<span class="sd">                CPU cores (e.g. for physics simulators such as MuJoCo). The limit applies only to ``reset``</span>
+<span class="sd">                and ``step``; every other call (:meth:`render`, :meth:`call`, :meth:`get_attr` and</span>
+<span class="sd">                :meth:`set_attr`) runs in all sub-environments simultaneously.</span>
 
 <span class="sd">        Warnings:</span>
 <span class="sd">            worker is an advanced mode option. It provides a high degree of flexibility and a high chance</span>
@@ -542,6 +552,8 @@
 <span class="sd">                (or, by default, the observation space of the first sub-environment).</span>
 <span class="sd">            ValueError: If observation_space is a custom space (i.e. not a default space in Gym,</span>
 <span class="sd">                such as gymnasium.spaces.Box, gymnasium.spaces.Discrete, or gymnasium.spaces.Dict) and shared_memory is True.</span>
+<span class="sd">            ValueError: If ``max_concurrency`` is not a positive integer, or if a custom ``worker`` does not</span>
+<span class="sd">                accept the ``semaphore`` keyword argument.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">env_fns</span> <span class="o">=</span> <span class="n">env_fns</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shared_memory</span> <span class="o">=</span> <span class="n">shared_memory</span>
@@ -555,6 +567,27 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">autoreset_mode</span><span class="p">,</span> <span class="n">AutoresetMode</span><span class="p">)</span>
             <span class="k">else</span> <span class="n">AutoresetMode</span><span class="p">(</span><span class="n">autoreset_mode</span><span class="p">)</span>
         <span class="p">)</span>
+        <span class="k">if</span> <span class="n">max_concurrency</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_concurrency</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"`max_concurrency` must be an integer or None, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">max_concurrency</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">max_concurrency</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"`max_concurrency` must be a positive or None, got </span><span class="si">{</span><span class="n">max_concurrency</span><span class="si">}</span><span class="s2">."</span>
+                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_concurrency</span> <span class="o">=</span> <span class="n">max_concurrency</span>
+
+        <span class="k">if</span> <span class="n">worker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Checked here as, otherwise, the worker fails with a `TypeError` in the subprocess that the</span>
+            <span class="c1"># main process only sees as a bare `EOFError` from the closed pipe.</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">worker</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kc">None</span><span class="p">,)</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"A custom `worker` must accept 8 arguments. Got the signature </span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">worker</span><span class="p">)</span><span class="si">}</span><span class="s2"> "</span>
+                    <span class="sa">f</span><span class="s2">"which should match </span><span class="si">{</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">_async_worker</span><span class="p">)</span><span class="si">}</span><span class="s2">."</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">env_fns</span><span class="p">)</span>
 
@@ -623,6 +656,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parent_pipes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">processes</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">error_queue</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
         <span class="n">target</span> <span class="o">=</span> <span class="n">worker</span> <span class="ow">or</span> <span class="n">_async_worker</span>
+        <span class="c1"># A shared semaphore to limit the number of environments executing at any one time</span>
+        <span class="n">semaphore</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">BoundedSemaphore</span><span class="p">(</span><span class="n">max_concurrency</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">max_concurrency</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
         <span class="k">with</span> <span class="n">clear_mpi_env_vars</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">env_fn</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_fns</span><span class="p">):</span>
                 <span class="n">parent_pipe</span><span class="p">,</span> <span class="n">child_pipe</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Pipe</span><span class="p">()</span>
@@ -637,6 +676,7 @@
                         <span class="n">_obs_buffer</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">error_queue</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span><span class="p">,</span>
+                        <span class="n">semaphore</span><span class="p">,</span>
                     <span class="p">),</span>
                 <span class="p">)</span>
 
@@ -1165,6 +1205,7 @@
     <span class="n">shared_memory</span><span class="p">:</span> <span class="n">SynchronizedArray</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
     <span class="n">error_queue</span><span class="p">:</span> <span class="n">Queue</span><span class="p">,</span>
     <span class="n">autoreset_mode</span><span class="p">:</span> <span class="n">AutoresetMode</span><span class="p">,</span>
+    <span class="n">semaphore</span><span class="p">:</span> <span class="n">synchronize</span><span class="o">.</span><span class="n">Semaphore</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">env_fn</span><span class="p">()</span>
     <span class="n">observation_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
@@ -1178,23 +1219,42 @@
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">command</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">pipe</span><span class="o">.</span><span class="n">recv</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"reset"</span><span class="p">:</span>
-                <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">shared_memory</span><span class="p">:</span>
-                    <span class="n">write_to_shared_memory</span><span class="p">(</span>
-                        <span class="n">observation_space</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">shared_memory</span>
-                    <span class="p">)</span>
-                    <span class="n">observation</span> <span class="o">=</span> <span class="kc">None</span>
-                    <span class="n">autoreset</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(((</span><span class="n">observation</span><span class="p">,</span> <span class="n">info</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"reset-noop"</span><span class="p">:</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(((</span><span class="n">observation</span><span class="p">,</span> <span class="p">{}),</span> <span class="kc">True</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"step"</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">autoreset</span><span class="p">:</span>
-                        <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-                        <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
-                    <span class="k">else</span><span class="p">:</span>
+            <span class="n">permit_held</span> <span class="o">=</span> <span class="n">semaphore</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">command</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"reset"</span><span class="p">,</span> <span class="s2">"step"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">permit_held</span><span class="p">:</span>
+                <span class="n">semaphore</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"reset"</span><span class="p">:</span>
+                    <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">shared_memory</span><span class="p">:</span>
+                        <span class="n">write_to_shared_memory</span><span class="p">(</span>
+                            <span class="n">observation_space</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">shared_memory</span>
+                        <span class="p">)</span>
+                        <span class="n">observation</span> <span class="o">=</span> <span class="kc">None</span>
+                        <span class="n">autoreset</span> <span class="o">=</span> <span class="kc">False</span>
+
+                    <span class="c1"># release before `send`, which blocks until the main process reads the pipe</span>
+                    <span class="k">if</span> <span class="n">permit_held</span><span class="p">:</span>
+                        <span class="n">permit_held</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">semaphore</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(((</span><span class="n">observation</span><span class="p">,</span> <span class="n">info</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"reset-noop"</span><span class="p">:</span>
+                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(((</span><span class="n">observation</span><span class="p">,</span> <span class="p">{}),</span> <span class="kc">True</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"step"</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">autoreset</span><span class="p">:</span>
+                            <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+                            <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="p">(</span>
+                                <span class="n">observation</span><span class="p">,</span>
+                                <span class="n">reward</span><span class="p">,</span>
+                                <span class="n">terminated</span><span class="p">,</span>
+                                <span class="n">truncated</span><span class="p">,</span>
+                                <span class="n">info</span><span class="p">,</span>
+                            <span class="p">)</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                        <span class="n">autoreset</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+                    <span class="k">elif</span> <span class="n">autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">SAME_STEP</span><span class="p">:</span>
                         <span class="p">(</span>
                             <span class="n">observation</span><span class="p">,</span>
                             <span class="n">reward</span><span class="p">,</span>
@@ -1202,85 +1262,87 @@
                             <span class="n">truncated</span><span class="p">,</span>
                             <span class="n">info</span><span class="p">,</span>
                         <span class="p">)</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                    <span class="n">autoreset</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
-                <span class="k">elif</span> <span class="n">autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">SAME_STEP</span><span class="p">:</span>
-                    <span class="p">(</span>
-                        <span class="n">observation</span><span class="p">,</span>
-                        <span class="n">reward</span><span class="p">,</span>
-                        <span class="n">terminated</span><span class="p">,</span>
-                        <span class="n">truncated</span><span class="p">,</span>
-                        <span class="n">info</span><span class="p">,</span>
-                    <span class="p">)</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-                    <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
-                        <span class="n">reset_observation</span><span class="p">,</span> <span class="n">reset_info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
+                            <span class="n">reset_observation</span><span class="p">,</span> <span class="n">reset_info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-                        <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
-                            <span class="s2">"final_info"</span><span class="p">:</span> <span class="n">info</span><span class="p">,</span>
-                            <span class="s2">"final_obs"</span><span class="p">:</span> <span class="n">observation</span><span class="p">,</span>
-                            <span class="o">**</span><span class="n">reset_info</span><span class="p">,</span>
-                        <span class="p">}</span>
-                        <span class="n">observation</span> <span class="o">=</span> <span class="n">reset_observation</span>
-                <span class="k">elif</span> <span class="n">autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">DISABLED</span><span class="p">:</span>
-                    <span class="k">assert</span> <span class="n">autoreset</span> <span class="ow">is</span> <span class="kc">False</span>
-                    <span class="p">(</span>
-                        <span class="n">observation</span><span class="p">,</span>
-                        <span class="n">reward</span><span class="p">,</span>
-                        <span class="n">terminated</span><span class="p">,</span>
-                        <span class="n">truncated</span><span class="p">,</span>
-                        <span class="n">info</span><span class="p">,</span>
-                    <span class="p">)</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unexpected autoreset_mode: </span><span class="si">{</span><span class="n">autoreset_mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                            <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
+                                <span class="s2">"final_info"</span><span class="p">:</span> <span class="n">info</span><span class="p">,</span>
+                                <span class="s2">"final_obs"</span><span class="p">:</span> <span class="n">observation</span><span class="p">,</span>
+                                <span class="o">**</span><span class="n">reset_info</span><span class="p">,</span>
+                            <span class="p">}</span>
+                            <span class="n">observation</span> <span class="o">=</span> <span class="n">reset_observation</span>
+                    <span class="k">elif</span> <span class="n">autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">DISABLED</span><span class="p">:</span>
+                        <span class="k">assert</span> <span class="n">autoreset</span> <span class="ow">is</span> <span class="kc">False</span>
+                        <span class="p">(</span>
+                            <span class="n">observation</span><span class="p">,</span>
+                            <span class="n">reward</span><span class="p">,</span>
+                            <span class="n">terminated</span><span class="p">,</span>
+                            <span class="n">truncated</span><span class="p">,</span>
+                            <span class="n">info</span><span class="p">,</span>
+                        <span class="p">)</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unexpected autoreset_mode: </span><span class="si">{</span><span class="n">autoreset_mode</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-                <span class="k">if</span> <span class="n">shared_memory</span><span class="p">:</span>
-                    <span class="n">write_to_shared_memory</span><span class="p">(</span>
-                        <span class="n">observation_space</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">shared_memory</span>
+                    <span class="k">if</span> <span class="n">shared_memory</span><span class="p">:</span>
+                        <span class="n">write_to_shared_memory</span><span class="p">(</span>
+                            <span class="n">observation_space</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">observation</span><span class="p">,</span> <span class="n">shared_memory</span>
+                        <span class="p">)</span>
+                        <span class="n">observation</span> <span class="o">=</span> <span class="kc">None</span>
+
+                    <span class="c1"># release before `send`, which blocks until the main process reads the pipe</span>
+                    <span class="k">if</span> <span class="n">permit_held</span><span class="p">:</span>
+                        <span class="n">permit_held</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">semaphore</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                        <span class="p">((</span><span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span>
                     <span class="p">)</span>
-                    <span class="n">observation</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"close"</span><span class="p">:</span>
+                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+                    <span class="k">break</span>
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"_call"</span><span class="p">:</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">data</span>
+                    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"reset"</span><span class="p">,</span> <span class="s2">"step"</span><span class="p">,</span> <span class="s2">"close"</span><span class="p">,</span> <span class="s2">"_setattr"</span><span class="p">,</span> <span class="s2">"_check_spaces"</span><span class="p">]:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">"Trying to call function `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` with `call`, use `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` directly instead."</span>
+                        <span class="p">)</span>
 
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(((</span><span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"close"</span><span class="p">:</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
-                <span class="k">break</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"_call"</span><span class="p">:</span>
-                <span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"reset"</span><span class="p">,</span> <span class="s2">"step"</span><span class="p">,</span> <span class="s2">"close"</span><span class="p">,</span> <span class="s2">"_setattr"</span><span class="p">,</span> <span class="s2">"_check_spaces"</span><span class="p">]:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">"Trying to call function `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` with `call`, use `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` directly instead."</span>
-                    <span class="p">)</span>
+                    <span class="n">attr</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
+                        <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">attr</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">attr</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"_setattr"</span><span class="p">:</span>
+                    <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">data</span>
+                    <span class="n">env</span><span class="o">.</span><span class="n">set_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"_check_spaces"</span><span class="p">:</span>
+                    <span class="n">obs_mode</span><span class="p">,</span> <span class="n">single_obs_space</span><span class="p">,</span> <span class="n">single_action_space</span> <span class="o">=</span> <span class="n">data</span>
 
-                <span class="n">attr</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">attr</span><span class="p">):</span>
-                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">attr</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="kc">True</span><span class="p">))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">attr</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"_setattr"</span><span class="p">:</span>
-                <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">data</span>
-                <span class="n">env</span><span class="o">.</span><span class="n">set_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="kc">None</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">command</span> <span class="o">==</span> <span class="s2">"_check_spaces"</span><span class="p">:</span>
-                <span class="n">obs_mode</span><span class="p">,</span> <span class="n">single_obs_space</span><span class="p">,</span> <span class="n">single_action_space</span> <span class="o">=</span> <span class="n">data</span>
-
-                <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
-                    <span class="p">(</span>
+                    <span class="n">pipe</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
                         <span class="p">(</span>
                             <span class="p">(</span>
-                                <span class="n">single_obs_space</span> <span class="o">==</span> <span class="n">observation_space</span>
-                                <span class="k">if</span> <span class="n">obs_mode</span> <span class="o">==</span> <span class="s2">"same"</span>
-                                <span class="k">else</span> <span class="n">is_space_dtype_shape_equiv</span><span class="p">(</span>
-                                    <span class="n">single_obs_space</span><span class="p">,</span> <span class="n">observation_space</span>
-                                <span class="p">)</span>
+                                <span class="p">(</span>
+                                    <span class="n">single_obs_space</span> <span class="o">==</span> <span class="n">observation_space</span>
+                                    <span class="k">if</span> <span class="n">obs_mode</span> <span class="o">==</span> <span class="s2">"same"</span>
+                                    <span class="k">else</span> <span class="n">is_space_dtype_shape_equiv</span><span class="p">(</span>
+                                        <span class="n">single_obs_space</span><span class="p">,</span> <span class="n">observation_space</span>
+                                    <span class="p">)</span>
+                                <span class="p">),</span>
+                                <span class="n">single_action_space</span> <span class="o">==</span> <span class="n">action_space</span><span class="p">,</span>
                             <span class="p">),</span>
-                            <span class="n">single_action_space</span> <span class="o">==</span> <span class="n">action_space</span><span class="p">,</span>
-                        <span class="p">),</span>
-                        <span class="kc">True</span><span class="p">,</span>
+                            <span class="kc">True</span><span class="p">,</span>
+                        <span class="p">)</span>
                     <span class="p">)</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"Received unknown command `</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">`. Must be one of [`reset`, `step`, `close`, `_call`, `_setattr`, `_check_spaces`]."</span>
-                <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Received unknown command `</span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">`. Must be one of [`reset`, `step`, `close`, `_call`, `_setattr`, `_check_spaces`]."</span>
+                    <span class="p">)</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">permit_held</span><span class="p">:</span>
+                    <span class="n">semaphore</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
     <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
         <span class="n">error_type</span><span class="p">,</span> <span class="n">error_message</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
         <span class="n">trace</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
