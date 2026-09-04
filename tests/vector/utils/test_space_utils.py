@@ -9,7 +9,7 @@ import pytest
 
 from gymnasium import Space
 from gymnasium.error import CustomSpaceError
-from gymnasium.spaces import Box, Discrete, Tuple
+from gymnasium.spaces import Box, Dict, Discrete, Tuple
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import (
     batch_differing_spaces,
@@ -159,6 +159,17 @@ def test_custom_space():
 
     empty_array = create_empty_array(custom_space)
     assert empty_array is None
+
+
+def test_batch_dict_preserves_key_order():
+    """Tests that batching doesn't reorder Dict spaces."""
+    space = Dict({"b": Discrete(2), "a": Discrete(3)}, sort_keys=False)
+
+    assert list(batch_space(space, n=2).keys()) == ["b", "a"]
+    assert list(batch_differing_spaces([space, copy.deepcopy(space)]).keys()) == [
+        "b",
+        "a",
+    ]
 
 
 @pytest.mark.parametrize(

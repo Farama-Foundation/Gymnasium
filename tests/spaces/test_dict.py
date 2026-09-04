@@ -41,18 +41,24 @@ def test_dict_init():
     with warnings.catch_warnings(record=True) as caught_warnings:
         # Sorting is applied to the keys
         a = Dict({"b": Box(low=0.0, high=1.0), "a": Discrete(2)})
-        assert a.keys() == {"a", "b"}
+        assert list(a.keys()) == ["a", "b"]
+
+        # Sorting is optional for standard dictionaries
+        unsorted = Dict(
+            {"b": Box(low=0.0, high=1.0), "a": Discrete(2)}, sort_keys=False
+        )
+        assert list(unsorted.keys()) == ["b", "a"]
 
         # Sorting is not applied to the keys
         b = Dict(OrderedDict(b=Box(low=0.0, high=1.0), a=Discrete(2)))
         c = Dict((("b", Box(low=0.0, high=1.0)), ("a", Discrete(2))))
         d = Dict(b=Box(low=0.0, high=1.0), a=Discrete(2))
-        assert b.keys() == c.keys() == d.keys() == {"b", "a"}
+        assert list(b.keys()) == list(c.keys()) == list(d.keys()) == ["b", "a"]
     assert len(caught_warnings) == 0
 
     # test sorting with different classes
     with warnings.catch_warnings(record=True) as caught_warnings:
-        assert Dict({1: Discrete(2), "a": Discrete(3)}).keys() == {1, "a"}
+        assert list(Dict({1: Discrete(2), "a": Discrete(3)}).keys()) == [1, "a"]
     assert len(caught_warnings) == 0
 
 

@@ -56,8 +56,11 @@ class MujocoEnv(gym.Env):
             frame_skip: Number of MuJoCo simulation steps per gym `step()`.
             observation_space: The observation space of the environment.
             render_mode: The `render_mode` used.
-            width: The width of the render window.
-            height: The height of the render window.
+            width: The width of the render window. The offscreen framebuffer is grown to
+                this size if the model XML declares a smaller one, but never shrunk below
+                the XML-declared size.
+            height: The height of the render window. Grown, but never shrunk, in the same
+                way as `width`.
             camera_id: The camera ID used.
             camera_name: The name of the camera used (can not be used in conjunction with `camera_id`).
             default_camera_config: configuration for rendering camera.
@@ -120,8 +123,9 @@ class MujocoEnv(gym.Env):
         """
         model = mujoco.MjModel.from_xml_path(self.fullpath)
         # MjrContext will copy model.vis.global_.off* to con.off*
-        model.vis.global_.offwidth = self.width
-        model.vis.global_.offheight = self.height
+        # Only grow the offscreen framebuffer, never shrink below the size of the model XML.
+        model.vis.global_.offwidth = max(model.vis.global_.offwidth, self.width)
+        model.vis.global_.offheight = max(model.vis.global_.offheight, self.height)
         data = mujoco.MjData(model)
         return model, data
 

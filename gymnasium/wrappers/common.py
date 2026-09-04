@@ -496,7 +496,9 @@ class RecordEpisodeStatistics(
             buffer_length: The size of the buffers :attr:`return_queue`, :attr:`length_queue` and :attr:`time_queue`
             stats_key: The info key for the episode statistics
         """
-        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, buffer_length=buffer_length, stats_key=stats_key
+        )
         gym.Wrapper.__init__(self, env)
 
         self._stats_key = stats_key
