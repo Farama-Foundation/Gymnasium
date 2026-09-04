@@ -76,16 +76,12 @@ class FunctionalJaxEnv(gym.Env, Generic[StateType]):
         """Steps through the environment using the action."""
         rng, self.rng = jrng.split(self.rng)
 
-        next_state = self.func_env.transition(
-            self.state, action, rng, params=self.params
-        )
-        observation = self.func_env.observation(next_state, rng, params=self.params)
-        reward = self.func_env.reward(
-            self.state, action, next_state, rng, params=self.params
-        )
-        terminated = self.func_env.terminal(next_state, rng, params=self.params)
+        next_state = self.func_env.transition(self.state, action, rng, self.params)
+        observation = self.func_env.observation(next_state, rng, self.params)
+        reward = self.func_env.reward(self.state, action, next_state, rng, self.params)
+        terminated = self.func_env.terminal(next_state, rng, self.params)
         info = self.func_env.transition_info(
-            self.state, action, next_state, params=self.params
+            self.state, action, next_state, self.params
         )
         self.state = next_state
 
