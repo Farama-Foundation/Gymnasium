@@ -885,8 +885,7 @@ class ExperimentalPymunkLunarLanderEnv(GymEnv):
 
         self.last_action = action
         self.elapsed_steps += 1
-        prev_raw_vy = float(self.demo.lander_body.velocity.y)
-        prev_raw_ang_vel = float(self.demo.lander_body.angular_velocity)
+
         self.demo.step(action)
         observation = self._get_observation()
 
@@ -917,24 +916,6 @@ class ExperimentalPymunkLunarLanderEnv(GymEnv):
             terminated = True
             reward = -100.0
             termination_reason = "crash" if self.demo.crashed else "viewport_exit"
-
-        if not terminated:
-            any_leg_contact = self.demo.left_leg_contact or self.demo.right_leg_contact
-
-            raw_vy = float(self.demo.lander_body.velocity.y)
-            raw_ang_vel = float(self.demo.lander_body.angular_velocity)
-
-            hard_leg_impact = any_leg_contact and (
-                abs(prev_raw_vy) > 3.0
-                or abs(prev_raw_ang_vel) > 2.0
-                or abs(raw_vy) > 3.0
-                or abs(raw_ang_vel) > 2.0
-            )
-
-            if hard_leg_impact:
-                terminated = True
-                reward = -100.0
-                termination_reason = "crash"
 
         inside_landing_zone = False
 

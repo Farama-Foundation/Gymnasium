@@ -1029,3 +1029,40 @@ def test_experimental_env_close_is_idempotent():
 
     env.close()
     env.close()
+
+
+def test_hard_leg_impact_matches_box2d_termination_semantics():
+    """Leg-only contact must not terminate unless the hull crashes."""
+    box_env = gym.make("LunarLander-v3", disable_env_checker=True)
+    pymunk_env = ExperimentalPymunkLunarLanderEnv()
+
+    box_env.reset(seed=123)
+    pymunk_env.reset(seed=123)
+
+    box = box_env.unwrapped
+    pymunk_demo = pymunk_env.demo
+
+    box.world.gravity = (0.0, 0.0)
+    pymunk_demo.space.gravity = (0.0, 0.0)
+
+    box.game_over = False
+    pymunk_demo.crashed = False
+
+    for leg in box.legs:
+        leg.ground_contact = True
+
+    pymunk_demo.leg_contacts[LEFT_LEG_COLLISION_TYPE] = 1
+    pymunk_demo.leg_contacts[RIGHT_LEG_COLLISION_TYPE] = 1
+
+    box.lander.linearVelocity = (0.0, -4.0)
+    pymunk_demo.lander_body.velocity = (0.0, -4.0)
+
+    _, _, box_terminated, _, _ = box_env.step(0)
+    _, _, pymunk_terminated, _, pymunk_info = pymunk_env.step(0)
+
+    assert box_terminated == pymunk_terminated
+    assert not pymunk_terminated
+    assert pymunk_info["termination_reason"] is None
+
+    box_env.close()
+    pymunk_env.close()
