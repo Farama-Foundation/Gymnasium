@@ -80,6 +80,32 @@ def _reset_default_seed(self: GenericTestEnv, seed=23, options=None):
     return self.observation_space.sample(), {}
 
 
+def _buffer_reusing_nondeterministic_reset(self, seed=None, options=None):
+    """Return a reused buffer whose value changes on every reset."""
+    super(GenericTestEnv, self).reset(seed=seed)
+    self._reset_count = getattr(self, "_reset_count", 0) + 1
+    if not hasattr(self, "_observation_buffer"):
+        self._observation_buffer = np.zeros(1, dtype=np.float32)
+    self._observation_buffer[...] = self._reset_count
+    return self._observation_buffer, {}
+
+
+def _buffer_reusing_deterministic_reset(self, seed=None, options=None):
+    """Reset a reusable observation buffer without drawing random values."""
+    super(GenericTestEnv, self).reset(seed=seed)
+    if not hasattr(self, "_observation_buffer"):
+        self._observation_buffer = np.zeros(1, dtype=np.float32)
+    self._observation_buffer[...] = 0
+    return self._observation_buffer, {}
+
+
+def _buffer_reusing_nondeterministic_step(self, action):
+    """Mutate one shared observation buffer on every step call."""
+    self._step_count = getattr(self, "_step_count", 0) + 1
+    self._observation_buffer[...] = self._step_count
+    return self._observation_buffer, 0.0, False, False, {}
+
+
 @pytest.mark.parametrize(
     "test,func,message",
     [
@@ -120,6 +146,21 @@ def test_check_reset_seed_determinism(test, func: Callable, message: str):
     else:
         with pytest.raises(test, match=f"^{re.escape(message)}$"):
             check_reset_seed_determinism(GenericTestEnv(reset_func=func))
+
+
+def test_check_reset_seed_determinism_snapshots_reused_observations():
+    """Detect nondeterministic resets even when an env reuses its buffer."""
+    observation_space = spaces.Box(0, 100, (1,), dtype=np.float32)
+    env = GenericTestEnv(
+        observation_space=observation_space,
+        reset_func=_buffer_reusing_nondeterministic_reset,
+    )
+
+    with pytest.raises(
+        AssertionError,
+        match="Using `env.reset\(seed=123\)` is non-deterministic as the observations are not equivalent.",
+    ):
+        check_reset_seed_determinism(env)
 
 
 def _deprecated_return_info(
@@ -267,6 +308,22 @@ def test_check_step_determinism(test, step_func, message: str):
     """Tests the check_step_determinism function."""
     with pytest.raises(test, match=f"^{re.escape(message)}$"):
         check_step_determinism(GenericTestEnv(step_func=step_func))
+
+
+def test_check_step_determinism_snapshots_reused_observations():
+    """Detect a changing step result before a reused buffer is overwritten."""
+    observation_space = spaces.Box(0, 100, (1,), dtype=np.float32)
+    env = GenericTestEnv(
+        observation_space=observation_space,
+        reset_func=_buffer_reusing_deterministic_reset,
+        step_func=_buffer_reusing_nondeterministic_step,
+    )
+
+    with pytest.raises(
+        AssertionError,
+        match="Deterministic step observations are not equivalent for the same seed and action",
+    ):
+        check_step_determinism(env)
 
 
 @pytest.mark.parametrize(

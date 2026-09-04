@@ -130,6 +130,7 @@ def _batch_space_dict(space: Dict, n: int = 1) -> Dict:
     return Dict(
         {key: batch_space(subspace, n=n) for key, subspace in space.items()},
         seed=deepcopy(space.np_random),
+        sort_keys=space.sort_keys,
     )
 
 
@@ -280,6 +281,7 @@ def _batch_differing_spaces_dict(spaces: _PySequence[Dict]) -> Dict:
             for key in spaces[0].keys()
         },
         seed=deepcopy(spaces[0].np_random),
+        sort_keys=spaces[0].sort_keys,
     )
 
 

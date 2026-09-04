@@ -163,7 +163,8 @@ class FilterObservation(
                 )
 
             new_observation_space = spaces.Dict(
-                {key: env.observation_space[key] for key in filter_keys}
+                {key: env.observation_space[key] for key in filter_keys},
+                sort_keys=env.observation_space.sort_keys,
             )
             if len(new_observation_space) == 0:
                 raise ValueError(
@@ -732,7 +733,8 @@ class AddRenderObservation(
                 )
 
             obs_space = spaces.Dict(
-                {render_key: pixel_space, **env.observation_space.spaces}
+                {render_key: pixel_space, **env.observation_space.spaces},
+                sort_keys=env.observation_space.sort_keys,
             )
             TransformObservation.__init__(
                 self,
@@ -836,7 +838,9 @@ class DiscretizeObservation(
             )
 
         self.multidiscrete = multidiscrete
-        gym.utils.RecordConstructorArgs.__init__(self, bins=bins)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, bins=bins, multidiscrete=multidiscrete
+        )
         gym.ObservationWrapper.__init__(self, env)
 
         if isinstance(bins, int):

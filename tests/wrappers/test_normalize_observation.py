@@ -1,9 +1,11 @@
 """Test suite for NormalizeObservation wrapper."""
 
 import numpy as np
+import pytest
 
 import gymnasium as gym
 from gymnasium import spaces, wrappers
+from gymnasium.error import InvalidBound
 from gymnasium.wrappers import NormalizeObservation
 from tests.testing_env import GenericTestEnv
 
@@ -75,3 +77,19 @@ def test_normalize_obs_with_vector():
 
     envs = gym.vector.SyncVectorEnv([thunk for _ in range(4)])
     obs, _ = envs.reset()
+
+
+@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0])
+def test_non_positive_epsilon_is_rejected(epsilon):
+    """``epsilon`` sits under a square root; once it exceeds the variance the result is NaN.
+
+    Left unchecked, the wrapper keeps running and silently returns NaN observations
+    rather than reporting that its stability parameter cannot stabilise anything.
+    """
+    with pytest.raises(InvalidBound, match="`epsilon` should be strictly positive"):
+        NormalizeObservation(GenericTestEnv(), epsilon=epsilon)
+
+
+@pytest.mark.parametrize("epsilon", [1e-8, 1e-4, 1.0])
+def test_positive_epsilon_is_accepted(epsilon):
+    assert NormalizeObservation(GenericTestEnv(), epsilon=epsilon).epsilon == epsilon

@@ -91,6 +91,9 @@ def check_reset_seed_determinism(env: gym.Env) -> None:
     ):
         try:
             obs_1, info = env.reset(seed=123)
+            # Some environments reuse an internal observation buffer.  Keep a
+            # snapshot before the next reset can mutate the object in place.
+            obs_1 = deepcopy(obs_1)
             assert obs_1 in env.observation_space, (
                 "The observation returned by `env.reset(seed=123)` is not within the observation space."
             )
@@ -100,6 +103,7 @@ def check_reset_seed_determinism(env: gym.Env) -> None:
             seed_123_rng_1 = deepcopy(env.unwrapped._np_random)
 
             obs_2, info = env.reset()
+            obs_2 = deepcopy(obs_2)
             assert obs_2 in env.observation_space, (
                 "The observation returned by `env.reset()` is not within the observation space."
             )
@@ -213,6 +217,9 @@ def check_step_determinism(env: gym.Env, seed: int = 123) -> None:
 
     env.reset(seed=seed)
     obs_0, rew_0, term_0, trunc_0, info_0 = env.step(action)
+    # Preserve the first transition before the second reset/step can mutate a
+    # reused observation buffer in place.
+    obs_0 = deepcopy(obs_0)
 
     orig_rng = env.unwrapped._np_random
     assert orig_rng is not None, "env.reset() should have initialized env._np_random"
