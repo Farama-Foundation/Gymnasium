@@ -232,7 +232,8 @@ class TimeAwareObservation(
                     f"The `dict_time_key` ({dict_time_key!r}) already exists in the observation space."
                 )
             observation_space = Dict(
-                {dict_time_key: time_space, **env.observation_space.spaces}
+                {dict_time_key: time_space, **env.observation_space.spaces},
+                sort_keys=env.observation_space.sort_keys,
             )
             self._append_data_func = lambda obs, time: {dict_time_key: time, **obs}
         elif isinstance(env.observation_space, Tuple):
