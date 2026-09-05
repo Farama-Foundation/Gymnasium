@@ -94,6 +94,38 @@ def test_charset_ordering():
     assert [space.character_index(c) for c in "dcba"] == [0, 1, 2, 3]
 
 
+def test_multi_character_charset_raises():
+    # GH 1317: charset elements longer than one character were accepted, and then
+    # `sample` concatenated whole elements, producing strings longer than
+    # `max_length` that `contains` rejected.
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "Expects all charset elements to be a single character, actual invalid "
+            "elements: ['fly', 'sit', 'walk']"
+        ),
+    ):
+        Text(1, charset=frozenset(["sit", "walk", "fly"]))
+
+    # sequences keep their given order, so the reported elements follow it
+    with pytest.raises(
+        ValueError, match=re.escape("actual invalid elements: ['ab', 'cd']")
+    ):
+        Text(3, charset=["ab", "cd"])
+
+    # the empty string is not a character either
+    with pytest.raises(ValueError, match=re.escape("actual invalid elements: ['']")):
+        Text(3, charset=frozenset(["a", ""]))
+
+    # single-character charsets are unaffected and keep the Space contract
+    for charset in [frozenset("abc"), "abc"]:
+        space = Text(3, charset=charset)
+        for _ in range(10):
+            sample = space.sample()
+            assert space.contains(sample)
+            assert len(sample) <= space.max_length
+
+
 def test_deterministic_across_hash_seeds():
     """Seeded samples and flatten encodings must not depend on PYTHONHASHSEED.
 

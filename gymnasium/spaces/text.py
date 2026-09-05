@@ -46,7 +46,11 @@ class Text(Space[str]):
             min_length (int): Minimum text length (in characters). Defaults to 1 to prevent empty strings.
             max_length (int): Maximum text length (in characters).
             charset (Union[set], str): Character set, defaults to the lower and upper english alphabet plus latin digits.
+                Each element must be a single character.
             seed: The seed for sampling from the space.
+
+        Raises:
+            ValueError: If any element of ``charset`` is not a single character.
         """
         if not np.issubdtype(type(min_length), np.integer):
             raise TypeError(
@@ -75,6 +79,16 @@ class Text(Space[str]):
         else:
             # Preserve the given ordering, dropping duplicate characters
             char_list = list(dict.fromkeys(charset))
+
+        # Each element of the charset must be a single character, otherwise `sample`
+        # concatenates multi-character elements and produces strings that are longer
+        # than `max_length` and that `contains` rejects.
+        invalid_chars = [char for char in char_list if len(char) != 1]
+        if invalid_chars:
+            raise ValueError(
+                "Expects all charset elements to be a single character, actual invalid "
+                f"elements: {invalid_chars}"
+            )
 
         self._char_set: frozenset[str] = frozenset(char_list)
         self._char_list: tuple[str, ...] = tuple(char_list)
