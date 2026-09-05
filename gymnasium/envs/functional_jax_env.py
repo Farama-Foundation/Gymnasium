@@ -167,7 +167,7 @@ class FunctionalJaxVectorEnv(
             self.func_env.reward, in_axes=(0, 0, 0, 0, None)
         )
         self.func_env.terminal = jax.vmap(self.func_env.terminal, in_axes=(0, 0, None))
-        self.func_env.state_info = jax.vmap(self.func_env.state_info, in_axes=(0, None))
+        self._state_info = jax.vmap(self.func_env.state_info, in_axes=(0, None))
         self.func_env.transition_info = jax.vmap(
             self.func_env.transition_info, in_axes=(0, 0, 0, None)
         )
@@ -184,7 +184,7 @@ class FunctionalJaxVectorEnv(
 
         self.state = self.func_env.initial(rng, self.params)
         obs = self.func_env.observation(self.state, rng, self.params)
-        info = self.func_env.state_info(self.state, self.params)
+        info = self._state_info(self.state, self.params)
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
 

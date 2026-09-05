@@ -47,7 +47,7 @@ class ParameterizedFuncEnv(FuncEnv):
         return {"param": jnp.asarray(params["value"])}
 
     def transition_info(self, state, action, next_state, params=None):
-        return {"param": jnp.asarray(params["value"])}
+        return self.state_info(next_state, params=params)
 
     def render_init(self, params=None):
         return object()
