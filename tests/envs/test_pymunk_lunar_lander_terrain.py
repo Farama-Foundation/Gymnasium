@@ -209,6 +209,118 @@ def test_damping_matches_box2d_no_damping_configuration():
     assert demo.space.damping == 1.0
 
 
+def simulate_box2d_stalled_motor(
+    density: float,
+    max_torque: float = 40.0,
+    steps: int = 100,
+) -> tuple[float, float]:
+    """Simulate a torque-limited Box2D revolute motor under gravity."""
+    dt = 1.0 / 50.0
+    width = 0.2
+    height = 2.0
+
+    world = Box2D.b2World(gravity=(0.0, -10.0))
+
+    parent = world.CreateStaticBody(position=(0.0, 0.0))
+    leg = world.CreateDynamicBody(position=(0.0, -height / 2))
+
+    # Box2D's box dimensions are half-extents.
+    leg.CreatePolygonFixture(
+        box=(width / 2, height / 2),
+        density=density,
+    )
+
+    joint = world.CreateRevoluteJoint(
+        bodyA=parent,
+        bodyB=leg,
+        anchor=(0.0, 0.0),
+        enableMotor=True,
+        motorSpeed=0.3,
+        maxMotorTorque=max_torque,
+    )
+
+    for _ in range(steps):
+        world.Step(dt, 180, 60)
+
+    return float(joint.angle), float(joint.speed)
+
+
+def simulate_pymunk_stalled_motor(
+    density: float,
+    max_force: float = 40.0,
+    steps: int = 100,
+) -> tuple[float, float]:
+    """Simulate a torque-limited Pymunk rotary motor under gravity."""
+    dt = 1.0 / 50.0
+    width = 0.2
+    height = 2.0
+
+    space = pymunk.Space()
+    space.gravity = (0.0, -10.0)
+    space.iterations = 180
+
+    parent = space.static_body
+
+    # Match the Box2D fixture's geometry, density-derived mass, and box inertia.
+    mass = width * height * density
+    moment = pymunk.moment_for_box(mass, (width, height))
+
+    leg = pymunk.Body(mass, moment)
+    leg.position = (0.0, -height / 2)
+
+    shape = pymunk.Poly.create_box(leg, (width, height))
+
+    pivot = pymunk.PivotJoint(
+        parent,
+        leg,
+        (0.0, 0.0),
+        (0.0, height / 2),
+    )
+
+    # Pymunk's motor rate sign is opposite Box2D's convention for this setup.
+    motor = pymunk.SimpleMotor(parent, leg, -0.3)
+    motor.max_force = max_force
+
+    space.add(leg, shape, pivot, motor)
+
+    for _ in range(steps):
+        space.step(dt)
+
+    return float(leg.angle), float(leg.angular_velocity)
+
+
+@pytest.mark.parametrize("density", [20.0, 25.0, 30.0])
+def test_leg_motor_force_mapping_against_box2d(density):
+    """Box2D motor torque maps directly to Pymunk max_force."""
+    box_angle, box_speed = simulate_box2d_stalled_motor(density)
+
+    direct_angle, direct_speed = simulate_pymunk_stalled_motor(
+        density,
+        max_force=40.0,
+    )
+    dt_scaled_angle, _ = simulate_pymunk_stalled_motor(
+        density,
+        max_force=40.0 / 50.0,
+    )
+
+    direct_angle_error = abs(direct_angle - box_angle)
+    dt_scaled_angle_error = abs(dt_scaled_angle - box_angle)
+
+    # The load must be strong enough that the torque budget matters.
+    # A freely running motor would simply reach the requested 0.3 rad/s.
+    assert abs(box_speed) < 0.29
+    assert abs(direct_speed) < 0.29
+
+    # Directly mapping Box2D's maxMotorTorque to Pymunk's max_force
+    # should reproduce the loaded joint response closely.
+    assert direct_angle == pytest.approx(box_angle, abs=0.02)
+    assert direct_speed == pytest.approx(box_speed, abs=0.02)
+
+    # Scaling the torque value by dt is a deliberately wrong alternative
+    # and should produce a substantially worse match.
+    assert direct_angle_error < dt_scaled_angle_error
+
+
 def simulate_box2d_flat_ground_slide():
     dt = 1 / 50
     width = height = 0.5
