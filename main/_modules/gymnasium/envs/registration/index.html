@@ -376,7 +376,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">difflib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">metadata</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
@@ -856,7 +855,7 @@
 <span class="w">    </span><span class="sd">"""Check the metadata of an environment."""</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">testing_metadata</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">InvalidMetadata</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"Expect the environment metadata to be dict, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"Expect the environment metadata to be dict, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">testing_metadata</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
     <span class="n">render_modes</span> <span class="o">=</span> <span class="n">testing_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"render_modes"</span><span class="p">)</span>
@@ -1095,8 +1094,11 @@
     <span class="c1"># Determine if to use the rendering</span>
     <span class="n">render_modes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">env_creator</span><span class="p">,</span> <span class="s2">"metadata"</span><span class="p">):</span>
-        <span class="n">_check_metadata</span><span class="p">(</span><span class="n">env_creator</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
-        <span class="n">render_modes</span> <span class="o">=</span> <span class="n">env_creator</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"render_modes"</span><span class="p">)</span>
+        <span class="n">env_creator_metadata</span> <span class="o">=</span> <span class="n">env_creator</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="c1"># Wrapper classes expose metadata through an instance property.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_creator_metadata</span><span class="p">,</span> <span class="nb">property</span><span class="p">):</span>
+            <span class="n">_check_metadata</span><span class="p">(</span><span class="n">env_creator_metadata</span><span class="p">)</span>
+            <span class="n">render_modes</span> <span class="o">=</span> <span class="n">env_creator_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"render_modes"</span><span class="p">)</span>
     <span class="n">render_mode</span> <span class="o">=</span> <span class="n">env_spec_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"render_mode"</span><span class="p">)</span>
     <span class="n">apply_human_rendering</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">apply_render_collection</span> <span class="o">=</span> <span class="kc">False</span>
