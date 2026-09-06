@@ -460,6 +460,12 @@ a certain timelimit was exceeded, or the physics simulation has entered an inval
 </ul>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Users commonly keep the data from every timestep, most obviously in a replay or rollout buffer, so each
+call must return new observation and info objects rather than modifying and returning the same buffer.
+<a class="reference internal" href="../utils/#gymnasium.utils.env_checker.check_env" title="gymnasium.utils.env_checker.check_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">gymnasium.utils.env_checker.check_env()</span></code></a> checks this.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -501,6 +507,11 @@ the <code class="docutils literal notranslate"><span class="pre">info</span></co
 </ul>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As with <a class="reference internal" href="#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a>, the returned observation and info must be new data rather than a
+buffer that a previous call already returned and that this call has mutated in place.</p>
+</div>
 </dd></dl>
 
 <dl class="py method">

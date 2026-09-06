@@ -483,6 +483,11 @@
 <span class="sd">                return undefined results. This was removed in OpenAI Gym v26 in favor of terminated and truncated attributes.</span>
 <span class="sd">                A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,</span>
 <span class="sd">                a certain timelimit was exceeded, or the physics simulation has entered an invalid state.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            Users commonly keep the data from every timestep, most obviously in a replay or rollout buffer, so each</span>
+<span class="sd">            call must return new observation and info objects rather than modifying and returning the same buffer.</span>
+<span class="sd">            :func:`gymnasium.utils.env_checker.check_env` checks this.</span>
 <span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
@@ -529,6 +534,10 @@
 <span class="sd">                (typically a numpy array) and is analogous to the observation returned by :meth:`step`.</span>
 <span class="sd">            info (dictionary):  This dictionary contains auxiliary information complementing ``observation``. It should be analogous to</span>
 <span class="sd">                the ``info`` returned by :meth:`step`.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            As with :meth:`step`, the returned observation and info must be new data rather than a</span>
+<span class="sd">            buffer that a previous call already returned and that this call has mutated in place.</span>
 <span class="sd">        """</span>
         <span class="c1"># Initialize the RNG if the seed is manually passed</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
