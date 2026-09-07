@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import multiprocessing as mp
-from array import typecodes
 from collections.abc import Mapping
 from ctypes import c_bool, c_int32, c_int64, c_uint8
 from functools import singledispatch
-from multiprocessing.sharedctypes import SynchronizedArray
+from multiprocessing.sharedctypes import SynchronizedArray, typecode_to_type
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, TypeAlias
 
@@ -86,11 +85,12 @@ def _create_base_shared_memory(
     dtype = space.dtype.char
     if dtype == "?":
         return ctx.Array(c_bool, size)
-    elif dtype in typecodes:
+    elif dtype in typecode_to_type:
         return ctx.Array(dtype, size)
     else:
-        # Some dtypes (e.g. float16) have no `array` typecode, allocate the equivalent
-        # number of bytes as read / write reinterpret the raw buffer with `space.dtype`.
+        # Some dtypes (e.g. float16) have no `multiprocessing` typecode, allocate the
+        # equivalent number of bytes as read / write reinterpret the raw buffer with
+        # `space.dtype`.
         return ctx.Array(c_uint8, size * space.dtype.itemsize)
 
 
