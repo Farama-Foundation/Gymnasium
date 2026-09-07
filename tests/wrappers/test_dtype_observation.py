@@ -45,7 +45,9 @@ def test_dtype_observation_discrete_space_matches_original_support(space, dtype)
 
     low = dtype(space.start)
     high = dtype(space.start + space.n - 1)
-    assert wrapped_env.observation_space == Box(low=low, high=high, shape=(), dtype=dtype)
+    assert wrapped_env.observation_space == Box(
+        low=low, high=high, shape=(), dtype=dtype
+    )
 
     last = dtype(space.start + space.n)
     assert last not in wrapped_env.observation_space
