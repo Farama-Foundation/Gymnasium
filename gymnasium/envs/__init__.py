@@ -114,6 +114,14 @@ register(
 )
 
 register(
+    id="LunarLanderContinuous-v4",
+    entry_point="gymnasium.envs.pymunk.lunar_lander:LunarLander",
+    kwargs={"continuous": True},
+    max_episode_steps=1000,
+    reward_threshold=200,
+)
+
+register(
     id="BipedalWalker-v3",
     entry_point="gymnasium.envs.box2d.bipedal_walker:BipedalWalker",
     max_episode_steps=1600,

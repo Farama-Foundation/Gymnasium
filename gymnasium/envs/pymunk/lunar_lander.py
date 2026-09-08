@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from gymnasium import Env, error, spaces
+from gymnasium import Env, error, logger, spaces
 from gymnasium.utils import EzPickle
 
 try:
@@ -287,6 +287,7 @@ class PymunkLunarLanderDemo:
         rng: np.random.Generator | None = None,
         randomize_initial_state: bool = False,
         solver_iterations: int = 6 * 30,
+        gravity: float = -10.0,
     ):
         """Create a seeded Pymunk LunarLander demonstration world."""
         self.world_width = VIEWPORT_WIDTH / SCALE
@@ -294,7 +295,7 @@ class PymunkLunarLanderDemo:
         rng = np.random.default_rng(seed) if rng is None else rng
         self.rng = rng
         self.space = pymunk.Space()
-        self.space.gravity = (0.0, -10.0)
+        self.space.gravity = (0.0, gravity)
         # Retained after a matched trajectory sweep: lower values reduce some
         # airborne errors but fail landing invariants or increase total error.
         self.space.iterations = solver_iterations
@@ -418,7 +419,11 @@ class PymunkLunarLanderDemo:
             begin=begin_lander_contact,
         )
 
-    def fire_main_engine(self, dispersion: list[float] | None = None) -> None:
+    def fire_main_engine(
+        self,
+        dispersion: list[float] | None = None,
+        power: float = 1.0,
+    ) -> None:
         """Apply main-engine impulse using Box2D-style LunarLander math."""
         tip = pymunk.Vec2d(
             math.sin(self.lander_body.angle),
@@ -428,8 +433,6 @@ class PymunkLunarLanderDemo:
 
         if dispersion is None:
             dispersion = [self.rng.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
-
-        m_power = 1.0
 
         ox = (
             tip.x * (MAIN_ENGINE_Y_LOCATION / SCALE + 2 * dispersion[0])
@@ -444,15 +447,18 @@ class PymunkLunarLanderDemo:
         impulse_pos = origin + pymunk.Vec2d(ox, oy)
 
         impulse = pymunk.Vec2d(
-            -ox * MAIN_ENGINE_POWER * m_power,
-            -oy * MAIN_ENGINE_POWER * m_power,
+            -ox * MAIN_ENGINE_POWER * power,
+            -oy * MAIN_ENGINE_POWER * power,
         )
 
         self._engine_impulse_applied("main", dispersion, impulse_pos, impulse)
         self.lander_body.apply_impulse_at_world_point(impulse, impulse_pos)
 
     def fire_orientation_engine(
-        self, direction: int, dispersion: list[float] | None = None
+        self,
+        direction: int,
+        dispersion: list[float] | None = None,
+        power: float = 1.0,
     ) -> None:
         """Apply Box2D-style side-engine impulse.
 
@@ -468,8 +474,6 @@ class PymunkLunarLanderDemo:
         if dispersion is None:
             dispersion = [self.rng.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
 
-        s_power = 1.0
-
         ox = tip.x * dispersion[0] + side.x * (
             3 * dispersion[1] + direction * SIDE_ENGINE_AWAY / SCALE
         )
@@ -484,8 +488,8 @@ class PymunkLunarLanderDemo:
         )
 
         impulse = pymunk.Vec2d(
-            -ox * SIDE_ENGINE_POWER * s_power,
-            -oy * SIDE_ENGINE_POWER * s_power,
+            -ox * SIDE_ENGINE_POWER * power,
+            -oy * SIDE_ENGINE_POWER * power,
         )
 
         self._engine_impulse_applied("side", dispersion, impulse_pos, impulse)
@@ -500,20 +504,45 @@ class PymunkLunarLanderDemo:
         2: fire the main engine
         3: fire the opposite orientation engine
         """
-        # Box2D samples dispersion on every physics step, even when no engine
-        # fires. Sampling here keeps matched-seed RNG progression identical.
+        state, _, _ = self._step_with_powers(action, continuous=False)
+        return state
+
+    def _step_with_powers(
+        self,
+        action: int | np.ndarray,
+        *,
+        continuous: bool,
+    ) -> tuple[DemoState, float, float]:
+        """Advance one step and return the applied engine throttle values."""
         dispersion = [self.rng.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
-        if action == 1:
-            self.fire_orientation_engine(-1, dispersion)
-        elif action == 2:
-            self.fire_main_engine(dispersion)
-        elif action == 3:
-            self.fire_orientation_engine(1, dispersion)
-        elif action != 0:
-            raise ValueError("action must be one of 0, 1, 2, or 3")
+        main_power = 0.0
+        side_power = 0.0
+
+        if continuous:
+            assert isinstance(action, np.ndarray)
+            main_action, side_action = (float(value) for value in action)
+            if main_action > 0.0:
+                main_power = float((np.clip(main_action, 0.0, 1.0) + 1.0) * 0.5)
+                self.fire_main_engine(dispersion, main_power)
+            if abs(side_action) > 0.5:
+                direction = int(np.sign(side_action))
+                side_power = float(np.clip(abs(side_action), 0.5, 1.0))
+                self.fire_orientation_engine(direction, dispersion, side_power)
+        else:
+            if action == 1:
+                side_power = 1.0
+                self.fire_orientation_engine(-1, dispersion)
+            elif action == 2:
+                main_power = 1.0
+                self.fire_main_engine(dispersion)
+            elif action == 3:
+                side_power = 1.0
+                self.fire_orientation_engine(1, dispersion)
+            elif action != 0:
+                raise ValueError("action must be one of 0, 1, 2, or 3")
 
         self.space.step(DT)
-        return self.state()
+        return self.state(), main_power, side_power
 
     def _engine_impulse_applied(
         self,
@@ -573,20 +602,49 @@ class LunarLander(Env, EzPickle):
     def __init__(
         self,
         render_mode: str | None = None,
+        continuous: bool = False,
+        gravity: float = -10.0,
+        enable_wind: bool = False,
+        wind_power: float = 15.0,
+        turbulence_power: float = 1.5,
         solver_iterations: int = 6 * 30,
     ):
         """Create a Pymunk LunarLander environment."""
         EzPickle.__init__(
             self,
             render_mode=render_mode,
+            continuous=continuous,
+            gravity=gravity,
+            enable_wind=enable_wind,
+            wind_power=wind_power,
+            turbulence_power=turbulence_power,
             solver_iterations=solver_iterations,
         )
+        assert -12.0 < gravity and gravity < 0.0, (
+            f"gravity (current value: {gravity}) must be between -12 and 0"
+        )
+        if not 0.0 <= wind_power <= 20.0:
+            logger.warn(
+                f"wind_power value is recommended to be between 0.0 and 20.0, (current value: {wind_power})"
+            )
+        if not 0.0 <= turbulence_power <= 2.0:
+            logger.warn(
+                f"turbulence_power value is recommended to be between 0.0 and 2.0, (current value: {turbulence_power})"
+            )
         if render_mode is not None and render_mode not in self.metadata["render_modes"]:
             raise ValueError(f"Unsupported render_mode: {render_mode}")
 
         self.render_mode = render_mode
+        self.continuous = continuous
+        self.gravity = gravity
+        self.enable_wind = enable_wind
+        self.wind_power = wind_power
+        self.turbulence_power = turbulence_power
         self.solver_iterations = solver_iterations
-        self.action_space = spaces.Discrete(4)
+        if continuous:
+            self.action_space = spaces.Box(-1, 1, (2,), dtype=np.float32)
+        else:
+            self.action_space = spaces.Discrete(4)
 
         low = np.array(
             [
@@ -635,8 +693,13 @@ class LunarLander(Env, EzPickle):
             rng=self.np_random,
             randomize_initial_state=True,
             solver_iterations=self.solver_iterations,
+            gravity=self.gravity,
         )
         self.prev_shaping = None
+
+        if self.enable_wind:
+            self.wind_idx = self.np_random.integers(-9999, 9999)
+            self.torque_idx = self.np_random.integers(-9999, 9999)
 
         self.last_action = 0
         self.stable_landing_steps = 0
@@ -654,7 +717,11 @@ class LunarLander(Env, EzPickle):
             leg_body.angle = side * 0.05
             leg_body.velocity = (0.0, 0.0)
             leg_body.angular_velocity = 0.0
-        self.demo.step(0)
+        self._apply_wind()
+        if self.continuous:
+            self.demo._step_with_powers(np.zeros(2), continuous=True)
+        else:
+            self.demo.step(0)
         # Pymunk generates constraint angular velocity after its orientation
         # integration phase; Box2D's reset step exposes the corresponding
         # orientation change immediately.
@@ -692,16 +759,23 @@ class LunarLander(Env, EzPickle):
         ]
         return np.array(state, dtype=np.float32)
 
-    def step(self, action: int):
+    def step(self, action: int | np.ndarray):
         """Step the Pymunk environment."""
         assert self.demo is not None, "You forgot to call reset()"
-        assert self.action_space.contains(action), (
-            f"{action!r} ({type(action)}) invalid"
-        )
+        if self.continuous:
+            action = np.clip(action, -1, 1).astype(np.float64)
+        else:
+            assert self.action_space.contains(action), (
+                f"{action!r} ({type(action)}) invalid"
+            )
 
         self.last_action = action
 
-        self.demo.step(action)
+        self._apply_wind()
+        _, main_power, side_power = self.demo._step_with_powers(
+            action,
+            continuous=self.continuous,
+        )
         observation = self._get_observation()
 
         shaping = (
@@ -719,8 +793,8 @@ class LunarLander(Env, EzPickle):
             reward = float(shaping - self.prev_shaping)
         self.prev_shaping = float(shaping)
 
-        reward -= 0.30 if action == 2 else 0.0
-        reward -= 0.03 if action in (1, 3) else 0.0
+        reward -= main_power * 0.30
+        reward -= side_power * 0.03
 
         terminated = False
         truncated = False
@@ -768,6 +842,41 @@ class LunarLander(Env, EzPickle):
         }
 
         return observation, reward, terminated, truncated, info
+
+    def _apply_wind(self) -> None:
+        """Apply Box2D-compatible wind force and turbulence torque."""
+        assert self.demo is not None
+        if not self.enable_wind or (
+            self.demo.left_leg_contact or self.demo.right_leg_contact
+        ):
+            return
+
+        wind_magnitude = (
+            math.tanh(
+                math.sin(0.02 * self.wind_idx)
+                + math.sin(math.pi * 0.01 * self.wind_idx)
+            )
+            * self.wind_power
+        )
+        self.wind_idx += 1
+        # Like Box2D's ApplyForceToCenter, Pymunk integrates this force over
+        # DT. Applying the same numeric value as an impulse would be 1 / DT
+        # times too strong and would bypass the engines' force-unit contract.
+        self.demo.lander_body.apply_force_at_world_point(
+            (wind_magnitude, 0.0),
+            tuple(body_center_of_mass_world(self.demo.lander_body)),
+        )
+
+        torque_magnitude = (
+            math.tanh(
+                math.sin(0.02 * self.torque_idx)
+                + math.sin(math.pi * 0.01 * self.torque_idx)
+            )
+            * self.turbulence_power
+        )
+        self.torque_idx += 1
+        # Body.torque is likewise integrated over DT into angular impulse.
+        self.demo.lander_body.torque += torque_magnitude
 
     def _update_stable_landing_counter(self) -> bool:
         """Track Box2D-tolerance stability when native group sleep stalls."""

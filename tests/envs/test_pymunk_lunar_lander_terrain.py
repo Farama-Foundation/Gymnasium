@@ -1,4 +1,5 @@
 import json
+import math
 import subprocess
 import sys
 
@@ -897,6 +898,178 @@ def test_experimental_env_accepts_all_discrete_actions(action):
     }
 
 
+def test_action_spaces_match_box2d_contract():
+    discrete_env = ExperimentalPymunkLunarLanderEnv()
+    continuous_env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+
+    assert discrete_env.action_space == gym.spaces.Discrete(4)
+    assert continuous_env.action_space == gym.spaces.Box(-1, 1, (2,), dtype=np.float32)
+
+
+@pytest.mark.parametrize("gravity", [-12.0, 0.0, -12.1, 0.1, np.nan])
+def test_invalid_gravity_matches_box2d_validation(gravity):
+    with pytest.raises(AssertionError, match="must be between -12 and 0"):
+        ExperimentalPymunkLunarLanderEnv(gravity=gravity)
+
+
+def test_non_default_gravity_configures_pymunk_space():
+    env = ExperimentalPymunkLunarLanderEnv(gravity=-4.0)
+    env.reset(seed=123)
+
+    assert tuple(env.demo.space.gravity) == (0.0, -4.0)
+
+
+@pytest.mark.parametrize(
+    ("argument", "value", "message"),
+    [
+        ("wind_power", -0.1, "wind_power value is recommended"),
+        ("wind_power", 20.1, "wind_power value is recommended"),
+        ("turbulence_power", -0.1, "turbulence_power value is recommended"),
+        ("turbulence_power", 2.1, "turbulence_power value is recommended"),
+    ],
+)
+def test_wind_power_recommendations_match_box2d(argument, value, message):
+    with pytest.warns(UserWarning, match=message):
+        ExperimentalPymunkLunarLanderEnv(**{argument: value})
+
+
+def test_continuous_zero_action_matches_discrete_noop():
+    discrete_env = ExperimentalPymunkLunarLanderEnv()
+    continuous_env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+    discrete_observation, _ = discrete_env.reset(seed=123)
+    continuous_observation, _ = continuous_env.reset(seed=123)
+
+    assert np.array_equal(discrete_observation, continuous_observation)
+    discrete_step = discrete_env.step(0)
+    continuous_step = continuous_env.step(np.zeros(2, dtype=np.float32))
+    assert np.array_equal(discrete_step[0], continuous_step[0])
+    assert discrete_step[1:] == continuous_step[1:]
+
+
+def test_continuous_main_and_side_engines_apply_scaled_impulses():
+    zero_demo = PymunkLunarLanderDemo(seed=123)
+    engine_demo = PymunkLunarLanderDemo(seed=123)
+    zero_demo.space.gravity = (0.0, 0.0)
+    engine_demo.space.gravity = (0.0, 0.0)
+
+    _, zero_main, zero_side = zero_demo._step_with_powers(
+        np.array([0.0, 0.0]), continuous=True
+    )
+    _, main_power, side_power = engine_demo._step_with_powers(
+        np.array([0.5, -0.75]), continuous=True
+    )
+
+    assert (zero_main, zero_side) == (0.0, 0.0)
+    assert main_power == pytest.approx(0.75)
+    assert side_power == pytest.approx(0.75)
+    assert engine_demo.lander_body.velocity != zero_demo.lander_body.velocity
+    assert engine_demo.lander_body.angular_velocity != pytest.approx(
+        zero_demo.lander_body.angular_velocity
+    )
+
+
+def test_continuous_actions_are_clipped_like_box2d():
+    clipped_env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+    bounded_env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+    clipped_env.reset(seed=123)
+    bounded_env.reset(seed=123)
+
+    clipped_step = clipped_env.step(np.array([2.0, -2.0], dtype=np.float32))
+    bounded_step = bounded_env.step(np.array([1.0, -1.0], dtype=np.float32))
+
+    assert np.array_equal(clipped_step[0], bounded_step[0])
+    assert clipped_step[1:] == bounded_step[1:]
+
+
+def test_continuous_engine_reward_uses_throttle_power():
+    env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+    env.reset(seed=123)
+    env.prev_shaping = float(
+        -100 * np.linalg.norm(env._get_observation()[:2])
+        - 100 * np.linalg.norm(env._get_observation()[2:4])
+        - 100 * abs(env._get_observation()[4])
+    )
+    original_step = env.demo._step_with_powers
+    env.demo._step_with_powers = lambda action, continuous: (
+        env.demo.state(),
+        0.75,
+        0.75,
+    )
+
+    _, reward, _, _, _ = env.step(np.array([0.5, 0.75], dtype=np.float32))
+
+    assert reward == pytest.approx(-(0.75 * 0.30 + 0.75 * 0.03))
+    env.demo._step_with_powers = original_step
+
+
+def test_wind_is_disabled_by_default():
+    env = ExperimentalPymunkLunarLanderEnv()
+    env.reset(seed=123)
+
+    assert env.enable_wind is False
+    assert not hasattr(env, "wind_idx")
+
+
+def test_seeded_wind_is_deterministic_and_changes_trajectory():
+    first = ExperimentalPymunkLunarLanderEnv(enable_wind=True)
+    second = ExperimentalPymunkLunarLanderEnv(enable_wind=True)
+    disabled = ExperimentalPymunkLunarLanderEnv(enable_wind=False)
+    first.reset(seed=123)
+    second.reset(seed=123)
+    disabled.reset(seed=123)
+    action = np.int64(0)
+
+    for _ in range(20):
+        first_observation = first.step(action)[0]
+        second_observation = second.step(action)[0]
+        disabled_observation = disabled.step(action)[0]
+
+    assert np.array_equal(first_observation, second_observation)
+    assert not np.array_equal(first_observation, disabled_observation)
+
+
+def test_configurable_wind_and_turbulence_change_their_respective_motion():
+    calm = ExperimentalPymunkLunarLanderEnv(
+        enable_wind=True, wind_power=0.0, turbulence_power=0.0
+    )
+    windy = ExperimentalPymunkLunarLanderEnv(
+        enable_wind=True, wind_power=7.0, turbulence_power=0.75
+    )
+    calm.reset(seed=123)
+    windy.reset(seed=123)
+
+    for _ in range(10):
+        calm_observation = calm.step(0)[0]
+        windy_observation = windy.step(0)[0]
+
+    assert windy.wind_power == 7.0
+    assert windy.turbulence_power == 0.75
+    assert windy_observation[2] != pytest.approx(calm_observation[2])
+    assert windy_observation[5] != pytest.approx(calm_observation[5])
+
+
+def test_wind_uses_force_and_torque_units_before_physics_integration():
+    env = ExperimentalPymunkLunarLanderEnv(
+        enable_wind=True, wind_power=7.0, turbulence_power=0.75
+    )
+    env.reset(seed=123)
+    env.wind_idx = 25
+    env.torque_idx = -40
+    env.demo.lander_body.force = (0.0, 0.0)
+    env.demo.lander_body.torque = 0.0
+
+    env._apply_wind()
+
+    expected_force = (
+        math.tanh(math.sin(0.02 * 25) + math.sin(math.pi * 0.01 * 25)) * 7.0
+    )
+    expected_torque = (
+        math.tanh(math.sin(0.02 * -40) + math.sin(math.pi * 0.01 * -40)) * 0.75
+    )
+    assert tuple(env.demo.lander_body.force) == pytest.approx((expected_force, 0.0))
+    assert env.demo.lander_body.torque == pytest.approx(expected_torque)
+
+
 def test_experimental_env_crash_termination():
     env = ExperimentalPymunkLunarLanderEnv()
     env.reset(seed=123)
@@ -1154,7 +1327,11 @@ def test_one_body_random_actions_isolate_center_of_mass_torque_mismatch():
 def test_direct_env_has_no_internal_time_limit_truncation():
     env = ExperimentalPymunkLunarLanderEnv()
     env.reset(seed=123)
-    env.demo.step = lambda action: None
+    env.demo._step_with_powers = lambda action, continuous: (
+        env.demo.state(),
+        0.0,
+        0.0,
+    )
 
     for _ in range(1001):
         _, _, terminated, truncated, info = env.step(0)

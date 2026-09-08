@@ -1,7 +1,9 @@
+import pickle
 import subprocess
 import sys
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 import gymnasium as gym
@@ -12,7 +14,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _disable_physics(env):
-    env.unwrapped.demo.step = lambda action: None
+    env.unwrapped.demo._step_with_powers = lambda action, continuous: (
+        env.unwrapped.demo.state(),
+        0.0,
+        0.0,
+    )
 
 
 def test_lunar_lander_v4_registration_and_time_limit():
@@ -63,6 +69,41 @@ def test_lunar_lander_v4_passes_checker_when_made_from_registry():
     env.close()
 
 
+@pytest.mark.parametrize("env_id", ["LunarLander-v4", "LunarLanderContinuous-v4"])
+def test_lunar_lander_v4_action_modes_pass_checker(env_id):
+    pytest.importorskip("pymunk")
+
+    env = gym.make(env_id)
+    check_env(env.unwrapped)
+    env.close()
+
+
+@pytest.mark.parametrize("env_id", ["LunarLander-v4", "LunarLanderContinuous-v4"])
+def test_lunar_lander_v4_action_modes_support_sync_vectorization(env_id):
+    pytest.importorskip("pymunk")
+
+    env = gym.make_vec(env_id, num_envs=2, vectorization_mode="sync")
+    observation, _ = env.reset(seed=123)
+
+    assert observation.shape == (2, 8)
+    assert env.num_envs == 2
+    env.close()
+
+
+def test_lunar_lander_continuous_v4_registration():
+    pytest.importorskip("pymunk")
+    from gymnasium.envs.pymunk import LunarLander
+
+    env = gym.make("LunarLanderContinuous-v4")
+
+    assert isinstance(env.unwrapped, LunarLander)
+    assert env.unwrapped.continuous is True
+    assert env.action_space == gym.spaces.Box(-1, 1, (2,), dtype=np.float32)
+    assert env.spec.entry_point == "gymnasium.envs.pymunk.lunar_lander:LunarLander"
+    assert env.spec.max_episode_steps == 1000
+    env.close()
+
+
 def test_lunar_lander_v3_remains_box2d_backed():
     pytest.importorskip("Box2D")
     from gymnasium.envs.box2d.lunar_lander import LunarLander
@@ -72,6 +113,42 @@ def test_lunar_lander_v3_remains_box2d_backed():
     assert isinstance(env.unwrapped, LunarLander)
     assert env.spec.entry_point == "gymnasium.envs.box2d.lunar_lander:LunarLander"
     env.close()
+
+
+def test_lunar_lander_continuous_v3_remains_box2d_backed():
+    pytest.importorskip("Box2D")
+    from gymnasium.envs.box2d.lunar_lander import LunarLander
+
+    with pytest.warns(DeprecationWarning):
+        env = gym.make("LunarLanderContinuous-v3")
+    assert isinstance(env.unwrapped, LunarLander)
+    assert env.unwrapped.continuous is True
+    assert env.spec.entry_point == "gymnasium.envs.box2d.lunar_lander:LunarLander"
+    env.close()
+
+
+def test_lunar_lander_v4_pickles_all_constructor_arguments():
+    pytest.importorskip("pymunk")
+    from gymnasium.envs.pymunk import LunarLander
+
+    env = LunarLander(
+        render_mode="rgb_array",
+        continuous=True,
+        gravity=-4.0,
+        enable_wind=True,
+        wind_power=7.0,
+        turbulence_power=0.75,
+        solver_iterations=30,
+    )
+    restored = pickle.loads(pickle.dumps(env))
+
+    assert restored.render_mode == "rgb_array"
+    assert restored.continuous is True
+    assert restored.gravity == -4.0
+    assert restored.enable_wind is True
+    assert restored.wind_power == 7.0
+    assert restored.turbulence_power == 0.75
+    assert restored.solver_iterations == 30
 
 
 def test_import_gymnasium_and_v4_spec_do_not_require_pymunk():
