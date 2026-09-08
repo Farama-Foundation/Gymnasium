@@ -42,19 +42,22 @@ from gymnasium.envs.pymunk.lunar_lander import (  # noqa: E402
 from gymnasium.envs.pymunk.lunar_lander import (  # noqa: E402
     LunarLander as ExperimentalPymunkLunarLanderEnv,
 )
-from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
-    DiagnosticPymunkLunarLanderDemo,
-    physics_diagnostics,
-)
-
-if Box2D is not None:
-    from scripts.analyze_lunar_lander_angular_dynamics import box_impulse, initial_rows
-    from scripts.sweep_pymunk_lunar_lander_solver_iterations import (
-        aggregate_scores,
-        sweep,
-    )
 
 requires_box2d = pytest.mark.skipif(Box2D is None, reason="Box2D is not installed")
+
+
+def diagnostic_demo(*args, **kwargs):
+    """Construct the script-only telemetry-enabled physics helper."""
+    from scripts.pymunk_lunar_lander_terrain import DiagnosticPymunkLunarLanderDemo
+
+    return DiagnosticPymunkLunarLanderDemo(*args, **kwargs)
+
+
+def physics_diagnostics(demo, action):
+    """Load physical telemetry only for tests that explicitly require it."""
+    from scripts.pymunk_lunar_lander_terrain import physics_diagnostics as collect
+
+    return collect(demo, action)
 
 
 def test_pymunk_lunar_lander_package_import():
@@ -461,6 +464,11 @@ def test_solver_iterations_are_configurable_without_changing_default():
 
 @requires_box2d
 def test_selected_solver_improves_trajectory_error_over_30_iterations():
+    from scripts.sweep_pymunk_lunar_lander_solver_iterations import (
+        aggregate_scores,
+        sweep,
+    )
+
     scores = aggregate_scores(sweep([30, 180], range(100, 102), steps=100))
 
     assert scores[180] < scores[30]
@@ -568,6 +576,8 @@ def test_state_values_are_finite():
 
 @requires_box2d
 def test_matched_seed_initial_state_distribution_moments_match_box2d():
+    from scripts.analyze_lunar_lander_angular_dynamics import initial_rows
+
     rows = initial_rows(1000)
     box_rows = [row for row in rows if row["engine"] == "box2d"]
     pymunk_rows = [row for row in rows if row["engine"] == "pymunk"]
@@ -614,7 +624,7 @@ def remove_pymunk_legs_and_constraints(demo):
 
 @pytest.mark.parametrize("action", [1, 2, 3])
 def test_one_body_engine_telemetry_matches_theoretical_impulse(action):
-    demo = DiagnosticPymunkLunarLanderDemo(seed=123)
+    demo = diagnostic_demo(seed=123)
     remove_pymunk_legs_and_constraints(demo)
     demo.space.gravity = (0.0, 0.0)
     demo.lander_body.velocity = (0.0, 0.0)
@@ -633,7 +643,7 @@ def test_one_body_engine_telemetry_matches_theoretical_impulse(action):
 
 
 def test_one_body_no_action_has_zero_angular_response():
-    demo = DiagnosticPymunkLunarLanderDemo(seed=123)
+    demo = diagnostic_demo(seed=123)
     remove_pymunk_legs_and_constraints(demo)
     demo.space.gravity = (0.0, 0.0)
     demo.lander_body.velocity = (0.0, 0.0)
@@ -648,8 +658,8 @@ def test_one_body_no_action_has_zero_angular_response():
 
 
 def test_articulated_constraints_change_side_engine_hull_response():
-    isolated_demo = DiagnosticPymunkLunarLanderDemo(seed=123)
-    articulated_demo = DiagnosticPymunkLunarLanderDemo(seed=123)
+    isolated_demo = diagnostic_demo(seed=123)
+    articulated_demo = diagnostic_demo(seed=123)
     remove_pymunk_legs_and_constraints(isolated_demo)
     for demo in (isolated_demo, articulated_demo):
         demo.space.gravity = (0.0, 0.0)
@@ -681,11 +691,13 @@ def test_articulated_constraints_change_side_engine_hull_response():
 @pytest.mark.parametrize("action", [1, 3])
 @requires_box2d
 def test_side_engine_impulse_and_application_point_match_box2d(action):
+    from scripts.analyze_lunar_lander_angular_dynamics import box_impulse
+
     angle = 0.2
     position = np.array([10.0, 10.0])
     dispersion = np.array([0.01, -0.02])
     box_offset, box_engine_impulse, _ = box_impulse(action, angle, position, dispersion)
-    demo = DiagnosticPymunkLunarLanderDemo(seed=123)
+    demo = diagnostic_demo(seed=123)
     demo.lander_body.position = tuple(position)
     demo.lander_body.angle = angle
     demo.rng = iter_uniform_rng(dispersion * SCALE)
@@ -725,11 +737,13 @@ def iter_uniform_rng(values):
 
 @requires_box2d
 def test_main_engine_impulse_and_application_point_match_box2d():
+    from scripts.analyze_lunar_lander_angular_dynamics import box_impulse
+
     angle = -0.3
     position = np.array([10.0, 10.0])
     dispersion = np.array([0.015, 0.005])
     box_offset, box_engine_impulse, _ = box_impulse(2, angle, position, dispersion)
-    demo = DiagnosticPymunkLunarLanderDemo(seed=123)
+    demo = diagnostic_demo(seed=123)
     demo.lander_body.position = tuple(position)
     demo.lander_body.angle = angle
     demo.rng = iter_uniform_rng(dispersion * SCALE)
@@ -1081,6 +1095,8 @@ def test_viewport_exit_boundary_and_timing_match_box2d(direction):
 
 @requires_box2d
 def test_one_body_random_actions_isolate_center_of_mass_torque_mismatch():
+    from scripts.analyze_lunar_lander_angular_dynamics import box_impulse
+
     world = Box2D.b2World(gravity=(0.0, -10.0))
     box_body = world.CreateDynamicBody(position=(10.0, 13.333333))
     box_body.CreatePolygonFixture(
