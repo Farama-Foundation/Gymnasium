@@ -9,13 +9,14 @@ from dataclasses import dataclass
 import numpy as np
 
 from gymnasium import Env, error, spaces
+from gymnasium.utils import EzPickle
 
 try:
     import pymunk
     from pymunk.util import calc_center
 except ImportError as e:
     raise error.DependencyNotInstalled(
-        "Pymunk is not installed. Install the Pymunk optional dependencies."
+        'Pymunk is not installed, run `pip install "gymnasium[pymunk]"`'
     ) from e
 
 FPS = 50
@@ -39,7 +40,6 @@ LEG_CATEGORY = 0b0100
 
 INITIAL_RANDOM = 1000.0
 INITIAL_RANDOM_ANGLE = 0.05
-MAX_EPISODE_STEPS = 1000
 SLEEP_TIME_THRESHOLD = 0.5
 IDLE_SPEED_THRESHOLD = 0.01
 # Box2D defaults: 0.01 m/s, 2 degrees/s, and 0.5 seconds at rest.
@@ -560,7 +560,7 @@ class PymunkLunarLanderDemo:
         )
 
 
-class LunarLander(Env):
+class LunarLander(Env, EzPickle):
     """LunarLander environment implemented using Pymunk.
 
     As in Box2D, a landing terminates successfully when the articulated lander
@@ -576,6 +576,11 @@ class LunarLander(Env):
         solver_iterations: int = 6 * 30,
     ):
         """Create a Pymunk LunarLander environment."""
+        EzPickle.__init__(
+            self,
+            render_mode=render_mode,
+            solver_iterations=solver_iterations,
+        )
         if render_mode is not None and render_mode not in self.metadata["render_modes"]:
             raise ValueError(f"Unsupported render_mode: {render_mode}")
 
@@ -614,7 +619,6 @@ class LunarLander(Env):
         self.demo: PymunkLunarLanderDemo | None = None
         self.prev_shaping: float | None = None
 
-        self.elapsed_steps = 0
         self.last_action = 0
         self.stable_landing_steps = 0
         self._pygame = None
@@ -634,7 +638,6 @@ class LunarLander(Env):
         )
         self.prev_shaping = None
 
-        self.elapsed_steps = 0
         self.last_action = 0
         self.stable_landing_steps = 0
         # Box2D creates legs at hull_y with non-coincident local anchors, then
@@ -697,7 +700,6 @@ class LunarLander(Env):
         )
 
         self.last_action = action
-        self.elapsed_steps += 1
 
         self.demo.step(action)
         observation = self._get_observation()
@@ -758,11 +760,6 @@ class LunarLander(Env):
                     is_success = True
             else:
                 self.stable_landing_steps = 0
-
-        if not terminated and self.elapsed_steps >= MAX_EPISODE_STEPS:
-            truncated = True
-            termination_reason = "time_limit"
-            is_success = False
 
         info = {
             "termination_reason": termination_reason,

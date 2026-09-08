@@ -25,7 +25,6 @@ from gymnasium.envs.pymunk.lunar_lander import (  # noqa: E402
     LEG_FRICTION,
     LEG_HEIGHT,
     LEG_WIDTH,
-    MAX_EPISODE_STEPS,
     RIGHT_LEG_COLLISION_TYPE,
     SCALE,
     SLEEP_TIME_THRESHOLD,
@@ -1152,22 +1151,18 @@ def test_one_body_random_actions_isolate_center_of_mass_torque_mismatch():
     assert pymunk_body.center_of_gravity.y == pytest.approx(box_body.localCenter.y)
 
 
-def test_experimental_env_time_limit_truncation():
+def test_direct_env_has_no_internal_time_limit_truncation():
     env = ExperimentalPymunkLunarLanderEnv()
     env.reset(seed=123)
-    env.demo.space.gravity = (0.0, 0.0)
-    env.demo.lander_body.position = (env.demo.world_width / 2.0, env.demo.world_height)
-    env.demo.lander_body.velocity = (0.0, 0.0)
+    env.demo.step = lambda action: None
 
-    for _ in range(MAX_EPISODE_STEPS):
+    for _ in range(1001):
         _, _, terminated, truncated, info = env.step(0)
-        if terminated or truncated:
-            break
 
     assert not terminated
-    assert truncated
+    assert not truncated
     assert info == {
-        "termination_reason": "time_limit",
+        "termination_reason": None,
         "is_success": False,
         "inside_landing_zone": False,
     }
@@ -1186,7 +1181,7 @@ def test_experimental_env_render_returns_rgb_array():
 def test_experimental_env_render_does_not_change_state():
     env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
     observation, _ = env.reset(seed=123)
-    elapsed_steps = env.elapsed_steps
+    body_positions = [tuple(body.position) for body in env.demo.space.bodies]
 
     first_frame = env.render()
     second_frame = env.render()
@@ -1194,7 +1189,7 @@ def test_experimental_env_render_does_not_change_state():
 
     assert np.array_equal(observation, next_observation)
     assert np.array_equal(first_frame, second_frame)
-    assert env.elapsed_steps == elapsed_steps
+    assert [tuple(body.position) for body in env.demo.space.bodies] == body_positions
 
 
 def test_experimental_env_render_works_after_step():

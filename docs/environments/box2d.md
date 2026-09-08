@@ -5,6 +5,12 @@ lastpage:
 
 # Box2D
 
+```{note}
+`LunarLander-v4` uses Pymunk and is installed with
+`pip install "gymnasium[pymunk]"`. `LunarLander-v3` remains available with the
+Box2D implementation and the `box2d` extra.
+```
+
 ```{toctree}
 :hidden:
 
