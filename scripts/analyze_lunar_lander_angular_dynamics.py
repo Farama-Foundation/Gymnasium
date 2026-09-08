@@ -18,10 +18,15 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from gymnasium.envs.box2d import lunar_lander as box_module  # noqa: E402
-from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
-    ExperimentalPymunkLunarLanderEnv,
+from gymnasium.envs.pymunk.lunar_lander import (  # noqa: E402
     body_center_of_mass_world,
     body_origin_world,
+)
+from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
+    DiagnosticLunarLander as LunarLander,
+)
+from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
+    physics_diagnostics,
 )
 
 SEQUENCES = {
@@ -115,7 +120,7 @@ def initial_rows(seed_count: int):
     """Collect matched initial articulated-state rows across seeds."""
     rows = []
     box_env = gym.make("LunarLander-v3", disable_env_checker=True)
-    pymunk_env = ExperimentalPymunkLunarLanderEnv()
+    pymunk_env = LunarLander()
     for seed in range(seed_count):
         box_env.reset(seed=seed)
         pymunk_env.reset(seed=seed)
@@ -186,7 +191,7 @@ def response_rows(seed: int, steps: int):
         box = box_env.unwrapped
         recorder = RecordingRng(box.np_random)
         box.np_random = recorder
-        pymunk_env = ExperimentalPymunkLunarLanderEnv()
+        pymunk_env = LunarLander()
         pymunk_env.reset(seed=seed)
         for step, action in enumerate(actions, 1):
             for engine in ("box2d", "pymunk"):
@@ -256,7 +261,7 @@ def response_rows(seed: int, steps: int):
                     )
                     dv = np.array(demo.lander_body.velocity) - pre_v
                     dw = float(demo.lander_body.angular_velocity) - pre_w
-                    diagnostics = demo.physics_diagnostics(action)
+                    diagnostics = physics_diagnostics(demo, action)
                     constraint = [
                         {
                             "motor_impulse": diagnostics[f"{side}_motor_impulse"],

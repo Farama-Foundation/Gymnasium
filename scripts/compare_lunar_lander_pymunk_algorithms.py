@@ -39,9 +39,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
-    ExperimentalPymunkLunarLanderEnv,
-)
+from gymnasium.envs.pymunk.lunar_lander import LunarLander  # noqa: E402
+from scripts.pymunk_lunar_lander_terrain import physics_diagnostics  # noqa: E402
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -193,7 +192,7 @@ def make_box2d_env(render_mode: str | None = None):
 
 def make_pymunk_env(render_mode: str | None = None):
     """Create the private experimental Pymunk LunarLander."""
-    return ExperimentalPymunkLunarLanderEnv(render_mode=render_mode)
+    return LunarLander(render_mode=render_mode)
 
 
 @dataclass
@@ -373,8 +372,15 @@ def evaluate_policy(
             observation, reward, terminated, truncated, final_info = env.step(action)
             unwrapped_env = env.unwrapped
             demo = getattr(unwrapped_env, "demo", None)
-            if demo is not None and hasattr(demo, "physics_diagnostics"):
-                physics_row = demo.physics_diagnostics(action_int)
+            if demo is not None:
+                diagnostic_function = getattr(
+                    demo, "physics_diagnostics", physics_diagnostics
+                )
+                physics_row = (
+                    diagnostic_function(action_int)
+                    if diagnostic_function is not physics_diagnostics
+                    else diagnostic_function(demo, action_int)
+                )
                 physics_row["episode_step"] = episode_length + 1
                 physics_row["stable_condition_counter"] = int(
                     getattr(unwrapped_env, "stable_landing_steps", 0)
@@ -1486,7 +1492,7 @@ def create_run_manifest(
             "engines": args.engines,
             "box2d": {"id": "LunarLander-v3", "render_mode": None},
             "pymunk": {
-                "class": "ExperimentalPymunkLunarLanderEnv",
+                "class": "LunarLander",
                 "render_mode": None,
                 "solver_iterations": 180,
             },
@@ -1742,9 +1748,7 @@ def effective_model_configuration(model: Any, env: Any) -> dict[str, Any]:
         "wrappers": wrappers,
         "time_limit_max_episode_steps": time_limit,
         "internal_max_episode_steps": (
-            1_000
-            if type(current).__name__ == "ExperimentalPymunkLunarLanderEnv"
-            else None
+            1_000 if type(current).__name__ == "LunarLander" else None
         ),
         "constructor_arguments": environment_arguments,
     }

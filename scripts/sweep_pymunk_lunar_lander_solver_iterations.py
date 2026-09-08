@@ -22,7 +22,10 @@ from scripts.analyze_lunar_lander_angular_dynamics import (  # noqa: E402
     articulated_metrics,
 )
 from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
-    ExperimentalPymunkLunarLanderEnv,
+    DiagnosticLunarLander as LunarLander,
+)
+from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
+    physics_diagnostics,
 )
 
 ITERATIONS = (10, 20, 30, 40, 45, 60, 90, 120, 180)
@@ -107,7 +110,7 @@ def rollout(
     if engine == "box2d":
         env = gym.make("LunarLander-v3", disable_env_checker=True)
     else:
-        env = ExperimentalPymunkLunarLanderEnv(solver_iterations=solver_iterations)
+        env = LunarLander(solver_iterations=solver_iterations)
     observation, _ = env.reset(seed=seed)
     if engine == "pymunk" and motor_max_force is not None:
         for constraint in env.demo.space.constraints:
@@ -170,7 +173,7 @@ def rollout(
             ]
         else:
             demo = env.demo
-            diagnostics = demo.physics_diagnostics(action)
+            diagnostics = physics_diagnostics(demo, action)
             hull, legs = demo.lander_body, [demo.left_leg_body, demo.right_leg_body]
             motor_impulse = np.mean(
                 [diagnostics["left_motor_impulse"], diagnostics["right_motor_impulse"]]

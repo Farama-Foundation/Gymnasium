@@ -13,9 +13,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
-    ExperimentalPymunkLunarLanderEnv,
-)
+from gymnasium.envs.pymunk.lunar_lander import LunarLander  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -39,7 +37,7 @@ def make_box2d_env():
 
 def make_pymunk_env():
     """Create the experimental Pymunk LunarLander environment."""
-    return ExperimentalPymunkLunarLanderEnv()
+    return LunarLander()
 
 
 def repeat_to_length(pattern: list[int], max_steps: int) -> list[int]:
