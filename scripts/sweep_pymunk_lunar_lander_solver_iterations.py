@@ -1,4 +1,4 @@
-"""Sweep Pymunk solver iterations against matched Box2D trajectories."""
+"""Sweep unwrapped Pymunk physics against unwrapped Box2D trajectories."""
 
 from __future__ import annotations
 
@@ -12,17 +12,14 @@ from pathlib import Path
 import numpy as np
 import pymunk
 
-import gymnasium as gym
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from scripts.analyze_lunar_lander_angular_dynamics import (  # noqa: E402
     articulated_metrics,
-)
-from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
-    DiagnosticLunarLander as LunarLander,
+    make_unwrapped_box2d_env,
+    make_unwrapped_pymunk_env,
 )
 from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
     physics_diagnostics,
@@ -108,9 +105,9 @@ def rollout(
 ):
     """Roll out one engine under a fixed action sequence."""
     if engine == "box2d":
-        env = gym.make("LunarLander-v3", disable_env_checker=True)
+        env = make_unwrapped_box2d_env()
     else:
-        env = LunarLander(solver_iterations=solver_iterations)
+        env = make_unwrapped_pymunk_env(solver_iterations=solver_iterations)
     observation, _ = env.reset(seed=seed)
     if engine == "pymunk" and motor_max_force is not None:
         for constraint in env.demo.space.constraints:

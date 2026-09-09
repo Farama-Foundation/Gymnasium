@@ -7,6 +7,7 @@ import pymunk
 from gymnasium.envs.pymunk.lunar_lander import *  # noqa: F403
 from gymnasium.envs.pymunk.lunar_lander import LunarLander, PymunkLunarLanderDemo
 
+# Compatibility alias for diagnostics that intentionally require an unwrapped env.
 ExperimentalPymunkLunarLanderEnv = LunarLander
 
 
@@ -110,7 +111,7 @@ def physics_diagnostics(
 
 
 def main() -> None:
-    """Create the standalone Pymunk LunarLander demonstration."""
+    """Create an intentionally unwrapped standalone Pymunk demonstration."""
     PymunkLunarLanderDemo(seed=42)  # noqa: F405
 
 

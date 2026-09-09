@@ -1,4 +1,4 @@
-"""Audit Box2D and Pymunk LunarLander angular dynamics without training."""
+"""Audit unwrapped Box2D and Pymunk angular dynamics without training."""
 
 from __future__ import annotations
 
@@ -28,6 +28,17 @@ from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
 from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
     physics_diagnostics,
 )
+
+
+def make_unwrapped_box2d_env():
+    """Create Box2D without registration wrappers for physics inspection."""
+    return gym.make("LunarLander-v3", disable_env_checker=True).unwrapped
+
+
+def make_unwrapped_pymunk_env(**kwargs):
+    """Create Pymunk without registration wrappers for physics inspection."""
+    return LunarLander(**kwargs)
+
 
 SEQUENCES = {
     "no_action": lambda steps: [0] * steps,
@@ -119,8 +130,8 @@ def box_impulse(action, angle, position, dispersion):
 def initial_rows(seed_count: int):
     """Collect matched initial articulated-state rows across seeds."""
     rows = []
-    box_env = gym.make("LunarLander-v3", disable_env_checker=True)
-    pymunk_env = LunarLander()
+    box_env = make_unwrapped_box2d_env()
+    pymunk_env = make_unwrapped_pymunk_env()
     for seed in range(seed_count):
         box_env.reset(seed=seed)
         pymunk_env.reset(seed=seed)
@@ -186,12 +197,12 @@ def response_rows(seed: int, steps: int):
     rows = []
     for sequence_name, make_actions in SEQUENCES.items():
         actions = make_actions(steps)
-        box_env = gym.make("LunarLander-v3", disable_env_checker=True)
+        box_env = make_unwrapped_box2d_env()
         box_env.reset(seed=seed)
         box = box_env.unwrapped
         recorder = RecordingRng(box.np_random)
         box.np_random = recorder
-        pymunk_env = LunarLander()
+        pymunk_env = make_unwrapped_pymunk_env()
         pymunk_env.reset(seed=seed)
         for step, action in enumerate(actions, 1):
             for engine in ("box2d", "pymunk"):

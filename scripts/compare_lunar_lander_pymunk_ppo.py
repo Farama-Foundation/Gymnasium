@@ -1,8 +1,8 @@
-"""Compare Box2D LunarLander and the experimental Pymunk prototype with PPO.
+"""Run the legacy, non-acceptance Box2D/Pymunk PPO comparison.
 
-This script is for early migration discussion only. It does not register the
-Pymunk prototype as a public environment and does not imply trajectory parity
-between Box2D and Pymunk.
+Use ``compare_lunar_lander_pymunk_algorithms.py`` for acceptance benchmarks.
+This script retains its original pipeline but uses registered, time-limited
+environments so both engines have the same episode horizon.
 """
 
 from __future__ import annotations
@@ -20,8 +20,6 @@ import numpy as np
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
-
-from gymnasium.envs.pymunk.lunar_lander import LunarLander  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
@@ -46,14 +44,15 @@ def parse_args() -> argparse.Namespace:
 
 
 def make_box2d_env():
-    """Create the current registered Box2D LunarLander."""
+    """Create the registered, time-limited Box2D LunarLander."""
     gym = importlib.import_module("gymnasium")
     return gym.make("LunarLander-v3", disable_env_checker=True)
 
 
 def make_pymunk_env():
-    """Create the private experimental Pymunk LunarLander."""
-    return LunarLander()
+    """Create the registered, time-limited Pymunk LunarLander."""
+    gym = importlib.import_module("gymnasium")
+    return gym.make("LunarLander-v4", disable_env_checker=True)
 
 
 def evaluate_policy(

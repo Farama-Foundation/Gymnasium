@@ -9,7 +9,8 @@ a timestep-zero evaluation and is divided by the final training timestep.
 When termination and truncation coincide, termination takes precedence. Box2D
 cannot publicly distinguish simultaneous hull collision and viewport exit, so
 that diagnostic subtype is ``ambiguous_failure``; cross-engine summaries combine
-all failure subtypes. The Pymunk environment remains unregistered here.
+all failure subtypes. Both engines are constructed through their registered
+environment IDs so equivalent ``TimeLimit(1000)`` wrappers govern every run.
 """
 
 from __future__ import annotations
@@ -39,8 +40,22 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from gymnasium.envs.pymunk.lunar_lander import LunarLander  # noqa: E402
 from scripts.pymunk_lunar_lander_terrain import physics_diagnostics  # noqa: E402
+
+BENCHMARK_ENVIRONMENT_POLICY = {
+    "box2d": {
+        "id": "LunarLander-v3",
+        "continuous_id": "LunarLanderContinuous-v3",
+        "wrapper_chain": ["TimeLimit", "OrderEnforcing"],
+        "max_episode_steps": 1_000,
+    },
+    "pymunk": {
+        "id": "LunarLander-v4",
+        "continuous_id": "LunarLanderContinuous-v4",
+        "wrapper_chain": ["TimeLimit", "OrderEnforcing"],
+        "max_episode_steps": 1_000,
+    },
+}
 
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
@@ -185,14 +200,23 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 
 def make_box2d_env(render_mode: str | None = None):
-    """Create the current registered Box2D LunarLander."""
+    """Create the registered, time-limited Box2D benchmark environment."""
     gym = importlib.import_module("gymnasium")
-    return gym.make("LunarLander-v3", disable_env_checker=True, render_mode=render_mode)
+    return gym.make(
+        BENCHMARK_ENVIRONMENT_POLICY["box2d"]["id"],
+        disable_env_checker=True,
+        render_mode=render_mode,
+    )
 
 
 def make_pymunk_env(render_mode: str | None = None):
-    """Create the private experimental Pymunk LunarLander."""
-    return LunarLander(render_mode=render_mode)
+    """Create the registered, time-limited Pymunk benchmark environment."""
+    gym = importlib.import_module("gymnasium")
+    return gym.make(
+        BENCHMARK_ENVIRONMENT_POLICY["pymunk"]["id"],
+        disable_env_checker=True,
+        render_mode=render_mode,
+    )
 
 
 @dataclass
@@ -1449,7 +1473,7 @@ def create_run_manifest(
         for engine in args.engines
     ]
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "status": "running",
         "started_at": started_at,
         "updated_at": started_at,
@@ -1488,16 +1512,75 @@ def create_run_manifest(
             "bootstrap_samples": args.bootstrap_samples,
             "final_window_checkpoints": args.final_window_checkpoints,
         },
-        "environment_configuration": {
-            "engines": args.engines,
-            "box2d": {"id": "LunarLander-v3", "render_mode": None},
-            "pymunk": {
-                "class": "LunarLander",
-                "render_mode": None,
-                "solver_iterations": 180,
-            },
-        },
+        "environment_configuration": benchmark_environment_configuration(args),
         "run_configuration_fingerprint": run_configuration_fingerprint(args),
+    }
+
+
+def describe_environment(env: Any) -> dict[str, Any]:
+    """Describe an environment's registered spec, wrappers, and base constructor."""
+    outer = env
+    wrappers = []
+    time_limit = None
+    current = env
+    while hasattr(current, "env"):
+        wrapper = {
+            "class": type(current).__name__,
+            "module": type(current).__module__,
+        }
+        if hasattr(current, "_max_episode_steps"):
+            time_limit = int(current._max_episode_steps)
+            wrapper["max_episode_steps"] = time_limit
+        wrappers.append(wrapper)
+        current = current.env
+
+    spec = getattr(outer, "spec", None)
+    constructor_arguments = {"render_mode": getattr(current, "render_mode", None)}
+    for name in (
+        "continuous",
+        "gravity",
+        "enable_wind",
+        "wind_power",
+        "turbulence_power",
+        "solver_iterations",
+    ):
+        if hasattr(current, name):
+            constructor_arguments[name] = getattr(current, name)
+    return {
+        "id": spec.id if spec is not None else None,
+        "spec": (
+            {
+                "id": spec.id,
+                "entry_point": str(spec.entry_point),
+                "max_episode_steps": spec.max_episode_steps,
+                "kwargs": dict(spec.kwargs),
+            }
+            if spec is not None
+            else None
+        ),
+        "wrapper_chain": wrappers,
+        "effective_max_episode_steps": time_limit,
+        "base_class": type(current).__name__,
+        "base_module": type(current).__module__,
+        "constructor_arguments": constructor_arguments,
+        "internal_max_episode_steps": None,
+    }
+
+
+def benchmark_environment_configuration(args: argparse.Namespace) -> dict[str, Any]:
+    """Inspect the registered environments selected for this benchmark run."""
+    factories = {"box2d": make_box2d_env, "pymunk": make_pymunk_env}
+    environments = {}
+    for engine in args.engines:
+        env = factories[engine]()
+        try:
+            environments[engine] = describe_environment(env)
+        finally:
+            env.close()
+    return {
+        "policy": "registered_lunar_lander_v1",
+        "engines": list(args.engines),
+        "environments": environments,
     }
 
 
@@ -1617,6 +1700,7 @@ def run_configuration_fingerprint(args: argparse.Namespace) -> str:
         "training_seeds": args.seeds,
         "evaluation_seeds": args.evaluation_seeds,
         "engines": args.engines,
+        "environment_configuration": benchmark_environment_configuration(args),
         "success_return_threshold": args.success_return_threshold,
         "constructor": resolved_constructor_configuration(args),
         "post_landing_settle_steps": args.post_landing_settle_steps,
@@ -1708,26 +1792,8 @@ def effective_model_configuration(model: Any, env: Any) -> dict[str, Any]:
     policy = model.policy
     activation = getattr(policy, "activation_fn", None)
     optimizer = getattr(policy, "optimizer", None)
-    wrappers = []
     current = env.envs[0] if hasattr(env, "envs") else env
-    time_limit = None
-    while hasattr(current, "env"):
-        wrapper = {"class": type(current).__name__}
-        if hasattr(current, "_max_episode_steps"):
-            time_limit = int(current._max_episode_steps)
-            wrapper["max_episode_steps"] = time_limit
-        wrappers.append(wrapper)
-        current = current.env
-    environment_arguments = {"render_mode": getattr(current, "render_mode", None)}
-    for name in (
-        "continuous",
-        "gravity",
-        "enable_wind",
-        "wind_power",
-        "turbulence_power",
-    ):
-        if hasattr(current, name):
-            environment_arguments[name] = getattr(current, name)
+    environment = describe_environment(current)
     return {
         "model_class": type(model).__name__,
         "policy_class": type(policy).__name__,
@@ -1744,13 +1810,12 @@ def effective_model_configuration(model: Any, env: Any) -> dict[str, Any]:
         "train_freq": str(getattr(model, "train_freq", None)),
         "gradient_steps": getattr(model, "gradient_steps", None),
         "buffer_size": getattr(model, "buffer_size", None),
-        "environment_class": type(current).__name__,
-        "wrappers": wrappers,
-        "time_limit_max_episode_steps": time_limit,
-        "internal_max_episode_steps": (
-            1_000 if type(current).__name__ == "LunarLander" else None
-        ),
-        "constructor_arguments": environment_arguments,
+        "environment_class": environment["base_class"],
+        "wrappers": environment["wrapper_chain"],
+        "time_limit_max_episode_steps": environment["effective_max_episode_steps"],
+        "internal_max_episode_steps": environment["internal_max_episode_steps"],
+        "constructor_arguments": environment["constructor_arguments"],
+        "environment": environment,
     }
 
 
@@ -1845,7 +1910,7 @@ def main() -> None:
         if not args.manifest_json.exists():
             raise RuntimeError("Cannot resume without an existing manifest")
         manifest = json.loads(args.manifest_json.read_text())
-        if manifest.get("schema_version") != 2:
+        if manifest.get("schema_version") != 3:
             raise RuntimeError("Cannot resume an incompatible manifest schema")
         if manifest.get("status") == "completed":
             raise RuntimeError("Run is already completed")

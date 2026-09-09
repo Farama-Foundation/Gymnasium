@@ -149,6 +149,86 @@ def test_parse_args_accepts_diagnostic_options(tmp_path):
     assert args.record_checkpoint_videos
 
 
+@pytest.mark.parametrize(
+    ("engine", "factory", "environment_id", "backend_module"),
+    [
+        (
+            "box2d",
+            compare.make_box2d_env,
+            "LunarLander-v3",
+            "gymnasium.envs.box2d.lunar_lander",
+        ),
+        (
+            "pymunk",
+            compare.make_pymunk_env,
+            "LunarLander-v4",
+            "gymnasium.envs.pymunk.lunar_lander",
+        ),
+    ],
+)
+def test_production_factories_use_registered_time_limit(
+    engine, factory, environment_id, backend_module
+):
+    """Production benchmark factories use matching registered contracts."""
+    if engine == "box2d":
+        pytest.importorskip("Box2D")
+    env = factory()
+    try:
+        description = compare.describe_environment(env)
+        assert description["id"] == environment_id
+        assert description["effective_max_episode_steps"] == 1_000
+        assert [wrapper["class"] for wrapper in description["wrapper_chain"]] == [
+            "TimeLimit",
+            "OrderEnforcing",
+        ]
+        assert description["base_class"] == "LunarLander"
+        assert description["base_module"] == backend_module
+        assert description["internal_max_episode_steps"] is None
+    finally:
+        env.close()
+
+
+def test_physics_diagnostic_factories_are_intentionally_unwrapped():
+    """State-level diagnostics deliberately omit registration wrappers."""
+    pytest.importorskip("Box2D")
+    from scripts import analyze_lunar_lander_angular_dynamics as angular
+    from scripts import compare_lunar_lander_fixed_actions as fixed
+    from scripts import sweep_pymunk_lunar_lander_solver_iterations as sweep
+
+    environments = [
+        fixed.make_box2d_env(),
+        fixed.make_pymunk_env(),
+        angular.make_unwrapped_box2d_env(),
+        angular.make_unwrapped_pymunk_env(),
+    ]
+    try:
+        assert all(env.unwrapped is env for env in environments)
+        assert all(not hasattr(env, "_max_episode_steps") for env in environments)
+        assert sweep.make_unwrapped_box2d_env is angular.make_unwrapped_box2d_env
+        assert sweep.make_unwrapped_pymunk_env is angular.make_unwrapped_pymunk_env
+    finally:
+        for env in environments:
+            env.close()
+
+
+def test_legacy_ppo_factories_remain_time_limited_but_non_acceptance():
+    """The superseded PPO harness still uses matching production wrappers."""
+    pytest.importorskip("Box2D")
+    from scripts import compare_lunar_lander_pymunk_ppo as legacy
+
+    environments = [legacy.make_box2d_env(), legacy.make_pymunk_env()]
+    try:
+        assert [env.spec.id for env in environments] == [
+            "LunarLander-v3",
+            "LunarLander-v4",
+        ]
+        assert all(env.spec.max_episode_steps == 1_000 for env in environments)
+        assert all(type(env).__name__ == "TimeLimit" for env in environments)
+    finally:
+        for env in environments:
+            env.close()
+
+
 def test_evaluate_policy_uses_engine_neutral_landing_classification():
     reset_seeds = []
 
@@ -586,6 +666,16 @@ def test_manifest_contains_reproducibility_fields():
         "box2d",
         "pymunk",
     ]
+    environments = manifest["environment_configuration"]["environments"]
+    assert environments["box2d"]["id"] == "LunarLander-v3"
+    assert environments["pymunk"]["id"] == "LunarLander-v4"
+    for environment in environments.values():
+        assert environment["effective_max_episode_steps"] == 1_000
+        assert [item["class"] for item in environment["wrapper_chain"]] == [
+            "TimeLimit",
+            "OrderEnforcing",
+        ]
+        assert environment["spec"]["max_episode_steps"] == 1_000
     assert {"gymnasium", "numpy", "pymunk", "stable-baselines3", "torch"} <= set(
         manifest["dependencies"]
     )
@@ -873,6 +963,56 @@ def test_resume_rejects_incompatible_configuration(monkeypatch, tmp_path):
         "--resume",
         "--train-steps",
         "999",
+        "--output-csv",
+        str(args.output_csv),
+        "--manifest-json",
+        str(args.manifest_json),
+    ]
+    original_parse_args = compare.parse_args
+    monkeypatch.setattr(compare, "parse_args", lambda: original_parse_args(argv[1:]))
+
+    with pytest.raises(RuntimeError, match="different run configuration"):
+        compare.main()
+
+
+@pytest.mark.parametrize(
+    ("field", "replacement"),
+    [
+        ("id", "DifferentLunarLander-v99"),
+        ("wrapper_chain", [{"class": "DifferentWrapper"}]),
+        ("effective_max_episode_steps", 999),
+    ],
+)
+def test_resume_rejects_changed_environment_contract(
+    monkeypatch, tmp_path, field, replacement
+):
+    args = compare.parse_args(
+        [
+            "--engines",
+            "pymunk",
+            "--output-csv",
+            str(tmp_path / "results.csv"),
+            "--manifest-json",
+            str(tmp_path / "manifest.json"),
+        ]
+    )
+    manifest = compare.create_run_manifest(args)
+    compare.write_manifest(manifest, args.manifest_json)
+    original_configuration = compare.benchmark_environment_configuration
+
+    def changed_configuration(parsed_args):
+        configuration = original_configuration(parsed_args)
+        configuration["environments"]["pymunk"][field] = replacement
+        return configuration
+
+    monkeypatch.setattr(
+        compare, "benchmark_environment_configuration", changed_configuration
+    )
+    argv = [
+        "benchmark.py",
+        "--resume",
+        "--engines",
+        "pymunk",
         "--output-csv",
         str(args.output_csv),
         "--manifest-json",

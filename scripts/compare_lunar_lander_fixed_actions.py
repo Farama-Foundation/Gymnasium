@@ -1,4 +1,4 @@
-"""Compare Box2D and Pymunk LunarLander under fixed action sequences."""
+"""Compare intentionally unwrapped LunarLander physics under fixed actions."""
 
 from __future__ import annotations
 
@@ -30,13 +30,13 @@ def parse_args() -> argparse.Namespace:
 
 
 def make_box2d_env():
-    """Create the registered Box2D LunarLander environment."""
+    """Create an intentionally unwrapped Box2D physics diagnostic."""
     gym = importlib.import_module("gymnasium")
-    return gym.make("LunarLander-v3", disable_env_checker=True)
+    return gym.make("LunarLander-v3", disable_env_checker=True).unwrapped
 
 
 def make_pymunk_env():
-    """Create the experimental Pymunk LunarLander environment."""
+    """Create an intentionally unwrapped Pymunk physics diagnostic."""
     return LunarLander()
 
 
