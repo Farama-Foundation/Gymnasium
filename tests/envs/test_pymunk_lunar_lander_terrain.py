@@ -831,6 +831,169 @@ def test_experimental_env_reset_and_step_contracts():
     }
 
 
+def shaping(observation):
+    """Calculate the LunarLander shaping formula independently of the environment."""
+    return float(
+        -100 * np.hypot(observation[0], observation[1])
+        - 100 * np.hypot(observation[2], observation[3])
+        - 100 * abs(observation[4])
+        + 10 * observation[6]
+        + 10 * observation[7]
+    )
+
+
+def test_reset_initializes_reward_shaping_from_returned_observation():
+    env = ExperimentalPymunkLunarLanderEnv()
+
+    observation, _ = env.reset(seed=123)
+
+    assert env.prev_shaping == pytest.approx(shaping(observation))
+    env.close()
+
+
+@pytest.mark.parametrize(
+    ("action", "fuel_penalty"),
+    [(0, 0.0), (1, 0.03), (2, 0.30), (3, 0.03)],
+)
+def test_first_discrete_reward_uses_reset_shaping_and_fuel_penalty(
+    action, fuel_penalty
+):
+    env = ExperimentalPymunkLunarLanderEnv()
+    reset_observation, _ = env.reset(seed=123)
+
+    observation, reward, terminated, _, _ = env.step(action)
+
+    assert not terminated
+    assert reward == pytest.approx(
+        shaping(observation) - shaping(reset_observation) - fuel_penalty
+    )
+    env.close()
+
+
+@pytest.mark.parametrize(
+    ("action", "fuel_penalty"),
+    [
+        (np.array([0.0, 0.0]), 0.0),
+        (np.array([0.5, 0.0]), 0.75 * 0.30),
+        (np.array([0.0, -0.75]), 0.75 * 0.03),
+    ],
+)
+def test_first_continuous_reward_uses_reset_shaping_and_throttle_penalty(
+    action, fuel_penalty
+):
+    env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+    reset_observation, _ = env.reset(seed=123)
+
+    observation, reward, terminated, _, _ = env.step(action)
+
+    assert not terminated
+    assert reward == pytest.approx(
+        shaping(observation) - shaping(reset_observation) - fuel_penalty
+    )
+    env.close()
+
+
+def test_repeated_reset_replaces_previous_episode_shaping_baseline():
+    env = ExperimentalPymunkLunarLanderEnv()
+    first_observation, _ = env.reset(seed=123)
+    first_baseline = env.prev_shaping
+    env.step(2)
+
+    second_observation, _ = env.reset(seed=456)
+
+    assert first_baseline == pytest.approx(shaping(first_observation))
+    assert env.prev_shaping == pytest.approx(shaping(second_observation))
+    assert env.prev_shaping != pytest.approx(first_baseline)
+    env.close()
+
+
+@pytest.mark.parametrize("action", [0, 1, 2, 3])
+def test_first_step_reward_is_deterministic_for_same_seed_and_action(action):
+    first = ExperimentalPymunkLunarLanderEnv()
+    second = ExperimentalPymunkLunarLanderEnv()
+    first.reset(seed=123)
+    second.reset(seed=123)
+
+    first_step = first.step(action)
+    second_step = second.step(action)
+
+    assert np.array_equal(first_step[0], second_step[0])
+    assert first_step[1:] == second_step[1:]
+    first.close()
+    second.close()
+
+
+def test_first_and_second_user_rewards_decompose_from_reset_shaping():
+    env = ExperimentalPymunkLunarLanderEnv()
+    reset_observation, _ = env.reset(seed=123)
+
+    first_observation, first_reward, first_terminated, _, _ = env.step(2)
+    second_observation, second_reward, second_terminated, _, _ = env.step(1)
+
+    assert not first_terminated
+    assert not second_terminated
+    assert first_reward == pytest.approx(
+        shaping(first_observation) - shaping(reset_observation) - 0.30
+    )
+    assert second_reward == pytest.approx(
+        shaping(second_observation) - shaping(first_observation) - 0.03
+    )
+    assert first_reward + second_reward == pytest.approx(
+        shaping(second_observation) - shaping(reset_observation) - 0.33
+    )
+    env.close()
+
+
+@pytest.mark.parametrize(
+    ("continuous", "action"),
+    [(False, 2), (True, np.array([0.5, -0.75]))],
+)
+def test_reward_fix_does_not_change_ef1cd8dfa_physics_or_terminal_flags(
+    continuous, action
+):
+    corrected = ExperimentalPymunkLunarLanderEnv(continuous=continuous)
+    historical = ExperimentalPymunkLunarLanderEnv(continuous=continuous)
+    corrected_observation, _ = corrected.reset(seed=123)
+    historical_observation, _ = historical.reset(seed=123)
+    # ef1cd8dfa advanced identical reset physics but left this baseline unset.
+    historical.prev_shaping = None
+
+    corrected_step = corrected.step(action)
+    historical_step = historical.step(action)
+
+    assert np.array_equal(corrected_observation, historical_observation)
+    assert np.array_equal(corrected_step[0], historical_step[0])
+    assert corrected_step[2:] == historical_step[2:]
+    assert corrected_step[1] != pytest.approx(historical_step[1])
+    corrected.close()
+    historical.close()
+
+
+def test_first_noop_reward_does_not_repeat_historical_zero_reward_failure():
+    env = ExperimentalPymunkLunarLanderEnv()
+    reset_observation, _ = env.reset(seed=123)
+
+    observation, reward, terminated, _, _ = env.step(0)
+
+    assert not terminated
+    assert reward == pytest.approx(shaping(observation) - shaping(reset_observation))
+    assert reward != pytest.approx(0.0)
+    env.close()
+
+
+@requires_box2d
+def test_reset_shaping_initialization_matches_box2d_reward_contract():
+    box2d = gym.make("LunarLander-v3", disable_env_checker=True).unwrapped
+    pymunk_env = ExperimentalPymunkLunarLanderEnv()
+    box_observation, _ = box2d.reset(seed=123)
+    pymunk_observation, _ = pymunk_env.reset(seed=123)
+
+    assert box2d.prev_shaping == pytest.approx(shaping(box_observation))
+    assert pymunk_env.prev_shaping == pytest.approx(shaping(pymunk_observation))
+    box2d.close()
+    pymunk_env.close()
+
+
 def test_experimental_env_observation_values_are_valid():
     env = ExperimentalPymunkLunarLanderEnv()
     observation, _ = env.reset(seed=123)

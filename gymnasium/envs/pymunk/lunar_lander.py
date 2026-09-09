@@ -748,6 +748,7 @@ class LunarLander(Env, EzPickle):
                 side * LEG_AWAY, LEG_DOWN
             ).rotated(leg_body.angle)
         observation = self._get_observation()
+        self.prev_shaping = self._calculate_shaping(observation)
         if self.render_mode == "human":
             self.render()
         return observation, {}
@@ -769,6 +770,19 @@ class LunarLander(Env, EzPickle):
             1.0 if self.demo.right_leg_contact else 0.0,
         ]
         return np.array(state, dtype=np.float32)
+
+    @staticmethod
+    def _calculate_shaping(observation: np.ndarray) -> float:
+        """Calculate the observation-derived reward shaping value."""
+        return float(
+            -100
+            * np.sqrt(observation[0] * observation[0] + observation[1] * observation[1])
+            - 100
+            * np.sqrt(observation[2] * observation[2] + observation[3] * observation[3])
+            - 100 * abs(observation[4])
+            + 10 * observation[6]
+            + 10 * observation[7]
+        )
 
     def step(self, action: int | np.ndarray):
         """Step the Pymunk environment."""
@@ -797,20 +811,12 @@ class LunarLander(Env, EzPickle):
             self._side_engine_direction = 0
         observation = self._get_observation()
 
-        shaping = (
-            -100
-            * np.sqrt(observation[0] * observation[0] + observation[1] * observation[1])
-            - 100
-            * np.sqrt(observation[2] * observation[2] + observation[3] * observation[3])
-            - 100 * abs(observation[4])
-            + 10 * observation[6]
-            + 10 * observation[7]
-        )
+        shaping = self._calculate_shaping(observation)
 
         reward = 0.0
         if self.prev_shaping is not None:
             reward = float(shaping - self.prev_shaping)
-        self.prev_shaping = float(shaping)
+        self.prev_shaping = shaping
 
         reward -= main_power * 0.30
         reward -= side_power * 0.03
