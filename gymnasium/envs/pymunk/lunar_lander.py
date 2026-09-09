@@ -596,7 +596,7 @@ class LunarLander(Env, EzPickle):
     group enters the physics engine's sleeping state with both legs in contact.
     """
 
-    metadata = {"render_modes": ["rgb_array"], "render_fps": FPS}
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": FPS}
     physics_class = PymunkLunarLanderDemo
 
     def __init__(
@@ -678,8 +678,14 @@ class LunarLander(Env, EzPickle):
         self.prev_shaping: float | None = None
 
         self.last_action = 0
+        self._main_engine_power = 0.0
+        self._side_engine_power = 0.0
+        self._side_engine_direction = 0
         self.stable_landing_steps = 0
         self._pygame = None
+        self._screen = None
+        self._surface = None
+        self._clock = None
 
     def reset(
         self,
@@ -702,6 +708,9 @@ class LunarLander(Env, EzPickle):
             self.torque_idx = self.np_random.integers(-9999, 9999)
 
         self.last_action = 0
+        self._main_engine_power = 0.0
+        self._side_engine_power = 0.0
+        self._side_engine_direction = 0
         self.stable_landing_steps = 0
         # Box2D creates legs at hull_y with non-coincident local anchors, then
         # resolves them during reset's world step. Recreate that reset-only
@@ -739,6 +748,8 @@ class LunarLander(Env, EzPickle):
                 side * LEG_AWAY, LEG_DOWN
             ).rotated(leg_body.angle)
         observation = self._get_observation()
+        if self.render_mode == "human":
+            self.render()
         return observation, {}
 
     def _get_observation(self) -> np.ndarray:
@@ -764,10 +775,12 @@ class LunarLander(Env, EzPickle):
         assert self.demo is not None, "You forgot to call reset()"
         if self.continuous:
             action = np.clip(action, -1, 1).astype(np.float64)
+            side_engine_direction = int(np.sign(action[1]))
         else:
             assert self.action_space.contains(action), (
                 f"{action!r} ({type(action)}) invalid"
             )
+            side_engine_direction = -1 if action == 1 else 1 if action == 3 else 0
 
         self.last_action = action
 
@@ -776,6 +789,12 @@ class LunarLander(Env, EzPickle):
             action,
             continuous=self.continuous,
         )
+        self._main_engine_power = main_power
+        self._side_engine_power = side_power
+        if side_power:
+            self._side_engine_direction = side_engine_direction
+        else:
+            self._side_engine_direction = 0
         observation = self._get_observation()
 
         shaping = (
@@ -841,6 +860,8 @@ class LunarLander(Env, EzPickle):
             "inside_landing_zone": inside_landing_zone,
         }
 
+        if self.render_mode == "human":
+            self.render()
         return observation, reward, terminated, truncated, info
 
     def _apply_wind(self) -> None:
@@ -916,36 +937,39 @@ class LunarLander(Env, EzPickle):
 
     def _draw_engine_flames(self, pygame, surface) -> None:
         assert self.demo is not None
+        body = self.demo.lander_body
+        origin = body_origin_world(body)
+        tip = pymunk.Vec2d(math.sin(body.angle), math.cos(body.angle))
+        side = pymunk.Vec2d(-tip.y, tip.x)
 
-        if self.last_action == 2:
+        if self._main_engine_power > 0.0:
+            application_point = origin + pymunk.Vec2d(
+                tip.x * MAIN_ENGINE_OFFSET,
+                -tip.y * MAIN_ENGINE_OFFSET,
+            )
             points = [
-                self.demo.lander_body.local_to_world((0.0, -MAIN_ENGINE_OFFSET - 0.5)),
-                self.demo.lander_body.local_to_world((-0.18, -MAIN_ENGINE_OFFSET)),
-                self.demo.lander_body.local_to_world((0.18, -MAIN_ENGINE_OFFSET)),
+                application_point - tip * (0.25 + 0.25 * self._main_engine_power),
+                application_point - side * 0.18,
+                application_point + side * 0.18,
             ]
             pygame.draw.polygon(
                 surface,
                 (255, 120, 20),
                 [self._world_to_screen(point) for point in points],
             )
-        elif self.last_action in (1, 3):
-            direction = -1 if self.last_action == 1 else 1
+        if self._side_engine_power > 0.0:
+            direction = self._side_engine_direction
+            ox = side.x * direction * SIDE_ENGINE_AWAY / SCALE
+            oy = -side.y * direction * SIDE_ENGINE_AWAY / SCALE
+            application_point = origin + pymunk.Vec2d(
+                ox - tip.x * 17 / SCALE,
+                oy + tip.y * SIDE_ENGINE_HEIGHT / SCALE,
+            )
+            exhaust = pymunk.Vec2d(ox, oy).normalized()
             points = [
-                self.demo.lander_body.local_to_world(
-                    (direction * SIDE_ENGINE_AWAY, SIDE_ENGINE_HEIGHT)
-                ),
-                self.demo.lander_body.local_to_world(
-                    (
-                        direction * SIDE_ENGINE_AWAY + direction * 0.35,
-                        SIDE_ENGINE_HEIGHT + 0.16,
-                    )
-                ),
-                self.demo.lander_body.local_to_world(
-                    (
-                        direction * SIDE_ENGINE_AWAY + direction * 0.35,
-                        SIDE_ENGINE_HEIGHT - 0.16,
-                    )
-                ),
+                application_point + exhaust * (0.2 + 0.2 * self._side_engine_power),
+                application_point + tip * 0.12,
+                application_point - tip * 0.12,
             ]
             pygame.draw.polygon(
                 surface,
@@ -954,16 +978,42 @@ class LunarLander(Env, EzPickle):
             )
 
     def render(self):
-        """Render a headless RGB frame."""
-        if self.render_mode != "rgb_array":
+        """Render the current state in the configured mode."""
+        if self.render_mode is None:
+            env_id = self.spec.id if self.spec is not None else "LunarLander-v4"
+            logger.warn(
+                "You are calling render method without specifying any render mode. "
+                "You can specify the render_mode at initialization, "
+                f'e.g. gym.make("{env_id}", render_mode="rgb_array")'
+            )
             return None
         assert self.demo is not None, "You forgot to call reset()"
 
         if self._pygame is None:
-            self._pygame = importlib.import_module("pygame")
+            try:
+                self._pygame = importlib.import_module("pygame")
+            except ImportError as e:
+                raise error.DependencyNotInstalled(
+                    'pygame is not installed, run `pip install "gymnasium[pymunk]"`'
+                ) from e
 
         pygame = self._pygame
-        surface = pygame.Surface((VIEWPORT_WIDTH, VIEWPORT_HEIGHT))
+        if not pygame.display.get_init():
+            pygame.display.init()
+            self._screen = None
+        if self._screen is None:
+            if self.render_mode == "human":
+                self._screen = pygame.display.set_mode(
+                    (VIEWPORT_WIDTH, VIEWPORT_HEIGHT)
+                )
+            else:
+                self._screen = pygame.Surface((VIEWPORT_WIDTH, VIEWPORT_HEIGHT))
+        if self._clock is None:
+            self._clock = pygame.time.Clock()
+        if self._surface is None:
+            self._surface = pygame.Surface((VIEWPORT_WIDTH, VIEWPORT_HEIGHT))
+
+        surface = self._surface
         surface.fill((255, 255, 255))
 
         terrain_points = [
@@ -1000,8 +1050,20 @@ class LunarLander(Env, EzPickle):
             pygame.draw.polygon(surface, (128, 102, 230), leg_points)
             pygame.draw.lines(surface, (77, 77, 128), True, leg_points, width=2)
 
+        if self.render_mode == "human":
+            self._screen.blit(surface, (0, 0))
+            pygame.event.pump()
+            pygame.display.flip()
+            self._clock.tick(FPS)
+            return None
+
         return np.transpose(pygame.surfarray.array3d(surface), axes=(1, 0, 2))
 
     def close(self):
         """Close rendering resources. Safe to call multiple times."""
+        if self._pygame is not None and self._pygame.display.get_init():
+            self._pygame.display.quit()
+        self._screen = None
+        self._surface = None
+        self._clock = None
         self._pygame = None

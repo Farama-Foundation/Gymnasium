@@ -1,3 +1,4 @@
+import os
 import pickle
 import subprocess
 import sys
@@ -11,6 +12,11 @@ from gymnasium.utils.env_checker import check_env
 from gymnasium.wrappers import TimeLimit
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+
+def _use_headless_pygame():
+    os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
+    os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 
 
 def _disable_physics(env):
@@ -63,6 +69,7 @@ def test_lunar_lander_v4_time_limit_can_be_overridden():
 
 def test_lunar_lander_v4_passes_checker_when_made_from_registry():
     pytest.importorskip("pymunk")
+    _use_headless_pygame()
 
     env = gym.make("LunarLander-v4")
     check_env(env.unwrapped)
@@ -72,6 +79,7 @@ def test_lunar_lander_v4_passes_checker_when_made_from_registry():
 @pytest.mark.parametrize("env_id", ["LunarLander-v4", "LunarLanderContinuous-v4"])
 def test_lunar_lander_v4_action_modes_pass_checker(env_id):
     pytest.importorskip("pymunk")
+    _use_headless_pygame()
 
     env = gym.make(env_id)
     check_env(env.unwrapped)
@@ -127,12 +135,13 @@ def test_lunar_lander_continuous_v3_remains_box2d_backed():
     env.close()
 
 
-def test_lunar_lander_v4_pickles_all_constructor_arguments():
+@pytest.mark.parametrize("render_mode", ["human", "rgb_array"])
+def test_lunar_lander_v4_pickles_all_constructor_arguments(render_mode):
     pytest.importorskip("pymunk")
     from gymnasium.envs.pymunk import LunarLander
 
     env = LunarLander(
-        render_mode="rgb_array",
+        render_mode=render_mode,
         continuous=True,
         gravity=-4.0,
         enable_wind=True,
@@ -142,7 +151,7 @@ def test_lunar_lander_v4_pickles_all_constructor_arguments():
     )
     restored = pickle.loads(pickle.dumps(env))
 
-    assert restored.render_mode == "rgb_array"
+    assert restored.render_mode == render_mode
     assert restored.continuous is True
     assert restored.gravity == -4.0
     assert restored.enable_wind is True

@@ -1353,12 +1353,17 @@ def test_experimental_env_render_returns_rgb_array():
 
     assert frame.shape == (400, 600, 3)
     assert frame.dtype == np.uint8
+    assert frame[:50].mean() > frame[-50:].mean()
+    assert np.unique(frame.reshape(-1, 3), axis=0).shape[0] >= 5
 
 
 def test_experimental_env_render_does_not_change_state():
     env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
     observation, _ = env.reset(seed=123)
     body_positions = [tuple(body.position) for body in env.demo.space.bodies]
+    rng_state = json.dumps(env.np_random.bit_generator.state, sort_keys=True)
+    previous_shaping = env.prev_shaping
+    stable_landing_steps = env.stable_landing_steps
 
     first_frame = env.render()
     second_frame = env.render()
@@ -1367,6 +1372,109 @@ def test_experimental_env_render_does_not_change_state():
     assert np.array_equal(observation, next_observation)
     assert np.array_equal(first_frame, second_frame)
     assert [tuple(body.position) for body in env.demo.space.bodies] == body_positions
+    assert json.dumps(env.np_random.bit_generator.state, sort_keys=True) == rng_state
+    assert env.prev_shaping == previous_shaping
+    assert env.stable_landing_steps == stable_landing_steps
+
+
+def test_render_calls_do_not_change_future_trajectory_or_rewards():
+    rendered_env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
+    control_env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
+    rendered_env.reset(seed=123)
+    control_env.reset(seed=123)
+
+    for action in [0, 2, 1, 0, 3, 2, 0] * 3:
+        rendered_env.render()
+        rendered_env.render()
+        rendered_step = rendered_env.step(action)
+        control_step = control_env.step(action)
+
+        assert np.array_equal(rendered_step[0], control_step[0])
+        assert rendered_step[1:] == control_step[1:]
+
+
+@pytest.mark.parametrize(
+    ("action", "color", "horizontal_direction"),
+    [
+        (2, (255, 120, 20), 0),
+        (1, (255, 150, 30), 1),
+        (3, (255, 150, 30), -1),
+    ],
+)
+def test_engine_actions_render_flames_in_plausible_regions(
+    action, color, horizontal_direction
+):
+    env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
+    env.reset(seed=123)
+    for body in env.demo.space.bodies:
+        body.position = (body.position.x, body.position.y - 2.0)
+    env.step(action)
+
+    frame = env.render()
+    flame_y, flame_x = np.nonzero(np.all(frame == color, axis=2))
+    hull_screen = env._world_to_screen(tuple(body_origin_world(env.demo.lander_body)))
+
+    assert flame_x.size >= 5
+    assert abs(float(flame_x.mean()) - hull_screen[0]) < 100
+    assert abs(float(flame_y.mean()) - hull_screen[1]) < 100
+    if action == 2:
+        assert flame_y.mean() > hull_screen[1]
+    else:
+        assert np.sign(flame_x.mean() - hull_screen[0]) == horizontal_direction
+
+
+def test_render_without_configured_mode_warns_and_returns_none():
+    env = ExperimentalPymunkLunarLanderEnv()
+    env.reset(seed=123)
+
+    with pytest.warns(UserWarning, match="without specifying any render mode"):
+        assert env.render() is None
+
+
+def test_human_mode_initializes_updates_and_renders_automatically(monkeypatch):
+    monkeypatch.setenv("SDL_VIDEODRIVER", "dummy")
+    monkeypatch.setenv("SDL_AUDIODRIVER", "dummy")
+    pygame = pytest.importorskip("pygame")
+    pygame.display.quit()
+    env = ExperimentalPymunkLunarLanderEnv(render_mode="human")
+    render_calls = 0
+    original_render = env.render
+
+    def tracked_render():
+        nonlocal render_calls
+        render_calls += 1
+        return original_render()
+
+    monkeypatch.setattr(env, "render", tracked_render)
+
+    env.reset(seed=123)
+    assert render_calls == 1
+    assert pygame.display.get_init()
+    assert env._screen is not None
+    assert env._clock is not None
+    assert env.render() is None
+    env.step(0)
+    assert render_calls == 3
+    env.close()
+
+
+def test_multiple_environments_and_reset_after_close_are_safe(monkeypatch):
+    monkeypatch.setenv("SDL_VIDEODRIVER", "dummy")
+    monkeypatch.setenv("SDL_AUDIODRIVER", "dummy")
+    first = ExperimentalPymunkLunarLanderEnv(render_mode="human")
+    second = ExperimentalPymunkLunarLanderEnv(render_mode="human")
+    first.reset(seed=123)
+    second.reset(seed=456)
+
+    first.close()
+    first.close()
+    assert second.render() is None
+    second.close()
+    observation, _ = first.reset(seed=789)
+
+    assert observation in first.observation_space
+    assert first.render() is None
+    first.close()
 
 
 def test_experimental_env_render_works_after_step():
