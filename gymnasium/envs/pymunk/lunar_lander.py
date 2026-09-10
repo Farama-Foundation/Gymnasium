@@ -590,10 +590,113 @@ class PymunkLunarLanderDemo:
 
 
 class LunarLander(Env, EzPickle):
-    """LunarLander environment implemented using Pymunk.
+    r"""A Pymunk implementation of the LunarLander task.
 
-    As in Box2D, a landing terminates successfully when the articulated lander
-    group enters the physics engine's sleeping state with both legs in contact.
+    ## Description
+    This environment is a classic rocket trajectory optimization problem. The
+    objective is to land a spacecraft safely on a landing pad centered at
+    coordinates (0, 0). Fuel is unlimited, and landing outside the pad is
+    possible.
+
+    `LunarLander-v4` uses Pymunk for its physics simulation. The earlier
+    `LunarLander-v3` uses Box2D and remains available for reproducibility. The
+    two implementations preserve the same task, spaces, and reward semantics,
+    but do not produce step-for-step identical trajectories.
+
+    ## Action Space
+    With the default `continuous=False`, the action space is `Discrete(4)`:
+    - 0: do nothing
+    - 1: fire the left orientation engine
+    - 2: fire the main engine
+    - 3: fire the right orientation engine
+
+    With `continuous=True`, the action space is
+    `Box(-1, 1, (2,), dtype=np.float32)`. The first value controls the main
+    engine: values below 0 turn it off, while values from 0 to 1 scale its
+    throttle from 50% to 100%. The second value controls the side engines:
+    values between -0.5 and 0.5 turn them off, values below -0.5 fire the left
+    engine, and values above 0.5 fire the right engine. Side-engine throttle
+    scales from 50% to 100% toward either endpoint.
+
+    ## Observation Space
+    The observation is an 8-dimensional `Box`. Its elements are the lander's
+    normalized horizontal and vertical position, normalized horizontal and
+    vertical velocity, angle, normalized angular velocity, and two indicators
+    for left- and right-leg ground contact.
+
+    ## Rewards
+    At each nonterminal step, the reward is the change in a shaping value that:
+    - increases as the lander approaches the landing pad;
+    - increases as linear speed decreases;
+    - decreases as the absolute tilt angle increases;
+    - adds 10 points for each leg in contact with the ground.
+
+    Firing the main engine costs 0.3 points at full power per step, and firing a
+    side engine costs 0.03 points at full power per step. Crashing or leaving
+    the horizontal viewport gives a terminal reward of -100. A stable landing
+    gives a terminal reward of +100. An episode is considered solved at 200
+    points.
+
+    ## Starting State
+    The lander starts near the top center of the viewport. A seeded random
+    impulse is applied at its center of mass. Terrain generation and all other
+    reset randomization use the environment's random-number generator.
+
+    ## Episode End
+    The episode terminates when the hull contacts the terrain, the lander leaves
+    the horizontal viewport, or a two-leg landing becomes stable. Stability is
+    detected by Pymunk articulated-body sleep or by maintaining Box2D-derived
+    linear and angular rest thresholds for approximately 0.5 seconds.
+
+    Registered `v4` environments are truncated after 1,000 steps by Gymnasium's
+    `TimeLimit` wrapper. Directly constructed environments do not impose an
+    internal time limit.
+
+    ## Arguments
+    ```python
+    >>> import gymnasium as gym
+    >>> env = gym.make("LunarLander-v4", continuous=False, gravity=-10.0,
+    ...                enable_wind=False, wind_power=15.0,
+    ...                turbulence_power=1.5, solver_iterations=180)
+    >>> env
+    <TimeLimit<OrderEnforcing<PassiveEnvChecker<LunarLander<LunarLander-v4>>>>>
+    ```
+
+    - `render_mode` can be `None`, `"human"`, or `"rgb_array"`. Human mode
+      renders interactively at 50 frames per second; RGB-array mode returns a
+      `(400, 600, 3)` `uint8` image.
+    - `continuous` selects the discrete or continuous action space described
+      above.
+    - `gravity` sets vertical gravity and must be strictly between -12 and 0.
+      Its default is -10.
+    - `enable_wind` enables deterministic, seeded horizontal wind and rotational
+      turbulence while the lander is airborne. It is disabled by default.
+    - `wind_power` controls maximum linear wind strength. Values from 0 to 20
+      are recommended; the default is 15.
+    - `turbulence_power` controls maximum rotational turbulence. Values from 0
+      to 2 are recommended; the default is 1.5.
+    - `solver_iterations` sets the number of Pymunk constraint-solver iterations
+      per physics step. The calibrated default is 180.
+
+    ## Version History
+    - v4: Reimplemented LunarLander with Pymunk. Both discrete
+      `LunarLander-v4` and continuous `LunarLanderContinuous-v4` are available
+      through the `pymunk` optional dependency.
+    - v3: The Box2D implementation remains available through the `box2d`
+      optional dependency.
+
+    ## Installation
+    Install the dependencies for the `v4` environments with:
+
+    ```bash
+    pip install "gymnasium[pymunk]"
+    ```
+
+    ## Implementation Notes
+    Pymunk and Box2D differ in contact-friction combination, constraint solving,
+    and body-sleep behavior. The Pymunk implementation translates material
+    values and applies a consecutive-stability fallback so that task and reward
+    semantics remain comparable without requiring trajectory identity.
     """
 
     metadata = {"render_modes": ["human", "rgb_array"], "render_fps": FPS}
