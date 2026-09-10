@@ -4,9 +4,9 @@ from functools import partial
 import numpy as np
 import pytest
 
-from gymnasium.spaces import Box, Dict, Discrete
+from gymnasium.spaces import Box, Dict, Discrete, Tuple
 from gymnasium.vector import AsyncVectorEnv, SyncVectorEnv
-from gymnasium.vector.utils import batch_differing_spaces
+from gymnasium.vector.utils import batch_differing_spaces, batch_space
 from tests.testing_env import GenericTestEnv
 
 
@@ -118,3 +118,28 @@ class TestVectorEnvObservationModes:
                 [create_env(space) for space in spaces],
                 observation_mode=observation_mode,
             )
+
+
+@pytest.mark.parametrize("vector_env_cls", [SyncVectorEnv, AsyncVectorEnv])
+@pytest.mark.parametrize("actual_length, declared_length", [(1, 2), (2, 1)])
+def test_custom_observation_mode_rejects_tuple_length_mismatch(
+    vector_env_cls, actual_length, declared_length
+):
+    """Reject different tuple lengths before observations can be lost or misbatched."""
+    actual_space = Tuple([Discrete(3)] * actual_length)
+    single_space = Tuple([Discrete(3)] * declared_length)
+    kwargs = {"observation_mode": (batch_space(single_space, n=1), single_space)}
+    if vector_env_cls is AsyncVectorEnv:
+        kwargs.update(shared_memory=False, context="spawn")
+
+    # Keep a reference so workers can be closed even when initialization raises.
+    envs = vector_env_cls.__new__(vector_env_cls)
+    try:
+        with pytest.raises(RuntimeError, match="do not share a common shape and dtype"):
+            envs.__init__([create_env(actual_space)], **kwargs)
+    finally:
+        if vector_env_cls is AsyncVectorEnv:
+            if hasattr(envs, "_state"):
+                envs.close(terminate=True)
+        elif hasattr(envs, "envs"):
+            envs.close()

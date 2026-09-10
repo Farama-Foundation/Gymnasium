@@ -228,6 +228,66 @@ def test_is_space_dtype_shape_equiv(space):
     assert is_space_dtype_shape_equiv(space, space) is True
 
 
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize(
+    "space_1, space_2, expected",
+    [
+        (gym.spaces.Tuple(()), gym.spaces.Tuple(()), True),
+        (
+            gym.spaces.Tuple(()),
+            gym.spaces.Tuple((gym.spaces.Discrete(2),)),
+            False,
+        ),
+        (
+            gym.spaces.Tuple((gym.spaces.Discrete(2),)),
+            gym.spaces.Tuple((gym.spaces.Discrete(2), gym.spaces.Discrete(3))),
+            False,
+        ),
+        (
+            gym.spaces.Tuple((Box(0, 1, (2,)), gym.spaces.Discrete(2))),
+            gym.spaces.Tuple((Box(-1, 2, (2,)), gym.spaces.Discrete(3))),
+            True,
+        ),
+        (
+            gym.spaces.Tuple((Box(0, 1, (2,), dtype=np.float32),)),
+            gym.spaces.Tuple((Box(0, 1, (2,), dtype=np.float64),)),
+            False,
+        ),
+        (
+            gym.spaces.Tuple((Box(0, 1, (2,)),)),
+            gym.spaces.Tuple((Box(0, 1, (3,)),)),
+            False,
+        ),
+    ],
+    ids=["empty", "empty-prefix", "prefix", "different-bounds", "dtype", "shape"],
+)
+def test_tuple_dtype_shape_equivalence(space_1, space_2, expected, reverse):
+    """Tuple compatibility requires equal arity and compatible components in either order."""
+    if reverse:
+        space_1, space_2 = space_2, space_1
+    assert is_space_dtype_shape_equiv(space_1, space_2) is expected
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize(
+    "wrap",
+    [
+        lambda space: gym.spaces.Tuple((space,)),
+        lambda space: gym.spaces.Dict({"observation": space}),
+        lambda space: OneOf((space,)),
+        lambda space: Sequence(space),
+    ],
+    ids=["tuple", "dict", "oneof", "sequence"],
+)
+def test_nested_tuple_dtype_shape_equivalence(wrap, reverse):
+    """Composite spaces must reject nested Tuples with different numbers of components."""
+    space_1 = wrap(gym.spaces.Tuple((gym.spaces.Discrete(2),)))
+    space_2 = wrap(gym.spaces.Tuple((gym.spaces.Discrete(2), gym.spaces.Discrete(3))))
+    if reverse:
+        space_1, space_2 = space_2, space_1
+    assert is_space_dtype_shape_equiv(space_1, space_2) is False
+
+
 @pytest.mark.parametrize("space_1", TESTING_SPACES, ids=TESTING_SPACES_IDS)
 def test_all_space_pairs_for_is_space_dtype_shape_equiv(space_1):
     """Practically check that the `is_space_dtype_shape_equiv` works as expected for `shared_memory`."""
