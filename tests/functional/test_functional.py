@@ -79,3 +79,12 @@ def test_functional_api():
         assert terminal == (i == 5)  # terminal state is in the final action
 
         state = next_state
+
+
+def test_init_uses_supplied_params():
+    """A supplied params instance overrides the generated defaults."""
+    params = object()
+
+    env = FuncEnv(params=params)
+
+    assert env.default_params is params
