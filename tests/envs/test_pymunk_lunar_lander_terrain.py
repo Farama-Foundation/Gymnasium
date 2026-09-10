@@ -1,7 +1,9 @@
+import ast
 import json
 import math
 import subprocess
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -42,22 +44,35 @@ from gymnasium.envs.pymunk.lunar_lander import (  # noqa: E402
 from gymnasium.envs.pymunk.lunar_lander import (  # noqa: E402
     LunarLander as ExperimentalPymunkLunarLanderEnv,
 )
+from tests.envs.pymunk_lunar_lander_test_helpers import (  # noqa: E402
+    DiagnosticPymunkLunarLanderDemo,
+    box_impulse,
+    diagnostic_demo,
+    physics_diagnostics,
+)
 
 requires_box2d = pytest.mark.skipif(Box2D is None, reason="Box2D is not installed")
 
 
-def diagnostic_demo(*args, **kwargs):
-    """Construct the script-only telemetry-enabled physics helper."""
-    from scripts.pymunk_lunar_lander_terrain import DiagnosticPymunkLunarLanderDemo
+def test_environment_test_module_does_not_import_development_scripts():
+    """Keep installed-package environment tests independent of scripts/."""
+    tree = ast.parse(Path(__file__).read_text())
+    imported_modules = {
+        alias.name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Import)
+        for alias in node.names
+    }
+    imported_modules.update(
+        node.module
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom) and node.module is not None
+    )
 
-    return DiagnosticPymunkLunarLanderDemo(*args, **kwargs)
-
-
-def physics_diagnostics(demo, action):
-    """Load physical telemetry only for tests that explicitly require it."""
-    from scripts.pymunk_lunar_lander_terrain import physics_diagnostics as collect
-
-    return collect(demo, action)
+    assert not any(
+        module == "scripts" or module.startswith("scripts.")
+        for module in imported_modules
+    )
 
 
 def test_pymunk_lunar_lander_package_import():
@@ -483,18 +498,6 @@ def test_solver_iterations_reject_noninteger_values(solver_iterations):
         ExperimentalPymunkLunarLanderEnv(solver_iterations=solver_iterations)
 
 
-@requires_box2d
-def test_selected_solver_improves_trajectory_error_over_30_iterations():
-    from scripts.sweep_pymunk_lunar_lander_solver_iterations import (
-        aggregate_scores,
-        sweep,
-    )
-
-    scores = aggregate_scores(sweep([30, 180], range(100, 102), steps=100))
-
-    assert scores[180] < scores[30]
-
-
 def test_resting_articulated_group_sleeps_after_at_least_one_second():
     demo = PymunkLunarLanderDemo(seed=123)
     place_in_resting_pose(demo)
@@ -520,6 +523,17 @@ def test_constraint_diagnostics_expose_motor_and_limit_impulses():
     assert diagnostics["right_rotary_limit_impulse"] > 0
     assert diagnostics["left_motor_impulse"] == pytest.approx(40.0 / 50.0)
     assert diagnostics["right_motor_impulse"] == pytest.approx(40.0 / 50.0)
+
+
+def test_test_local_instrumentation_does_not_change_fixed_action_physics():
+    observed_demo = DiagnosticPymunkLunarLanderDemo(seed=123)
+    control_demo = PymunkLunarLanderDemo(seed=123)
+
+    for action in [0, 2, 1, 0, 3, 2, 0, 0]:
+        observed_state = observed_demo.step(action)
+        control_state = control_demo.step(action)
+
+        assert np.array_equal(observed_state.as_array(), control_state.as_array())
 
 
 def test_corrected_leg_friction_reduces_articulated_landing_drift():
@@ -593,38 +607,6 @@ def test_state_values_are_finite():
         state = demo.step(0)
 
     assert np.isfinite(state.as_array()).all()
-
-
-@requires_box2d
-def test_matched_seed_initial_state_distribution_moments_match_box2d():
-    from scripts.analyze_lunar_lander_angular_dynamics import initial_rows
-
-    rows = initial_rows(1000)
-    box_rows = [row for row in rows if row["engine"] == "box2d"]
-    pymunk_rows = [row for row in rows if row["engine"] == "pymunk"]
-
-    box_vx = np.array([json.loads(row["hull_velocity"])[0] for row in box_rows])
-    pymunk_vx = np.array([json.loads(row["hull_velocity"])[0] for row in pymunk_rows])
-    box_omega = np.array([row["hull_angular_velocity"] for row in box_rows])
-    pymunk_omega = np.array([row["hull_angular_velocity"] for row in pymunk_rows])
-
-    box_vy = np.array([json.loads(row["hull_velocity"])[1] for row in box_rows])
-    pymunk_vy = np.array([json.loads(row["hull_velocity"])[1] for row in pymunk_rows])
-    box_angle = np.array([row["hull_angle"] for row in box_rows])
-    pymunk_angle = np.array([row["hull_angle"] for row in pymunk_rows])
-
-    assert np.std(pymunk_vx) == pytest.approx(np.std(box_vx), rel=0.02)
-    assert np.std(pymunk_vy) == pytest.approx(np.std(box_vy), rel=0.02)
-    assert np.std(pymunk_angle) == pytest.approx(np.std(box_angle), rel=0.25)
-    assert np.std(pymunk_omega) == pytest.approx(np.std(box_omega), rel=0.25)
-    assert np.mean(pymunk_vx) == pytest.approx(np.mean(box_vx), abs=0.01)
-    assert np.mean(pymunk_vy) == pytest.approx(np.mean(box_vy), abs=0.1)
-    assert pymunk_rows[0]["total_mass"] == pytest.approx(
-        box_rows[0]["total_mass"], rel=1e-6
-    )
-    assert pymunk_rows[0]["articulated_inertia"] == pytest.approx(
-        box_rows[0]["articulated_inertia"], rel=0.01
-    )
 
 
 def test_leg_mass_and_moment_match_box2d():
@@ -712,8 +694,6 @@ def test_articulated_constraints_change_side_engine_hull_response():
 @pytest.mark.parametrize("action", [1, 3])
 @requires_box2d
 def test_side_engine_impulse_and_application_point_match_box2d(action):
-    from scripts.analyze_lunar_lander_angular_dynamics import box_impulse
-
     angle = 0.2
     position = np.array([10.0, 10.0])
     dispersion = np.array([0.01, -0.02])
@@ -758,8 +738,6 @@ def iter_uniform_rng(values):
 
 @requires_box2d
 def test_main_engine_impulse_and_application_point_match_box2d():
-    from scripts.analyze_lunar_lander_angular_dynamics import box_impulse
-
     angle = -0.3
     position = np.array([10.0, 10.0])
     dispersion = np.array([0.015, 0.005])
@@ -1554,8 +1532,6 @@ def test_viewport_exit_boundary_and_timing_match_box2d(direction):
 
 @requires_box2d
 def test_one_body_random_actions_isolate_center_of_mass_torque_mismatch():
-    from scripts.analyze_lunar_lander_angular_dynamics import box_impulse
-
     world = Box2D.b2World(gravity=(0.0, -10.0))
     box_body = world.CreateDynamicBody(position=(10.0, 13.333333))
     box_body.CreatePolygonFixture(
