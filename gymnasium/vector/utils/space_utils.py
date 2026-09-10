@@ -34,7 +34,7 @@ from gymnasium.spaces import (
 )
 
 if TYPE_CHECKING:
-    from typing_extensions import Never
+    from typing import Never
 
 __all__ = [
     "batch_space",
