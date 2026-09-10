@@ -829,9 +829,9 @@ class DiscretizeObservation(
                 "DiscretizeObservation is only compatible with Box continuous observations."
             )
 
-        self.low = env.observation_space.low
-        self.high = env.observation_space.high
-        self.n_dims = self.low.shape[0]
+        self.low = np.ravel(env.observation_space.low)
+        self.high = np.ravel(env.observation_space.high)
+        self.n_dims = int(self.low.size)
 
         if np.any(np.isinf(self.low)) or np.any(np.isinf(self.high)):
             raise ValueError(
@@ -871,7 +871,7 @@ class DiscretizeObservation(
         # index could be out of range for the number of bins.
         # Solution: clip to ensure 0 <= index < bins[i], and add a small margin
         # to prevent precision issues.
-        clipped = np.clip(observation, self.low, self.high - 1e-8)
+        clipped = np.clip(np.ravel(observation), self.low, self.high - 1e-8)
         indices = [
             int(np.digitize(clipped[i], self.bin_edges[i])) for i in range(self.n_dims)
         ]
