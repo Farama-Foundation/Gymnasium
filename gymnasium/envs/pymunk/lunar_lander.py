@@ -531,7 +531,9 @@ class PymunkLunarLanderDemo:
 
         if continuous:
             assert isinstance(action, np.ndarray)
-            main_action, side_action = (float(value) for value in action)
+            continuous_action = np.asarray(action, dtype=np.float64)
+            main_action = float(continuous_action[0])
+            side_action = float(continuous_action[1])
             if main_action > 0.0:
                 main_power = float((np.clip(main_action, 0.0, 1.0) + 1.0) * 0.5)
                 self.fire_main_engine(dispersion, main_power)
