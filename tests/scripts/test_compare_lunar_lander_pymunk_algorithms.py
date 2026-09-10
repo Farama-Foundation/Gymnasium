@@ -33,6 +33,28 @@ def _dqn_args(*extra_args):
     )
 
 
+def _sac_args(*extra_args):
+    return compare.parse_args(
+        [
+            "--algorithm",
+            "sac",
+            "--train-steps",
+            "2",
+            "--eval-freq",
+            "2",
+            "--eval-episodes",
+            "1",
+            "--sac-batch-size",
+            "2",
+            "--sac-buffer-size",
+            "16",
+            "--sac-learning-starts",
+            "0",
+            *extra_args,
+        ]
+    )
+
+
 def test_parse_args_defaults_to_ppo():
     args = compare.parse_args([])
 
@@ -63,6 +85,36 @@ def test_parse_args_accepts_dqn():
     assert args.dqn_gradient_steps == -1
     assert args.dqn_exploration_fraction == 0.12
     assert args.dqn_exploration_final_eps == 0.1
+
+
+def test_parse_args_accepts_sac_defaults_and_entropy_values():
+    args = compare.parse_args(["--algorithm", "sac"])
+
+    assert args.algorithm == "sac"
+    assert compare.ACTION_MODE_BY_ALGORITHM[args.algorithm] == "continuous"
+    assert args.output_csv.name == "lunar_lander_pymunk_sac.csv"
+    assert args.sac_learning_rate == 3e-4
+    assert args.sac_buffer_size == 1_000_000
+    assert args.sac_learning_starts == 100
+    assert args.sac_batch_size == 256
+    assert args.sac_tau == 0.005
+    assert args.sac_gamma == 0.99
+    assert args.sac_train_freq == 1
+    assert args.sac_gradient_steps == 1
+    assert args.sac_ent_coef == "auto"
+    assert args.sac_target_update_interval == 1
+    assert args.sac_target_entropy == "auto"
+
+    numeric = compare.parse_args(
+        ["--algorithm", "sac", "--sac-ent-coef", "0.2", "--sac-target-entropy", "-2"]
+    )
+    assert numeric.sac_ent_coef == 0.2
+    assert numeric.sac_target_entropy == -2.0
+
+
+def test_parse_args_rejects_invalid_entropy_value():
+    with pytest.raises(SystemExit):
+        compare.parse_args(["--sac-ent-coef", "adaptive"])
 
 
 def test_episode_output_csv_is_derived_from_output_csv():
@@ -186,6 +238,63 @@ def test_production_factories_use_registered_time_limit(
         assert description["internal_max_episode_steps"] is None
     finally:
         env.close()
+
+
+@pytest.mark.parametrize(
+    ("engine", "factory", "environment_id", "backend_module"),
+    [
+        (
+            "box2d",
+            compare.make_box2d_env,
+            "LunarLanderContinuous-v3",
+            "gymnasium.envs.box2d.lunar_lander",
+        ),
+        (
+            "pymunk",
+            compare.make_pymunk_env,
+            "LunarLanderContinuous-v4",
+            "gymnasium.envs.pymunk.lunar_lander",
+        ),
+    ],
+)
+def test_sac_factories_use_registered_continuous_time_limit(
+    engine, factory, environment_id, backend_module
+):
+    if engine == "box2d":
+        pytest.importorskip("Box2D")
+    env = factory(algorithm="sac")
+    try:
+        description = compare.describe_environment(env)
+        assert description["id"] == environment_id
+        assert description["base_module"] == backend_module
+        assert description["effective_max_episode_steps"] == 1_000
+        assert description["constructor_arguments"]["continuous"] is True
+        assert description["action_space"] == {
+            "class": "Box",
+            "module": "gymnasium.spaces.box",
+            "shape": [2],
+            "dtype": "float32",
+            "low": [-1.0, -1.0],
+            "high": [1.0, 1.0],
+        }
+    finally:
+        env.close()
+
+
+def test_algorithm_action_space_compatibility_is_validated_early():
+    discrete = compare.make_pymunk_env()
+    continuous = compare.make_pymunk_env(algorithm="sac")
+    try:
+        compare.validate_algorithm_action_space("ppo", discrete.action_space)
+        compare.validate_algorithm_action_space("dqn", discrete.action_space)
+        compare.validate_algorithm_action_space("sac", continuous.action_space)
+        with pytest.raises(ValueError, match="continuous"):
+            compare.validate_algorithm_action_space("sac", discrete.action_space)
+        with pytest.raises(ValueError, match="discrete"):
+            compare.validate_algorithm_action_space("dqn", continuous.action_space)
+    finally:
+        discrete.close()
+        continuous.close()
 
 
 def test_physics_diagnostic_factories_are_intentionally_unwrapped():
@@ -336,6 +445,136 @@ def test_explicit_evaluation_seeds_are_shared_verbatim():
 
     assert reset_seeds == [91, 17, 42]
     assert [episode["evaluation_seed"] for episode in result.episodes] == [91, 17, 42]
+
+
+@pytest.mark.parametrize(
+    ("action", "main_penalty", "side_penalty"),
+    [
+        (np.array([0.0, 0.0], dtype=np.float32), 0.0, 0.0),
+        (np.array([1.0, 0.0], dtype=np.float32), -0.3, 0.0),
+        (np.array([0.0, -1.0], dtype=np.float32), 0.0, -0.03),
+        (np.array([0.0, 1.0], dtype=np.float32), 0.0, -0.03),
+    ],
+)
+def test_continuous_reward_decomposition_uses_public_engine_powers(
+    action, main_penalty, side_penalty
+):
+    initial = np.zeros(8, dtype=np.float32)
+    following = np.array([0.1, 0.2, 0.01, -0.02, 0.03, 0.0, 0.0, 0.0])
+    decomposition = compare.RewardDecomposition(
+        compare.RewardDecomposition.shaping(initial)
+    )
+    expected_shaping = float(
+        np.sum(
+            compare.RewardDecomposition.shaping(following)
+            - compare.RewardDecomposition.shaping(initial)
+        )
+    )
+    reward = expected_shaping + main_penalty + side_penalty
+
+    decomposition.add_step(following, action, reward, terminated=False)
+
+    components = decomposition.as_dict()
+    assert components["main_engine_penalty"] == pytest.approx(main_penalty)
+    assert components["side_engine_penalty"] == pytest.approx(side_penalty)
+    assert sum(components.values()) == pytest.approx(reward)
+
+
+def test_continuous_action_diagnostics_have_stable_schema_and_values():
+    actions = [
+        np.array([0.0, 0.0]),
+        np.array([1.0, -0.75]),
+        np.array([0.5, 1.0]),
+        np.array([-1.0, 0.5]),
+    ]
+
+    diagnostics = compare.continuous_action_diagnostics(actions)
+
+    assert tuple(diagnostics) == compare.CONTINUOUS_ACTION_DIAGNOSTIC_KEYS
+    assert diagnostics["main_engine_activation_count"] == 2
+    assert diagnostics["mean_active_main_power"] == pytest.approx(0.875)
+    assert diagnostics["left_side_engine_activation_count"] == 1
+    assert diagnostics["right_side_engine_activation_count"] == 1
+    assert diagnostics["mean_active_side_power"] == pytest.approx(0.875)
+    assert diagnostics["action_0_mean"] == pytest.approx(0.125)
+    assert diagnostics["action_1_mean"] == pytest.approx(0.1875)
+    assert diagnostics["boundary_saturation_frequency"] == pytest.approx(0.75)
+
+
+def test_continuous_evaluation_and_settling_preserve_vector_actions():
+    actions_seen = []
+
+    class Model:
+        def predict(self, observation, deterministic):
+            assert deterministic is True
+            return np.array([0.25, -0.75], dtype=np.float32), None
+
+    class Env:
+        prev_shaping = None
+
+        @property
+        def unwrapped(self):
+            return self
+
+        def reset(self, seed):
+            return np.zeros(8, dtype=np.float32), {}
+
+        def step(self, action):
+            actions_seen.append(np.asarray(action).copy())
+            return np.zeros(8, dtype=np.float32), 100.0, True, False, {}
+
+        def close(self):
+            pass
+
+    result = compare.evaluate_policy(
+        Model(),
+        Env,
+        seed=None,
+        episodes=None,
+        success_return_threshold=200,
+        evaluation_seeds=[9],
+        post_landing_settle_steps=2,
+        action_mode="continuous",
+    )
+
+    np.testing.assert_array_equal(actions_seen[0], [0.25, -0.75])
+    np.testing.assert_array_equal(actions_seen[1], np.zeros(2, dtype=np.float32))
+    np.testing.assert_array_equal(actions_seen[2], np.zeros(2, dtype=np.float32))
+    assert result.action_counts == "{}"
+    diagnostics = json.loads(result.continuous_action_diagnostics)
+    assert tuple(diagnostics) == tuple(
+        sorted(compare.CONTINUOUS_ACTION_DIAGNOSTIC_KEYS)
+    )
+
+
+def test_continuous_video_uses_registered_factory_and_vector_action(
+    monkeypatch, tmp_path
+):
+    actions = []
+    created_ids = []
+
+    class Model:
+        def predict(self, observation, deterministic):
+            return np.array([0.0, 0.0], dtype=np.float32), None
+
+    def factory(render_mode=None):
+        env = compare.make_pymunk_env(render_mode=render_mode, algorithm="sac")
+        created_ids.append(env.spec.id)
+        original_step = env.step
+
+        def step(action):
+            actions.append(np.asarray(action).copy())
+            return original_step(action)
+
+        env.step = step
+        return env
+
+    monkeypatch.setattr(compare, "write_video", lambda frames, path, fps: None)
+    compare.record_policy_video(Model(), factory, tmp_path / "video.mp4", 7, 30, 1)
+
+    assert created_ids == ["LunarLanderContinuous-v4"]
+    assert len(actions) == 1
+    assert actions[0].shape == (2,)
 
 
 def test_post_landing_steps_do_not_change_evaluation_metrics(tmp_path):
@@ -560,6 +799,82 @@ def test_make_algorithm_constructs_supported_algorithms(algorithm):
     model.env.close()
 
 
+def test_make_algorithm_constructs_sac_with_explicit_defaults():
+    pytest.importorskip("stable_baselines3")
+    env = compare.make_pymunk_env(algorithm="sac")
+    args = _sac_args()
+
+    model = compare.make_algorithm(args, env, seed=0)
+
+    assert model.__class__.__name__ == "SAC"
+    assert model.learning_rate == 3e-4
+    assert model.buffer_size == 16
+    assert model.learning_starts == 0
+    assert model.batch_size == 2
+    assert model.tau == 0.005
+    assert model.gamma == 0.99
+    assert model.gradient_steps == 1
+    assert model.ent_coef == "auto"
+    assert model.target_entropy == pytest.approx(-2.0)
+    assert model.action_noise is None
+    assert model.use_sde is False
+    model.env.close()
+
+
+def test_effective_sac_configuration_records_model_and_environment_contract():
+    pytest.importorskip("stable_baselines3")
+    env = compare.make_pymunk_env(algorithm="sac")
+    args = _sac_args()
+    model = compare.make_algorithm(args, env, seed=0)
+
+    configuration = compare.effective_model_configuration(model, model.get_env(), args)
+
+    assert configuration["model_class"] == "SAC"
+    assert configuration["actor_class"] == "Actor"
+    assert configuration["critic_class"] == "ContinuousCritic"
+    assert configuration["actor_architecture"] == [256, 256]
+    assert configuration["critic_architecture"] == [256, 256]
+    assert configuration["critic_count"] == 2
+    assert configuration["actor_optimizer_class"] == "Adam"
+    assert configuration["critic_optimizer_class"] == "Adam"
+    assert configuration["entropy_optimizer_class"] == "Adam"
+    assert configuration["replay_buffer_class"] == "ReplayBuffer"
+    assert configuration["replay_buffer_capacity"] == 16
+    assert configuration["replay_buffer_handles_timeouts"] is True
+    assert configuration["tau"] == 0.005
+    assert configuration["requested_ent_coef"] == "auto"
+    assert configuration["effective_ent_coef"] == pytest.approx(1.0)
+    assert configuration["requested_target_entropy"] == "auto"
+    assert configuration["effective_target_entropy"] == pytest.approx(-2.0)
+    assert configuration["environment"]["id"] == "LunarLanderContinuous-v4"
+    model.env.close()
+
+
+def test_training_uses_one_uninterrupted_learn_call(monkeypatch):
+    pytest.importorskip("stable_baselines3")
+    args = _sac_args("--engines", "pymunk")
+    calls = []
+
+    class Model:
+        def learn(self, total_timesteps, callback):
+            calls.append((total_timesteps, callback.__class__.__name__))
+            return self
+
+    model = Model()
+    monkeypatch.setattr(compare, "make_algorithm", lambda args, env, seed: model)
+
+    rows, returned = compare.train_and_evaluate(
+        "pymunk",
+        lambda: compare.make_pymunk_env(algorithm="sac"),
+        0,
+        args,
+    )
+
+    assert calls == [(2, "PeriodicEvaluationCallback")]
+    assert rows == []
+    assert returned is model
+
+
 @pytest.mark.parametrize(
     "make_env",
     [
@@ -651,6 +966,7 @@ def test_manifest_contains_reproducibility_fields():
         timestamp=timestamp,
     )
 
+    assert manifest["schema_version"] == 4
     assert manifest["git_sha"]
     assert isinstance(manifest["dirty_worktree"], bool)
     assert manifest["status"] == "running"
@@ -658,6 +974,7 @@ def test_manifest_contains_reproducibility_fields():
     assert manifest["command"] == "python benchmark.py --algorithm dqn"
     assert manifest["python"]
     assert manifest["algorithm"] == "dqn"
+    assert manifest["action_mode"] == "discrete"
     assert manifest["run_type"] == "pilot"
     assert manifest["training_seeds"] == [3, 5]
     assert manifest["evaluation_seeds"] == [101, 102]
@@ -679,6 +996,35 @@ def test_manifest_contains_reproducibility_fields():
     assert {"gymnasium", "numpy", "pymunk", "stable-baselines3", "torch"} <= set(
         manifest["dependencies"]
     )
+
+
+def test_sac_manifest_fingerprints_continuous_contract_and_configuration():
+    args = _sac_args("--engines", "pymunk", "--evaluation-seeds", "17")
+
+    manifest = compare.create_run_manifest(args)
+
+    assert manifest["schema_version"] == 4
+    assert manifest["algorithm"] == "sac"
+    assert manifest["action_mode"] == "continuous"
+    assert manifest["resolved_constructor"]["ent_coef"] == "auto"
+    assert manifest["resolved_constructor"]["target_entropy"] == "auto"
+    environment = manifest["environment_configuration"]["environments"]["pymunk"]
+    assert environment["id"] == "LunarLanderContinuous-v4"
+    assert environment["effective_max_episode_steps"] == 1_000
+    assert environment["action_space"]["shape"] == [2]
+    assert environment["action_space"]["low"] == [-1.0, -1.0]
+
+    changed = _sac_args(
+        "--engines",
+        "pymunk",
+        "--evaluation-seeds",
+        "17",
+        "--sac-tau",
+        "0.01",
+    )
+    assert compare.run_configuration_fingerprint(
+        args
+    ) != compare.run_configuration_fingerprint(changed)
 
 
 def test_summary_reports_windows_auc_per_seed_and_schema(tmp_path):
@@ -972,6 +1318,34 @@ def test_resume_rejects_incompatible_configuration(monkeypatch, tmp_path):
     monkeypatch.setattr(compare, "parse_args", lambda: original_parse_args(argv[1:]))
 
     with pytest.raises(RuntimeError, match="different run configuration"):
+        compare.main()
+
+
+def test_resume_rejects_schema_three_with_clear_message(monkeypatch, tmp_path):
+    output = tmp_path / "results.csv"
+    manifest_path = tmp_path / "manifest.json"
+    args = compare.parse_args(
+        ["--output-csv", str(output), "--manifest-json", str(manifest_path)]
+    )
+    manifest = compare.create_run_manifest(args)
+    manifest["schema_version"] = 3
+    compare.write_manifest(manifest, manifest_path)
+    original_parse_args = compare.parse_args
+    monkeypatch.setattr(
+        compare,
+        "parse_args",
+        lambda: original_parse_args(
+            [
+                "--resume",
+                "--output-csv",
+                str(output),
+                "--manifest-json",
+                str(manifest_path),
+            ]
+        ),
+    )
+
+    with pytest.raises(RuntimeError, match="schema 3 runs cannot be migrated"):
         compare.main()
 
 

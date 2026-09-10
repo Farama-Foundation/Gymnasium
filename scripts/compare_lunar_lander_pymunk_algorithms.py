@@ -31,6 +31,7 @@ from collections import Counter, deque
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from functools import partial
 from pathlib import Path
 from typing import Any
 
@@ -57,13 +58,38 @@ BENCHMARK_ENVIRONMENT_POLICY = {
     },
 }
 
+ACTION_MODE_BY_ALGORITHM = {
+    "ppo": "discrete",
+    "dqn": "discrete",
+    "sac": "continuous",
+}
+
+
+def parse_auto_or_float(value: str) -> str | float:
+    """Parse an SB3 entropy setting expressed as a number or ``auto``."""
+    if value == "auto":
+        return value
+    try:
+        return float(value)
+    except ValueError as error:
+        raise argparse.ArgumentTypeError("expected a number or 'auto'") from error
+
+
+def parse_entropy_coefficient(value: str) -> str | float:
+    """Parse SAC's fixed or automatically learned entropy coefficient."""
+    if value == "auto" or value.startswith("auto_"):
+        return value
+    return parse_auto_or_float(value)
+
 
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line options."""
     parser = argparse.ArgumentParser(
         description="Run a reproducible LunarLander cross-engine benchmark."
     )
-    parser.add_argument("--algorithm", choices=["ppo", "dqn"], default="ppo")
+    parser.add_argument(
+        "--algorithm", choices=list(ACTION_MODE_BY_ALGORITHM), default="ppo"
+    )
     parser.add_argument(
         "--run-type",
         choices=["smoke", "pilot", "acceptance"],
@@ -121,6 +147,21 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--dqn-gradient-steps", type=int, default=-1)
     parser.add_argument("--dqn-exploration-fraction", type=float, default=0.12)
     parser.add_argument("--dqn-exploration-final-eps", type=float, default=0.1)
+    parser.add_argument("--sac-learning-rate", type=float, default=3e-4)
+    parser.add_argument("--sac-buffer-size", type=int, default=1_000_000)
+    parser.add_argument("--sac-learning-starts", type=int, default=100)
+    parser.add_argument("--sac-batch-size", type=int, default=256)
+    parser.add_argument("--sac-tau", type=float, default=0.005)
+    parser.add_argument("--sac-gamma", type=float, default=0.99)
+    parser.add_argument("--sac-train-freq", type=int, default=1)
+    parser.add_argument("--sac-gradient-steps", type=int, default=1)
+    parser.add_argument(
+        "--sac-ent-coef", type=parse_entropy_coefficient, default="auto"
+    )
+    parser.add_argument("--sac-target-update-interval", type=int, default=1)
+    parser.add_argument(
+        "--sac-target-entropy", type=parse_auto_or_float, default="auto"
+    )
     parser.add_argument("--record-videos", action="store_true")
     parser.add_argument("--video-dir", type=Path, default=Path("lunar_lander_videos"))
     parser.add_argument("--video-seeds", type=int, nargs="+", default=None)
@@ -199,21 +240,29 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     return args
 
 
-def make_box2d_env(render_mode: str | None = None):
+def environment_id(engine: str, algorithm: str) -> str:
+    """Return the registered environment ID selected by an algorithm."""
+    key = (
+        "continuous_id" if ACTION_MODE_BY_ALGORITHM[algorithm] == "continuous" else "id"
+    )
+    return str(BENCHMARK_ENVIRONMENT_POLICY[engine][key])
+
+
+def make_box2d_env(render_mode: str | None = None, algorithm: str = "ppo"):
     """Create the registered, time-limited Box2D benchmark environment."""
     gym = importlib.import_module("gymnasium")
     return gym.make(
-        BENCHMARK_ENVIRONMENT_POLICY["box2d"]["id"],
+        environment_id("box2d", algorithm),
         disable_env_checker=True,
         render_mode=render_mode,
     )
 
 
-def make_pymunk_env(render_mode: str | None = None):
+def make_pymunk_env(render_mode: str | None = None, algorithm: str = "ppo"):
     """Create the registered, time-limited Pymunk benchmark environment."""
     gym = importlib.import_module("gymnasium")
     return gym.make(
-        BENCHMARK_ENVIRONMENT_POLICY["pymunk"]["id"],
+        environment_id("pymunk", algorithm),
         disable_env_checker=True,
         render_mode=render_mode,
     )
@@ -245,6 +294,7 @@ class EvaluationResult:
     early_action_counts: str
     middle_action_counts: str
     late_action_counts: str
+    continuous_action_diagnostics: str
     episodes: list[dict[str, float | int | bool | str | None]]
     settle_steps: list[dict[str, float | int | str]]
 
@@ -311,7 +361,7 @@ class RewardDecomposition:
     def add_step(
         self,
         observation: np.ndarray,
-        action: int,
+        action: int | np.ndarray,
         reward: float,
         terminated: bool,
     ) -> None:
@@ -326,8 +376,9 @@ class RewardDecomposition:
                 self.position_velocity_shaping += float(delta[0])
                 self.angle_shaping += float(delta[1])
                 self.leg_contact_shaping += float(delta[2])
-            self.main_engine_penalty -= 0.30 if action == 2 else 0.0
-            self.side_engine_penalty -= 0.03 if action in (1, 3) else 0.0
+            main_power, side_power = engine_powers(action)
+            self.main_engine_penalty -= 0.30 * main_power
+            self.side_engine_penalty -= 0.03 * side_power
         self.previous_shaping = current_shaping
 
     def as_dict(self) -> dict[str, float]:
@@ -342,6 +393,80 @@ class RewardDecomposition:
         }
 
 
+def engine_powers(action: int | np.ndarray) -> tuple[float, float]:
+    """Reconstruct public LunarLander engine powers from an action."""
+    if np.isscalar(action):
+        action_int = int(action)
+        return float(action_int == 2), float(action_int in (1, 3))
+
+    continuous_action = np.asarray(action, dtype=np.float64).reshape(-1)
+    if continuous_action.shape != (2,):
+        raise ValueError("Continuous LunarLander actions must have shape (2,)")
+    main_power = (
+        float((np.clip(continuous_action[0], 0.0, 1.0) + 1.0) * 0.5)
+        if continuous_action[0] > 0.0
+        else 0.0
+    )
+    side_power = (
+        float(np.clip(abs(continuous_action[1]), 0.5, 1.0))
+        if abs(continuous_action[1]) > 0.5
+        else 0.0
+    )
+    return main_power, side_power
+
+
+CONTINUOUS_ACTION_DIAGNOSTIC_KEYS = (
+    "main_engine_activation_count",
+    "mean_active_main_power",
+    "left_side_engine_activation_count",
+    "right_side_engine_activation_count",
+    "mean_active_side_power",
+    "action_0_mean",
+    "action_0_std",
+    "action_1_mean",
+    "action_1_std",
+    "boundary_saturation_frequency",
+)
+
+
+def continuous_action_diagnostics(
+    actions: Sequence[np.ndarray],
+) -> dict[str, float | int]:
+    """Summarize continuous controls using a stable, engine-neutral schema."""
+    if not actions:
+        return {key: 0 for key in CONTINUOUS_ACTION_DIAGNOSTIC_KEYS}
+    array = np.asarray(actions, dtype=np.float64).reshape(-1, 2)
+    main_powers = [engine_powers(action)[0] for action in array]
+    side_powers = [engine_powers(action)[1] for action in array]
+    active_main = [power for power in main_powers if power > 0.0]
+    active_side = [power for power in side_powers if power > 0.0]
+    return {
+        "main_engine_activation_count": len(active_main),
+        "mean_active_main_power": float(np.mean(active_main)) if active_main else 0.0,
+        "left_side_engine_activation_count": int(np.sum(array[:, 1] < -0.5)),
+        "right_side_engine_activation_count": int(np.sum(array[:, 1] > 0.5)),
+        "mean_active_side_power": float(np.mean(active_side)) if active_side else 0.0,
+        "action_0_mean": float(np.mean(array[:, 0])),
+        "action_0_std": float(np.std(array[:, 0])),
+        "action_1_mean": float(np.mean(array[:, 1])),
+        "action_1_std": float(np.std(array[:, 1])),
+        # This measures actor outputs at either declared action-space boundary.
+        "boundary_saturation_frequency": float(
+            np.mean(np.any(np.abs(array) >= 1.0, axis=1))
+        ),
+    }
+
+
+def action_for_environment(action: Any, action_mode: str) -> int | np.ndarray:
+    """Normalize an SB3 prediction for the selected LunarLander action space."""
+    if action_mode == "discrete":
+        return int(action)
+    action_array = np.asarray(action, dtype=np.float32).reshape(-1)
+    if action_array.shape != (2,):
+        raise ValueError("SAC must predict a continuous action with shape (2,)")
+    return action_array
+
+
 def evaluate_policy(
     model,
     make_env: Callable[..., Any],
@@ -352,6 +477,7 @@ def evaluate_policy(
     evaluation_seeds: Sequence[int] | None = None,
     bootstrap_samples: int = 2_000,
     engine: str | None = None,
+    action_mode: str = "discrete",
 ) -> EvaluationResult:
     """Run deterministic episodes using one shared external seed list."""
     if evaluation_seeds is None:
@@ -372,6 +498,7 @@ def evaluate_policy(
     early_action_counts = Counter()
     middle_action_counts = Counter()
     late_action_counts = Counter()
+    all_continuous_actions: list[np.ndarray] = []
 
     for episode, evaluation_seed in enumerate(evaluation_seeds):
         env = make_env()
@@ -385,25 +512,30 @@ def evaluate_policy(
         episode_return = 0.0
         episode_length = 0
         final_info = {}
-        episode_actions = []
+        episode_actions: list[int | np.ndarray] = []
         recent_physics_diagnostics = deque(maxlen=100)
 
         while True:
             action, _ = model.predict(observation, deterministic=True)
-            action_int = int(action)
-            action_counts[action_int] += 1
-            episode_actions.append(action_int)
-            observation, reward, terminated, truncated, final_info = env.step(action)
+            env_action = action_for_environment(action, action_mode)
+            if action_mode == "discrete":
+                action_counts[int(env_action)] += 1
+            else:
+                all_continuous_actions.append(np.asarray(env_action).copy())
+            episode_actions.append(env_action)
+            observation, reward, terminated, truncated, final_info = env.step(
+                env_action
+            )
             unwrapped_env = env.unwrapped
             demo = getattr(unwrapped_env, "demo", None)
-            if demo is not None:
+            if demo is not None and action_mode == "discrete":
                 diagnostic_function = getattr(
                     demo, "physics_diagnostics", physics_diagnostics
                 )
                 physics_row = (
-                    diagnostic_function(action_int)
+                    diagnostic_function(int(env_action))
                     if diagnostic_function is not physics_diagnostics
-                    else diagnostic_function(demo, action_int)
+                    else diagnostic_function(demo, int(env_action))
                 )
                 physics_row["episode_step"] = episode_length + 1
                 physics_row["stable_condition_counter"] = int(
@@ -411,7 +543,7 @@ def evaluate_policy(
                 )
                 recent_physics_diagnostics.append(physics_row)
             reward_decomposition.add_step(
-                observation, action_int, float(reward), terminated
+                observation, env_action, float(reward), terminated
             )
             episode_return += float(reward)
             episode_length += 1
@@ -421,7 +553,7 @@ def evaluate_policy(
 
         n_actions = len(episode_actions)
 
-        if n_actions > 0:
+        if n_actions > 0 and action_mode == "discrete":
             early_end = max(1, n_actions // 4)
             late_start = max(early_end, (3 * n_actions) // 4)
 
@@ -461,13 +593,16 @@ def evaluate_policy(
                 )
             )
             for settle_step in range(1, post_landing_settle_steps + 1):
+                settle_action = (
+                    0 if action_mode == "discrete" else np.zeros(2, dtype=np.float32)
+                )
                 (
                     observation,
                     settle_reward,
                     settle_terminated,
                     settle_truncated,
                     _,
-                ) = env.step(0)
+                ) = env.step(settle_action)
                 settle_reason = classify_episode(
                     observation,
                     terminal_reward=float(settle_reward),
@@ -494,7 +629,21 @@ def evaluate_policy(
                 "environment_success": episode_success,
                 "termination_reason": outcome,
                 "outcome": outcome,
-                "action_counts": str(dict(Counter(episode_actions))),
+                "action_counts": (
+                    str(dict(Counter(episode_actions)))
+                    if action_mode == "discrete"
+                    else "{}"
+                ),
+                "continuous_action_diagnostics": (
+                    json.dumps(
+                        continuous_action_diagnostics(
+                            [np.asarray(action) for action in episode_actions]
+                        ),
+                        sort_keys=True,
+                    )
+                    if action_mode == "continuous"
+                    else "{}"
+                ),
                 "final_observation": json.dumps(terminal_observation.tolist()),
                 "time_limit_final_100": json.dumps(
                     list(recent_physics_diagnostics) if outcome == "time_limit" else []
@@ -546,6 +695,13 @@ def evaluate_policy(
         early_action_counts=str(dict(early_action_counts)),
         middle_action_counts=str(dict(middle_action_counts)),
         late_action_counts=str(dict(late_action_counts)),
+        continuous_action_diagnostics=(
+            json.dumps(
+                continuous_action_diagnostics(all_continuous_actions), sort_keys=True
+            )
+            if action_mode == "continuous"
+            else "{}"
+        ),
         episodes=episode_logs,
         settle_steps=settle_logs,
     )
@@ -577,6 +733,7 @@ def make_settle_row(
 
 def make_algorithm(args: argparse.Namespace, env: Any, seed: int):
     """Create the requested SB3 algorithm with script defaults."""
+    validate_algorithm_action_space(args.algorithm, env.action_space)
     if args.algorithm == "ppo":
         from stable_baselines3 import PPO
 
@@ -615,7 +772,52 @@ def make_algorithm(args: argparse.Namespace, env: Any, seed: int):
             verbose=0,
         )
 
+    if args.algorithm == "sac":
+        from stable_baselines3 import SAC
+
+        return SAC(
+            "MlpPolicy",
+            env,
+            seed=seed,
+            learning_rate=args.sac_learning_rate,
+            buffer_size=args.sac_buffer_size,
+            learning_starts=args.sac_learning_starts,
+            batch_size=args.sac_batch_size,
+            tau=args.sac_tau,
+            gamma=args.sac_gamma,
+            train_freq=args.sac_train_freq,
+            gradient_steps=args.sac_gradient_steps,
+            ent_coef=args.sac_ent_coef,
+            target_update_interval=args.sac_target_update_interval,
+            target_entropy=args.sac_target_entropy,
+            action_noise=None,
+            replay_buffer_class=None,
+            replay_buffer_kwargs=None,
+            optimize_memory_usage=False,
+            n_steps=1,
+            use_sde=False,
+            sde_sample_freq=-1,
+            use_sde_at_warmup=False,
+            policy_kwargs=None,
+            verbose=0,
+        )
+
     raise ValueError(f"Unsupported algorithm: {args.algorithm}")
+
+
+def validate_algorithm_action_space(algorithm: str, action_space: Any) -> None:
+    """Reject an algorithm paired with the wrong LunarLander action-space type."""
+    gym = importlib.import_module("gymnasium")
+    expected_mode = ACTION_MODE_BY_ALGORITHM[algorithm]
+    valid = (
+        isinstance(action_space, gym.spaces.Discrete)
+        if expected_mode == "discrete"
+        else isinstance(action_space, gym.spaces.Box) and action_space.shape == (2,)
+    )
+    if not valid:
+        raise ValueError(
+            f"{algorithm} requires the {expected_mode} LunarLander action space"
+        )
 
 
 def train_and_evaluate(
@@ -769,6 +971,7 @@ def train_and_evaluate(
                 evaluation_seeds=args.evaluation_seeds,
                 bootstrap_samples=args.bootstrap_samples,
                 engine=engine,
+                action_mode=ACTION_MODE_BY_ALGORITHM[args.algorithm],
             )
             row = {
                 "algorithm": args.algorithm,
@@ -804,6 +1007,7 @@ def train_and_evaluate(
                 "early_action_counts": result.early_action_counts,
                 "middle_action_counts": result.middle_action_counts,
                 "late_action_counts": result.late_action_counts,
+                "continuous_action_diagnostics": result.continuous_action_diagnostics,
             }
             rows.append(row)
             if output_csv is not None:
@@ -823,6 +1027,9 @@ def train_and_evaluate(
                     "termination_reason": episode["termination_reason"],
                     "final_observation": episode["final_observation"],
                     "action_counts": episode["action_counts"],
+                    "continuous_action_diagnostics": episode[
+                        "continuous_action_diagnostics"
+                    ],
                     "time_limit_final_100": episode["time_limit_final_100"],
                     "position_velocity_shaping": episode["position_velocity_shaping"],
                     "angle_shaping": episode["angle_shaping"],
@@ -872,6 +1079,8 @@ def train_and_evaluate(
                     f"outcome={episode['outcome']} "
                     f"termination_reason={episode['termination_reason']} "
                     f"action_counts={episode['action_counts']} "
+                    f"continuous_action_diagnostics="
+                    f"{episode['continuous_action_diagnostics']} "
                     f"final_observation={episode['final_observation']} "
                     f"position_velocity_shaping="
                     f"{episode['position_velocity_shaping']:.6f} "
@@ -1020,6 +1229,7 @@ CSV_FIELDNAMES = [
     "early_action_counts",
     "middle_action_counts",
     "late_action_counts",
+    "continuous_action_diagnostics",
 ]
 
 EPISODE_CSV_FIELDNAMES = [
@@ -1036,6 +1246,7 @@ EPISODE_CSV_FIELDNAMES = [
     "termination_reason",
     "final_observation",
     "action_counts",
+    "continuous_action_diagnostics",
     "time_limit_final_100",
     "position_velocity_shaping",
     "angle_shaping",
@@ -1473,7 +1684,7 @@ def create_run_manifest(
         for engine in args.engines
     ]
     return {
-        "schema_version": 3,
+        "schema_version": 4,
         "status": "running",
         "started_at": started_at,
         "updated_at": started_at,
@@ -1501,6 +1712,7 @@ def create_run_manifest(
             )
         },
         "algorithm": args.algorithm,
+        "action_mode": ACTION_MODE_BY_ALGORITHM[args.algorithm],
         "resolved_constructor": resolved_constructor_configuration(args),
         "hyperparameters": resolved_constructor_configuration(args),
         "effective_models": {},
@@ -1546,6 +1758,18 @@ def describe_environment(env: Any) -> dict[str, Any]:
     ):
         if hasattr(current, name):
             constructor_arguments[name] = getattr(current, name)
+    action_space = current.action_space
+    action_space_description: dict[str, Any] = {
+        "class": type(action_space).__name__,
+        "module": type(action_space).__module__,
+        "shape": list(action_space.shape),
+        "dtype": str(action_space.dtype),
+    }
+    if hasattr(action_space, "low"):
+        action_space_description["low"] = np.asarray(action_space.low).tolist()
+        action_space_description["high"] = np.asarray(action_space.high).tolist()
+    if hasattr(action_space, "n"):
+        action_space_description["n"] = int(action_space.n)
     return {
         "id": spec.id if spec is not None else None,
         "spec": (
@@ -1563,13 +1787,17 @@ def describe_environment(env: Any) -> dict[str, Any]:
         "base_class": type(current).__name__,
         "base_module": type(current).__module__,
         "constructor_arguments": constructor_arguments,
+        "action_space": action_space_description,
         "internal_max_episode_steps": None,
     }
 
 
 def benchmark_environment_configuration(args: argparse.Namespace) -> dict[str, Any]:
     """Inspect the registered environments selected for this benchmark run."""
-    factories = {"box2d": make_box2d_env, "pymunk": make_pymunk_env}
+    factories = {
+        "box2d": partial(make_box2d_env, algorithm=args.algorithm),
+        "pymunk": partial(make_pymunk_env, algorithm=args.algorithm),
+    }
     environments = {}
     for engine in args.engines:
         env = factories[engine]()
@@ -1579,6 +1807,7 @@ def benchmark_environment_configuration(args: argparse.Namespace) -> dict[str, A
             env.close()
     return {
         "policy": "registered_lunar_lander_v1",
+        "action_mode": ACTION_MODE_BY_ALGORITHM[args.algorithm],
         "engines": list(args.engines),
         "environments": environments,
     }
@@ -1617,23 +1846,47 @@ def resolved_constructor_configuration(args: argparse.Namespace) -> dict[str, An
             "sde_sample_freq": -1,
             "target_kl": None,
         }
+    if args.algorithm == "dqn":
+        return {
+            **common,
+            "learning_rate": args.dqn_learning_rate,
+            "batch_size": args.dqn_batch_size,
+            "buffer_size": args.dqn_buffer_size,
+            "learning_starts": args.dqn_learning_starts,
+            "gamma": args.dqn_gamma,
+            "target_update_interval": args.dqn_target_update_interval,
+            "train_freq": args.dqn_train_freq,
+            "gradient_steps": args.dqn_gradient_steps,
+            "exploration_fraction": args.dqn_exploration_fraction,
+            "exploration_final_eps": args.dqn_exploration_final_eps,
+            "policy_kwargs": {"net_arch": [256, 256]},
+            "replay_buffer_class": None,
+            "replay_buffer_kwargs": None,
+            "optimize_memory_usage": False,
+            "max_grad_norm": 10,
+        }
     return {
         **common,
-        "learning_rate": args.dqn_learning_rate,
-        "batch_size": args.dqn_batch_size,
-        "buffer_size": args.dqn_buffer_size,
-        "learning_starts": args.dqn_learning_starts,
-        "gamma": args.dqn_gamma,
-        "target_update_interval": args.dqn_target_update_interval,
-        "train_freq": args.dqn_train_freq,
-        "gradient_steps": args.dqn_gradient_steps,
-        "exploration_fraction": args.dqn_exploration_fraction,
-        "exploration_final_eps": args.dqn_exploration_final_eps,
-        "policy_kwargs": {"net_arch": [256, 256]},
+        "learning_rate": args.sac_learning_rate,
+        "buffer_size": args.sac_buffer_size,
+        "learning_starts": args.sac_learning_starts,
+        "batch_size": args.sac_batch_size,
+        "tau": args.sac_tau,
+        "gamma": args.sac_gamma,
+        "train_freq": args.sac_train_freq,
+        "gradient_steps": args.sac_gradient_steps,
+        "ent_coef": args.sac_ent_coef,
+        "target_update_interval": args.sac_target_update_interval,
+        "target_entropy": args.sac_target_entropy,
+        "action_noise": None,
         "replay_buffer_class": None,
         "replay_buffer_kwargs": None,
         "optimize_memory_usage": False,
-        "max_grad_norm": 10,
+        "n_steps": 1,
+        "use_sde": False,
+        "sde_sample_freq": -1,
+        "use_sde_at_warmup": False,
+        "policy_kwargs": None,
     }
 
 
@@ -1694,6 +1947,7 @@ def run_configuration_fingerprint(args: argparse.Namespace) -> str:
     """Hash all settings that determine training and evaluation results."""
     configuration = {
         "algorithm": args.algorithm,
+        "action_mode": ACTION_MODE_BY_ALGORITHM[args.algorithm],
         "run_type": args.run_type,
         "train_steps": args.train_steps,
         "eval_freq": args.eval_freq,
@@ -1787,13 +2041,27 @@ def output_artifact_paths(args: argparse.Namespace) -> list[Path | None]:
     return paths
 
 
-def effective_model_configuration(model: Any, env: Any) -> dict[str, Any]:
+def effective_model_configuration(
+    model: Any, env: Any, args: argparse.Namespace | None = None
+) -> dict[str, Any]:
     """Describe the effective SB3 model, policy, optimizer, and wrapped environment."""
     policy = model.policy
     activation = getattr(policy, "activation_fn", None)
     optimizer = getattr(policy, "optimizer", None)
     current = env.envs[0] if hasattr(env, "envs") else env
     environment = describe_environment(current)
+    actor = getattr(model, "actor", None)
+    critic = getattr(model, "critic", None)
+    replay_buffer = getattr(model, "replay_buffer", None)
+    actor_optimizer = getattr(actor, "optimizer", None)
+    critic_optimizer = getattr(critic, "optimizer", None)
+    entropy_optimizer = getattr(model, "ent_coef_optimizer", None)
+    if getattr(model, "log_ent_coef", None) is not None:
+        effective_ent_coef = float(model.log_ent_coef.detach().exp().item())
+    elif getattr(model, "ent_coef_tensor", None) is not None:
+        effective_ent_coef = float(model.ent_coef_tensor.item())
+    else:
+        effective_ent_coef = None
     return {
         "model_class": type(model).__name__,
         "policy_class": type(policy).__name__,
@@ -1810,6 +2078,43 @@ def effective_model_configuration(model: Any, env: Any) -> dict[str, Any]:
         "train_freq": str(getattr(model, "train_freq", None)),
         "gradient_steps": getattr(model, "gradient_steps", None),
         "buffer_size": getattr(model, "buffer_size", None),
+        "tau": getattr(model, "tau", None),
+        "target_update_interval": getattr(model, "target_update_interval", None),
+        "requested_ent_coef": getattr(model, "ent_coef", None),
+        "effective_ent_coef": effective_ent_coef,
+        "requested_target_entropy": (
+            args.sac_target_entropy
+            if args is not None and args.algorithm == "sac"
+            else None
+        ),
+        "effective_target_entropy": getattr(model, "target_entropy", None),
+        "action_noise": (
+            type(model.action_noise).__name__
+            if getattr(model, "action_noise", None) is not None
+            else None
+        ),
+        "use_sde": getattr(model, "use_sde", None),
+        "actor_class": type(actor).__name__ if actor is not None else None,
+        "critic_class": type(critic).__name__ if critic is not None else None,
+        "actor_architecture": getattr(actor, "net_arch", None),
+        "critic_architecture": getattr(policy, "net_arch", None) if critic else None,
+        "actor_optimizer_class": (
+            type(actor_optimizer).__name__ if actor_optimizer is not None else None
+        ),
+        "critic_optimizer_class": (
+            type(critic_optimizer).__name__ if critic_optimizer is not None else None
+        ),
+        "entropy_optimizer_class": (
+            type(entropy_optimizer).__name__ if entropy_optimizer is not None else None
+        ),
+        "critic_count": len(getattr(critic, "q_networks", [])) if critic else None,
+        "replay_buffer_class": (
+            type(replay_buffer).__name__ if replay_buffer is not None else None
+        ),
+        "replay_buffer_capacity": getattr(replay_buffer, "buffer_size", None),
+        "replay_buffer_handles_timeouts": getattr(
+            replay_buffer, "handle_timeout_termination", None
+        ),
         "environment_class": environment["base_class"],
         "wrappers": environment["wrapper_chain"],
         "time_limit_max_episode_steps": environment["effective_max_episode_steps"],
@@ -1894,8 +2199,8 @@ def main() -> None:
     """Run the comparison."""
     args = parse_args()
     available_engines = {
-        "box2d": make_box2d_env,
-        "pymunk": make_pymunk_env,
+        "box2d": partial(make_box2d_env, algorithm=args.algorithm),
+        "pymunk": partial(make_pymunk_env, algorithm=args.algorithm),
     }
     engines = {name: available_engines[name] for name in args.engines}
 
@@ -1910,8 +2215,11 @@ def main() -> None:
         if not args.manifest_json.exists():
             raise RuntimeError("Cannot resume without an existing manifest")
         manifest = json.loads(args.manifest_json.read_text())
-        if manifest.get("schema_version") != 3:
-            raise RuntimeError("Cannot resume an incompatible manifest schema")
+        if manifest.get("schema_version") != 4:
+            raise RuntimeError(
+                "Cannot resume an incompatible manifest schema; schema 3 runs "
+                "cannot be migrated to the action-mode-aware schema 4"
+            )
         if manifest.get("status") == "completed":
             raise RuntimeError("Run is already completed")
         if manifest.get(
@@ -2031,7 +2339,7 @@ def main() -> None:
                     )
                 models[(args.algorithm, engine, seed)] = model
                 manifest["effective_models"][f"{engine}:{seed}"] = (
-                    effective_model_configuration(model, model.get_env())
+                    effective_model_configuration(model, model.get_env(), args)
                 )
                 manifest["completed_pairs"].append(pair)
                 completed.add(pair_key)
