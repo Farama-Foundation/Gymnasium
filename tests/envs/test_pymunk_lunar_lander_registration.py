@@ -159,6 +159,9 @@ def test_lunar_lander_v4_pickles_all_constructor_arguments(render_mode):
     assert restored.turbulence_power == 0.75
     assert restored.solver_iterations == 30
 
+    restored.reset(seed=123)
+    assert restored.demo.space.iterations == 30
+
 
 def test_import_gymnasium_and_v4_spec_do_not_require_pymunk():
     code = """

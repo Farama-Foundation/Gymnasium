@@ -462,6 +462,27 @@ def test_solver_iterations_are_configurable_without_changing_default():
     assert diagnostic_env.demo.space.iterations == 30
 
 
+@pytest.mark.parametrize("solver_iterations", [1, 30, 180])
+def test_solver_iterations_accept_positive_integers(solver_iterations):
+    env = ExperimentalPymunkLunarLanderEnv(solver_iterations=solver_iterations)
+    env.reset(seed=123)
+
+    assert env.solver_iterations == solver_iterations
+    assert env.demo.space.iterations == solver_iterations
+
+
+@pytest.mark.parametrize("solver_iterations", [0, -1])
+def test_solver_iterations_reject_nonpositive_values(solver_iterations):
+    with pytest.raises(ValueError, match="must be greater than zero"):
+        ExperimentalPymunkLunarLanderEnv(solver_iterations=solver_iterations)
+
+
+@pytest.mark.parametrize("solver_iterations", [1.5, True, "30", None])
+def test_solver_iterations_reject_noninteger_values(solver_iterations):
+    with pytest.raises(TypeError, match="must be a positive integer"):
+        ExperimentalPymunkLunarLanderEnv(solver_iterations=solver_iterations)
+
+
 @requires_box2d
 def test_selected_solver_improves_trajectory_error_over_30_iterations():
     from scripts.sweep_pymunk_lunar_lander_solver_iterations import (
@@ -796,6 +817,29 @@ def test_leg_contacts_become_active_after_normal_landing():
     assert not state.crashed
 
 
+def test_leg_contact_callbacks_are_balanced_and_preserve_collision_response():
+    demo = PymunkLunarLanderDemo(seed=42)
+    place_in_resting_pose(demo)
+
+    state = demo.step(0)
+
+    assert state.left_leg_contact
+    assert state.right_leg_contact
+    ground_y = float(demo.terrain.smooth_y[CHUNKS // 2])
+    for leg in (demo.left_leg_body, demo.right_leg_body):
+        foot_y = min(
+            leg.local_to_world((x, -LEG_HEIGHT / 2)).y
+            for x in (-LEG_WIDTH / 2, LEG_WIDTH / 2)
+        )
+        assert foot_y >= ground_y - 0.02
+
+    left_shape = next(iter(demo.left_leg_body.shapes))
+    demo.space.remove(left_shape)
+
+    assert not demo.left_leg_contact
+    assert demo.right_leg_contact
+
+
 def test_hull_contact_sets_crash_flag():
     demo = PymunkLunarLanderDemo(seed=123)
     demo.lander_body.position = (
@@ -809,6 +853,86 @@ def test_hull_contact_sets_crash_flag():
     state = demo.step(0)
 
     assert state.crashed
+
+
+def test_hull_collision_callback_preserves_collision_response():
+    demo = PymunkLunarLanderDemo(seed=123)
+    ground_y = float(demo.terrain.smooth_y[CHUNKS // 2])
+    demo.lander_body.position = (demo.world_width / 2.0, ground_y + 1.0)
+    demo.lander_body.velocity = (0.0, -5.0)
+    demo.left_leg_body.position = (0.0, demo.world_height)
+    demo.right_leg_body.position = (demo.world_width, demo.world_height)
+
+    for _ in range(40):
+        state = demo.step(0)
+        if state.crashed:
+            break
+
+    assert state.crashed
+    for _ in range(20):
+        demo.step(0)
+    assert demo.lander_body.position.y >= ground_y + 0.25
+    assert abs(demo.lander_body.velocity.y) < 0.01
+
+
+def test_default_fixed_action_trajectory_matches_c28b7064c():
+    env = ExperimentalPymunkLunarLanderEnv()
+    observation, _ = env.reset(seed=123)
+    np.testing.assert_allclose(
+        observation,
+        [
+            0.0053343717,
+            1.402869,
+            0.52415466,
+            -0.3216238,
+            -0.005029867,
+            -0.10059734,
+            0.0,
+            0.0,
+        ],
+        rtol=0.0,
+        atol=1e-7,
+    )
+    actions = [0, 2, 1, 0, 3, 2, 0, 0]
+    rewards = []
+    flags = []
+
+    for action in actions:
+        observation, reward, terminated, truncated, info = env.step(action)
+        rewards.append(reward)
+        flags.append((terminated, truncated, info["termination_reason"]))
+
+    np.testing.assert_allclose(
+        observation,
+        [
+            0.046894807,
+            1.3378954,
+            0.5309858,
+            -0.44626433,
+            -0.040800195,
+            -0.09018384,
+            0.0,
+            0.0,
+        ],
+        rtol=0.0,
+        atol=1e-7,
+    )
+    np.testing.assert_allclose(
+        rewards,
+        [
+            -2.33413696,
+            1.59857483,
+            -0.07553223,
+            -1.07142639,
+            -1.89422729,
+            0.4454071,
+            -1.17303467,
+            -1.18130493,
+        ],
+        rtol=0.0,
+        atol=1e-7,
+    )
+    assert flags == [(False, False, None)] * len(actions)
 
 
 def test_experimental_env_reset_and_step_contracts():

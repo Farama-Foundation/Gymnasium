@@ -77,6 +77,20 @@ LANDER_POLY = [
     (14, 17),
 ]
 
+_RENDER_MODES = ("human", "rgb_array")
+
+
+def _validate_solver_iterations(value: object) -> int:
+    """Validate and return a positive Pymunk solver iteration count."""
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise TypeError(
+            "solver_iterations must be a positive integer, "
+            f"got {value!r} ({type(value).__name__})"
+        )
+    if value < 1:
+        raise ValueError(f"solver_iterations must be greater than zero, got {value}")
+    return value
+
 
 @dataclass
 class DemoState:
@@ -290,6 +304,7 @@ class PymunkLunarLanderDemo:
         gravity: float = -10.0,
     ):
         """Create a seeded Pymunk LunarLander demonstration world."""
+        solver_iterations = _validate_solver_iterations(solver_iterations)
         self.world_width = VIEWPORT_WIDTH / SCALE
         self.world_height = VIEWPORT_HEIGHT / SCALE
         rng = np.random.default_rng(seed) if rng is None else rng
@@ -370,23 +385,19 @@ class PymunkLunarLanderDemo:
 
     def _add_collision_handlers(self) -> None:
         def begin_lander_contact(
-            arbiter: pymunk.Arbiter,
+            _arbiter: pymunk.Arbiter,
             _collision_space: pymunk.Space,
             _data: dict,
-        ) -> bool:
+        ) -> None:
             self.crashed = True
-
-            return True
 
         def begin_leg_contact(
             _arbiter: pymunk.Arbiter,
             _collision_space: pymunk.Space,
             data: dict,
-        ) -> bool:
+        ) -> None:
             collision_type = data["collision_type"]
             self.leg_contacts[collision_type] += 1
-
-            return True
 
         def separate_leg_contact(
             _arbiter: pymunk.Arbiter,
@@ -675,8 +686,9 @@ class LunarLander(Env, EzPickle):
       are recommended; the default is 15.
     - `turbulence_power` controls maximum rotational turbulence. Values from 0
       to 2 are recommended; the default is 1.5.
-    - `solver_iterations` sets the number of Pymunk constraint-solver iterations
-      per physics step. The calibrated default is 180.
+    - `solver_iterations` must be a positive integer and sets the number of
+      Pymunk constraint-solver iterations per physics step. The calibrated
+      default is 180.
 
     ## Version History
     - v4: Reimplemented LunarLander with Pymunk. Both discrete
@@ -699,7 +711,7 @@ class LunarLander(Env, EzPickle):
     semantics remain comparable without requiring trajectory identity.
     """
 
-    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": FPS}
+    metadata = {"render_modes": list(_RENDER_MODES), "render_fps": FPS}
     physics_class = PymunkLunarLanderDemo
 
     def __init__(
@@ -713,6 +725,7 @@ class LunarLander(Env, EzPickle):
         solver_iterations: int = 6 * 30,
     ):
         """Create a Pymunk LunarLander environment."""
+        solver_iterations = _validate_solver_iterations(solver_iterations)
         EzPickle.__init__(
             self,
             render_mode=render_mode,
@@ -734,7 +747,7 @@ class LunarLander(Env, EzPickle):
             logger.warn(
                 f"turbulence_power value is recommended to be between 0.0 and 2.0, (current value: {turbulence_power})"
             )
-        if render_mode is not None and render_mode not in self.metadata["render_modes"]:
+        if render_mode is not None and render_mode not in _RENDER_MODES:
             raise ValueError(f"Unsupported render_mode: {render_mode}")
 
         self.render_mode = render_mode
