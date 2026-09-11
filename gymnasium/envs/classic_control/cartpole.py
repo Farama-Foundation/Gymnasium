@@ -161,6 +161,11 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
         self.steps_beyond_terminated = None
 
+    def _get_obs(self):
+        """Return the current environment observation."""
+        assert self.state is not None
+        return np.array(self.state, dtype=np.float32)
+
     def step(self, action):
         assert self.action_space.contains(action), (
             f"{action!r} ({type(action)}) invalid"
@@ -223,7 +228,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
             self.render()
 
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
-        return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
+        return self._get_obs(), reward, terminated, False, {}
 
     def reset(
         self,
@@ -244,7 +249,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
         if self.render_mode == "human":
             self.render()
-        return np.array(self.state, dtype=np.float32), {}
+        return self._get_obs(), {}
 
     def render(self):
         if self.render_mode is None:
