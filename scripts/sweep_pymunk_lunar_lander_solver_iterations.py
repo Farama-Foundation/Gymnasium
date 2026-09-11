@@ -22,6 +22,7 @@ from scripts.analyze_lunar_lander_angular_dynamics import (  # noqa: E402
     make_unwrapped_pymunk_env,
 )
 from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
+    articulated_angular_momentum,
     physics_diagnostics,
 )
 
@@ -110,7 +111,7 @@ def rollout(
         env = make_unwrapped_pymunk_env(solver_iterations=solver_iterations)
     observation, _ = env.reset(seed=seed)
     if engine == "pymunk" and motor_max_force is not None:
-        for constraint in env.demo.space.constraints:
+        for constraint in env._physics.space.constraints:
             if isinstance(constraint, pymunk.SimpleMotor):
                 constraint.max_force = motor_max_force
     previous = shaping_parts(observation) if engine == "box2d" else None
@@ -169,9 +170,12 @@ def rollout(
                 momentum,
             ]
         else:
-            demo = env.demo
-            diagnostics = physics_diagnostics(demo, action)
-            hull, legs = demo.lander_body, [demo.left_leg_body, demo.right_leg_body]
+            physics = env._physics
+            diagnostics = physics_diagnostics(physics, action)
+            hull, legs = (
+                physics.lander_body,
+                [physics.left_leg_body, physics.right_leg_body],
+            )
             motor_impulse = np.mean(
                 [diagnostics["left_motor_impulse"], diagnostics["right_motor_impulse"]]
             )
@@ -192,7 +196,7 @@ def rollout(
                 legs[0].angular_velocity,
                 legs[1].angle,
                 legs[1].angular_velocity,
-                demo.articulated_angular_momentum(),
+                articulated_angular_momentum(physics),
             ]
         row = dict(zip(STATE_COMPONENTS, map(float, values), strict=True))
         row.update(dict(zip(REWARD_COMPONENTS[1:], cumulative, strict=True)))

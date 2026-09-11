@@ -37,17 +37,15 @@ from gymnasium.envs.pymunk.lunar_lander import (  # noqa: E402
     TERRAIN_FRICTION,
     VIEWPORT_HEIGHT,
     VIEWPORT_WIDTH,
-    PymunkLunarLanderDemo,
+    LunarLander,
+    _LunarLanderPhysics,
     body_center_of_mass_world,
     body_origin_world,
 )
-from gymnasium.envs.pymunk.lunar_lander import (  # noqa: E402
-    LunarLander as ExperimentalPymunkLunarLanderEnv,
-)
 from tests.envs.pymunk_lunar_lander_test_helpers import (  # noqa: E402
-    DiagnosticPymunkLunarLanderDemo,
+    DiagnosticLunarLanderPhysics,
     box_impulse,
-    diagnostic_demo,
+    diagnostic_physics,
     physics_diagnostics,
 )
 
@@ -78,7 +76,7 @@ def test_environment_test_module_does_not_import_development_scripts():
 def test_pymunk_lunar_lander_package_import():
     from gymnasium.envs.pymunk import LunarLander as PackagedLunarLander
 
-    assert PackagedLunarLander is ExperimentalPymunkLunarLanderEnv
+    assert PackagedLunarLander is LunarLander
 
 
 def test_pymunk_package_reports_missing_optional_dependency():
@@ -104,30 +102,30 @@ else:
 
 
 def test_pymunk_lunar_lander_passes_environment_checker():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
 
     check_env(env)
     env.close()
 
 
-def place_in_resting_pose(demo):
+def place_in_resting_pose(physics):
     """Place the articulated lander just above the flat helipad."""
     relative_angle = 0.4 - 0.05
     left_anchor = pymunk.Vec2d(-LEG_AWAY, LEG_DOWN).rotated(relative_angle)
     left_foot = pymunk.Vec2d(0.0, -LEG_HEIGHT / 2).rotated(relative_angle)
-    ground_y = float(demo.terrain.smooth_y[CHUNKS // 2])
+    ground_y = float(physics.terrain.smooth_y[CHUNKS // 2])
     hull_y = ground_y + left_anchor.y - left_foot.y + 0.01
 
-    demo.lander_body.position = (demo.world_width / 2, hull_y)
-    demo.lander_body.angle = 0.0
-    demo.lander_body.velocity = (0.0, 0.0)
-    demo.lander_body.angular_velocity = 0.0
+    physics.lander_body.position = (physics.world_width / 2, hull_y)
+    physics.lander_body.angle = 0.0
+    physics.lander_body.velocity = (0.0, 0.0)
+    physics.lander_body.angular_velocity = 0.0
     for body, side, angle in [
-        (demo.left_leg_body, -1, relative_angle),
-        (demo.right_leg_body, 1, -relative_angle),
+        (physics.left_leg_body, -1, relative_angle),
+        (physics.right_leg_body, 1, -relative_angle),
     ]:
         body.angle = angle
-        body.position = demo.lander_body.position - pymunk.Vec2d(
+        body.position = physics.lander_body.position - pymunk.Vec2d(
             side * LEG_AWAY, LEG_DOWN
         ).rotated(angle)
         body.velocity = (0.0, 0.0)
@@ -135,26 +133,26 @@ def place_in_resting_pose(demo):
 
 
 def test_geometry_matches_scaled_box2d_definitions():
-    demo = PymunkLunarLanderDemo(seed=123)
+    physics = _LunarLanderPhysics(seed=123)
     hull_center = np.array([VIEWPORT_WIDTH / SCALE / 2, VIEWPORT_HEIGHT / SCALE])
 
-    assert np.allclose(demo.lander_body.position, hull_center)
+    assert np.allclose(physics.lander_body.position, hull_center)
     assert min(y for _, y in LANDER_POLY) / SCALE == pytest.approx(-10 / SCALE)
 
     pivots = {
         constraint.b: constraint
-        for constraint in demo.space.constraints
+        for constraint in physics.space.constraints
         if isinstance(constraint, pymunk.PivotJoint)
     }
     for leg, side in [
-        (demo.left_leg_body, -1),
-        (demo.right_leg_body, 1),
+        (physics.left_leg_body, -1),
+        (physics.right_leg_body, 1),
     ]:
         reference_angle = side * 0.05
         joint_angle = -side * 0.4
         expected_angle = reference_angle + joint_angle
         local_anchor = pymunk.Vec2d(side * LEG_AWAY, LEG_DOWN)
-        expected_center = demo.lander_body.position - local_anchor.rotated(
+        expected_center = physics.lander_body.position - local_anchor.rotated(
             expected_angle
         )
         expected_foot_endpoints = [
@@ -169,7 +167,9 @@ def test_geometry_matches_scaled_box2d_definitions():
 
         assert leg.angle == pytest.approx(expected_angle)
         assert np.allclose(leg.position, expected_center)
-        assert np.allclose(demo.lander_body.local_to_world(pivot.anchor_a), hull_center)
+        assert np.allclose(
+            physics.lander_body.local_to_world(pivot.anchor_a), hull_center
+        )
         assert np.allclose(leg.local_to_world(pivot.anchor_b), hull_center)
         assert np.allclose(actual_foot_endpoints, expected_foot_endpoints)
 
@@ -178,9 +178,9 @@ def test_geometry_matches_scaled_box2d_definitions():
 def test_hull_local_center_origin_and_center_of_mass_match_box2d():
     box_env = gym.make("LunarLander-v3", disable_env_checker=True)
     box_env.reset(seed=123)
-    demo = PymunkLunarLanderDemo(seed=123)
+    physics = _LunarLanderPhysics(seed=123)
     box_hull = box_env.unwrapped.lander
-    pymunk_hull = demo.lander_body
+    pymunk_hull = physics.lander_body
 
     assert tuple(pymunk_hull.center_of_gravity) == pytest.approx(
         tuple(box_hull.localCenter), abs=1e-8
@@ -200,7 +200,7 @@ def test_hull_local_center_origin_and_center_of_mass_match_box2d():
 
 
 def test_hull_world_vertices_are_unchanged_by_center_of_gravity():
-    corrected = PymunkLunarLanderDemo(seed=123).lander_body
+    corrected = _LunarLanderPhysics(seed=123).lander_body
     corrected.position = (10.0, 7.0)
     corrected.angle = 0.2
     baseline = pymunk.Body(corrected.mass, corrected.moment)
@@ -221,10 +221,10 @@ def test_hull_world_vertices_are_unchanged_by_center_of_gravity():
 
 
 def test_observation_position_uses_body_origin_not_center_of_mass():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     env.reset(seed=123)
-    origin = body_origin_world(env.demo.lander_body)
-    expected_y = (origin.y - (env.demo.terrain.helipad_y + LEG_DOWN)) / (
+    origin = body_origin_world(env._physics.lander_body)
+    expected_y = (origin.y - (env._physics.terrain.helipad_y + LEG_DOWN)) / (
         VIEWPORT_HEIGHT / SCALE / 2
     )
 
@@ -232,14 +232,16 @@ def test_observation_position_uses_body_origin_not_center_of_mass():
 
     assert observation[0] == pytest.approx((origin.x - 10.0) / 10.0)
     assert observation[1] == pytest.approx(expected_y)
-    assert body_center_of_mass_world(env.demo.lander_body).y != pytest.approx(origin.y)
+    assert body_center_of_mass_world(env._physics.lander_body).y != pytest.approx(
+        origin.y
+    )
 
 
 def test_terrain_uses_zero_radius_box2d_edges():
-    demo = PymunkLunarLanderDemo(seed=123)
+    physics = _LunarLanderPhysics(seed=123)
     terrain_segments = [
         shape
-        for shape in demo.space.static_body.shapes
+        for shape in physics.space.static_body.shapes
         if isinstance(shape, pymunk.Segment)
     ]
 
@@ -248,15 +250,15 @@ def test_terrain_uses_zero_radius_box2d_edges():
 
 
 def test_material_friction_matches_box2d_effective_contacts():
-    demo = PymunkLunarLanderDemo(seed=123)
+    physics = _LunarLanderPhysics(seed=123)
     terrain = next(
         shape
-        for shape in demo.space.static_body.shapes
+        for shape in physics.space.static_body.shapes
         if isinstance(shape, pymunk.Segment)
     )
-    hull = next(iter(demo.lander_body.shapes))
-    left_leg = next(iter(demo.left_leg_body.shapes))
-    right_leg = next(iter(demo.right_leg_body.shapes))
+    hull = next(iter(physics.lander_body.shapes))
+    left_leg = next(iter(physics.left_leg_body.shapes))
+    right_leg = next(iter(physics.right_leg_body.shapes))
 
     assert terrain.friction == TERRAIN_FRICTION == pytest.approx(0.1)
     assert hull.friction == HULL_FRICTION == pytest.approx(1.0)
@@ -270,11 +272,11 @@ def test_material_friction_matches_box2d_effective_contacts():
 def test_damping_matches_box2d_no_damping_configuration():
     world = Box2D.b2World(gravity=(0.0, -10.0))
     box_body = world.CreateDynamicBody()
-    demo = PymunkLunarLanderDemo(seed=123)
+    physics = _LunarLanderPhysics(seed=123)
 
     assert box_body.linearDamping == 0.0
     assert box_body.angularDamping == 0.0
-    assert demo.space.damping == 1.0
+    assert physics.space.damping == 1.0
 
 
 def simulate_box2d_stalled_motor(
@@ -457,10 +459,10 @@ def test_flat_ground_slide_matches_box2d_effective_friction():
 
 
 def test_sleep_configuration_matches_box2d_style_behavior():
-    demo = PymunkLunarLanderDemo(seed=123)
+    physics = _LunarLanderPhysics(seed=123)
 
-    assert demo.space.idle_speed_threshold == IDLE_SPEED_THRESHOLD
-    assert demo.space.sleep_time_threshold == SLEEP_TIME_THRESHOLD
+    assert physics.space.idle_speed_threshold == IDLE_SPEED_THRESHOLD
+    assert physics.space.sleep_time_threshold == SLEEP_TIME_THRESHOLD
     assert SLEEP_TIME_THRESHOLD == pytest.approx(0.5)
     assert STABLE_LINEAR_SPEED_THRESHOLD == pytest.approx(0.01)
     assert STABLE_ANGULAR_SPEED_THRESHOLD == pytest.approx(np.deg2rad(2.0))
@@ -468,54 +470,54 @@ def test_sleep_configuration_matches_box2d_style_behavior():
 
 
 def test_solver_iterations_are_configurable_without_changing_default():
-    default_env = ExperimentalPymunkLunarLanderEnv()
-    diagnostic_env = ExperimentalPymunkLunarLanderEnv(solver_iterations=30)
+    default_env = LunarLander()
+    diagnostic_env = LunarLander(solver_iterations=30)
     default_env.reset(seed=123)
     diagnostic_env.reset(seed=123)
 
-    assert default_env.demo.space.iterations == 180
-    assert diagnostic_env.demo.space.iterations == 30
+    assert default_env._physics.space.iterations == 180
+    assert diagnostic_env._physics.space.iterations == 30
 
 
 @pytest.mark.parametrize("solver_iterations", [1, 30, 180])
 def test_solver_iterations_accept_positive_integers(solver_iterations):
-    env = ExperimentalPymunkLunarLanderEnv(solver_iterations=solver_iterations)
+    env = LunarLander(solver_iterations=solver_iterations)
     env.reset(seed=123)
 
     assert env.solver_iterations == solver_iterations
-    assert env.demo.space.iterations == solver_iterations
+    assert env._physics.space.iterations == solver_iterations
 
 
 @pytest.mark.parametrize("solver_iterations", [0, -1])
 def test_solver_iterations_reject_nonpositive_values(solver_iterations):
     with pytest.raises(ValueError, match="must be greater than zero"):
-        ExperimentalPymunkLunarLanderEnv(solver_iterations=solver_iterations)
+        LunarLander(solver_iterations=solver_iterations)
 
 
 @pytest.mark.parametrize("solver_iterations", [1.5, True, "30", None])
 def test_solver_iterations_reject_noninteger_values(solver_iterations):
     with pytest.raises(TypeError, match="must be a positive integer"):
-        ExperimentalPymunkLunarLanderEnv(solver_iterations=solver_iterations)
+        LunarLander(solver_iterations=solver_iterations)
 
 
 def test_resting_articulated_group_sleeps_after_at_least_one_second():
-    demo = PymunkLunarLanderDemo(seed=123)
-    place_in_resting_pose(demo)
+    physics = _LunarLanderPhysics(seed=123)
+    place_in_resting_pose(physics)
 
     for _ in range(100):
-        demo.step(0)
+        physics.step(0)
 
-    assert demo.lander_body.is_sleeping
-    assert demo.left_leg_body.is_sleeping
-    assert demo.right_leg_body.is_sleeping
+    assert physics.lander_body.is_sleeping
+    assert physics.left_leg_body.is_sleeping
+    assert physics.right_leg_body.is_sleeping
 
 
 def test_constraint_diagnostics_expose_motor_and_limit_impulses():
-    demo = PymunkLunarLanderDemo(seed=123)
-    place_in_resting_pose(demo)
+    physics = _LunarLanderPhysics(seed=123)
+    place_in_resting_pose(physics)
     for _ in range(25):
-        demo.step(0)
-    diagnostics = physics_diagnostics(demo, 0)
+        physics.step(0)
+    diagnostics = physics_diagnostics(physics, 0)
 
     assert diagnostics["left_motor_impulse"] > 0
     assert diagnostics["right_motor_impulse"] > 0
@@ -526,115 +528,122 @@ def test_constraint_diagnostics_expose_motor_and_limit_impulses():
 
 
 def test_test_local_instrumentation_does_not_change_fixed_action_physics():
-    observed_demo = DiagnosticPymunkLunarLanderDemo(seed=123)
-    control_demo = PymunkLunarLanderDemo(seed=123)
+    observed_physics = DiagnosticLunarLanderPhysics(seed=123)
+    control_physics = _LunarLanderPhysics(seed=123)
 
     for action in [0, 2, 1, 0, 3, 2, 0, 0]:
-        observed_state = observed_demo.step(action)
-        control_state = control_demo.step(action)
+        observed_state = observed_physics.step(action)
+        control_state = control_physics.step(action)
 
         assert np.array_equal(observed_state.as_array(), control_state.as_array())
 
 
 def test_corrected_leg_friction_reduces_articulated_landing_drift():
-    corrected_demo = PymunkLunarLanderDemo(seed=123)
-    frictionless_demo = PymunkLunarLanderDemo(seed=123)
-    for demo in (corrected_demo, frictionless_demo):
-        place_in_resting_pose(demo)
+    corrected_physics = _LunarLanderPhysics(seed=123)
+    frictionless_physics = _LunarLanderPhysics(seed=123)
+    for physics in (corrected_physics, frictionless_physics):
+        place_in_resting_pose(physics)
         for body in (
-            demo.lander_body,
-            demo.left_leg_body,
-            demo.right_leg_body,
+            physics.lander_body,
+            physics.left_leg_body,
+            physics.right_leg_body,
         ):
             body.velocity = (0.05, 0.0)
-    for leg in (frictionless_demo.left_leg_body, frictionless_demo.right_leg_body):
+    for leg in (
+        frictionless_physics.left_leg_body,
+        frictionless_physics.right_leg_body,
+    ):
         next(iter(leg.shapes)).friction = 0.0
 
-    corrected_start_x = float(corrected_demo.lander_body.position.x)
-    frictionless_start_x = float(frictionless_demo.lander_body.position.x)
+    corrected_start_x = float(corrected_physics.lander_body.position.x)
+    frictionless_start_x = float(frictionless_physics.lander_body.position.x)
     for _ in range(100):
-        corrected_demo.step(0)
-        frictionless_demo.step(0)
+        corrected_physics.step(0)
+        frictionless_physics.step(0)
 
-    corrected_drift = abs(corrected_demo.lander_body.position.x - corrected_start_x)
+    corrected_drift = abs(corrected_physics.lander_body.position.x - corrected_start_x)
     frictionless_drift = abs(
-        frictionless_demo.lander_body.position.x - frictionless_start_x
+        frictionless_physics.lander_body.position.x - frictionless_start_x
     )
-    corrected_diagnostics = physics_diagnostics(corrected_demo, 0)
+    corrected_diagnostics = physics_diagnostics(corrected_physics, 0)
 
     assert corrected_drift < frictionless_drift / 5
-    assert corrected_demo.lander_body.is_sleeping
+    assert corrected_physics.lander_body.is_sleeping
     assert corrected_diagnostics["hull_linear_speed"] < STABLE_LINEAR_SPEED_THRESHOLD
-    assert frictionless_demo.lander_body.velocity.length > STABLE_LINEAR_SPEED_THRESHOLD
+    assert (
+        frictionless_physics.lander_body.velocity.length > STABLE_LINEAR_SPEED_THRESHOLD
+    )
 
 
 def test_friction_conversion_does_not_change_airborne_trajectory():
-    corrected_demo = PymunkLunarLanderDemo(seed=123)
-    legacy_demo = PymunkLunarLanderDemo(seed=123)
-    for shape in legacy_demo.space.shapes:
-        if shape.body is not legacy_demo.space.static_body:
+    corrected_physics = _LunarLanderPhysics(seed=123)
+    legacy_physics = _LunarLanderPhysics(seed=123)
+    for shape in legacy_physics.space.shapes:
+        if shape.body is not legacy_physics.space.static_body:
             shape.friction = 0.0
 
     actions = [0, 1, 0, 2, 0, 3, 0, 0, 2, 0]
     for action in actions:
-        corrected_state = corrected_demo.step(action)
-        legacy_state = legacy_demo.step(action)
+        corrected_state = corrected_physics.step(action)
+        legacy_state = legacy_physics.step(action)
         assert not corrected_state.left_leg_contact
         assert not corrected_state.right_leg_contact
         assert np.allclose(corrected_state.as_array(), legacy_state.as_array())
 
 
 def test_seeded_terrain_is_reproducible():
-    first_demo = PymunkLunarLanderDemo(seed=123)
-    second_demo = PymunkLunarLanderDemo(seed=123)
-    different_demo = PymunkLunarLanderDemo(seed=456)
+    first_physics = _LunarLanderPhysics(seed=123)
+    second_physics = _LunarLanderPhysics(seed=123)
+    different_physics = _LunarLanderPhysics(seed=456)
 
-    assert np.array_equal(first_demo.terrain.chunk_x, second_demo.terrain.chunk_x)
-    assert np.array_equal(first_demo.terrain.smooth_y, second_demo.terrain.smooth_y)
+    assert np.array_equal(first_physics.terrain.chunk_x, second_physics.terrain.chunk_x)
+    assert np.array_equal(
+        first_physics.terrain.smooth_y, second_physics.terrain.smooth_y
+    )
     assert not np.array_equal(
-        first_demo.terrain.smooth_y, different_demo.terrain.smooth_y
+        first_physics.terrain.smooth_y, different_physics.terrain.smooth_y
     )
 
     center = CHUNKS // 2
-    helipad_points = first_demo.terrain.smooth_y[center - 1 : center + 2]
+    helipad_points = first_physics.terrain.smooth_y[center - 1 : center + 2]
     assert np.allclose(helipad_points, helipad_points[0])
 
 
 def test_state_values_are_finite():
-    demo = PymunkLunarLanderDemo(seed=123)
+    physics = _LunarLanderPhysics(seed=123)
 
     for _ in range(20):
-        state = demo.step(0)
+        state = physics.step(0)
 
     assert np.isfinite(state.as_array()).all()
 
 
 def test_leg_mass_and_moment_match_box2d():
-    demo = PymunkLunarLanderDemo(seed=123)
+    physics = _LunarLanderPhysics(seed=123)
     expected_mass = (4 / SCALE) * (16 / SCALE)
     expected_moment = expected_mass * ((4 / SCALE) ** 2 + (16 / SCALE) ** 2) / 12
 
-    for leg in (demo.left_leg_body, demo.right_leg_body):
+    for leg in (physics.left_leg_body, physics.right_leg_body):
         assert leg.mass == pytest.approx(expected_mass)
         assert leg.moment == pytest.approx(expected_moment)
 
 
-def remove_pymunk_legs_and_constraints(demo):
-    demo.space.remove(*list(demo.space.constraints))
-    for leg in (demo.left_leg_body, demo.right_leg_body):
-        demo.space.remove(*list(leg.shapes), leg)
+def remove_pymunk_legs_and_constraints(physics):
+    physics.space.remove(*list(physics.space.constraints))
+    for leg in (physics.left_leg_body, physics.right_leg_body):
+        physics.space.remove(*list(leg.shapes), leg)
 
 
 @pytest.mark.parametrize("action", [1, 2, 3])
 def test_one_body_engine_telemetry_matches_theoretical_impulse(action):
-    demo = diagnostic_demo(seed=123)
-    remove_pymunk_legs_and_constraints(demo)
-    demo.space.gravity = (0.0, 0.0)
-    demo.lander_body.velocity = (0.0, 0.0)
-    demo.lander_body.angular_velocity = 0.0
+    physics = diagnostic_physics(seed=123)
+    remove_pymunk_legs_and_constraints(physics)
+    physics.space.gravity = (0.0, 0.0)
+    physics.lander_body.velocity = (0.0, 0.0)
+    physics.lander_body.angular_velocity = 0.0
 
-    demo.step(action)
-    telemetry = demo.last_engine_diagnostics
+    physics.step(action)
+    telemetry = physics.last_engine_diagnostics
 
     assert telemetry is not None
     assert telemetry["observed_delta_velocity"] == pytest.approx(
@@ -646,45 +655,45 @@ def test_one_body_engine_telemetry_matches_theoretical_impulse(action):
 
 
 def test_one_body_no_action_has_zero_angular_response():
-    demo = diagnostic_demo(seed=123)
-    remove_pymunk_legs_and_constraints(demo)
-    demo.space.gravity = (0.0, 0.0)
-    demo.lander_body.velocity = (0.0, 0.0)
-    demo.lander_body.angular_velocity = 0.0
+    physics = diagnostic_physics(seed=123)
+    remove_pymunk_legs_and_constraints(physics)
+    physics.space.gravity = (0.0, 0.0)
+    physics.lander_body.velocity = (0.0, 0.0)
+    physics.lander_body.angular_velocity = 0.0
 
-    state = demo.step(0)
+    state = physics.step(0)
 
-    assert demo.last_engine_diagnostics is None
+    assert physics.last_engine_diagnostics is None
     assert state.velocity_x == pytest.approx(0.0)
     assert state.velocity_y == pytest.approx(0.0)
     assert state.angular_velocity == pytest.approx(0.0)
 
 
 def test_articulated_constraints_change_side_engine_hull_response():
-    isolated_demo = diagnostic_demo(seed=123)
-    articulated_demo = diagnostic_demo(seed=123)
-    remove_pymunk_legs_and_constraints(isolated_demo)
-    for demo in (isolated_demo, articulated_demo):
-        demo.space.gravity = (0.0, 0.0)
-        demo.lander_body.velocity = (0.0, 0.0)
-        demo.lander_body.angular_velocity = 0.0
-        demo.rng = iter_uniform_rng([0.3, -0.6])
-    for leg in (articulated_demo.left_leg_body, articulated_demo.right_leg_body):
+    isolated_physics = diagnostic_physics(seed=123)
+    articulated_physics = diagnostic_physics(seed=123)
+    remove_pymunk_legs_and_constraints(isolated_physics)
+    for physics in (isolated_physics, articulated_physics):
+        physics.space.gravity = (0.0, 0.0)
+        physics.lander_body.velocity = (0.0, 0.0)
+        physics.lander_body.angular_velocity = 0.0
+        physics.rng = iter_uniform_rng([0.3, -0.6])
+    for leg in (articulated_physics.left_leg_body, articulated_physics.right_leg_body):
         leg.velocity = (0.0, 0.0)
         leg.angular_velocity = 0.0
 
-    isolated_demo.step(3)
-    articulated_demo.step(3)
-    isolated_delta = isolated_demo.last_engine_diagnostics[
+    isolated_physics.step(3)
+    articulated_physics.step(3)
+    isolated_delta = isolated_physics.last_engine_diagnostics[
         "observed_delta_angular_velocity"
     ]
-    articulated_delta = articulated_demo.last_engine_diagnostics[
+    articulated_delta = articulated_physics.last_engine_diagnostics[
         "observed_delta_angular_velocity"
     ]
-    diagnostics = physics_diagnostics(articulated_demo, 3)
+    diagnostics = physics_diagnostics(articulated_physics, 3)
 
     assert isolated_delta == pytest.approx(
-        isolated_demo.last_engine_diagnostics["theoretical_delta_angular_velocity"]
+        isolated_physics.last_engine_diagnostics["theoretical_delta_angular_velocity"]
     )
     assert articulated_delta == pytest.approx(isolated_delta, rel=0.15)
     assert 0 < diagnostics["left_motor_impulse"] <= 0.8
@@ -698,19 +707,19 @@ def test_side_engine_impulse_and_application_point_match_box2d(action):
     position = np.array([10.0, 10.0])
     dispersion = np.array([0.01, -0.02])
     box_offset, box_engine_impulse, _ = box_impulse(action, angle, position, dispersion)
-    demo = diagnostic_demo(seed=123)
-    demo.lander_body.position = tuple(position)
-    demo.lander_body.angle = angle
-    demo.rng = iter_uniform_rng(dispersion * SCALE)
+    physics = diagnostic_physics(seed=123)
+    physics.lander_body.position = tuple(position)
+    physics.lander_body.angle = angle
+    physics.rng = iter_uniform_rng(dispersion * SCALE)
 
-    demo.fire_orientation_engine(action - 2)
-    telemetry = demo.last_engine_diagnostics
+    physics.fire_orientation_engine(action - 2)
+    telemetry = physics.last_engine_diagnostics
     pymunk_offset = np.array(telemetry["application_offset"])
     pymunk_impulse = np.array(telemetry["impulse"])
     assert pymunk_impulse == pytest.approx(box_engine_impulse)
     assert pymunk_offset == pytest.approx(box_offset)
     expected_lever_arm = box_offset - np.array(
-        demo.lander_body.center_of_gravity.rotated(angle)
+        physics.lander_body.center_of_gravity.rotated(angle)
     )
     assert telemetry["center_of_mass_lever_arm"] == pytest.approx(expected_lever_arm)
     box_torque = (
@@ -742,52 +751,52 @@ def test_main_engine_impulse_and_application_point_match_box2d():
     position = np.array([10.0, 10.0])
     dispersion = np.array([0.015, 0.005])
     box_offset, box_engine_impulse, _ = box_impulse(2, angle, position, dispersion)
-    demo = diagnostic_demo(seed=123)
-    demo.lander_body.position = tuple(position)
-    demo.lander_body.angle = angle
-    demo.rng = iter_uniform_rng(dispersion * SCALE)
+    physics = diagnostic_physics(seed=123)
+    physics.lander_body.position = tuple(position)
+    physics.lander_body.angle = angle
+    physics.rng = iter_uniform_rng(dispersion * SCALE)
 
-    demo.fire_main_engine()
-    telemetry = demo.last_engine_diagnostics
+    physics.fire_main_engine()
+    telemetry = physics.last_engine_diagnostics
 
     assert telemetry["application_offset"] == pytest.approx(box_offset)
     assert telemetry["impulse"] == pytest.approx(box_engine_impulse)
     expected_lever_arm = box_offset - np.array(
-        demo.lander_body.center_of_gravity.rotated(angle)
+        physics.lander_body.center_of_gravity.rotated(angle)
     )
     assert telemetry["center_of_mass_lever_arm"] == pytest.approx(expected_lever_arm)
 
 
 def test_main_thrust_reduces_downward_velocity():
-    passive_demo = PymunkLunarLanderDemo(seed=123)
-    thrust_demo = PymunkLunarLanderDemo(seed=123)
+    passive_physics = _LunarLanderPhysics(seed=123)
+    thrust_physics = _LunarLanderPhysics(seed=123)
 
-    passive_state = passive_demo.step(0)
-    thrust_state = thrust_demo.step(2)
+    passive_state = passive_physics.step(0)
+    thrust_state = thrust_physics.step(2)
 
     assert thrust_state.velocity_y > passive_state.velocity_y
 
 
 def test_orientation_actions_produce_opposite_angular_acceleration():
-    passive_demo = PymunkLunarLanderDemo(seed=123)
-    left_demo = PymunkLunarLanderDemo(seed=123)
-    right_demo = PymunkLunarLanderDemo(seed=123)
+    passive_physics = _LunarLanderPhysics(seed=123)
+    left_physics = _LunarLanderPhysics(seed=123)
+    right_physics = _LunarLanderPhysics(seed=123)
 
-    passive_state = passive_demo.step(0)
-    left_state = left_demo.step(1)
-    right_state = right_demo.step(3)
+    passive_state = passive_physics.step(0)
+    left_state = left_physics.step(1)
+    right_state = right_physics.step(3)
 
     assert left_state.angular_velocity > passive_state.angular_velocity
     assert right_state.angular_velocity < passive_state.angular_velocity
 
 
 def test_leg_contacts_become_active_after_normal_landing():
-    demo = PymunkLunarLanderDemo(seed=42)
-    place_in_resting_pose(demo)
+    physics = _LunarLanderPhysics(seed=42)
+    place_in_resting_pose(physics)
 
     for _ in range(200):
-        state = demo.step(0)
-        if demo.lander_body.is_sleeping:
+        state = physics.step(0)
+        if physics.lander_body.is_sleeping:
             break
 
     assert state.left_leg_contact
@@ -796,65 +805,65 @@ def test_leg_contacts_become_active_after_normal_landing():
 
 
 def test_leg_contact_callbacks_are_balanced_and_preserve_collision_response():
-    demo = PymunkLunarLanderDemo(seed=42)
-    place_in_resting_pose(demo)
+    physics = _LunarLanderPhysics(seed=42)
+    place_in_resting_pose(physics)
 
-    state = demo.step(0)
+    state = physics.step(0)
 
     assert state.left_leg_contact
     assert state.right_leg_contact
-    ground_y = float(demo.terrain.smooth_y[CHUNKS // 2])
-    for leg in (demo.left_leg_body, demo.right_leg_body):
+    ground_y = float(physics.terrain.smooth_y[CHUNKS // 2])
+    for leg in (physics.left_leg_body, physics.right_leg_body):
         foot_y = min(
             leg.local_to_world((x, -LEG_HEIGHT / 2)).y
             for x in (-LEG_WIDTH / 2, LEG_WIDTH / 2)
         )
         assert foot_y >= ground_y - 0.02
 
-    left_shape = next(iter(demo.left_leg_body.shapes))
-    demo.space.remove(left_shape)
+    left_shape = next(iter(physics.left_leg_body.shapes))
+    physics.space.remove(left_shape)
 
-    assert not demo.left_leg_contact
-    assert demo.right_leg_contact
+    assert not physics.left_leg_contact
+    assert physics.right_leg_contact
 
 
 def test_hull_contact_sets_crash_flag():
-    demo = PymunkLunarLanderDemo(seed=123)
-    demo.lander_body.position = (
-        demo.world_width / 2.0,
-        demo.terrain.helipad_y + 0.05,
+    physics = _LunarLanderPhysics(seed=123)
+    physics.lander_body.position = (
+        physics.world_width / 2.0,
+        physics.terrain.helipad_y + 0.05,
     )
-    demo.lander_body.velocity = (0.0, 0.0)
-    demo.left_leg_body.position = (0.0, demo.world_height)
-    demo.right_leg_body.position = (demo.world_width, demo.world_height)
+    physics.lander_body.velocity = (0.0, 0.0)
+    physics.left_leg_body.position = (0.0, physics.world_height)
+    physics.right_leg_body.position = (physics.world_width, physics.world_height)
 
-    state = demo.step(0)
+    state = physics.step(0)
 
     assert state.crashed
 
 
 def test_hull_collision_callback_preserves_collision_response():
-    demo = PymunkLunarLanderDemo(seed=123)
-    ground_y = float(demo.terrain.smooth_y[CHUNKS // 2])
-    demo.lander_body.position = (demo.world_width / 2.0, ground_y + 1.0)
-    demo.lander_body.velocity = (0.0, -5.0)
-    demo.left_leg_body.position = (0.0, demo.world_height)
-    demo.right_leg_body.position = (demo.world_width, demo.world_height)
+    physics = _LunarLanderPhysics(seed=123)
+    ground_y = float(physics.terrain.smooth_y[CHUNKS // 2])
+    physics.lander_body.position = (physics.world_width / 2.0, ground_y + 1.0)
+    physics.lander_body.velocity = (0.0, -5.0)
+    physics.left_leg_body.position = (0.0, physics.world_height)
+    physics.right_leg_body.position = (physics.world_width, physics.world_height)
 
     for _ in range(40):
-        state = demo.step(0)
+        state = physics.step(0)
         if state.crashed:
             break
 
     assert state.crashed
     for _ in range(20):
-        demo.step(0)
-    assert demo.lander_body.position.y >= ground_y + 0.25
-    assert abs(demo.lander_body.velocity.y) < 0.01
+        physics.step(0)
+    assert physics.lander_body.position.y >= ground_y + 0.25
+    assert abs(physics.lander_body.velocity.y) < 0.01
 
 
 def test_default_fixed_action_trajectory_matches_c28b7064c():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     observation, _ = env.reset(seed=123)
     np.testing.assert_allclose(
         observation,
@@ -914,7 +923,7 @@ def test_default_fixed_action_trajectory_matches_c28b7064c():
 
 
 def test_experimental_env_reset_and_step_contracts():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
 
     observation, info = env.reset(seed=123)
     assert observation.shape == (8,)
@@ -941,7 +950,7 @@ def shaping(observation):
 
 
 def test_reset_initializes_reward_shaping_from_returned_observation():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
 
     observation, _ = env.reset(seed=123)
 
@@ -956,7 +965,7 @@ def test_reset_initializes_reward_shaping_from_returned_observation():
 def test_first_discrete_reward_uses_reset_shaping_and_fuel_penalty(
     action, fuel_penalty
 ):
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     reset_observation, _ = env.reset(seed=123)
 
     observation, reward, terminated, _, _ = env.step(action)
@@ -979,7 +988,7 @@ def test_first_discrete_reward_uses_reset_shaping_and_fuel_penalty(
 def test_first_continuous_reward_uses_reset_shaping_and_throttle_penalty(
     action, fuel_penalty
 ):
-    env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+    env = LunarLander(continuous=True)
     reset_observation, _ = env.reset(seed=123)
 
     observation, reward, terminated, _, _ = env.step(action)
@@ -992,7 +1001,7 @@ def test_first_continuous_reward_uses_reset_shaping_and_throttle_penalty(
 
 
 def test_repeated_reset_replaces_previous_episode_shaping_baseline():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     first_observation, _ = env.reset(seed=123)
     first_baseline = env.prev_shaping
     env.step(2)
@@ -1007,8 +1016,8 @@ def test_repeated_reset_replaces_previous_episode_shaping_baseline():
 
 @pytest.mark.parametrize("action", [0, 1, 2, 3])
 def test_first_step_reward_is_deterministic_for_same_seed_and_action(action):
-    first = ExperimentalPymunkLunarLanderEnv()
-    second = ExperimentalPymunkLunarLanderEnv()
+    first = LunarLander()
+    second = LunarLander()
     first.reset(seed=123)
     second.reset(seed=123)
 
@@ -1022,7 +1031,7 @@ def test_first_step_reward_is_deterministic_for_same_seed_and_action(action):
 
 
 def test_first_and_second_user_rewards_decompose_from_reset_shaping():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     reset_observation, _ = env.reset(seed=123)
 
     first_observation, first_reward, first_terminated, _, _ = env.step(2)
@@ -1049,8 +1058,8 @@ def test_first_and_second_user_rewards_decompose_from_reset_shaping():
 def test_reward_fix_does_not_change_ef1cd8dfa_physics_or_terminal_flags(
     continuous, action
 ):
-    corrected = ExperimentalPymunkLunarLanderEnv(continuous=continuous)
-    historical = ExperimentalPymunkLunarLanderEnv(continuous=continuous)
+    corrected = LunarLander(continuous=continuous)
+    historical = LunarLander(continuous=continuous)
     corrected_observation, _ = corrected.reset(seed=123)
     historical_observation, _ = historical.reset(seed=123)
     # ef1cd8dfa advanced identical reset physics but left this baseline unset.
@@ -1068,7 +1077,7 @@ def test_reward_fix_does_not_change_ef1cd8dfa_physics_or_terminal_flags(
 
 
 def test_first_noop_reward_does_not_repeat_historical_zero_reward_failure():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     reset_observation, _ = env.reset(seed=123)
 
     observation, reward, terminated, _, _ = env.step(0)
@@ -1082,7 +1091,7 @@ def test_first_noop_reward_does_not_repeat_historical_zero_reward_failure():
 @requires_box2d
 def test_reset_shaping_initialization_matches_box2d_reward_contract():
     box2d = gym.make("LunarLander-v3", disable_env_checker=True).unwrapped
-    pymunk_env = ExperimentalPymunkLunarLanderEnv()
+    pymunk_env = LunarLander()
     box_observation, _ = box2d.reset(seed=123)
     pymunk_observation, _ = pymunk_env.reset(seed=123)
 
@@ -1093,7 +1102,7 @@ def test_reset_shaping_initialization_matches_box2d_reward_contract():
 
 
 def test_experimental_env_observation_values_are_valid():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     observation, _ = env.reset(seed=123)
 
     assert env.observation_space.contains(observation)
@@ -1101,48 +1110,48 @@ def test_experimental_env_observation_values_are_valid():
 
 
 def test_experimental_env_seeded_resets_are_deterministic():
-    first_env = ExperimentalPymunkLunarLanderEnv()
-    second_env = ExperimentalPymunkLunarLanderEnv()
+    first_env = LunarLander()
+    second_env = LunarLander()
 
     first_observation, _ = first_env.reset(seed=123)
     second_observation, _ = second_env.reset(seed=123)
 
     assert np.array_equal(first_observation, second_observation)
     assert np.array_equal(
-        first_env.demo.terrain.smooth_y,
-        second_env.demo.terrain.smooth_y,
+        first_env._physics.terrain.smooth_y,
+        second_env._physics.terrain.smooth_y,
     )
 
 
 def test_experimental_env_different_seeds_change_initial_state():
-    first_env = ExperimentalPymunkLunarLanderEnv()
-    second_env = ExperimentalPymunkLunarLanderEnv()
+    first_env = LunarLander()
+    second_env = LunarLander()
 
     first_observation, _ = first_env.reset(seed=123)
     second_observation, _ = second_env.reset(seed=456)
 
     assert not np.array_equal(first_observation, second_observation)
     assert not np.array_equal(
-        first_env.demo.terrain.smooth_y,
-        second_env.demo.terrain.smooth_y,
+        first_env._physics.terrain.smooth_y,
+        second_env._physics.terrain.smooth_y,
     )
 
 
 def test_experimental_env_successive_unseeded_resets_advance_rng():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
 
     first_observation, _ = env.reset(seed=123)
     second_observation, _ = env.reset()
 
     assert not np.array_equal(first_observation, second_observation)
-    first_terrain = env.demo.terrain.smooth_y.copy()
+    first_terrain = env._physics.terrain.smooth_y.copy()
     env.reset()
-    assert not np.array_equal(first_terrain, env.demo.terrain.smooth_y)
+    assert not np.array_equal(first_terrain, env._physics.terrain.smooth_y)
 
 
 @pytest.mark.parametrize("action", [0, 1, 2, 3])
 def test_experimental_env_accepts_all_discrete_actions(action):
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     env.reset(seed=123)
 
     observation, reward, terminated, truncated, info = env.step(action)
@@ -1156,8 +1165,8 @@ def test_experimental_env_accepts_all_discrete_actions(action):
 
 
 def test_action_spaces_match_box2d_contract():
-    discrete_env = ExperimentalPymunkLunarLanderEnv()
-    continuous_env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+    discrete_env = LunarLander()
+    continuous_env = LunarLander(continuous=True)
 
     assert discrete_env.action_space == gym.spaces.Discrete(4)
     assert continuous_env.action_space == gym.spaces.Box(-1, 1, (2,), dtype=np.float32)
@@ -1166,14 +1175,14 @@ def test_action_spaces_match_box2d_contract():
 @pytest.mark.parametrize("gravity", [-12.0, 0.0, -12.1, 0.1, np.nan])
 def test_invalid_gravity_matches_box2d_validation(gravity):
     with pytest.raises(AssertionError, match="must be between -12 and 0"):
-        ExperimentalPymunkLunarLanderEnv(gravity=gravity)
+        LunarLander(gravity=gravity)
 
 
 def test_non_default_gravity_configures_pymunk_space():
-    env = ExperimentalPymunkLunarLanderEnv(gravity=-4.0)
+    env = LunarLander(gravity=-4.0)
     env.reset(seed=123)
 
-    assert tuple(env.demo.space.gravity) == (0.0, -4.0)
+    assert tuple(env._physics.space.gravity) == (0.0, -4.0)
 
 
 @pytest.mark.parametrize(
@@ -1187,12 +1196,12 @@ def test_non_default_gravity_configures_pymunk_space():
 )
 def test_wind_power_recommendations_match_box2d(argument, value, message):
     with pytest.warns(UserWarning, match=message):
-        ExperimentalPymunkLunarLanderEnv(**{argument: value})
+        LunarLander(**{argument: value})
 
 
 def test_continuous_zero_action_matches_discrete_noop():
-    discrete_env = ExperimentalPymunkLunarLanderEnv()
-    continuous_env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+    discrete_env = LunarLander()
+    continuous_env = LunarLander(continuous=True)
     discrete_observation, _ = discrete_env.reset(seed=123)
     continuous_observation, _ = continuous_env.reset(seed=123)
 
@@ -1204,30 +1213,30 @@ def test_continuous_zero_action_matches_discrete_noop():
 
 
 def test_continuous_main_and_side_engines_apply_scaled_impulses():
-    zero_demo = PymunkLunarLanderDemo(seed=123)
-    engine_demo = PymunkLunarLanderDemo(seed=123)
-    zero_demo.space.gravity = (0.0, 0.0)
-    engine_demo.space.gravity = (0.0, 0.0)
+    zero_physics = _LunarLanderPhysics(seed=123)
+    engine_physics = _LunarLanderPhysics(seed=123)
+    zero_physics.space.gravity = (0.0, 0.0)
+    engine_physics.space.gravity = (0.0, 0.0)
 
-    _, zero_main, zero_side = zero_demo._step_with_powers(
+    _, zero_main, zero_side = zero_physics._step_with_powers(
         np.array([0.0, 0.0]), continuous=True
     )
-    _, main_power, side_power = engine_demo._step_with_powers(
+    _, main_power, side_power = engine_physics._step_with_powers(
         np.array([0.5, -0.75]), continuous=True
     )
 
     assert (zero_main, zero_side) == (0.0, 0.0)
     assert main_power == pytest.approx(0.75)
     assert side_power == pytest.approx(0.75)
-    assert engine_demo.lander_body.velocity != zero_demo.lander_body.velocity
-    assert engine_demo.lander_body.angular_velocity != pytest.approx(
-        zero_demo.lander_body.angular_velocity
+    assert engine_physics.lander_body.velocity != zero_physics.lander_body.velocity
+    assert engine_physics.lander_body.angular_velocity != pytest.approx(
+        zero_physics.lander_body.angular_velocity
     )
 
 
 def test_continuous_actions_are_clipped_like_box2d():
-    clipped_env = ExperimentalPymunkLunarLanderEnv(continuous=True)
-    bounded_env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+    clipped_env = LunarLander(continuous=True)
+    bounded_env = LunarLander(continuous=True)
     clipped_env.reset(seed=123)
     bounded_env.reset(seed=123)
 
@@ -1239,16 +1248,16 @@ def test_continuous_actions_are_clipped_like_box2d():
 
 
 def test_continuous_engine_reward_uses_throttle_power():
-    env = ExperimentalPymunkLunarLanderEnv(continuous=True)
+    env = LunarLander(continuous=True)
     env.reset(seed=123)
     env.prev_shaping = float(
         -100 * np.linalg.norm(env._get_observation()[:2])
         - 100 * np.linalg.norm(env._get_observation()[2:4])
         - 100 * abs(env._get_observation()[4])
     )
-    original_step = env.demo._step_with_powers
-    env.demo._step_with_powers = lambda action, continuous: (
-        env.demo.state(),
+    original_step = env._physics._step_with_powers
+    env._physics._step_with_powers = lambda action, continuous: (
+        env._physics.state(),
         0.75,
         0.75,
     )
@@ -1256,11 +1265,11 @@ def test_continuous_engine_reward_uses_throttle_power():
     _, reward, _, _, _ = env.step(np.array([0.5, 0.75], dtype=np.float32))
 
     assert reward == pytest.approx(-(0.75 * 0.30 + 0.75 * 0.03))
-    env.demo._step_with_powers = original_step
+    env._physics._step_with_powers = original_step
 
 
 def test_wind_is_disabled_by_default():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     env.reset(seed=123)
 
     assert env.enable_wind is False
@@ -1268,9 +1277,9 @@ def test_wind_is_disabled_by_default():
 
 
 def test_seeded_wind_is_deterministic_and_changes_trajectory():
-    first = ExperimentalPymunkLunarLanderEnv(enable_wind=True)
-    second = ExperimentalPymunkLunarLanderEnv(enable_wind=True)
-    disabled = ExperimentalPymunkLunarLanderEnv(enable_wind=False)
+    first = LunarLander(enable_wind=True)
+    second = LunarLander(enable_wind=True)
+    disabled = LunarLander(enable_wind=False)
     first.reset(seed=123)
     second.reset(seed=123)
     disabled.reset(seed=123)
@@ -1286,12 +1295,8 @@ def test_seeded_wind_is_deterministic_and_changes_trajectory():
 
 
 def test_configurable_wind_and_turbulence_change_their_respective_motion():
-    calm = ExperimentalPymunkLunarLanderEnv(
-        enable_wind=True, wind_power=0.0, turbulence_power=0.0
-    )
-    windy = ExperimentalPymunkLunarLanderEnv(
-        enable_wind=True, wind_power=7.0, turbulence_power=0.75
-    )
+    calm = LunarLander(enable_wind=True, wind_power=0.0, turbulence_power=0.0)
+    windy = LunarLander(enable_wind=True, wind_power=7.0, turbulence_power=0.75)
     calm.reset(seed=123)
     windy.reset(seed=123)
 
@@ -1306,14 +1311,12 @@ def test_configurable_wind_and_turbulence_change_their_respective_motion():
 
 
 def test_wind_uses_force_and_torque_units_before_physics_integration():
-    env = ExperimentalPymunkLunarLanderEnv(
-        enable_wind=True, wind_power=7.0, turbulence_power=0.75
-    )
+    env = LunarLander(enable_wind=True, wind_power=7.0, turbulence_power=0.75)
     env.reset(seed=123)
     env.wind_idx = 25
     env.torque_idx = -40
-    env.demo.lander_body.force = (0.0, 0.0)
-    env.demo.lander_body.torque = 0.0
+    env._physics.lander_body.force = (0.0, 0.0)
+    env._physics.lander_body.torque = 0.0
 
     env._apply_wind()
 
@@ -1323,20 +1326,23 @@ def test_wind_uses_force_and_torque_units_before_physics_integration():
     expected_torque = (
         math.tanh(math.sin(0.02 * -40) + math.sin(math.pi * 0.01 * -40)) * 0.75
     )
-    assert tuple(env.demo.lander_body.force) == pytest.approx((expected_force, 0.0))
-    assert env.demo.lander_body.torque == pytest.approx(expected_torque)
+    assert tuple(env._physics.lander_body.force) == pytest.approx((expected_force, 0.0))
+    assert env._physics.lander_body.torque == pytest.approx(expected_torque)
 
 
 def test_experimental_env_crash_termination():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     env.reset(seed=123)
-    env.demo.lander_body.position = (
-        env.demo.world_width / 2.0,
-        env.demo.terrain.helipad_y + 0.05,
+    env._physics.lander_body.position = (
+        env._physics.world_width / 2.0,
+        env._physics.terrain.helipad_y + 0.05,
     )
-    env.demo.lander_body.velocity = (0.0, 0.0)
-    env.demo.left_leg_body.position = (0.0, env.demo.world_height)
-    env.demo.right_leg_body.position = (env.demo.world_width, env.demo.world_height)
+    env._physics.lander_body.velocity = (0.0, 0.0)
+    env._physics.left_leg_body.position = (0.0, env._physics.world_height)
+    env._physics.right_leg_body.position = (
+        env._physics.world_width,
+        env._physics.world_height,
+    )
 
     _, reward, terminated, truncated, info = env.step(0)
 
@@ -1347,9 +1353,9 @@ def test_experimental_env_crash_termination():
 
 
 def test_experimental_env_stable_landing_termination():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     env.reset(seed=123)
-    place_in_resting_pose(env.demo)
+    place_in_resting_pose(env._physics)
 
     for _ in range(100):
         observation, reward, terminated, truncated, info = env.step(0)
@@ -1363,9 +1369,9 @@ def test_experimental_env_stable_landing_termination():
     group_is_sleeping = all(
         body.is_sleeping
         for body in (
-            env.demo.lander_body,
-            env.demo.left_leg_body,
-            env.demo.right_leg_body,
+            env._physics.lander_body,
+            env._physics.left_leg_body,
+            env._physics.right_leg_body,
         )
     )
     assert group_is_sleeping or env.stable_landing_steps >= STABLE_LANDING_STEPS
@@ -1374,15 +1380,15 @@ def test_experimental_env_stable_landing_termination():
     assert observation[6] == 1.0
     assert observation[7] == 1.0
     assert abs(observation[1]) < 0.02
-    diagnostics = physics_diagnostics(env.demo, 0)
+    diagnostics = physics_diagnostics(env._physics, 0)
     for body_name in ("hull", "left_leg", "right_leg"):
         assert diagnostics[f"{body_name}_linear_speed"] <= STABLE_LINEAR_SPEED_THRESHOLD
         assert (
             diagnostics[f"{body_name}_angular_speed"] <= STABLE_ANGULAR_SPEED_THRESHOLD
         )
 
-    ground_y = float(env.demo.terrain.smooth_y[CHUNKS // 2])
-    for leg in (env.demo.left_leg_body, env.demo.right_leg_body):
+    ground_y = float(env._physics.terrain.smooth_y[CHUNKS // 2])
+    for leg in (env._physics.left_leg_body, env._physics.right_leg_body):
         shape = next(iter(leg.shapes))
         lowest_point = min(
             leg.local_to_world(vertex).y for vertex in shape.get_vertices()
@@ -1391,10 +1397,10 @@ def test_experimental_env_stable_landing_termination():
 
 
 def test_stability_fallback_terminates_when_native_sleep_is_disabled():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     env.reset(seed=123)
-    place_in_resting_pose(env.demo)
-    env.demo.space.sleep_time_threshold = float("inf")
+    place_in_resting_pose(env._physics)
+    env._physics.space.sleep_time_threshold = float("inf")
 
     for _ in range(100):
         observation, reward, terminated, truncated, info = env.step(0)
@@ -1405,22 +1411,22 @@ def test_stability_fallback_terminates_when_native_sleep_is_disabled():
     assert not truncated
     assert reward == 100.0
     assert info == {}
-    assert not env.demo.lander_body.is_sleeping
+    assert not env._physics.lander_body.is_sleeping
     assert env.stable_landing_steps >= STABLE_LANDING_STEPS
     assert np.hypot(observation[2], observation[3]) < 0.01
     assert abs(observation[5]) < 0.01
 
 
 def test_stability_counter_rejects_motion_and_resets_immediately():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     env.reset(seed=123)
     bodies = (
-        env.demo.lander_body,
-        env.demo.left_leg_body,
-        env.demo.right_leg_body,
+        env._physics.lander_body,
+        env._physics.left_leg_body,
+        env._physics.right_leg_body,
     )
-    env.demo.leg_contacts[LEFT_LEG_COLLISION_TYPE] = 1
-    env.demo.leg_contacts[RIGHT_LEG_COLLISION_TYPE] = 1
+    env._physics.leg_contacts[LEFT_LEG_COLLISION_TYPE] = 1
+    env._physics.leg_contacts[RIGHT_LEG_COLLISION_TYPE] = 1
     for body in bodies:
         body.velocity = (0.0, 0.0)
         body.angular_velocity = 0.0
@@ -1429,41 +1435,44 @@ def test_stability_counter_rejects_motion_and_resets_immediately():
         assert not env._update_stable_landing_counter()
     assert env.stable_landing_steps == STABLE_LANDING_STEPS - 1
 
-    env.demo.left_leg_body.velocity = (STABLE_LINEAR_SPEED_THRESHOLD * 2, 0.0)
+    env._physics.left_leg_body.velocity = (STABLE_LINEAR_SPEED_THRESHOLD * 2, 0.0)
     assert not env._update_stable_landing_counter()
     assert env.stable_landing_steps == 0
 
-    env.demo.left_leg_body.velocity = (0.0, 0.0)
+    env._physics.left_leg_body.velocity = (0.0, 0.0)
     env._update_stable_landing_counter()
-    env.demo.leg_contacts[LEFT_LEG_COLLISION_TYPE] = 0
+    env._physics.leg_contacts[LEFT_LEG_COLLISION_TYPE] = 0
     assert not env._update_stable_landing_counter()
     assert env.stable_landing_steps == 0
 
 
 def test_resting_hull_height_matches_scaled_box2d_geometry():
-    demo = PymunkLunarLanderDemo(seed=123)
-    place_in_resting_pose(demo)
+    physics = _LunarLanderPhysics(seed=123)
+    place_in_resting_pose(physics)
     for _ in range(100):
-        demo.step(0)
-        if demo.lander_body.is_sleeping:
+        physics.step(0)
+        if physics.lander_body.is_sleeping:
             break
 
     relative_angle = 0.4 - 0.05
     anchor_height = pymunk.Vec2d(-LEG_AWAY, LEG_DOWN).rotated(relative_angle).y
     foot_height = pymunk.Vec2d(0.0, -LEG_HEIGHT / 2).rotated(relative_angle).y
     expected_hull_y = (
-        float(demo.terrain.smooth_y[CHUNKS // 2]) + anchor_height - foot_height
+        float(physics.terrain.smooth_y[CHUNKS // 2]) + anchor_height - foot_height
     )
 
-    assert demo.lander_body.is_sleeping
-    assert demo.lander_body.position.y == pytest.approx(expected_hull_y, abs=0.03)
+    assert physics.lander_body.is_sleeping
+    assert physics.lander_body.position.y == pytest.approx(expected_hull_y, abs=0.03)
 
 
 def test_experimental_env_viewport_exit_termination():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     env.reset(seed=123)
-    env.demo.lander_body.position = (env.demo.world_width + 1.0, env.demo.world_height)
-    env.demo.lander_body.velocity = (0.0, 0.0)
+    env._physics.lander_body.position = (
+        env._physics.world_width + 1.0,
+        env._physics.world_height,
+    )
+    env._physics.lander_body.velocity = (0.0, 0.0)
 
     _, reward, terminated, truncated, info = env.step(0)
 
@@ -1477,7 +1486,7 @@ def test_experimental_env_viewport_exit_termination():
 @requires_box2d
 def test_viewport_exit_boundary_and_timing_match_box2d(direction):
     box_env = gym.make("LunarLander-v3", disable_env_checker=True)
-    pymunk_env = ExperimentalPymunkLunarLanderEnv()
+    pymunk_env = LunarLander()
     box_env.reset(seed=123)
     pymunk_env.reset(seed=123)
     target_x = 10.0 + direction * 10.01
@@ -1485,16 +1494,16 @@ def test_viewport_exit_boundary_and_timing_match_box2d(direction):
     for body in [box_env.unwrapped.lander, *box_env.unwrapped.legs]:
         body.position = (body.position.x + box_delta, body.position.y)
         body.linearVelocity = (0.0, 0.0)
-    pymunk_delta = target_x - pymunk_env.demo.lander_body.position.x
+    pymunk_delta = target_x - pymunk_env._physics.lander_body.position.x
     for body in (
-        pymunk_env.demo.lander_body,
-        pymunk_env.demo.left_leg_body,
-        pymunk_env.demo.right_leg_body,
+        pymunk_env._physics.lander_body,
+        pymunk_env._physics.left_leg_body,
+        pymunk_env._physics.right_leg_body,
     ):
         body.position = (body.position.x + pymunk_delta, body.position.y)
         body.velocity = (0.0, 0.0)
     box_env.unwrapped.world.gravity = (0.0, 0.0)
-    pymunk_env.demo.space.gravity = (0.0, 0.0)
+    pymunk_env._physics.space.gravity = (0.0, 0.0)
 
     box_observation, box_reward, box_terminated, _, _ = box_env.step(0)
     pymunk_observation, pymunk_reward, pymunk_terminated, _, pymunk_info = (
@@ -1568,10 +1577,10 @@ def test_one_body_random_actions_isolate_center_of_mass_torque_mismatch():
 
 
 def test_direct_env_has_no_internal_time_limit_truncation():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     env.reset(seed=123)
-    env.demo._step_with_powers = lambda action, continuous: (
-        env.demo.state(),
+    env._physics._step_with_powers = lambda action, continuous: (
+        env._physics.state(),
         0.0,
         0.0,
     )
@@ -1585,7 +1594,7 @@ def test_direct_env_has_no_internal_time_limit_truncation():
 
 
 def test_experimental_env_render_returns_rgb_array():
-    env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
+    env = LunarLander(render_mode="rgb_array")
     env.reset(seed=123)
 
     frame = env.render()
@@ -1597,9 +1606,9 @@ def test_experimental_env_render_returns_rgb_array():
 
 
 def test_experimental_env_render_does_not_change_state():
-    env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
+    env = LunarLander(render_mode="rgb_array")
     observation, _ = env.reset(seed=123)
-    body_positions = [tuple(body.position) for body in env.demo.space.bodies]
+    body_positions = [tuple(body.position) for body in env._physics.space.bodies]
     rng_state = json.dumps(env.np_random.bit_generator.state, sort_keys=True)
     previous_shaping = env.prev_shaping
     stable_landing_steps = env.stable_landing_steps
@@ -1610,15 +1619,17 @@ def test_experimental_env_render_does_not_change_state():
 
     assert np.array_equal(observation, next_observation)
     assert np.array_equal(first_frame, second_frame)
-    assert [tuple(body.position) for body in env.demo.space.bodies] == body_positions
+    assert [
+        tuple(body.position) for body in env._physics.space.bodies
+    ] == body_positions
     assert json.dumps(env.np_random.bit_generator.state, sort_keys=True) == rng_state
     assert env.prev_shaping == previous_shaping
     assert env.stable_landing_steps == stable_landing_steps
 
 
 def test_render_calls_do_not_change_future_trajectory_or_rewards():
-    rendered_env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
-    control_env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
+    rendered_env = LunarLander(render_mode="rgb_array")
+    control_env = LunarLander(render_mode="rgb_array")
     rendered_env.reset(seed=123)
     control_env.reset(seed=123)
 
@@ -1643,15 +1654,17 @@ def test_render_calls_do_not_change_future_trajectory_or_rewards():
 def test_engine_actions_render_flames_in_plausible_regions(
     action, color, horizontal_direction
 ):
-    env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
+    env = LunarLander(render_mode="rgb_array")
     env.reset(seed=123)
-    for body in env.demo.space.bodies:
+    for body in env._physics.space.bodies:
         body.position = (body.position.x, body.position.y - 2.0)
     env.step(action)
 
     frame = env.render()
     flame_y, flame_x = np.nonzero(np.all(frame == color, axis=2))
-    hull_screen = env._world_to_screen(tuple(body_origin_world(env.demo.lander_body)))
+    hull_screen = env._world_to_screen(
+        tuple(body_origin_world(env._physics.lander_body))
+    )
 
     assert flame_x.size >= 5
     assert abs(float(flame_x.mean()) - hull_screen[0]) < 100
@@ -1663,7 +1676,7 @@ def test_engine_actions_render_flames_in_plausible_regions(
 
 
 def test_render_without_configured_mode_warns_and_returns_none():
-    env = ExperimentalPymunkLunarLanderEnv()
+    env = LunarLander()
     env.reset(seed=123)
 
     with pytest.warns(UserWarning, match="without specifying any render mode"):
@@ -1675,7 +1688,7 @@ def test_human_mode_initializes_updates_and_renders_automatically(monkeypatch):
     monkeypatch.setenv("SDL_AUDIODRIVER", "dummy")
     pygame = pytest.importorskip("pygame")
     pygame.display.quit()
-    env = ExperimentalPymunkLunarLanderEnv(render_mode="human")
+    env = LunarLander(render_mode="human")
     render_calls = 0
     original_render = env.render
 
@@ -1700,8 +1713,8 @@ def test_human_mode_initializes_updates_and_renders_automatically(monkeypatch):
 def test_multiple_environments_and_reset_after_close_are_safe(monkeypatch):
     monkeypatch.setenv("SDL_VIDEODRIVER", "dummy")
     monkeypatch.setenv("SDL_AUDIODRIVER", "dummy")
-    first = ExperimentalPymunkLunarLanderEnv(render_mode="human")
-    second = ExperimentalPymunkLunarLanderEnv(render_mode="human")
+    first = LunarLander(render_mode="human")
+    second = LunarLander(render_mode="human")
     first.reset(seed=123)
     second.reset(seed=456)
 
@@ -1717,7 +1730,7 @@ def test_multiple_environments_and_reset_after_close_are_safe(monkeypatch):
 
 
 def test_experimental_env_render_works_after_step():
-    env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
+    env = LunarLander(render_mode="rgb_array")
     env.reset(seed=123)
     env.step(2)
 
@@ -1728,7 +1741,7 @@ def test_experimental_env_render_works_after_step():
 
 
 def test_experimental_env_close_is_idempotent():
-    env = ExperimentalPymunkLunarLanderEnv(render_mode="rgb_array")
+    env = LunarLander(render_mode="rgb_array")
     env.reset(seed=123)
     env.render()
 
@@ -1740,28 +1753,28 @@ def test_experimental_env_close_is_idempotent():
 def test_hard_leg_impact_matches_box2d_termination_semantics():
     """Leg-only contact must not terminate unless the hull crashes."""
     box_env = gym.make("LunarLander-v3", disable_env_checker=True)
-    pymunk_env = ExperimentalPymunkLunarLanderEnv()
+    pymunk_env = LunarLander()
 
     box_env.reset(seed=123)
     pymunk_env.reset(seed=123)
 
     box = box_env.unwrapped
-    pymunk_demo = pymunk_env.demo
+    pymunk_physics = pymunk_env._physics
 
     box.world.gravity = (0.0, 0.0)
-    pymunk_demo.space.gravity = (0.0, 0.0)
+    pymunk_physics.space.gravity = (0.0, 0.0)
 
     box.game_over = False
-    pymunk_demo.crashed = False
+    pymunk_physics.crashed = False
 
     for leg in box.legs:
         leg.ground_contact = True
 
-    pymunk_demo.leg_contacts[LEFT_LEG_COLLISION_TYPE] = 1
-    pymunk_demo.leg_contacts[RIGHT_LEG_COLLISION_TYPE] = 1
+    pymunk_physics.leg_contacts[LEFT_LEG_COLLISION_TYPE] = 1
+    pymunk_physics.leg_contacts[RIGHT_LEG_COLLISION_TYPE] = 1
 
     box.lander.linearVelocity = (0.0, -4.0)
-    pymunk_demo.lander_body.velocity = (0.0, -4.0)
+    pymunk_physics.lander_body.velocity = (0.0, -4.0)
 
     _, _, box_terminated, _, _ = box_env.step(0)
     _, _, pymunk_terminated, _, pymunk_info = pymunk_env.step(0)

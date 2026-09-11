@@ -663,7 +663,7 @@ def test_time_limit_episode_records_final_100_physics_steps():
         def predict(self, observation, deterministic):
             return 0, None
 
-    class Demo:
+    class Physics:
         def __init__(self, env):
             self.env = env
 
@@ -698,7 +698,7 @@ def test_time_limit_episode_records_final_100_physics_steps():
         def __init__(self):
             self.steps = 0
             self.stable_landing_steps = 0
-            self.demo = Demo(self)
+            self._physics = Physics(self)
 
         @property
         def unwrapped(self):

@@ -8,9 +8,13 @@ import pytest
 pytest.importorskip("pymunk")
 pytest.importorskip("Box2D")
 
-from scripts.analyze_lunar_lander_angular_dynamics import initial_rows  # noqa: E402
+from scripts.analyze_lunar_lander_angular_dynamics import (  # noqa: E402
+    articulated_metrics,
+    initial_rows,
+)
 from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
-    DiagnosticPymunkLunarLanderDemo,
+    DiagnosticLunarLanderPhysics,
+    articulated_angular_momentum,
 )
 from scripts.pymunk_lunar_lander_terrain import (  # noqa: E402
     physics_diagnostics as script_physics_diagnostics,
@@ -20,7 +24,7 @@ from scripts.sweep_pymunk_lunar_lander_solver_iterations import (  # noqa: E402
     sweep,
 )
 from tests.envs.pymunk_lunar_lander_test_helpers import (  # noqa: E402
-    DiagnosticPymunkLunarLanderDemo as _TestDiagnosticDemo,
+    DiagnosticLunarLanderPhysics as _TestDiagnosticPhysics,
 )
 from tests.envs.pymunk_lunar_lander_test_helpers import (  # noqa: E402
     physics_diagnostics as _test_physics_diagnostics,
@@ -65,13 +69,39 @@ def test_matched_seed_initial_state_distribution_moments_match_box2d():
 
 def test_test_local_telemetry_matches_script_measurements():
     """Ensure test-local telemetry retains the established measurements."""
-    script_demo = DiagnosticPymunkLunarLanderDemo(seed=123)
-    test_demo = _TestDiagnosticDemo(seed=123)
+    script_physics = DiagnosticLunarLanderPhysics(seed=123)
+    test_physics = _TestDiagnosticPhysics(seed=123)
     for action in [0, 2, 1, 3, 0]:
-        script_state = script_demo.step(action)
-        test_state = test_demo.step(action)
+        script_state = script_physics.step(action)
+        test_state = test_physics.step(action)
         assert np.array_equal(script_state.as_array(), test_state.as_array())
         assert script_physics_diagnostics(
-            script_demo, action
-        ) == _test_physics_diagnostics(test_demo, action)
-        assert script_demo.last_engine_diagnostics == test_demo.last_engine_diagnostics
+            script_physics, action
+        ) == _test_physics_diagnostics(test_physics, action)
+        assert (
+            script_physics.last_engine_diagnostics
+            == test_physics.last_engine_diagnostics
+        )
+
+
+def test_articulated_angular_momentum_is_a_read_only_diagnostic():
+    """Match the shared diagnostic formula without mutating physics state."""
+    physics = DiagnosticLunarLanderPhysics(seed=123)
+    bodies = (physics.lander_body, physics.left_leg_body, physics.right_leg_body)
+    before = [
+        (tuple(body.position), tuple(body.velocity), body.angle, body.angular_velocity)
+        for body in bodies
+    ]
+    _, _, expected, _ = articulated_metrics(
+        bodies,
+        lambda body: body.position,
+        lambda body: body.velocity,
+        lambda body: body.angle,
+        lambda body: body.angular_velocity,
+    )
+
+    assert articulated_angular_momentum(physics) == pytest.approx(expected)
+    assert [
+        (tuple(body.position), tuple(body.velocity), body.angle, body.angular_velocity)
+        for body in bodies
+    ] == before

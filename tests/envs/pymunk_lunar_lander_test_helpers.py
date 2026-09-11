@@ -8,13 +8,13 @@ import numpy as np
 import pymunk
 
 from gymnasium.envs.pymunk.lunar_lander import (
-    PymunkLunarLanderDemo,
+    _LunarLanderPhysics,
     body_center_of_mass_world,
     body_origin_world,
 )
 
 
-class DiagnosticPymunkLunarLanderDemo(PymunkLunarLanderDemo):
+class DiagnosticLunarLanderPhysics(_LunarLanderPhysics):
     """Observe engine impulses without changing physics behavior."""
 
     last_engine_diagnostics: dict[str, object] | None = None
@@ -35,7 +35,7 @@ class DiagnosticPymunkLunarLanderDemo(PymunkLunarLanderDemo):
             )
         return state
 
-    def _engine_impulse_applied(
+    def _on_engine_impulse(
         self,
         engine: str,
         dispersion: list[float],
@@ -63,14 +63,14 @@ class DiagnosticPymunkLunarLanderDemo(PymunkLunarLanderDemo):
 
 
 def physics_diagnostics(
-    demo: PymunkLunarLanderDemo,
+    physics: _LunarLanderPhysics,
     action: int,
 ) -> dict[str, float | int | bool]:
     """Read body and constraint diagnostics without mutating the simulation."""
     bodies = {
-        "hull": demo.lander_body,
-        "left_leg": demo.left_leg_body,
-        "right_leg": demo.right_leg_body,
+        "hull": physics.lander_body,
+        "left_leg": physics.left_leg_body,
+        "right_leg": physics.right_leg_body,
     }
     diagnostics: dict[str, float | int | bool] = {"action": action}
     for name, body in bodies.items():
@@ -79,21 +79,21 @@ def physics_diagnostics(
         diagnostics[f"{name}_is_sleeping"] = bool(body.is_sleeping)
     diagnostics.update(
         {
-            "left_leg_contact": demo.left_leg_contact,
-            "right_leg_contact": demo.right_leg_contact,
-            "hull_kinetic_energy": float(demo.lander_body.kinetic_energy),
+            "left_leg_contact": physics.left_leg_contact,
+            "right_leg_contact": physics.right_leg_contact,
+            "hull_kinetic_energy": float(physics.lander_body.kinetic_energy),
             "total_kinetic_energy": float(
                 sum(body.kinetic_energy for body in bodies.values())
             ),
-            "idle_speed_threshold": float(demo.space.idle_speed_threshold),
-            "sleep_time_threshold": float(demo.space.sleep_time_threshold),
+            "idle_speed_threshold": float(physics.space.idle_speed_threshold),
+            "sleep_time_threshold": float(physics.space.sleep_time_threshold),
         }
     )
     for side_name, leg in (
-        ("left", demo.left_leg_body),
-        ("right", demo.right_leg_body),
+        ("left", physics.left_leg_body),
+        ("right", physics.right_leg_body),
     ):
-        for constraint in demo.space.constraints:
+        for constraint in physics.space.constraints:
             if constraint.b is not leg:
                 continue
             if isinstance(constraint, pymunk.RotaryLimitJoint):
@@ -143,6 +143,6 @@ def box_impulse(action, angle, position, dispersion):
     return offset, impulse, np.asarray(position) + offset
 
 
-def diagnostic_demo(*args, **kwargs) -> DiagnosticPymunkLunarLanderDemo:
+def diagnostic_physics(*args, **kwargs) -> DiagnosticLunarLanderPhysics:
     """Construct test-local telemetry-enabled physics."""
-    return DiagnosticPymunkLunarLanderDemo(*args, **kwargs)
+    return DiagnosticLunarLanderPhysics(*args, **kwargs)

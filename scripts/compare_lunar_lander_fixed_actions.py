@@ -85,11 +85,11 @@ def get_raw_state(env: Any) -> dict[str, float | None]:
     """
     unwrapped = getattr(env, "unwrapped", env)
 
-    # Pymunk prototype
-    if hasattr(unwrapped, "demo") and unwrapped.demo is not None:
-        body = unwrapped.demo.lander_body
-        left_leg = unwrapped.demo.left_leg_body
-        right_leg = unwrapped.demo.right_leg_body
+    # Pymunk physics
+    if hasattr(unwrapped, "physics") and unwrapped._physics is not None:
+        body = unwrapped._physics.lander_body
+        left_leg = unwrapped._physics.left_leg_body
+        right_leg = unwrapped._physics.right_leg_body
         return {
             "raw_x": float(body.position.x),
             "raw_y": float(body.position.y),
@@ -150,17 +150,17 @@ def print_initial_debug(env, engine: str) -> None:
         print("gravity:", unwrapped.world.gravity)
 
     elif engine == "pymunk":
-        body = unwrapped.demo.lander_body
-        left_leg = unwrapped.demo.left_leg_body
-        right_leg = unwrapped.demo.right_leg_body
+        body = unwrapped._physics.lander_body
+        left_leg = unwrapped._physics.left_leg_body
+        right_leg = unwrapped._physics.right_leg_body
         print("position:", body.position)
         print("velocity:", body.velocity)
         print("angle:", body.angle)
         print("angular_velocity:", body.angular_velocity)
         print("mass:", body.mass)
         print("moment:", body.moment)
-        print("gravity:", unwrapped.demo.space.gravity)
-        print("space damping:", unwrapped.demo.space.damping)
+        print("gravity:", unwrapped._physics.space.gravity)
+        print("space damping:", unwrapped._physics.space.damping)
         print("left_leg position:", left_leg.position)
         print("left_leg angle:", left_leg.angle)
         print("left_leg angular_velocity:", left_leg.angular_velocity)

@@ -39,7 +39,6 @@ LEG_CATEGORY = 0b0100
 
 
 INITIAL_RANDOM = 1000.0
-INITIAL_RANDOM_ANGLE = 0.05
 SLEEP_TIME_THRESHOLD = 0.5
 IDLE_SPEED_THRESHOLD = 0.01
 # Box2D defaults: 0.01 m/s, 2 degrees/s, and 0.5 seconds at rest.
@@ -93,8 +92,8 @@ def _validate_solver_iterations(value: object) -> int:
 
 
 @dataclass
-class DemoState:
-    """Small state object used by the standalone Pymunk demonstration."""
+class _PhysicsState:
+    """Internal state snapshot for the Pymunk physics simulation."""
 
     x: float
     y: float
@@ -191,7 +190,6 @@ def _create_lander_body(
     position: tuple[float, float],
 ) -> pymunk.Body:
     vertices = [(x / SCALE, y / SCALE) for x, y in LANDER_POLY]
-    # Match Box2D debug output for the lander body as closely as possible.
     mass = 4.816666603088379
     moment = 0.8333148956298828
 
@@ -232,7 +230,7 @@ def create_leg(
     side: int,
     collision_type: int,
 ) -> pymunk.Body:
-    """Create one constrained Pymunk leg for the prototype lander."""
+    """Create one constrained Pymunk lander leg."""
     if side not in (-1, 1):
         raise ValueError("side must be -1 or +1")
 
@@ -292,8 +290,8 @@ def create_leg(
     return leg_body
 
 
-class PymunkLunarLanderDemo:
-    """Small action-driven Pymunk LunarLander physics demonstration."""
+class _LunarLanderPhysics:
+    """Own the Pymunk bodies, constraints, and physics integration."""
 
     def __init__(
         self,
@@ -303,7 +301,7 @@ class PymunkLunarLanderDemo:
         solver_iterations: int = 6 * 30,
         gravity: float = -10.0,
     ):
-        """Create a seeded Pymunk LunarLander demonstration world."""
+        """Create a seeded Pymunk LunarLander physics world."""
         solver_iterations = _validate_solver_iterations(solver_iterations)
         self.world_width = VIEWPORT_WIDTH / SCALE
         self.world_height = VIEWPORT_HEIGHT / SCALE
@@ -368,10 +366,6 @@ class PymunkLunarLanderDemo:
             force * DT,
             tuple(body_center_of_mass_world(self.lander_body)),
         )
-        # Box2d starts at angle 0
-        # self.lander_body.angle = float(
-        # rng.uniform(-INITIAL_RANDOM_ANGLE, INITIAL_RANDOM_ANGLE)
-        # )
 
     @property
     def left_leg_contact(self) -> bool:
@@ -462,7 +456,7 @@ class PymunkLunarLanderDemo:
             -oy * MAIN_ENGINE_POWER * power,
         )
 
-        self._engine_impulse_applied("main", dispersion, impulse_pos, impulse)
+        self._on_engine_impulse("main", dispersion, impulse_pos, impulse)
         self.lander_body.apply_impulse_at_world_point(impulse, impulse_pos)
 
     def fire_orientation_engine(
@@ -503,11 +497,11 @@ class PymunkLunarLanderDemo:
             -oy * SIDE_ENGINE_POWER * power,
         )
 
-        self._engine_impulse_applied("side", dispersion, impulse_pos, impulse)
+        self._on_engine_impulse("side", dispersion, impulse_pos, impulse)
         self.lander_body.apply_impulse_at_world_point(impulse, impulse_pos)
 
-    def step(self, action: int) -> DemoState:
-        """Advance the prototype by one step.
+    def step(self, action: int) -> _PhysicsState:
+        """Advance the physics simulation by one step.
 
         Actions:
         0: no action
@@ -523,7 +517,7 @@ class PymunkLunarLanderDemo:
         action: int | np.ndarray,
         *,
         continuous: bool,
-    ) -> tuple[DemoState, float, float]:
+    ) -> tuple[_PhysicsState, float, float]:
         """Advance one step and return the applied engine throttle values."""
         dispersion = [self.rng.uniform(-1.0, +1.0) / SCALE for _ in range(2)]
         main_power = 0.0
@@ -557,7 +551,7 @@ class PymunkLunarLanderDemo:
         self.space.step(DT)
         return self.state(), main_power, side_power
 
-    def _engine_impulse_applied(
+    def _on_engine_impulse(
         self,
         _engine: str,
         _dispersion: list[float],
@@ -566,9 +560,9 @@ class PymunkLunarLanderDemo:
     ) -> None:
         """Provide a no-op hook for out-of-package diagnostic tooling."""
 
-    def state(self) -> DemoState:
-        """Return the current prototype state."""
-        return DemoState(
+    def state(self) -> _PhysicsState:
+        """Return the current internal physics state."""
+        return _PhysicsState(
             x=float(body_origin_world(self.lander_body).x),
             y=float(body_origin_world(self.lander_body).y),
             velocity_x=float(self.lander_body.velocity.x),
@@ -578,27 +572,6 @@ class PymunkLunarLanderDemo:
             left_leg_contact=self.left_leg_contact,
             right_leg_contact=self.right_leg_contact,
             crashed=self.crashed,
-        )
-
-    def articulated_angular_momentum(self) -> float:
-        """Return total angular momentum about the articulated center of mass."""
-        bodies = (self.lander_body, self.left_leg_body, self.right_leg_body)
-        total_mass = sum(body.mass for body in bodies)
-        center_of_mass = (
-            sum(
-                (body_center_of_mass_world(body) * body.mass for body in bodies),
-                start=pymunk.Vec2d(0.0, 0.0),
-            )
-            / total_mass
-        )
-        return float(
-            sum(
-                body.moment * body.angular_velocity
-                + (body_center_of_mass_world(body) - center_of_mass).cross(
-                    body.velocity * body.mass
-                )
-                for body in bodies
-            )
         )
 
 
@@ -714,7 +687,7 @@ class LunarLander(Env, EzPickle):
     """
 
     metadata = {"render_modes": list(_RENDER_MODES), "render_fps": FPS}
-    physics_class = PymunkLunarLanderDemo
+    _physics_class = _LunarLanderPhysics
 
     def __init__(
         self,
@@ -792,7 +765,7 @@ class LunarLander(Env, EzPickle):
         )
         self.observation_space = spaces.Box(low, high)
 
-        self.demo: PymunkLunarLanderDemo | None = None
+        self._physics: _LunarLanderPhysics | None = None
         self.prev_shaping: float | None = None
 
         self.last_action = 0
@@ -813,7 +786,7 @@ class LunarLander(Env, EzPickle):
     ) -> tuple[np.ndarray, dict]:
         """Reset the Pymunk environment."""
         super().reset(seed=seed)
-        self.demo = self.physics_class(
+        self._physics = self._physics_class(
             rng=self.np_random,
             randomize_initial_state=True,
             solver_iterations=self.solver_iterations,
@@ -834,35 +807,35 @@ class LunarLander(Env, EzPickle):
         # resolves them during reset's world step. Recreate that reset-only
         # pose so the seeded horizontal impulse couples into angular motion.
         for leg_body, side in (
-            (self.demo.left_leg_body, -1),
-            (self.demo.right_leg_body, 1),
+            (self._physics.left_leg_body, -1),
+            (self._physics.right_leg_body, 1),
         ):
             leg_body.position = (
-                self.demo.lander_body.position.x - side * LEG_AWAY,
-                self.demo.lander_body.position.y,
+                self._physics.lander_body.position.x - side * LEG_AWAY,
+                self._physics.lander_body.position.y,
             )
             leg_body.angle = side * 0.05
             leg_body.velocity = (0.0, 0.0)
             leg_body.angular_velocity = 0.0
         self._apply_wind()
         if self.continuous:
-            self.demo._step_with_powers(np.zeros(2), continuous=True)
+            self._physics._step_with_powers(np.zeros(2), continuous=True)
         else:
-            self.demo.step(0)
+            self._physics.step(0)
         # Pymunk generates constraint angular velocity after its orientation
         # integration phase; Box2D's reset step exposes the corresponding
         # orientation change immediately.
         for body in (
-            self.demo.lander_body,
-            self.demo.left_leg_body,
-            self.demo.right_leg_body,
+            self._physics.lander_body,
+            self._physics.left_leg_body,
+            self._physics.right_leg_body,
         ):
             body.angle += body.angular_velocity * DT
         for leg_body, side in (
-            (self.demo.left_leg_body, -1),
-            (self.demo.right_leg_body, 1),
+            (self._physics.left_leg_body, -1),
+            (self._physics.right_leg_body, 1),
         ):
-            leg_body.position = self.demo.lander_body.position - pymunk.Vec2d(
+            leg_body.position = self._physics.lander_body.position - pymunk.Vec2d(
                 side * LEG_AWAY, LEG_DOWN
             ).rotated(leg_body.angle)
         observation = self._get_observation()
@@ -872,20 +845,20 @@ class LunarLander(Env, EzPickle):
         return observation, {}
 
     def _get_observation(self) -> np.ndarray:
-        assert self.demo is not None
+        assert self._physics is not None
 
-        pos = body_origin_world(self.demo.lander_body)
-        vel = self.demo.lander_body.velocity
+        pos = body_origin_world(self._physics.lander_body)
+        vel = self._physics.lander_body.velocity
         state = [
             (pos.x - VIEWPORT_WIDTH / SCALE / 2) / (VIEWPORT_WIDTH / SCALE / 2),
-            (pos.y - (self.demo.terrain.helipad_y + LEG_DOWN))
+            (pos.y - (self._physics.terrain.helipad_y + LEG_DOWN))
             / (VIEWPORT_HEIGHT / SCALE / 2),
             vel.x * (VIEWPORT_WIDTH / SCALE / 2) / FPS,
             vel.y * (VIEWPORT_HEIGHT / SCALE / 2) / FPS,
-            self.demo.lander_body.angle,
-            20.0 * self.demo.lander_body.angular_velocity / FPS,
-            1.0 if self.demo.left_leg_contact else 0.0,
-            1.0 if self.demo.right_leg_contact else 0.0,
+            self._physics.lander_body.angle,
+            20.0 * self._physics.lander_body.angular_velocity / FPS,
+            1.0 if self._physics.left_leg_contact else 0.0,
+            1.0 if self._physics.right_leg_contact else 0.0,
         ]
         return np.array(state, dtype=np.float32)
 
@@ -904,7 +877,7 @@ class LunarLander(Env, EzPickle):
 
     def step(self, action: int | np.ndarray):
         """Step the Pymunk environment."""
-        assert self.demo is not None, "You forgot to call reset()"
+        assert self._physics is not None, "You forgot to call reset()"
         if self.continuous:
             action = np.clip(action, -1, 1).astype(np.float64)
             side_engine_direction = int(np.sign(action[1]))
@@ -917,7 +890,7 @@ class LunarLander(Env, EzPickle):
         self.last_action = action
 
         self._apply_wind()
-        _, main_power, side_power = self.demo._step_with_powers(
+        _, main_power, side_power = self._physics._step_with_powers(
             action,
             continuous=self.continuous,
         )
@@ -941,18 +914,18 @@ class LunarLander(Env, EzPickle):
 
         terminated = False
         truncated = False
-        if self.demo.crashed or abs(float(observation[0])) >= 1.0:
+        if self._physics.crashed or abs(float(observation[0])) >= 1.0:
             terminated = True
             reward = -100.0
 
-        if not terminated and not self.demo.crashed:
-            if self.demo.left_leg_contact and self.demo.right_leg_contact:
+        if not terminated and not self._physics.crashed:
+            if self._physics.left_leg_contact and self._physics.right_leg_contact:
                 group_is_sleeping = all(
                     body.is_sleeping
                     for body in (
-                        self.demo.lander_body,
-                        self.demo.left_leg_body,
-                        self.demo.right_leg_body,
+                        self._physics.lander_body,
+                        self._physics.left_leg_body,
+                        self._physics.right_leg_body,
                     )
                 )
                 stable_long_enough = self._update_stable_landing_counter()
@@ -968,9 +941,9 @@ class LunarLander(Env, EzPickle):
 
     def _apply_wind(self) -> None:
         """Apply Box2D-compatible wind force and turbulence torque."""
-        assert self.demo is not None
+        assert self._physics is not None
         if not self.enable_wind or (
-            self.demo.left_leg_contact or self.demo.right_leg_contact
+            self._physics.left_leg_contact or self._physics.right_leg_contact
         ):
             return
 
@@ -985,9 +958,9 @@ class LunarLander(Env, EzPickle):
         # Like Box2D's ApplyForceToCenter, Pymunk integrates this force over
         # DT. Applying the same numeric value as an impulse would be 1 / DT
         # times too strong and would bypass the engines' force-unit contract.
-        self.demo.lander_body.apply_force_at_world_point(
+        self._physics.lander_body.apply_force_at_world_point(
             (wind_magnitude, 0.0),
-            tuple(body_center_of_mass_world(self.demo.lander_body)),
+            tuple(body_center_of_mass_world(self._physics.lander_body)),
         )
 
         torque_magnitude = (
@@ -999,19 +972,19 @@ class LunarLander(Env, EzPickle):
         )
         self.torque_idx += 1
         # Body.torque is likewise integrated over DT into angular impulse.
-        self.demo.lander_body.torque += torque_magnitude
+        self._physics.lander_body.torque += torque_magnitude
 
     def _update_stable_landing_counter(self) -> bool:
         """Track Box2D-tolerance stability when native group sleep stalls."""
-        assert self.demo is not None
+        assert self._physics is not None
         bodies = (
-            self.demo.lander_body,
-            self.demo.left_leg_body,
-            self.demo.right_leg_body,
+            self._physics.lander_body,
+            self._physics.left_leg_body,
+            self._physics.right_leg_body,
         )
         stable = (
-            self.demo.left_leg_contact
-            and self.demo.right_leg_contact
+            self._physics.left_leg_contact
+            and self._physics.right_leg_contact
             and all(
                 body.velocity.length <= STABLE_LINEAR_SPEED_THRESHOLD
                 and abs(body.angular_velocity) <= STABLE_ANGULAR_SPEED_THRESHOLD
@@ -1038,8 +1011,8 @@ class LunarLander(Env, EzPickle):
         ]
 
     def _draw_engine_flames(self, pygame, surface) -> None:
-        assert self.demo is not None
-        body = self.demo.lander_body
+        assert self._physics is not None
+        body = self._physics.lander_body
         origin = body_origin_world(body)
         tip = pymunk.Vec2d(math.sin(body.angle), math.cos(body.angle))
         side = pymunk.Vec2d(-tip.y, tip.x)
@@ -1089,7 +1062,7 @@ class LunarLander(Env, EzPickle):
                 f'e.g. gym.make("{env_id}", render_mode="rgb_array")'
             )
             return None
-        assert self.demo is not None, "You forgot to call reset()"
+        assert self._physics is not None, "You forgot to call reset()"
 
         if self._pygame is None:
             try:
@@ -1121,8 +1094,8 @@ class LunarLander(Env, EzPickle):
         terrain_points = [
             self._world_to_screen((float(x), float(y)))
             for x, y in zip(
-                self.demo.terrain.chunk_x,
-                self.demo.terrain.smooth_y,
+                self._physics.terrain.chunk_x,
+                self._physics.terrain.smooth_y,
                 strict=True,
             )
         ]
@@ -1134,20 +1107,20 @@ class LunarLander(Env, EzPickle):
         pygame.draw.lines(surface, (0, 0, 0), False, terrain_points, width=2)
 
         helipad_start = self._world_to_screen(
-            (self.demo.terrain.helipad_x1, self.demo.terrain.helipad_y)
+            (self._physics.terrain.helipad_x1, self._physics.terrain.helipad_y)
         )
         helipad_end = self._world_to_screen(
-            (self.demo.terrain.helipad_x2, self.demo.terrain.helipad_y)
+            (self._physics.terrain.helipad_x2, self._physics.terrain.helipad_y)
         )
         pygame.draw.line(surface, (40, 180, 80), helipad_start, helipad_end, width=4)
 
         self._draw_engine_flames(pygame, surface)
 
-        hull_points = self._body_poly_points(self.demo.lander_body)
+        hull_points = self._body_poly_points(self._physics.lander_body)
         pygame.draw.polygon(surface, (128, 102, 230), hull_points)
         pygame.draw.lines(surface, (77, 77, 128), True, hull_points, width=2)
 
-        for leg_body in [self.demo.left_leg_body, self.demo.right_leg_body]:
+        for leg_body in [self._physics.left_leg_body, self._physics.right_leg_body]:
             leg_points = self._body_poly_points(leg_body)
             pygame.draw.polygon(surface, (128, 102, 230), leg_points)
             pygame.draw.lines(surface, (77, 77, 128), True, leg_points, width=2)

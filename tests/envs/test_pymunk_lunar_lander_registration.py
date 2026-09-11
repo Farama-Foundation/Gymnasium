@@ -20,8 +20,8 @@ def _use_headless_pygame():
 
 
 def _disable_physics(env):
-    env.unwrapped.demo._step_with_powers = lambda action, continuous: (
-        env.unwrapped.demo.state(),
+    env.unwrapped._physics._step_with_powers = lambda action, continuous: (
+        env.unwrapped._physics.state(),
         0.0,
         0.0,
     )
@@ -190,7 +190,7 @@ def test_lunar_lander_v4_pickles_all_constructor_arguments(render_mode):
     assert restored.solver_iterations == 30
 
     restored.reset(seed=123)
-    assert restored.demo.space.iterations == 30
+    assert restored._physics.space.iterations == 30
 
 
 def test_import_gymnasium_and_v4_spec_do_not_require_pymunk():

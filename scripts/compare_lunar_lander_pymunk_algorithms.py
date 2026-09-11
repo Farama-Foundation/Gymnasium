@@ -524,15 +524,15 @@ def evaluate_policy(
             episode_actions.append(env_action)
             observation, reward, terminated, truncated, _ = env.step(env_action)
             unwrapped_env = env.unwrapped
-            demo = getattr(unwrapped_env, "demo", None)
-            if demo is not None and action_mode == "discrete":
+            physics = getattr(unwrapped_env, "_physics", None)
+            if physics is not None and action_mode == "discrete":
                 diagnostic_function = getattr(
-                    demo, "physics_diagnostics", physics_diagnostics
+                    physics, "physics_diagnostics", physics_diagnostics
                 )
                 physics_row = (
                     diagnostic_function(int(env_action))
                     if diagnostic_function is not physics_diagnostics
-                    else diagnostic_function(demo, int(env_action))
+                    else diagnostic_function(physics, int(env_action))
                 )
                 physics_row["episode_step"] = episode_length + 1
                 physics_row["stable_condition_counter"] = int(

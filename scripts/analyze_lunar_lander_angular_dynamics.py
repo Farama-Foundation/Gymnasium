@@ -147,9 +147,9 @@ def initial_rows(seed_count: int):
             (
                 "pymunk",
                 [
-                    pymunk_env.demo.lander_body,
-                    pymunk_env.demo.left_leg_body,
-                    pymunk_env.demo.right_leg_body,
+                    pymunk_env._physics.lander_body,
+                    pymunk_env._physics.left_leg_body,
+                    pymunk_env._physics.right_leg_body,
                 ],
                 body_center_of_mass_world,
                 lambda body: body.velocity,
@@ -255,14 +255,14 @@ def response_rows(seed: int, steps: int):
                     ]
                     hull_v = list(hull.linearVelocity)
                 else:
-                    demo = pymunk_env.demo
-                    pre_v = np.array(demo.lander_body.velocity, dtype=float)
-                    pre_w = float(demo.lander_body.angular_velocity)
+                    physics = pymunk_env._physics
+                    pre_v = np.array(physics.lander_body.velocity, dtype=float)
+                    pre_w = float(physics.lander_body.angular_velocity)
                     pymunk_env.step(action)
-                    telemetry = demo.last_engine_diagnostics or {}
+                    telemetry = physics.last_engine_diagnostics or {}
                     impulse = np.array(telemetry.get("impulse", (0.0, 0.0)))
                     point = telemetry.get(
-                        "application_point", tuple(demo.lander_body.position)
+                        "application_point", tuple(physics.lander_body.position)
                     )
                     theoretical_dv = telemetry.get(
                         "theoretical_delta_velocity", (0.0, 0.0)
@@ -270,9 +270,9 @@ def response_rows(seed: int, steps: int):
                     theoretical_dw = telemetry.get(
                         "theoretical_delta_angular_velocity", 0.0
                     )
-                    dv = np.array(demo.lander_body.velocity) - pre_v
-                    dw = float(demo.lander_body.angular_velocity) - pre_w
-                    diagnostics = physics_diagnostics(demo, action)
+                    dv = np.array(physics.lander_body.velocity) - pre_v
+                    dw = float(physics.lander_body.angular_velocity) - pre_w
+                    diagnostics = physics_diagnostics(physics, action)
                     constraint = [
                         {
                             "motor_impulse": diagnostics[f"{side}_motor_impulse"],
@@ -283,8 +283,8 @@ def response_rows(seed: int, steps: int):
                         for side in ("left", "right")
                     ]
                     hull, legs = (
-                        demo.lander_body,
-                        [demo.left_leg_body, demo.right_leg_body],
+                        physics.lander_body,
+                        [physics.left_leg_body, physics.right_leg_body],
                     )
                     center, inertia, momentum, mass = articulated_metrics(
                         [hull, *legs],
