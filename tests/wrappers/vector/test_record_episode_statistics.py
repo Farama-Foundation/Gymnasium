@@ -3,7 +3,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
-from gymnasium.vector import AutoresetMode, SyncVectorEnv, VectorEnv
+from gymnasium.vector import AsyncVectorEnv, AutoresetMode, SyncVectorEnv, VectorEnv
 from tests.testing_env import GenericTestEnv
 
 
@@ -123,3 +123,32 @@ def test_episode_statistics_with_autoreset_mode(
     assert np.all(np.array(envs.return_queue) == episode_length)
     assert np.all(np.array(envs.length_queue) == episode_length)
     envs.close()
+
+
+@pytest.mark.parametrize("vectoriser", [SyncVectorEnv, AsyncVectorEnv])
+def test_partial_reset_preserves_episode_statistics(vectoriser):
+    def step_func(self, action):
+        return self.observation_space.sample(), 1.0, False, False, {}
+
+    envs = gym.wrappers.vector.RecordEpisodeStatistics(
+        vectoriser(
+            [
+                lambda length=length: gym.wrappers.TimeLimit(
+                    GenericTestEnv(step_func=step_func), max_episode_steps=length
+                )
+                for length in (2, 3)
+            ],
+            autoreset_mode=AutoresetMode.DISABLED,
+        )
+    )
+    try:
+        envs.reset(seed=123)
+        envs.step(envs.action_space.sample())
+        _, _, terminated, truncated, _ = envs.step(envs.action_space.sample())
+        envs.reset(options={"reset_mask": np.logical_or(terminated, truncated)})
+        *_, info = envs.step(envs.action_space.sample())
+
+        np.testing.assert_array_equal(info["episode"]["r"], [0.0, 3.0])
+        np.testing.assert_array_equal(info["episode"]["l"], [0, 3])
+    finally:
+        envs.close()

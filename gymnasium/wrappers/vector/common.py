@@ -119,11 +119,11 @@ class RecordEpisodeStatistics(VectorWrapper):
         seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[np.ndarray, dict[str, Any]]:
-        """Resets the environment using kwargs and resets the episode returns and lengths."""
+        """Resets the environment and the reset sub-environments' episode statistics."""
         obs, info = super().reset(seed=seed, options=options)
 
         if options is not None and "reset_mask" in options:
-            reset_mask = options.pop("reset_mask")
+            reset_mask = options["reset_mask"]
             if not isinstance(reset_mask, np.ndarray):
                 raise TypeError(
                     f"`options['reset_mask']` must be a numpy array, got {type(reset_mask)}"
