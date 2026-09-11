@@ -646,6 +646,7 @@ class LunarLander(Env, EzPickle):
     ...                turbulence_power=1.5, solver_iterations=180)
     >>> env
     <TimeLimit<OrderEnforcing<PassiveEnvChecker<LunarLander<LunarLander-v4>>>>>
+
     ```
 
     - `render_mode` can be `None`, `"human"`, or `"rgb_array"`. Human mode

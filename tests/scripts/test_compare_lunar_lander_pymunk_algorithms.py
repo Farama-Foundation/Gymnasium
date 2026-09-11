@@ -1128,6 +1128,54 @@ def test_normalized_auc_is_invariant_to_evaluation_frequency():
     assert dense == pytest.approx(sparse)
 
 
+@pytest.mark.parametrize(
+    ("timesteps", "values"),
+    [
+        ([0], [1]),
+        ([0, 0], [1, 2]),
+        ([0, 10], [1]),
+        ([0, 10, 5], [1, 2, 3]),
+        ([1, 10], [1, 2]),
+    ],
+)
+def test_normalized_auc_rejects_incomplete_or_zero_width_curves(timesteps, values):
+    with pytest.raises(ValueError, match="strictly ordered from step zero"):
+        compare.normalized_learning_curve_area(timesteps, values)
+
+
+@pytest.mark.parametrize(
+    ("timesteps", "values", "expected"),
+    [
+        ([0, 10], [3, 3], 3.0),
+        ([0, 5, 10], [0, 10, 0], 5.0),
+        ([0.0, 0.25, 1.0], [-2.0, 2.0, 2.0], 1.5),
+    ],
+)
+def test_normalized_auc_known_curves(timesteps, values, expected):
+    assert compare.normalized_learning_curve_area(timesteps, values) == pytest.approx(
+        expected
+    )
+
+
+def test_normalized_auc_treats_integer_and_float_timesteps_equally():
+    values = [1.5, -2.0, 4.0]
+    assert compare.normalized_learning_curve_area(
+        [0, 3, 10], values
+    ) == compare.normalized_learning_curve_area([0.0, 3.0, 10.0], values)
+
+
+def test_normalized_auc_matches_numpy_2_trapezoid():
+    trapezoid = getattr(np, "trapezoid", None)
+    if trapezoid is None:
+        pytest.skip("NumPy 1.x does not provide np.trapezoid")
+    timesteps = np.array([0, 3, 10, 25], dtype=np.float64)
+    values = np.array([-4.5, 2.0, 7.25, -1.0], dtype=np.float64)
+
+    assert compare.normalized_learning_curve_area(timesteps, values) == pytest.approx(
+        float(trapezoid(values, timesteps) / timesteps[-1])
+    )
+
+
 def test_duplicate_result_keys_are_rejected():
     rows = [
         {"engine": "box2d", "seed": 1, "timestep": 10},

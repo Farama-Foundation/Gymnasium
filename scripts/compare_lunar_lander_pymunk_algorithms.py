@@ -1451,7 +1451,9 @@ def normalized_learning_curve_area(
         or np.any(np.diff(x) <= 0)
     ):
         raise ValueError("evaluations must be strictly ordered from step zero")
-    return float(np.trapezoid(y, x) / x[-1])
+    interval_widths = np.diff(x)
+    interval_means = (y[:-1] + y[1:]) / 2.0
+    return float(np.sum(interval_widths * interval_means) / x[-1])
 
 
 def _seed_statistics(values: dict[int, float], samples: int) -> dict[str, Any]:
