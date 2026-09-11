@@ -19,7 +19,8 @@ all_envs = [
         ],
     },
     {"id": "toy_text", "list": ["blackjack", "cliff_walking", "frozen_lake", "taxi"]},
-    {"id": "box2d", "list": ["bipedal_walker", "car_racing", "lunar_lander"]},
+    {"id": "box2d", "list": ["bipedal_walker", "car_racing"]},
+    {"id": "pymunk", "list": ["lunar_lander"]},
     {
         "id": "classic_control",
         "list": [

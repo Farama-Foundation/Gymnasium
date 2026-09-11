@@ -73,6 +73,7 @@ api/functional
 
 environments/classic_control
 environments/box2d
+environments/pymunk
 environments/toy_text
 environments/mujoco
 environments/atari
