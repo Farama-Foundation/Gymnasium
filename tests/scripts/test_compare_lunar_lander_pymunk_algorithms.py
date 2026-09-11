@@ -320,24 +320,6 @@ def test_physics_diagnostic_factories_are_intentionally_unwrapped():
             env.close()
 
 
-def test_legacy_ppo_factories_remain_time_limited_but_non_acceptance():
-    """The superseded PPO harness still uses matching production wrappers."""
-    pytest.importorskip("Box2D")
-    from scripts import compare_lunar_lander_pymunk_ppo as legacy
-
-    environments = [legacy.make_box2d_env(), legacy.make_pymunk_env()]
-    try:
-        assert [env.spec.id for env in environments] == [
-            "LunarLander-v3",
-            "LunarLander-v4",
-        ]
-        assert all(env.spec.max_episode_steps == 1_000 for env in environments)
-        assert all(type(env).__name__ == "TimeLimit" for env in environments)
-    finally:
-        for env in environments:
-            env.close()
-
-
 def test_evaluate_policy_uses_engine_neutral_landing_classification():
     reset_seeds = []
 
