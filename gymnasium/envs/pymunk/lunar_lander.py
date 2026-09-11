@@ -941,15 +941,9 @@ class LunarLander(Env, EzPickle):
 
         terminated = False
         truncated = False
-        termination_reason = None
-        is_success = False
-
         if self.demo.crashed or abs(float(observation[0])) >= 1.0:
             terminated = True
             reward = -100.0
-            termination_reason = "crash" if self.demo.crashed else "viewport_exit"
-
-        inside_landing_zone = False
 
         if not terminated and not self.demo.crashed:
             if self.demo.left_leg_contact and self.demo.right_leg_contact:
@@ -963,30 +957,14 @@ class LunarLander(Env, EzPickle):
                 )
                 stable_long_enough = self._update_stable_landing_counter()
                 if group_is_sleeping or stable_long_enough:
-                    lander_x = float(self.demo.lander_body.position.x)
-
-                    inside_landing_zone = (
-                        self.demo.terrain.helipad_x1
-                        <= lander_x
-                        <= self.demo.terrain.helipad_x2
-                    )
-
                     terminated = True
                     reward = 100.0
-                    termination_reason = "stable_landing"
-                    is_success = True
             else:
                 self.stable_landing_steps = 0
 
-        info = {
-            "termination_reason": termination_reason,
-            "is_success": is_success,
-            "inside_landing_zone": inside_landing_zone,
-        }
-
         if self.render_mode == "human":
             self.render()
-        return observation, reward, terminated, truncated, info
+        return observation, reward, terminated, truncated, {}
 
     def _apply_wind(self) -> None:
         """Apply Box2D-compatible wind force and turbulence torque."""

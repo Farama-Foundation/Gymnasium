@@ -16,6 +16,21 @@ if str(PROJECT_ROOT) not in sys.path:
 from gymnasium.envs.pymunk.lunar_lander import LunarLander  # noqa: E402
 
 
+def classify_outcome(
+    observation, reward: float, terminated: bool, truncated: bool
+) -> str:
+    """Classify an episode from engine-neutral public outputs."""
+    if terminated:
+        if reward > 0.0:
+            return "landing"
+        if abs(float(observation[0])) >= 1.0:
+            return "ambiguous_failure"
+        return "crash"
+    if truncated:
+        return "time_limit"
+    return "ongoing"
+
+
 def parse_args() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser()
@@ -176,7 +191,7 @@ def run_fixed_sequence(
     for step_idx, action in enumerate(actions):
         raw_state_before = get_raw_state(env)
 
-        next_observation, reward, terminated, truncated, info = env.step(action)
+        next_observation, reward, terminated, truncated, _ = env.step(action)
         raw_state_after = get_raw_state(env)
 
         rows.append(
@@ -229,8 +244,9 @@ def run_fixed_sequence(
                 "reward": float(reward),
                 "terminated": bool(terminated),
                 "truncated": bool(truncated),
-                "termination_reason": info.get("termination_reason", "unknown"),
-                "is_success": info.get("is_success", None),
+                "outcome": classify_outcome(
+                    next_observation, float(reward), terminated, truncated
+                ),
             }
         )
 
@@ -275,8 +291,7 @@ def write_csv(rows: list[dict[str, Any]], output_csv: Path) -> None:
         "reward",
         "terminated",
         "truncated",
-        "termination_reason",
-        "is_success",
+        "outcome",
     ]
 
     with output_csv.open("w", newline="") as file:

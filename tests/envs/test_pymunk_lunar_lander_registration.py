@@ -98,6 +98,36 @@ def test_lunar_lander_v4_action_modes_support_sync_vectorization(env_id):
     env.close()
 
 
+@pytest.mark.parametrize(
+    ("box2d_id", "pymunk_id", "action"),
+    [
+        ("LunarLander-v3", "LunarLander-v4", 0),
+        (
+            "LunarLanderContinuous-v3",
+            "LunarLanderContinuous-v4",
+            np.zeros(2, dtype=np.float32),
+        ),
+    ],
+)
+def test_v3_v4_reset_and_step_info_contracts_match(box2d_id, pymunk_id, action):
+    """Registered Box2D and Pymunk environments return empty public info."""
+    pytest.importorskip("Box2D")
+    pytest.importorskip("pymunk")
+    box2d_env = gym.make(box2d_id)
+    pymunk_env = gym.make(pymunk_id)
+    try:
+        _, box2d_reset_info = box2d_env.reset(seed=123)
+        _, pymunk_reset_info = pymunk_env.reset(seed=123)
+        *_, box2d_step_info = box2d_env.step(action)
+        *_, pymunk_step_info = pymunk_env.step(action)
+
+        assert box2d_reset_info == pymunk_reset_info == {}
+        assert box2d_step_info == pymunk_step_info == {}
+    finally:
+        box2d_env.close()
+        pymunk_env.close()
+
+
 def test_lunar_lander_continuous_v4_registration():
     pytest.importorskip("pymunk")
     from gymnasium.envs.pymunk import LunarLander

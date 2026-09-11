@@ -318,15 +318,15 @@ def classify_episode(
     terminal_reward: float,
     terminated: bool,
     truncated: bool,
-    engine: str | None = None,
 ) -> str:
     """Classify an episode using only engine-neutral Gymnasium outputs."""
     if terminated:
         if terminal_reward > 0.0:
             return "landing"
         if abs(float(observation[0])) >= 1.0:
-            # Box2D exposes collision and viewport exit through one terminal branch.
-            return "ambiguous_failure" if engine == "box2d" else "viewport_exit"
+            # Public outputs cannot distinguish a viewport exit from a collision
+            # occurring during the same terminal transition.
+            return "ambiguous_failure"
         return "crash"
     if truncated:
         return "time_limit"
@@ -511,7 +511,6 @@ def evaluate_policy(
         reward_decomposition = RewardDecomposition(initial_previous_shaping)
         episode_return = 0.0
         episode_length = 0
-        final_info = {}
         episode_actions: list[int | np.ndarray] = []
         recent_physics_diagnostics = deque(maxlen=100)
 
@@ -523,9 +522,7 @@ def evaluate_policy(
             else:
                 all_continuous_actions.append(np.asarray(env_action).copy())
             episode_actions.append(env_action)
-            observation, reward, terminated, truncated, final_info = env.step(
-                env_action
-            )
+            observation, reward, terminated, truncated, _ = env.step(env_action)
             unwrapped_env = env.unwrapped
             demo = getattr(unwrapped_env, "demo", None)
             if demo is not None and action_mode == "discrete":
@@ -570,15 +567,7 @@ def evaluate_policy(
             terminal_reward=float(reward),
             terminated=terminated,
             truncated=truncated,
-            engine=engine,
         )
-        if (
-            engine == "pymunk"
-            and outcome in {"crash", "viewport_exit"}
-            and final_info.get("termination_reason") in {"crash", "viewport_exit"}
-        ):
-            # Pymunk's public diagnostic disambiguates subtypes; failure_rate does not.
-            outcome = final_info["termination_reason"]
         terminal_observation = np.asarray(observation).copy()
         termination_reasons.append(outcome)
         episode_success = outcome == "landing"
@@ -608,7 +597,6 @@ def evaluate_policy(
                     terminal_reward=float(settle_reward),
                     terminated=settle_terminated,
                     truncated=settle_truncated,
-                    engine=engine,
                 )
                 settle_logs.append(
                     make_settle_row(
@@ -1684,7 +1672,7 @@ def create_run_manifest(
         for engine in args.engines
     ]
     return {
-        "schema_version": 4,
+        "schema_version": 5,
         "status": "running",
         "started_at": started_at,
         "updated_at": started_at,
@@ -2215,10 +2203,10 @@ def main() -> None:
         if not args.manifest_json.exists():
             raise RuntimeError("Cannot resume without an existing manifest")
         manifest = json.loads(args.manifest_json.read_text())
-        if manifest.get("schema_version") != 4:
+        if manifest.get("schema_version") != 5:
             raise RuntimeError(
-                "Cannot resume an incompatible manifest schema; schema 3 runs "
-                "cannot be migrated to the action-mode-aware schema 4"
+                "Cannot resume an incompatible manifest schema; schema 4 runs "
+                "cannot be migrated to the engine-neutral outcome schema 5"
             )
         if manifest.get("status") == "completed":
             raise RuntimeError("Run is already completed")

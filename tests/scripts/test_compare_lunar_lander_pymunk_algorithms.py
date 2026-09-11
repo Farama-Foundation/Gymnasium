@@ -320,6 +320,29 @@ def test_physics_diagnostic_factories_are_intentionally_unwrapped():
             env.close()
 
 
+@pytest.mark.parametrize(
+    ("observation", "reward", "terminated", "truncated", "expected"),
+    [
+        (np.zeros(8), 100.0, True, False, "landing"),
+        (np.zeros(8), -100.0, True, False, "crash"),
+        (
+            np.array([1.0, 0, 0, 0, 0, 0, 0, 0]),
+            -100.0,
+            True,
+            False,
+            "ambiguous_failure",
+        ),
+        (np.zeros(8), 0.0, False, True, "time_limit"),
+    ],
+)
+def test_fixed_action_outcomes_use_engine_neutral_outputs(
+    observation, reward, terminated, truncated, expected
+):
+    from scripts.compare_lunar_lander_fixed_actions import classify_outcome
+
+    assert classify_outcome(observation, reward, terminated, truncated) == expected
+
+
 def test_evaluate_policy_uses_engine_neutral_landing_classification():
     reset_seeds = []
 
@@ -339,8 +362,7 @@ def test_evaluate_policy_uses_engine_neutral_landing_classification():
             return np.zeros(8), {}
 
         def step(self, action):
-            # Pymunk-only info must not alter the engine-neutral classification.
-            return np.zeros(8), 250.0, True, False, {"is_success": False}
+            return np.zeros(8), 250.0, True, False, {}
 
         def close(self):
             pass
@@ -362,7 +384,13 @@ def test_evaluate_policy_uses_engine_neutral_landing_classification():
     [
         (np.zeros(8), 100.0, True, False, "landing"),
         (np.zeros(8), -100.0, True, False, "crash"),
-        (np.array([1.0, 0, 0, 0, 0, 0, 0, 0]), -100.0, True, False, "viewport_exit"),
+        (
+            np.array([1.0, 0, 0, 0, 0, 0, 0, 0]),
+            -100.0,
+            True,
+            False,
+            "ambiguous_failure",
+        ),
         (np.zeros(8), 0.0, False, True, "time_limit"),
     ],
 )
@@ -378,16 +406,12 @@ def test_terminated_takes_precedence_over_truncated():
     assert compare.classify_episode(np.zeros(8), 100.0, True, True) == "landing"
 
 
-def test_box2d_viewport_failure_is_ambiguous():
+def test_viewport_failure_is_engine_neutral_and_ambiguous():
     observation = np.array([1.0, 0, 0, 0, 0, 0, 0, 0])
 
     assert (
-        compare.classify_episode(observation, -100.0, True, False, engine="box2d")
+        compare.classify_episode(observation, -100.0, True, False)
         == "ambiguous_failure"
-    )
-    assert (
-        compare.classify_episode(observation, -100.0, True, False, engine="pymunk")
-        == "viewport_exit"
     )
 
 
@@ -592,26 +616,8 @@ def test_post_landing_steps_do_not_change_evaluation_metrics(tmp_path):
                 dtype=np.float32,
             )
             if self.steps == 1:
-                return (
-                    observation,
-                    100.0,
-                    True,
-                    False,
-                    {
-                        "is_success": True,
-                        "termination_reason": "stable_landing",
-                    },
-                )
-            return (
-                observation,
-                999.0,
-                True,
-                False,
-                {
-                    "is_success": True,
-                    "termination_reason": "stable_landing",
-                },
-            )
+                return observation, 100.0, True, False, {}
+            return observation, 999.0, True, False, {}
 
         def close(self):
             pass
@@ -709,10 +715,7 @@ def test_time_limit_episode_records_final_100_physics_steps():
                 0.0,
                 False,
                 truncated,
-                {
-                    "is_success": False,
-                    "termination_reason": "time_limit" if truncated else None,
-                },
+                {},
             )
 
         def close(self):
@@ -948,7 +951,7 @@ def test_manifest_contains_reproducibility_fields():
         timestamp=timestamp,
     )
 
-    assert manifest["schema_version"] == 4
+    assert manifest["schema_version"] == 5
     assert manifest["git_sha"]
     assert isinstance(manifest["dirty_worktree"], bool)
     assert manifest["status"] == "running"
@@ -985,7 +988,7 @@ def test_sac_manifest_fingerprints_continuous_contract_and_configuration():
 
     manifest = compare.create_run_manifest(args)
 
-    assert manifest["schema_version"] == 4
+    assert manifest["schema_version"] == 5
     assert manifest["algorithm"] == "sac"
     assert manifest["action_mode"] == "continuous"
     assert manifest["resolved_constructor"]["ent_coef"] == "auto"
@@ -1303,14 +1306,14 @@ def test_resume_rejects_incompatible_configuration(monkeypatch, tmp_path):
         compare.main()
 
 
-def test_resume_rejects_schema_three_with_clear_message(monkeypatch, tmp_path):
+def test_resume_rejects_schema_four_with_clear_message(monkeypatch, tmp_path):
     output = tmp_path / "results.csv"
     manifest_path = tmp_path / "manifest.json"
     args = compare.parse_args(
         ["--output-csv", str(output), "--manifest-json", str(manifest_path)]
     )
     manifest = compare.create_run_manifest(args)
-    manifest["schema_version"] = 3
+    manifest["schema_version"] = 4
     compare.write_manifest(manifest, manifest_path)
     original_parse_args = compare.parse_args
     monkeypatch.setattr(
@@ -1327,7 +1330,7 @@ def test_resume_rejects_schema_three_with_clear_message(monkeypatch, tmp_path):
         ),
     )
 
-    with pytest.raises(RuntimeError, match="schema 3 runs cannot be migrated"):
+    with pytest.raises(RuntimeError, match="schema 4 runs cannot be migrated"):
         compare.main()
 
 

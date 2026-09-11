@@ -878,7 +878,7 @@ def test_default_fixed_action_trajectory_matches_c28b7064c():
     for action in actions:
         observation, reward, terminated, truncated, info = env.step(action)
         rewards.append(reward)
-        flags.append((terminated, truncated, info["termination_reason"]))
+        flags.append((terminated, truncated, info))
 
     np.testing.assert_allclose(
         observation,
@@ -910,7 +910,7 @@ def test_default_fixed_action_trajectory_matches_c28b7064c():
         rtol=0.0,
         atol=1e-7,
     )
-    assert flags == [(False, False, None)] * len(actions)
+    assert flags == [(False, False, {})] * len(actions)
 
 
 def test_experimental_env_reset_and_step_contracts():
@@ -926,11 +926,7 @@ def test_experimental_env_reset_and_step_contracts():
     assert isinstance(reward, float)
     assert isinstance(terminated, bool)
     assert truncated is False
-    assert info == {
-        "termination_reason": None,
-        "is_success": False,
-        "inside_landing_zone": False,
-    }
+    assert info == {}
 
 
 def shaping(observation):
@@ -1156,11 +1152,7 @@ def test_experimental_env_accepts_all_discrete_actions(action):
     assert isinstance(reward, float)
     assert isinstance(terminated, bool)
     assert truncated is False
-    assert set(info) == {
-        "termination_reason",
-        "is_success",
-        "inside_landing_zone",
-    }
+    assert info == {}
 
 
 def test_action_spaces_match_box2d_contract():
@@ -1351,11 +1343,7 @@ def test_experimental_env_crash_termination():
     assert terminated
     assert not truncated
     assert reward == -100.0
-    assert info == {
-        "termination_reason": "crash",
-        "is_success": False,
-        "inside_landing_zone": False,
-    }
+    assert info == {}
 
 
 def test_experimental_env_stable_landing_termination():
@@ -1371,11 +1359,7 @@ def test_experimental_env_stable_landing_termination():
     assert terminated
     assert not truncated
     assert reward == 100.0
-    assert info == {
-        "termination_reason": "stable_landing",
-        "is_success": True,
-        "inside_landing_zone": True,
-    }
+    assert info == {}
     group_is_sleeping = all(
         body.is_sleeping
         for body in (
@@ -1420,7 +1404,7 @@ def test_stability_fallback_terminates_when_native_sleep_is_disabled():
     assert terminated
     assert not truncated
     assert reward == 100.0
-    assert info["termination_reason"] == "stable_landing"
+    assert info == {}
     assert not env.demo.lander_body.is_sleeping
     assert env.stable_landing_steps >= STABLE_LANDING_STEPS
     assert np.hypot(observation[2], observation[3]) < 0.01
@@ -1475,7 +1459,7 @@ def test_resting_hull_height_matches_scaled_box2d_geometry():
     assert demo.lander_body.position.y == pytest.approx(expected_hull_y, abs=0.03)
 
 
-def test_experimental_env_viewport_exit_termination_reason():
+def test_experimental_env_viewport_exit_termination():
     env = ExperimentalPymunkLunarLanderEnv()
     env.reset(seed=123)
     env.demo.lander_body.position = (env.demo.world_width + 1.0, env.demo.world_height)
@@ -1486,11 +1470,7 @@ def test_experimental_env_viewport_exit_termination_reason():
     assert terminated
     assert not truncated
     assert reward == -100.0
-    assert info == {
-        "termination_reason": "viewport_exit",
-        "is_success": False,
-        "inside_landing_zone": False,
-    }
+    assert info == {}
 
 
 @pytest.mark.parametrize("direction", [-1, 1])
@@ -1525,7 +1505,7 @@ def test_viewport_exit_boundary_and_timing_match_box2d(direction):
     assert abs(pymunk_observation[0]) >= 1.0
     assert box_terminated and pymunk_terminated
     assert box_reward == pymunk_reward == -100.0
-    assert pymunk_info["termination_reason"] == "viewport_exit"
+    assert pymunk_info == {}
     box_env.close()
     pymunk_env.close()
 
@@ -1601,11 +1581,7 @@ def test_direct_env_has_no_internal_time_limit_truncation():
 
     assert not terminated
     assert not truncated
-    assert info == {
-        "termination_reason": None,
-        "is_success": False,
-        "inside_landing_zone": False,
-    }
+    assert info == {}
 
 
 def test_experimental_env_render_returns_rgb_array():
@@ -1792,7 +1768,7 @@ def test_hard_leg_impact_matches_box2d_termination_semantics():
 
     assert box_terminated == pymunk_terminated
     assert not pymunk_terminated
-    assert pymunk_info["termination_reason"] is None
+    assert pymunk_info == {}
 
     box_env.close()
     pymunk_env.close()
