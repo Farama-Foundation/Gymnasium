@@ -2,6 +2,7 @@ __credits__ = ["Kallinteris-Andreas"]
 
 from typing import Any, Final
 
+import mujoco
 import numpy as np
 
 from gymnasium import utils
@@ -189,6 +190,10 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
     def step(self, action):
         self.do_simulation(action, self.frame_skip)
+        # Sync body xpos with post-step qpos (xpos lags by one integration;
+        # see google-deepmind/mujoco#889). Needed so fingertip/target in the
+        # observation match the joint angles in the same vector (#1690).
+        mujoco.mj_kinematics(self.model, self.data)
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew(action)
