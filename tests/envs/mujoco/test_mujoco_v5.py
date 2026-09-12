@@ -708,3 +708,39 @@ def test_reset_state(env_name: str, version: str):
 
     env = gym.make(f"{env_name}-{version}")
     check_mujoco_reset_state(env)
+
+
+@pytest.mark.parametrize("version", ["v5", "v4"])
+def test_reacher_fingertip_matches_joint_fk(version: str):
+    """Fingertip xpos in the observation must match forward kinematics from qpos.
+
+    After mj_step, MuJoCo leaves body xpos one integration behind qpos
+    (google-deepmind/mujoco#889). Reacher mixes both in one observation vector,
+    so we sync kinematics after the step (#1690).
+    """
+    L1, L2 = 0.1, 0.11
+    env = gym.make(f"Reacher-{version}", disable_env_checker=True)
+    u = env.unwrapped
+    env.reset(seed=0)
+
+    rng = np.random.default_rng(0)
+    for _ in range(32):
+        # Stay inside joint limits used by the audit in #1690.
+        qpos = u.data.qpos.copy()
+        qpos[0] = rng.uniform(-np.pi, np.pi)
+        qpos[1] = rng.uniform(-2.9, 2.9)
+        qpos[2:] = rng.uniform(-0.15, 0.15, size=2)
+        qvel = rng.uniform(-1.0, 1.0, size=u.model.nv)
+        qvel[2:] = 0.0
+        u.set_state(qpos, qvel)
+
+        env.step(np.zeros(2, dtype=np.float32))
+
+        t1, t2 = u.data.qpos[:2]
+        fingertip = u.data.body("fingertip").xpos
+        expected_x = L1 * np.cos(t1) + L2 * np.cos(t1 + t2)
+        expected_y = L1 * np.sin(t1) + L2 * np.sin(t1 + t2)
+        assert abs(fingertip[0] - expected_x) < 1e-12
+        assert abs(fingertip[1] - expected_y) < 1e-12
+
+    env.close()
