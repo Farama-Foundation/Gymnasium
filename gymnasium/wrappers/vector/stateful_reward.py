@@ -11,7 +11,7 @@ import numpy as np
 import numpy.typing as npt
 
 import gymnasium as gym
-from gymnasium.typing import VectorActType, VectorObsType
+from gymnasium.typing import VectorActType_contra, VectorObsType_co
 from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
@@ -23,9 +23,11 @@ VectorFloat32Array: TypeAlias = np.ndarray[tuple[int], np.dtype[np.float64]]
 
 
 class NormalizeReward(
-    VectorWrapper[VectorObsType, VectorActType, VectorFloat32Array, VectorBoolArray],
+    VectorWrapper[
+        VectorObsType_co, VectorActType_contra, VectorFloat32Array, VectorBoolArray
+    ],
     gym.utils.RecordConstructorArgs,
-    Generic[VectorObsType, VectorActType],
+    Generic[VectorObsType_co, VectorActType_contra],
 ):
     r"""This wrapper will scale rewards s.t. their exponential moving average has an approximately fixed variance.
 
@@ -83,8 +85,8 @@ class NormalizeReward(
     def __init__(
         self,
         env: VectorEnv[
-            VectorObsType,
-            VectorActType,
+            VectorObsType_co,
+            VectorActType_contra,
             npt.NDArray[np.floating],
             npt.NDArray[np.bool_],
         ],
@@ -123,16 +125,16 @@ class NormalizeReward(
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[VectorObsType, dict[str, Any]]:
+    ) -> tuple[VectorObsType_co, dict[str, Any]]:
         """Resets the environment and clears accumulated reward tracking state."""
         self.accumulated_reward[:] = 0
         self._prev_dones[:] = 0
         return super().reset(seed=seed, options=options)
 
     def step(
-        self, actions: VectorActType
+        self, actions: VectorActType_contra
     ) -> tuple[
-        VectorObsType,
+        VectorObsType_co,
         VectorFloat32Array,
         VectorBoolArray,
         VectorBoolArray,

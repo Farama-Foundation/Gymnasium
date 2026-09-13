@@ -7,10 +7,10 @@ from typing import Any, Generic
 
 import gymnasium as gym
 from gymnasium.typing import (
-    VectorActType,
-    VectorBoolType,
-    VectorObsType,
-    VectorRewardType,
+    VectorActType_contra,
+    VectorBoolType_co,
+    VectorObsType_co,
+    VectorRewardType_co,
 )
 from gymnasium.vector import VectorEnv, VectorWrapper
 from gymnasium.wrappers.array_conversion import (
@@ -23,9 +23,13 @@ __all__ = ["ArrayConversion"]
 
 
 class ArrayConversion(
-    VectorWrapper[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    VectorWrapper[
+        VectorObsType_co, VectorActType_contra, VectorRewardType_co, VectorBoolType_co
+    ],
     gym.utils.RecordConstructorArgs,
-    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    Generic[
+        VectorObsType_co, VectorActType_contra, VectorRewardType_co, VectorBoolType_co
+    ],
 ):
     """Wraps a vector environment returning Array API compatible arrays so that it can be interacted with through a specific framework.
 
@@ -44,7 +48,12 @@ class ArrayConversion(
 
     def __init__(
         self,
-        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        env: VectorEnv[
+            VectorObsType_co,
+            VectorActType_contra,
+            VectorRewardType_co,
+            VectorBoolType_co,
+        ],
         env_xp: ModuleType,
         target_xp: ModuleType,
         env_device: Device | None = None,
@@ -67,9 +76,13 @@ class ArrayConversion(
         self._target_device = target_device
 
     def step(
-        self, actions: VectorActType
+        self, actions: VectorActType_contra
     ) -> tuple[
-        VectorObsType, VectorRewardType, VectorBoolType, VectorBoolType, dict[str, Any]
+        VectorObsType_co,
+        VectorRewardType_co,
+        VectorBoolType_co,
+        VectorBoolType_co,
+        dict[str, Any],
     ]:
         """Transforms the action to the specified xp module array type.
 
@@ -97,7 +110,7 @@ class ArrayConversion(
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[VectorObsType, dict[str, Any]]:
+    ) -> tuple[VectorObsType_co, dict[str, Any]]:
         """Resets the environment returning xp-based observation and info.
 
         Args:

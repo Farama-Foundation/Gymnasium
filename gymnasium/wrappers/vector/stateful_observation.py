@@ -13,7 +13,11 @@ import numpy.typing as npt
 import gymnasium as gym
 from gymnasium.logger import warn
 from gymnasium.spaces import Box
-from gymnasium.typing import VectorActType, VectorBoolType, VectorRewardType
+from gymnasium.typing import (
+    VectorActType_contra,
+    VectorBoolType_co,
+    VectorRewardType_co,
+)
 from gymnasium.vector.utils import batch_space
 from gymnasium.vector.vector_env import (
     AutoresetMode,
@@ -35,13 +39,13 @@ VectorFloatingArray: TypeAlias = npt.NDArray[np.floating]
 class NormalizeObservation(
     VectorObservationWrapper[
         VectorFloat32Array,
-        VectorActType,
-        VectorRewardType,
-        VectorBoolType,
+        VectorActType_contra,
+        VectorRewardType_co,
+        VectorBoolType_co,
         VectorFloatingArray,
     ],
     gym.utils.RecordConstructorArgs,
-    Generic[VectorActType, VectorRewardType, VectorBoolType],
+    Generic[VectorActType_contra, VectorRewardType_co, VectorBoolType_co],
 ):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
@@ -90,7 +94,10 @@ class NormalizeObservation(
     def __init__(
         self,
         env: VectorEnv[
-            VectorFloatingArray, VectorActType, VectorRewardType, VectorBoolType
+            VectorFloatingArray,
+            VectorActType_contra,
+            VectorRewardType_co,
+            VectorBoolType_co,
         ],
         epsilon: float = 1e-8,
     ) -> None:

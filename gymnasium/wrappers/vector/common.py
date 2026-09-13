@@ -11,22 +11,22 @@ import numpy.typing as npt
 from typing_extensions import TypeVar
 
 from gymnasium.logger import warn
-from gymnasium.typing import VectorActType, VectorObsType
+from gymnasium.typing import VectorActType_contra, VectorObsType_co
 from gymnasium.vector.vector_env import AutoresetMode, VectorEnv, VectorWrapper
 
 __all__ = ["RecordEpisodeStatistics"]
 
 
 # A specialised, `np.ndarray`-bound reward array type. This is *not* the shared
-# `gymnasium.typing.RewardArrayType` (which is unbounded), so it keeps a distinct name.
+# `gymnasium.typing.VectorRewardType_co` (which is unbounded), so it keeps a distinct name.
 NDRewardArrayType = TypeVar("NDRewardArrayType", bound=np.ndarray, default=Any)
 
 
 class RecordEpisodeStatistics(
     VectorWrapper[
-        VectorObsType, VectorActType, NDRewardArrayType, npt.NDArray[np.bool_]
+        VectorObsType_co, VectorActType_contra, NDRewardArrayType, npt.NDArray[np.bool_]
     ],
-    Generic[VectorObsType, VectorActType, NDRewardArrayType],
+    Generic[VectorObsType_co, VectorActType_contra, NDRewardArrayType],
 ):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
@@ -87,7 +87,10 @@ class RecordEpisodeStatistics(
     def __init__(
         self,
         env: VectorEnv[
-            VectorObsType, VectorActType, NDRewardArrayType, npt.NDArray[np.bool_]
+            VectorObsType_co,
+            VectorActType_contra,
+            NDRewardArrayType,
+            npt.NDArray[np.bool_],
         ],
         buffer_length: int = 100,
         stats_key: str = "episode",
@@ -128,7 +131,7 @@ class RecordEpisodeStatistics(
         self,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[VectorObsType, dict[str, Any]]:
+    ) -> tuple[VectorObsType_co, dict[str, Any]]:
         """Resets the environment using kwargs and resets the episode returns and lengths."""
         obs, info = super().reset(seed=seed, options=options)
 
@@ -164,9 +167,9 @@ class RecordEpisodeStatistics(
         return obs, info
 
     def step(
-        self, actions: VectorActType
+        self, actions: VectorActType_contra
     ) -> tuple[
-        VectorObsType,
+        VectorObsType_co,
         NDRewardArrayType,
         npt.NDArray[np.bool_],
         npt.NDArray[np.bool_],

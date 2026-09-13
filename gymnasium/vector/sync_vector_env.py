@@ -11,7 +11,7 @@ import numpy as np
 from gymnasium import Env, Space
 from gymnasium.core import RenderFrame
 from gymnasium.spaces.utils import is_space_dtype_shape_equiv
-from gymnasium.typing import VectorActType, VectorObsType
+from gymnasium.typing import VectorActType_contra, VectorObsType_co
 from gymnasium.vector.utils import (
     batch_differing_spaces,
     batch_space,
@@ -29,8 +29,10 @@ VectorFloat32Array: TypeAlias = np.ndarray[tuple[int], np.dtype[np.float64]]
 
 
 class SyncVectorEnv(
-    VectorEnv[VectorObsType, VectorActType, VectorFloat32Array, VectorBoolArray],
-    Generic[VectorObsType, VectorActType],
+    VectorEnv[
+        VectorObsType_co, VectorActType_contra, VectorFloat32Array, VectorBoolArray
+    ],
+    Generic[VectorObsType_co, VectorActType_contra],
 ):
     """Vectorized environment that serially runs multiple environments.
 
@@ -70,24 +72,24 @@ class SyncVectorEnv(
 
     env_fns: Sequence[Callable[[], Env]]
     copy: bool
-    observation_mode: str | tuple[Space[VectorObsType], Space[Any]]
+    observation_mode: str | tuple[Space[VectorObsType_co], Space[Any]]
     autoreset_mode: AutoresetMode
     envs: list[Env]
     num_envs: int
     metadata: dict[str, Any]
     render_mode: str | None
     single_action_space: Space
-    action_space: Space[VectorActType]
+    action_space: Space[VectorActType_contra]
     single_observation_space: Space
-    observation_space: Space[VectorObsType]
+    observation_space: Space[VectorObsType_co]
 
-    _observations: VectorObsType
+    _observations: VectorObsType_co
 
     def __init__(
         self,
         env_fns: Sequence[Callable[[], Env]],
         copy: bool = True,
-        observation_mode: str | tuple[Space[VectorObsType], Space[Any]] = "same",
+        observation_mode: str | tuple[Space[VectorObsType_co], Space[Any]] = "same",
         autoreset_mode: str | AutoresetMode = AutoresetMode.NEXT_STEP,
     ) -> None:
         """Vectorized environment that serially runs multiple environments.
@@ -176,7 +178,7 @@ class SyncVectorEnv(
         # Initialise attributes used in `step` and `reset`
         self._env_obs = [None for _ in range(self.num_envs)]
         self._observations = cast(
-            VectorObsType,
+            VectorObsType_co,
             create_empty_array(
                 self.single_observation_space,
                 n=self.num_envs,
@@ -204,7 +206,7 @@ class SyncVectorEnv(
         *,
         seed: int | list[int | None] | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[VectorObsType, dict[str, Any]]:
+    ) -> tuple[VectorObsType_co, dict[str, Any]]:
         """Resets each of the sub-environments and concatenate the results together.
 
         Args:
@@ -274,7 +276,7 @@ class SyncVectorEnv(
 
         # Concatenate the observations
         self._observations = cast(
-            VectorObsType,
+            VectorObsType_co,
             concatenate(
                 self.single_observation_space,
                 self._env_obs,
@@ -284,9 +286,9 @@ class SyncVectorEnv(
         return deepcopy(self._observations) if self.copy else self._observations, infos
 
     def step(
-        self, actions: VectorActType
+        self, actions: VectorActType_contra
     ) -> tuple[
-        VectorObsType,
+        VectorObsType_co,
         VectorFloat32Array,
         VectorBoolArray,
         VectorBoolArray,
@@ -350,7 +352,7 @@ class SyncVectorEnv(
 
         # Concatenate the observations
         self._observations = cast(
-            VectorObsType,
+            VectorObsType_co,
             concatenate(
                 self.single_observation_space,
                 self._env_obs,

@@ -17,10 +17,10 @@ from gymnasium.core import RenderFrame
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.logger import warn
 from gymnasium.typing import (
-    VectorActType,
-    VectorBoolType,
-    VectorObsType,
-    VectorRewardType,
+    VectorActType_contra,
+    VectorBoolType_co,
+    VectorObsType_co,
+    VectorRewardType_co,
 )
 from gymnasium.vector import VectorEnv, VectorWrapper
 
@@ -29,9 +29,13 @@ if TYPE_CHECKING:
 
 
 class HumanRendering(
-    VectorWrapper[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    VectorWrapper[
+        VectorObsType_co, VectorActType_contra, VectorRewardType_co, VectorBoolType_co
+    ],
     gym.utils.RecordConstructorArgs,
-    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    Generic[
+        VectorObsType_co, VectorActType_contra, VectorRewardType_co, VectorBoolType_co
+    ],
 ):
     """Adds support for Human-based Rendering for Vector-based environments."""
 
@@ -52,7 +56,12 @@ class HumanRendering(
 
     def __init__(
         self,
-        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        env: VectorEnv[
+            VectorObsType_co,
+            VectorActType_contra,
+            VectorRewardType_co,
+            VectorBoolType_co,
+        ],
         screen_size: tuple[int, int] | None = None,
     ) -> None:
         """Constructor for Human Rendering of Vector-based environments.
@@ -88,9 +97,13 @@ class HumanRendering(
         return "human"
 
     def step(
-        self, actions: VectorActType
+        self, actions: VectorActType_contra
     ) -> tuple[
-        VectorObsType, VectorRewardType, VectorBoolType, VectorBoolType, dict[str, Any]
+        VectorObsType_co,
+        VectorRewardType_co,
+        VectorBoolType_co,
+        VectorBoolType_co,
+        dict[str, Any],
     ]:
         """Perform a step in the base environment and render a frame to the screen."""
         result = super().step(actions)
@@ -102,7 +115,7 @@ class HumanRendering(
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[VectorObsType, dict[str, Any]]:
+    ) -> tuple[VectorObsType_co, dict[str, Any]]:
         """Reset the base environment and render a frame to the screen."""
         result = super().reset(seed=seed, options=options)
         self._render_frame()
@@ -223,10 +236,13 @@ class HumanRendering(
 
 class RecordVideo(
     VectorWrapper[
-        VectorObsType, VectorActType, VectorRewardType, npt.NDArray[np.bool_]
+        VectorObsType_co,
+        VectorActType_contra,
+        VectorRewardType_co,
+        npt.NDArray[np.bool_],
     ],
     gym.utils.RecordConstructorArgs,
-    Generic[VectorObsType, VectorActType, VectorRewardType],
+    Generic[VectorObsType_co, VectorActType_contra, VectorRewardType_co],
 ):
     """Adds support for video recording for Vector-based environments.
 
@@ -280,7 +296,10 @@ class RecordVideo(
     def __init__(
         self,
         env: VectorEnv[
-            VectorObsType, VectorActType, VectorRewardType, npt.NDArray[np.bool_]
+            VectorObsType_co,
+            VectorActType_contra,
+            VectorRewardType_co,
+            npt.NDArray[np.bool_],
         ],
         video_folder: str,
         video_aspect_ratio: tuple[int, int] = (1, 1),
@@ -442,7 +461,7 @@ class RecordVideo(
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[VectorObsType, dict[str, Any]]:
+    ) -> tuple[VectorObsType_co, dict[str, Any]]:
         """Reset the environment and eventually starts a new recording."""
         if options is None or "reset_mask" not in options or options["reset_mask"][0]:
             self.episode_id += 1
@@ -465,10 +484,10 @@ class RecordVideo(
         return obs, info
 
     def step(
-        self, actions: VectorActType
+        self, actions: VectorActType_contra
     ) -> tuple[
-        VectorObsType,
-        VectorRewardType,
+        VectorObsType_co,
+        VectorRewardType_co,
         npt.NDArray[np.bool_],
         npt.NDArray[np.bool_],
         dict[str, Any],

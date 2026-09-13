@@ -25,7 +25,7 @@ from gymnasium.error import (
     NoAsyncCallError,
 )
 from gymnasium.spaces.utils import is_space_dtype_shape_equiv
-from gymnasium.typing import VectorActType, VectorObsType
+from gymnasium.typing import VectorActType_contra, VectorObsType_co
 from gymnasium.vector.utils import (
     CloudpickleWrapper,
     batch_differing_spaces,
@@ -59,8 +59,10 @@ class AsyncState(Enum):
 
 
 class AsyncVectorEnv(
-    VectorEnv[VectorObsType, VectorActType, VectorFloat32Array, VectorBoolArray],
-    Generic[VectorObsType, VectorActType],
+    VectorEnv[
+        VectorObsType_co, VectorActType_contra, VectorFloat32Array, VectorBoolArray
+    ],
+    Generic[VectorObsType_co, VectorActType_contra],
 ):
     """Vectorized environment that runs multiple environments in parallel.
 
@@ -117,10 +119,10 @@ class AsyncVectorEnv(
     render_mode: str | None
 
     single_action_space: Space
-    action_space: Space[VectorActType]
+    action_space: Space[VectorActType_contra]
     single_observation_space: Space
-    observation_space: Space[VectorObsType]
-    observations: VectorObsType
+    observation_space: Space[VectorObsType_co]
+    observations: VectorObsType_co
 
     parent_pipes: list[
         Connection[
@@ -301,7 +303,7 @@ class AsyncVectorEnv(
         *,
         seed: int | list[int | None] | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[VectorObsType, dict[str, Any]]:
+    ) -> tuple[VectorObsType_co, dict[str, Any]]:
         """Resets all sub-environments in parallel and return a batch of concatenated observations and info.
 
         Args:
@@ -387,7 +389,7 @@ class AsyncVectorEnv(
     def reset_wait(
         self,
         timeout: float | None = None,
-    ) -> tuple[VectorObsType, dict[str, Any]]:
+    ) -> tuple[VectorObsType_co, dict[str, Any]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
@@ -433,9 +435,9 @@ class AsyncVectorEnv(
         return (deepcopy(self.observations) if self.copy else self.observations), infos
 
     def step(
-        self, actions: VectorActType
+        self, actions: VectorActType_contra
     ) -> tuple[
-        VectorObsType,
+        VectorObsType_co,
         VectorFloat32Array,
         VectorBoolArray,
         VectorBoolArray,
@@ -480,7 +482,7 @@ class AsyncVectorEnv(
     def step_wait(
         self, timeout: float | None = None
     ) -> tuple[
-        VectorObsType,
+        VectorObsType_co,
         VectorFloat32Array,
         VectorBoolArray,
         VectorBoolArray,

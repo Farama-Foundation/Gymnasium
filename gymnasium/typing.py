@@ -5,16 +5,23 @@ used to parameterise Gymnasium's generic classes (precedent: :mod:`numpy.typing`
 Downstream code and Gymnasium's own modules should import these names from here
 rather than redefining their own copies.
 
-All the TypeVars are **invariant** and declare ``default=Any`` (PEP 696), so a
-class may be subscripted with as few or as many arguments as desired and any
-omitted argument falls back to ``Any``.
+.. warning::
+    These TypeVars are **provisional**. They exist because Gymnasium supports Python
+    versions without PEP 695 type parameter syntax, and will be replaced by that syntax
+    when support for those versions is dropped. Do not build long-lived abstractions on them.
+
+Every TypeVar declares ``default=Any`` (PEP 696), so a class may be subscripted with
+as few or as many arguments as desired and any omitted argument falls back to ``Any``.
 
 The single-environment vocabulary parameterises
 :class:`gymnasium.Env` ``[ObsType, ActType]`` and
 :class:`gymnasium.Wrapper` ``[WrapperObsType, WrapperActType, ObsType, ActType]``;
-the vector-environment vocabulary parameterises
-:class:`gymnasium.vector.VectorEnv` ``[VectorObsType, VectorActType, RewardArrayType, BoolArrayType]``
-and its wrappers. Each name's meaning is documented on the name itself below.
+these are invariant for backwards compatibility.
+The vector-environment vocabulary parameterises
+:class:`gymnasium.vector.VectorEnv` ``[VectorObsType_co, VectorActType_contra, VectorRewardType_co, VectorBoolType_co]``
+and its wrappers; these are variance-correct, as indicated by their ``_co`` (covariant)
+and ``_contra`` (contravariant) suffixes, such that PEP 695's inferred variance will
+not change their semantics. Each name's meaning is documented on the name itself below.
 """
 
 from typing import Any, TypeAlias
@@ -30,10 +37,10 @@ __all__ = [
     "WrapperObsType",
     "WrapperActType",
     # Vector Env
-    "VectorObsType",
-    "VectorActType",
-    "VectorRewardType",
-    "VectorBoolType",
+    "VectorObsType_co",
+    "VectorActType_contra",
+    "VectorRewardType_co",
+    "VectorBoolType_co",
     "VectorWrappedObsType",
     "VectorWrappedActType",
     "VectorWrappedRewardType",
@@ -58,24 +65,33 @@ WrapperActType = TypeVar("WrapperActType", default=Any)
 """The action type a :class:`~gymnasium.Wrapper` accepts from its user, possibly different from the wrapped environment's :data:`ActType`."""
 
 # Vector-environment vocabulary
-VectorObsType = TypeVar("VectorObsType", default=Any)
-"""The batched observation type of a :class:`~gymnasium.vector.VectorEnv`."""
+VectorObsType_co = TypeVar("VectorObsType_co", covariant=True, default=Any)
+"""The batched observation type of a :class:`~gymnasium.vector.VectorEnv` (covariant)."""
 
-VectorActType = TypeVar("VectorActType", default=Any)
-"""The batched action type of a :class:`~gymnasium.vector.VectorEnv`."""
+VectorActType_contra = TypeVar("VectorActType_contra", contravariant=True, default=Any)
+"""The batched action type of a :class:`~gymnasium.vector.VectorEnv` (contravariant)."""
 
-VectorRewardType = TypeVar("VectorRewardType", default=Any)
-"""The batched reward array type of a :class:`~gymnasium.vector.VectorEnv`, typically ``np.ndarray`` of ``float64``."""
+VectorRewardType_co = TypeVar("VectorRewardType_co", covariant=True, default=Any)
+"""The batched reward array type of a :class:`~gymnasium.vector.VectorEnv`, typically ``np.ndarray`` of ``float64`` (covariant)."""
 
-VectorBoolType = TypeVar("VectorBoolType", default=Any)
-"""The batched termination/truncation array type of a :class:`~gymnasium.vector.VectorEnv`, typically ``np.ndarray`` of ``bool``."""
+VectorBoolType_co = TypeVar("VectorBoolType_co", covariant=True, default=Any)
+"""The batched termination/truncation array type of a :class:`~gymnasium.vector.VectorEnv`, typically ``np.ndarray`` of ``bool`` (covariant)."""
 
 # `Wrapped` variants are the wrapped (inner) environment's types for wrappers that
 # transform observations, actions or rewards. They default to the wrapper's own type
 # so that a same-type wrapper doesn't need to repeat itself.
-VectorWrappedObsType = TypeVar("VectorWrappedObsType", default=VectorObsType)
-VectorWrappedActType = TypeVar("VectorWrappedActType", default=VectorActType)
-VectorWrappedRewardType = TypeVar("VectorWrappedRewardType", default=VectorRewardType)
+#
+# Ordering constraint: a TypeVar whose default refers to another TypeVar is only valid
+# when that other TypeVar precedes it in *every* parameter list it appears in, e.g.
+# `VectorObsType_co` must come before `VectorWrappedObsType` in `Generic[...]`.
+# Otherwise, type checkers report a default that refers to type variables that are out
+# of scope. As these TypeVars are shared across modules, this applies to every generic
+# class in Gymnasium that uses them.
+VectorWrappedObsType = TypeVar("VectorWrappedObsType", default=VectorObsType_co)
+VectorWrappedActType = TypeVar("VectorWrappedActType", default=VectorActType_contra)
+VectorWrappedRewardType = TypeVar(
+    "VectorWrappedRewardType", default=VectorRewardType_co
+)
 
 # Deprecated: kept for backwards compatibility with downstream code that does
 # `from gymnasium.vector.vector_env import ArrayType`. Prefer the dedicated

@@ -7,10 +7,10 @@ from typing import Any, Generic
 import numpy as np
 
 from gymnasium.typing import (
-    VectorActType,
-    VectorBoolType,
-    VectorObsType,
-    VectorRewardType,
+    VectorActType_contra,
+    VectorBoolType_co,
+    VectorObsType_co,
+    VectorRewardType_co,
 )
 from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
 
@@ -18,8 +18,12 @@ __all__ = ["DictInfoToList"]
 
 
 class DictInfoToList(
-    VectorWrapper[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
-    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    VectorWrapper[
+        VectorObsType_co, VectorActType_contra, VectorRewardType_co, VectorBoolType_co
+    ],
+    Generic[
+        VectorObsType_co, VectorActType_contra, VectorRewardType_co, VectorBoolType_co
+    ],
 ):
     """Converts infos of vectorized environments from ``dict`` to ``List[dict]``.
 
@@ -76,7 +80,12 @@ class DictInfoToList(
 
     def __init__(
         self,
-        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        env: VectorEnv[
+            VectorObsType_co,
+            VectorActType_contra,
+            VectorRewardType_co,
+            VectorBoolType_co,
+        ],
     ) -> None:
         """This wrapper will convert the info into the list format.
 
@@ -87,12 +96,12 @@ class DictInfoToList(
 
     # ty reports an error because the last return is a `dict` in super but a `list` here
     def step(
-        self, actions: VectorActType
+        self, actions: VectorActType_contra
     ) -> tuple[
-        VectorObsType,
-        VectorRewardType,
-        VectorBoolType,
-        VectorBoolType,
+        VectorObsType_co,
+        VectorRewardType_co,
+        VectorBoolType_co,
+        VectorBoolType_co,
         list[dict[str, Any]],
     ]:  # ty:ignore[invalid-method-override]
         """Steps through the environment, convert dict info to list."""
@@ -105,7 +114,7 @@ class DictInfoToList(
     # ty reports an error because the last return is a `dict` in super but a `list` here
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
-    ) -> tuple[VectorObsType, list[dict[str, Any]]]:  # ty:ignore[invalid-method-override]
+    ) -> tuple[VectorObsType_co, list[dict[str, Any]]]:  # ty:ignore[invalid-method-override]
         """Resets the environment using kwargs."""
         obs, infos = self.env.reset(seed=seed, options=options)
         assert isinstance(infos, dict)

@@ -4,6 +4,10 @@ title: Typing
 
 # Typing
 
+```{warning}
+These `TypeVar`s exist because Gymnasium supports Python versions without PEP 695 type parameter syntax. They will be replaced by PEP 695 syntax when support for those versions is dropped. Do not build long-lived abstractions on them.
+```
+
 ```{eval-rst}
 .. automodule:: gymnasium.typing
 ```
@@ -48,12 +52,12 @@ Every TypeVar defaults to ``Any``, so ``gym.Env``, ``gym.Wrapper[np.ndarray, int
 ## Vector-environment vocabulary
 
 ```{eval-rst}
-.. autodata:: gymnasium.typing.VectorObsType
+.. autodata:: gymnasium.typing.VectorObsType_co
    :no-value:
-.. autodata:: gymnasium.typing.VectorActType
+.. autodata:: gymnasium.typing.VectorActType_contra
    :no-value:
-.. autodata:: gymnasium.typing.RewardArrayType
+.. autodata:: gymnasium.typing.VectorRewardType_co
    :no-value:
-.. autodata:: gymnasium.typing.BoolArrayType
+.. autodata:: gymnasium.typing.VectorBoolType_co
    :no-value:
 ```

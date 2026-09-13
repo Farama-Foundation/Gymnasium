@@ -13,33 +13,35 @@ from gymnasium import Space
 from gymnasium.core import Env
 from gymnasium.logger import warn
 from gymnasium.typing import (
-    VectorActType,
-    VectorBoolType,
-    VectorObsType,
-    VectorRewardType,
+    VectorActType_contra,
+    VectorBoolType_co,
+    VectorObsType_co,
+    VectorRewardType_co,
+    VectorWrappedActType,
 )
 from gymnasium.vector import VectorActionWrapper, VectorEnv
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.wrappers import transform_action
 
-# The wrapped (inner) environment's action type; defaults to this wrapper's own
-# invariant `VectorActType`.
-VectorWrappedActType = TypeVar("VectorWrappedActType", default=VectorActType)
+# `VectorizeTransformAction` (and its subclasses) use the action type as both the argument
+# and return type of `actions`, therefore, it must be invariant. As a result, it can not be
+# `VectorActType_contra` and does not have a public `gymnasium.typing` equivalent.
+_VectorActType = TypeVar("_VectorActType", default=Any)
 
 
 class TransformAction(
     VectorActionWrapper[
-        VectorObsType,
-        VectorActType,
-        VectorRewardType,
-        VectorBoolType,
+        VectorObsType_co,
+        VectorActType_contra,
+        VectorRewardType_co,
+        VectorBoolType_co,
         VectorWrappedActType,
     ],
     Generic[
-        VectorObsType,
-        VectorActType,
-        VectorRewardType,
-        VectorBoolType,
+        VectorObsType_co,
+        VectorActType_contra,
+        VectorRewardType_co,
+        VectorBoolType_co,
         VectorWrappedActType,
     ],
 ):
@@ -85,16 +87,19 @@ class TransformAction(
     """
 
     single_action_space: Space
-    action_space: Space[VectorActType]
-    func: Callable[[VectorActType], VectorWrappedActType]
+    action_space: Space[VectorActType_contra]
+    func: Callable[[VectorActType_contra], VectorWrappedActType]
 
     def __init__(
         self,
         env: VectorEnv[
-            VectorObsType, VectorWrappedActType, VectorRewardType, VectorBoolType
+            VectorObsType_co,
+            VectorWrappedActType,
+            VectorRewardType_co,
+            VectorBoolType_co,
         ],
-        func: Callable[[VectorActType], VectorWrappedActType],
-        action_space: Space[VectorActType] | None = None,
+        func: Callable[[VectorActType_contra], VectorWrappedActType],
+        action_space: Space[VectorActType_contra] | None = None,
         single_action_space: Space | None = None,
     ) -> None:
         """Constructor for the lambda action wrapper.
@@ -123,16 +128,20 @@ class TransformAction(
 
         self.func = func
 
-    def actions(self, actions: VectorActType) -> VectorWrappedActType:
+    def actions(self, actions: VectorActType_contra) -> VectorWrappedActType:
         """Applies the :attr:`func` to the actions."""
         return self.func(actions)
 
 
 class VectorizeTransformAction(
     VectorActionWrapper[
-        VectorObsType, VectorActType, VectorRewardType, VectorBoolType, VectorActType
+        VectorObsType_co,
+        _VectorActType,
+        VectorRewardType_co,
+        VectorBoolType_co,
+        _VectorActType,
     ],
-    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    Generic[VectorObsType_co, _VectorActType, VectorRewardType_co, VectorBoolType_co],
 ):
     """Vectorizes a single-agent transform action wrapper for vector environments.
 
@@ -174,14 +183,16 @@ class VectorizeTransformAction(
 
     wrapper: transform_action.TransformAction
     single_action_space: Space
-    action_space: Space[VectorActType]
+    action_space: Space[_VectorActType]
 
     same_out: bool
     out: np.ndarray
 
     def __init__(
         self,
-        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        env: VectorEnv[
+            VectorObsType_co, _VectorActType, VectorRewardType_co, VectorBoolType_co
+        ],
         wrapper: type[transform_action.TransformAction],
         **kwargs: Any,
     ) -> None:
@@ -202,7 +213,7 @@ class VectorizeTransformAction(
         # ty doesn't support `@single_dispatch` yet
         self.out = create_empty_array(self.env.single_action_space, self.num_envs)  # ty:ignore[invalid-assignment]
 
-    def actions(self, actions: VectorActType) -> VectorActType:
+    def actions(self, actions: _VectorActType) -> _VectorActType:
         """Applies the wrapper to each of the action.
 
         Args:
@@ -237,9 +248,9 @@ class VectorizeTransformAction(
 
 class ClipAction(
     VectorizeTransformAction[
-        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+        VectorObsType_co, _VectorActType, VectorRewardType_co, VectorBoolType_co
     ],
-    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    Generic[VectorObsType_co, _VectorActType, VectorRewardType_co, VectorBoolType_co],
 ):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
@@ -260,7 +271,9 @@ class ClipAction(
 
     def __init__(
         self,
-        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        env: VectorEnv[
+            VectorObsType_co, _VectorActType, VectorRewardType_co, VectorBoolType_co
+        ],
     ) -> None:
         """Constructor for the Clip Action wrapper.
 
@@ -272,9 +285,9 @@ class ClipAction(
 
 class RescaleAction(
     VectorizeTransformAction[
-        VectorObsType, VectorActType, VectorRewardType, VectorBoolType
+        VectorObsType_co, _VectorActType, VectorRewardType_co, VectorBoolType_co
     ],
-    Generic[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+    Generic[VectorObsType_co, _VectorActType, VectorRewardType_co, VectorBoolType_co],
 ):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
@@ -312,7 +325,9 @@ class RescaleAction(
 
     def __init__(
         self,
-        env: VectorEnv[VectorObsType, VectorActType, VectorRewardType, VectorBoolType],
+        env: VectorEnv[
+            VectorObsType_co, _VectorActType, VectorRewardType_co, VectorBoolType_co
+        ],
         min_action: float | int | np.ndarray,
         max_action: float | int | np.ndarray,
     ) -> None:
