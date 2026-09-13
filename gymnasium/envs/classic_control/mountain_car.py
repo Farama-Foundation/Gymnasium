@@ -87,11 +87,11 @@ class MountainCarEnv(gym.Env):
 
     ```python
     >>> import gymnasium as gym
-    >>> env = gym.make("MountainCar-v0", render_mode="rgb_array", goal_velocity=0.1)  # default goal_velocity=0
+    >>> env = gym.make("MountainCar-v0", render_mode="rgb_array", goal_velocity=0.05)  # default goal_velocity=0
     >>> env
     <TimeLimit<OrderEnforcing<PassiveEnvChecker<MountainCarEnv<MountainCar-v0>>>>>
-    >>> env.reset(seed=123, options={"x_init": np.pi/2, "y_init": 0.5})  # default x_init=np.pi, y_init=1.0
-    (array([-0.46352962,  0.        ], dtype=float32), {})
+    >>> env.reset(seed=123, options={"low": -0.7, "high": 0.5})  # default low=-0.6, high=-0.5
+    (array([0.11882224, 0.        ], dtype=float32), {})
 
     ```
 

@@ -65,6 +65,7 @@ class Dict(
     """
 
     spaces: dict[str, Space[_T_co]]
+    sort_keys: bool
 
     def __init__(
         self,
@@ -72,29 +73,37 @@ class Dict(
             dict[str, Space[_T_co]] | Sequence[tuple[str, Space[_T_co]]] | None
         ) = None,
         seed: dict | int | np.random.Generator | None = None,
+        *,
+        sort_keys: bool = True,
         **spaces_kwargs: Space,
     ) -> None:
         """Constructor of :class:`Dict` space.
 
         This space can be instantiated in one of two ways: Either you pass a dictionary
         of spaces to :meth:`__init__` via the ``spaces`` argument, or you pass the spaces as separate
-        keyword arguments (where you will need to avoid the keys ``spaces`` and ``seed``)
+        keyword arguments (where you will need to avoid the keys ``spaces``, ``seed``, and ``sort_keys``)
 
         Args:
             spaces: A dictionary of spaces. This specifies the structure of the :class:`Dict` space
             seed: Optionally, you can use this argument to seed the RNGs of the spaces that make up the :class:`Dict` space.
+            sort_keys: Whether to sort the keys of a standard mapping. This does not affect :class:`OrderedDict` or sequence inputs.
             **spaces_kwargs: If ``spaces`` is ``None``, you need to pass the constituent spaces as keyword arguments, as described above.
         """
+        self.sort_keys = sort_keys
+
         if isinstance(spaces, OrderedDict):
             spaces_dict = dict(spaces.items())
         elif isinstance(spaces, collections.abc.Mapping):
-            # for legacy reasons, we need to preserve the sorted dictionary items.
-            # as this could matter for projects flatten the dictionary.
-            try:
-                spaces_dict = dict(sorted(spaces.items()))
-            except TypeError:
-                # Incomparable types (e.g. `int` vs. `str`, or user-defined types) found.
-                # The keys remain in the insertion order.
+            if self.sort_keys:
+                # for legacy reasons, we need to preserve the sorted dictionary items.
+                # as this could matter for projects flatten the dictionary.
+                try:
+                    spaces_dict = dict(sorted(spaces.items()))
+                except TypeError:
+                    # Incomparable types (e.g. `int` vs. `str`, or user-defined types) found.
+                    # The keys remain in the insertion order.
+                    spaces_dict = dict(spaces.items())
+            else:
                 spaces_dict = dict(spaces.items())
         elif isinstance(spaces, Sequence):
             spaces_dict = dict(spaces)

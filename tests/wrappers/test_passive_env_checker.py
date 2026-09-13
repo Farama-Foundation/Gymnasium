@@ -110,3 +110,57 @@ def test_api_failures():
     assert env.checked_render
 
     env.close()
+
+
+def _reused_buffer_reset(self, seed=None, options=None):
+    """Reset an environment that reuses one observation buffer and one info dictionary."""
+    super(GenericTestEnv, self).reset(seed=seed)
+    self.buffer = getattr(self, "buffer", np.zeros(1, dtype=np.float32))
+    self.buffer[...] = 0
+    self.info = getattr(self, "info", {})
+    self.info["count"] = 0
+
+    return self.buffer, self.info
+
+
+def _reused_buffer_step(self, action):
+    """Mutate the reused observation buffer and info dictionary."""
+    self.buffer += 1
+    self.info["count"] += 1
+
+    return self.buffer, 0.0, False, False, self.info
+
+
+def test_passive_checker_wrapper_data_reuse():
+    """The wrapper warns for the reset to the first step, then the first to the second step."""
+    checker_env = PassiveEnvChecker(
+        GenericTestEnv(
+            action_space=gym.spaces.Discrete(1),
+            observation_space=gym.spaces.Box(0, 100, (1,), dtype=np.float32),
+            reset_func=_reused_buffer_reset,
+            step_func=_reused_buffer_step,
+        )
+    )
+
+    with warnings.catch_warnings(record=True) as caught_warnings:
+        warnings.simplefilter("always")
+
+        checker_env.reset()
+        for _ in range(4):
+            checker_env.step(0)
+
+    assert len(caught_warnings) == 4
+    expected_warnings = [
+        "The observations returned by `reset` and the following `step` share an object",
+        "The infos returned by `reset` and the following `step` share an object",
+        "The observations returned by `step` and the following `step` share an object",
+        "The infos returned by `step` and the following `step` share an object",
+    ]
+    assert all(
+        expected in actual.message.args[0]
+        for expected, actual in zip(expected_warnings, caught_warnings, strict=True)
+    )
+
+    # the checks are not repeated and the wrapper stops holding a reference to the user's data
+    assert checker_env.checked_data_reuse
+    assert checker_env._previous_data is None

@@ -1,6 +1,8 @@
 """Test the `SyncVectorEnv` implementation."""
 
+import multiprocessing
 import re
+import time
 import warnings
 from multiprocessing import TimeoutError
 
@@ -14,6 +16,7 @@ from gymnasium.error import (
 )
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
 from gymnasium.vector import AsyncVectorEnv, AutoresetMode
+from gymnasium.vector.async_vector_env import _async_worker
 from tests.testing_env import GenericTestEnv
 from tests.vector.testing_utils import (
     CustomSpace,
@@ -472,3 +475,194 @@ def test_async_vector_subenv_error():
         caught_warnings[4].message.args[0]
         == "\x1b[31mERROR: Raising the last exception back to the main process.\x1b[0m"
     )
+
+
+def custom_semaphore_worker(
+    index,
+    env_fn,
+    pipe,
+    parent_pipe,
+    shared_memory,
+    error_queue,
+    autoreset_mode,
+    semaphore,
+):
+    """A custom worker with the signature expected by `AsyncVectorEnv`."""
+    _async_worker(
+        index,
+        env_fn,
+        pipe,
+        parent_pipe,
+        shared_memory,
+        error_queue,
+        autoreset_mode,
+        semaphore=semaphore,
+    )
+
+
+def test_max_concurrency_async_vector_env():
+    """Tests that `max_concurrency` limits the number of environments executing at any one time."""
+    with multiprocessing.Manager() as manager:
+        active_count = manager.Value("i", 0)
+        max_active = manager.Value("i", 0)
+        lock = manager.Lock()
+        # Two environments must be executing simultaneously to get past the barrier, so the
+        # exact concurrency is asserted rather than relying on the two happening to overlap.
+        barrier = manager.Barrier(2)
+
+        def counting_step_func(self, action):
+            with lock:
+                active_count.value += 1
+                if active_count.value > max_active.value:
+                    max_active.value = active_count.value
+            barrier.wait(timeout=30)
+            with lock:
+                active_count.value -= 1
+            return self.observation_space.sample(), 0.0, False, False, {}
+
+        envs = AsyncVectorEnv(
+            [lambda: GenericTestEnv(step_func=counting_step_func) for _ in range(4)],
+            max_concurrency=2,
+        )
+        try:
+            envs.reset()
+            envs.step(envs.action_space.sample())
+        finally:
+            envs.close(terminate=True)
+
+        assert max_active.value == 2
+
+
+def test_max_concurrency_one_async_vector_env():
+    """Tests that `max_concurrency=1` fully serializes environment execution."""
+    with multiprocessing.Manager() as manager:
+        active_count = manager.Value("i", 0)
+        max_active = manager.Value("i", 0)
+        lock = manager.Lock()
+
+        def counting_step_func(self, action):
+            with lock:
+                active_count.value += 1
+                if active_count.value > max_active.value:
+                    max_active.value = active_count.value
+            time.sleep(0.05)
+            with lock:
+                active_count.value -= 1
+            return self.observation_space.sample(), 0.0, False, False, {}
+
+        envs = AsyncVectorEnv(
+            [lambda: GenericTestEnv(step_func=counting_step_func) for _ in range(4)],
+            max_concurrency=1,
+        )
+        envs.reset()
+        envs.step(envs.action_space.sample())
+        envs.close()
+
+        assert max_active.value == 1
+
+
+@pytest.mark.parametrize("max_concurrency", [2.5, "2", 2.0])
+def test_non_integer_max_concurrency_async_vector_env(max_concurrency):
+    """Tests that non-integer `max_concurrency` values are rejected rather than silently misused.
+
+    Without an upfront type check, `2.5` fails much later with an opaque `TypeError` from
+    `BoundedSemaphore` and `True` silently becomes `max_concurrency=1`.
+    """
+    with pytest.raises(
+        ValueError, match="`max_concurrency` must be an integer or None, got"
+    ):
+        AsyncVectorEnv(
+            [lambda: GenericTestEnv() for _ in range(2)],
+            max_concurrency=max_concurrency,
+        )
+
+
+@pytest.mark.parametrize("max_concurrency", [0, -1, -10])
+def test_invalid_max_concurrency_async_vector_env(max_concurrency):
+    """Tests that invalid `max_concurrency` values raise a `ValueError`."""
+    with pytest.raises(
+        ValueError, match="`max_concurrency` must be a positive or None, got"
+    ):
+        AsyncVectorEnv(
+            [lambda: GenericTestEnv() for _ in range(2)],
+            max_concurrency=max_concurrency,
+        )
+
+
+@pytest.mark.parametrize("max_concurrency", [None, 2])
+def test_incompatible_custom_worker(max_concurrency):
+    """Tests that a custom `worker` not accepting the `semaphore` argument is rejected upfront.
+
+    The semaphore is always passed to the worker, so otherwise the worker dies with a `TypeError` in
+    the subprocess that the main process only reports as a bare `EOFError`.
+    """
+
+    def custom_worker(
+        index,
+        env_fn,
+        pipe,
+        parent_pipe,
+        shared_memory,
+        error_queue,
+        autoreset_mode,
+    ):
+        pass
+
+    with pytest.raises(ValueError, match="A custom `worker` must accept 8 arguments"):
+        AsyncVectorEnv(
+            [lambda: GenericTestEnv() for _ in range(2)],
+            worker=custom_worker,
+            max_concurrency=max_concurrency,
+        )
+
+
+@pytest.mark.parametrize("max_concurrency", [None, 2])
+def test_custom_worker_with_semaphore(max_concurrency):
+    """Tests that a custom `worker` with the expected signature works with and without `max_concurrency`."""
+    envs = AsyncVectorEnv(
+        [lambda: GenericTestEnv() for _ in range(4)],
+        worker=custom_semaphore_worker,
+        max_concurrency=max_concurrency,
+    )
+    try:
+        envs.reset()
+        envs.step(envs.action_space.sample())
+    finally:
+        envs.close()
+
+
+def test_max_concurrency_greater_than_num_envs():
+    """Tests that `max_concurrency` greater than the number of environments works."""
+    envs = AsyncVectorEnv(
+        [lambda: GenericTestEnv() for _ in range(2)],
+        max_concurrency=4,
+    )
+    envs.reset()
+    envs.step(envs.action_space.sample())
+    envs.close()
+
+
+def test_max_concurrency_releases_before_pipe_send():
+    """Tests that a worker releases its `max_concurrency` permit before writing its result to the pipe.
+
+    The observation must be larger than the OS pipe buffer (~64 KB) for `send` to block, so this
+    only affects `shared_memory=False` (and any large `info`, e.g. `final_obs` under `SAME_STEP`).
+    """
+    envs = AsyncVectorEnv(
+        [
+            lambda: GenericTestEnv(
+                observation_space=Box(
+                    low=0, high=255, shape=(256, 256, 3), dtype=np.uint8
+                )
+            )
+            for _ in range(4)
+        ],
+        shared_memory=False,
+        max_concurrency=1,
+    )
+    try:
+        envs.reset_async()
+        obs, info = envs.reset_wait(timeout=10)
+        assert obs.shape == (4, 256, 256, 3)
+    finally:
+        envs.close(terminate=True)

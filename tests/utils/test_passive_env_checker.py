@@ -11,6 +11,7 @@ from gymnasium.utils.passive_env_checker import (
     check_action_space,
     check_obs,
     check_observation_space,
+    env_data_reuse_passive_checker,
     env_render_passive_checker,
     env_reset_passive_checker,
     env_step_passive_checker,
@@ -453,3 +454,50 @@ def test_passive_render_checker(test, env: GenericTestEnv, message: str):
             with pytest.raises(test, match=f"^{re.escape(message)}$"):
                 env_render_passive_checker(env)
         assert len(caught_warnings) == 0
+
+
+def test_env_data_reuse_passive_checker():
+    """Sharing an observation or info object between two calls must warn."""
+    buffer = np.zeros(3)
+
+    with pytest.warns(
+        UserWarning,
+        match=re.escape(
+            "The observations returned by `reset` and the following `step` share an object"
+        ),
+    ):
+        env_data_reuse_passive_checker((buffer, {}), (buffer, {}), "reset", "step")
+
+    # a new view of a reused buffer is a different object, but modifying it modifies the other
+    with pytest.warns(
+        UserWarning,
+        match=re.escape(
+            "The observations returned by `step` and the following `step` share an object"
+        ),
+    ):
+        env_data_reuse_passive_checker((buffer[:], {}), (buffer[:], {}), "step", "step")
+
+    shared, fresh = np.zeros(3), np.zeros(3)
+    with pytest.warns(
+        UserWarning,
+        match="The infos returned by `reset` and the following `step` share an object",
+    ):
+        env_data_reuse_passive_checker(
+            (fresh, {"shared": shared, "fresh": np.zeros(3)}),
+            (np.zeros(3), {"shared": shared, "fresh": np.zeros(3)}),
+            "reset",
+            "step",
+        )
+
+
+def test_env_data_reuse_passive_checker_distinct_data():
+    """Distinct observation and info data must not warn."""
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+
+        env_data_reuse_passive_checker(
+            (np.zeros(3), {"a": np.zeros(3), "b": 0}),
+            (np.zeros(3), {"a": np.zeros(3), "b": 0}),
+            "reset",
+            "step",
+        )

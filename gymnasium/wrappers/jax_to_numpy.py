@@ -72,4 +72,8 @@ class JaxToNumpy(ArrayConversion):
             raise DependencyNotInstalled(
                 'Jax is not installed, run `pip install "gymnasium[jax]"`'
             )
+        # Recorded here rather than left to `ArrayConversion`, whose four
+        # arguments this constructor does not take. The first call wins, so
+        # the one below is ignored.
+        gym.utils.RecordConstructorArgs.__init__(self)
         super().__init__(env=env, env_xp=jnp, target_xp=np)

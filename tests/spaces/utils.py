@@ -60,6 +60,7 @@ TESTING_COMPOSITE_SPACES = [
     ),
     Tuple((Discrete(5), Tuple((Box(low=0.0, high=1.0, shape=(3,)), Discrete(2))))),
     Tuple((Discrete(3), Dict(position=Box(low=0.0, high=1.0), velocity=Discrete(2)))),
+    Tuple((OneOf([Box(-1, 1, shape=(2,)), Box(-1, 1, shape=(3,))]), Box(0.0, 1.0))),
     Tuple((Graph(node_space=Box(-1, 1, shape=(2, 1)), edge_space=None), Discrete(2))),
     # Dict spaces
     Dict(
@@ -155,6 +156,15 @@ TESTING_COMPOSITE_SPACES = [
     # OneOf spaces
     OneOf([Discrete(3), Box(low=0.0, high=1.0)]),
     OneOf([MultiBinary(2), MultiDiscrete([2, 2])]),
+    OneOf([Box(-1, 1, shape=(2,)), Box(-1, 1, shape=(3,))]),
+    OneOf([Text(5), Discrete(3)]),
+    OneOf([MultiBinary(3), MultiBinary([2, 2])]),
+    OneOf([Discrete(3), Discrete(5, start=-2)]),
+    OneOf([Discrete(3), Box(-1, 1, shape=(2,))]),
+    OneOf([Text(5), Box(-1, 1, shape=(4,))]),
+    OneOf([OneOf([Discrete(2), MultiBinary(3)]), Box(-1, 1, shape=(4,))]),
+    # More subspaces than the shared `bool` dtype can index, see `_flat_dtype`
+    OneOf([Box(0, 1, shape=(2,), dtype=np.bool_) for _ in range(3)]),
 ]
 TESTING_COMPOSITE_SPACES_IDS = [f"{space}" for space in TESTING_COMPOSITE_SPACES]
 

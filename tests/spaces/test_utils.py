@@ -4,7 +4,14 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.spaces import Box, Graph, Sequence, utils
+from gymnasium.spaces import (
+    Box,
+    Graph,
+    MultiBinary,
+    OneOf,
+    Sequence,
+    utils,
+)
 from gymnasium.spaces.utils import is_space_dtype_shape_equiv
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import (
@@ -49,6 +56,7 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     7,
     10,
     6,
+    5,
     None,
     # Dict
     7,
@@ -86,6 +94,14 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     # OneOf
     4,
     5,
+    4,
+    6,
+    5,
+    6,
+    4,
+    6,
+    5,
+    3,
 ]
 assert len(TESTING_SPACES) == len(TESTING_SPACES_EXPECTED_FLATDIMS)
 
@@ -148,6 +164,7 @@ def test_flatten(space):
         flatdim = utils.flatdim(space)
 
         assert single_dim == flatdim
+        assert flattened_sample.dtype == utils.flatten_space(space).dtype
     else:
         assert isinstance(space, Sequence) or isinstance(
             flattened_sample, (tuple, dict, Graph)
@@ -162,6 +179,8 @@ def test_flat_space_contains_flat_points(space):
 
     for flat_sample in flattened_samples:
         assert flat_sample in flat_space
+        if isinstance(flat_space, Box):
+            assert flat_sample.dtype == flat_space.dtype
 
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
@@ -240,3 +259,33 @@ def test_all_space_pairs_for_is_space_dtype_shape_equiv(space_1):
 
             assert data_equivalence(sample_1, read_sample_1)
             assert data_equivalence(sample_2, read_sample_2)
+
+
+TESTING_ONEOF_INDEX_DTYPE_SPACES = [
+    OneOf([Box(0, 1, shape=(2,), dtype=np.bool_) for _ in range(3)]),
+    OneOf([MultiBinary(2) for _ in range(130)]),
+    OneOf([Box(0, 255, shape=(2,), dtype=np.uint8) for _ in range(300)]),
+]
+
+
+@pytest.mark.parametrize(
+    "space",
+    TESTING_ONEOF_INDEX_DTYPE_SPACES,
+    ids=["bool", "int8", "uint8"],
+)
+def test_oneof_index_dtype(space):
+    """Tests `OneOf` spaces with more subspaces than their subspaces' dtype can index.
+
+    The subspace index is prepended to the flattened subspace sample, therefore the
+    flattened dtype must be able to represent the largest index, otherwise the index
+    would overflow and `unflatten` would recover the wrong subspace.
+    """
+    flat_space = utils.flatten_space(space)
+    space.seed(123)
+
+    for idx in (0, len(space.spaces) - 1):
+        flat_sample = utils.flatten(space, (idx, space.spaces[idx].sample()))
+
+        assert flat_sample.dtype == flat_space.dtype
+        assert flat_sample in flat_space
+        assert utils.unflatten(space, flat_sample)[0] == idx

@@ -15,6 +15,19 @@ from gymnasium.wrappers import TimeLimit, TransformObservation
 from tests.wrappers.utils import has_wrapper
 
 
+class RegisteredWrapper(gym.Wrapper):
+    """Wrapper used as a registry entry point."""
+
+    def __init__(self):
+        super().__init__(CartPoleEnv())
+
+
+class InvalidMetadataEnv(CartPoleEnv):
+    """Environment with invalid class metadata."""
+
+    metadata = []
+
+
 def test_make_vec_env_id():
     """Ensure that the `gym.make_vec` creates the right environment."""
     env = gym.make_vec("CartPole-v1")
@@ -165,6 +178,36 @@ def test_make_vec_wrappers():
     assert all(has_wrapper(sub_env, TransformObservation) for sub_env in env.envs)
 
     env.close()
+
+
+def test_make_vec_wrapper_entry_point():
+    """Test that an environment entry point can be a wrapper class."""
+    gym.register("RegisteredWrapper-v0", entry_point=RegisteredWrapper)
+    envs = None
+    try:
+        envs = gym.make_vec(
+            "RegisteredWrapper-v0", num_envs=2, vectorization_mode="sync"
+        )
+        assert all(has_wrapper(env, RegisteredWrapper) for env in envs.envs)
+    finally:
+        if envs is not None:
+            envs.close()
+        gym.registry.pop("RegisteredWrapper-v0", None)
+
+
+def test_make_vec_invalid_entry_point_metadata():
+    """Test that invalid class metadata reports its actual type."""
+    gym.register("InvalidMetadata-v0", entry_point=InvalidMetadataEnv)
+    try:
+        with pytest.raises(
+            error.InvalidMetadata,
+            match=re.escape(
+                "Expect the environment metadata to be dict, actual type: <class 'list'>"
+            ),
+        ):
+            gym.make_vec("InvalidMetadata-v0", vectorization_mode="sync")
+    finally:
+        gym.registry.pop("InvalidMetadata-v0", None)
 
 
 @pytest.mark.parametrize(

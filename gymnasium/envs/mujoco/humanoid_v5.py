@@ -483,8 +483,8 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         info = {
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
-            "tendon_length": self.data.ten_length,
-            "tendon_velocity": self.data.ten_velocity,
+            "tendon_length": self.data.ten_length.copy(),
+            "tendon_velocity": self.data.ten_velocity.copy(),
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
             "x_velocity": x_velocity,
             "y_velocity": y_velocity,
@@ -535,7 +535,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         return {
             "x_position": self.data.qpos[0],
             "y_position": self.data.qpos[1],
-            "tendon_length": self.data.ten_length,
-            "tendon_velocity": self.data.ten_velocity,
+            "tendon_length": self.data.ten_length.copy(),
+            "tendon_velocity": self.data.ten_velocity.copy(),
             "distance_from_origin": np.linalg.norm(self.data.qpos[0:2], ord=2),
         }
