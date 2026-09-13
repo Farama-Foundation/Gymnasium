@@ -13,8 +13,7 @@ import numpy.typing as npt
 import gymnasium as gym
 from gymnasium.error import InvalidBound
 from gymnasium.typing import VectorActType_contra, VectorObsType_co
-from gymnasium.vector.vector_env import AutoresetMode
-from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import AutoresetMode, VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
 __all__ = ["NormalizeReward"]
