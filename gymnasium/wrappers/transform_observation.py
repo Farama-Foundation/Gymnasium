@@ -586,7 +586,8 @@ class DtypeObservation(
 
         Args:
             env: The environment to wrap
-            dtype: The new dtype of the observation
+            dtype: The new dtype of the observation, as a NumPy scalar type,
+                dtype object, or string
         """
         if not isinstance(
             env.observation_space,
@@ -633,7 +634,7 @@ class DtypeObservation(
         TransformObservation.__init__(
             self,
             env=env,
-            func=lambda obs: dtype(obs),
+            func=lambda obs: new_observation_space.dtype.type(obs),
             observation_space=new_observation_space,
         )
 
