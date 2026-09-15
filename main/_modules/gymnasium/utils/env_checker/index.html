@@ -599,7 +599,10 @@
     <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
     <span class="n">obs_1</span><span class="p">,</span> <span class="n">rew_1</span><span class="p">,</span> <span class="n">term_1</span><span class="p">,</span> <span class="n">trunc_1</span><span class="p">,</span> <span class="n">info_1</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="n">orig_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">seeded_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="p">(</span>
+    <span class="c1"># A seeded reset can replace the environment's random number generator.</span>
+    <span class="n">current_rng</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">_np_random</span>
+    <span class="k">assert</span> <span class="n">current_rng</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"env.reset() should have initialized env._np_random"</span>
+    <span class="k">assert</span> <span class="n">current_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="n">seeded_rng</span><span class="o">.</span><span class="n">bit_generator</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="p">(</span>
         <span class="s2">"The `.np_random` is not properly been updated after step."</span>
     <span class="p">)</span>
 
