@@ -821,9 +821,10 @@
         <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="c1"># OpenCV drops the channel dimension for single-channel images.</span>
             <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
                 <span class="n">obs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cv2_shape</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_AREA</span>
-            <span class="p">),</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">new_observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
             <span class="n">observation_space</span><span class="o">=</span><span class="n">new_observation_space</span><span class="p">,</span>
         <span class="p">)</span></div>
 
