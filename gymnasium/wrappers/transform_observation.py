@@ -438,9 +438,10 @@ class ResizeObservation(
         TransformObservation.__init__(
             self,
             env=env,
+            # OpenCV drops the channel dimension for single-channel images.
             func=lambda obs: cv2.resize(
                 obs, self.cv2_shape, interpolation=cv2.INTER_AREA
-            ),
+            ).reshape(new_observation_space.shape),
             observation_space=new_observation_space,
         )
 
