@@ -280,6 +280,8 @@ class Box(Space[NDArray[_ScalarT_co]]):
             neginf = np.isneginf(low)
             if np.any(neginf):
                 if self.dtype.kind == "i":  # signed int
+                    # set the limit after the cast, where low's float dtype cannot round it
+                    low = np.where(neginf, 0, low).astype(self.dtype)
                     low[neginf] = dtype_min
                 elif self.dtype.kind in {"u", "b"}:  # unsigned int and bool
                     raise ValueError(
@@ -347,6 +349,8 @@ class Box(Space[NDArray[_ScalarT_co]]):
             posinf = np.isposinf(high)
             if np.any(posinf):
                 if self.dtype.kind == "i":  # signed int
+                    # set the limit after the cast, where high's float dtype cannot round it
+                    high = np.where(posinf, 0, high).astype(self.dtype)
                     high[posinf] = dtype_max
                 elif self.dtype.kind in {"u", "b"}:  # unsigned int
                     raise ValueError(
