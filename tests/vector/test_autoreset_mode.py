@@ -174,6 +174,44 @@ def test_autoreset_within_step(vectoriser):
     envs.close()
 
 
+class ReusedObservationEnv(gym.Env):
+    observation_space = gym.spaces.Box(0, 1, shape=(1,), dtype=np.int64)
+    action_space = Discrete(1)
+
+    def __init__(self):
+        self.observation = np.zeros(1, dtype=np.int64)
+        self.info = {}
+
+    def reset(self, *, seed=None, options=None):
+        self.observation[...] = 0
+        self.info.clear()
+        self.info["state"] = "reset"
+        return self.observation, self.info
+
+    def step(self, action):
+        self.observation[...] = 1
+        self.info.clear()
+        self.info["state"] = "step"
+        return self.observation, 0.0, True, False, self.info
+
+
+@pytest.mark.parametrize("shared_memory", [True, False])
+def test_async_same_step_preserves_final_values(shared_memory):
+    envs = AsyncVectorEnv(
+        [ReusedObservationEnv],
+        shared_memory=shared_memory,
+        autoreset_mode=AutoresetMode.SAME_STEP,
+    )
+    envs.reset()
+
+    _, _, terminations, _, info = envs.step([0])
+
+    assert terminations[0]
+    assert np.array_equal(info["final_obs"][0], np.array([1]))
+    assert info["final_info"]["state"][0] == "step"
+    envs.close()
+
+
 @pytest.mark.parametrize(
     "vectoriser",
     [

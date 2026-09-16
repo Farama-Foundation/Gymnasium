@@ -877,11 +877,13 @@ def _async_worker(
                         ) = env.step(data)
 
                         if terminated or truncated:
+                            final_observation = deepcopy(observation)
+                            final_info = deepcopy(info)
                             reset_observation, reset_info = env.reset()
 
                             info = {
-                                "final_info": info,
-                                "final_obs": observation,
+                                "final_info": final_info,
+                                "final_obs": final_observation,
                                 **reset_info,
                             }
                             observation = reset_observation
