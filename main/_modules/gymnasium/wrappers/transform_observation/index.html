@@ -979,7 +979,8 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The environment to wrap</span>
-<span class="sd">            dtype: The new dtype of the observation</span>
+<span class="sd">            dtype: The new dtype of the observation, as a NumPy scalar type,</span>
+<span class="sd">                dtype object, or string</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
             <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span>
@@ -1026,7 +1027,7 @@
         <span class="n">TransformObservation</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
-            <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">dtype</span><span class="p">(</span><span class="n">obs</span><span class="p">),</span>
+            <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">obs</span><span class="p">:</span> <span class="n">new_observation_space</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">obs</span><span class="p">),</span>
             <span class="n">observation_space</span><span class="o">=</span><span class="n">new_observation_space</span><span class="p">,</span>
         <span class="p">)</span></div>
 
