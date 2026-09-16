@@ -125,6 +125,20 @@ class AcrobotEnv(Env):
       generated with the equations shown in the book. However, there is the option to run the domain with the paper equations
       by setting `book_or_nips = 'nips'`
 
+    ## Integration timestep
+
+    `Acrobot-v1` uses fourth-order Runge-Kutta integration with a default
+    timestep of `dt = 0.2`.
+
+    The timestep can be changed through the unwrapped environment:
+
+    '''python
+    env = gym.make("Acrobot-v1")
+    env.unwrapped.dt = 0.05
+    ```
+
+    Smaller timesteps can reduce numerical integration error.
+
     ## Version History
 
     - v1: Maximum number of steps increased from 200 to 500. The observation space for v0 provided direct readings of
@@ -144,7 +158,7 @@ class AcrobotEnv(Env):
         "render_fps": 15,
     }
 
-    dt = 0.2
+    dt = 0.2  #: integration timestep [s]
 
     LINK_LENGTH_1 = 1.0  # [m]
     LINK_LENGTH_2 = 1.0  # [m]
