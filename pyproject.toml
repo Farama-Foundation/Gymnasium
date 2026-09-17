@@ -59,7 +59,7 @@ other = [
     "seaborn >= 0.13",
 ]
 all = [
-    "gymnasium[atari, box2d, classic-control, mujoco, toy-text, jax, torch, array-api, other]"
+    "gymnasium[atari, box2d, classic-control, mujoco, toy-text, jax, array-api, other]"
 ]
 
 testing = [
