@@ -72,9 +72,9 @@ class MujocoEnv(gym.Env):
             error.DependencyNotInstalled: When `mujoco` is not installed.
         """
         self.fullpath = expand_model_path(model_path)
-
         self.width = width
         self.height = height
+
         # may use width and height
         self.model, self.data = self._initialize_simulation()
 
@@ -87,8 +87,10 @@ class MujocoEnv(gym.Env):
             assert int(np.round(1.0 / self.dt)) == self.metadata["render_fps"], (
                 f"Expected value: {int(np.round(1.0 / self.dt))}, Actual value: {self.metadata['render_fps']}"
             )
+
         if observation_space is not None:
             self.observation_space = observation_space
+
         self._set_action_space()
 
         self.render_mode = render_mode
@@ -146,13 +148,18 @@ class MujocoEnv(gym.Env):
         Step over the MuJoCo simulation.
         """
         self.data.ctrl[:] = ctrl
-
         mujoco.mj_step(self.model, self.data, nstep=n_frames)
 
         # As of MuJoCo 2.0, force-related quantities like cacc are not computed
         # unless there's a force sensor in the model.
         # See https://github.com/openai/gym/issues/1541
         mujoco.mj_rnePostConstraint(self.model, self.data)
+
+        # mj_step does not recompute derived quantities (e.g. body xpos) after the step.
+        # Call mj_forward to ensure qpos and body positions are consistent, otherwise
+        # observations mixing qpos and xpos (e.g. Reacher) can be inconsistent.
+        # See https://github.com/Farama-Foundation/Gymnasium/issues/1690
+        mujoco.mj_forward(self.model, self.data)
 
     def render(self):
         """
@@ -176,9 +183,7 @@ class MujocoEnv(gym.Env):
         options: dict | None = None,
     ):
         super().reset(seed=seed)
-
         mujoco.mj_resetData(self.model, self.data)
-
         ob = self.reset_model()
         info = self._get_reset_info()
 
@@ -210,6 +215,7 @@ class MujocoEnv(gym.Env):
 
     # methods to override:
     # ----------------------------
+
     def step(
         self, action: NDArray[np.float32]
     ) -> tuple[NDArray[np.float64], np.float64, bool, bool, dict[str, np.float64]]:
