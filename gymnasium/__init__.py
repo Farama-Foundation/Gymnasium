@@ -20,7 +20,16 @@ from gymnasium.envs.registration import (
     VectorizeMode,
     register_envs,
 )
-from gymnasium import spaces, utils, vector, wrappers, error, logger, experimental
+from gymnasium import (
+    spaces,
+    typing,
+    utils,
+    vector,
+    wrappers,
+    error,
+    logger,
+    experimental,
+)
 
 import os
 import sys
@@ -51,6 +60,7 @@ __all__ = [
     # module folders
     "envs",
     "spaces",
+    "typing",
     "utils",
     "vector",
     "wrappers",

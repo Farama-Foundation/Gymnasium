@@ -27,7 +27,7 @@ classifiers = [
 dependencies = [
     "numpy >=1.22.0",
     "cloudpickle >=1.2.0",
-    "typing-extensions >=4.3.0",
+    "typing-extensions >=4.6.0",
     "farama-notifications >=0.0.1",
 ]
 dynamic = ["version"]
@@ -132,8 +132,8 @@ ignore = [
 convention = "google"
 
 [tool.ty.src]
-include = ["gymnasium"]
-exclude = ["tests", "**/node_modules", "**/__pycache__"]
+include = ["gymnasium", "tests/test_typing.py"]
+exclude = ["tests", "!tests/test_typing.py", "**/node_modules", "**/__pycache__"]
 
 [tool.ty.analysis]
 replace-imports-with-any = ["Box2D.**", "mujoco.**", "glfw.**"]
@@ -156,6 +156,15 @@ missing-argument = "warn"                 # TODO remove
 unresolved-attribute = "warn"             # TODO remove
 unresolved-import = "warn"                # TODO remove
 unsupported-operator = "warn"             # TODO remove
+
+# `tests/test_typing.py` pins the variance of `gymnasium.typing`, so any regression must be an error
+[[tool.ty.overrides]]
+include = ["tests/test_typing.py"]
+
+[tool.ty.overrides.rules]
+invalid-return-type = "error"
+type-assertion-failure = "error"
+unused-ignore-comment = "error"
 
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning:gymnasium.*:"]

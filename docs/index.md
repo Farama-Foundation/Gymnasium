@@ -64,6 +64,7 @@ api/spaces
 api/wrappers
 api/vector
 api/utils
+api/typing
 api/functional
 ```
 
