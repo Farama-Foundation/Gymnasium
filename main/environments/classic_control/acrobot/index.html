@@ -544,23 +544,31 @@ generated with the equations shown in the book. However, there is the option to 
 by setting <code class="docutils literal notranslate"><span class="pre">book_or_nips</span> <span class="pre">=</span> <span class="pre">'nips'</span></code></p>
 </div></blockquote>
 </section>
-<section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>v1: Maximum number of steps increased from 200 to 500. The observation space for v0 provided direct readings of
-<code class="docutils literal notranslate"><span class="pre">theta1</span></code> and <code class="docutils literal notranslate"><span class="pre">theta2</span></code> in radians, having a range of <code class="docutils literal notranslate"><span class="pre">[-pi,</span> <span class="pre">pi]</span></code>. The v1 observation space as described here provides the
-sine and cosine of each angle instead.</p></li>
-<li><p>v0: Initial versions release</p></li>
-</ul>
-</section>
-<section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Sutton, R. S. (1996). Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding.
-In D. Touretzky, M. C. Mozer, &amp; M. Hasselmo (Eds.), Advances in Neural Information Processing Systems (Vol. 8).
-MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e80b0dc05c48-Paper.pdf</p></li>
-<li><p>Sutton, R. S., Barto, A. G. (2018 ). Reinforcement Learning: An Introduction. The MIT Press.</p></li>
-</ul>
+<section id="integration-timestep">
+<h2>Integration timestep<a class="headerlink" href="#integration-timestep" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Acrobot-v1</span></code> uses fourth-order Runge-Kutta integration with a default
+timestep of <code class="docutils literal notranslate"><span class="pre">dt</span> <span class="pre">=</span> <span class="pre">0.2</span></code>.</p>
+<p>The timestep can be changed through the unwrapped environment:</p>
+<p>‘’’python
+env = gym.make(“Acrobot-v1”)
+env.unwrapped.dt = 0.05</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+Smaller timesteps can reduce numerical integration error.
+
+## Version History
+
+- v1: Maximum number of steps increased from 200 to 500. The observation space for v0 provided direct readings of
+`theta1` and `theta2` in radians, having a range of `[-pi, pi]`. The v1 observation space as described here provides the
+sine and cosine of each angle instead.
+- v0: Initial versions release
+
+## References
+- Sutton, R. S. (1996). Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding.
+    In D. Touretzky, M. C. Mozer, &amp; M. Hasselmo (Eds.), Advances in Neural Information Processing Systems (Vol. 8).
+    MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e80b0dc05c48-Paper.pdf
+- Sutton, R. S., Barto, A. G. (2018 ). Reinforcement Learning: An Introduction. The MIT Press.
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -629,8 +637,7 @@ MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e8
 <li><a class="reference internal" href="#starting-state">Starting State</a></li>
 <li><a class="reference internal" href="#episode-end">Episode End</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
-<li><a class="reference internal" href="#version-history">Version History</a></li>
-<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#integration-timestep">Integration timestep</a></li>
 </ul>
 </li>
 </ul>
