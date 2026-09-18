@@ -392,6 +392,9 @@ def concatenate(
 ) -> tuple[Any, ...] | dict[str, Any] | np.ndarray:
     """Concatenate multiple samples from space into a single object.
 
+    For NumPy-based spaces, empty inputs are supported when ``out`` has shape
+    ``(0, *space.shape)``. The empty output array is returned unchanged.
+
     Args:
         space: Space of each item (e.g. `single_action_space` from vectorized environment)
         items: Samples to be concatenated (e.g. all sample should be an element of the `space`).
@@ -427,7 +430,15 @@ def _concatenate_base(
     items: Iterable,
     out: np.ndarray,
 ) -> np.ndarray:
-    return np.stack(list(items), axis=0, out=out)
+    items = list(items)
+    if (
+        not items
+        and isinstance(out, np.ndarray)
+        and space.shape is not None
+        and out.shape == (0, *space.shape)
+    ):
+        return out
+    return np.stack(items, axis=0, out=out)
 
 
 @concatenate.register(Tuple)

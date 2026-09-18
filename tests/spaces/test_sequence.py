@@ -4,6 +4,8 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
+from gymnasium.spaces.utils import flatten, flatten_space, unflatten
+from gymnasium.utils.env_checker import data_equivalence
 
 
 def test_stacked_sequence():
@@ -128,3 +130,99 @@ def test_sample_with_probability():
     assert np.all(value in space for value in sample)
     counts = np.bincount(sample[:], minlength=3) / len(sample)
     np.testing.assert_allclose(counts, probability[1], atol=0.05)
+
+
+EMPTY_STACKED_SEQUENCES = [
+    pytest.param(
+        gym.spaces.Box(-1, 1, shape=(), dtype=np.float32),
+        np.empty((0,), dtype=np.float32),
+        np.empty((0, 1), dtype=np.float32),
+        id="scalar-box",
+    ),
+    pytest.param(
+        gym.spaces.Box(-1, 1, shape=(2, 3), dtype=np.float32),
+        np.empty((0, 2, 3), dtype=np.float32),
+        np.empty((0, 6), dtype=np.float32),
+        id="matrix-box",
+    ),
+    pytest.param(
+        gym.spaces.Discrete(3, start=2, dtype=np.int16),
+        np.empty((0,), dtype=np.int16),
+        np.empty((0, 3), dtype=np.int16),
+        id="discrete",
+    ),
+    pytest.param(
+        gym.spaces.MultiDiscrete([[2, 3], [4, 2]], dtype=np.int32),
+        np.empty((0, 2, 2), dtype=np.int32),
+        np.empty((0, 11), dtype=np.int32),
+        id="multidiscrete",
+    ),
+    pytest.param(
+        gym.spaces.MultiBinary((2, 3)),
+        np.empty((0, 2, 3), dtype=np.int8),
+        np.empty((0, 6), dtype=np.int8),
+        id="multibinary",
+    ),
+    pytest.param(
+        gym.spaces.Dict(
+            {
+                "position": gym.spaces.Box(-1, 1, shape=(2,), dtype=np.float32),
+                "status": gym.spaces.Tuple(
+                    (
+                        gym.spaces.Discrete(3, dtype=np.int16),
+                        gym.spaces.MultiBinary(2),
+                    )
+                ),
+            }
+        ),
+        {
+            "position": np.empty((0, 2), dtype=np.float32),
+            "status": (
+                np.empty((0,), dtype=np.int16),
+                np.empty((0, 2), dtype=np.int8),
+            ),
+        },
+        np.empty((0, 7), dtype=np.float32),
+        id="nested-dict-tuple",
+    ),
+]
+
+
+@pytest.mark.parametrize(
+    "feature_space, expected, flat_expected", EMPTY_STACKED_SEQUENCES
+)
+@pytest.mark.parametrize("mask_type", ["mask", "probability"])
+@pytest.mark.parametrize("length", [0, np.array([0])], ids=["integer", "array"])
+def test_empty_stacked_sample(
+    feature_space, expected, flat_expected, mask_type, length
+):
+    """Zero-length masks preserve the feature shape, dtype, and nested structure."""
+    space = gym.spaces.Sequence(feature_space, stack=True)
+
+    sample = space.sample(**{mask_type: (length, None)})
+
+    assert sample in space
+    assert data_equivalence(sample, expected, exact=True)
+
+
+@pytest.mark.parametrize(
+    "feature_space, expected, flat_expected", EMPTY_STACKED_SEQUENCES
+)
+@pytest.mark.parametrize(
+    "transform", [flatten, unflatten], ids=["flatten", "unflatten"]
+)
+def test_empty_stacked_transform(feature_space, expected, flat_expected, transform):
+    """Flatten and unflatten each accept valid empty samples without prior sampling."""
+    space = gym.spaces.Sequence(feature_space, stack=True)
+    flat_space = flatten_space(space)
+    assert expected in space
+    assert flat_expected in flat_space
+
+    if transform is flatten:
+        transformed = flatten(space, expected)
+        assert transformed in flat_space
+        assert data_equivalence(transformed, flat_expected, exact=True)
+    else:
+        transformed = unflatten(space, flat_expected)
+        assert transformed in space
+        assert data_equivalence(transformed, expected, exact=True)
