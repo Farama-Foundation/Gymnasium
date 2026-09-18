@@ -161,6 +161,10 @@ def batch_differing_spaces(spaces: _PySequence[Space]) -> Space:
     Returns:
         A batched space
 
+    For Discrete spaces, dtypes are promoted to a common integer dtype that can
+    represent the full range of each input dtype. Combinations without such a
+    dtype, including uint64 mixed with a signed integer dtype, raise ValueError.
+
     Example:
         >>> from gymnasium.spaces import Discrete
         >>> spaces = [Discrete(3), Discrete(5), Discrete(4), Discrete(8)]
@@ -206,14 +210,16 @@ def _batch_differing_spaces_box(spaces: _PySequence[Box]) -> Box:
 
 @batch_differing_spaces.register(Discrete)
 def _batch_differing_spaces_discrete(spaces: _PySequence[Discrete]) -> MultiDiscrete:
-    # select the "largest" to fit others.
-    # Assumes all spaces dtype are of int dtype
     dtypes = [space.dtype for space in spaces]
-    largest = max(dtypes, key=lambda dt: np.dtype(dt).itemsize)
+    dtype = np.result_type(*dtypes)
+    if not np.issubdtype(dtype, np.integer):
+        raise ValueError(
+            f"Cannot batch Discrete spaces with dtypes {dtypes}: no common integer dtype."
+        )
     return MultiDiscrete(
-        nvec=np.array([space.n for space in spaces]),
-        dtype=largest,
-        start=np.array([space.start for space in spaces]),
+        nvec=np.array([space.n for space in spaces], dtype=dtype),
+        dtype=dtype,
+        start=np.array([space.start for space in spaces], dtype=dtype),
         seed=deepcopy(spaces[0].np_random),
     )
 

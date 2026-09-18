@@ -256,3 +256,60 @@ def test_batch_differing_discrete_spaces_dtype(spaces, expected_dtype):
     multi_discrete = batch_differing_spaces(spaces)
 
     assert multi_discrete.dtype == expected_dtype
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize(
+    "first, second, expected_dtype",
+    [
+        ((np.int8, -5, 3), (np.uint8, 200, 3), np.int16),
+        ((np.int8, 0, 3), (np.uint8, 0, 200), np.int16),
+        ((np.int16, -5, 3), (np.uint16, 60000, 3), np.int32),
+        ((np.int32, -5, 3), (np.uint32, 2**32 - 4, 3), np.int64),
+        ((np.int8, -5, 3), (np.uint16, 60000, 3), np.int32),
+        ((np.int64, -5, 3), (np.uint32, 2**32 - 4, 3), np.int64),
+        ((np.uint8, 200, 3), (np.uint16, 60000, 3), np.uint16),
+        ((np.uint64, 2**63 + 1, 3), (np.uint32, 5, 3), np.uint64),
+    ],
+    ids=[
+        "int8-uint8-starts",
+        "int8-uint8-counts",
+        "int16-uint16",
+        "int32-uint32",
+        "wider-unsigned",
+        "wider-signed",
+        "unsigned",
+        "large-uint64-start",
+    ],
+)
+def test_batch_differing_discrete_preserves_ranges(
+    first, second, expected_dtype, reverse
+):
+    """Promote integer dtypes without changing counts or starts in either input order."""
+    spaces = [
+        Discrete(n, start=start, dtype=dtype) for dtype, start, n in (first, second)
+    ]
+    if reverse:
+        spaces.reverse()
+    batched = batch_differing_spaces(spaces)
+
+    assert batched.dtype == expected_dtype
+    assert batched.nvec.tolist() == [int(space.n) for space in spaces]
+    assert batched.start.tolist() == [int(space.start) for space in spaces]
+    batched.seed(123)
+    for _ in range(10):
+        assert all(
+            space.contains(int(value))
+            for space, value in zip(spaces, batched.sample(), strict=True)
+        )
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("signed_dtype", [np.int8, np.int16, np.int32, np.int64])
+def test_batch_differing_discrete_rejects_float_promotion(signed_dtype, reverse):
+    """Reject dtypes without a common integer type, even if these particular values fit."""
+    spaces = [Discrete(3, dtype=signed_dtype), Discrete(3, dtype=np.uint64)]
+    if reverse:
+        spaces.reverse()
+    with pytest.raises(ValueError, match="common integer dtype"):
+        batch_differing_spaces(spaces)
