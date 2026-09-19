@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from gymnasium.spaces import Box, Discrete, MultiDiscrete
+from gymnasium.spaces import Box, Discrete, MultiBinary, MultiDiscrete
 from gymnasium.wrappers import DtypeObservation
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import record_random_obs_reset, record_random_obs_step
@@ -23,6 +23,50 @@ def test_dtype_observation():
     obs, _, _, _, info = wrapped_env.step(None)
     assert obs.dtype != info["obs"].dtype
     assert obs.dtype == np.uint8
+
+
+@pytest.mark.parametrize("dtype_form", ("type", "dtype", "string"))
+@pytest.mark.parametrize(
+    "space,target_dtype",
+    (
+        (Box(-2, 2, shape=(2,), dtype=np.int16), np.float64),
+        (Box(-2, 2, shape=(), dtype=np.int16), np.float64),
+        (Discrete(3, start=-1), np.float64),
+        (Discrete(3, start=-1), np.int32),
+        (MultiDiscrete([3, 4], start=[-1, 2]), np.int32),
+        (MultiBinary(3), np.int32),
+    ),
+)
+def test_dtype_observation_descriptors(space, target_dtype, dtype_form):
+    """Equivalent dtype descriptions produce matching observations and spaces."""
+    dtype = {
+        "type": target_dtype,
+        "dtype": np.dtype(target_dtype),
+        "string": np.dtype(target_dtype).name,
+    }[dtype_form]
+    env = GenericTestEnv(
+        observation_space=space,
+        reset_func=record_random_obs_reset,
+        step_func=record_random_obs_step,
+    )
+    wrapped_env = DtypeObservation(env, dtype=dtype)
+    assert wrapped_env.observation_space.dtype == np.dtype(target_dtype)
+
+    obs, info = wrapped_env.reset()
+    assert obs.dtype == np.dtype(target_dtype)
+    assert obs.shape == space.shape
+    assert np.asarray(obs) in wrapped_env.observation_space
+    np.testing.assert_array_equal(obs, info["obs"])
+    if isinstance(space, Discrete):
+        assert isinstance(obs, np.generic)
+
+    obs, _, _, _, info = wrapped_env.step(None)
+    assert obs.dtype == np.dtype(target_dtype)
+    assert obs.shape == space.shape
+    assert np.asarray(obs) in wrapped_env.observation_space
+    np.testing.assert_array_equal(obs, info["obs"])
+    if isinstance(space, Discrete):
+        assert isinstance(obs, np.generic)
 
 
 @pytest.mark.parametrize(
