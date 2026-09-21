@@ -9,7 +9,7 @@ from ctypes import c_bool, c_int32, c_int64, c_uint8
 from functools import singledispatch
 from multiprocessing.sharedctypes import SynchronizedArray
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, TypeAlias
+from typing import TYPE_CHECKING, Any, NamedTuple, TypeAlias
 
 import numpy as np
 
@@ -19,6 +19,7 @@ from gymnasium.spaces import (
     Dict,
     Discrete,
     Graph,
+    GraphInstance,
     MultiBinary,
     MultiDiscrete,
     OneOf,
@@ -37,7 +38,18 @@ if TYPE_CHECKING:
 __all__ = ["create_shared_memory", "read_from_shared_memory", "write_to_shared_memory"]
 
 
-_SharedMemory: TypeAlias = dict[str, Any] | tuple[Any, ...] | SynchronizedArray
+class _SharedMemoryGraph(NamedTuple):
+    """Pickleable buffers for a batch of fixed-count graph observations."""
+
+    nodes: Any
+    edges: Any
+    edge_links: SynchronizedArray[Any] | None
+    num_envs: int
+
+
+_SharedMemory: TypeAlias = (
+    dict[str, Any] | tuple[Any, ...] | SynchronizedArray | _SharedMemoryGraph
+)
 _SharedMemoryOneOf: TypeAlias = tuple[
     "SynchronizedArray[c_int64]",
     "Unpack[tuple[SynchronizedArray[Any], ...]]",
@@ -132,10 +144,30 @@ def _create_oneof_shared_memory(
 
 
 @create_shared_memory.register(Graph)
+def _create_graph_shared_memory(
+    space: Graph, n: int = 1, ctx: ModuleType = mp
+) -> _SharedMemoryGraph:
+    """Allocate numerical feature buffers and int32 connectivity for fixed graphs."""
+    if space.num_nodes is None:
+        _raise_dynamic_shared_memory_error(space)
+    nodes = create_shared_memory(space.batch_node_space, n=n, ctx=ctx)
+    edges = edge_links = None
+    if space.num_edges:
+        assert space.batch_edge_space is not None
+        edges = create_shared_memory(space.batch_edge_space, n=n, ctx=ctx)
+        edge_links = ctx.Array(c_int32, n * space.num_edges * 2)
+    return _SharedMemoryGraph(nodes, edges, edge_links, n)
+
+
 @create_shared_memory.register(Sequence)
 def _create_dynamic_shared_memory(
     space: Graph | Sequence, n: int = 1, ctx: ModuleType = mp
 ) -> Never:
+    return _raise_dynamic_shared_memory_error(space)
+
+
+def _raise_dynamic_shared_memory_error(space: Graph | Sequence) -> Never:
+    """Explain why a variable-size observation cannot use a static buffer."""
     raise TypeError(
         f"As {space} has a dynamic shape so its not possible to make a static shared memory. For `AsyncVectorEnv`, disable `shared_memory`."
     )
@@ -209,6 +241,45 @@ def _read_dict_from_shared_memory(
         key: read_from_shared_memory(subspace, shared_memory[key], n=n)
         for (key, subspace) in space.spaces.items()
     }
+
+
+def _graph_feature_view(values: Any, index: int) -> Any:
+    """Select one environment while retaining live views of every feature leaf."""
+    if isinstance(values, dict):
+        return {key: _graph_feature_view(value, index) for key, value in values.items()}
+    if isinstance(values, tuple):
+        return tuple(_graph_feature_view(value, index) for value in values)
+    # Every leaf has a node/edge axis, including batched scalar feature spaces.
+    return values[index]
+
+
+@read_from_shared_memory.register(Graph)
+def _read_graph_from_shared_memory(
+    space: Graph, shared_memory: _SharedMemoryGraph, n: int = 1
+) -> tuple[GraphInstance, ...]:
+    """Return graph instances whose arrays remain connected to worker buffers."""
+    if space.num_nodes is None:
+        _raise_dynamic_shared_memory_error(space)
+    nodes = read_from_shared_memory(space.batch_node_space, shared_memory.nodes, n)
+    edges = links = None
+    if space.num_edges:
+        assert (
+            space.batch_edge_space is not None and shared_memory.edge_links is not None
+        )
+        edges = read_from_shared_memory(space.batch_edge_space, shared_memory.edges, n)
+        links = np.frombuffer(
+            shared_memory.edge_links.get_obj(), dtype=np.int32
+        ).reshape(  # ty:ignore[no-matching-overload]
+            n, space.num_edges, 2
+        )
+    return tuple(
+        GraphInstance(
+            _graph_feature_view(nodes, index),
+            _graph_feature_view(edges, index) if edges is not None else None,
+            links[index] if links is not None else None,
+        )
+        for index in range(n)
+    )
 
 
 @read_from_shared_memory.register(Text)
@@ -318,6 +389,80 @@ def _write_dict_to_shared_memory(
 ) -> None:
     for key, subspace in space.spaces.items():
         write_to_shared_memory(subspace, index, values[key], shared_memory[key])
+
+
+def _validate_graph_feature(space: Space, value: Any, path: str) -> None:
+    """Validate every leaf before writing so malformed graphs cannot partially update a buffer."""
+    if isinstance(space, Dict):
+        if not isinstance(value, dict) or value.keys() != space.spaces.keys():
+            raise ValueError(
+                f"Invalid Graph {path}: expected keys {tuple(space.spaces)}."
+            )
+        for key, subspace in space.spaces.items():
+            _validate_graph_feature(subspace, value[key], f"{path}[{key!r}]")
+    elif isinstance(space, Tuple):
+        if not isinstance(value, tuple) or len(value) != len(space.spaces):
+            raise ValueError(
+                f"Invalid Graph {path}: expected {len(space.spaces)} tuple entries."
+            )
+        for index, subspace in enumerate(space.spaces):
+            _validate_graph_feature(subspace, value[index], f"{path}[{index}]")
+    elif not (
+        isinstance(value, np.ndarray)
+        and value.shape == space.shape
+        and np.can_cast(value.dtype, space.dtype, casting="safe")
+    ):
+        raise ValueError(
+            f"Invalid Graph {path}: expected array shape {space.shape} safely castable to {space.dtype}."
+        )
+
+
+@write_to_shared_memory.register(Graph)
+def _write_graph_to_shared_memory(
+    space: Graph, index: int, value: GraphInstance, shared_memory: _SharedMemoryGraph
+) -> None:
+    """Validate a complete fixed graph and then copy it into one worker's buffers."""
+    if space.num_nodes is None:
+        _raise_dynamic_shared_memory_error(space)
+    if not 0 <= index < shared_memory.num_envs:
+        raise IndexError(f"Graph environment index {index} is out of bounds.")
+    if not isinstance(value, GraphInstance):
+        raise ValueError("Expected a GraphInstance observation.")
+    _validate_graph_feature(space.batch_node_space, value.nodes, "nodes")
+    if space.num_edges == 0:
+        if value.edges is not None or value.edge_links is not None:
+            raise ValueError(
+                "A fixed zero-edge Graph requires edges=None and edge_links=None."
+            )
+    else:
+        assert space.batch_edge_space is not None
+        _validate_graph_feature(space.batch_edge_space, value.edges, "edges")
+        if not (
+            isinstance(value.edge_links, np.ndarray)
+            and value.edge_links.shape == (space.num_edges, 2)
+            and np.issubdtype(value.edge_links.dtype, np.integer)
+            and np.all(value.edge_links >= 0)
+            and np.all(value.edge_links < space.num_nodes)
+        ):
+            raise ValueError(
+                "Invalid Graph edge_links: expected integer pairs within the node bounds."
+            )
+
+    write_to_shared_memory(
+        space.batch_node_space, index, value.nodes, shared_memory.nodes
+    )
+    if space.num_edges:
+        write_to_shared_memory(
+            space.batch_edge_space, index, value.edges, shared_memory.edges
+        )
+        assert shared_memory.edge_links is not None and value.edge_links is not None
+        destination = np.frombuffer(
+            shared_memory.edge_links.get_obj(), dtype=np.int32
+        ).reshape(  # ty:ignore[no-matching-overload]
+            shared_memory.num_envs, space.num_edges, 2
+        )
+        # Range validation above makes normalization from any integer dtype safe.
+        np.copyto(destination[index], value.edge_links, casting="unsafe")
 
 
 @write_to_shared_memory.register(Text)

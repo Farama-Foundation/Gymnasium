@@ -49,6 +49,20 @@ behavior: the default node count is 10, and omitting `num_edges` broadcasts a
 single edge mask over the randomly sampled edges. Previously pickled dynamic
 graphs load without count constraints.
 
+Fixed-count graphs also support `AsyncVectorEnv(shared_memory=True)`, including
+numerical Dict/Tuple node and edge features and Graph spaces inside Dict/Tuple
+observations. The observation batch remains a tuple of `GraphInstance` objects;
+each numerical leaf is backed by a shared buffer. With `copy=False`, previously
+returned leaves change when their worker writes another observation. Use
+`copy=True` (the default) to retain independent snapshots.
+
+Shared graph writes require the declared array shapes and safely castable feature
+dtypes. Connectivity is validated and normalized to int32, so values are preserved
+without promising to retain an input int64 connectivity dtype. Invalid graph
+layouts are rejected before updating that graph's buffers. Dynamic graphs still
+require `shared_memory=False`. Same-step autoreset final observations continue
+to travel through the existing info channel.
+
 
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Dict
