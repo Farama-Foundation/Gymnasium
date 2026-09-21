@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from typing import Any, Literal, NamedTuple
 
 import numpy as np
@@ -31,7 +31,8 @@ class Graph(Space[GraphInstance]):
     By default, observations may contain different numbers of nodes and edges.
     Set both ``num_nodes`` and ``num_edges`` to constrain their counts while
     allowing feature values and connectivity to change. Fixed-count graphs
-    support numerical feature spaces and nonempty Dict/Tuple compositions.
+    support Box, Discrete, MultiBinary and MultiDiscrete feature spaces and
+    nonempty Dict/Tuple compositions of these spaces.
     Zero-edge graphs use ``edges=None`` and ``edge_links=None``.
 
     Example:
@@ -75,9 +76,18 @@ class Graph(Space[GraphInstance]):
             node_space (Space[Any]): space of the node features.
             edge_space (None | Space[Any]): space of the edge features.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
-            num_nodes: A fixed positive node count, or None for a dynamic graph.
-            num_edges: A fixed nonnegative edge count. Must be supplied together
+            num_nodes: A fixed positive integer node count, limited to int32,
+                or None for a dynamic graph.
+            num_edges: A fixed nonnegative integer edge count. Must be supplied together
                 with num_nodes, and must be zero when edge_space is None.
+
+        Raises:
+            TypeError: A fixed count is not an integer (booleans are not accepted),
+                or a fixed feature space is unsupported. Fixed features must use
+                the standard numerical spaces above, or nonempty Dict/Tuple
+                compositions of them; custom subclasses are not supported.
+            ValueError: Only one count is supplied, a count is out of range,
+                or edges are requested without an edge space.
         """
         if (num_nodes is None) != (num_edges is None):
             raise ValueError("num_nodes and num_edges must be provided together.")
@@ -239,13 +249,21 @@ class Graph(Space[GraphInstance]):
     ) -> GraphInstance:
         """Sample a graph using its fixed counts or the requested dynamic counts.
 
+        For fixed-count graphs, masks follow the batched node and edge spaces.
+        For example, Discrete features require one mask per node and one per
+        edge, even when counts are omitted from this call. Zero-edge graphs
+        accept None or an empty tuple as the edge mask.
+
+        For dynamic graphs, omitting ``num_edges`` samples an edge count and
+        repeats a single edge mask for each sampled edge. Supplying a count
+        requires a mask for the batched edge space instead. These rules apply
+        to both ``mask`` and ``probability``.
+
         Args:
             mask: An optional tuple of optional node and edge mask
                 (Box spaces don't support sample masks).
-                If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges
             probability: An optional tuple of optional node and edge probability mask
                 (Box spaces don't support sample probability masks).
-                If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges
             num_nodes: The number of nodes to sample. Defaults to the fixed count,
                 or 10 for a dynamic graph. An explicit count must match a fixed count.
             num_edges: The number of edges to sample. Defaults to the fixed count,
@@ -411,6 +429,15 @@ class Graph(Space[GraphInstance]):
             and (self.node_space == other.node_space)
             and (self.edge_space == other.edge_space)
         )
+
+    def __setstate__(
+        self, state: Iterable[tuple[str, Any]] | Mapping[str, Any]
+    ) -> None:
+        """Load graphs saved before count constraints were added as dynamic graphs."""
+        state = dict(state)
+        state.setdefault("num_nodes", None)
+        state.setdefault("num_edges", None)
+        super().__setstate__(state)
 
     def to_jsonable(
         self, sample_n: Iterable[GraphInstance]

@@ -317,6 +317,26 @@ def test_fixed_sample_counts_and_rng():
     assert data_equivalence(pickle.loads(pickle.dumps(fixed)).sample(), fixed.sample())
 
 
+@pytest.mark.parametrize("edge_space", [None, Discrete(2)])
+@pytest.mark.parametrize(
+    "node_space",
+    [Discrete(3), spaces.Dict({"feature": spaces.Box(-1, 1, (2,))})],
+)
+def test_legacy_pickle_without_count_constraints(node_space, edge_space):
+    """Graphs saved before fixed counts were added remain dynamic after loading."""
+    legacy = Graph(deepcopy(node_space), deepcopy(edge_space), seed=42)
+    reference = deepcopy(legacy)
+    del legacy.num_nodes
+    del legacy.num_edges
+
+    restored = pickle.loads(pickle.dumps(legacy))
+    assert restored.num_nodes is restored.num_edges is None
+    assert restored == reference
+    assert repr(restored) == repr(reference)
+    assert data_equivalence(restored.sample(), reference.sample())
+    assert restored.sample(num_nodes=3) in restored
+
+
 @pytest.mark.parametrize("kind", ["mask", "probability"])
 def test_fixed_per_feature_masks(kind):
     space = Graph(Discrete(3), Discrete(2), num_nodes=3, num_edges=2)
