@@ -76,6 +76,10 @@ TESTING_SPACES_EXPECTED_FLATDIMS = [
     None,
     None,
     None,
+    # Fixed-count Graph
+    None,
+    None,
+    None,
     # Graph (non-functional subspaces)
     # None,
     # None,

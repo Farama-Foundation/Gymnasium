@@ -9,7 +9,6 @@ import numpy as np
 from numpy.typing import NDArray
 
 import gymnasium as gym
-from gymnasium.spaces import Box, Discrete
 from gymnasium.spaces.space import Space
 
 
@@ -29,6 +28,12 @@ class GraphInstance(NamedTuple):
 class Graph(Space[GraphInstance]):
     r"""A space representing graph information as a series of ``nodes`` connected with ``edges`` according to an adjacency matrix represented as a series of ``edge_links``.
 
+    By default, observations may contain different numbers of nodes and edges.
+    Set both ``num_nodes`` and ``num_edges`` to constrain their counts while
+    allowing feature values and connectivity to change. Fixed-count graphs
+    support numerical feature spaces and nonempty Dict/Tuple compositions.
+    Zero-edge graphs use ``edges=None`` and ``edge_links=None``.
+
     Example:
         >>> from gymnasium.spaces import Graph, Box, Discrete
         >>> observation_space = Graph(node_space=Box(low=-100, high=100, shape=(3,)), edge_space=Discrete(3), seed=123)
@@ -46,14 +51,19 @@ class Graph(Space[GraphInstance]):
                [1, 1]], dtype=int32))
     """
 
-    node_space: Box | Discrete
-    edge_space: Box | Discrete | None
+    node_space: Space[Any]
+    edge_space: Space[Any] | None
+    num_nodes: int | None
+    num_edges: int | None
 
     def __init__(
         self,
         node_space: Space[Any],
         edge_space: None | Space[Any],
         seed: int | np.random.Generator | None = None,
+        *,
+        num_nodes: int | None = None,
+        num_edges: int | None = None,
     ) -> None:
         r"""Constructor of :class:`Graph`.
 
@@ -65,17 +75,73 @@ class Graph(Space[GraphInstance]):
             node_space (Space[Any]): space of the node features.
             edge_space (None | Space[Any]): space of the edge features.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
+            num_nodes: A fixed positive node count, or None for a dynamic graph.
+            num_edges: A fixed nonnegative edge count. Must be supplied together
+                with num_nodes, and must be zero when edge_space is None.
         """
+        if (num_nodes is None) != (num_edges is None):
+            raise ValueError("num_nodes and num_edges must be provided together.")
+        if num_nodes is not None:
+            assert num_edges is not None
+            self._validate_count(num_nodes, "num_nodes")
+            self._validate_count(num_edges, "num_edges")
+            num_nodes, num_edges = int(num_nodes), int(num_edges)
+            if edge_space is None and num_edges != 0:
+                raise ValueError("num_edges must be zero when edge_space is None.")
+            self._validate_fixed_feature_space(node_space, "node_space")
+            if edge_space is not None:
+                self._validate_fixed_feature_space(edge_space, "edge_space")
+        self.num_nodes, self.num_edges = num_nodes, num_edges
         self.node_space = node_space
         self.edge_space = edge_space
 
-        self.batch_node_space = gym.vector.utils.batch_space(node_space, n=1)
+        self.batch_node_space = gym.vector.utils.batch_space(
+            node_space, n=num_nodes or 1
+        )
         if edge_space is not None:
-            self.batch_edge_space = gym.vector.utils.batch_space(edge_space, n=1)
+            self.batch_edge_space = gym.vector.utils.batch_space(
+                edge_space, n=num_edges or 1
+            )
         else:
             self.batch_edge_space = None
 
         super().__init__(None, None, seed)
+
+    @staticmethod
+    def _validate_count(value: Any, name: str) -> None:
+        """Validate a fixed graph count before sampling or advancing any RNG."""
+        if isinstance(value, (bool, np.bool_)) or not isinstance(
+            value, (int, np.integer)
+        ):
+            raise TypeError(f"{name} must be an integer, got {value!r}.")
+        minimum = 1 if name == "num_nodes" else 0
+        if value < minimum:
+            raise ValueError(f"{name} must be at least {minimum}, got {value}.")
+        if name == "num_nodes" and value > np.iinfo(np.int32).max:
+            raise ValueError("num_nodes must fit the int32 edge-link representation.")
+
+    @staticmethod
+    def _validate_fixed_feature_space(space: Space[Any], path: str) -> None:
+        """Check that every feature leaf has a supported fixed numerical layout."""
+        if type(space) in (
+            gym.spaces.Box,
+            gym.spaces.Discrete,
+            gym.spaces.MultiBinary,
+            gym.spaces.MultiDiscrete,
+        ):
+            return
+        if type(space) is gym.spaces.Dict and space.spaces:
+            for key, subspace in space.spaces.items():
+                Graph._validate_fixed_feature_space(subspace, f"{path}[{key!r}]")
+            return
+        if type(space) is gym.spaces.Tuple and space.spaces:
+            for index, subspace in enumerate(space.spaces):
+                Graph._validate_fixed_feature_space(subspace, f"{path}[{index}]")
+            return
+        raise TypeError(
+            f"Fixed-count Graph features require numerical spaces or nonempty "
+            f"Dict/Tuple compositions; unsupported {path}: {space!r}."
+        )
 
     @property
     def is_np_flattenable(self) -> Literal[False]:
@@ -168,10 +234,10 @@ class Graph(Space[GraphInstance]):
             ]
         )
         | None = None,
-        num_nodes: int = 10,
+        num_nodes: int | None = None,
         num_edges: int | None = None,
     ) -> GraphInstance:
-        """Generates a single sample graph with num_nodes between ``1`` and ``10`` sampled from the Graph.
+        """Sample a graph using its fixed counts or the requested dynamic counts.
 
         Args:
             mask: An optional tuple of optional node and edge mask
@@ -180,12 +246,28 @@ class Graph(Space[GraphInstance]):
             probability: An optional tuple of optional node and edge probability mask
                 (Box spaces don't support sample probability masks).
                 If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges
-            num_nodes: The number of nodes that will be sampled, the default is `10` nodes
-            num_edges: An optional number of edges, otherwise, a random number between `0` and :math:`num_nodes^2`
+            num_nodes: The number of nodes to sample. Defaults to the fixed count,
+                or 10 for a dynamic graph. An explicit count must match a fixed count.
+            num_edges: The number of edges to sample. Defaults to the fixed count,
+                or the existing random edge-count rule for a dynamic graph.
 
         Returns:
             A :class:`GraphInstance` with attributes `.nodes`, `.edges`, and `.edge_links`.
         """
+        if self.num_nodes is not None:
+            for name, requested, expected in (
+                ("num_nodes", num_nodes, self.num_nodes),
+                ("num_edges", num_edges, self.num_edges),
+            ):
+                if requested is not None:
+                    self._validate_count(requested, name)
+                    if requested != expected:
+                        raise ValueError(
+                            f"{name} must match the fixed count {expected}, got {requested}."
+                        )
+            num_nodes, num_edges = self.num_nodes, self.num_edges
+        elif num_nodes is None:
+            num_nodes = 10
         assert num_nodes > 0, (
             f"The number of nodes is expected to be greater than 0, actual value: {num_nodes}"
         )
@@ -203,6 +285,12 @@ class Graph(Space[GraphInstance]):
         else:
             node_space_mask = edge_space_mask = mask_type = None
 
+        if self.num_edges == 0 and edge_space_mask is not None:
+            if not isinstance(edge_space_mask, tuple) or len(edge_space_mask) != 0:
+                raise ValueError(
+                    "A fixed zero-edge graph requires an empty or None edge mask."
+                )
+
         # we only have edges when we have at least 2 nodes
         if num_edges is None:
             if num_nodes > 1:
@@ -214,7 +302,7 @@ class Graph(Space[GraphInstance]):
             if edge_space_mask is not None:
                 edge_space_mask = tuple(edge_space_mask for _ in range(num_edges))
         else:
-            if self.edge_space is None:
+            if self.edge_space is None and self.num_nodes is None:
                 gym.logger.warn(
                     f"The number of edges is set ({num_edges}) but the edge space is None."
                 )
@@ -229,7 +317,7 @@ class Graph(Space[GraphInstance]):
         else:
             node_sample_kwargs = edge_sample_kwargs = {}
 
-        # We need to reconstruct the batch node space each time as the num_nodes will change each time.
+        # Reconstruct the batch space to preserve the existing feature-seeding behavior.
         sample_batch_node_space = gym.vector.utils.batch_space(
             self.node_space, num_nodes
         )
@@ -259,6 +347,20 @@ class Graph(Space[GraphInstance]):
 
     def contains(self, x: GraphInstance) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
+        if self.num_nodes is not None:
+            if not isinstance(x, GraphInstance) or x.nodes not in self.batch_node_space:
+                return False
+            if self.num_edges == 0:
+                return x.edges is None and x.edge_links is None
+            return bool(
+                self.batch_edge_space is not None
+                and x.edges in self.batch_edge_space
+                and isinstance(x.edge_links, np.ndarray)
+                and x.edge_links.shape == (self.num_edges, 2)
+                and np.issubdtype(x.edge_links.dtype, np.integer)
+                and np.all(x.edge_links >= 0)
+                and np.all(x.edge_links < self.num_nodes)
+            )
         if isinstance(x, GraphInstance) and x.nodes is not None:
             # Checks the nodes
             nodes = list(gym.vector.utils.iterate(self.batch_node_space, x.nodes))
@@ -293,12 +395,19 @@ class Graph(Space[GraphInstance]):
         Returns:
             A representation of the space
         """
-        return f"Graph({self.node_space}, {self.edge_space})"
+        counts = (
+            f", num_nodes={self.num_nodes}, num_edges={self.num_edges}"
+            if self.num_nodes is not None
+            else ""
+        )
+        return f"Graph({self.node_space}, {self.edge_space}{counts})"
 
     def __eq__(self, other: Any) -> bool:
         """Check whether `other` is equivalent to this instance."""
         return (
             isinstance(other, Graph)
+            and self.num_nodes == other.num_nodes
+            and self.num_edges == other.num_edges
             and (self.node_space == other.node_space)
             and (self.edge_space == other.edge_space)
         )
