@@ -5,19 +5,31 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Generic, TypeAlias
 
 import numpy as np
+import numpy.typing as npt
 
 import gymnasium as gym
 from gymnasium.error import InvalidBound
+from gymnasium.typing import VectorActType_contra, VectorObsType_co
 from gymnasium.vector.vector_env import AutoresetMode, VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
 __all__ = ["NormalizeReward"]
 
 
-class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
+VectorBoolArray: TypeAlias = np.ndarray[tuple[int], np.dtype[np.bool_]]
+VectorFloat32Array: TypeAlias = np.ndarray[tuple[int], np.dtype[np.float64]]
+
+
+class NormalizeReward(
+    VectorWrapper[
+        VectorObsType_co, VectorActType_contra, VectorFloat32Array, VectorBoolArray
+    ],
+    gym.utils.RecordConstructorArgs,
+    Generic[VectorObsType_co, VectorActType_contra],
+):
     r"""This wrapper will scale rewards s.t. their exponential moving average has an approximately fixed variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
@@ -74,7 +86,12 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[
+            VectorObsType_co,
+            VectorActType_contra,
+            npt.NDArray[np.floating],
+            npt.NDArray[np.bool_],
+        ],
         gamma: float = 0.99,
         epsilon: float = 1e-8,
     ) -> None:
@@ -131,19 +148,19 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[np.ndarray, dict[str, Any]]:
+    ) -> tuple[VectorObsType_co, dict[str, Any]]:
         """Resets the environment and clears accumulated reward tracking state."""
         self.accumulated_reward[:] = 0
         self._prev_dones[:] = 0
         return super().reset(seed=seed, options=options)
 
     def step(
-        self, actions: np.ndarray
+        self, actions: VectorActType_contra
     ) -> tuple[
-        np.ndarray,
-        np.ndarray[tuple[int], np.dtype[np.float64]],
-        np.ndarray[tuple[int], np.dtype[np.bool_]],
-        np.ndarray[tuple[int], np.dtype[np.bool_]],
+        VectorObsType_co,
+        VectorFloat32Array,
+        VectorBoolArray,
+        VectorBoolArray,
         dict[str, Any],
     ]:
         """Steps through the environment, normalizing the reward returned."""
