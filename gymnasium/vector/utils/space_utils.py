@@ -434,6 +434,7 @@ def _concatenate_base(
 def _concatenate_tuple(
     space: Tuple, items: Iterable, out: tuple[Any, ...]
 ) -> tuple[Any, ...]:
+    items = list(items)
     return tuple(
         concatenate(subspace, [item[i] for item in items], out[i])
         for (i, subspace) in enumerate(space.spaces)
@@ -444,6 +445,7 @@ def _concatenate_tuple(
 def _concatenate_dict(
     space: Dict, items: Iterable, out: Mapping[str, Any]
 ) -> dict[str, Any]:
+    items = list(items)
     return {
         key: concatenate(subspace, [item[key] for item in items], out[key])
         for key, subspace in space.items()
