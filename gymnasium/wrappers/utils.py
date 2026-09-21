@@ -142,13 +142,20 @@ def _create_text_zero_array(space: Text):
 
 @create_zero_array.register(Graph)
 def _create_graph_zero_array(space: Graph):
-    nodes = create_zero_array(gym.vector.utils.batch_space(space.node_space, 1))
+    nodes = create_zero_array(
+        gym.vector.utils.batch_space(space.node_space, space.num_nodes or 1)
+    )
 
-    if space.edge_space is None:
+    if space.edge_space is None or space.num_edges == 0:
         return GraphInstance(nodes=nodes, edges=None, edge_links=None)
     else:
-        edges = create_zero_array(gym.vector.utils.batch_space(space.edge_space, 1))
-        edge_links = np.zeros((1, 2), dtype=np.int64)
+        num_edges = space.num_edges or 1
+        edges = create_zero_array(
+            gym.vector.utils.batch_space(space.edge_space, num_edges)
+        )
+        edge_links = np.zeros(
+            (num_edges, 2), dtype=np.int32 if space.num_nodes is not None else np.int64
+        )
         return GraphInstance(nodes=nodes, edges=edges, edge_links=edge_links)
 
 

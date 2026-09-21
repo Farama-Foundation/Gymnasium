@@ -527,16 +527,24 @@ def _create_empty_array_dict(
 def _create_empty_array_graph(
     space: Graph, n: int = 1, fn: Callable = np.zeros
 ) -> tuple[GraphInstance, ...]:
+    node_count = space.num_nodes or 1
+    edge_count = space.num_edges if space.num_edges is not None else 1
+    has_edges = space.edge_space is not None and edge_count > 0
     return tuple(
         GraphInstance(
-            nodes=create_empty_array(space.node_space, n=1, fn=fn),
+            nodes=create_empty_array(space.node_space, n=node_count, fn=fn),
             edges=(
-                create_empty_array(space.edge_space, n=1, fn=fn)
-                if space.edge_space is not None
+                create_empty_array(space.edge_space, n=edge_count, fn=fn)
+                if has_edges
                 else None
             ),
             edge_links=(
-                fn((1, 2), dtype=np.int64) if space.edge_space is not None else None
+                fn(
+                    (edge_count, 2),
+                    dtype=np.int32 if space.num_nodes is not None else np.int64,
+                )
+                if has_edges
+                else None
             ),
         )
         for _ in range(n)
