@@ -13,7 +13,7 @@ from gymnasium.logger import warn
 from gymnasium.utils import seeding
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing import Self
 
     from gymnasium.envs.registration import EnvSpec
 

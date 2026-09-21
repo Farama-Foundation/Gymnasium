@@ -12,7 +12,7 @@ from gymnasium import spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing import Self
 
     from gymnasium.envs.registration import EnvSpec, WrapperSpec
 
