@@ -35,7 +35,7 @@ wrapper in the page on the wrapper type
     * - :class:`GrayscaleObservation`
       - Converts an image observation computed by ``reset`` and ``step`` from RGB to Grayscale.
     * - :class:`HumanRendering`
-      - Allows human like rendering for environments that support "rgb_array" rendering.
+      - Displays RGB frames, with optional cached RGB access through ``return_rgb_array=True``.
     * - :class:`JaxToNumpy`
       - Wraps a Jax-based environment such that it can be interacted with NumPy arrays.
     * - :class:`JaxToTorch`
