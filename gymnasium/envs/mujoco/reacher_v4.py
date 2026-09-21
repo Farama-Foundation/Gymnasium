@@ -1,3 +1,4 @@
+import mujoco
 import numpy as np
 
 from gymnasium import utils
@@ -37,6 +38,8 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         reward = reward_dist + reward_ctrl
 
         self.do_simulation(a, self.frame_skip)
+        # Sync body xpos with post-step qpos (see google-deepmind/mujoco#889).
+        mujoco.mj_kinematics(self.model, self.data)
         if self.render_mode == "human":
             self.render()
 
