@@ -9,7 +9,7 @@ import pytest
 
 from gymnasium import Space
 from gymnasium.error import CustomSpaceError
-from gymnasium.spaces import Box, Dict, Discrete, Tuple
+from gymnasium.spaces import Box, Dict, Discrete, MultiBinary, MultiDiscrete, Tuple
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import (
     batch_differing_spaces,
@@ -256,3 +256,55 @@ def test_batch_differing_discrete_spaces_dtype(spaces, expected_dtype):
     multi_discrete = batch_differing_spaces(spaces)
 
     assert multi_discrete.dtype == expected_dtype
+
+
+@pytest.mark.parametrize(
+    "space",
+    [
+        Box(-1, 1, shape=(), dtype=np.float32),
+        Box(-1, 1, shape=(2, 3), dtype=np.float64),
+        Box(-1, 1, shape=(0,), dtype=np.float32),
+        Discrete(3, dtype=np.int32),
+        MultiDiscrete([2, 3], dtype=np.int16),
+        MultiBinary((2, 3)),
+    ],
+)
+@pytest.mark.parametrize("use_iterator", [False, True])
+def test_concatenate_empty_samples(space, use_iterator):
+    """Empty batches preserve the preallocated array, shape and dtype."""
+    out = create_empty_array(space, n=0)
+    items = iter(()) if use_iterator else ()
+
+    result = concatenate(space, items, out)
+
+    assert result is out
+    assert result.shape == (0, *space.shape)
+    assert result.dtype == space.dtype
+
+
+@pytest.mark.parametrize("out_shape", [(), (1, 2), (0, 3), (0, 2, 1)])
+def test_concatenate_empty_samples_invalid_shape(out_shape):
+    """An empty input must not accept a mismatched output shape."""
+    space = Box(-1, 1, shape=(2,), dtype=np.float32)
+    out = np.empty(out_shape, dtype=space.dtype)
+
+    with pytest.raises(ValueError):
+        concatenate(space, (), out)
+
+
+def test_concatenate_empty_samples_without_output():
+    """Empty input still requires a compatible output array."""
+    with pytest.raises(ValueError):
+        concatenate(Box(-1, 1, shape=(2,)), (), None)
+
+
+def test_concatenate_nonempty_zero_width_samples():
+    """Zero-size samples still require the output batch dimension to match."""
+    space = Box(-1, 1, shape=(0,), dtype=np.float32)
+    samples = [space.sample(), space.sample()]
+    out = create_empty_array(space, n=2)
+
+    assert concatenate(space, samples, out) is out
+    assert out.shape == (2, 0)
+    with pytest.raises(ValueError):
+        concatenate(space, samples, create_empty_array(space, n=0))
