@@ -346,22 +346,29 @@ class BlackjackFunctional(
         )
 
         # in the natural setting, if the player wins with a natural blackjack, then reward is 1.5
-        if params.natural and not params.sutton_and_barto:
-            condition = jnp.logical_and(is_natural(player_hand), (reward == 1))
-            reward = reward * jnp.logical_not(condition) + 1.5 * condition
+        natural_bonus = jnp.logical_and(
+            jnp.logical_and(params.natural, jnp.logical_not(params.sutton_and_barto)),
+            jnp.logical_and(is_natural(player_hand), reward == 1),
+        )
+        reward = jnp.where(natural_bonus, 1.5, reward)
 
         # in the sutton and barto setting, if the player gets a natural blackjack and the dealer gets
         # a non-natural blackjack, the player wins. A dealer natural blackjack and a player
         # non-natural blackjack should result in a tie.
-        if params.sutton_and_barto:
-            condition = jnp.logical_and(
+        sutton_and_barto_win = jnp.logical_and(
+            params.sutton_and_barto,
+            jnp.logical_and(
                 is_natural(player_hand), jnp.logical_not(is_natural(dealer_hand))
-            )
-            reward = reward * jnp.logical_not(condition) + 1 * condition
+            ),
+        )
+        reward = jnp.where(sutton_and_barto_win, 1, reward)
         return reward
 
     def render_init(
-        self, screen_width: int = 600, screen_height: int = 500
+        self,
+        screen_width: int = 600,
+        screen_height: int = 500,
+        params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> RenderStateType:
         """Returns an initial render state."""
         try:
@@ -397,7 +404,9 @@ class BlackjackFunctional(
             ) from e
         screen, dealer_top_card_value_str, dealer_top_card_suit = render_state
 
-        player_sum, dealer_card_value, usable_ace = self.observation(state, None)
+        player_sum, dealer_card_value, usable_ace = self.observation(
+            state, None, params
+        )
         screen_width, screen_height = 600, 500
         card_img_height = screen_height // 3
         card_img_width = int(card_img_height * 142 / 197)
