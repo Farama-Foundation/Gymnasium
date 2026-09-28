@@ -345,7 +345,7 @@ def play(
     while game.running:
         if done:
             done = False
-            obs = env.reset(seed=seed)
+            obs, _ = env.reset(seed=seed)
         elif wait_on_player is False or len(game.pressed_keys) > 0:
             action = key_code_to_action.get(tuple(sorted(game.pressed_keys)), noop)
             prev_obs = obs
