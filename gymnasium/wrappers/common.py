@@ -21,6 +21,7 @@ from gymnasium.error import ResetNeeded
 from gymnasium.utils.passive_env_checker import (
     check_action_space,
     check_observation_space,
+    env_data_reuse_passive_checker,
     env_render_passive_checker,
     env_reset_passive_checker,
     env_step_passive_checker,
@@ -278,15 +279,38 @@ class PassiveEnvChecker(
         self.checked_render: bool = False
         self.close_called: bool = False
 
+        # For checking that `reset` and `step` do not reuse their observation and info objects,
+        #   comparing the reset with the first step, then the first step with the second step.
+        self.checked_data_reuse: bool = False
+        self._previous_data: tuple[ObsType, dict[str, Any]] | None = None
+
     def step(
         self, action: ActType
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Steps through the environment that on the first call will run the `passive_env_step_check`."""
         if self.checked_step is False:
             self.checked_step = True
-            return env_step_passive_checker(self.env, action)
+            result = env_step_passive_checker(self.env, action)
+
+            obs, reward, terminated, truncated, info = result
+            env_data_reuse_passive_checker(
+                self._previous_data, (obs, info), "reset", "step"
+            )
+            self._previous_data = (obs, info)
+
+            return result
         else:
-            return self.env.step(action)
+            result = self.env.step(action)
+
+            if self.checked_data_reuse is False:
+                obs, reward, terminated, truncated, info = result
+                env_data_reuse_passive_checker(
+                    self._previous_data, (obs, info), "step", "step"
+                )
+                self._previous_data = None
+                self.checked_data_reuse = True
+
+            return result
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
@@ -294,7 +318,10 @@ class PassiveEnvChecker(
         """Resets the environment that on the first call will run the `passive_env_reset_check`."""
         if self.checked_reset is False:
             self.checked_reset = True
-            return env_reset_passive_checker(self.env, seed=seed, options=options)
+            self._previous_data = env_reset_passive_checker(
+                self.env, seed=seed, options=options
+            )
+            return self._previous_data
         else:
             return self.env.reset(seed=seed, options=options)
 

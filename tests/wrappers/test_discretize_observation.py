@@ -58,3 +58,17 @@ def test_discretize_observation_dtype():
     """Tests the discretize observation wrapper with spaces that should raise an error."""
     with pytest.raises((TypeError,)):
         DiscretizeObservation(GenericTestEnv(observation_space=Discrete(10)))
+
+
+def test_discretize_observation_multidimensional_box():
+    """DiscretizeObservation should accept any finite Box, not only 1-D.
+
+    ``n_dims`` was taken from ``shape[0]``, so a Box of shape ``(2, 2)``
+    constructed a Discrete space but crashed on ``reset`` / ``observation``
+    with ``ValueError: object too deep for desired array``.
+    """
+    env = GenericTestEnv(observation_space=Box(0, 1, shape=(2, 2), dtype=np.float32))
+    wrapped = DiscretizeObservation(env, bins=2)
+    assert wrapped.observation_space == Discrete(16)
+    obs, _ = wrapped.reset()
+    assert obs in wrapped.observation_space

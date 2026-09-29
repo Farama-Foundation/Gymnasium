@@ -275,9 +275,9 @@ class DiscretizeAction(
                 "DiscretizeAction is only compatible with Box continuous actions."
             )
 
-        self.low = env.action_space.low
-        self.high = env.action_space.high
-        self.n_dims = self.low.shape[0]
+        self.low = np.ravel(env.action_space.low)
+        self.high = np.ravel(env.action_space.high)
+        self.n_dims = int(self.low.size)
 
         if np.any(np.isinf(self.low)) or np.any(np.isinf(self.high)):
             raise ValueError(
@@ -324,10 +324,13 @@ class DiscretizeAction(
             self.bin_centers[i][min(max(idx, 0), self.bins[i] - 1)]
             for i, idx in enumerate(indices)
         ]
-        return np.array(centers, dtype=self.env.action_space.dtype)
+        return np.array(centers, dtype=self.env.action_space.dtype).reshape(
+            self.env.action_space.shape
+        )
 
     def revert_action(self, action):
         """Converts a discretized action to a possible continuous action (the center of the closest bin)."""
+        action = np.ravel(action)
         indices = [
             np.argmin(np.abs(self.bin_centers[i] - action[i]))
             for i in range(self.n_dims)

@@ -16,8 +16,10 @@ from gymnasium.utils.env_checker import (
     check_reset_return_info_deprecation,
     check_reset_return_type,
     check_reset_seed_determinism,
+    check_returned_data_not_reused,
     check_seed_deprecation,
     check_step_determinism,
+    data_shares_objects,
 )
 from tests.testing_env import GenericTestEnv
 
@@ -310,6 +312,30 @@ def test_check_step_determinism(test, step_func, message: str):
         check_step_determinism(GenericTestEnv(step_func=step_func))
 
 
+@pytest.mark.parametrize("second_draw_count", (1, 2))
+@pytest.mark.parametrize("declared_nondeterministic", (False, True))
+def test_check_step_determinism_rng_state(second_draw_count, declared_nondeterministic):
+    """Compare RNG state even when the first transition's outputs are identical."""
+    draw_counts = iter((1, second_draw_count))
+
+    def step_func(self, action):
+        self.np_random.random(next(draw_counts))
+        return np.zeros(1, dtype=np.float32), 0.0, False, False, {}
+
+    env = GenericTestEnv(step_func=step_func)
+    env.spec.nondeterministic = declared_nondeterministic
+    check_reset_seed_determinism(env)
+
+    if second_draw_count != 1 and not declared_nondeterministic:
+        with pytest.raises(
+            AssertionError,
+            match="not properly been updated after step",
+        ):
+            check_step_determinism(env)
+    else:
+        check_step_determinism(env)
+
+
 def test_check_step_determinism_snapshots_reused_observations():
     """Detect a changing step result before a reused buffer is overwritten."""
     observation_space = spaces.Box(0, 100, (1,), dtype=np.float32)
@@ -324,6 +350,130 @@ def test_check_step_determinism_snapshots_reused_observations():
         match="Deterministic step observations are not equivalent for the same seed and action",
     ):
         check_step_determinism(env)
+
+
+def _buffer_reusing_info_reset(self, seed=None, options=None):
+    """Return a reused info dictionary, mutated in place on every call."""
+    super(GenericTestEnv, self).reset(seed=seed)
+    self._info = getattr(self, "_info", {})
+    self._info["count"] = 0
+    return self.observation_space.sample(), self._info
+
+
+def _buffer_reusing_info_step(self, action):
+    """Mutate one shared info dictionary on every step call."""
+    self._info["count"] += 1
+    return self.observation_space.sample(), 0.0, False, False, self._info
+
+
+def _buffer_viewing_reset(self, seed=None, options=None):
+    """Return a new view of a reused buffer, which is not the same object but shares its memory."""
+    super(GenericTestEnv, self).reset(seed=seed)
+    self._observation_buffer = getattr(
+        self, "_observation_buffer", np.zeros(1, dtype=np.float32)
+    )
+    self._observation_buffer[...] = 0
+    return self._observation_buffer[:], {}
+
+
+def _buffer_viewing_step(self, action):
+    """Mutate one shared observation buffer, returning a new view of it on every step call."""
+    self._observation_buffer += 1
+    return self._observation_buffer[:], 0.0, False, False, {}
+
+
+def test_check_returned_data_not_reused_buffer_view():
+    """A new view of a reused buffer must be rejected, as modifying it modifies the older view."""
+    env = GenericTestEnv(
+        observation_space=spaces.Box(0, 100, (1,), dtype=np.float32),
+        reset_func=_buffer_viewing_reset,
+        step_func=_buffer_viewing_step,
+    )
+
+    with pytest.raises(AssertionError, match="share an object"):
+        check_returned_data_not_reused(env)
+
+
+@pytest.mark.parametrize(
+    "data_1,data_2,shared",
+    [
+        (np.zeros(3), np.zeros(3), False),
+        (0, 0, False),
+        ("abc", "abc", False),
+        ({"a": np.zeros(3)}, {"a": np.zeros(3)}, False),
+        # differing types and keys mean there is nothing that can be shared
+        (np.zeros(3), 0, False),
+        ({"a": np.zeros(3)}, {"b": np.zeros(3)}, False),
+    ],
+    ids=["arrays", "ints", "strs", "dicts", "differing types", "differing keys"],
+)
+def test_data_shares_objects_distinct(data_1, data_2, shared):
+    """Distinct data must never be reported as sharing an object."""
+    assert data_shares_objects(data_1, data_2) is shared
+
+
+def test_data_shares_objects_shared():
+    """Every mutable container and a view of an array must be detected as shared."""
+    array, dictionary = np.zeros(3), {"a": np.zeros(3)}
+
+    assert data_shares_objects(array, array)
+    assert data_shares_objects(array, array[:])
+    assert data_shares_objects(dictionary, dictionary)
+    assert data_shares_objects({"a": array}, {"a": array})
+    assert data_shares_objects((array,), (array,))
+    assert data_shares_objects(
+        np.array([dictionary], dtype=object), np.array([dictionary], dtype=object)
+    )
+
+
+def test_check_returned_data_not_reused():
+    """A reused observation buffer must be rejected as users keep the data returned to them."""
+    env = GenericTestEnv(
+        observation_space=spaces.Box(0, 100, (1,), dtype=np.float32),
+        reset_func=_buffer_reusing_deterministic_reset,
+        step_func=_buffer_reusing_nondeterministic_step,
+    )
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The observations returned by `env.reset() (call 1)` and `env.step() (call 2)` "
+            "share an object"
+        ),
+    ):
+        check_returned_data_not_reused(env)
+
+
+def test_check_returned_data_not_reused_info():
+    """A reused info dictionary must be rejected in the same way as a reused observation."""
+    env = GenericTestEnv(
+        reset_func=_buffer_reusing_info_reset, step_func=_buffer_reusing_info_step
+    )
+
+    with pytest.raises(
+        AssertionError,
+        match=re.escape(
+            "The infos returned by `env.reset() (call 1)` and `env.step() (call 2)` "
+            "share an object"
+        ),
+    ):
+        check_returned_data_not_reused(env)
+
+
+def test_check_returned_data_not_reused_immutable_info_value():
+    """Returning the same immutable info value on every call is safe and must be allowed."""
+    constant = ("unchanging", 3)
+
+    def reset_func(self, seed=None, options=None):
+        super(GenericTestEnv, self).reset(seed=seed)
+        return self.observation_space.sample(), {"constant": constant}
+
+    def step_func(self, action):
+        return self.observation_space.sample(), 0, False, False, {"constant": constant}
+
+    check_returned_data_not_reused(
+        GenericTestEnv(reset_func=reset_func, step_func=step_func)
+    )
 
 
 @pytest.mark.parametrize(

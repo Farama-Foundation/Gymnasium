@@ -110,6 +110,11 @@ class Env(Generic[ObsType, ActType]):
                 return undefined results. This was removed in OpenAI Gym v26 in favor of terminated and truncated attributes.
                 A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,
                 a certain timelimit was exceeded, or the physics simulation has entered an invalid state.
+
+        Note:
+            Users commonly keep the data from every timestep, most obviously in a replay or rollout buffer, so each
+            call must return new observation and info objects rather than modifying and returning the same buffer.
+            :func:`gymnasium.utils.env_checker.check_env` checks this.
         """
         raise NotImplementedError
 
@@ -153,6 +158,10 @@ class Env(Generic[ObsType, ActType]):
                 (typically a numpy array) and is analogous to the observation returned by :meth:`step`.
             info (dictionary):  This dictionary contains auxiliary information complementing ``observation``. It should be analogous to
                 the ``info`` returned by :meth:`step`.
+
+        Note:
+            As with :meth:`step`, the returned observation and info must be new data rather than a
+            buffer that a previous call already returned and that this call has mutated in place.
         """
         # Initialize the RNG if the seed is manually passed
         if seed is not None:
