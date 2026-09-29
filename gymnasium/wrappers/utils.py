@@ -242,9 +242,9 @@ def rescale_box(
     safe_width = np.where(width == 0, 1, width)
 
     gradient = np.ones_like(new_min, dtype=box.dtype)
-    gradient[both_finite] = (
-        new_max[both_finite] - new_min[both_finite]
-    ) / safe_width[both_finite]
+    gradient[both_finite] = (new_max[both_finite] - new_min[both_finite]) / safe_width[
+        both_finite
+    ]
     gradient[point] = 0
 
     intercept = np.zeros_like(new_min, dtype=box.dtype)
