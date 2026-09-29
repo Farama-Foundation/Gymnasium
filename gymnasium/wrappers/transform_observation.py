@@ -438,9 +438,10 @@ class ResizeObservation(
         TransformObservation.__init__(
             self,
             env=env,
+            # OpenCV drops the channel dimension for single-channel images.
             func=lambda obs: cv2.resize(
                 obs, self.cv2_shape, interpolation=cv2.INTER_AREA
-            ),
+            ).reshape(new_observation_space.shape),
             observation_space=new_observation_space,
         )
 
@@ -586,7 +587,8 @@ class DtypeObservation(
 
         Args:
             env: The environment to wrap
-            dtype: The new dtype of the observation
+            dtype: The new dtype of the observation, as a NumPy scalar type,
+                dtype object, or string
         """
         if not isinstance(
             env.observation_space,
@@ -633,7 +635,7 @@ class DtypeObservation(
         TransformObservation.__init__(
             self,
             env=env,
-            func=lambda obs: dtype(obs),
+            func=lambda obs: new_observation_space.dtype.type(obs),
             observation_space=new_observation_space,
         )
 
