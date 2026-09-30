@@ -557,7 +557,7 @@ for iteration in range(num_iterations):
 
     # Formulate the prompt
     user_prompt = f"""
-Here is an existing Gymnasium classic-control environment to use as an API
+Here is the base environment from which learning started
 reference:
 ```python
 {initial_environment}
@@ -568,8 +568,7 @@ The agents have currently successfully learned the following environments:
 The agents have failed to learn: None.
 
 Please reason about what RL environment the agents should learn next.
-Output a JSON object with 'reasoning', 'symbol name', and 'code'. The symbol
-name must be the environment concept, and code must contain only the complete
+Output a JSON object with 'reasoning', 'task', and 'code'. The task must be the environment concept, and code must contain only the complete
 Python source for the new Gymnasium environment module.
 """
 
@@ -589,10 +588,10 @@ Python source for the new Gymnasium environment module.
                         "type": "object",
                         "properties": {
                             "reasoning": {"type": "string"},
-                            "symbol name": {"type": "string"},
+                            "task": {"type": "string"},
                             "code": {"type": "string"}
                         },
-                        "required": ["reasoning", "code", "symbol name"],
+                        "required": ["reasoning", "code", "task"],
                         "additionalProperties": False
                     }
                 }
@@ -603,7 +602,7 @@ Python source for the new Gymnasium environment module.
         result_content = response.choices[0].message.content or "{}"
         result = json.loads(result_content)
         
-        title = result.get("symbol name", f"generated_environment_{iteration}")
+        title = result.get("task", f"generated_environment_{iteration}")
         reasoning = result.get("reasoning", "")
         code_to_run = result.get("code", "")
         
