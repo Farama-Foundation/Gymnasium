@@ -1,0 +1,5 @@
+numpy>=1.22
+torch>=1.13
+tyro>=0.8
+matplotlib>=3.0
+groq>=0.9

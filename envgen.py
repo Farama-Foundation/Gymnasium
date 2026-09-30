@@ -2,13 +2,7 @@ import os
 import json
 import ast
 import re
-from groq import Groq
 import math
-
-# Initialize Groq client
-groq = Groq(
-    api_key=os.environ.get("GROQ_API_KEY"),
-)
 
 # Generated environments are written as importable Gymnasium modules.
 output_dir = os.path.join("gymnasium", "envs", "classic_control")
@@ -243,15 +237,15 @@ def angle_normalize(x):
 """
 
 # Track previously generated and learned environment concepts.
-learned_titles = ["CartPole"]
+def generate_environment(learned_titles, performance_report, output_dir=None):
+    """Generate and save one environment from measured agent performance."""
+    from groq import Groq
 
-# Data generation loop
-num_iterations = 20
+    if not os.environ.get("GROQ_API_KEY"):
+        raise RuntimeError("GROQ_API_KEY must be set before generating an environment")
 
-for iteration in range(num_iterations):
-    print(f"\n--- Starting Iteration {iteration + 1} ---")
-
-    # Formulate the prompt
+    output_dir = output_dir or os.path.join("gymnasium", "envs", "classic_control")
+    os.makedirs(output_dir, exist_ok=True)
     user_prompt = f"""
 Here is the base environment from which learning started
 reference:
@@ -261,69 +255,61 @@ reference:
 
 The agents have currently successfully learned the following environments:
 {learned_titles if learned_titles else "None so far."}
-The agents have failed to learn: None.
+
+Measured random-agent versus learned-agent performance:
+{json.dumps(performance_report, indent=2)}
+
+The next environment must keep the exact Pendulum observation and action spaces,
+because it will be trained by the same DDPG implementation.
 
 Please reason about what RL environment the agents should learn next.
 Output a JSON object with 'reasoning', 'task', and 'code'. The task must be the environment concept, and code must contain only the complete
 Python source for the new Gymnasium environment module.
 """
 
-    messages = [{"role": "system", "content": system_prompt}]
-    messages.append({"role": "user", "content": user_prompt})
-    
-    try:
-        response = groq.chat.completions.create(
-            model="openai/gpt-oss-120b",
-            messages=messages,
-            response_format={
-                "type": "json_schema",
-                "json_schema": {
-                    "name": "gymnasium_environment_generation",
-                    "strict": True,
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "reasoning": {"type": "string"},
-                            "task": {"type": "string"},
-                            "code": {"type": "string"}
-                        },
-                        "required": ["reasoning", "code", "task"],
-                        "additionalProperties": False
-                    }
-                }
-            }
-        )
-        
-        # Parse output
-        result_content = response.choices[0].message.content or "{}"
-        result = json.loads(result_content)
-        
-        title = result.get("task", f"generated_environment_{iteration}")
-        reasoning = result.get("reasoning", "")
-        code_to_run = result.get("code", "")
-        
-        print(f"Title: {title}")
-        print(f"Reasoning: {reasoning}")
-        
-        if code_to_run:
-            try:
-                ast.parse(code_to_run)
-            except SyntaxError as error:
-                print(f"Generated code is invalid Python: {error}")
-                continue
+    client = Groq(api_key=os.environ["GROQ_API_KEY"])
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-120b",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+        response_format={
+            "type": "json_schema",
+            "json_schema": {
+                "name": "gymnasium_environment_generation",
+                "strict": True,
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "reasoning": {"type": "string"},
+                        "task": {"type": "string"},
+                        "code": {"type": "string"},
+                    },
+                    "required": ["reasoning", "code", "task"],
+                    "additionalProperties": False,
+                },
+            },
+        },
+    )
 
-            module_name = re.sub(r"[^a-z0-9]+", "_", title.lower()).strip("_")
-            module_name = module_name or f"generated_environment_{iteration}"
-            module_path = os.path.join(output_dir, f"{module_name}.py")
-            with open(module_path, "w", encoding="utf-8") as environment_file:
-                environment_file.write(code_to_run.rstrip() + "\n")
-            print(f"Saved environment to {module_path}")
-            learned_titles.append(title)
-        else:
-            print("No environment code provided by the LLM.")
-            
-    except Exception as e:
-        print(f"An error occurred during iteration {iteration + 1}: {e}")
-        
-print("\n--- Data Generation Loop Completed ---")
-print("Learned titles over the loop:", learned_titles)
+    result = json.loads(response.choices[0].message.content or "{}")
+    title = result.get("task", "generated_environment")
+    code_to_run = result.get("code", "")
+    code_to_run = re.sub(r"^```(?:python)?\s*|\s*```$", "", code_to_run.strip())
+    if not code_to_run:
+        raise RuntimeError("Groq returned no environment code")
+    ast.parse(code_to_run)
+
+    module_name = re.sub(r"[^a-z0-9]+", "_", title.lower()).strip("_")
+    module_name = module_name or "generated_environment"
+    module_path = os.path.join(output_dir, f"{module_name}.py")
+    with open(module_path, "w", encoding="utf-8") as environment_file:
+        environment_file.write(code_to_run.rstrip() + "\n")
+
+    return {
+        "title": title,
+        "reasoning": result.get("reasoning", ""),
+        "module_name": module_name,
+        "module_path": module_path,
+    }
