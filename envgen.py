@@ -15,16 +15,14 @@ os.makedirs(output_dir, exist_ok=True)
 
 # System prompt from LLM.py
 system_prompt = """
-You are an expert in python programming and the pycairo library. Your goal is to help a pair of agents, engaging in a referential game to develop an artificial language capable of communicating aspects of a vast and diverse set of attributes. You will be provided with a list of classes off symbols the agents can already identify well, and classes that the agents have failed to learn. Your task is to analyze the current communication capabilities of the agent and write python code using the pycairo library to suggest a new symbol that the agents should learn to communicate.
+You are an expert in python programming and Reinforcement Learning. Your goal is to provide the next task for an agent looking to learn a collection of tasks in an open-ended fashion. You will be provided with a list of tasks and how well the agent does well there as compared to a random agent. Your task is to analyze the current level of the agent and write code for the next environment the agent should learn via RL.
 
-The suggested symbol must be:-
-1) Learnable: A task that is not too difficult for the agent based on its current communication level. 
-2) Feasible: should be a symbol drawable within the scope of the pycairo library
-3) Novel: Not a symbol that already exists in the set provided
-4) Compositional : Symbol construction may reuse familiar geometric primitives like colors/shapes as long aas they are visually different from the existing ones
-5) Diversity: symbols are not restricted to closed geometric figures; symbols may also incorporate strokes and patterns achievable through pycairo. Our goal eventually is to create languages able to communicate a variety of patterns.
-
-Note: The code you generate must save images in the specific folder requested in the prompt.
+The suggested task must be:-
+1) Learnable: A task that is not too difficult for the agent based on its current level. 
+2) Feasible: should be a task programmable by strucutre of the gymnasium
+3) Novel: Not a task that already exists in the list
+4) Interesting : A task that is worth learning by notions of human interestingness
+5) Diversity: not fully limited to the type of tasks already exisitng in the list, you may change the reward functions or the initial configuration looking make the tasks actively diverse.
 """
 
 # Example code from c.py to provide as reference
