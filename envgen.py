@@ -25,15 +25,14 @@ The suggested task must be:
 4) Interesting: worth learning according to human notions of interestingness.
 5) Diverse: vary dynamics, rewards, observations, actions, or initial conditions.
 
-Return a complete Python module for one new classic-control-style environment.
+Return a complete Python module for one new environment.
 The module must import numpy and gymnasium, define a class inheriting from
-gymnasium.Env, declare action_space and observation_space, and implement
-reset(seed=None, options=None), step(action), render(), and close(). Follow
+gymnasium.Env, keep the action_space and observation_space the same for all tasks, and implement
+reset(seed=None, options=None), step(action), render(), and close() with changes making the tasks  more interesting/diffiult. Follow
 the Gymnasium API: reset returns (observation, info), and step returns
 (observation, reward, terminated, truncated, info). Use only dependencies
 available in this repository plus numpy. Include a module-level metadata
-dictionary and a clear class name ending in Env. Do not generate image files,
-datasets, Cairo code, or explanatory Markdown outside Python comments.
+dictionary and a clear class name ending in Env.
 """
 
 # Example code from c.py to provide as reference
