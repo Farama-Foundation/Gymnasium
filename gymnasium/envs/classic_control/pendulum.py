@@ -83,8 +83,8 @@ class PendulumEnv(gym.Env):
     >>> env = gym.make("Pendulum-v1", render_mode="rgb_array", g=9.81)  # default g=10.0
     >>> env
     <TimeLimit<OrderEnforcing<PassiveEnvChecker<PendulumEnv<Pendulum-v1>>>>>
-    >>> env.reset(seed=123, options={"low": -0.7, "high": 0.5})  # default low=-0.6, high=-0.5
-    (array([ 0.4123625 ,  0.91101986, -0.89235795], dtype=float32), {})
+    >>> env.reset(seed=123, options={"x_init": np.pi/2, "y_init": 0.5})  # default x_init=np.pi, y_init=1.0
+    (array([ 0.8403459 ,  0.54205054, -0.44617897], dtype=float32), {})
 
     ```
 

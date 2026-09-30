@@ -1,10 +1,12 @@
 """Test suite for vector NormalizeReward wrapper."""
 
 import numpy as np
+import pytest
 
 from gymnasium import wrappers
 from gymnasium.core import ActType
-from gymnasium.vector import SyncVectorEnv
+from gymnasium.error import InvalidBound
+from gymnasium.vector import AutoresetMode, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
 
 
@@ -93,3 +95,59 @@ def test_equivalence_with_wrapper(n_steps=50):
     )
     per_env.close()
     vec_env.close()
+
+
+@pytest.mark.parametrize("gamma", [-1.0, 1.01, 2.0, 99])
+def test_gamma_outside_unit_interval_is_rejected(gamma):
+    """Matches the same check on the non-vector wrapper, which shares this accumulator."""
+    vec_env = SyncVectorEnv([thunk])
+    with pytest.raises(InvalidBound, match="`gamma` should be in the interval"):
+        wrappers.vector.NormalizeReward(vec_env, gamma=gamma)
+    vec_env.close()
+
+
+@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0])
+def test_non_positive_epsilon_is_rejected(epsilon):
+    vec_env = SyncVectorEnv([thunk])
+    with pytest.raises(InvalidBound, match="`epsilon` should be strictly positive"):
+        wrappers.vector.NormalizeReward(vec_env, epsilon=epsilon)
+    vec_env.close()
+
+
+def test_same_step_autoreset_updates_return_rms(n_envs=2, episode_length=4, n_steps=12):
+    """SAME_STEP first-after-done rewards must update return_rms and start a new return."""
+
+    def reset_func(self, seed=None, options=None):
+        self.timestep = 0
+        return self.observation_space.sample(), {}
+
+    def step_func(self, action):
+        self.timestep += 1
+        return (
+            self.observation_space.sample(),
+            1.0,
+            self.timestep >= episode_length,
+            False,
+            {},
+        )
+
+    env = wrappers.vector.NormalizeReward(
+        SyncVectorEnv(
+            [
+                lambda: GenericTestEnv(reset_func=reset_func, step_func=step_func)
+                for _ in range(n_envs)
+            ],
+            autoreset_mode=AutoresetMode.SAME_STEP,
+        )
+    )
+
+    env.reset(seed=123)
+    for _ in range(n_steps):
+        _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+        dones = np.logical_or(terminated, truncated)
+        if np.any(dones):
+            assert np.all(env.accumulated_reward[dones] == 0)
+
+    # Every step is a real environment step under SAME_STEP.
+    assert np.isclose(env.return_rms.count, n_steps * n_envs)
+    env.close()

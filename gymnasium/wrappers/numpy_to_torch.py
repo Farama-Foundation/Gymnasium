@@ -71,6 +71,7 @@ class NumpyToTorch(ArrayConversion):
             env: The NumPy-based environment to wrap
             device: The device the torch Tensors should be moved to
         """
+        gym.utils.RecordConstructorArgs.__init__(self, device=device)
         super().__init__(env=env, env_xp=np, target_xp=torch, target_device=device)
 
         self.device: Device | None = device

@@ -3,7 +3,10 @@
 import time
 from collections.abc import Callable
 
+import numpy as np
+
 import gymnasium
+from gymnasium.vector import AutoresetMode, VectorEnv
 
 
 def benchmark_step(
@@ -41,14 +44,63 @@ def benchmark_step(
         if terminal or truncated:
             env.reset()
 
-        if time.time() - start > target_duration:
-            end = time.time()
+        end = time.time()
+        if end - start > target_duration:
             break
 
     length = end - start
 
     steps_per_time = steps / length
     return steps_per_time
+
+
+def benchmark_vector_step(
+    env: VectorEnv, target_duration: int = 5, seed: int | None = None
+) -> float:
+    """Measure the step throughput of a vector environment.
+
+    Args:
+        env: The vector environment to benchmark.
+        target_duration: The benchmark duration in seconds. The benchmark can run
+            slightly longer while its final step completes.
+        seed: Seed for the environment and action space.
+
+    Returns:
+        The number of individual environment steps per second.
+    """
+    env.action_space.seed(seed)
+    # Some environments lazily initialize during their first reset.
+    env.reset(seed=seed)
+
+    # Warm up lazy initialization, including JIT compilation, outside the benchmark.
+    env.step(env.action_space.sample())
+    env.reset(seed=seed)
+
+    steps = 0
+    end = 0.0
+    start = time.time()
+    autoreset_mode = env.metadata.get("autoreset_mode", AutoresetMode.NEXT_STEP)
+    previous_done = np.zeros(env.num_envs, dtype=np.bool_)
+
+    while True:
+        _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+
+        if autoreset_mode == AutoresetMode.NEXT_STEP:
+            steps += env.num_envs - int(np.count_nonzero(previous_done))
+            previous_done = np.logical_or(terminated, truncated)
+        else:
+            steps += env.num_envs
+
+        if autoreset_mode == AutoresetMode.DISABLED:
+            done = np.logical_or(terminated, truncated)
+            if np.any(done):
+                env.reset(options={"reset_mask": done})
+
+        end = time.time()
+        if end - start > target_duration:
+            break
+
+    return steps / (end - start)
 
 
 def benchmark_init(
@@ -71,8 +123,8 @@ def benchmark_init(
         env = env_lambda()
         env.reset(seed=seed)
 
-        if time.time() - start > target_duration:
-            end = time.time()
+        end = time.time()
+        if end - start > target_duration:
             break
     length = end - start
 
@@ -96,8 +148,8 @@ def benchmark_render(env: gymnasium.Env, target_duration: int = 5) -> float:
         renders += 1
         env.render()
 
-        if time.time() - start > target_duration:
-            end = time.time()
+        end = time.time()
+        if end - start > target_duration:
             break
     length = end - start
 

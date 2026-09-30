@@ -14,6 +14,7 @@ import numpy as np
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType, WrapperActType
+from gymnasium.error import InvalidBound
 from gymnasium.spaces import Box, Discrete, MultiDiscrete, Space
 
 __all__ = ["TransformAction", "ClipAction", "RescaleAction"]
@@ -167,6 +168,9 @@ class RescaleAction(
             env (Env): The environment to wrap
             min_action (float, int or np.ndarray): The min values for each action. This may be a numpy array or a scalar.
             max_action (float, int or np.ndarray): The max values for each action. This may be a numpy array or a scalar.
+
+        Raises:
+            InvalidBound: If a component of ``min_action`` equals the matching component of ``max_action``.
         """
         if not isinstance(env.action_space, Box):
             raise TypeError(
@@ -178,6 +182,14 @@ class RescaleAction(
         )
 
         act_space, _, func = rescale_box(env.action_space, min_action, max_action)
+        # The wrapper applies the inverse of the rescaling, and a component that is
+        # rescaled onto a single point has no inverse.
+        if np.any(act_space.low == act_space.high):
+            raise InvalidBound(
+                f"Min action ({min_action}) must be strictly smaller than max action "
+                f"({max_action}), the rescaling has no inverse where they are equal"
+            )
+
         TransformAction.__init__(
             self,
             env=env,
@@ -263,9 +275,9 @@ class DiscretizeAction(
                 "DiscretizeAction is only compatible with Box continuous actions."
             )
 
-        self.low = env.action_space.low
-        self.high = env.action_space.high
-        self.n_dims = self.low.shape[0]
+        self.low = np.ravel(env.action_space.low)
+        self.high = np.ravel(env.action_space.high)
+        self.n_dims = int(self.low.size)
 
         if np.any(np.isinf(self.low)) or np.any(np.isinf(self.high)):
             raise ValueError(
@@ -274,7 +286,9 @@ class DiscretizeAction(
             )
 
         self.multidiscrete = multidiscrete
-        gym.utils.RecordConstructorArgs.__init__(self, bins=bins)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, bins=bins, multidiscrete=multidiscrete
+        )
         gym.ActionWrapper.__init__(self, env)
 
         if isinstance(bins, int):
@@ -310,10 +324,13 @@ class DiscretizeAction(
             self.bin_centers[i][min(max(idx, 0), self.bins[i] - 1)]
             for i, idx in enumerate(indices)
         ]
-        return np.array(centers, dtype=self.env.action_space.dtype)
+        return np.array(centers, dtype=self.env.action_space.dtype).reshape(
+            self.env.action_space.shape
+        )
 
     def revert_action(self, action):
         """Converts a discretized action to a possible continuous action (the center of the closest bin)."""
+        action = np.ravel(action)
         indices = [
             np.argmin(np.abs(self.bin_centers[i] - action[i]))
             for i in range(self.n_dims)

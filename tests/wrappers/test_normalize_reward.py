@@ -1,9 +1,11 @@
 """Test suite for NormalizeReward wrapper."""
 
 import numpy as np
+import pytest
 
 import gymnasium as gym
 from gymnasium.core import ActType
+from gymnasium.error import InvalidBound
 from gymnasium.wrappers import NormalizeReward
 from tests.testing_env import GenericTestEnv
 
@@ -81,3 +83,27 @@ def test_normalize_return():
         np.mean([2 + 1 * env.gamma, 1]),  # [second return, first return]
         decimal=4,
     )
+
+
+@pytest.mark.parametrize("gamma", [-1.0, -0.01, 1.01, 2.0, 99])
+def test_gamma_outside_unit_interval_is_rejected(gamma):
+    """The accumulator is multiplied by ``gamma`` every step, so a value outside [0, 1] diverges.
+
+    Left unchecked, ``gamma=99`` (a plausible typo for ``0.99``) drives the accumulator
+    to infinity and every normalized reward to NaN, without raising anything.
+    """
+    with pytest.raises(InvalidBound, match="`gamma` should be in the interval"):
+        NormalizeReward(GenericTestEnv(), gamma=gamma)
+
+
+@pytest.mark.parametrize("gamma", [0.0, 0.5, 0.99, 1.0])
+def test_gamma_inside_unit_interval_is_accepted(gamma):
+    """Both endpoints are meaningful: 0 keeps only the immediate reward, 1 is undiscounted."""
+    assert NormalizeReward(GenericTestEnv(), gamma=gamma).gamma == gamma
+
+
+@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0])
+def test_non_positive_epsilon_is_rejected(epsilon):
+    """``epsilon`` sits under a square root; once it exceeds the variance the result is NaN."""
+    with pytest.raises(InvalidBound, match="`epsilon` should be strictly positive"):
+        NormalizeReward(GenericTestEnv(), epsilon=epsilon)

@@ -463,7 +463,10 @@ class Box(Space[NDArray[_ScalarT_co]]):
         if np.issubdtype(self.dtype, np.integer):
             iinfo = np.iinfo(cast("np.dtype[np.integer]", self.dtype))
             dtype_min, dtype_max = iinfo.min, iinfo.max
-            if np.issubdtype(self.dtype, np.signedinteger):
+            if self.dtype == np.int64:
+                # float64 cannot exactly represent the int64 limits, so keep a
+                # margin to stay within the dtype range after the cast below
+                # (narrower signed dtypes are exactly representable in float64)
                 dtype_min += 2
                 dtype_max -= 2
             sample = sample.clip(min=dtype_min, max=dtype_max)
@@ -483,7 +486,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
             gym.logger.warn("Casting input x to numpy array.")
             try:
                 x = np.asarray(x, dtype=self.dtype)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, OverflowError):
                 return False
 
         return bool(

@@ -85,6 +85,7 @@ class JaxToTorch(ArrayConversion):
             env: The Jax-based environment to wrap
             device: The device the torch Tensors should be moved to
         """
+        gym.utils.RecordConstructorArgs.__init__(self, device=device)
         super().__init__(env=env, env_xp=jnp, target_xp=torch, target_device=device)
 
         # TODO: Device was part of the public API, but should be removed in favor of _env_device and

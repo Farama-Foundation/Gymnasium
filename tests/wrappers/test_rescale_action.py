@@ -1,7 +1,9 @@
 """Test suite for RescaleAction wrapper."""
 
 import numpy as np
+import pytest
 
+from gymnasium.error import InvalidBound
 from gymnasium.spaces import Box
 from gymnasium.wrappers import RescaleAction
 from tests.testing_env import GenericTestEnv
@@ -46,3 +48,30 @@ def test_rescale_action_wrapper():
 
         _, _, _, _, info = wrapped_env.step(sample_action)
         assert np.all(info["action"] == expected_action)
+
+
+def test_rescale_action_equal_bounds():
+    """Test that a min action equal to the max action is rejected.
+
+    The wrapper maps an action from the rescaled space back to the action space of
+    the environment, and that map is the inverse of the rescaling. A component whose
+    min equals its max collapses to a constant, which has no inverse, so every action
+    on that component would come out as `nan`.
+    """
+    env = GenericTestEnv(
+        step_func=record_action_step,
+        action_space=Box(
+            np.array([0, 1], dtype=np.float32), np.array([1, 3], dtype=np.float32)
+        ),
+    )
+
+    with pytest.raises(InvalidBound):
+        RescaleAction(env, min_action=np.float32(0), max_action=np.float32(0))
+
+    # only one of the two components is degenerate
+    with pytest.raises(InvalidBound):
+        RescaleAction(
+            env,
+            min_action=np.array([-1, 2], dtype=np.float32),
+            max_action=np.array([1, 2], dtype=np.float32),
+        )

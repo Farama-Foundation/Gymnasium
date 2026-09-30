@@ -64,33 +64,40 @@ class StickyAction(
                 f"`repeat_action_probability` should be in the interval [0,1). Received {repeat_action_probability}"
             )
 
+        # The pair of bounds that the number of repeats is drawn from.
+        # `repeat_action_duration` keeps the value the caller gave, which is what
+        # `RecordConstructorArgs` stores for the env spec.
         if isinstance(repeat_action_duration, int):
-            repeat_action_duration = (repeat_action_duration, repeat_action_duration)
+            duration_range = (repeat_action_duration, repeat_action_duration)
+        else:
+            duration_range = repeat_action_duration
 
-        if not isinstance(repeat_action_duration, tuple):
+        if not isinstance(duration_range, tuple):
             raise ValueError(
-                f"`repeat_action_duration` should be either an integer or a tuple. Received {repeat_action_duration}"
+                f"`repeat_action_duration` should be either an integer or a tuple. Received {duration_range}"
             )
-        elif len(repeat_action_duration) != 2:
+        elif len(duration_range) != 2:
             raise ValueError(
-                f"`repeat_action_duration` should be a tuple or a list of two integers. Received {repeat_action_duration}"
+                f"`repeat_action_duration` should be a tuple or a list of two integers. Received {duration_range}"
             )
-        elif repeat_action_duration[0] > repeat_action_duration[1]:
+        elif duration_range[0] > duration_range[1]:
             raise InvalidBound(
-                f"`repeat_action_duration` is not a valid bound. Received {repeat_action_duration}"
+                f"`repeat_action_duration` is not a valid bound. Received {duration_range}"
             )
-        elif np.any(np.array(repeat_action_duration) < 1):
+        elif np.any(np.array(duration_range) < 1):
             raise ValueError(
-                f"`repeat_action_duration` should be larger or equal than 1. Received {repeat_action_duration}"
+                f"`repeat_action_duration` should be larger or equal than 1. Received {duration_range}"
             )
 
         gym.utils.RecordConstructorArgs.__init__(
-            self, repeat_action_probability=repeat_action_probability
+            self,
+            repeat_action_probability=repeat_action_probability,
+            repeat_action_duration=repeat_action_duration,
         )
         gym.ActionWrapper.__init__(self, env)
 
         self.repeat_action_probability = repeat_action_probability
-        self.repeat_action_duration_range = repeat_action_duration
+        self.repeat_action_duration_range = duration_range
 
         self.last_action: ActType | None = None
         self.is_sticky_actions: bool = False  # if sticky actions are taken
