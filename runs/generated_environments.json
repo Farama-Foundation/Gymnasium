@@ -7,5 +7,23 @@
   },
   "GeneratedVariablegravitypendulumenvAPendulumWhereTheGravityConstantGIs1065F9E6Da-v0": {
     "entry_point": "gymnasium.envs.classic_control.variablegravitypendulumenv_a_pendulum_where_the_gravity_constant_g_is_1065f9e6da:VariableGravityPendulumEnv"
+  },
+  "GeneratedPendulumtargetenvAPendulumVariantWhereTheAgentMustFollowASiD81Df4078D-v0": {
+    "entry_point": "gymnasium.envs.classic_control.pendulumtargetenv_a_pendulum_variant_where_the_agent_must_follow_a_si_d81df4078d:PendulumTargetEnv"
+  },
+  "GeneratedPendulumstochasticswingupenvAPendulumWhereEachStepARandomWind314B644Dcf-v0": {
+    "entry_point": "gymnasium.envs.classic_control.pendulumstochasticswingupenv_a_pendulum_where_each_step_a_random_wind_314b644dcf:PendulumStochasticSwingUpEnv"
+  },
+  "GeneratedVariablegravitypendulumenvAPendulumWithEpisodeSpecificRandomGr93D9Bbddf1-v0": {
+    "entry_point": "gymnasium.envs.classic_control.variablegravitypendulumenv_a_pendulum_with_episode_specific_random_gr_93d9bbddf1:VariableGravityPendulumEnv"
+  },
+  "GeneratedCreateAPendulumEnvironmentWithEpisodeSpecificRandomDampingCoEd26B1F0Ab-v0": {
+    "entry_point": "gymnasium.envs.classic_control.create_a_pendulum_environment_with_episode_specific_random_damping_co_ed26b1f0ab:DampedWindPendulumEnv"
+  },
+  "GeneratedCreateAPendulumEnvironmentWhereGravityVariesSinusoidallyWithi9D20E48Ef6-v0": {
+    "entry_point": "gymnasium.envs.classic_control.create_a_pendulum_environment_where_gravity_varies_sinusoidally_withi_9d20e48ef6:VariableGravityWindPendulumEnv"
+  },
+  "GeneratedCreateAPendulumEnvironmentWithAOneStepTorqueDelayARandomJ56F017E3F9-v0": {
+    "entry_point": "gymnasium.envs.classic_control.create_a_pendulum_environment_with_a_one_step_torque_delay_a_random_j_56f017e3f9:DelayedFrictionPendulumEnv"
   }
 }

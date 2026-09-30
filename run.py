@@ -14,6 +14,7 @@ from gymnasium.envs.registration import register
 
 from envgen import generate_environment
 from run_ddpg import Actor
+from run_saved_agent import discover_agents, run_agent
 
 GENERATED_ENV_MAX_STEPS = 200
 
@@ -144,13 +145,21 @@ def register_generated_environment(module_name, module_path):
 
 def main():
     parser = argparse.ArgumentParser(description="Run the open-ended RL training pipeline")
-    parser.add_argument("--total-timesteps", type=int, default=60_000)
-    parser.add_argument("--learning-starts", type=int, default=10_000)
+    parser.add_argument("--total-timesteps", type=int, default=30_000)
+    parser.add_argument("--learning-starts", type=int, default=5_000)
     parser.add_argument("--episodes", type=int, default=5)
     parser.add_argument("--iterations", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--cuda", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--learned-titles-file", default="runs/learned_titles.txt")
+    parser.add_argument(
+        "--generate-videos",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="generate videos for all saved agents after the pipeline completes",
+    )
+    parser.add_argument("--video-folder", default="videos")
+    parser.add_argument("--video-episodes", type=int, default=1)
     args = parser.parse_args()
 
     reports = []
@@ -186,6 +195,20 @@ def main():
     with open("runs/pipeline_results.json", "w", encoding="utf-8") as results_file:
         json.dump(reports, results_file, indent=2)
     print("Pipeline results saved to runs/pipeline_results.json")
+
+    if args.generate_videos:
+        device = torch.device("cuda" if torch.cuda.is_available() and args.cuda else "cpu")
+        agents = discover_agents("runs")
+        for video_env_id, checkpoint_path in agents:
+            run_agent(
+                video_env_id,
+                checkpoint_path,
+                args.video_folder,
+                args.seed,
+                args.video_episodes,
+                device,
+            )
+        print(f"Videos saved in {args.video_folder} for {len(agents)} environment(s)")
 
 
 if __name__ == "__main__":

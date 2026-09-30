@@ -237,6 +237,32 @@ def angle_normalize(x):
 
 """
 
+GROQ_TPM_LIMIT = 8_000
+GROQ_REQUEST_SAFETY_MARGIN = 200
+MAX_COMPLETION_TOKENS = 4_500
+MIN_COMPLETION_TOKENS = 3_000
+
+
+def _estimate_token_count(*parts):
+    """Conservatively estimate tokens without adding a tokenizer dependency."""
+    return sum(len(part) for part in parts) // 3
+
+
+def _completion_token_budget(system_content, user_content):
+    """Keep Groq's prompt-plus-completion request below the organization limit."""
+    prompt_tokens = _estimate_token_count(system_content, user_content)
+    available_tokens = (
+        GROQ_TPM_LIMIT - GROQ_REQUEST_SAFETY_MARGIN - prompt_tokens
+    )
+    if available_tokens < MIN_COMPLETION_TOKENS:
+        raise RuntimeError(
+            "The environment-generation prompt is too large for Groq's "
+            f"{GROQ_TPM_LIMIT}-token TPM limit "
+            f"(estimated prompt size: {prompt_tokens} tokens)"
+        )
+    return min(MAX_COMPLETION_TOKENS, available_tokens)
+
+
 # Track previously generated and learned environment concepts.
 def generate_environment(learned_titles, performance_report, output_dir=None):
     """Generate and save one environment from measured agent performance."""
@@ -273,11 +299,12 @@ increment it, and return truncated=True when the counter reaches 200 unless the
 episode has already terminated. Keep the truncation logic inside the environment
 as a defensive fallback; the runner also applies Gymnasium's TimeLimit wrapper.
 """
+    completion_token_budget = _completion_token_budget(system_prompt, user_prompt)
 
     client = Groq(api_key=os.environ["GROQ_API_KEY"])
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",
-        max_completion_tokens=12000,
+        max_completion_tokens=completion_token_budget,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
