@@ -103,6 +103,12 @@ def summarize(random_returns, learned_returns):
     }
 
 
+def save_learned_titles(path, learned_titles):
+    os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+    with open(path, "w", encoding="utf-8") as titles_file:
+        titles_file.write("\n".join(learned_titles) + "\n")
+
+
 def register_generated_environment(module_name, module_path):
     importlib.invalidate_caches()
     module = importlib.import_module(f"gymnasium.envs.classic_control.{module_name}")
@@ -114,7 +120,19 @@ def register_generated_environment(module_name, module_path):
     if len(environment_classes) != 1:
         raise RuntimeError(f"Expected one generated Env class in {module_path}")
     env_id = f"Generated{module_name.title().replace('_', '')}-v0"
-    register(id=env_id, entry_point=f"gymnasium.envs.classic_control.{module_name}:{environment_classes[0].__name__}")
+    entry_point = f"gymnasium.envs.classic_control.{module_name}:{environment_classes[0].__name__}"
+    register(id=env_id, entry_point=entry_point)
+
+    registry_path = Path("runs/generated_environments.json")
+    registry_path.parent.mkdir(parents=True, exist_ok=True)
+    generated_registry = {}
+    if registry_path.exists():
+        with registry_path.open(encoding="utf-8") as registry_file:
+            generated_registry = json.load(registry_file)
+    generated_registry[env_id] = {"entry_point": entry_point}
+    with registry_path.open("w", encoding="utf-8") as registry_file:
+        json.dump(generated_registry, registry_file, indent=2)
+
     return env_id
 
 
@@ -126,11 +144,13 @@ def main():
     parser.add_argument("--iterations", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--cuda", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--learned-titles-file", default="runs/learned_titles.txt")
     args = parser.parse_args()
 
     reports = []
     env_id = "Pendulum-v1"
     learned_titles = [env_id]
+    save_learned_titles(args.learned_titles_file, learned_titles)
     for iteration in range(args.iterations + 1):
         exp_name = f"pipeline_stage_{iteration}"
         checkpoint = train(
@@ -153,6 +173,7 @@ def main():
         generated = generate_environment(learned_titles, report)
         env_id = register_generated_environment(generated["module_name"], generated["module_path"])
         learned_titles.append(generated["title"])
+        save_learned_titles(args.learned_titles_file, learned_titles)
         print(f"Generated and registered {env_id}: {generated['title']}")
 
     os.makedirs("runs", exist_ok=True)

@@ -1,0 +1,2 @@
+Pendulum-v1
+PendulumTargetEnv – a pendulum where each episode has a random target angle; reward penalizes deviation from the target angle, angular velocity, and control effort.

@@ -1,0 +1,5 @@
+{
+  "GeneratedPendulumtargetenvAPendulumWhereEachEpisodeHasARandomTargetAngleRewardPenalizesDeviationFromTheTargetAngleAngularVelocityAndControlEffort-v0": {
+    "entry_point": "gymnasium.envs.classic_control.pendulumtargetenv_a_pendulum_where_each_episode_has_a_random_target_angle_reward_penalizes_deviation_from_the_target_angle_angular_velocity_and_control_effort:PendulumTargetEnv"
+  }
+}

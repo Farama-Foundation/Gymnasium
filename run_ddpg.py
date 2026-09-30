@@ -1,4 +1,5 @@
 import copy
+import json
 import os
 import random
 import time
@@ -14,6 +15,7 @@ import tyro
 import matplotlib.pyplot as plt
 
 from buffers import ReplayBuffer
+from gymnasium.envs.registration import register, registry
 
 
 @dataclass
@@ -60,6 +62,18 @@ def make_env(env_id, seed, idx):
         return env
 
     return thunk
+
+
+def register_saved_generated_environments():
+    registry_path = os.path.join("runs", "generated_environments.json")
+    if not os.path.isfile(registry_path):
+        return
+
+    with open(registry_path, encoding="utf-8") as registry_file:
+        generated_registry = json.load(registry_file)
+    for env_id, environment in generated_registry.items():
+        if env_id not in registry:
+            register(id=env_id, entry_point=environment["entry_point"])
 
 
 def save_reward_plot(run_name, episode_returns):
@@ -133,6 +147,7 @@ if __name__ == "__main__":
     print(f"Starting {run_name} on {device} for {args.total_timesteps} timesteps")
 
     # env setup
+    register_saved_generated_environments()
     envs = gym.vector.SyncVectorEnv([make_env(args.env_id, args.seed, 0)])
     assert isinstance(envs.single_action_space, gym.spaces.Box), "only continuous action space is supported"
 
