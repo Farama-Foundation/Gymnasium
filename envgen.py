@@ -16,8 +16,7 @@ os.makedirs(output_dir, exist_ok=True)
 
 # System prompt from LLM.py
 system_prompt = """
-You are an expert in python programming and Reinforcement Learning. Your goal is to provide the next task for an agent looking to learn a collection of tasks in an open-ended fashion. You will be provided with a list of tasks and how well the agent does well there as compared to a random agent. Your task is to analyze the current level of the agent and write code for the next environment the agent should learn via RL.
-
+You are an expert in python programming and Reinforcement Learning. Your goal is to provide the next task for an agent looking to learn a collection of tasks in an open-ended fashion. You will be provided with a list of tasks and how well the agent does well there as compared to a random agent. Your task is to analyze the current level of the agent and write code for the next environment the agent should learn via RL. You are only allowed to change the reward functions and the initial configurations, not the naturer of the robot/agent(action/observation space).
 The suggested task must be:
 1) Learnable: not too difficult for the agent based on its current level.
 2) Feasible: implementable as a self-contained Gymnasium environment.
@@ -38,153 +37,96 @@ dictionary and a clear class name ending in Env.
 # Example code from c.py to provide as reference
 
 initial_environment = """
-# Classic cartpole control
-import math
-from typing import Any
+from os import path
 
 import numpy as np
 
 import gymnasium as gym
-from gymnasium import logger, spaces
+from gymnasium import spaces
 from gymnasium.envs.classic_control import utils
 from gymnasium.error import DependencyNotInstalled
-from gymnasium.vector import AutoresetMode, VectorEnv
-from gymnasium.vector.utils import batch_space
+
+DEFAULT_X = np.pi
+DEFAULT_Y = 1.0
 
 
-class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
+class PendulumEnv(gym.Env):
+
     metadata = {
         "render_modes": ["human", "rgb_array"],
-        "render_fps": 50,
+        "render_fps": 30,
     }
 
-    def __init__(
-        self, sutton_barto_reward: bool = False, render_mode: str | None = None
-    ):
-        self._sutton_barto_reward = sutton_barto_reward
-
-        self.gravity = 9.8
-        self.masscart = 1.0
-        self.masspole = 0.1
-        self.total_mass = self.masspole + self.masscart
-        self.length = 0.5  # actually half the pole's length
-        self.polemass_length = self.masspole * self.length
-        self.force_mag = 10.0
-        self.tau = 0.02  # seconds between state updates
-        self.kinematics_integrator = "euler"
-
-        # Angle at which to fail the episode
-        self.theta_threshold_radians = 12 * 2 * math.pi / 360
-        self.x_threshold = 2.4
-
-        # Angle limit set to 2 * theta_threshold_radians so failing observation
-        # is still within bounds.
-        high = np.array(
-            [
-                self.x_threshold * 2,
-                np.inf,
-                self.theta_threshold_radians * 2,
-                np.inf,
-            ],
-            dtype=np.float32,
-        )
-
-        self.action_space = spaces.Discrete(2)
-        self.observation_space = spaces.Box(-high, high, dtype=np.float32)
+    def __init__(self, render_mode: str | None = None, g=10.0):
+        self.max_speed = 8
+        self.max_torque = 2.0
+        self.dt = 0.05
+        self.g = g
+        self.m = 1.0
+        self.l = 1.0
 
         self.render_mode = render_mode
 
-        self.screen_width = 600
-        self.screen_height = 400
+        self.screen_dim = 500
         self.screen = None
         self.clock = None
         self.isopen = True
-        self.state: np.ndarray | None = None
 
-        self.steps_beyond_terminated = None
-
-    def step(self, action):
-        assert self.action_space.contains(action), (
-            f"{action!r} ({type(action)}) invalid"
+        high = np.array([1.0, 1.0, self.max_speed], dtype=np.float32)
+        # This will throw a warning in tests/envs/test_envs in utils/env_checker.py as the space is not symmetric
+        #   or normalised as max_torque == 2 by default. Ignoring the issue here as the default settings are too old
+        #   to update to follow the gymnasium api
+        self.action_space = spaces.Box(
+            low=-self.max_torque, high=self.max_torque, shape=(1,), dtype=np.float32
         )
-        assert self.state is not None, "Call reset before using step method."
-        x, x_dot, theta, theta_dot = self.state
-        force = self.force_mag if action == 1 else -self.force_mag
-        costheta = np.cos(theta)
-        sintheta = np.sin(theta)
+        self.observation_space = spaces.Box(low=-high, high=high, dtype=np.float32)
 
-        temp = (
-            force + self.polemass_length * np.square(theta_dot) * sintheta
-        ) / self.total_mass
-        thetaacc = (self.gravity * sintheta - costheta * temp) / (
-            self.length
-            * (4.0 / 3.0 - self.masspole * np.square(costheta) / self.total_mass)
-        )
-        xacc = temp - self.polemass_length * thetaacc * costheta / self.total_mass
+    def step(self, u):
+        th, thdot = self.state  # th := theta
 
-        if self.kinematics_integrator == "euler":
-            x = x + self.tau * x_dot
-            x_dot = x_dot + self.tau * xacc
-            theta = theta + self.tau * theta_dot
-            theta_dot = theta_dot + self.tau * thetaacc
-        else:  # semi-implicit euler
-            x_dot = x_dot + self.tau * xacc
-            x = x + self.tau * x_dot
-            theta_dot = theta_dot + self.tau * thetaacc
-            theta = theta + self.tau * theta_dot
+        g = self.g
+        m = self.m
+        l = self.l
+        dt = self.dt
 
-        self.state = np.array((x, x_dot, theta, theta_dot), dtype=np.float64)
+        u = np.clip(u, -self.max_torque, self.max_torque)[0]
+        self.last_u = u  # for rendering
+        costs = angle_normalize(th) ** 2 + 0.1 * thdot**2 + 0.001 * (u**2)
 
-        terminated = bool(
-            x < -self.x_threshold
-            or x > self.x_threshold
-            or theta < -self.theta_threshold_radians
-            or theta > self.theta_threshold_radians
-        )
+        newthdot = thdot + (3 * g / (2 * l) * np.sin(th) + 3.0 / (m * l**2) * u) * dt
+        newthdot = np.clip(newthdot, -self.max_speed, self.max_speed)
+        newth = th + newthdot * dt
 
-        if not terminated:
-            reward = 0.0 if self._sutton_barto_reward else 1.0
-        elif self.steps_beyond_terminated is None:
-            # Pole just fell!
-            self.steps_beyond_terminated = 0
-
-            reward = -1.0 if self._sutton_barto_reward else 1.0
-        else:
-            if self.steps_beyond_terminated == 0:
-                logger.warn(
-                    "You are calling 'step()' even though this environment has already returned terminated = True. "
-                    "You should always call 'reset()' once you receive 'terminated = True' -- any further steps are undefined behavior."
-                )
-            self.steps_beyond_terminated += 1
-
-            reward = -1.0 if self._sutton_barto_reward else 0.0
+        self.state = np.array([newth, newthdot])
 
         if self.render_mode == "human":
             self.render()
-
         # truncation=False as the time limit is handled by the `TimeLimit` wrapper added during `make`
-        return np.array(self.state, dtype=np.float32), reward, terminated, False, {}
+        return self._get_obs(), -costs, False, False, {}
 
-    def reset(
-        self,
-        *,
-        seed: int | None = None,
-        options: dict | None = None,
-    ):
+    def reset(self, *, seed: int | None = None, options: dict | None = None):
         super().reset(seed=seed)
-        # Note that if you use custom reset bounds, it may lead to out-of-bound
-        # state/observations.
-        low, high = utils.maybe_parse_reset_bounds(
-            options,
-            -0.05,
-            0.05,  # default low
-        )  # default high
-        self.state = self.np_random.uniform(low=low, high=high, size=(4,))
-        self.steps_beyond_terminated = None
+        if options is None:
+            high = np.array([DEFAULT_X, DEFAULT_Y])
+        else:
+            # Note that if you use custom reset bounds, it may lead to out-of-bound
+            # state/observations.
+            x = options.get("x_init") if "x_init" in options else DEFAULT_X
+            y = options.get("y_init") if "y_init" in options else DEFAULT_Y
+            x = utils.verify_number_and_cast(x)
+            y = utils.verify_number_and_cast(y)
+            high = np.array([x, y])
+        low = -high  # We enforce symmetric limits.
+        self.state = self.np_random.uniform(low=low, high=high)
+        self.last_u = None
 
         if self.render_mode == "human":
             self.render()
-        return np.array(self.state, dtype=np.float32), {}
+        return self._get_obs(), {}
+
+    def _get_obs(self):
+        theta, thetadot = self.state
+        return np.array([np.cos(theta), np.sin(theta), thetadot], dtype=np.float32)
 
     def render(self):
         if self.render_mode is None:
@@ -201,75 +143,77 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
             from pygame import gfxdraw
         except ImportError as e:
             raise DependencyNotInstalled(
-                'pygame is not installed, run `pip install "gymnasium[classic-control]"`'
+                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
 
         if self.screen is None:
             pygame.display.init()
             if self.render_mode == "human":
                 self.screen = pygame.display.set_mode(
-                    (self.screen_width, self.screen_height)
+                    (self.screen_dim, self.screen_dim)
                 )
-            else:  # mode == "rgb_array"
-                self.screen = pygame.Surface((self.screen_width, self.screen_height))
+            else:  # mode in "rgb_array"
+                self.screen = pygame.Surface((self.screen_dim, self.screen_dim))
         if self.clock is None:
             self.clock = pygame.time.Clock()
 
-        world_width = self.x_threshold * 2
-        scale = self.screen_width / world_width
-        polewidth = 10.0
-        polelen = scale * (2 * self.length)
-        cartwidth = 50.0
-        cartheight = 30.0
-
-        if self.state is None:
-            return None
-
-        x = self.state
-
-        self.surf = pygame.Surface((self.screen_width, self.screen_height))
+        self.surf = pygame.Surface((self.screen_dim, self.screen_dim))
         self.surf.fill((255, 255, 255))
 
-        l, r, t, b = -cartwidth / 2, cartwidth / 2, cartheight / 2, -cartheight / 2
-        axleoffset = cartheight / 4.0
-        cartx = x[0] * scale + self.screen_width / 2.0  # MIDDLE OF CART
-        carty = 100  # TOP OF CART
-        cart_coords = [(l, b), (l, t), (r, t), (r, b)]
-        cart_coords = [(c[0] + cartx, c[1] + carty) for c in cart_coords]
-        gfxdraw.aapolygon(self.surf, cart_coords, (0, 0, 0))
-        gfxdraw.filled_polygon(self.surf, cart_coords, (0, 0, 0))
+        bound = 2.2
+        scale = self.screen_dim / (bound * 2)
+        offset = self.screen_dim // 2
 
-        l, r, t, b = (
-            -polewidth / 2,
-            polewidth / 2,
-            polelen - polewidth / 2,
-            -polewidth / 2,
+        rod_length = 1 * scale
+        rod_width = 0.2 * scale
+        l, r, t, b = 0, rod_length, rod_width / 2, -rod_width / 2
+        coords = [(l, b), (l, t), (r, t), (r, b)]
+        transformed_coords = []
+        for c in coords:
+            c = pygame.math.Vector2(c).rotate_rad(self.state[0] + np.pi / 2)
+            c = (c[0] + offset, c[1] + offset)
+            transformed_coords.append(c)
+        gfxdraw.aapolygon(self.surf, transformed_coords, (204, 77, 77))
+        gfxdraw.filled_polygon(self.surf, transformed_coords, (204, 77, 77))
+
+        gfxdraw.aacircle(self.surf, offset, offset, int(rod_width / 2), (204, 77, 77))
+        gfxdraw.filled_circle(
+            self.surf, offset, offset, int(rod_width / 2), (204, 77, 77)
         )
 
-        pole_coords = []
-        for coord in [(l, b), (l, t), (r, t), (r, b)]:
-            coord = pygame.math.Vector2(coord).rotate_rad(-x[2])
-            coord = (coord[0] + cartx, coord[1] + carty + axleoffset)
-            pole_coords.append(coord)
-        gfxdraw.aapolygon(self.surf, pole_coords, (202, 152, 101))
-        gfxdraw.filled_polygon(self.surf, pole_coords, (202, 152, 101))
-
+        rod_end = (rod_length, 0)
+        rod_end = pygame.math.Vector2(rod_end).rotate_rad(self.state[0] + np.pi / 2)
+        rod_end = (int(rod_end[0] + offset), int(rod_end[1] + offset))
         gfxdraw.aacircle(
-            self.surf,
-            int(cartx),
-            int(carty + axleoffset),
-            int(polewidth / 2),
-            (129, 132, 203),
+            self.surf, rod_end[0], rod_end[1], int(rod_width / 2), (204, 77, 77)
         )
         gfxdraw.filled_circle(
-            self.surf,
-            int(cartx),
-            int(carty + axleoffset),
-            int(polewidth / 2),
-            (129, 132, 203),
+            self.surf, rod_end[0], rod_end[1], int(rod_width / 2), (204, 77, 77)
         )
 
-        gfxdraw.hline(self.surf, 0, self.screen_width, carty, (0, 0, 0))
+        fname = path.join(path.dirname(__file__), "assets/clockwise.png")
+        img = pygame.image.load(fname)
+        if self.last_u is not None:
+            scale_img = pygame.transform.smoothscale(
+                img,
+                (
+                    float(scale * np.abs(self.last_u) / 2),
+                    float(scale * np.abs(self.last_u) / 2),
+                ),
+            )
+            is_flip = bool(self.last_u > 0)
+            scale_img = pygame.transform.flip(scale_img, is_flip, True)
+            self.surf.blit(
+                scale_img,
+                (
+                    offset - scale_img.get_rect().centerx,
+                    offset - scale_img.get_rect().centery,
+                ),
+            )
+
+        # drawing axle
+        gfxdraw.aacircle(self.surf, offset, offset, int(0.05 * scale), (0, 0, 0))
+        gfxdraw.filled_circle(self.surf, offset, offset, int(0.05 * scale), (0, 0, 0))
 
         self.surf = pygame.transform.flip(self.surf, False, True)
         self.screen.blit(self.surf, (0, 0))
@@ -278,7 +222,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
             self.clock.tick(self.metadata["render_fps"])
             pygame.display.flip()
 
-        elif self.render_mode == "rgb_array":
+        else:  # mode == "rgb_array":
             return np.transpose(
                 np.array(pygame.surfarray.pixels3d(self.screen)), axes=(1, 0, 2)
             )
@@ -292,256 +236,9 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
             self.isopen = False
 
 
-class CartPoleVectorEnv(VectorEnv):
-    metadata = {
-        "render_modes": ["rgb_array"],
-        "render_fps": 50,
-        "autoreset_mode": AutoresetMode.NEXT_STEP,
-    }
+def angle_normalize(x):
+    return ((x + np.pi) % (2 * np.pi)) - np.pi
 
-    def __init__(
-        self,
-        num_envs: int = 1,
-        max_episode_steps: int = 500,
-        render_mode: str | None = None,
-        sutton_barto_reward: bool = False,
-    ):
-        self._sutton_barto_reward = sutton_barto_reward
-
-        self.num_envs = num_envs
-        self.max_episode_steps = max_episode_steps
-        self.render_mode = render_mode
-
-        self.gravity = 9.8
-        self.masscart = 1.0
-        self.masspole = 0.1
-        self.total_mass = self.masspole + self.masscart
-        self.length = 0.5  # actually half the pole's length
-        self.polemass_length = self.masspole * self.length
-        self.force_mag = 10.0
-        self.tau = 0.02  # seconds between state updates
-        self.kinematics_integrator = "euler"
-
-        self.state = None
-
-        self.steps = np.zeros(num_envs, dtype=np.int32)
-        self.prev_done = np.zeros(num_envs, dtype=np.bool_)
-
-        # Angle at which to fail the episode
-        self.theta_threshold_radians = 12 * 2 * math.pi / 360
-        self.x_threshold = 2.4
-
-        # Angle limit set to 2 * theta_threshold_radians so failing observation
-        # is still within bounds.
-        high = np.array(
-            [
-                self.x_threshold * 2,
-                np.inf,
-                self.theta_threshold_radians * 2,
-                np.inf,
-            ],
-            dtype=np.float32,
-        )
-
-        self.low = -0.05
-        self.high = 0.05
-
-        self.single_action_space = spaces.Discrete(2)
-        self.action_space = batch_space(self.single_action_space, num_envs)
-        self.single_observation_space = spaces.Box(-high, high, dtype=np.float32)
-        self.observation_space = batch_space(self.single_observation_space, num_envs)
-
-        self.screen_width = 600
-        self.screen_height = 400
-        self.screens = None
-        self.surf = None
-
-        self.steps_beyond_terminated = None
-
-    def step(
-        self, action: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
-        assert self.action_space.contains(action), (
-            f"{action!r} ({type(action)}) invalid"
-        )
-        assert self.state is not None, "Call reset before using step method."
-
-        x, x_dot, theta, theta_dot = self.state
-        force = np.sign(action - 0.5) * self.force_mag
-        costheta = np.cos(theta)
-        sintheta = np.sin(theta)
-
-        # For the interested reader:
-        # https://coneural.org/florian/papers/05_cart_pole.pdf
-        temp = (
-            force + self.polemass_length * np.square(theta_dot) * sintheta
-        ) / self.total_mass
-        thetaacc = (self.gravity * sintheta - costheta * temp) / (
-            self.length
-            * (4.0 / 3.0 - self.masspole * np.square(costheta) / self.total_mass)
-        )
-        xacc = temp - self.polemass_length * thetaacc * costheta / self.total_mass
-
-        if self.kinematics_integrator == "euler":
-            x = x + self.tau * x_dot
-            x_dot = x_dot + self.tau * xacc
-            theta = theta + self.tau * theta_dot
-            theta_dot = theta_dot + self.tau * thetaacc
-        else:  # semi-implicit euler
-            x_dot = x_dot + self.tau * xacc
-            x = x + self.tau * x_dot
-            theta_dot = theta_dot + self.tau * thetaacc
-            theta = theta + self.tau * theta_dot
-
-        self.state = np.stack((x, x_dot, theta, theta_dot))
-
-        terminated: np.ndarray = (
-            (x < -self.x_threshold)
-            | (x > self.x_threshold)
-            | (theta < -self.theta_threshold_radians)
-            | (theta > self.theta_threshold_radians)
-        )
-
-        self.steps += 1
-
-        truncated = self.steps >= self.max_episode_steps
-
-        if self._sutton_barto_reward:
-            reward = -np.array(terminated, dtype=np.float32)
-        else:
-            reward = np.ones_like(terminated, dtype=np.float32)
-
-        # Reset all environments which terminated or were truncated in the last step
-        self.state[:, self.prev_done] = self.np_random.uniform(
-            low=self.low, high=self.high, size=(4, self.prev_done.sum())
-        )
-        self.steps[self.prev_done] = 0
-        reward[self.prev_done] = 0.0
-        terminated[self.prev_done] = False
-        truncated[self.prev_done] = False
-
-        self.prev_done = np.logical_or(terminated, truncated)
-
-        return self.state.T.astype(np.float32), reward, terminated, truncated, {}
-
-    def reset(
-        self,
-        *,
-        seed: int | None = None,
-        options: dict | None = None,
-    ):
-        super().reset(seed=seed)
-        # Note that if you use custom reset bounds, it may lead to out-of-bound
-        # state/observations.
-        # -0.05 and 0.05 is the default low and high bounds
-        self.low, self.high = utils.maybe_parse_reset_bounds(options, -0.05, 0.05)
-        self.state = self.np_random.uniform(
-            low=self.low, high=self.high, size=(4, self.num_envs)
-        )
-        self.steps_beyond_terminated = None
-        self.steps = np.zeros(self.num_envs, dtype=np.int32)
-        self.prev_done = np.zeros(self.num_envs, dtype=np.bool_)
-
-        return self.state.T.astype(np.float32), {}
-
-    def render(self):
-        if self.render_mode is None:
-            assert self.spec is not None
-            gym.logger.warn(
-                "You are calling render method without specifying any render mode. "
-                "You can specify the render_mode at initialization, "
-                f'e.g. gym.make_vec("{self.spec.id}", render_mode="rgb_array")'
-            )
-            return
-
-        try:
-            import pygame
-            from pygame import gfxdraw
-        except ImportError as e:
-            raise DependencyNotInstalled(
-                'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
-            ) from e
-
-        if self.screens is None:
-            pygame.display.init()
-
-            self.screens = [
-                pygame.Surface((self.screen_width, self.screen_height))
-                for _ in range(self.num_envs)
-            ]
-
-        world_width = self.x_threshold * 2
-        scale = self.screen_width / world_width
-        polewidth = 10.0
-        polelen = scale * (2 * self.length)
-        cartwidth = 50.0
-        cartheight = 30.0
-
-        if self.state is None:
-            raise ValueError(
-                "Cartpole's state is None, it probably hasn't be reset yet."
-            )
-
-        for x, screen in zip(self.state.T, self.screens, strict=True):
-            assert isinstance(x, np.ndarray) and x.shape == (4,)
-
-            self.surf = pygame.Surface((self.screen_width, self.screen_height))
-            self.surf.fill((255, 255, 255))
-
-            l, r, t, b = -cartwidth / 2, cartwidth / 2, cartheight / 2, -cartheight / 2
-            axleoffset = cartheight / 4.0
-            cartx = x[0] * scale + self.screen_width / 2.0  # MIDDLE OF CART
-            carty = 100  # TOP OF CART
-            cart_coords = [(l, b), (l, t), (r, t), (r, b)]
-            cart_coords = [(c[0] + cartx, c[1] + carty) for c in cart_coords]
-            gfxdraw.aapolygon(self.surf, cart_coords, (0, 0, 0))
-            gfxdraw.filled_polygon(self.surf, cart_coords, (0, 0, 0))
-
-            l, r, t, b = (
-                -polewidth / 2,
-                polewidth / 2,
-                polelen - polewidth / 2,
-                -polewidth / 2,
-            )
-
-            pole_coords = []
-            for coord in [(l, b), (l, t), (r, t), (r, b)]:
-                coord = pygame.math.Vector2(coord).rotate_rad(-x[2])
-                coord = (coord[0] + cartx, coord[1] + carty + axleoffset)
-                pole_coords.append(coord)
-            gfxdraw.aapolygon(self.surf, pole_coords, (202, 152, 101))
-            gfxdraw.filled_polygon(self.surf, pole_coords, (202, 152, 101))
-
-            gfxdraw.aacircle(
-                self.surf,
-                int(cartx),
-                int(carty + axleoffset),
-                int(polewidth / 2),
-                (129, 132, 203),
-            )
-            gfxdraw.filled_circle(
-                self.surf,
-                int(cartx),
-                int(carty + axleoffset),
-                int(polewidth / 2),
-                (129, 132, 203),
-            )
-
-            gfxdraw.hline(self.surf, 0, self.screen_width, carty, (0, 0, 0))
-
-            self.surf = pygame.transform.flip(self.surf, False, True)
-            screen.blit(self.surf, (0, 0))
-
-        return [
-            np.transpose(np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2))
-            for screen in self.screens
-        ]
-
-    def close(self, **kwargs: Any):
-        if self.screens is not None:
-            import pygame
-
-            pygame.quit()
 
 """
 
