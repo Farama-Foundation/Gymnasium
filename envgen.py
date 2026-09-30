@@ -262,35 +262,22 @@ Measured random-agent versus learned-agent performance:
 The next environment must keep the exact Pendulum observation and action spaces,
 because it will be trained by the same DDPG implementation.
 
-Please reason about what RL environment the agents should learn next.
-Output a JSON object with 'reasoning', 'task', and 'code'. The task must be the environment concept, and code must contain only the complete
-Python source for the new Gymnasium environment module.
+Please reason briefly about what RL environment the agents should learn next.
+Output one valid JSON object with string fields 'reasoning', 'task', and 'code'.
+The code field must contain one complete Python source module, with a gymnasium.Env
+class implementing reset, step, render, and close. Do not truncate the module,
+omit methods, or wrap the JSON in Markdown fences.
 """
 
     client = Groq(api_key=os.environ["GROQ_API_KEY"])
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",
+        max_completion_tokens=12000,
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
-        response_format={
-            "type": "json_schema",
-            "json_schema": {
-                "name": "gymnasium_environment_generation",
-                "strict": True,
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "reasoning": {"type": "string"},
-                        "task": {"type": "string"},
-                        "code": {"type": "string"},
-                    },
-                    "required": ["reasoning", "code", "task"],
-                    "additionalProperties": False,
-                },
-            },
-        },
+        response_format={"type": "json_object"},
     )
 
     result = json.loads(response.choices[0].message.content or "{}")
@@ -299,7 +286,30 @@ Python source for the new Gymnasium environment module.
     code_to_run = re.sub(r"^```(?:python)?\s*|\s*```$", "", code_to_run.strip())
     if not code_to_run:
         raise RuntimeError("Groq returned no environment code")
-    ast.parse(code_to_run)
+    module_tree = ast.parse(code_to_run)
+    environment_classes = [
+        node
+        for node in module_tree.body
+        if isinstance(node, ast.ClassDef)
+        and any(
+            isinstance(base, ast.Attribute) and base.attr == "Env"
+            for base in node.bases
+        )
+    ]
+    required_methods = {"reset", "step", "render", "close"}
+    if not environment_classes:
+        raise RuntimeError("Groq returned code without a gymnasium.Env class")
+    method_names = {
+        node.name
+        for node in environment_classes[0].body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+    missing_methods = required_methods - method_names
+    if missing_methods:
+        raise RuntimeError(
+            "Groq returned an incomplete environment; missing methods: "
+            + ", ".join(sorted(missing_methods))
+        )
 
     module_name = re.sub(r"[^a-z0-9]+", "_", title.lower()).strip("_")
     module_name = module_name or "generated_environment"

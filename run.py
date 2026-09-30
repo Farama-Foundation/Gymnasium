@@ -16,7 +16,21 @@ from envgen import generate_environment
 from run_ddpg import Actor
 
 
-def train(env_id, seed, total_timesteps, learning_starts, exp_name):
+def find_checkpoint(env_id, seed, exp_name):
+    candidates = sorted(
+        Path("runs").glob(f"{env_id}__{exp_name}__{seed}__*/{exp_name}.cleanrl_model"),
+        key=lambda path: path.stat().st_mtime,
+    )
+    return candidates[-1] if candidates else None
+
+
+def train(env_id, seed, total_timesteps, learning_starts, exp_name, reuse_existing=False):
+    if reuse_existing:
+        checkpoint = find_checkpoint(env_id, seed, exp_name)
+        if checkpoint is not None:
+            print(f"Reusing existing checkpoint: {checkpoint}")
+            return str(checkpoint)
+
     command = [
         sys.executable,
         "run_ddpg.py",
@@ -32,13 +46,10 @@ def train(env_id, seed, total_timesteps, learning_starts, exp_name):
         exp_name,
     ]
     subprocess.run(command, check=True)
-    candidates = sorted(
-        Path("runs").glob(f"{env_id}__{exp_name}__{seed}__*/{exp_name}.cleanrl_model"),
-        key=lambda path: path.stat().st_mtime,
-    )
-    if not candidates:
+    checkpoint = find_checkpoint(env_id, seed, exp_name)
+    if checkpoint is None:
         raise FileNotFoundError(f"No checkpoint was produced for {env_id}")
-    return str(candidates[-1])
+    return str(checkpoint)
 
 
 def evaluate_random(env_id, episodes, seed):
@@ -122,7 +133,14 @@ def main():
     learned_titles = [env_id]
     for iteration in range(args.iterations + 1):
         exp_name = f"pipeline_stage_{iteration}"
-        checkpoint = train(env_id, args.seed + iteration, args.total_timesteps, args.learning_starts, exp_name)
+        checkpoint = train(
+            env_id,
+            args.seed + iteration,
+            args.total_timesteps,
+            args.learning_starts,
+            exp_name,
+            reuse_existing=iteration == 0,
+        )
         random_returns = evaluate_random(env_id, args.episodes, args.seed + iteration)
         learned_returns = evaluate_learned(env_id, checkpoint, args.episodes, args.seed + iteration, args.cuda)
         report = summarize(random_returns, learned_returns)

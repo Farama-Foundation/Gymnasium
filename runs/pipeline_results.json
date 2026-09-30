@@ -1,0 +1,15 @@
+[
+  {
+    "random_returns": [
+      -870.1046857685647
+    ],
+    "learned_returns": [
+      -0.7265195453340384
+    ],
+    "random_mean": -870.1046857685647,
+    "learned_mean": -0.7265195453340384,
+    "improvement": 869.3781662232307,
+    "env_id": "Pendulum-v1",
+    "checkpoint": "runs\\Pendulum-v1__pipeline_stage_0__1__1790794251\\pipeline_stage_0.cleanrl_model"
+  }
+]

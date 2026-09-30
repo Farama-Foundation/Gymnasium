@@ -11,8 +11,8 @@ from run_ddpg import Actor
 
 @dataclass
 class Args:
-    checkpoint: str = "runs/Hopper-v4__run_ddpg__1__1789726943/run_ddpg.cleanrl_model"
-    env_id: str = "Hopper-v4"
+    checkpoint: str
+    env_id: str
     video_folder: str = "videos"
     seed: int = 1
     cuda: bool = True
@@ -35,10 +35,12 @@ def main() -> None:
         name_prefix="saved-agent",
     )
 
-    actor = Actor(gym.vector.SyncVectorEnv([lambda: gym.make(args.env_id)])).to(device)
+    actor_env = gym.vector.SyncVectorEnv([lambda: gym.make(args.env_id)])
+    actor = Actor(actor_env).to(device)
     checkpoint = torch.load(args.checkpoint, map_location=device, weights_only=False)
     actor.load_state_dict(checkpoint[0])
     actor.eval()
+    actor_env.close()
 
     for episode in range(args.episodes):
         observation, _ = env.reset(seed=args.seed + episode)
@@ -57,7 +59,7 @@ def main() -> None:
         print(f"episode={episode + 1}, return={episode_return:.3f}")
 
     env.close()
-    print(f"Video saved in {args.video_folder}")
+    print(f"Video saved in {args.video_folder} for {args.env_id}")
 
 
 if __name__ == "__main__":
