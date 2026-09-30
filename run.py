@@ -15,6 +15,8 @@ from gymnasium.envs.registration import register
 from envgen import generate_environment
 from run_ddpg import Actor
 
+GENERATED_ENV_MAX_STEPS = 200
+
 
 def find_checkpoint(env_id, seed, exp_name):
     candidates = sorted(
@@ -121,7 +123,11 @@ def register_generated_environment(module_name, module_path):
         raise RuntimeError(f"Expected one generated Env class in {module_path}")
     env_id = f"Generated{module_name.title().replace('_', '')}-v0"
     entry_point = f"gymnasium.envs.classic_control.{module_name}:{environment_classes[0].__name__}"
-    register(id=env_id, entry_point=entry_point)
+    register(
+        id=env_id,
+        entry_point=entry_point,
+        max_episode_steps=GENERATED_ENV_MAX_STEPS,
+    )
 
     registry_path = Path("runs/generated_environments.json")
     registry_path.parent.mkdir(parents=True, exist_ok=True)
@@ -138,8 +144,8 @@ def register_generated_environment(module_name, module_path):
 
 def main():
     parser = argparse.ArgumentParser(description="Run the open-ended RL training pipeline")
-    parser.add_argument("--total-timesteps", type=int, default=100_000)
-    parser.add_argument("--learning-starts", type=int, default=25_000)
+    parser.add_argument("--total-timesteps", type=int, default=60_000)
+    parser.add_argument("--learning-starts", type=int, default=10_000)
     parser.add_argument("--episodes", type=int, default=5)
     parser.add_argument("--iterations", type=int, default=1)
     parser.add_argument("--seed", type=int, default=1)

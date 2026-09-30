@@ -1,5 +1,11 @@
 {
   "GeneratedPendulumtargetenvAPendulumWhereEachEpisodeHasARandomTargetAngleRewardPenalizesDeviationFromTheTargetAngleAngularVelocityAndControlEffort-v0": {
     "entry_point": "gymnasium.envs.classic_control.pendulumtargetenv_a_pendulum_where_each_episode_has_a_random_target_angle_reward_penalizes_deviation_from_the_target_angle_angular_velocity_and_control_effort:PendulumTargetEnv"
+  },
+  "GeneratedPendulumtargetenvGoalConditionedPendulumWhereEachEpisodeHasAD7F2C625Bb-v0": {
+    "entry_point": "gymnasium.envs.classic_control.pendulumtargetenv_goal_conditioned_pendulum_where_each_episode_has_a_d7f2c625bb:PendulumTargetEnv"
+  },
+  "GeneratedVariablegravitypendulumenvAPendulumWhereTheGravityConstantGIs1065F9E6Da-v0": {
+    "entry_point": "gymnasium.envs.classic_control.variablegravitypendulumenv_a_pendulum_where_the_gravity_constant_g_is_1065f9e6da:VariableGravityPendulumEnv"
   }
 }

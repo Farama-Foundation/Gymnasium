@@ -17,6 +17,8 @@ import matplotlib.pyplot as plt
 from buffers import ReplayBuffer
 from gymnasium.envs.registration import register, registry
 
+GENERATED_ENV_MAX_STEPS = 200
+
 
 @dataclass
 class Args:
@@ -73,7 +75,11 @@ def register_saved_generated_environments():
         generated_registry = json.load(registry_file)
     for env_id, environment in generated_registry.items():
         if env_id not in registry:
-            register(id=env_id, entry_point=environment["entry_point"])
+            register(
+                id=env_id,
+                entry_point=environment["entry_point"],
+                max_episode_steps=GENERATED_ENV_MAX_STEPS,
+            )
 
 
 def save_reward_plot(run_name, episode_returns):

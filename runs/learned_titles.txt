@@ -1,2 +1,2 @@
 Pendulum-v1
-PendulumTargetEnv – a pendulum where each episode has a random target angle; reward penalizes deviation from the target angle, angular velocity, and control effort.
+VariableGravityPendulumEnv – a pendulum where the gravity constant g is sampled uniformly from a configurable range at the start of each episode. The observation (cos(theta), sin(theta), theta_dot) and action (torque) spaces are unchanged. The reward remains a negative cost based on angle deviation, angular velocity and torque, encouraging the agent to swing up and balance under varying gravitational forces.

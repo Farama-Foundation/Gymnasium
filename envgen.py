@@ -1,6 +1,7 @@
 import os
 import json
 import ast
+import hashlib
 import re
 import math
 
@@ -266,7 +267,11 @@ Please reason briefly about what RL environment the agents should learn next.
 Output one valid JSON object with string fields 'reasoning', 'task', and 'code'.
 The code field must contain one complete Python source module, with a gymnasium.Env
 class implementing reset, step, render, and close. Do not truncate the module,
-omit methods, or wrap the JSON in Markdown fences.
+omit methods, or wrap the JSON in Markdown fences. The environment must enforce a
+200-step episode horizon: reset must set an episode step counter to zero, step must
+increment it, and return truncated=True when the counter reaches 200 unless the
+episode has already terminated. Keep the truncation logic inside the environment
+as a defensive fallback; the runner also applies Gymnasium's TimeLimit wrapper.
 """
 
     client = Groq(api_key=os.environ["GROQ_API_KEY"])
@@ -313,6 +318,9 @@ omit methods, or wrap the JSON in Markdown fences.
 
     module_name = re.sub(r"[^a-z0-9]+", "_", title.lower()).strip("_")
     module_name = module_name or "generated_environment"
+    if len(module_name) > 80:
+        title_hash = hashlib.sha1(title.encode("utf-8")).hexdigest()[:10]
+        module_name = f"{module_name[:69].rstrip('_')}_{title_hash}"
     module_path = os.path.join(output_dir, f"{module_name}.py")
     with open(module_path, "w", encoding="utf-8") as environment_file:
         environment_file.write(code_to_run.rstrip() + "\n")
