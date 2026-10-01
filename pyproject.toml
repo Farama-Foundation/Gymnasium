@@ -88,7 +88,7 @@ gymnasium = [
     "envs/phys2d/assets/*.png",
     "envs/toy_text/font/*.ttf",
     "envs/toy_text/img/*.png",
-    "envs/toy_text/img/taxi/*.png",
+    "envs/toy_text/img/*/*.png",
     "py.typed",
 ]
 
