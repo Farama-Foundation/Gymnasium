@@ -281,6 +281,7 @@ class AsyncVectorEnv(VectorEnv):
             self.observations = create_empty_array(  # ty:ignore[invalid-assignment]
                 self.single_observation_space, n=self.num_envs, fn=np.zeros
             )
+        self._obs_buffer = _obs_buffer
 
         self.parent_pipes, self.processes = [], []
         self.error_queue = ctx.Queue()
@@ -457,7 +458,13 @@ class AsyncVectorEnv(VectorEnv):
         for i, info in enumerate(info_data):
             infos = self._add_info(infos, info, i)
 
-        if not self.shared_memory:
+        if self.shared_memory:
+            # most spaces are read as views of the shared memory, but `OneOf` and `Text` are
+            # decoded into new objects, so the observations must be read again
+            self.observations = read_from_shared_memory(  # ty:ignore[invalid-assignment]
+                self.single_observation_space, self._obs_buffer, n=self.num_envs
+            )
+        else:
             self.observations = concatenate(  # ty:ignore[invalid-assignment]
                 self.single_observation_space, results, self.observations
             )
@@ -544,7 +551,13 @@ class AsyncVectorEnv(VectorEnv):
 
         self._raise_if_errors(successes)
 
-        if not self.shared_memory:
+        if self.shared_memory:
+            # most spaces are read as views of the shared memory, but `OneOf` and `Text` are
+            # decoded into new objects, so the observations must be read again
+            self.observations = read_from_shared_memory(  # ty:ignore[invalid-assignment]
+                self.single_observation_space, self._obs_buffer, n=self.num_envs
+            )
+        else:
             self.observations = concatenate(  # ty:ignore[invalid-assignment]
                 self.single_observation_space,
                 observations,

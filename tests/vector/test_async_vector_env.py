@@ -14,7 +14,8 @@ from gymnasium.error import (
     ClosedEnvironmentError,
     NoAsyncCallError,
 )
-from gymnasium.spaces import Box, Discrete, MultiDiscrete, Tuple
+from gymnasium.spaces import Box, Dict, Discrete, MultiDiscrete, OneOf, Text, Tuple
+from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import AsyncVectorEnv, AutoresetMode
 from gymnasium.vector.async_vector_env import _async_worker
 from tests.testing_env import GenericTestEnv
@@ -388,6 +389,38 @@ def test_float16_async_vector_env_shared_memory():
     assert observations.shape == (2, 3)
 
     envs.close()
+
+
+@pytest.mark.parametrize(
+    "obs_space",
+    [
+        OneOf([Discrete(3), Box(0, 1, shape=(2,))]),
+        OneOf([Dict({"a": Box(0, 1, shape=(2,)), "b": Discrete(3)}), Discrete(3)]),
+        OneOf([Tuple((Box(0, 1, shape=(2,)), Discrete(3))), Discrete(3)]),
+        Text(5),
+    ],
+    ids=["OneOf", "OneOf-Dict", "OneOf-Tuple", "Text"],
+)
+def test_async_vector_env_shared_memory_non_view_observations(obs_space):
+    """Test observations for spaces whose shared memory read is not a view (`OneOf`, `Text`) are updated on reset and step."""
+    env_fns = [lambda: GenericTestEnv(observation_space=obs_space)] * 2
+    shared_envs = AsyncVectorEnv(env_fns, shared_memory=True)
+    pipe_envs = AsyncVectorEnv(env_fns, shared_memory=False)
+
+    shared_obs, _ = shared_envs.reset(seed=123)
+    pipe_obs, _ = pipe_envs.reset(seed=123)
+    assert shared_obs in shared_envs.observation_space
+    assert data_equivalence(shared_obs, pipe_obs)
+
+    for _ in range(3):
+        actions = shared_envs.action_space.sample()
+        shared_obs, *_ = shared_envs.step(actions)
+        pipe_obs, *_ = pipe_envs.step(actions)
+        assert shared_obs in shared_envs.observation_space
+        assert data_equivalence(shared_obs, pipe_obs)
+
+    shared_envs.close()
+    pipe_envs.close()
 
 
 def raise_error_reset(self, seed, options):
