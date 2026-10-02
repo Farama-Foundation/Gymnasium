@@ -3,11 +3,18 @@
 from __future__ import annotations
 
 import numpy as np
-import torch
 
+from gymnasium.error import DependencyNotInstalled
 from gymnasium.vector import VectorEnv
 from gymnasium.wrappers.numpy_to_torch import Device
 from gymnasium.wrappers.vector.array_conversion import ArrayConversion
+
+try:
+    import torch
+except ImportError as e:
+    raise DependencyNotInstalled(
+        'Torch is not installed therefore cannot call `NumpyToTorch`, run `pip install "gymnasium[torch]"`'
+    ) from e
 
 __all__ = ["NumpyToTorch"]
 
