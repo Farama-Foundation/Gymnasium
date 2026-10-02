@@ -1,12 +1,15 @@
 """Test suite for vector NormalizeReward wrapper."""
 
+from functools import partial
+
 import numpy as np
 import pytest
 
 from gymnasium import wrappers
 from gymnasium.core import ActType
 from gymnasium.error import InvalidBound
-from gymnasium.vector import AutoresetMode, SyncVectorEnv
+from gymnasium.vector import AsyncVectorEnv, AutoresetMode, SyncVectorEnv
+from gymnasium.wrappers.utils import RunningMeanStd
 from tests.testing_env import GenericTestEnv
 
 
@@ -151,3 +154,46 @@ def test_same_step_autoreset_updates_return_rms(n_envs=2, episode_length=4, n_st
     # Every step is a real environment step under SAME_STEP.
     assert np.isclose(env.return_rms.count, n_steps * n_envs)
     env.close()
+
+
+@pytest.mark.parametrize("vectoriser", [SyncVectorEnv, AsyncVectorEnv])
+@pytest.mark.parametrize("record_statistics", [False, True])
+def test_partial_reset_preserves_normalized_rewards(vectoriser, record_statistics):
+    def step_func(self, action, episode_length):
+        self.step_id += 1
+        return (
+            self.observation_space.sample(),
+            1.0,
+            self.step_id == episode_length,
+            False,
+            {},
+        )
+
+    env = vectoriser(
+        [
+            lambda length=length: GenericTestEnv(
+                reset_func=reset_func,
+                step_func=partial(step_func, episode_length=length),
+            )
+            for length in (2, 4)
+        ],
+        autoreset_mode=AutoresetMode.DISABLED,
+    )
+    if record_statistics:
+        env = wrappers.vector.RecordEpisodeStatistics(env)
+    env = wrappers.vector.NormalizeReward(env, gamma=0.9)
+    try:
+        env.reset(seed=123)
+        env.step(env.action_space.sample())
+        env.step(env.action_space.sample())
+        env.reset(options={"reset_mask": np.array([True, False])})
+        _, rewards, *_ = env.step(env.action_space.sample())
+
+        # Worker 0 restarts its return on termination and on its explicit reset.
+        # Worker 1 is still running, so its discounted return reaches 2.71.
+        reference = RunningMeanStd(shape=())
+        reference.update(np.array([1.0, 1.0, 1.0, 1.9, 1.0, 2.71]))
+        expected_reward = 1.0 / np.sqrt(reference.var + env.epsilon)
+        np.testing.assert_allclose(rewards, expected_reward, rtol=1e-6)
+    finally:
+        env.close()

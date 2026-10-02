@@ -197,7 +197,9 @@ class SyncVectorEnv(VectorEnv):
                 * ``None`` - random seeds for all environment
                 * ``int`` - ``[seed, seed+1, ..., seed+n]``
                 * List of ints - ``[1, 2, 3, ..., n]``
-            options: Option information used for each sub-environment
+            options: Options passed to each sub-environment. A boolean NumPy array
+                ``reset_mask`` selects which sub-environments to reset. This mask is
+                not passed to the sub-environments or removed from ``options``.
 
         Returns:
             Concatenated observations and info from each sub-environment
@@ -212,6 +214,8 @@ class SyncVectorEnv(VectorEnv):
             )
 
         if options is not None and "reset_mask" in options:
+            # Preserve the mask for vector wrappers and subsequent resets.
+            options = options.copy()
             reset_mask = options.pop("reset_mask")
             if not isinstance(reset_mask, np.ndarray):
                 raise TypeError(
