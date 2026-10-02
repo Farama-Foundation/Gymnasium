@@ -72,3 +72,30 @@ def test_discretize_observation_multidimensional_box():
     assert wrapped.observation_space == Discrete(16)
     obs, _ = wrapped.reset()
     assert obs in wrapped.observation_space
+
+
+@pytest.mark.parametrize("dtype", [np.float32, np.float64])
+@pytest.mark.parametrize("multidiscrete", [False, True])
+@pytest.mark.parametrize("high", [1.0, 1e-8])
+def test_discretize_observation_small_bounds(dtype, multidiscrete, high):
+    """Discretization retains every bin when the observation range is small."""
+    space = Box(0, high, shape=(1,), dtype=dtype)
+    wrapped = DiscretizeObservation(
+        GenericTestEnv(observation_space=space), bins=4, multidiscrete=multidiscrete
+    )
+    for fraction, expected_bin in [
+        (0, 0),
+        (0.125, 0),
+        (0.375, 1),
+        (0.625, 2),
+        (0.875, 3),
+        (1, 3),
+    ]:
+        observation = np.array([high * fraction], dtype=dtype)
+        discretized = wrapped.observation(observation)
+        np.testing.assert_array_equal(
+            discretized, [expected_bin] if multidiscrete else expected_bin
+        )
+        assert discretized in wrapped.observation_space
+        lower, upper = wrapped.revert_observation(discretized)
+        assert np.all(lower <= observation) and np.all(observation <= upper)

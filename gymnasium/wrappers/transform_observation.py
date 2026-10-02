@@ -868,12 +868,8 @@ class DiscretizeObservation(
 
     def observation(self, observation):
         """Discretizes the observation."""
-        # np.digitize returns len(bins) if the input exceeds the last edge.
-        # If an observation is exactly equal to the high bound, the resulting
-        # index could be out of range for the number of bins.
-        # Solution: clip to ensure 0 <= index < bins[i], and add a small margin
-        # to prevent precision issues.
-        clipped = np.clip(np.ravel(observation), self.low, self.high - 1e-8)
+        # Only internal bin edges are used, so the high bound maps to the last bin.
+        clipped = np.clip(np.ravel(observation), self.low, self.high)
         indices = [
             int(np.digitize(clipped[i], self.bin_edges[i])) for i in range(self.n_dims)
         ]
