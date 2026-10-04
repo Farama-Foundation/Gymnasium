@@ -1,7 +1,6 @@
 """This module provides a Blackjack functional environment and Gymnasium environment wrapper BlackJackJaxEnv."""
 
 import math
-import os
 from typing import TYPE_CHECKING, NamedTuple, TypeAlias
 
 import jax
@@ -12,6 +11,7 @@ from jax import random
 
 from gymnasium import spaces
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
+from gymnasium.envs.toy_text.blackjack import SCREEN_SIZE, draw_table
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv, StateType
 from gymnasium.utils import EzPickle, seeding
@@ -361,7 +361,9 @@ class BlackjackFunctional(
         return reward
 
     def render_init(
-        self, screen_width: int = 600, screen_height: int = 500
+        self,
+        screen_width: int = SCREEN_SIZE[0],
+        screen_height: int = SCREEN_SIZE[1],
     ) -> RenderStateType:
         """Returns an initial render state."""
         try:
@@ -377,7 +379,6 @@ class BlackjackFunctional(
         dealer_top_card_suit = rng.choice(suits)
         dealer_top_card_value_str = rng.choice(["J", "Q", "K"])
         pygame.display.init()
-        pygame.font.init()
         screen = pygame.Surface((screen_width, screen_height))
 
         return screen, dealer_top_card_value_str, dealer_top_card_suit
@@ -398,14 +399,6 @@ class BlackjackFunctional(
         screen, dealer_top_card_value_str, dealer_top_card_suit = render_state
 
         player_sum, dealer_card_value, usable_ace = self.observation(state, None)
-        screen_width, screen_height = 600, 500
-        card_img_height = screen_height // 3
-        card_img_width = int(card_img_height * 142 / 197)
-        spacing = screen_height // 20
-
-        bg_color = (7, 99, 36)
-        white = (255, 255, 255)
-
         if dealer_card_value == 1:
             display_card_value = "A"
         elif dealer_card_value == 10:
@@ -413,82 +406,13 @@ class BlackjackFunctional(
         else:
             display_card_value = str(math.floor(dealer_card_value))
 
-        screen.fill(bg_color)
-
-        def get_image(path):
-            cwd = os.path.dirname(__file__)
-            cwd = os.path.join(cwd, "..")
-            cwd = os.path.join(cwd, "toy_text")
-            image = pygame.image.load(os.path.join(cwd, path))
-            return image
-
-        def get_font(path, size):
-            cwd = os.path.dirname(__file__)
-            cwd = os.path.join(cwd, "..")
-            cwd = os.path.join(cwd, "toy_text")
-            font = pygame.font.Font(os.path.join(cwd, path), size)
-            return font
-
-        small_font = get_font(
-            os.path.join("font", "Minecraft.ttf"), screen_height // 15
+        draw_table(
+            screen,
+            player_sum,
+            dealer_card_value,
+            usable_ace,
+            display_card_value + dealer_top_card_suit,
         )
-        dealer_text = small_font.render(
-            "Dealer: " + str(dealer_card_value), True, white
-        )
-        dealer_text_rect = screen.blit(dealer_text, (spacing, spacing))
-
-        def scale_card_img(card_img):
-            return pygame.transform.scale(card_img, (card_img_width, card_img_height))
-
-        dealer_card_img = scale_card_img(
-            get_image(
-                os.path.join(
-                    "img",
-                    f"{dealer_top_card_suit}{display_card_value}.png",
-                )
-            )
-        )
-        dealer_card_rect = screen.blit(
-            dealer_card_img,
-            (
-                screen_width // 2 - card_img_width - spacing // 2,
-                dealer_text_rect.bottom + spacing,
-            ),
-        )
-
-        hidden_card_img = scale_card_img(get_image(os.path.join("img", "Card.png")))
-        screen.blit(
-            hidden_card_img,
-            (
-                screen_width // 2 + spacing // 2,
-                dealer_text_rect.bottom + spacing,
-            ),
-        )
-
-        player_text = small_font.render("Player", True, white)
-        player_text_rect = screen.blit(
-            player_text, (spacing, dealer_card_rect.bottom + 1.5 * spacing)
-        )
-
-        large_font = get_font(os.path.join("font", "Minecraft.ttf"), screen_height // 6)
-        player_sum_text = large_font.render(str(player_sum), True, white)
-        player_sum_text_rect = screen.blit(
-            player_sum_text,
-            (
-                screen_width // 2 - player_sum_text.get_width() // 2,
-                player_text_rect.bottom + spacing,
-            ),
-        )
-
-        if usable_ace:
-            usable_ace_text = small_font.render("usable ace", True, white)
-            screen.blit(
-                usable_ace_text,
-                (
-                    screen_width // 2 - usable_ace_text.get_width() // 2,
-                    player_sum_text_rect.bottom + spacing // 2,
-                ),
-            )
         return render_state, np.transpose(
             np.array(pygame.surfarray.pixels3d(screen)), axes=(1, 0, 2)
         )
@@ -531,7 +455,7 @@ class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
         )
 
 
-# Pixel art from Mariia Khmelnytska (https://www.123rf.com/photo_104453049_stock-vector-pixel-art-playing-cards-standart-deck-vector-set.html)
+# Pixel art assets by ____
 
 # Jax structure inspired by https://medium.com/@ngoodger_7766/writing-an-rl-environment-in-jax-9f74338898ba
 
