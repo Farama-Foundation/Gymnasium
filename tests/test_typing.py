@@ -22,6 +22,14 @@ from gymnasium.vector import (
     VectorWrapper,
 )
 from gymnasium.vector.vector_env import ArrayType
+from gymnasium.wrappers.vector import (
+    DictInfoToList,
+    HumanRendering,
+    NormalizeObservation,
+    NormalizeReward,
+    RecordEpisodeStatistics,
+    RecordVideo,
+)
 from gymnasium.wrappers.vector.array_conversion import ArrayConversion
 
 
@@ -131,3 +139,40 @@ def _check_array_conversion(
     assert_type(rewards, Any)
     inner_obs, _ = envs.env.reset()
     assert_type(inner_obs, Inner)
+
+
+@pytest.mark.parametrize(
+    "wrapper_cls",
+    [
+        RecordEpisodeStatistics,
+        NormalizeReward,
+        RecordVideo,
+        HumanRendering,
+        DictInfoToList,
+    ],
+)
+def test_pass_through_wrapper_parameters(wrapper_cls):
+    """Tests that the pass-through vector wrappers are generic in the wrapped environment's types."""
+    assert _parameters(wrapper_cls)[:2] == (ObsType, ActType)
+
+
+# The pass-through wrappers expose the wrapped environment's types
+def _check_pass_through_wrappers(
+    envs: VectorEnv[Inner, Outer, np.ndarray],
+    obs_envs: VectorEnv[np.ndarray, Outer, np.ndarray],
+) -> None:
+    obs, *_ = RecordEpisodeStatistics(envs).step(Outer())
+    assert_type(obs, Inner)
+    obs, *_ = NormalizeReward(envs).step(Outer())
+    assert_type(obs, Inner)
+    obs, *_ = RecordVideo(envs, video_folder="videos").step(Outer())
+    assert_type(obs, Inner)
+    obs, *_ = HumanRendering(envs).step(Outer())
+    assert_type(obs, Inner)
+    obs, _ = DictInfoToList(envs).reset()
+    assert_type(obs, Inner)
+
+    normalized = NormalizeObservation(obs_envs)
+    obs_array, _ = normalized.reset()
+    assert_type(obs_array, np.ndarray)
+    normalized.step(Outer())
