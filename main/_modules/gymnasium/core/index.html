@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -372,9 +373,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">TypeAlias</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">TypeAlias</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">spaces</span>
@@ -385,8 +387,10 @@
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvSpec</span><span class="p">,</span> <span class="n">WrapperSpec</span>
 
-<span class="n">ObsType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ObsType"</span><span class="p">)</span>
-<span class="n">ActType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ActType"</span><span class="p">)</span>
+<span class="c1"># All TypeVars default to `Any` so that generic classes can be partially subscripted,</span>
+<span class="c1"># e.g., `Env[np.ndarray]`, with the omitted parameters falling back to `Any`.</span>
+<span class="n">ObsType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ObsType"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
+<span class="n">ActType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ActType"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
 
 <span class="n">RenderFrame</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
 
@@ -676,8 +680,8 @@
 
 
 
-<span class="n">WrapperObsType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"WrapperObsType"</span><span class="p">)</span>
-<span class="n">WrapperActType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"WrapperActType"</span><span class="p">)</span>
+<span class="n">WrapperObsType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"WrapperObsType"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
+<span class="n">WrapperActType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"WrapperActType"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Wrapper">

@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -372,12 +373,19 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">RenderFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ActType</span><span class="p">,</span>
+    <span class="n">ObsType</span><span class="p">,</span>
+    <span class="n">RenderFrame</span><span class="p">,</span>
+    <span class="n">WrapperActType</span><span class="p">,</span>
+    <span class="n">WrapperObsType</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">seeding</span>
 
@@ -386,7 +394,7 @@
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvSpec</span>
 
-<span class="n">ArrayType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ArrayType"</span><span class="p">)</span>
+<span class="n">ArrayType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"ArrayType"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Any</span><span class="p">)</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -737,20 +745,28 @@
 
 <div class="viewcode-block" id="VectorWrapper">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorWrapper">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">VectorWrapper</span><span class="p">(</span><span class="n">VectorEnv</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorWrapper</span><span class="p">(</span>
+    <span class="n">VectorEnv</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span>
+    <span class="n">Generic</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Wraps the vectorized environment to allow a modular transformation.</span>
 
 <span class="sd">    This class is the base class for all wrappers for vectorized environments. The subclass</span>
 <span class="sd">    could override some methods to change the behavior of the original vectorized environment</span>
 <span class="sd">    without touching the original code.</span>
 
+<span class="sd">    Equivalent to :class:`gymnasium.Wrapper` for vectorized environments, with the same type parameters,</span>
+<span class="sd">    ``VectorWrapper[WrapperObsType, WrapperActType, ObsType, ActType, ArrayType]``, where ``WrapperObsType`` and</span>
+<span class="sd">    ``WrapperActType`` are the types the wrapper exposes and ``ObsType`` and ``ActType`` are the wrapped environment's.</span>
+<span class="sd">    The reward and termination/truncation ``ArrayType`` is shared between the wrapper and the wrapped environment.</span>
+
 <span class="sd">    Note:</span>
 <span class="sd">        Don't forget to call ``super().__init__(env)`` if the subclass overrides :meth:`__init__`.</span>
 <span class="sd">    """</span>
 
-    <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Initialize the vectorized environment wrapper.</span>
 
 <span class="sd">        Args:</span>
@@ -772,18 +788,26 @@
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorWrapper.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Reset all environment using seed and options."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span></div>
+        <span class="c1"># Only valid if the wrapper doesn't change the observation type, otherwise override `reset`</span>
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span>
+            <span class="s2">"tuple[WrapperObsType, dict[str, Any]]"</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">),</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VectorWrapper.step">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorWrapper.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">WrapperActType</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Step through all environments using the actions returning the batched data."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span></div>
+        <span class="c1"># Only valid if the wrapper doesn't change the observation or action types, otherwise override `step`</span>
+        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span>
+            <span class="s2">"tuple[WrapperObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]"</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">cast</span><span class="p">(</span><span class="s2">"ActType"</span><span class="p">,</span> <span class="n">actions</span><span class="p">)),</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VectorWrapper.render">
@@ -918,13 +942,15 @@
 
 <div class="viewcode-block" id="VectorObservationWrapper">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorObservationWrapper">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">VectorObservationWrapper</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorObservationWrapper</span><span class="p">(</span>
+    <span class="n">VectorWrapper</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Wraps the vectorized environment to allow a modular transformation of the observation.</span>
 
 <span class="sd">    Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.</span>
 <span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Vector observation wrapper that batch transforms observations.</span>
 
 <span class="sd">        Args:</span>
@@ -946,14 +972,14 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Modifies the observation returned from the environment ``reset`` using the :meth:`observation`."""</span>
         <span class="n">observations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">(</span><span class="n">observations</span><span class="p">),</span> <span class="n">infos</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Modifies the observation returned from the environment ``step`` using the :meth:`observation`."""</span>
         <span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -966,7 +992,7 @@
 
 <div class="viewcode-block" id="VectorObservationWrapper.observations">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorObservationWrapper.observations">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observations</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observations</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WrapperObsType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Defines the vector observation transformation.</span>
 
 <span class="sd">        Args:</span>
@@ -982,25 +1008,35 @@
 
 <div class="viewcode-block" id="VectorActionWrapper">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorActionWrapper">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">VectorActionWrapper</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorActionWrapper</span><span class="p">(</span>
+    <span class="n">VectorWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Wraps the vectorized environment to allow a modular transformation of the actions.</span>
 
 <span class="sd">    Equivalent of :class:`gymnasium.ActionWrapper` for vectorized environments.</span>
 <span class="sd">    """</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Vector action wrapper that batch transforms actions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: Vector environment.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">WrapperActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Steps through the environment using a modified action by :meth:`action`."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">(</span><span class="n">actions</span><span class="p">))</span>
 
 <div class="viewcode-block" id="VectorActionWrapper.actions">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorActionWrapper.actions">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">WrapperActType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Transform the actions before sending them to the environment.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            actions (ActType): the actions to transform</span>
+<span class="sd">            actions (WrapperActType): the actions to transform</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ActType: the transformed actions</span>
@@ -1012,11 +1048,19 @@
 
 <div class="viewcode-block" id="VectorRewardWrapper">
 <a class="viewcode-back" href="../../../../api/vector/wrappers/#gymnasium.vector.VectorRewardWrapper">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">VectorRewardWrapper</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorRewardWrapper</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Wraps the vectorized environment to allow a modular transformation of the reward.</span>
 
 <span class="sd">    Equivalent of :class:`gymnasium.RewardWrapper` for vectorized environments.</span>
 <span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Vector reward wrapper that batch transforms rewards.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            env: Vector environment.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>

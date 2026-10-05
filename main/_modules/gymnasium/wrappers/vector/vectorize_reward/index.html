@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -372,35 +373,24 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Env</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">VectorRewardWrapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.vector_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">transform_reward</span>
 
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
-
-    <span class="n">_ArrayT_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span>
-        <span class="s2">"_ArrayT_contra"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Any</span>
-    <span class="p">)</span>
-    <span class="n">_ArrayT_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span>
-        <span class="s2">"_ArrayT_co"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_ArrayT_contra</span>
-    <span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
-
-    <span class="n">_ArrayT_contra</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_ArrayT_contra"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">contravariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">_ArrayT_co</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_ArrayT_co"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">covariant</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">_ArrayT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_ArrayT"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+<span class="c1"># `VectorizeTransformReward.rewards` updates the reward array in place, so it needs an `np.ndarray`</span>
+<span class="n">_ArrayT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_ArrayT"</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="TransformReward">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.TransformReward">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">_ArrayT_contra</span><span class="p">,</span> <span class="n">_ArrayT_co</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""A reward wrapper that allows a custom function to modify the step reward.</span>
 
 <span class="sd">    Example with reward transformation:</span>
@@ -421,10 +411,12 @@
 <span class="sd">               [-4.3118435e-01, -1.5342437e-03]], dtype=float32)</span>
 <span class="sd">    """</span>
 
-    <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_ArrayT_contra</span><span class="p">],</span> <span class="n">_ArrayT_co</span><span class="p">]</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ArrayType</span><span class="p">],</span> <span class="n">ArrayType</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_ArrayT_contra</span><span class="p">],</span> <span class="n">_ArrayT_co</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ArrayType</span><span class="p">],</span> <span class="n">ArrayType</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Initialize LambdaReward wrapper.</span>
 
@@ -436,7 +428,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rewards</span><span class="p">:</span> <span class="n">_ArrayT_contra</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ArrayT_co</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rewards</span><span class="p">:</span> <span class="n">ArrayType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Apply function to reward."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span></div>
 
@@ -444,7 +436,7 @@
 
 <div class="viewcode-block" id="VectorizeTransformReward">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.VectorizeTransformReward">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">VectorizeTransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorizeTransformReward</span><span class="p">(</span><span class="n">VectorRewardWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">_ArrayT</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""Vectorizes a single-agent transform reward wrapper for vector environments.</span>
 
 <span class="sd">    An example such that applies a ReLU to the reward:</span>
@@ -464,7 +456,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">_ArrayT</span><span class="p">],</span>
         <span class="n">wrapper</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">transform_reward</span><span class="o">.</span><span class="n">TransformReward</span><span class="p">],</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -489,7 +481,7 @@
 
 <div class="viewcode-block" id="ClipReward">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.ClipReward">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ClipReward</span><span class="p">(</span><span class="n">VectorizeTransformReward</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClipReward</span><span class="p">(</span><span class="n">VectorizeTransformReward</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">_ArrayT</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">"""A wrapper that clips the rewards for an environment between an upper and lower bound.</span>
 
 <span class="sd">    Example with clipped rewards:</span>
@@ -509,7 +501,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">_ArrayT</span><span class="p">],</span>
         <span class="n">min_reward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_reward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

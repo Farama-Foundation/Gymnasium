@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -379,11 +380,13 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidBound</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">batch_space</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.vector_env</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ArrayType</span><span class="p">,</span>
     <span class="n">AutoresetMode</span><span class="p">,</span>
     <span class="n">VectorEnv</span><span class="p">,</span>
     <span class="n">VectorObservationWrapper</span><span class="p">,</span>
@@ -395,7 +398,10 @@
 
 <div class="viewcode-block" id="NormalizeObservation">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.NormalizeObservation">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">NormalizeObservation</span><span class="p">(</span><span class="n">VectorObservationWrapper</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NormalizeObservation</span><span class="p">(</span>
+    <span class="n">VectorObservationWrapper</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span>
+    <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">"""This wrapper will normalize observations s.t. each coordinate is centered with unit variance.</span>
 
 <span class="sd">    The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation</span>
@@ -440,7 +446,9 @@
     <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span>
     <span class="n">_update_running_mean</span><span class="p">:</span> <span class="nb">bool</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""This wrapper will normalize observations s.t. each coordinate is centered with unit variance.</span>
 
 <span class="sd">        Args:</span>
