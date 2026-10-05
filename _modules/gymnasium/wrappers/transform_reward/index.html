@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/wrappers/transform_reward.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/wrappers/transform_reward.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>gymnasium.wrappers.transform_reward - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -367,11 +368,11 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.transform_reward</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A collection of wrappers for modifying the reward.</span>
+<span></span><span class="sd">"""A collection of wrappers for modifying the reward.</span>
 
 <span class="sd">* ``TransformReward`` - Transforms the reward by a function</span>
 <span class="sd">* ``ClipReward`` - Clips the reward between a minimum and maximum value</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -384,7 +385,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.error</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidBound</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TransformReward&quot;</span><span class="p">,</span> <span class="s2">&quot;ClipReward&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"TransformReward"</span><span class="p">,</span> <span class="s2">"ClipReward"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="TransformReward">
@@ -392,14 +393,14 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">TransformReward</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies a function to the ``reward`` received from the environment&#39;s ``step``.</span>
+<span class="w">    </span><span class="sd">"""Applies a function to the ``reward`` received from the environment's ``step``.</span>
 
 <span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.TransformReward`.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import TransformReward</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env = TransformReward(env, lambda r: 2 * r + 1)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset()</span>
 <span class="sd">        &gt;&gt;&gt; _, rew, _, _, _ = env.step(0)</span>
@@ -408,30 +409,30 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.15.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
         <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">SupportsFloat</span><span class="p">],</span> <span class="n">SupportsFloat</span><span class="p">],</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize TransformReward wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize TransformReward wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to wrap</span>
 <span class="sd">            func: (Callable): The function to apply to reward</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">RewardWrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reward</span><span class="p">:</span> <span class="n">SupportsFloat</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SupportsFloat</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to reward.</span>
+<span class="w">        </span><span class="sd">"""Apply function to reward.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            reward (Union[float, int, np.ndarray]): environment&#39;s reward</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            reward (Union[float, int, np.ndarray]): environment's reward</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span></div>
 
 
@@ -439,14 +440,14 @@
 <div class="viewcode-block" id="ClipReward">
 <a class="viewcode-back" href="../../../../api/wrappers/reward_wrappers/#gymnasium.wrappers.ClipReward">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ClipReward</span><span class="p">(</span><span class="n">TransformReward</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clips the rewards for an environment between an upper and lower bound.</span>
+<span class="w">    </span><span class="sd">"""Clips the rewards for an environment between an upper and lower bound.</span>
 
 <span class="sd">    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.ClipReward`.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import ClipReward</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v1&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v1")</span>
 <span class="sd">        &gt;&gt;&gt; env = ClipReward(env, 0, 0.5)</span>
 <span class="sd">        &gt;&gt;&gt; _ = env.reset()</span>
 <span class="sd">        &gt;&gt;&gt; _, rew, _, _, _ = env.step(1)</span>
@@ -455,7 +456,7 @@
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v1.0.0 - Initially added</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -463,27 +464,29 @@
         <span class="n">min_reward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_reward</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize ClipRewards wrapper.</span>
+<span class="w">        </span><span class="sd">"""Initialize ClipRewards wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to wrap</span>
 <span class="sd">            min_reward (Union[float, np.ndarray]): lower bound to apply</span>
 <span class="sd">            max_reward (Union[float, np.ndarray]): higher bound to apply</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">min_reward</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_reward</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span><span class="s2">&quot;Both `min_reward` and `max_reward` cannot be None&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span><span class="s2">"Both `min_reward` and `max_reward` cannot be None"</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">max_reward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">min_reward</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">max_reward</span> <span class="o">-</span> <span class="n">min_reward</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Min reward (</span><span class="si">{</span><span class="n">min_reward</span><span class="si">}</span><span class="s2">) must be smaller than max reward (</span><span class="si">{</span><span class="n">max_reward</span><span class="si">}</span><span class="s2">)&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Min reward (</span><span class="si">{</span><span class="n">min_reward</span><span class="si">}</span><span class="s2">) must be smaller than max reward (</span><span class="si">{</span><span class="n">max_reward</span><span class="si">}</span><span class="s2">)"</span>
                 <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">min_reward</span><span class="o">=</span><span class="n">min_reward</span><span class="p">,</span> <span class="n">max_reward</span><span class="o">=</span><span class="n">max_reward</span>
         <span class="p">)</span>
         <span class="n">TransformReward</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="n">min_reward</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="n">max_reward</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+            <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a_min</span><span class="o">=</span><span class="n">min_reward</span><span class="p">,</span> <span class="n">a_max</span><span class="o">=</span><span class="n">max_reward</span><span class="p">),</span>  <span class="c1"># ty:ignore[no-matching-overload]</span>
         <span class="p">)</span></div>
 
 </pre></div>
@@ -603,10 +606,10 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     
     <script>
 
@@ -667,14 +670,6 @@
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -688,7 +683,14 @@
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -704,8 +706,6 @@
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -717,6 +717,13 @@
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -761,7 +768,14 @@
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

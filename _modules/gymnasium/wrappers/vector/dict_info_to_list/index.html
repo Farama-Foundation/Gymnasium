@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/wrappers/vector/dict_info_to_list.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/wrappers/vector/dict_info_to_list.html" />
 
-    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>gymnasium.wrappers.vector.dict_info_to_list - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -367,7 +368,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.vector.dict_info_to_list</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Wrapper that converts the info format for vec envs into the list format.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Wrapper that converts the info format for vec envs into the list format."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -378,13 +379,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.vector_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">VectorWrapper</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DictInfoToList&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"DictInfoToList"</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="DictInfoToList">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.DictInfoToList">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">DictInfoToList</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts infos of vectorized environments from ``dict`` to ``List[dict]``.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DictInfoToList</span><span class="p">(</span><span class="n">VectorWrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Converts infos of vectorized environments from ``dict`` to ``List[dict]``.</span>
 
 <span class="sd">    This wrapper converts the info format of a</span>
 <span class="sd">    vector environment from a dictionary to a list of dictionaries.</span>
@@ -398,16 +399,16 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; dict_info = {</span>
-<span class="sd">        ...      &quot;k&quot;: np.array([0., 0., 0.5, 0.3]),</span>
-<span class="sd">        ...      &quot;_k&quot;: np.array([False, False, True, True])</span>
+<span class="sd">        ...      "k": np.array([0., 0., 0.5, 0.3]),</span>
+<span class="sd">        ...      "_k": np.array([False, False, True, True])</span>
 <span class="sd">        ...  }</span>
 <span class="sd">        ...</span>
-<span class="sd">        &gt;&gt;&gt; list_info = [{}, {}, {&quot;k&quot;: 0.5}, {&quot;k&quot;: 0.3}]</span>
+<span class="sd">        &gt;&gt;&gt; list_info = [{}, {}, {"k": 0.5}, {"k": 0.3}]</span>
 
 <span class="sd">    Example for vector environments:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CartPole-v1", num_envs=3)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; info</span>
 <span class="sd">        {}</span>
@@ -419,57 +420,58 @@
 <span class="sd">    Another example for vector environments:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;HalfCheetah-v5&quot;, num_envs=2)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("HalfCheetah-v5", num_envs=2)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; _, _, _, _, infos = envs.step(envs.action_space.sample())</span>
 <span class="sd">        &gt;&gt;&gt; infos</span>
-<span class="sd">        {&#39;x_position&#39;: array([0.03332211, 0.10172355]), &#39;_x_position&#39;: array([ True,  True]), &#39;x_velocity&#39;: array([-0.06296527,  0.89345848]), &#39;_x_velocity&#39;: array([ True,  True]), &#39;reward_forward&#39;: array([-0.06296527,  0.89345848]), &#39;_reward_forward&#39;: array([ True,  True]), &#39;reward_ctrl&#39;: array([-0.24503504, -0.21944423], dtype=float32), &#39;_reward_ctrl&#39;: array([ True,  True])}</span>
+<span class="sd">        {'x_position': array([0.03332211, 0.10172355]), '_x_position': array([ True,  True]), 'x_velocity': array([-0.06296527,  0.89345848]), '_x_velocity': array([ True,  True]), 'reward_forward': array([-0.06296527,  0.89345848]), '_reward_forward': array([ True,  True]), 'reward_ctrl': array([-0.24503504, -0.21944423], dtype=float32), '_reward_ctrl': array([ True,  True])}</span>
 <span class="sd">        &gt;&gt;&gt; envs = DictInfoToList(envs)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; _ = envs.action_space.seed(123)</span>
 <span class="sd">        &gt;&gt;&gt; _, _, _, _, infos = envs.step(envs.action_space.sample())</span>
 <span class="sd">        &gt;&gt;&gt; infos  # doctest: +ELLIPSIS</span>
-<span class="sd">        [{&#39;x_position&#39;: np.float64(0.0333221...), &#39;x_velocity&#39;: np.float64(-0.0629652...), &#39;reward_forward&#39;: np.float64(-0.0629652...), &#39;reward_ctrl&#39;: np.float32(-0.2450350...)}, {&#39;x_position&#39;: np.float64(0.1017235...), &#39;x_velocity&#39;: np.float64(0.8934584...), &#39;reward_forward&#39;: np.float64(0.8934584...), &#39;reward_ctrl&#39;: np.float32(-0.2194442...)}]</span>
+<span class="sd">        [{'x_position': np.float64(0.0333221...), 'x_velocity': np.float64(-0.0629652...), 'reward_forward': np.float64(-0.0629652...), 'reward_ctrl': np.float32(-0.2450350...)}, {'x_position': np.float64(0.1017235...), 'x_velocity': np.float64(0.8934584...), 'reward_forward': np.float64(0.8934584...), 'reward_ctrl': np.float32(-0.2194442...)}]</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.24.0 - Initially added as ``VectorListInfo``</span>
 <span class="sd">     * v1.0.0 - Renamed to ``DictInfoToList``</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;This wrapper will convert the info into the list format.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""This wrapper will convert the info into the list format.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (Env): The environment to apply the wrapper</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
+    <span class="c1"># ty reports an error because the last return is a `dict` in super but a `list` here</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the environment, convert dict info to list.&quot;&quot;&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>  <span class="c1"># ty:ignore[invalid-method-override]</span>
+<span class="w">        </span><span class="sd">"""Steps through the environment, convert dict info to list."""</span>
         <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_info_to_list</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">list_info</span>
 
+    <span class="c1"># ty reports an error because the last return is a `dict` in super but a `list` here</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the environment using kwargs.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>  <span class="c1"># ty:ignore[invalid-method-override]</span>
+<span class="w">        </span><span class="sd">"""Resets the environment using kwargs."""</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_info_to_list</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">list_info</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_info_to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector_infos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the dict info to list.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_info_to_list</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">vector_infos</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Convert the dict info to list.</span>
 
 <span class="sd">        Convert the dict info of the vectorized environment</span>
 <span class="sd">        into a list of dictionaries where the i-th dictionary</span>
@@ -480,23 +482,23 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            list_info (list): converted info.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">list_info</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)]</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"_"</span><span class="p">):</span>
                 <span class="k">continue</span>
 
-            <span class="n">binary_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">binary_key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="n">value_list_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_info_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value_list_info</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Expects </span><span class="si">{</span><span class="n">value_list_info</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">value_list_info</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Expects </span><span class="si">{</span><span class="n">value_list_info</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">value_list_info</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">binary_key</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="p">:</span>
                     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Expects </span><span class="si">{</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">]</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">"Expects </span><span class="si">{</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">]</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span>
                     <span class="p">)</span>
 
                     <span class="k">for</span> <span class="n">env_num</span><span class="p">,</span> <span class="p">(</span><span class="n">env_info</span><span class="p">,</span> <span class="n">has_info</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
@@ -510,12 +512,12 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Expects </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Expects </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">binary_key</span> <span class="ow">in</span> <span class="n">vector_infos</span><span class="p">:</span>
                     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Expects </span><span class="si">{</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">]</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">"Expects </span><span class="si">{</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">]</span><span class="si">}</span><span class="s2"> to have length equal to the num-envs (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="si">}</span><span class="s2">), actual length is </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span>
                     <span class="p">)</span>
 
                     <span class="k">for</span> <span class="n">env_num</span><span class="p">,</span> <span class="n">has_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vector_infos</span><span class="p">[</span><span class="n">binary_key</span><span class="p">]):</span>
@@ -644,10 +646,10 @@
         })()
       </script>
 
-    <script src="../../../../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../../../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     
     <script>
 
@@ -708,14 +710,6 @@
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -729,7 +723,14 @@
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -745,8 +746,6 @@
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -758,6 +757,13 @@
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -802,7 +808,14 @@
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

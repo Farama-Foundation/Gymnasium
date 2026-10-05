@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Implementing Custom Wrappers" href="../implementing_custom_wrappers/" /><link rel="prev" title="Make your own custom environment" href="../environment_creation/" />
         <link rel="canonical" href="https://gymnasium.farama.org/tutorials/gymnasium_basics/handling_time_limits.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>Handling Time Limits - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -249,6 +249,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -379,7 +380,7 @@
             
             <div class="sphx-glr-example-title admonition note">
 <p class="admonition-title">Note</p>
-<p>This tutorial is compatible with Gymnasium version 1.3.0.</p>
+<p>This tutorial is compatible with Gymnasium version 1.4.0.</p>
 </div>
 <section id="handling-time-limits">
 <span id="sphx-glr-tutorials-gymnasium-basics-handling-time-limits-py"></span><h1>Handling Time Limits<a class="headerlink" href="#handling-time-limits" title="Link to this heading">¶</a></h1>
@@ -439,7 +440,7 @@ bootstrap or not. However, this is incorrect since it does not differentiate bet
 <p>From v0.26 onwards, Gymnasium’s <code class="docutils literal notranslate"><span class="pre">env.step</span></code> API returns both termination and truncation information explicitly.
 In the previous version truncation information was supplied through the info key <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code>.
 The correct way to handle terminations and truncations now is,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># terminated = done and &#39;TimeLimit.truncated&#39; not in info</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># terminated = done and 'TimeLimit.truncated' not in info</span>
 <span class="c1"># This was needed in previous versions.</span>
 
 <span class="n">vf_target</span> <span class="o">=</span> <span class="n">rew</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">vf_next_state</span>
@@ -616,10 +617,10 @@ The correct way to handle terminations and truncations now is,</p>
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
@@ -682,14 +683,6 @@ The correct way to handle terminations and truncations now is,</p>
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -703,7 +696,14 @@ The correct way to handle terminations and truncations now is,</p>
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -719,8 +719,6 @@ The correct way to handle terminations and truncations now is,</p>
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -732,6 +730,13 @@ The correct way to handle terminations and truncations now is,</p>
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -776,7 +781,14 @@ The correct way to handle terminations and truncations now is,</p>
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

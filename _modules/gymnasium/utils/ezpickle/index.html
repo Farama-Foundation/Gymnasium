@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/utils/ezpickle.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/utils/ezpickle.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>gymnasium.utils.ezpickle - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -367,7 +368,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.utils.ezpickle</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Class for pickling and unpickling objects via their constructor arguments.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Class for pickling and unpickling objects via their constructor arguments."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
 
@@ -375,12 +376,12 @@
 <div class="viewcode-block" id="EzPickle">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.ezpickle.EzPickle">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EzPickle</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Objects that are pickled and unpickled via their constructor arguments.</span>
+<span class="w">    </span><span class="sd">"""Objects that are pickled and unpickled via their constructor arguments.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; class Animal: pass</span>
 <span class="sd">        &gt;&gt;&gt; class Dog(Animal, EzPickle):</span>
-<span class="sd">        ...    def __init__(self, furcolor, tailkind=&quot;bushy&quot;):</span>
+<span class="sd">        ...    def __init__(self, furcolor, tailkind="bushy"):</span>
 <span class="sd">        ...        Animal.__init__(self)</span>
 <span class="sd">        ...        EzPickle.__init__(self, furcolor, tailkind)</span>
 
@@ -388,23 +389,23 @@
 <span class="sd">    However, philosophers are still not sure whether it is still the same dog.</span>
 
 <span class="sd">    This is generally needed only for environments which wrap C/C++ code, such as MuJoCo and Atari.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Uses the ``args`` and ``kwargs`` from the object&#39;s constructor for pickling.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Uses the ``args`` and ``kwargs`` from the object's constructor for pickling."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ezpickle_args</span> <span class="o">=</span> <span class="n">args</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ezpickle_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns the object pickle state with args and kwargs.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Returns the object pickle state with args and kwargs."""</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;_ezpickle_args&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ezpickle_args</span><span class="p">,</span>
-            <span class="s2">&quot;_ezpickle_kwargs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ezpickle_kwargs</span><span class="p">,</span>
+            <span class="s2">"_ezpickle_args"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ezpickle_args</span><span class="p">,</span>
+            <span class="s2">"_ezpickle_kwargs"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ezpickle_kwargs</span><span class="p">,</span>
         <span class="p">}</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets the object pickle state using d.&quot;&quot;&quot;</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="o">*</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;_ezpickle_args&quot;</span><span class="p">],</span> <span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;_ezpickle_kwargs&quot;</span><span class="p">])</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Sets the object pickle state using d."""</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="o">*</span><span class="n">d</span><span class="p">[</span><span class="s2">"_ezpickle_args"</span><span class="p">],</span> <span class="o">**</span><span class="n">d</span><span class="p">[</span><span class="s2">"_ezpickle_kwargs"</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span></div>
 
 </pre></div>
@@ -524,10 +525,10 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     
     <script>
 
@@ -588,14 +589,6 @@
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -609,7 +602,14 @@
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -625,8 +625,6 @@
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -638,6 +636,13 @@
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -682,7 +687,14 @@
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

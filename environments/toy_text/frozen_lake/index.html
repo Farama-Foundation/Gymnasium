@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="MuJoCo" href="../../mujoco/" /><link rel="prev" title="Cliff Walking" href="../cliff_walking/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/toy_text/frozen_lake.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>Frozen Lake - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -249,6 +249,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -407,8 +408,7 @@ Randomly generated worlds will always have a path to the goal.</p>
 <p>The player makes moves until they reach the goal or fall in a hole.</p>
 <p>The lake is slippery (unless disabled) so the player may move perpendicular
 to the intended direction sometimes (see <code class="docutils literal notranslate"><span class="pre">is_slippery</span></code> in Argument section).</p>
-<p>Elf and stool from <a class="reference external" href="https://franuka.itch.io/rpg-snow-tileset">https://franuka.itch.io/rpg-snow-tileset</a>.
-All other assets by Mel Tillery <a class="reference external" href="http://www.cyaneus.com/">http://www.cyaneus.com/</a>.</p>
+<p>Pixel art assets are part of Farama Foundation’s shared environment art set.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
@@ -472,9 +472,9 @@ The number of possible observations is dependent on the size of the map.</p>
 <p>FrozenLake has five parameters:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
-    <span class="s1">&#39;FrozenLake-v1&#39;</span><span class="p">,</span>
+    <span class="s1">'FrozenLake-v1'</span><span class="p">,</span>
     <span class="n">desc</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">map_name</span><span class="o">=</span><span class="s2">&quot;4x4&quot;</span><span class="p">,</span>
+    <span class="n">map_name</span><span class="o">=</span><span class="s2">"4x4"</span><span class="p">,</span>
     <span class="n">is_slippery</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">success_rate</span><span class="o">=</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span>
     <span class="n">reward_schedule</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -496,27 +496,27 @@ The tile letters denote:</p>
 <p>A random generated map can be specified by calling the function <code class="docutils literal notranslate"><span class="pre">generate_random_map</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.toy_text.frozen_lake</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_random_map</span>
 
-<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;FrozenLake-v1&#39;</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">generate_random_map</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">))</span>
+<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'FrozenLake-v1'</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">generate_random_map</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">))</span>
 </pre></div>
 </div>
 </li>
 <li><p><code class="docutils literal notranslate"><span class="pre">map_name=&quot;4x4&quot;</span></code> - Helps load two predefined map names (<code class="docutils literal notranslate"><span class="pre">4x4</span></code> and <code class="docutils literal notranslate"><span class="pre">8x8</span></code>)</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;4x4&quot;</span><span class="p">:[</span>
-    <span class="s2">&quot;SFFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FHFH&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFH&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;HFFG&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s2">"4x4"</span><span class="p">:[</span>
+    <span class="s2">"SFFF"</span><span class="p">,</span>
+    <span class="s2">"FHFH"</span><span class="p">,</span>
+    <span class="s2">"FFFH"</span><span class="p">,</span>
+    <span class="s2">"HFFG"</span>
 <span class="p">]</span>
 
-<span class="s2">&quot;8x8&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="s2">&quot;SFFFFFFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFFFFFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFHFFFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFFFHFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFHFFFF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FHHFFFHF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FHFFHFHF&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FFFHFFFG&quot;</span><span class="p">,</span>
+<span class="s2">"8x8"</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">"SFFFFFFF"</span><span class="p">,</span>
+    <span class="s2">"FFFFFFFF"</span><span class="p">,</span>
+    <span class="s2">"FFFHFFFF"</span><span class="p">,</span>
+    <span class="s2">"FFFFFHFF"</span><span class="p">,</span>
+    <span class="s2">"FFFHFFFF"</span><span class="p">,</span>
+    <span class="s2">"FHHFFFHF"</span><span class="p">,</span>
+    <span class="s2">"FHFFHFHF"</span><span class="p">,</span>
+    <span class="s2">"FFFHFFFG"</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 </div>
@@ -715,10 +715,10 @@ The indices correspond to: Reach Goal, Reach Hole, Reach Frozen (includes Start)
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     
     <script>
 
@@ -779,14 +779,6 @@ The indices correspond to: Reach Goal, Reach Hole, Reach Frozen (includes Start)
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -800,7 +792,14 @@ The indices correspond to: Reach Goal, Reach Hole, Reach Frozen (includes Start)
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -816,8 +815,6 @@ The indices correspond to: Reach Goal, Reach Hole, Reach Frozen (includes Start)
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -829,6 +826,13 @@ The indices correspond to: Reach Goal, Reach Hole, Reach Frozen (includes Start)
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -873,7 +877,14 @@ The indices correspond to: Reach Goal, Reach Hole, Reach Frozen (includes Start)
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

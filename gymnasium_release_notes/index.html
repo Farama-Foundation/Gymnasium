@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../genindex/" /><link rel="search" title="Search" href="../search/" /><link rel="next" title="Gym Release Notes" href="../gym_release_notes/" /><link rel="prev" title="Third-Party Tutorials" href="../tutorials/third-party-tutorials/" />
         <link rel="canonical" href="https://gymnasium.farama.org/gymnasium_release_notes/index.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>Gymnasium Release Notes - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -249,6 +249,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -378,6 +379,72 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="gymnasium-release-notes">
 <h1>Gymnasium Release Notes<a class="headerlink" href="#gymnasium-release-notes" title="Link to this heading">¶</a></h1>
+<section id="release-v1-4-0">
+<h2>v1.4.0 <a class="headerlink" href="#release-v1-4-0" title="Link to this heading">¶</a></h2>
+<p><em>Released on 2026-10-05 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v1.4.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v1.4.0/">PyPI</a></em></p>
+<h1>Gymnasium v1.4.0</h1>
+<p>This release adds <code>max_concurrency</code> to <code>AsyncVectorEnv</code>, support for arbitrary node and edge spaces in <code>Graph</code>, optional key sorting for <code>Dict</code>, generic typing for vector environments, and a large number of bug fixes across spaces, wrappers, vector environments and MuJoCo rendering.</p>
+<h2>New Features</h2>
+<ul>
+<li>Added <code>max_concurrency</code> to <code>AsyncVectorEnv</code> to cap how many sub-environments run <code>reset</code>/<code>step</code> at once, reducing CPU oversubscription when the number of environments exceeds the number of cores. Also usable via <code>gym.make_vec(..., vectorization_mode="async", vector_kwargs={"max_concurrency": N})</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/lawliet206/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/lawliet206">@lawliet206</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5204547854" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1673" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1673/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1673">#1673</a>)</li>
+<li><code>Graph</code> spaces now accept <code>Dict</code> and <code>Tuple</code> spaces for their node and edge spaces, enabling heterogeneous graphs and named node/edge features by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/2ToTheNthPower/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/2ToTheNthPower">@2ToTheNthPower</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="3802384328" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1514" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1514/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1514">#1514</a>)</li>
+<li>Added a keyword-only <code>sort_keys</code> argument to <code>Dict</code> spaces. It defaults to <code>True</code> (existing behaviour), while <code>sort_keys=False</code> preserves the insertion order of the keys, including through wrappers such as <code>FrameStackObservation</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/quinnarnold/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/quinnarnold">@quinnarnold</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5237239590" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1675" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1675/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1675">#1675</a>)</li>
+<li><code>VectorEnv</code>, its subclasses and the vector wrappers are now generic types by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/pseudo-rnd-thoughts/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/pseudo-rnd-thoughts">@pseudo-rnd-thoughts</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5710633761" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1752" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1752/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1752">#1752</a>)</li>
+<li>The environment checkers (<code>check_env</code> and the passive checker run by <code>make</code>) now verify that <code>reset</code> and <code>step</code> return distinct observation and info objects each timestep, preventing buffers being silently overwritten in replay/rollout buffers. This found and fixed two <code>info</code> elements in <code>Humanoid</code> and <code>HumanoidStandup</code> that reused the same buffer between timesteps by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/pseudo-rnd-thoughts/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/pseudo-rnd-thoughts">@pseudo-rnd-thoughts</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5347645171" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1683" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1683/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1683">#1683</a>)</li>
+</ul>
+<h2>Bug Fixes</h2>
+<p>It seems that the agents have reached Gymnasium, so a large quantity of previously unknown bugs have been reported and resolved.</p>
+<h3>Spaces</h3>
+<ul>
+<li>Fixed <code>Discrete.contains</code> and <code>Box.contains</code> raising <code>OverflowError</code> for integers outside the space's dtype range, they now return <code>False</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/nikolauspschuetz/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/nikolauspschuetz">@nikolauspschuetz</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4961494252" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1648" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1648/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1648">#1648</a>, <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5138349117" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1663" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1663/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1663">#1663</a>)</li>
+<li>Fixed integer overflow in <code>MultiDiscrete.contains</code> for negative <code>start</code> values and small dtypes by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/teddytennant/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/teddytennant">@teddytennant</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4862251966" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1622" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1622/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1622">#1622</a>)</li>
+<li>Fixed <code>Box.sample</code> never returning values near the limits of signed integer dtypes by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/shoutoutuoadi325/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/shoutoutuoadi325">@shoutoutuoadi325</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5162817114" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1666" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1666/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1666">#1666</a>)</li>
+<li>Fixed <code>Text</code> space charset ordering being non-deterministic under Python hash randomization, making seeded samples reproducible across processes by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/teddytennant/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/teddytennant">@teddytennant</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4863565455" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1626" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1626/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1626">#1626</a>)</li>
+<li><code>Text</code> spaces now reject charset elements that are more than one character long by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/adarshsm/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/adarshsm">@adarshsm</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5012952674" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1653" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1653/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1653">#1653</a>)</li>
+<li>Fixed <code>flatten</code> and <code>flatten_space</code> disagreeing on the dtype of <code>OneOf</code> spaces, so <code>FlattenObservation</code> observations are contained in its observation space, and <code>OneOf</code> spaces containing <code>Text</code> can be flattened by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/teddytennant/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/teddytennant">@teddytennant</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5236770481" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1674" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1674/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1674">#1674</a>)</li>
+<li><code>is_space_dtype_shape_equiv</code> now requires <code>Tuple</code> spaces to have equal lengths, previously a shorter <code>Tuple</code> could be accepted (or an <code>IndexError</code> raised) by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Doribelove/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Doribelove">@Doribelove</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5411227147" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1694" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1694/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1694">#1694</a>)</li>
+</ul>
+<h2>Wrappers</h2>
+<ul>
+<li>Fixed several wrappers not recording all of their constructor arguments, meaning environments rebuilt with <code>gym.make(env.spec)</code> either raised a <code>TypeError</code> or silently used default arguments:
+<ul>
+<li><code>AddRenderObservation</code> recorded stale argument names from <code>PixelObservationWrapper</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/uttam12331/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/uttam12331">@uttam12331</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5052587226" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1658" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1658/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1658">#1658</a>)</li>
+<li><code>DiscretizeAction</code>, <code>DiscretizeObservation</code>, <code>RecordEpisodeStatistics</code>, <code>RecordVideo</code> and <code>StickyAction</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/mkzung/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/mkzung">@mkzung</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5160261077" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1664" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1664/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1664">#1664</a>)</li>
+<li><code>ArrayConversion</code> and its <code>JaxToNumpy</code>, <code>JaxToTorch</code> and <code>NumpyToTorch</code> subclasses by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/mkzung/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/mkzung">@mkzung</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5163856266" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1667" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1667/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1667">#1667</a>)</li>
+</ul>
+</li>
+<li><code>DiscretizeObservation</code> and <code>DiscretizeAction</code> now support n-dimensional <code>Box</code> spaces by flattening them by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/teddytennant/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/teddytennant">@teddytennant</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5406472917" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1691" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1691/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1691">#1691</a>, <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5444675708" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1703" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1703/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1703">#1703</a>)</li>
+<li><code>DtypeObservation</code> now keeps a <code>Discrete</code> observation space when changing dtype and accepts NumPy dtype descriptors (e.g. <code>np.float32</code>, <code>"float32"</code>) by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/teddytennant/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/teddytennant">@teddytennant</a> and <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/NaCr05/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/NaCr05">@NaCr05</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5367365368" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1688" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1688/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1688">#1688</a>, <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5446159762" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1706" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1706/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1706">#1706</a>)</li>
+<li><code>ResizeObservation</code> now preserves singleton channel dimensions (e.g. <code>(H, W, 1)</code> observations) by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/NaCr05/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/NaCr05">@NaCr05</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5446158774" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1704" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1704/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1704">#1704</a>)</li>
+<li><code>RescaleAction</code> now raises an <code>InvalidBound</code> error when a min action equals the max action, rather than producing <code>nan</code> actions by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/mkzung/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/mkzung">@mkzung</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5160261235" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1665" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1665/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1665">#1665</a>)</li>
+<li><code>NormalizeObservation</code> and <code>NormalizeReward</code> (including the vector versions) now reject invalid <code>gamma</code> and <code>epsilon</code> values, which previously produced <code>nan</code> or diverging outputs by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/DenisDrobyshev/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/DenisDrobyshev">@DenisDrobyshev</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5165551527" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1669" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1669/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1669">#1669</a>)</li>
+<li><code>RecordVideo</code> now reports a single clear error when the environment's render mode is incompatible, instead of three by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/DenisDrobyshev/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/DenisDrobyshev">@DenisDrobyshev</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5184938977" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1671" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1671/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1671">#1671</a>)</li>
+</ul>
+<h2>VectorEnv</h2>
+<ul>
+<li>Fixed vector <code>RecordEpisodeStatistics</code> reporting incorrect episode statistics with <code>SAME_STEP</code> autoreset by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/teddytennant/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/teddytennant">@teddytennant</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4863470335" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1624" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1624/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1624">#1624</a>)</li>
+<li>Fixed vector <code>NormalizeReward</code> under <code>SAME_STEP</code> autoreset by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/teddytennant/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/teddytennant">@teddytennant</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5164976557" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1668" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1668/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1668">#1668</a>)</li>
+<li>Fixed vector environments modifying the sub-environment's class-level <code>metadata</code> when setting <code>autoreset_mode</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/teddytennant/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/teddytennant">@teddytennant</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4863416038" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1623" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1623/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1623">#1623</a>)</li>
+<li>Fixed <code>AsyncVectorEnv</code> shared memory for dtypes without an <code>array</code> module typecode, e.g., <code>float16</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/teddytennant/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/teddytennant">@teddytennant</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4873516868" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1632" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1632/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1632">#1632</a>)</li>
+</ul>
+<h2>Env</h2>
+<ul>
+<li>MuJoCo environments' <code>default_camera_config</code> now takes effect when no <code>camera_id</code> or <code>camera_name</code> is given, previously it was ignored as the fixed <code>"track"</code> camera was always used. Note that this changes the rendered output of MuJoCo environments by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Functionhx/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Functionhx">@Functionhx</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4848150120" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1618" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1618/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1618">#1618</a>)</li>
+<li>Fixed mouse and scroll camera controls in <code>human</code>-rendered MuJoCo environments with MuJoCo 3.11+ by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Yuming-Lee24/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Yuming-Lee24">@Yuming-Lee24</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5287339063" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1678" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1678/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1678">#1678</a>)</li>
+<li><code>MujocoEnv</code> no longer shrinks an offscreen framebuffer size declared in the model XML by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/midhunxavier/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/midhunxavier">@midhunxavier</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4909729139" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1642" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1642/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1642">#1642</a>)</li>
+<li>Fixed the <code>CarRacing</code> HUD score overflowing due to float formatting by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Fstarnb/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Fstarnb">@Fstarnb</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4893389992" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1639" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1639/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1639">#1639</a>)</li>
+<li><code>CliffWalking</code> now uses the new Farama pixel art for rendering by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/MannXo/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/MannXo">@MannXo</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5465967689" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1713" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1713/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1713">#1713</a>)</li>
+</ul>
+<h2>Utilities</h2>
+<ul>
+<li>Fixed <code>make</code> and <code>make_vec</code> rejecting registered environments whose entry point is a <code>Wrapper</code> subclass by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/tandede/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/tandede">@tandede</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5196228072" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1672" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1672/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1672">#1672</a>)</li>
+<li>Fixed <code>check_environments_match</code> comparing <code>env_b</code>'s observation space to itself by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/betacatsling/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/betacatsling">@betacatsling</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5449331105" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1708" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1708/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1708">#1708</a>)</li>
+<li>Fixed determinism checks in the environment checker by snapshotting observations that are reused between steps, and comparing the current RNG state in <code>check_step_determinism</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/zjn20030811/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/zjn20030811">@zjn20030811</a> and <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/NaCr05/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/NaCr05">@NaCr05</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5336656001" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1682" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1682/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1682">#1682</a>, <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="5446159161" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1705" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1705/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1705">#1705</a>)</li>
+<li>Fixed several bugs in <code>play</code>: window resizing drift and float sizes, a crash on <code>KEYUP</code> events and validation of <code>zoom</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Ankush0077/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Ankush0077">@Ankush0077</a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="4875832987" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Gymnasium/issues/1633" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Gymnasium/pull/1633/hovercard" href="https://github.com/Farama-Foundation/Gymnasium/pull/1633">#1633</a>)</li>
+</ul>
+<h2>Third-Party Environments</h2>
+<p>3 new community environments have been added to the <a href="https://gymnasium.farama.org/environments/third_party_environments/" rel="nofollow">third-party environments list</a>: WireHarness-MultiGripper-RL, Ignis and Kraken Crossing.</p>
+<p><strong>Full Changelog:</strong> <a class="commit-link" href="https://github.com/Farama-Foundation/Gymnasium/compare/v1.3.0...v1.4.0"><tt>v1.3.0...v1.4.0</tt></a></p></section>
 <section id="release-v1-3-0">
 <h2>v1.3.0<a class="headerlink" href="#release-v1-3-0" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2026-04-22 - <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v1.3.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/gymnasium/v1.3.0/">PyPI</a></em></p>
@@ -1577,6 +1644,7 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Gymnasium Release Notes</a><ul>
+<li><a class="reference internal" href="#release-v1-4-0">v1.4.0 </a></li>
 <li><a class="reference internal" href="#release-v1-3-0">v1.3.0</a></li>
 <li><a class="reference internal" href="#release-v1-2-3">v1.2.3</a></li>
 <li><a class="reference internal" href="#release-v1-2-2">v1.2.2: V1.2.2</a></li>
@@ -1683,10 +1751,10 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
         })()
       </script>
 
-    <script src="../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../_static/documentation_options.js?v=74824699"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../_static/scripts/celshast.js?v=a788a8c6"></script>
     
     <script>
 
@@ -1747,14 +1815,6 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -1768,7 +1828,14 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -1784,8 +1851,6 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -1797,6 +1862,13 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -1841,7 +1913,14 @@ For a more detailed discussion, see the original PRs - <a class="issue-link js-i
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

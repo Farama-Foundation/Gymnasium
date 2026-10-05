@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Bipedal Walker" href="bipedal_walker/" /><link rel="prev" title="Pendulum" href="../classic_control/pendulum/" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/box2d.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>Box2D - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -249,6 +249,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -386,7 +387,7 @@
             <a href="bipedal_walker">
                 <div class="env-grid__cell">
                     <div class="cell__image-container">
-                        <img src="/_static/videos/box2d/bipedal_walker.gif">
+                        <img src="../../_static/videos/box2d/bipedal_walker.gif">
                     </div>
                     <div class="cell__title">
                         <span>Bipedal Walker</span>
@@ -398,7 +399,7 @@
             <a href="car_racing">
                 <div class="env-grid__cell">
                     <div class="cell__image-container">
-                        <img src="/_static/videos/box2d/car_racing.gif">
+                        <img src="../../_static/videos/box2d/car_racing.gif">
                     </div>
                     <div class="cell__title">
                         <span>Car Racing</span>
@@ -410,7 +411,7 @@
             <a href="lunar_lander">
                 <div class="env-grid__cell">
                     <div class="cell__image-container">
-                        <img src="/_static/videos/box2d/lunar_lander.gif">
+                        <img src="../../_static/videos/box2d/lunar_lander.gif">
                     </div>
                     <div class="cell__title">
                         <span>Lunar Lander</span>
@@ -420,13 +421,17 @@
     
 </div>
 
-    <p>These environments all involve toy games based around physics control, using <a class="reference external" href="https://box2d.org/">box2d</a> based physics and PyGame-based rendering. These environments were contributed back in the early days of OpenAI Gym by Oleg Klimov, and have become popular toy benchmarks ever since. All environments are highly configurable via arguments specified in each environment’s documentation.</p>
+    <div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you plan to use box2d with Python version &gt;= 3.14, know that at the moment the upstream project <a class="reference external" href="https://github.com/pybox2d/pybox2d">pybox2d</a> does not provide pre-built wheels for &gt;= 3.13. As a workaround, the <code class="docutils literal notranslate"><span class="pre">box2d</span></code> extra builds <a class="reference external" href="https://pypi.org/project/box2d-py/">box2d-py</a> from source and additionally requires <code class="docutils literal notranslate"><span class="pre">swig</span></code>. Make sure you have <a class="reference external" href="https://swig.org/">SWIG</a> installed on your system.</p>
+</div>
+<p>These environments all involve toy games based around physics control, using <a class="reference external" href="https://box2d.org/">box2d</a> based physics and PyGame-based rendering. These environments were contributed back in the early days of OpenAI Gym by Oleg Klimov, and have become popular toy benchmarks ever since. All environments are highly configurable via arguments specified in each environment’s documentation.</p>
 <p>The unique dependencies for this set of environments can be installed via:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>swig
 pip<span class="w"> </span>install<span class="w"> </span>gymnasium<span class="o">[</span>box2d<span class="o">]</span>
 </pre></div>
 </div>
-<p><a class="reference external" href="https://swig.org/">SWIG</a> is necessary for building the wheel for <a class="reference external" href="https://pypi.org/project/box2d-py/">box2d-py</a>, the Python package that provides bindings to box2d.</p>
+<p><a class="reference external" href="https://swig.org/">SWIG</a> is necessary for building the wheel for <a class="reference external" href="https://pypi.org/project/box2d-py/">box2d-py</a>, the Python package that provides bindings to box2d on Python 3.14+. For Python 3.13 or below we use the pre-built wheel from <a class="reference external" href="https://github.com/pybox2d/pybox2d">pybox2d</a>.</p>
 </section>
 
           </article>
@@ -545,10 +550,10 @@ pip<span class="w"> </span>install<span class="w"> </span>gymnasium<span class="
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../_static/scripts/celshast.js?v=a788a8c6"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
@@ -611,14 +616,6 @@ pip<span class="w"> </span>install<span class="w"> </span>gymnasium<span class="
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -632,7 +629,14 @@ pip<span class="w"> </span>install<span class="w"> </span>gymnasium<span class="
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -648,8 +652,6 @@ pip<span class="w"> </span>install<span class="w"> </span>gymnasium<span class="
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -661,6 +663,13 @@ pip<span class="w"> </span>install<span class="w"> </span>gymnasium<span class="
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -705,7 +714,14 @@ pip<span class="w"> </span>install<span class="w"> </span>gymnasium<span class="
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

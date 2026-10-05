@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/vector/utils/space_utils.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/vector/utils/space_utils.html" />
 
-    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>gymnasium.vector.utils.space_utils - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -367,22 +368,22 @@
           <article role="main">
             
             <h1>Source code for gymnasium.vector.utils.space_utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Space-based utility functions for vector environments.</span>
+<span></span><span class="sd">"""Space-based utility functions for vector environments.</span>
 
 <span class="sd">- ``batch_space``: Create a (batched) space containing multiple copies of a single space.</span>
 <span class="sd">- ``batch_differing_spaces``: Create a (batched) space containing copies of different compatible spaces (share a common dtype and shape)</span>
 <span class="sd">- ``concatenate``: Concatenate multiple samples from (unbatched) space into a single object.</span>
 <span class="sd">- ``Iterate``: Iterate over the elements of a (batched) space and items.</span>
 <span class="sd">- ``create_empty_array``: Create an empty (possibly nested) (normally numpy-based) array, used in conjunction with ``concatenate(..., out=array)``</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span> <span class="k">as</span> <span class="n">_PySequence</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">singledispatch</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
@@ -401,22 +402,26 @@
     <span class="n">Text</span><span class="p">,</span>
     <span class="n">Tuple</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces.space</span><span class="w"> </span><span class="kn">import</span> <span class="n">T_cov</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Never</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;batch_space&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;batch_differing_spaces&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;iterate&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;concatenate&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;create_empty_array&quot;</span><span class="p">,</span>
+    <span class="s2">"batch_space"</span><span class="p">,</span>
+    <span class="s2">"batch_differing_spaces"</span><span class="p">,</span>
+    <span class="s2">"iterate"</span><span class="p">,</span>
+    <span class="s2">"concatenate"</span><span class="p">,</span>
+    <span class="s2">"create_empty_array"</span><span class="p">,</span>
 <span class="p">]</span>
+
+<span class="n">_T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">"_T"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="batch_space">
 <a class="viewcode-back" href="../../../../../api/vector/utils/#gymnasium.vector.utils.batch_space">[docs]</a>
 <span class="nd">@singledispatch</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">batch_space</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Batch spaces of size `n` optimized for neural networks.</span>
+<span class="w">    </span><span class="sd">"""Batch spaces of size `n` optimized for neural networks.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        space: Space (e.g. the observation space for a single environment in the vectorized environment).</span>
@@ -432,27 +437,27 @@
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Box, Dict</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; space = Dict({</span>
-<span class="sd">        ...     &#39;position&#39;: Box(low=0, high=1, shape=(3,), dtype=np.float32),</span>
-<span class="sd">        ...     &#39;velocity&#39;: Box(low=0, high=1, shape=(2,), dtype=np.float32)</span>
+<span class="sd">        ...     'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),</span>
+<span class="sd">        ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32)</span>
 <span class="sd">        ... })</span>
 <span class="sd">        &gt;&gt;&gt; batch_space(space, n=5)</span>
-<span class="sd">        Dict(&#39;position&#39;: Box(0.0, 1.0, (5, 3), float32), &#39;velocity&#39;: Box(0.0, 1.0, (5, 2), float32))</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        Dict('position': Box(0.0, 1.0, (5, 3), float32), 'velocity': Box(0.0, 1.0, (5, 2), float32))</span>
+<span class="sd">    """</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;The space provided to `batch_space` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">"The space provided to `batch_space` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">"</span>
     <span class="p">)</span></div>
 
 
 
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_box</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Box</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_box</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Box</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
     <span class="n">repeats</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
     <span class="n">low</span><span class="p">,</span> <span class="n">high</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="n">repeats</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span> <span class="n">repeats</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">high</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">np_random</span><span class="p">))</span>
 
 
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MultiDiscrete</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">MultiDiscrete</span><span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,),</span> <span class="n">space</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
         <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
@@ -462,7 +467,7 @@
 
 
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_multidiscrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">MultiDiscrete</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_multidiscrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">MultiDiscrete</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
     <span class="n">repeats</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span>
     <span class="n">low</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">repeats</span><span class="p">)</span>
     <span class="n">high</span> <span class="o">=</span> <span class="n">low</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="p">,</span> <span class="n">repeats</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
@@ -475,7 +480,7 @@
 
 
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_multibinary</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_multibinary</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span>
         <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -486,7 +491,7 @@
 
 
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Tuple</span><span class="p">(</span>
         <span class="nb">tuple</span><span class="p">(</span><span class="n">batch_space</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">),</span>
         <span class="n">seed</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">np_random</span><span class="p">),</span>
@@ -494,10 +499,11 @@
 
 
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Dict</span><span class="p">(</span>
         <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">batch_space</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
         <span class="n">seed</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">np_random</span><span class="p">),</span>
+        <span class="n">sort_keys</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">sort_keys</span><span class="p">,</span>
     <span class="p">)</span>
 
 
@@ -506,21 +512,21 @@
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
 <span class="nd">@batch_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Space</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_custom</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_space_custom</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Graph</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
     <span class="c1"># Without deepcopy, then the space.np_random is batched_space.spaces[0].np_random</span>
     <span class="c1"># Which is an issue if you are sampling actions of both the original space and the batched space</span>
     <span class="n">batched_space</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">(</span>
         <span class="nb">tuple</span><span class="p">(</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)),</span> <span class="n">seed</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">np_random</span><span class="p">)</span>
     <span class="p">)</span>
     <span class="n">space_rng</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">np_random</span><span class="p">)</span>
-    <span class="n">new_seeds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">space_rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e8</span><span class="p">,</span> <span class="n">n</span><span class="p">)))</span>
+    <span class="n">new_seeds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">space_rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e8</span><span class="p">),</span> <span class="n">n</span><span class="p">)))</span>
     <span class="n">batched_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">new_seeds</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">batched_space</span>
 
 
 <span class="nd">@singledispatch</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">batch_differing_spaces</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Space</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Batch a Sequence of spaces where subspaces to contain minor differences.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">batch_differing_spaces</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="n">_PySequence</span><span class="p">[</span><span class="n">Space</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Batch a Sequence of spaces where subspaces to contain minor differences.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        spaces: A sequence of Spaces with minor differences (the same space type but different parameters).</span>
@@ -533,29 +539,35 @@
 <span class="sd">        &gt;&gt;&gt; spaces = [Discrete(3), Discrete(5), Discrete(4), Discrete(8)]</span>
 <span class="sd">        &gt;&gt;&gt; batch_differing_spaces(spaces)</span>
 <span class="sd">        MultiDiscrete([3 5 4 8])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Expects a non-empty list of spaces&quot;</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">),</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Expects all spaces to be the same shape, actual types: </span><span class="si">{</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">in</span> <span class="n">batch_differing_spaces</span><span class="o">.</span><span class="n">registry</span><span class="p">,</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Requires the Space type to have a registered `batch_differing_space`, current list: </span><span class="si">{</span><span class="n">batch_differing_spaces</span><span class="o">.</span><span class="n">registry</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">spaces</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Expects a non-empty list of spaces"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Expects all spaces to be of the same type, actual types: </span><span class="si">{</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">batch_differing_spaces</span><span class="o">.</span><span class="n">registry</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Requires the Space type to have a registered `batch_differing_space`, current list: </span><span class="si">{</span><span class="n">batch_differing_spaces</span><span class="o">.</span><span class="n">registry</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">batch_differing_spaces</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]))(</span><span class="n">spaces</span><span class="p">)</span>
 
 
 <span class="nd">@batch_differing_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_box</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Box</span><span class="p">]):</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">),</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Expected all dtypes to be equal, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">),</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Expected all Box.low shape to be equal, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">shape</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">),</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Expected all Box.high shape to be equal, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">shape</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_box</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="n">_PySequence</span><span class="p">[</span><span class="n">Box</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Expected all dtypes to be equal, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Expected all Box.low shape to be equal, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">shape</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Expected all Box.high shape to be equal, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">shape</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span>
         <span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">space</span><span class="o">.</span><span class="n">low</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">]),</span>
@@ -566,8 +578,8 @@
 
 
 <span class="nd">@batch_differing_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_discrete</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Discrete</span><span class="p">]):</span>
-    <span class="c1"># select the &quot;largest&quot; to fit others.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_discrete</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="n">_PySequence</span><span class="p">[</span><span class="n">Discrete</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">MultiDiscrete</span><span class="p">:</span>
+    <span class="c1"># select the "largest" to fit others.</span>
     <span class="c1"># Assumes all spaces dtype are of int dtype</span>
     <span class="n">dtypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">]</span>
     <span class="n">largest</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">dtypes</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">dt</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">itemsize</span><span class="p">)</span>
@@ -580,16 +592,19 @@
 
 
 <span class="nd">@batch_differing_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_multi_discrete</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MultiDiscrete</span><span class="p">]):</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">),</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Expected all dtypes to be equal, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">),</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Expects all MultiDiscrete.nvec shape, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">),</span> <span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Expects all MultiDiscrete.start shape, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">shape</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_multi_discrete</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="n">_PySequence</span><span class="p">[</span><span class="n">MultiDiscrete</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Expected all dtypes to be equal, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Expects all MultiDiscrete.nvec shape, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">nvec</span><span class="o">.</span><span class="n">shape</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Expects all MultiDiscrete.start shape, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">start</span><span class="o">.</span><span class="n">shape</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span>
         <span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">space</span><span class="o">.</span><span class="n">start</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">]),</span>
@@ -600,8 +615,11 @@
 
 
 <span class="nd">@batch_differing_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_multi_binary</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">MultiBinary</span><span class="p">]):</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_multi_binary</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="n">_PySequence</span><span class="p">[</span><span class="n">MultiBinary</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Box</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Expected all MultiBinary shapes to be equal, actually </span><span class="si">{</span><span class="p">[</span><span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span>
         <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -613,7 +631,7 @@
 
 
 <span class="nd">@batch_differing_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_tuple</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_tuple</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="n">_PySequence</span><span class="p">[</span><span class="n">Tuple</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Tuple</span><span class="p">(</span>
         <span class="nb">tuple</span><span class="p">(</span>
             <span class="n">batch_differing_spaces</span><span class="p">(</span><span class="n">subspaces</span><span class="p">)</span>
@@ -624,8 +642,11 @@
 
 
 <span class="nd">@batch_differing_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_dict</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Dict</span><span class="p">]):</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_differing_spaces_dict</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="n">_PySequence</span><span class="p">[</span><span class="n">Dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">==</span> <span class="n">space</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Expected all Dict spaces to have the same keys, actually </span><span class="si">{</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">space</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">spaces</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">Dict</span><span class="p">(</span>
         <span class="p">{</span>
@@ -633,6 +654,7 @@
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="p">},</span>
         <span class="n">seed</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">np_random</span><span class="p">),</span>
+        <span class="n">sort_keys</span><span class="o">=</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sort_keys</span><span class="p">,</span>
     <span class="p">)</span>
 
 
@@ -640,7 +662,9 @@
 <span class="nd">@batch_differing_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
 <span class="nd">@batch_differing_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
 <span class="nd">@batch_differing_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_batch_spaces_undefined</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Graph</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="n">OneOf</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_spaces_undefined</span><span class="p">(</span>
+    <span class="n">spaces</span><span class="p">:</span> <span class="n">_PySequence</span><span class="p">[</span><span class="n">Graph</span> <span class="o">|</span> <span class="n">Text</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="n">OneOf</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">Tuple</span><span class="p">(</span>
         <span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">space</span><span class="p">)</span> <span class="k">for</span> <span class="n">space</span> <span class="ow">in</span> <span class="n">spaces</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">np_random</span><span class="p">)</span>
     <span class="p">)</span>
@@ -649,8 +673,8 @@
 <div class="viewcode-block" id="iterate">
 <a class="viewcode-back" href="../../../../../api/vector/utils/#gymnasium.vector.utils.iterate">[docs]</a>
 <span class="nd">@singledispatch</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">iterate</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">T_cov</span><span class="p">],</span> <span class="n">items</span><span class="p">:</span> <span class="n">T_cov</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Iterate over the elements of a (batched) space.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">iterate</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="n">items</span><span class="p">:</span> <span class="n">_T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Iterate over the elements of a (batched) space.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        space: (batched) space (e.g. `action_space` or `observation_space` from vectorized environment).</span>
@@ -660,49 +684,51 @@
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Box, Dict</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; space = Dict({</span>
-<span class="sd">        ... &#39;position&#39;: Box(low=0, high=1, shape=(2, 3), seed=42, dtype=np.float32),</span>
-<span class="sd">        ... &#39;velocity&#39;: Box(low=0, high=1, shape=(2, 2), seed=42, dtype=np.float32)})</span>
+<span class="sd">        ... 'position': Box(low=0, high=1, shape=(2, 3), seed=42, dtype=np.float32),</span>
+<span class="sd">        ... 'velocity': Box(low=0, high=1, shape=(2, 2), seed=42, dtype=np.float32)})</span>
 <span class="sd">        &gt;&gt;&gt; items = space.sample()</span>
 <span class="sd">        &gt;&gt;&gt; it = iterate(space, items)</span>
 <span class="sd">        &gt;&gt;&gt; next(it)</span>
-<span class="sd">        {&#39;position&#39;: array([0.77395606, 0.43887845, 0.85859793], dtype=float32), &#39;velocity&#39;: array([0.77395606, 0.43887845], dtype=float32)}</span>
+<span class="sd">        {'position': array([0.77395606, 0.43887845, 0.85859793], dtype=float32), 'velocity': array([0.77395606, 0.43887845], dtype=float32)}</span>
 <span class="sd">        &gt;&gt;&gt; next(it)</span>
-<span class="sd">        {&#39;position&#39;: array([0.697368  , 0.09417735, 0.97562236], dtype=float32), &#39;velocity&#39;: array([0.85859793, 0.697368  ], dtype=float32)}</span>
+<span class="sd">        {'position': array([0.697368  , 0.09417735, 0.97562236], dtype=float32), 'velocity': array([0.85859793, 0.697368  ], dtype=float32)}</span>
 <span class="sd">        &gt;&gt;&gt; next(it)</span>
 <span class="sd">        Traceback (most recent call last):</span>
 <span class="sd">            ...</span>
 <span class="sd">        StopIteration</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">Space</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">CustomSpaceError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Space of type `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` doesn&#39;t have an registered `iterate` function. Register `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` for `iterate` to support it.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Space of type `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` doesn't have an registered `iterate` function. Register `</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">` for `iterate` to support it."</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The space provided to `iterate` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"The space provided to `iterate` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span></div>
 
 
 
 <span class="nd">@iterate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_iterate_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unable to iterate over a space of type `Discrete`.&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_iterate_discrete</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Never</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"Unable to iterate over a space of type `Discrete`."</span><span class="p">)</span>
 
 
 <span class="nd">@iterate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>
 <span class="nd">@iterate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
 <span class="nd">@iterate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_iterate_base</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">MultiDiscrete</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_iterate_base</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">MultiDiscrete</span> <span class="o">|</span> <span class="n">MultiBinary</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Unable to iterate over the following elements: </span><span class="si">{</span><span class="n">items</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"Unable to iterate over the following elements: </span><span class="si">{</span><span class="n">items</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 
 <span class="nd">@iterate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_iterate_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_iterate_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
     <span class="c1"># If this is a tuple of custom subspaces only, then simply iterate over items</span>
     <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span> <span class="ow">in</span> <span class="n">iterate</span><span class="o">.</span><span class="n">registry</span> <span class="k">for</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="n">space</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span>
@@ -719,12 +745,12 @@
             <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">subspace</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">iterate</span><span class="o">.</span><span class="n">registry</span>
         <span class="p">]</span>
         <span class="k">raise</span> <span class="n">CustomSpaceError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Could not iterate through </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2"> as no custom iterate function is registered for </span><span class="si">{</span><span class="n">unregistered_spaces</span><span class="si">}</span><span class="s2"> and `iter(items)` raised the following error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">"Could not iterate through </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2"> as no custom iterate function is registered for </span><span class="si">{</span><span class="n">unregistered_spaces</span><span class="si">}</span><span class="s2"> and `iter(items)` raised the following error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">."</span>
         <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 
 <span class="nd">@iterate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_iterate_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_iterate_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
     <span class="n">keys</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span>
         <span class="o">*</span><span class="p">[</span>
             <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">iterate</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">items</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
@@ -740,9 +766,9 @@
 <a class="viewcode-back" href="../../../../../api/vector/utils/#gymnasium.vector.utils.concatenate">[docs]</a>
 <span class="nd">@singledispatch</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">concatenate</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Concatenate multiple samples from space into a single object.</span>
+<span class="w">    </span><span class="sd">"""Concatenate multiple samples from space into a single object.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        space: Space of each item (e.g. `single_action_space` from vectorized environment)</span>
@@ -764,9 +790,9 @@
 <span class="sd">        &gt;&gt;&gt; concatenate(space, items, out)</span>
 <span class="sd">        array([[0.77395606, 0.43887845, 0.85859793],</span>
 <span class="sd">               [0.697368  , 0.09417735, 0.97562236]], dtype=float32)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;The space provided to `concatenate` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">"The space provided to `concatenate` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">"</span>
     <span class="p">)</span></div>
 
 
@@ -780,7 +806,7 @@
     <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span>
     <span class="n">out</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">)</span>
 
 
 <span class="nd">@concatenate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
@@ -795,7 +821,7 @@
 
 <span class="nd">@concatenate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_concatenate_dict</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="n">key</span><span class="p">:</span> <span class="n">concatenate</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">],</span> <span class="n">out</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
@@ -808,7 +834,7 @@
 <span class="nd">@concatenate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
 <span class="nd">@concatenate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Space</span><span class="p">)</span>
 <span class="nd">@concatenate</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_concatenate_custom</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_concatenate_custom</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_T</span><span class="p">],</span> <span class="n">out</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">_T</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
 
 
@@ -817,8 +843,8 @@
 <span class="nd">@singledispatch</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_empty_array</span><span class="p">(</span>
     <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an empty (possibly nested and normally numpy-based) array, used in conjunction with ``concatenate(..., out=array)``.</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create an empty (possibly nested and normally numpy-based) array, used in conjunction with ``concatenate(..., out=array)``.</span>
 
 <span class="sd">    In most cases, the array will be contained within the batched space, however, this is not guaranteed.</span>
 
@@ -837,15 +863,16 @@
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Box, Dict</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; space = Dict({</span>
-<span class="sd">        ... &#39;position&#39;: Box(low=0, high=1, shape=(3,), dtype=np.float32),</span>
-<span class="sd">        ... &#39;velocity&#39;: Box(low=0, high=1, shape=(2,), dtype=np.float32)})</span>
+<span class="sd">        ...     'position': Box(low=0, high=1, shape=(3,), dtype=np.float32),</span>
+<span class="sd">        ...     'velocity': Box(low=0, high=1, shape=(2,), dtype=np.float32),</span>
+<span class="sd">        ... })</span>
 <span class="sd">        &gt;&gt;&gt; create_empty_array(space, n=2, fn=np.zeros)</span>
-<span class="sd">        {&#39;position&#39;: array([[0., 0., 0.],</span>
-<span class="sd">               [0., 0., 0.]], dtype=float32), &#39;velocity&#39;: array([[0., 0.],</span>
+<span class="sd">        {'position': array([[0., 0., 0.],</span>
+<span class="sd">               [0., 0., 0.]], dtype=float32), 'velocity': array([[0., 0.],</span>
 <span class="sd">               [0., 0.]], dtype=float32)}</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;The space provided to `create_empty_array` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">"The space provided to `create_empty_array` is not a gymnasium Space instance, type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">space</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">space</span><span class="si">}</span><span class="s2">"</span>
     <span class="p">)</span></div>
 
 
@@ -856,17 +883,23 @@
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Discrete</span><span class="p">)</span>
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiDiscrete</span><span class="p">)</span>
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MultiBinary</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_multi</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Box</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_multi</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Box</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">fn</span><span class="p">((</span><span class="n">n</span><span class="p">,)</span> <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
 
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Tuple</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_tuple</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_tuple</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">create_empty_array</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">spaces</span><span class="p">)</span>
 
 
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Dict</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_dict</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_dict</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="n">key</span><span class="p">:</span> <span class="n">create_empty_array</span><span class="p">(</span><span class="n">subspace</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="n">space</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">}</span>
@@ -874,36 +907,34 @@
 
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Graph</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_graph</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">GraphInstance</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-    <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="n">GraphInstance</span><span class="p">(</span>
-                <span class="n">nodes</span><span class="o">=</span><span class="n">fn</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
-                <span class="n">edges</span><span class="o">=</span><span class="n">fn</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
-                <span class="n">edge_links</span><span class="o">=</span><span class="n">fn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span>
-            <span class="p">)</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+        <span class="n">GraphInstance</span><span class="p">(</span>
+            <span class="n">nodes</span><span class="o">=</span><span class="n">create_empty_array</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">),</span>
+            <span class="n">edges</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">create_empty_array</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">),</span>
+            <span class="n">edge_links</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">fn</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="p">),</span>
         <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="n">GraphInstance</span><span class="p">(</span>
-                <span class="n">nodes</span><span class="o">=</span><span class="n">fn</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">space</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
-                <span class="n">edges</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                <span class="n">edge_links</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="p">)</span>
 
 
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Text</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_text</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_text</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Text</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">characters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">space</span><span class="o">.</span><span class="n">min_length</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 
 
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Sequence</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_sequence</span><span class="p">(</span>
-    <span class="n">space</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">space</span><span class="o">.</span><span class="n">stack</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
@@ -914,12 +945,16 @@
 
 
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">OneOf</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_oneof</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_oneof</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">OneOf</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[()],</span> <span class="o">...</span><span class="p">]:</span>
     <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">tuple</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 
 
 <span class="nd">@create_empty_array</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Space</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_custom</span><span class="p">(</span><span class="n">space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_empty_array_custom</span><span class="p">(</span>
+    <span class="n">space</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">return</span> <span class="kc">None</span>
 </pre></div>
           </article>
@@ -1038,10 +1073,10 @@
         })()
       </script>
 
-    <script src="../../../../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../../../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     
     <script>
 
@@ -1102,14 +1137,6 @@
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -1123,7 +1150,14 @@
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -1139,8 +1173,6 @@
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -1152,6 +1184,13 @@
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -1196,7 +1235,14 @@
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

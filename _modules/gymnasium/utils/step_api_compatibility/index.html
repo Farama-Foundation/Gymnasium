@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/utils/step_api_compatibility.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/utils/step_api_compatibility.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>gymnasium.utils.step_api_compatibility - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -367,7 +368,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.utils.step_api_compatibility</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Contains methods for step compatibility, from old-to-new and new-to-old API.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Contains methods for step compatibility, from old-to-new and new-to-old API."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -396,16 +397,17 @@
 <div class="viewcode-block" id="convert_to_terminated_truncated_step_api">
 <a class="viewcode-back" href="../../../../api/utils/#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">convert_to_terminated_truncated_step_api</span><span class="p">(</span>
-    <span class="n">step_returns</span><span class="p">:</span> <span class="n">DoneStepType</span> <span class="o">|</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">,</span> <span class="n">is_vector_env</span><span class="o">=</span><span class="kc">False</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to transform step returns to new step API irrespective of input API.</span>
+    <span class="n">step_returns</span><span class="p">:</span> <span class="n">DoneStepType</span><span class="p">[</span><span class="n">ObsType</span><span class="p">]</span> <span class="o">|</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">[</span><span class="n">ObsType</span><span class="p">],</span>
+    <span class="n">is_vector_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminatedTruncatedStepType</span><span class="p">[</span><span class="n">ObsType</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Function to transform step returns to new step API irrespective of input API.</span>
 
 <span class="sd">    .. py:currentmodule:: gymnasium.Env</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        step_returns (tuple): Items returned by :meth:`step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``</span>
 <span class="sd">        is_vector_env (bool): Whether the ``step_returns`` are from a vector environment</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">step_returns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">step_returns</span>
     <span class="k">else</span><span class="p">:</span>
@@ -414,7 +416,7 @@
 
         <span class="c1"># Cases to handle - info single env /  info vector env (list) / info vector env (dict)</span>
         <span class="k">if</span> <span class="n">is_vector_env</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-            <span class="n">truncated</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">truncated</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"TimeLimit.truncated"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># ty:ignore[too-many-positional-arguments]</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">observations</span><span class="p">,</span>
                 <span class="n">rewards</span><span class="p">,</span>
@@ -424,7 +426,7 @@
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">truncated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">]</span>
+                <span class="p">[</span><span class="n">info</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"TimeLimit.truncated"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">observations</span><span class="p">,</span>
@@ -435,7 +437,7 @@
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="n">num_envs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dones</span><span class="p">)</span>
-            <span class="n">truncated</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
+            <span class="n">truncated</span> <span class="o">=</span> <span class="n">infos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"TimeLimit.truncated"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">))</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">observations</span><span class="p">,</span>
                 <span class="n">rewards</span><span class="p">,</span>
@@ -445,7 +447,7 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unexpected value of infos, as is_vector_envs=False, expects `info` to be a list or dict, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Unexpected value of infos, as is_vector_envs=False, expects `info` to be a list or dict, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span></div>
 
 
@@ -456,14 +458,14 @@
     <span class="n">step_returns</span><span class="p">:</span> <span class="n">TerminatedTruncatedStepType</span> <span class="o">|</span> <span class="n">DoneStepType</span><span class="p">,</span>
     <span class="n">is_vector_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DoneStepType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to transform step returns to old step API irrespective of input API.</span>
+<span class="w">    </span><span class="sd">"""Function to transform step returns to old step API irrespective of input API.</span>
 
 <span class="sd">    .. py:currentmodule:: gymnasium.Env</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        step_returns (tuple): Items returned by :meth:`step`. Can be ``(obs, rew, done, info)`` or ``(obs, rew, terminated, truncated, info)``</span>
 <span class="sd">        is_vector_env (bool): Whether the ``step_returns`` are from a vector environment</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">step_returns</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">step_returns</span>
     <span class="k">else</span><span class="p">:</span>
@@ -473,7 +475,7 @@
         <span class="c1"># Cases to handle - info single env /  info vector env (list) / info vector env (dict)</span>
         <span class="k">if</span> <span class="n">is_vector_env</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">truncated</span> <span class="ow">or</span> <span class="n">terminated</span><span class="p">:</span>
-                <span class="n">infos</span><span class="p">[</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">truncated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">terminated</span>
+                <span class="n">infos</span><span class="p">[</span><span class="s2">"TimeLimit.truncated"</span><span class="p">]</span> <span class="o">=</span> <span class="n">truncated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">terminated</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">observations</span><span class="p">,</span>
                 <span class="n">rewards</span><span class="p">,</span>
@@ -483,9 +485,9 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">info</span><span class="p">,</span> <span class="n">env_truncated</span><span class="p">,</span> <span class="n">env_terminated</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
                 <span class="n">infos</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span>
-            <span class="p">):</span>
+            <span class="p">):</span>  <span class="c1"># ty:ignore[not-iterable]</span>
                 <span class="k">if</span> <span class="n">env_truncated</span> <span class="ow">or</span> <span class="n">env_terminated</span><span class="p">:</span>
-                    <span class="n">info</span><span class="p">[</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_truncated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">env_terminated</span>
+                    <span class="n">info</span><span class="p">[</span><span class="s2">"TimeLimit.truncated"</span><span class="p">]</span> <span class="o">=</span> <span class="n">env_truncated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">env_terminated</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">observations</span><span class="p">,</span>
                 <span class="n">rewards</span><span class="p">,</span>
@@ -494,7 +496,7 @@
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">infos</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">truncated</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">terminated</span><span class="p">)):</span>
-                <span class="n">infos</span><span class="p">[</span><span class="s2">&quot;TimeLimit.truncated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                <span class="n">infos</span><span class="p">[</span><span class="s2">"TimeLimit.truncated"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
                     <span class="n">truncated</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">terminated</span><span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">return</span> <span class="p">(</span>
@@ -505,7 +507,7 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unexpected value of infos, as is_vector_envs=False, expects `info` to be a list or dict, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Unexpected value of infos, as is_vector_envs=False, expects `info` to be a list or dict, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span></div>
 
 
@@ -517,7 +519,7 @@
     <span class="n">output_truncation_bool</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">is_vector_env</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminatedTruncatedStepType</span> <span class="o">|</span> <span class="n">DoneStepType</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to transform step returns to the API specified by ``output_truncation_bool``.</span>
+<span class="w">    </span><span class="sd">"""Function to transform step returns to the API specified by ``output_truncation_bool``.</span>
 
 <span class="sd">    .. py:currentmodule:: gymnasium.Env</span>
 
@@ -538,17 +540,17 @@
 <span class="sd">        wrapper is written in new API, and the final step output is desired to be in old API.</span>
 
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; env = gym.make(&quot;CartPole-v0&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("CartPole-v0")</span>
 <span class="sd">        &gt;&gt;&gt; _, _ = env.reset()</span>
 <span class="sd">        &gt;&gt;&gt; obs, reward, done, info = step_api_compatibility(env.step(0), output_truncation_bool=False)</span>
 <span class="sd">        &gt;&gt;&gt; obs, reward, terminated, truncated, info = step_api_compatibility(env.step(0), output_truncation_bool=True)</span>
 
-<span class="sd">        &gt;&gt;&gt; vec_env = gym.make_vec(&quot;CartPole-v0&quot;, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; vec_env = gym.make_vec("CartPole-v0", vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; _, _ = vec_env.reset()</span>
 <span class="sd">        &gt;&gt;&gt; obs, rewards, dones, infos = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=False)</span>
 <span class="sd">        &gt;&gt;&gt; obs, rewards, terminations, truncations, infos = step_api_compatibility(vec_env.step([0]), is_vector_env=True, output_truncation_bool=True)</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">output_truncation_bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">convert_to_terminated_truncated_step_api</span><span class="p">(</span><span class="n">step_returns</span><span class="p">,</span> <span class="n">is_vector_env</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -671,10 +673,10 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     
     <script>
 
@@ -735,14 +737,6 @@
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -756,7 +750,14 @@
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -772,8 +773,6 @@
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -785,6 +784,13 @@
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -829,7 +835,14 @@
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

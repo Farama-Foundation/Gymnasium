@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/wrappers/vector/vectorize_observation.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/wrappers/vector/vectorize_observation.html" />
 
-    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>gymnasium.wrappers.vector.vectorize_observation - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -367,7 +368,7 @@
           <article role="main">
             
             <h1>Source code for gymnasium.wrappers.vector.vectorize_observation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Vectorizes observation wrappers to works for `VectorEnv`.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Vectorizes observation wrappers to works for `VectorEnv`."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -378,7 +379,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">Space</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">Env</span><span class="p">,</span> <span class="n">ObsType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">Env</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperObsType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">VectorObservationWrapper</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">batch_space</span><span class="p">,</span> <span class="n">concatenate</span><span class="p">,</span> <span class="n">create_empty_array</span><span class="p">,</span> <span class="n">iterate</span>
@@ -388,8 +389,10 @@
 
 <div class="viewcode-block" id="TransformObservation">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.TransformObservation">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">TransformObservation</span><span class="p">(</span><span class="n">VectorObservationWrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transforms an observation via a function provided to the wrapper.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransformObservation</span><span class="p">(</span>
+    <span class="n">VectorObservationWrapper</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Transforms an observation via a function provided to the wrapper.</span>
 
 <span class="sd">    This function allows the manual specification of the vector-observation function as well as the single-observation function.</span>
 <span class="sd">    This is desirable when, for example, it is possible to process vector observations in parallel or via other more optimized methods.</span>
@@ -397,7 +400,7 @@
 
 <span class="sd">    Example - Without observation transformation:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs</span>
 <span class="sd">        array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
@@ -413,7 +416,7 @@
 <span class="sd">        ...     return (obs - 1.0) * 2.0</span>
 <span class="sd">        ...</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; new_obs_space = Box(low=envs.observation_space.low, high=envs.observation_space.high)</span>
 <span class="sd">        &gt;&gt;&gt; envs = TransformObservation(envs, func=scale_and_shift, observation_space=new_obs_space)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
@@ -422,23 +425,27 @@
 <span class="sd">               [-1.9429494, -1.9428282, -1.9061728, -1.9503881],</span>
 <span class="sd">               [-1.9296501, -2.00127  , -2.0219676, -2.0640786]], dtype=float32)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
+
+    <span class="n">single_observation_space</span><span class="p">:</span> <span class="n">Space</span>
+    <span class="n">observation_space</span><span class="p">:</span> <span class="n">Space</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">WrapperObsType</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
-        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">WrapperObsType</span><span class="p">],</span>
         <span class="n">observation_space</span><span class="p">:</span> <span class="n">Space</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">single_observation_space</span><span class="p">:</span> <span class="n">Space</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the transform observation wrapper.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Constructor for the transform observation wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
 <span class="sd">            func: A function that will transform the vector observation. If this transformed observation is outside the observation space of ``env.observation_space`` then provide an ``observation_space``.</span>
 <span class="sd">            observation_space: The observation spaces of the wrapper. If None, then it is computed from ``single_observation_space``. If ``single_observation_space`` is not provided either, then it is assumed to be the same as ``env.observation_space``.</span>
 <span class="sd">            single_observation_space: The observation space of the non-vectorized environment. If None, then it is assumed the same as ``env.single_observation_space``.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -450,27 +457,29 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">observation_space</span>
             <span class="k">if</span> <span class="n">single_observation_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_single_observation_space</span> <span class="o">=</span> <span class="n">single_observation_space</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span> <span class="o">=</span> <span class="n">single_observation_space</span>
             <span class="c1"># TODO: We could compute single_observation_space from the observation_space if only the latter is provided and avoid the warning below.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">!=</span> <span class="n">batch_space</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span>
         <span class="p">):</span>
             <span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;For </span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">, the observation space and the batched single observation space don&#39;t match as expected, observation_space=</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">, batched single_observation_space=</span><span class="si">{</span><span class="n">batch_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"For </span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">, the observation space and the batched single observation space don't match as expected, observation_space=</span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">, batched single_observation_space=</span><span class="si">{</span><span class="n">batch_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observations</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply function to the vector observation.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observations</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WrapperObsType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Apply function to the vector observation."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">observations</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="VectorizeTransformObservation">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.VectorizeTransformObservation">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">VectorizeTransformObservation</span><span class="p">(</span><span class="n">VectorObservationWrapper</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vectorizes a single-agent transform observation wrapper for vector environments.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorizeTransformObservation</span><span class="p">(</span>
+    <span class="n">VectorObservationWrapper</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Vectorizes a single-agent transform observation wrapper for vector environments.</span>
 
 <span class="sd">    Most of the lambda observation wrappers for single agent environments have vectorized implementations,</span>
 <span class="sd">    it is advised that users simply use those instead via importing from `gymnasium.wrappers.vector...`.</span>
@@ -478,7 +487,7 @@
 
 <span class="sd">    Example - The normal observation:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
 <span class="sd">        &gt;&gt;&gt; obs</span>
@@ -492,7 +501,7 @@
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Box</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import TransformObservation</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; old_space = envs.single_observation_space</span>
 <span class="sd">        &gt;&gt;&gt; new_space = Box(low=np.array([old_space.low, old_space.low]), high=np.array([old_space.high, old_space.high]))</span>
 <span class="sd">        &gt;&gt;&gt; envs = VectorizeTransformObservation(envs, wrapper=TransformObservation, func=lambda x: np.array([x, x]), observation_space=new_space)</span>
@@ -508,38 +517,50 @@
 <span class="sd">               [[ 0.03517495, -0.000635  , -0.01098382, -0.03203924],</span>
 <span class="sd">                [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]]],</span>
 <span class="sd">              dtype=float32)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">_SingleEnv</span><span class="p">(</span><span class="n">Env</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fake single-agent environment used for the single-agent wrapper.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Fake single-agent environment used for the single-agent wrapper."""</span>
 
-        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Constructor for the fake environment.&quot;&quot;&quot;</span>
+        <span class="n">observation_space</span><span class="p">:</span> <span class="n">Space</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">"""Constructor for the fake environment."""</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">observation_space</span>
+
+    <span class="n">autoreset_mode</span><span class="p">:</span> <span class="n">AutoresetMode</span>
+    <span class="n">wrapper</span><span class="p">:</span> <span class="n">transform_observation</span><span class="o">.</span><span class="n">TransformObservation</span>
+    <span class="n">single_observation_space</span><span class="p">:</span> <span class="n">Space</span>
+    <span class="n">observation_space</span><span class="p">:</span> <span class="n">Space</span>
+    <span class="n">same_out</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">out</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span>
         <span class="n">wrapper</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">transform_observation</span><span class="o">.</span><span class="n">TransformObservation</span><span class="p">],</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the vectorized transform observation wrapper.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Constructor for the vectorized transform observation wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap.</span>
 <span class="sd">            wrapper: The wrapper to vectorize</span>
 <span class="sd">            **kwargs: Keyword argument for the wrapper</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="s2">&quot;autoreset_mode&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"autoreset_mode"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
             <span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Vector environment (</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">) is missing `autoreset_mode` metadata key.&quot;</span>
+                <span class="sa">f</span><span class="s2">"Vector environment (</span><span class="si">{</span><span class="n">env</span><span class="si">}</span><span class="s2">) is missing `autoreset_mode` metadata key."</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">=</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;autoreset_mode&quot;</span><span class="p">],</span> <span class="n">AutoresetMode</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;autoreset_mode&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"autoreset_mode"</span><span class="p">],</span> <span class="n">AutoresetMode</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Expected env.metadata['autoreset_mode'] to be an AutoresetMode, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">'autoreset_mode'</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"autoreset_mode"</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span> <span class="o">=</span> <span class="n">wrapper</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_SingleEnv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span>
@@ -550,30 +571,31 @@
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">same_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">create_empty_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>
+        <span class="c1"># ty doesn't support `@single_dispatch` yet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out</span> <span class="o">=</span> <span class="n">create_empty_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">)</span>  <span class="c1"># ty:ignore[invalid-assignment]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span> <span class="n">ActType</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Steps through the vector environments, transforming the observation and for final obs individually transformed.&quot;&quot;&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">"""Steps through the vector environments, transforming the observation and for final obs individually transformed."""</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
         <span class="n">obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">SAME_STEP</span> <span class="ow">and</span> <span class="s2">&quot;final_obs&quot;</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
-            <span class="n">final_obs</span> <span class="o">=</span> <span class="n">infos</span><span class="p">[</span><span class="s2">&quot;final_obs&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">SAME_STEP</span> <span class="ow">and</span> <span class="s2">"final_obs"</span> <span class="ow">in</span> <span class="n">infos</span><span class="p">:</span>
+            <span class="n">final_obs</span> <span class="o">=</span> <span class="n">infos</span><span class="p">[</span><span class="s2">"final_obs"</span><span class="p">]</span>
 
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">sub_obs</span><span class="p">,</span> <span class="n">has_final_obs</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-                <span class="nb">zip</span><span class="p">(</span><span class="n">final_obs</span><span class="p">,</span> <span class="n">infos</span><span class="p">[</span><span class="s2">&quot;_final_obs&quot;</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">final_obs</span><span class="p">,</span> <span class="n">infos</span><span class="p">[</span><span class="s2">"_final_obs"</span><span class="p">],</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="p">):</span>
                 <span class="k">if</span> <span class="n">has_final_obs</span><span class="p">:</span>
                     <span class="n">final_obs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">observation</span><span class="p">(</span><span class="n">sub_obs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observations</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ObsType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">observations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observations</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WrapperObsType</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">same_out</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">concatenate</span><span class="p">(</span>
+            <span class="n">observations_out</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span>
                 <span class="nb">tuple</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
@@ -582,7 +604,7 @@
                 <span class="n">observations</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">deepcopy</span><span class="p">(</span>
+            <span class="n">observations_out</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span>
                 <span class="n">concatenate</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">single_observation_space</span><span class="p">,</span>
                     <span class="nb">tuple</span><span class="p">(</span>
@@ -591,14 +613,18 @@
                     <span class="p">),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">out</span><span class="p">,</span>
                 <span class="p">)</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span>
+        <span class="c1"># ty doesn't support `@single_dispatch` yet</span>
+        <span class="k">return</span> <span class="n">observations_out</span>  <span class="c1"># ty:ignore[invalid-return-type]</span></div>
 
 
 
 <div class="viewcode-block" id="FilterObservation">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.FilterObservation">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">FilterObservation</span><span class="p">(</span><span class="n">VectorizeTransformObservation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Vector wrapper for filtering dict or tuple observation spaces.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FilterObservation</span><span class="p">(</span>
+    <span class="n">VectorizeTransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Vector wrapper for filtering dict or tuple observation spaces.</span>
 
 <span class="sd">    Example - Create a vectorized environment with a Dict space to demonstrate how to filter keys:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
@@ -606,27 +632,31 @@
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Dict, Box</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers import TransformObservation</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.wrappers.vector import VectorizeTransformObservation, FilterObservation</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; make_dict = lambda x: {&quot;obs&quot;: x, &quot;junk&quot;: np.array([0.0])}</span>
-<span class="sd">        &gt;&gt;&gt; new_space = Dict({&quot;obs&quot;: envs.single_observation_space, &quot;junk&quot;: Box(low=-1.0, high=1.0)})</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")</span>
+<span class="sd">        &gt;&gt;&gt; make_dict = lambda x: {"obs": x, "junk": np.array([0.0])}</span>
+<span class="sd">        &gt;&gt;&gt; new_space = Dict({"obs": envs.single_observation_space, "junk": Box(low=-1.0, high=1.0)})</span>
 <span class="sd">        &gt;&gt;&gt; envs = VectorizeTransformObservation(env=envs, wrapper=TransformObservation, func=make_dict, observation_space=new_space)</span>
-<span class="sd">        &gt;&gt;&gt; envs = FilterObservation(envs, [&quot;obs&quot;])</span>
+<span class="sd">        &gt;&gt;&gt; envs = FilterObservation(envs, ["obs"])</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
 <span class="sd">        &gt;&gt;&gt; obs</span>
-<span class="sd">        {&#39;obs&#39;: array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
+<span class="sd">        {'obs': array([[ 0.01823519, -0.0446179 , -0.02796401, -0.03156282],</span>
 <span class="sd">               [ 0.02852531,  0.02858594,  0.0469136 ,  0.02480598],</span>
 <span class="sd">               [ 0.03517495, -0.000635  , -0.01098382, -0.03203924]],</span>
 <span class="sd">              dtype=float32)}</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">filter_keys</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for the filter observation wrapper.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span>
+        <span class="n">filter_keys</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Constructor for the filter observation wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
 <span class="sd">            filter_keys: The subspaces to be included, use a list of strings or integers for ``Dict`` and ``Tuple`` spaces respectivesly</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">env</span><span class="p">,</span> <span class="n">transform_observation</span><span class="o">.</span><span class="n">FilterObservation</span><span class="p">,</span> <span class="n">filter_keys</span><span class="o">=</span><span class="n">filter_keys</span>
         <span class="p">)</span></div>
@@ -635,12 +665,14 @@
 
 <div class="viewcode-block" id="FlattenObservation">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.FlattenObservation">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">FlattenObservation</span><span class="p">(</span><span class="n">VectorizeTransformObservation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Observation wrapper that flattens the observation.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FlattenObservation</span><span class="p">(</span>
+    <span class="n">VectorizeTransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Observation wrapper that flattens the observation.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CarRacing-v3&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs.shape</span>
 <span class="sd">        (3, 96, 96, 3)</span>
@@ -649,26 +681,28 @@
 <span class="sd">        &gt;&gt;&gt; obs.shape</span>
 <span class="sd">        (3, 27648)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for any environment&#39;s observation space that implements ``spaces.utils.flatten_space`` and ``spaces.utils.flatten``.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Constructor for any environment's observation space that implements ``spaces.utils.flatten_space`` and ``spaces.utils.flatten``.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env:  The vector environment to wrap</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">transform_observation</span><span class="o">.</span><span class="n">FlattenObservation</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="GrayscaleObservation">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.GrayscaleObservation">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">GrayscaleObservation</span><span class="p">(</span><span class="n">VectorizeTransformObservation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Observation wrapper that converts an RGB image to grayscale.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GrayscaleObservation</span><span class="p">(</span>
+    <span class="n">VectorizeTransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Observation wrapper that converts an RGB image to grayscale.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CarRacing-v3&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs.shape</span>
 <span class="sd">        (3, 96, 96, 3)</span>
@@ -677,15 +711,17 @@
 <span class="sd">        &gt;&gt;&gt; obs.shape</span>
 <span class="sd">        (3, 96, 96)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">keep_dim</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for an RGB image based environments to make the image grayscale.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span> <span class="n">keep_dim</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Constructor for an RGB image based environments to make the image grayscale.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
 <span class="sd">            keep_dim: If to keep the channel in the observation, if ``True``, ``obs.shape == 3`` else ``obs.shape == 2``</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">env</span><span class="p">,</span> <span class="n">transform_observation</span><span class="o">.</span><span class="n">GrayscaleObservation</span><span class="p">,</span> <span class="n">keep_dim</span><span class="o">=</span><span class="n">keep_dim</span>
         <span class="p">)</span></div>
@@ -694,12 +730,14 @@
 
 <div class="viewcode-block" id="ResizeObservation">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.ResizeObservation">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ResizeObservation</span><span class="p">(</span><span class="n">VectorizeTransformObservation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Resizes image observations using OpenCV to shape.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResizeObservation</span><span class="p">(</span>
+    <span class="n">VectorizeTransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Resizes image observations using OpenCV to shape.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CarRacing-v3&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs.shape</span>
 <span class="sd">        (3, 96, 96, 3)</span>
@@ -708,27 +746,31 @@
 <span class="sd">        &gt;&gt;&gt; obs.shape</span>
 <span class="sd">        (3, 28, 28, 3)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor that requires an image environment observation space with a shape.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span> <span class="n">shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Constructor that requires an image environment observation space with a shape.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
 <span class="sd">            shape: The resized observation shape</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">transform_observation</span><span class="o">.</span><span class="n">ResizeObservation</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="ReshapeObservation">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.ReshapeObservation">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">ReshapeObservation</span><span class="p">(</span><span class="n">VectorizeTransformObservation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reshapes array based observations to shapes.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReshapeObservation</span><span class="p">(</span>
+    <span class="n">VectorizeTransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reshapes array based observations to shapes.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CarRacing-v3&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CarRacing-v3", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs.shape</span>
 <span class="sd">        (3, 96, 96, 3)</span>
@@ -737,27 +779,31 @@
 <span class="sd">        &gt;&gt;&gt; obs.shape</span>
 <span class="sd">        (3, 9216, 3)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for env with Box observation space that has a shape product equal to the new shape product.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span> <span class="n">shape</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Constructor for env with Box observation space that has a shape product equal to the new shape product.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
 <span class="sd">            shape: The reshaped observation space</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">transform_observation</span><span class="o">.</span><span class="n">ReshapeObservation</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="RescaleObservation">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.RescaleObservation">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">RescaleObservation</span><span class="p">(</span><span class="n">VectorizeTransformObservation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Linearly rescales observation to between a minimum and maximum value.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RescaleObservation</span><span class="p">(</span>
+    <span class="n">VectorizeTransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Linearly rescales observation to between a minimum and maximum value.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;MountainCar-v0&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("MountainCar-v0", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs.min()</span>
 <span class="sd">        np.float32(-0.46352962)</span>
@@ -770,21 +816,21 @@
 <span class="sd">        &gt;&gt;&gt; obs.max()</span>
 <span class="sd">        np.float32(0.0)</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span>
-        <span class="n">min_obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">max_obs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor that requires the env observation spaces to be a :class:`Box`.</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span>
+        <span class="n">min_obs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">max_obs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Constructor that requires the env observation spaces to be a :class:`Box`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
 <span class="sd">            min_obs: The new minimum observation bound</span>
 <span class="sd">            max_obs: The new maximum observation bound</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">env</span><span class="p">,</span>
             <span class="n">transform_observation</span><span class="o">.</span><span class="n">RescaleObservation</span><span class="p">,</span>
@@ -796,30 +842,32 @@
 
 <div class="viewcode-block" id="DtypeObservation">
 <a class="viewcode-back" href="../../../../../api/vector/wrappers/#gymnasium.wrappers.vector.DtypeObservation">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">DtypeObservation</span><span class="p">(</span><span class="n">VectorizeTransformObservation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Observation wrapper for transforming the dtype of an observation.</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DtypeObservation</span><span class="p">(</span>
+    <span class="n">VectorizeTransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">]</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Observation wrapper for transforming the dtype of an observation.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
-<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec(&quot;CartPole-v1&quot;, num_envs=3, vectorization_mode=&quot;sync&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs.dtype</span>
-<span class="sd">        dtype(&#39;float32&#39;)</span>
+<span class="sd">        dtype('float32')</span>
 <span class="sd">        &gt;&gt;&gt; envs = DtypeObservation(envs, dtype=np.float64)</span>
 <span class="sd">        &gt;&gt;&gt; obs, info = envs.reset(seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; obs.dtype</span>
-<span class="sd">        dtype(&#39;float64&#39;)</span>
+<span class="sd">        dtype('float64')</span>
 <span class="sd">        &gt;&gt;&gt; envs.close()</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor for Dtype observation wrapper.</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ArrayType</span><span class="p">],</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Constructor for Dtype observation wrapper.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env: The vector environment to wrap</span>
 <span class="sd">            dtype: The new dtype of the observation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">transform_observation</span><span class="o">.</span><span class="n">DtypeObservation</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
 </pre></div>
@@ -939,10 +987,10 @@
         })()
       </script>
 
-    <script src="../../../../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../../../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     
     <script>
 
@@ -1003,14 +1051,6 @@
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -1024,7 +1064,14 @@
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -1040,8 +1087,6 @@
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -1053,6 +1098,13 @@
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -1097,7 +1149,14 @@
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

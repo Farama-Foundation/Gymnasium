@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://gymnasium.farama.org/_modules/gymnasium/spaces/graph.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://gymnasium.farama.org/_modules/gymnasium/spaces/graph.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>gymnasium.spaces.graph - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -248,6 +248,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -367,128 +368,104 @@
           <article role="main">
             
             <h1>Source code for gymnasium.spaces.graph</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Implementation of a space that represents graph information where nodes and edges can be represented with euclidean space.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Implementation of a space that represents graph information where nodes and edges can be represented with euclidean space."""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">NamedTuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">NamedTuple</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NDArray</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces.box</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces.discrete</span><span class="w"> </span><span class="kn">import</span> <span class="n">Discrete</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces.multi_discrete</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiDiscrete</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces.space</span><span class="w"> </span><span class="kn">import</span> <span class="n">Space</span>
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GraphInstance</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Graph space instance.</span>
+<span class="w">    </span><span class="sd">"""A Graph space instance.</span>
 
-<span class="sd">    * nodes (np.ndarray): an (n x ...) sized array representing the features for n nodes, (...) must adhere to the shape of the node space.</span>
-<span class="sd">    * edges (Optional[np.ndarray]): an (m x ...) sized array representing the features for m edges, (...) must adhere to the shape of the edge space.</span>
+<span class="sd">    * nodes (Iterable): an (n x ...) sized array representing the features for n nodes, (...) must adhere to the shape of the node space.</span>
+<span class="sd">    * edges (Optional[Iterable]): an (m x ...) sized array representing the features for m edges, (...) must adhere to the shape of the edge space.</span>
 <span class="sd">    * edge_links (Optional[np.ndarray]): an (m x 2) sized array of ints representing the indices of the two nodes that each edge connects.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">nodes</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
-    <span class="n">edges</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">nodes</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
+    <span class="n">edges</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">edge_links</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="Graph">
 <a class="viewcode-back" href="../../../../api/spaces/composite/#gymnasium.spaces.Graph">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Graph</span><span class="p">(</span><span class="n">Space</span><span class="p">[</span><span class="n">GraphInstance</span><span class="p">]):</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;A space representing graph information as a series of ``nodes`` connected with ``edges`` according to an adjacency matrix represented as a series of ``edge_links``.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""A space representing graph information as a series of ``nodes`` connected with ``edges`` according to an adjacency matrix represented as a series of ``edge_links``.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Graph, Box, Discrete</span>
 <span class="sd">        &gt;&gt;&gt; observation_space = Graph(node_space=Box(low=-100, high=100, shape=(3,)), edge_space=Discrete(3), seed=123)</span>
 <span class="sd">        &gt;&gt;&gt; observation_space.sample(num_nodes=4, num_edges=8)</span>
-<span class="sd">        GraphInstance(nodes=array([[ 36.47037 , -89.235794, -55.928024],</span>
-<span class="sd">               [-63.125637, -64.81882 ,  62.4189  ],</span>
-<span class="sd">               [ 84.669   , -44.68512 ,  63.950912],</span>
-<span class="sd">               [ 77.97854 ,   2.594091, -51.00708 ]], dtype=float32), edges=array([2, 0, 2, 1, 2, 0, 2, 1]), edge_links=array([[3, 0],</span>
-<span class="sd">               [0, 0],</span>
-<span class="sd">               [0, 1],</span>
-<span class="sd">               [0, 2],</span>
+<span class="sd">        GraphInstance(nodes=array([[-50.143734, -89.37025 , -42.120003],</span>
+<span class="sd">               [ 31.519672, -96.5817  ,  85.16244 ],</span>
+<span class="sd">               [ 97.65833 ,  92.20077 ,  75.31062 ],</span>
+<span class="sd">               [-21.80443 , -73.790115,  39.97857 ]], dtype=float32), edges=array([1, 0, 2, 0, 2, 1, 1, 2]), edge_links=array([[0, 2],</span>
+<span class="sd">               [2, 0],</span>
+<span class="sd">               [3, 0],</span>
 <span class="sd">               [1, 0],</span>
 <span class="sd">               [1, 0],</span>
-<span class="sd">               [0, 1],</span>
-<span class="sd">               [0, 2]], dtype=int32))</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">               [1, 3],</span>
+<span class="sd">               [1, 3],</span>
+<span class="sd">               [1, 1]], dtype=int32))</span>
+<span class="sd">    """</span>
+
+    <span class="n">node_space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Discrete</span>
+    <span class="n">edge_space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Discrete</span> <span class="o">|</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">node_space</span><span class="p">:</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Discrete</span><span class="p">,</span>
-        <span class="n">edge_space</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Discrete</span><span class="p">,</span>
+        <span class="n">node_space</span><span class="p">:</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">edge_space</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Space</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Constructor of :class:`Graph`.</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""Constructor of :class:`Graph`.</span>
 
 <span class="sd">        The argument ``node_space`` specifies the base space that each node feature will use.</span>
-<span class="sd">        This argument must be either a Box or Discrete instance.</span>
 
 <span class="sd">        The argument ``edge_space`` specifies the base space that each edge feature will use.</span>
-<span class="sd">        This argument must be either a None, Box or Discrete instance.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            node_space (Union[Box, Discrete]): space of the node features.</span>
-<span class="sd">            edge_space (Union[None, Box, Discrete]): space of the edge features.</span>
+<span class="sd">            node_space (Space[Any]): space of the node features.</span>
+<span class="sd">            edge_space (None | Space[Any]): space of the edge features.</span>
 <span class="sd">            seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_space</span><span class="p">,</span> <span class="p">(</span><span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">)),</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Values of the node_space should be instances of Box or Discrete, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">node_space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edge_space</span><span class="p">,</span> <span class="p">(</span><span class="n">Box</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">)),</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Values of the edge_space should be instances of None Box or Discrete, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">edge_space</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">node_space</span> <span class="o">=</span> <span class="n">node_space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="o">=</span> <span class="n">edge_space</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_node_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">batch_space</span><span class="p">(</span><span class="n">node_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_edge_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">batch_space</span><span class="p">(</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_edge_space</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">is_np_flattenable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether this space can be flattened to a :class:`spaces.Box`.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_np_flattenable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Literal</span><span class="p">[</span><span class="kc">False</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Checks whether this space can be flattened to a :class:`spaces.Box`."""</span>
         <span class="k">return</span> <span class="kc">False</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_sample_space</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">base_space</span><span class="p">:</span> <span class="kc">None</span> <span class="o">|</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">Discrete</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Box</span> <span class="o">|</span> <span class="n">MultiDiscrete</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">base_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_space</span><span class="p">,</span> <span class="n">Box</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">Box</span><span class="p">(</span>
-                <span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="n">base_space</span><span class="o">.</span><span class="n">low</span><span class="p">]),</span>
-                <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="n">base_space</span><span class="o">.</span><span class="n">high</span><span class="p">]),</span>
-                <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">num</span><span class="p">,)</span> <span class="o">+</span> <span class="n">base_space</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
-                <span class="n">dtype</span><span class="o">=</span><span class="n">base_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
-                <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base_space</span><span class="p">,</span> <span class="n">Discrete</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">MultiDiscrete</span><span class="p">(</span><span class="n">nvec</span><span class="o">=</span><span class="p">[</span><span class="n">base_space</span><span class="o">.</span><span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">num</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expects base space to be Box and Discrete, actual space: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">base_space</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
 
 <div class="viewcode-block" id="Graph.seed">
 <a class="viewcode-back" href="../../../../api/spaces/composite/#gymnasium.spaces.Graph.seed">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">seed</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Seeds the PRNG of this space and node / edge subspace.</span>
+<span class="w">        </span><span class="sd">"""Seeds the PRNG of this space and node / edge subspace.</span>
 
 <span class="sd">        Depending on the type of seed, the subspaces will be seeded differently</span>
 
 <span class="sd">        * ``None`` - The root, node and edge spaces PRNG are randomly initialized</span>
 <span class="sd">        * ``Int`` - The integer is used to seed the :class:`Graph` space that is used to generate seed values for the node and edge subspaces.</span>
-<span class="sd">        * ``Tuple[int, int]`` - Seeds the :class:`Graph` and node subspace with a particular value. Only if edge subspace isn&#39;t specified</span>
+<span class="sd">        * ``Tuple[int, int]`` - Seeds the :class:`Graph` and node subspace with a particular value. Only if edge subspace isn't specified</span>
 <span class="sd">        * ``Tuple[int, int, int]`` - Seeds the :class:`Graph`, node and edge subspaces with a particular value.</span>
 
 <span class="sd">        Args:</span>
@@ -496,7 +473,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A tuple of two or three ints depending on if the edge subspace is specified.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
@@ -529,24 +506,24 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Expects a tuple of two values for Graph and node space, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">"Expects a tuple of two values for Graph and node space, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                     <span class="p">)</span>
 
                 <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Expects a tuple of three values for Graph, node and edge space, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="sa">f</span><span class="s2">"Expects a tuple of three values for Graph, node and edge space, actual length: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                     <span class="p">)</span>
 
                 <span class="k">return</span> <span class="p">(</span>
                     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>  <span class="c1"># ty:ignore[index-out-of-bounds]</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expects `None`, int or tuple of ints, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Expects `None`, int or tuple of ints, actual type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span></div>
 
 
@@ -554,52 +531,52 @@
 <a class="viewcode-back" href="../../../../api/spaces/composite/#gymnasium.spaces.Graph.sample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">mask</span><span class="p">:</span> <span class="kc">None</span>
-        <span class="o">|</span> <span class="p">(</span>
+        <span class="n">mask</span><span class="p">:</span> <span class="p">(</span>
             <span class="nb">tuple</span><span class="p">[</span>
                 <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
             <span class="p">]</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">probability</span><span class="p">:</span> <span class="kc">None</span>
-        <span class="o">|</span> <span class="p">(</span>
+        <span class="p">)</span>
+        <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">probability</span><span class="p">:</span> <span class="p">(</span>
             <span class="nb">tuple</span><span class="p">[</span>
                 <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
                 <span class="n">NDArray</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
             <span class="p">]</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_nodes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
         <span class="n">num_edges</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GraphInstance</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a single sample graph with num_nodes between ``1`` and ``10`` sampled from the Graph.</span>
+<span class="w">        </span><span class="sd">"""Generates a single sample graph with num_nodes between ``1`` and ``10`` sampled from the Graph.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            mask: An optional tuple of optional node and edge mask that is only possible with Discrete spaces</span>
-<span class="sd">                (Box spaces don&#39;t support sample masks).</span>
+<span class="sd">            mask: An optional tuple of optional node and edge mask</span>
+<span class="sd">                (Box spaces don't support sample masks).</span>
 <span class="sd">                If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges</span>
-<span class="sd">            probability: An optional tuple of optional node and edge probability mask that is only possible with Discrete spaces</span>
-<span class="sd">                (Box spaces don&#39;t support sample probability masks).</span>
+<span class="sd">            probability: An optional tuple of optional node and edge probability mask</span>
+<span class="sd">                (Box spaces don't support sample probability masks).</span>
 <span class="sd">                If no ``num_edges`` is provided then the ``edge_mask`` is multiplied by the number of edges</span>
 <span class="sd">            num_nodes: The number of nodes that will be sampled, the default is `10` nodes</span>
 <span class="sd">            num_edges: An optional number of edges, otherwise, a random number between `0` and :math:`num_nodes^2`</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A :class:`GraphInstance` with attributes `.nodes`, `.edges`, and `.edge_links`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="n">num_nodes</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The number of nodes is expected to be greater than 0, actual value: </span><span class="si">{</span><span class="n">num_nodes</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"The number of nodes is expected to be greater than 0, actual value: </span><span class="si">{</span><span class="n">num_nodes</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Only one of `mask` or `probability` can be provided, actual values: mask=</span><span class="si">{</span><span class="n">mask</span><span class="si">}</span><span class="s2">, probability=</span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Only one of `mask` or `probability` can be provided, actual values: mask=</span><span class="si">{</span><span class="n">mask</span><span class="si">}</span><span class="s2">, probability=</span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">node_space_mask</span><span class="p">,</span> <span class="n">edge_space_mask</span> <span class="o">=</span> <span class="n">mask</span>
-            <span class="n">mask_type</span> <span class="o">=</span> <span class="s2">&quot;mask&quot;</span>
+            <span class="n">mask_type</span> <span class="o">=</span> <span class="s2">"mask"</span>
         <span class="k">elif</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">node_space_mask</span><span class="p">,</span> <span class="n">edge_space_mask</span> <span class="o">=</span> <span class="n">probability</span>
-            <span class="n">mask_type</span> <span class="o">=</span> <span class="s2">&quot;probability&quot;</span>
+            <span class="n">mask_type</span> <span class="o">=</span> <span class="s2">"probability"</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">node_space_mask</span> <span class="o">=</span> <span class="n">edge_space_mask</span> <span class="o">=</span> <span class="n">mask_type</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -607,7 +584,7 @@
         <span class="k">if</span> <span class="n">num_edges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">num_nodes</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># maximal number of edges is `n*(n-1)` allowing self connections and two-way is allowed</span>
-                <span class="n">num_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">num_nodes</span> <span class="o">*</span> <span class="p">(</span><span class="n">num_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">num_edges</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="n">num_nodes</span> <span class="o">*</span> <span class="p">(</span><span class="n">num_nodes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">num_edges</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -616,16 +593,12 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">gym</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The number of edges is set (</span><span class="si">{</span><span class="n">num_edges</span><span class="si">}</span><span class="s2">) but the edge space is None.&quot;</span>
+                    <span class="sa">f</span><span class="s2">"The number of edges is set (</span><span class="si">{</span><span class="n">num_edges</span><span class="si">}</span><span class="s2">) but the edge space is None."</span>
                 <span class="p">)</span>
             <span class="k">assert</span> <span class="n">num_edges</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Expects the number of edges to be greater than 0, actual value: </span><span class="si">{</span><span class="n">num_edges</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">"Expects the number of edges to be greater than 0, actual value: </span><span class="si">{</span><span class="n">num_edges</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
         <span class="k">assert</span> <span class="n">num_edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-
-        <span class="n">sampled_node_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_sample_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">sampled_node_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="n">sampled_edge_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_sample_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">num_edges</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">mask_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">node_sample_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">mask_type</span><span class="p">:</span> <span class="n">node_space_mask</span><span class="p">}</span>
@@ -633,10 +606,25 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">node_sample_kwargs</span> <span class="o">=</span> <span class="n">edge_sample_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="n">sampled_nodes</span> <span class="o">=</span> <span class="n">sampled_node_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">**</span><span class="n">node_sample_kwargs</span><span class="p">)</span>
-        <span class="n">sampled_edges</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">sampled_edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">sampled_edges</span> <span class="o">=</span> <span class="n">sampled_edge_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">**</span><span class="n">edge_sample_kwargs</span><span class="p">)</span>
+        <span class="c1"># We need to reconstruct the batch node space each time as the num_nodes will change each time.</span>
+        <span class="n">sample_batch_node_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">batch_space</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="p">,</span> <span class="n">num_nodes</span>
+        <span class="p">)</span>
+        <span class="n">sampled_nodes</span> <span class="o">=</span> <span class="n">sample_batch_node_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">**</span><span class="n">node_sample_kwargs</span><span class="p">)</span>
+        <span class="c1"># The batch_space function deepcopies the node_space's np_random therefore to avoid generating the same samples each time</span>
+        <span class="c1">#   we need to get the updated np_random</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+
+        <span class="c1"># It is valid to sample one node and one edge (self loop)</span>
+        <span class="k">if</span> <span class="n">num_nodes</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">num_edges</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sample_batch_edge_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">batch_space</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="p">,</span> <span class="n">num_edges</span>
+            <span class="p">)</span>
+
+            <span class="n">sampled_edges</span> <span class="o">=</span> <span class="n">sample_batch_edge_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="o">**</span><span class="n">edge_sample_kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sampled_edges</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">sampled_edge_links</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">sampled_edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_edges</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -648,44 +636,45 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">contains</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">GraphInstance</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return boolean specifying if x is a valid member of this space.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">GraphInstance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Return boolean specifying if x is a valid member of this space."""</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">GraphInstance</span><span class="p">)</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">nodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Checks the nodes</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">nodes</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-                <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_space</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">nodes</span><span class="p">):</span>
-                    <span class="c1"># Check the edges and edge links which are optional</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">edges</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_node_space</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_space</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">):</span>
+                <span class="c1"># Check the edges and edge links which are optional</span>
+                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
                         <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
                     <span class="p">):</span>
-                        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                        <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span><span class="p">):</span>
-                                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">edge_links</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
-                                    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">edges</span><span class="p">),</span> <span class="mi">2</span><span class="p">):</span>
-                                        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
-                                            <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
-                                                <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span>
-                                                <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">nodes</span><span class="p">),</span>
-                                            <span class="p">)</span>
-                                        <span class="p">):</span>
-                                            <span class="k">return</span> <span class="kc">True</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span> <span class="ow">is</span> <span class="kc">None</span>
+                        <span class="c1"># Use iterate to handle all space types (Dict, Tuple, etc.)</span>
+                        <span class="n">edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+                            <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_edge_space</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span><span class="p">)</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">edge_links</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">integer</span><span class="p">):</span>
+                                <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="p">),</span> <span class="mi">2</span><span class="p">):</span>
+                                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+                                        <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span>
+                                            <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+                                        <span class="p">)</span>
+                                    <span class="p">):</span>
+                                        <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">edges</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">edge_links</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A string representation of this space.</span>
+<span class="w">        </span><span class="sd">"""A string representation of this space.</span>
 
 <span class="sd">        The representation will include ``node_space`` and ``edge_space``</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A representation of the space</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Graph(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="si">}</span><span class="s2">)&quot;</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"Graph(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether `other` is equivalent to this instance.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Check whether `other` is equivalent to this instance."""</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Graph</span><span class="p">)</span>
             <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_space</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">node_space</span><span class="p">)</span>
@@ -693,34 +682,34 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">to_jsonable</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">GraphInstance</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]]]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a batch of samples from this space to a JSONable data type.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">GraphInstance</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""Convert a batch of samples from this space to a JSONable data type."""</span>
         <span class="n">ret_n</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">sample_n</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;nodes&quot;</span><span class="p">:</span> <span class="n">sample</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">tolist</span><span class="p">()}</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"nodes"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_node_space</span><span class="o">.</span><span class="n">to_jsonable</span><span class="p">([</span><span class="n">sample</span><span class="o">.</span><span class="n">nodes</span><span class="p">])}</span>
             <span class="k">if</span> <span class="n">sample</span><span class="o">.</span><span class="n">edges</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">sample</span><span class="o">.</span><span class="n">edge_links</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;edges&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">edges</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-                <span class="n">ret</span><span class="p">[</span><span class="s2">&quot;edge_links&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">edge_links</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">ret</span><span class="p">[</span><span class="s2">"edges"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_edge_space</span><span class="o">.</span><span class="n">to_jsonable</span><span class="p">([</span><span class="n">sample</span><span class="o">.</span><span class="n">edges</span><span class="p">])</span>
+                <span class="n">ret</span><span class="p">[</span><span class="s2">"edge_links"</span><span class="p">]</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">edge_links</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
             <span class="n">ret_n</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret_n</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">from_jsonable</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">GraphInstance</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a JSONable data type to a batch of samples from this space.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Convert a JSONable data type to a batch of samples from this space."""</span>
         <span class="n">ret</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GraphInstance</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">sample</span> <span class="ow">in</span> <span class="n">sample_n</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">&quot;edges&quot;</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"edges"</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">ret_n</span> <span class="o">=</span> <span class="n">GraphInstance</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">&quot;nodes&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">&quot;edges&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">&quot;edge_links&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">batch_node_space</span><span class="o">.</span><span class="n">from_jsonable</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">"nodes"</span><span class="p">])[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">batch_edge_space</span><span class="o">.</span><span class="n">from_jsonable</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">"edges"</span><span class="p">])[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">"edge_links"</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">ret_n</span> <span class="o">=</span> <span class="n">GraphInstance</span><span class="p">(</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">&quot;nodes&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">node_space</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">batch_node_space</span><span class="o">.</span><span class="n">from_jsonable</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="s2">"nodes"</span><span class="p">])[</span><span class="mi">0</span><span class="p">],</span>
                     <span class="kc">None</span><span class="p">,</span>
                     <span class="kc">None</span><span class="p">,</span>
                 <span class="p">)</span>
@@ -844,10 +833,10 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     
     <script>
 
@@ -908,14 +897,6 @@
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -929,7 +910,14 @@
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -945,8 +933,6 @@
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -958,6 +944,13 @@
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -1002,7 +995,14 @@
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

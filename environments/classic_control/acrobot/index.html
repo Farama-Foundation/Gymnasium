@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Cart Pole" href="../cart_pole/" /><link rel="prev" title="Classic Control" href="../" />
         <link rel="canonical" href="https://gymnasium.farama.org/environments/classic_control/acrobot.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>Acrobot - Gymnasium Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     
     
 
@@ -249,6 +249,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils/">Utility functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/typing/">Typing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/functional/">Functional Env</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Environments</span></p>
@@ -519,10 +520,10 @@ uniformly between -0.1 and 0.1. This means both links are pointing downwards wit
 <p>Acrobot only has <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> as a keyword for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.
 On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine the new random state.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;Acrobot-v1&#39;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;rgb_array&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'Acrobot-v1'</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
 <span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;AcrobotEnv&lt;Acrobot-v1&gt;&gt;&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;low&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})</span>  <span class="c1"># default low=-0.1, high=0.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"low"</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span> <span class="s2">"high"</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">})</span>  <span class="c1"># default low=-0.1, high=0.1</span>
 <span class="go">(array([ 0.997341  ,  0.07287608,  0.9841162 , -0.17752565, -0.11185605,</span>
 <span class="go">       -0.12625128], dtype=float32), {})</span>
 
@@ -533,7 +534,7 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
 However, a <code class="docutils literal notranslate"><span class="pre">book_or_nips</span></code> parameter can be modified to change the pendulum dynamics to those described
 in the original <a class="reference external" href="https://papers.nips.cc/paper/1995/hash/8f1d43620bc6bb580df6e80b0dc05c48-Abstract.html">NeurIPS paper</a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># To change the dynamics as described above</span>
-<span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">book_or_nips</span> <span class="o">=</span> <span class="s1">&#39;nips&#39;</span>
+<span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">book_or_nips</span> <span class="o">=</span> <span class="s1">'nips'</span>
 </pre></div>
 </div>
 <p>See the following note for details:</p>
@@ -544,23 +545,31 @@ generated with the equations shown in the book. However, there is the option to 
 by setting <code class="docutils literal notranslate"><span class="pre">book_or_nips</span> <span class="pre">=</span> <span class="pre">'nips'</span></code></p>
 </div></blockquote>
 </section>
-<section id="version-history">
-<h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>v1: Maximum number of steps increased from 200 to 500. The observation space for v0 provided direct readings of
-<code class="docutils literal notranslate"><span class="pre">theta1</span></code> and <code class="docutils literal notranslate"><span class="pre">theta2</span></code> in radians, having a range of <code class="docutils literal notranslate"><span class="pre">[-pi,</span> <span class="pre">pi]</span></code>. The v1 observation space as described here provides the
-sine and cosine of each angle instead.</p></li>
-<li><p>v0: Initial versions release</p></li>
-</ul>
-</section>
-<section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Sutton, R. S. (1996). Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding.
-In D. Touretzky, M. C. Mozer, &amp; M. Hasselmo (Eds.), Advances in Neural Information Processing Systems (Vol. 8).
-MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e80b0dc05c48-Paper.pdf</p></li>
-<li><p>Sutton, R. S., Barto, A. G. (2018 ). Reinforcement Learning: An Introduction. The MIT Press.</p></li>
-</ul>
+<section id="integration-timestep">
+<h2>Integration timestep<a class="headerlink" href="#integration-timestep" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Acrobot-v1</span></code> uses fourth-order Runge-Kutta integration with a default
+timestep of <code class="docutils literal notranslate"><span class="pre">dt</span> <span class="pre">=</span> <span class="pre">0.2</span></code>.</p>
+<p>The timestep can be changed through the unwrapped environment:</p>
+<p>‘’’python
+env = gym.make(“Acrobot-v1”)
+env.unwrapped.dt = 0.05</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+Smaller timesteps can reduce numerical integration error.
+
+## Version History
+
+- v1: Maximum number of steps increased from 200 to 500. The observation space for v0 provided direct readings of
+`theta1` and `theta2` in radians, having a range of `[-pi, pi]`. The v1 observation space as described here provides the
+sine and cosine of each angle instead.
+- v0: Initial versions release
+
+## References
+- Sutton, R. S. (1996). Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding.
+    In D. Touretzky, M. C. Mozer, &amp; M. Hasselmo (Eds.), Advances in Neural Information Processing Systems (Vol. 8).
+    MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e80b0dc05c48-Paper.pdf
+- Sutton, R. S., Barto, A. G. (2018 ). Reinforcement Learning: An Introduction. The MIT Press.
+</pre></div>
+</div>
 </section>
 </section>
 
@@ -629,8 +638,7 @@ MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e8
 <li><a class="reference internal" href="#starting-state">Starting State</a></li>
 <li><a class="reference internal" href="#episode-end">Episode End</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
-<li><a class="reference internal" href="#version-history">Version History</a></li>
-<li><a class="reference internal" href="#references">References</a></li>
+<li><a class="reference internal" href="#integration-timestep">Integration timestep</a></li>
 </ul>
 </li>
 </ul>
@@ -717,10 +725,10 @@ MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e8
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=0559ecf3"></script>
+    <script src="../../../_static/documentation_options.js?v=74824699"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     
     <script>
 
@@ -781,14 +789,6 @@ MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e8
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -802,7 +802,14 @@ MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e8
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -818,8 +825,6 @@ MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e8
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -831,6 +836,13 @@ MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e8
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -875,7 +887,14 @@ MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e8
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 
