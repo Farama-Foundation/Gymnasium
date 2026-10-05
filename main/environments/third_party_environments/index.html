@@ -478,6 +478,10 @@ goal-RL (<a class="reference external" href="https://robotics.farama.org/">Gymna
 <img alt="GitHub stars" src="https://img.shields.io/github/stars/ClementPerroud/Gym-Trading-Env" /></p>
 <p>Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.</p>
 </li>
+<li><p><a class="reference external" href="https://github.com/simoncoombes/tradefloor">tradefloor: Simulated stock markets with a limit order book per company</a></p>
+<p><img alt="Gymnasium version dependency" src="https://img.shields.io/badge/Gymnasium-%3E%3D0.29-blue" /></p>
+<p>tradefloor generates simulated stock markets in which each company has a limit order book and an economy runs underneath. Its <code class="docutils literal notranslate"><span class="pre">TradingEnv</span></code> takes a target portfolio weight per stock as the action, and the policy’s orders fill against the book and move prices, so the reward, the step’s change in net worth, includes the cost of its own trading. Each seed is a new market, and any episode can be replayed exactly from its seed. Install with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;tradefloor[rl]&quot;</span></code>.</p>
+</li>
 </ul>
 </section>
 <section id="electrical-energy-environments">
