@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Generic, cast
 
 import numpy as np
+from typing_extensions import TypeVar
 
 import gymnasium as gym
 from gymnasium.core import (
@@ -23,7 +24,7 @@ if TYPE_CHECKING:
 
     from gymnasium.envs.registration import EnvSpec
 
-ArrayType = TypeVar("ArrayType")
+ArrayType = TypeVar("ArrayType", default=Any)
 
 
 __all__ = [

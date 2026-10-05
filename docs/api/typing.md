@@ -36,7 +36,7 @@ class GrayscaleWrapper(gym.ObservationWrapper[np.ndarray, ActType, np.ndarray]):
         return np.mean(observation, axis=-1).astype(np.uint8)
 ```
 
-The `TypeVar`s have no defaults, so a class must be given either all of its type arguments or none. Without any, such as a bare `gym.Env` or `VectorWrapper`, every type parameter is `Any`. A partial subscription, such as `gym.Wrapper[np.ndarray, int]`, is an error.
+Every `TypeVar` defaults to `Any` ([PEP 696](https://peps.python.org/pep-0696/)), so a class may be given as few or as many of its type arguments as desired and the omitted ones fall back to `Any`. A bare `gym.Env` or `VectorWrapper` has every type parameter as `Any`, and a partial subscription such as `gym.Env[np.ndarray]` has `np.ndarray` observations and `Any` actions. On Python versions before 3.13, the defaults are provided by `typing-extensions >= 4.12`.
 
 ## Single-environment types
 
@@ -95,7 +95,22 @@ class VectorGrayscaleWrapper(
 
 The base wrappers' `reset` and `step` pass the wrapped environment's data through unchanged, so a wrapper that changes the observation or action type must override them (or use {class}`~gymnasium.vector.VectorObservationWrapper` or {class}`~gymnasium.vector.VectorActionWrapper`, which do).
 
+## Built-in vector environments
+
+{class}`~gymnasium.vector.SyncVectorEnv` and {class}`~gymnasium.vector.AsyncVectorEnv` are generic in their observation and action types, `[ObsType, ActType]`, and return `np.ndarray` rewards, terminations and truncations, so they compose with the `np.ndarray` wrappers below. The `step` return types are more precise, `float64` rewards and `bool` terminations and truncations, than the `ArrayType` of `np.ndarray`, which is the common type of all three arrays.
+
 ## Built-in vector wrappers
+
+The vector wrappers that transform the observations, actions or rewards mirror their single-environment equivalents, so they have the same type parameters, followed by `ArrayType`:
+
+| Wrapper                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Type parameters                                                   |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
+| {class}`~gymnasium.wrappers.vector.TransformObservation`, {class}`~gymnasium.wrappers.vector.VectorizeTransformObservation`, {class}`~gymnasium.wrappers.vector.FilterObservation`, {class}`~gymnasium.wrappers.vector.FlattenObservation`, {class}`~gymnasium.wrappers.vector.GrayscaleObservation`, {class}`~gymnasium.wrappers.vector.ResizeObservation`, {class}`~gymnasium.wrappers.vector.ReshapeObservation`, {class}`~gymnasium.wrappers.vector.RescaleObservation`, {class}`~gymnasium.wrappers.vector.DtypeObservation` | `[WrapperObsType, ActType, ObsType, ArrayType]`                   |
+| {class}`~gymnasium.wrappers.vector.TransformAction`, {class}`~gymnasium.wrappers.vector.VectorizeTransformAction`, {class}`~gymnasium.wrappers.vector.ClipAction`, {class}`~gymnasium.wrappers.vector.RescaleAction`                                                                                                                                                                                                                                                                                                       | `[ObsType, WrapperActType, ActType, ArrayType]`                   |
+| {class}`~gymnasium.wrappers.vector.TransformReward`                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | `[ObsType, ActType, ArrayType]`                                   |
+| {class}`~gymnasium.wrappers.vector.VectorizeTransformReward`, {class}`~gymnasium.wrappers.vector.ClipReward`                                                                                                                                                                                                                                                                                                                                                                                                                 | `[ObsType, ActType, ArrayType]`, with `ArrayType` an `np.ndarray` |
+
+`TransformObservation`, `TransformAction` and `TransformReward` infer the wrapper's types from the `func` passed to them, e.g., `TransformObservation(envs, func)` with `envs: VectorEnv[Inner, ActType, ArrayType]` and `func: Callable[[Inner], Outer]` has `Outer` observations.
 
 The vector wrappers that don't change the observations or actions are generic in the wrapped environment's types, so they keep them:
 
@@ -106,4 +121,4 @@ The vector wrappers that don't change the observations or actions are generic in
 | {class}`~gymnasium.wrappers.vector.NormalizeObservation`                                                                                                                            | `[ActType, ArrayType]`, with observations as `np.ndarray`                       |
 | `ArrayConversion` (the base of {class}`~gymnasium.wrappers.vector.JaxToNumpy`, {class}`~gymnasium.wrappers.vector.JaxToTorch` and {class}`~gymnasium.wrappers.vector.NumpyToTorch`) | `[WrapperObsType, WrapperActType, ObsType, ActType]`, with `ArrayType` as `Any` |
 
-{class}`~gymnasium.wrappers.vector.TransformObservation`, {class}`~gymnasium.wrappers.vector.TransformAction` and {class}`~gymnasium.wrappers.vector.TransformReward` are generic in their function's input and output types, and the remaining vector wrappers, including the conversion wrappers above, aren't generic, so their wrapped environment's types are `Any`.
+The remaining vector wrappers, including the conversion wrappers above, aren't generic, so their wrapped environment's types are `Any`.

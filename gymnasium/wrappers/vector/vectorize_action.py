@@ -4,30 +4,20 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic
+from typing import Any
 
 import numpy as np
 
 from gymnasium import Space
-from gymnasium.core import Env
+from gymnasium.core import ActType, Env, ObsType, WrapperActType
 from gymnasium.logger import warn
 from gymnasium.vector import VectorActionWrapper, VectorEnv
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
+from gymnasium.vector.vector_env import ArrayType
 from gymnasium.wrappers import transform_action
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
 
-    _T_contra = TypeVar("_T_contra", contravariant=True, default=Any)
-    _T_co = TypeVar("_T_co", covariant=True, default=_T_contra)
-else:
-    from typing import TypeVar
-
-    _T_contra = TypeVar("_T_contra", contravariant=True)
-    _T_co = TypeVar("_T_co", covariant=True)
-
-
-class TransformAction(VectorActionWrapper, Generic[_T_contra, _T_co]):
+class TransformAction(VectorActionWrapper[ObsType, WrapperActType, ActType, ArrayType]):
     """Transforms an action via a function provided to the wrapper.
 
     The function :attr:`func` will be applied to all vector actions.
@@ -71,12 +61,12 @@ class TransformAction(VectorActionWrapper, Generic[_T_contra, _T_co]):
 
     single_action_space: Space
     action_space: Space
-    func: Callable[[_T_contra], _T_co]
+    func: Callable[[WrapperActType], ActType]
 
     def __init__(
         self,
-        env: VectorEnv,
-        func: Callable[[_T_contra], _T_co],
+        env: VectorEnv[ObsType, ActType, ArrayType],
+        func: Callable[[WrapperActType], ActType],
         action_space: Space | None = None,
         single_action_space: Space | None = None,
     ) -> None:
@@ -106,12 +96,14 @@ class TransformAction(VectorActionWrapper, Generic[_T_contra, _T_co]):
 
         self.func = func
 
-    def actions(self, actions: _T_contra) -> _T_co:
+    def actions(self, actions: WrapperActType) -> ActType:
         """Applies the :attr:`func` to the actions."""
         return self.func(actions)
 
 
-class VectorizeTransformAction(VectorActionWrapper):
+class VectorizeTransformAction(
+    VectorActionWrapper[ObsType, WrapperActType, ActType, ArrayType]
+):
     """Vectorizes a single-agent transform action wrapper for vector environments.
 
     Example - Without action transformation:
@@ -159,7 +151,7 @@ class VectorizeTransformAction(VectorActionWrapper):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[ObsType, ActType, ArrayType],
         wrapper: type[transform_action.TransformAction],
         **kwargs: Any,
     ) -> None:
@@ -180,7 +172,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         # ty doesn't support `@single_dispatch` yet
         self.out = create_empty_array(self.env.single_action_space, self.num_envs)  # ty:ignore[invalid-assignment]
 
-    def actions(self, actions: np.ndarray) -> np.ndarray:
+    def actions(self, actions: WrapperActType) -> ActType:
         """Applies the wrapper to each of the action.
 
         Args:
@@ -213,7 +205,7 @@ class VectorizeTransformAction(VectorActionWrapper):
         return actions_out  # ty:ignore[invalid-return-type]
 
 
-class ClipAction(VectorizeTransformAction):
+class ClipAction(VectorizeTransformAction[ObsType, WrapperActType, ActType, ArrayType]):
     """Clip the continuous action within the valid :class:`Box` observation space bound.
 
     Example - Passing an out-of-bounds action to the environment to be clipped.
@@ -231,7 +223,7 @@ class ClipAction(VectorizeTransformAction):
                [-0.42884544,  0.00080468]], dtype=float32)
     """
 
-    def __init__(self, env: VectorEnv) -> None:
+    def __init__(self, env: VectorEnv[ObsType, ActType, ArrayType]) -> None:
         """Constructor for the Clip Action wrapper.
 
         Args:
@@ -240,7 +232,9 @@ class ClipAction(VectorizeTransformAction):
         super().__init__(env, transform_action.ClipAction)
 
 
-class RescaleAction(VectorizeTransformAction):
+class RescaleAction(
+    VectorizeTransformAction[ObsType, WrapperActType, ActType, ArrayType]
+):
     """Affinely rescales the continuous action space of the environment to the range [min_action, max_action].
 
     Example - Without action scaling:
@@ -277,7 +271,7 @@ class RescaleAction(VectorizeTransformAction):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[ObsType, ActType, ArrayType],
         min_action: float | int | np.ndarray,
         max_action: float | int | np.ndarray,
     ) -> None:
