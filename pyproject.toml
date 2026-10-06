@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 name = "gymnasium"
 description = "A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)."
 readme = "README.md"
-requires-python = ">= 3.10"
+requires-python = ">= 3.11"
 authors = [{ name = "Farama Foundation", email = "contact@farama.org" }]
 license = { text = "MIT License" }
 keywords = ["Reinforcement Learning", "game", "RL", "AI", "gymnasium"]
@@ -16,7 +16,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -143,7 +142,7 @@ respect-type-ignore-comments = false
 error-on-warning = false
 
 [tool.ty.environment]
-python-version = "3.10"
+python-version = "3.11"
 python-platform = "all"
 extra-paths = []
 
