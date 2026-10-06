@@ -8,6 +8,7 @@ import math
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 import gymnasium as gym
 from gymnasium import logger, spaces
@@ -352,7 +353,9 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
             self.isopen = False
 
 
-class CartPoleVectorEnv(VectorEnv):
+class CartPoleVectorEnv(
+    VectorEnv[npt.NDArray[np.float32], npt.NDArray[np.integer[Any]], np.ndarray]
+):
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 50,
@@ -419,8 +422,14 @@ class CartPoleVectorEnv(VectorEnv):
         self.steps_beyond_terminated = None
 
     def step(
-        self, action: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
+        self, action: npt.NDArray[np.integer[Any]]
+    ) -> tuple[
+        npt.NDArray[np.float32],
+        npt.NDArray[np.float32],
+        npt.NDArray[np.bool_],
+        npt.NDArray[np.bool_],
+        dict[str, Any],
+    ]:
         assert self.action_space.contains(action), (
             f"{action!r} ({type(action)}) invalid"
         )
@@ -488,8 +497,8 @@ class CartPoleVectorEnv(VectorEnv):
         self,
         *,
         seed: int | None = None,
-        options: dict | None = None,
-    ):
+        options: dict[str, Any] | None = None,
+    ) -> tuple[npt.NDArray[np.float32], dict[str, Any]]:
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.

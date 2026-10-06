@@ -33,12 +33,12 @@ all_envs = [
 ]
 
 
-def create_grid_cell(type_id, env_id, base_path):
+def create_grid_cell(type_id, env_id, base_path, static_path):
     return f"""
             <a href="{base_path}{env_id}">
                 <div class="env-grid__cell">
                     <div class="cell__image-container">
-                        <img src="/_static/videos/{type_id}/{env_id}.gif">
+                        <img src="{static_path}/videos/{type_id}/{env_id}.gif">
                     </div>
                     <div class="cell__title">
                         <span>{" ".join(env_id.split("_")).title()}</span>
@@ -48,10 +48,16 @@ def create_grid_cell(type_id, env_id, base_path):
     """
 
 
-def generate_page(env, limit=-1, base_path=""):
+# The grid is embedded as raw HTML, so Sphinx does not rewrite its links. Image
+# paths must be relative to the rendered page (dirhtml: environments/<type>/),
+# otherwise versioned builds (e.g. /main/) load the root (stable) release's gifs.
+def generate_page(env, limit=-1, base_path="", static_path="../../_static"):
     env_type_id = env["id"]
     env_list = env["list"]
-    cells = [create_grid_cell(env_type_id, env_id, base_path) for env_id in env_list]
+    cells = [
+        create_grid_cell(env_type_id, env_id, base_path, static_path)
+        for env_id in env_list
+    ]
     non_limited_page = limit == -1 or limit >= len(cells)
     if non_limited_page:
         cells = "\n".join(cells)
@@ -105,7 +111,9 @@ if __name__ == "__main__":
             fp.write(page)
             fp.close()
 
-            page = generate_page(type_dict, base_path="../")
+            page = generate_page(
+                type_dict, base_path="../", static_path="../../../_static"
+            )
             fp = open(
                 os.path.join(
                     os.path.dirname(__file__), envs_path, "complete_list.html"

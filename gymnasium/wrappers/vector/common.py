@@ -9,6 +9,7 @@ from typing import Any
 import numpy as np
 import numpy.typing as npt
 
+from gymnasium.core import ActType, ObsType
 from gymnasium.logger import warn
 from gymnasium.vector.vector_env import (
     AutoresetMode,
@@ -19,7 +20,9 @@ from gymnasium.vector.vector_env import (
 __all__ = ["RecordEpisodeStatistics"]
 
 
-class RecordEpisodeStatistics(VectorWrapper):
+class RecordEpisodeStatistics(
+    VectorWrapper[ObsType, ActType, ObsType, ActType, np.ndarray]
+):
     """This wrapper will keep track of cumulative rewards and episode lengths.
 
     At the end of any episode within the vectorized env, the statistics of the episode
@@ -78,7 +81,7 @@ class RecordEpisodeStatistics(VectorWrapper):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[ObsType, ActType, np.ndarray],
         buffer_length: int = 100,
         stats_key: str = "episode",
     ) -> None:
@@ -118,7 +121,7 @@ class RecordEpisodeStatistics(VectorWrapper):
         self,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[np.ndarray, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment and the reset sub-environments' episode statistics."""
         obs, info = super().reset(seed=seed, options=options)
 
@@ -154,9 +157,9 @@ class RecordEpisodeStatistics(VectorWrapper):
         return obs, info
 
     def step(
-        self, actions: np.ndarray
+        self, actions: ActType
     ) -> tuple[
-        np.ndarray,
+        ObsType,
         npt.NDArray[np.float64],
         npt.NDArray[np.bool_],
         npt.NDArray[np.bool_],

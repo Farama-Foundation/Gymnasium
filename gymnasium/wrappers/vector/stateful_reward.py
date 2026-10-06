@@ -10,6 +10,7 @@ from typing import Any
 import numpy as np
 
 import gymnasium as gym
+from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidBound
 from gymnasium.vector.vector_env import AutoresetMode, VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
@@ -17,7 +18,10 @@ from gymnasium.wrappers.utils import RunningMeanStd
 __all__ = ["NormalizeReward"]
 
 
-class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
+class NormalizeReward(
+    VectorWrapper[ObsType, ActType, ObsType, ActType, np.ndarray],
+    gym.utils.RecordConstructorArgs,
+):
     r"""This wrapper will scale rewards s.t. their exponential moving average has an approximately fixed variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
@@ -74,7 +78,7 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[ObsType, ActType, np.ndarray],
         gamma: float = 0.99,
         epsilon: float = 1e-8,
     ) -> None:
@@ -131,7 +135,7 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[np.ndarray, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment and clears accumulated rewards for the reset sub-environments."""
         obs, info = super().reset(seed=seed, options=options)
         if options is not None and "reset_mask" in options:
@@ -144,9 +148,9 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         return obs, info
 
     def step(
-        self, actions: np.ndarray
+        self, actions: ActType
     ) -> tuple[
-        np.ndarray,
+        ObsType,
         np.ndarray[tuple[int], np.dtype[np.float64]],
         np.ndarray[tuple[int], np.dtype[np.bool_]],
         np.ndarray[tuple[int], np.dtype[np.bool_]],

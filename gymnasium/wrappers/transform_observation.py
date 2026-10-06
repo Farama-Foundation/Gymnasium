@@ -438,9 +438,10 @@ class ResizeObservation(
         TransformObservation.__init__(
             self,
             env=env,
+            # OpenCV drops the channel dimension for single-channel images.
             func=lambda obs: cv2.resize(
                 obs, self.cv2_shape, interpolation=cv2.INTER_AREA
-            ),
+            ).reshape(new_observation_space.shape),
             observation_space=new_observation_space,
         )
 
@@ -586,7 +587,8 @@ class DtypeObservation(
 
         Args:
             env: The environment to wrap
-            dtype: The new dtype of the observation
+            dtype: The new dtype of the observation, as a NumPy scalar type,
+                dtype object, or string
         """
         if not isinstance(
             env.observation_space,
@@ -633,7 +635,7 @@ class DtypeObservation(
         TransformObservation.__init__(
             self,
             env=env,
-            func=lambda obs: dtype(obs),
+            func=lambda obs: new_observation_space.dtype.type(obs),
             observation_space=new_observation_space,
         )
 
@@ -702,7 +704,9 @@ class AddRenderObservation(
                 observation dictionary will contain both the original
                 observations and the pixel observations.
             render_key: Optional custom string specifying the pixel key. Defaults to "pixels"
-            obs_key: Optional custom string specifying the obs key. Defaults to "state"
+            obs_key: Optional custom string specifying the obs key. Defaults to "state".
+                Must differ from ``render_key`` when ``render_only=False`` and the
+                original observation space is not a :class:`spaces.Dict`.
         """
         gym.utils.RecordConstructorArgs.__init__(
             self,
@@ -745,6 +749,10 @@ class AddRenderObservation(
                 observation_space=obs_space,
             )
         else:
+            if render_key == obs_key:
+                raise ValueError(
+                    f"AddRenderObservation render_key and obs_key must be different, got {render_key!r} for both"
+                )
             obs_space = spaces.Dict(
                 {obs_key: env.observation_space, render_key: pixel_space}
             )

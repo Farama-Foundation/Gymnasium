@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import Any
+from typing import Any, Generic, cast
 
 import numpy as np
+import numpy.typing as npt
 
 from gymnasium import Env, Space
 from gymnasium.core import ActType, ObsType, RenderFrame
@@ -18,12 +19,12 @@ from gymnasium.vector.utils import (
     create_empty_array,
     iterate,
 )
-from gymnasium.vector.vector_env import ArrayType, AutoresetMode, VectorEnv
+from gymnasium.vector.vector_env import AutoresetMode, VectorEnv
 
 __all__ = ["SyncVectorEnv"]
 
 
-class SyncVectorEnv(VectorEnv):
+class SyncVectorEnv(VectorEnv[ObsType, ActType, np.ndarray], Generic[ObsType, ActType]):
     """Vectorized environment that serially runs multiple environments.
 
     Example:
@@ -72,6 +73,8 @@ class SyncVectorEnv(VectorEnv):
     action_space: Space
     single_observation_space: Space
     observation_space: Space
+
+    _observations: ObsType
 
     def __init__(
         self,
@@ -165,8 +168,11 @@ class SyncVectorEnv(VectorEnv):
 
         # Initialise attributes used in `step` and `reset`
         self._env_obs = [None for _ in range(self.num_envs)]
-        self._observations = create_empty_array(
-            self.single_observation_space, n=self.num_envs, fn=np.zeros
+        self._observations = cast(
+            "ObsType",
+            create_empty_array(
+                self.single_observation_space, n=self.num_envs, fn=np.zeros
+            ),
         )
         self._rewards = np.zeros((self.num_envs,), dtype=np.float64)
         self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
@@ -262,14 +268,23 @@ class SyncVectorEnv(VectorEnv):
                 infos = self._add_info(infos, env_info, i)
 
         # Concatenate the observations
-        self._observations = concatenate(
-            self.single_observation_space, self._env_obs, self._observations
+        self._observations = cast(
+            "ObsType",
+            concatenate(
+                self.single_observation_space, self._env_obs, self._observations
+            ),
         )
         return deepcopy(self._observations) if self.copy else self._observations, infos
 
     def step(
         self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+    ) -> tuple[
+        ObsType,
+        npt.NDArray[np.float64],
+        npt.NDArray[np.bool_],
+        npt.NDArray[np.bool_],
+        dict[str, Any],
+    ]:
         """Steps through each of the environments returning the batched results.
 
         Returns:
@@ -327,8 +342,11 @@ class SyncVectorEnv(VectorEnv):
             infos = self._add_info(infos, env_info, i)
 
         # Concatenate the observations
-        self._observations = concatenate(
-            self.single_observation_space, self._env_obs, self._observations
+        self._observations = cast(
+            "ObsType",
+            concatenate(
+                self.single_observation_space, self._env_obs, self._observations
+            ),
         )
         self._autoreset_envs = np.logical_or(self._terminations, self._truncations)
 

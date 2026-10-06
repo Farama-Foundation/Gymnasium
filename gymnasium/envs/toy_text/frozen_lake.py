@@ -99,8 +99,7 @@ class FrozenLakeEnv(Env):
      The lake is slippery (unless disabled) so the player may move perpendicular
      to the intended direction sometimes (see `is_slippery` in Argument section).
 
-     Elf and stool from [https://franuka.itch.io/rpg-snow-tileset](https://franuka.itch.io/rpg-snow-tileset).
-     All other assets by Mel Tillery [http://www.cyaneus.com/](http://www.cyaneus.com/).
+     Pixel art assets are part of Farama Foundation's shared environment art set.
 
      ## Action Space
      The action shape is `(1,)` in the range `{0, 3}` indicating
@@ -314,12 +313,13 @@ class FrozenLakeEnv(Env):
         )
         self.window_surface = None
         self.clock = None
-        self.hole_img = None
-        self.cracked_hole_img = None
         self.ice_img = None
-        self.elf_images = None
-        self.goal_img = None
-        self.start_img = None
+        self.ice_crack_imgs = None
+        self.hole_img = None
+        self.agent_img = None
+        self.goal_flag_img = None
+        self.letter_s_img = None
+        self.letter_g_img = None
 
     def step(self, a):
         transitions = self.P[self.s][a]
@@ -385,70 +385,85 @@ class FrozenLakeEnv(Env):
 
         if self.clock is None:
             self.clock = pygame.time.Clock()
-        if self.hole_img is None:
-            file_name = path.join(path.dirname(__file__), "img/hole.png")
-            self.hole_img = pygame.transform.scale(
-                pygame.image.load(file_name), self.cell_size
-            )
-        if self.cracked_hole_img is None:
-            file_name = path.join(path.dirname(__file__), "img/cracked_hole.png")
-            self.cracked_hole_img = pygame.transform.scale(
-                pygame.image.load(file_name), self.cell_size
-            )
-        if self.ice_img is None:
-            file_name = path.join(path.dirname(__file__), "img/ice.png")
-            self.ice_img = pygame.transform.scale(
-                pygame.image.load(file_name), self.cell_size
-            )
-        if self.goal_img is None:
-            file_name = path.join(path.dirname(__file__), "img/goal.png")
-            self.goal_img = pygame.transform.scale(
-                pygame.image.load(file_name), self.cell_size
-            )
-        if self.start_img is None:
-            file_name = path.join(path.dirname(__file__), "img/stool.png")
-            self.start_img = pygame.transform.scale(
-                pygame.image.load(file_name), self.cell_size
-            )
-        if self.elf_images is None:
-            elfs = [
-                path.join(path.dirname(__file__), "img/elf_left.png"),
-                path.join(path.dirname(__file__), "img/elf_down.png"),
-                path.join(path.dirname(__file__), "img/elf_right.png"),
-                path.join(path.dirname(__file__), "img/elf_up.png"),
-            ]
-            self.elf_images = [
-                pygame.transform.scale(pygame.image.load(f_name), self.cell_size)
-                for f_name in elfs
-            ]
 
+        if self.ice_img is None:
+
+            def load_tile(name):
+                # ice / hole / crack tiles fill an entire cell
+                file_name = path.join(path.dirname(__file__), name)
+                return pygame.transform.scale(
+                    pygame.image.load(file_name), self.cell_size
+                )
+
+            def load_overlay(name, native_size):
+                # agent / flag / letters keep their proportions (art is drawn for a
+                # 64px cell) and are placed on top of a tile rather than stretched
+                scale = min(self.cell_size) / 64
+                size = (
+                    max(1, round(native_size[0] * scale)),
+                    max(1, round(native_size[1] * scale)),
+                )
+                file_name = path.join(path.dirname(__file__), name)
+                return pygame.transform.scale(pygame.image.load(file_name), size)
+
+            self.ice_img = load_tile("img/tile_ice.png")
+            self.hole_img = load_tile("img/tile_hole.png")
+            self.ice_crack_imgs = [
+                load_tile("img/tile_ice_crack_a.png"),
+                load_tile("img/tile_ice_crack_b.png"),
+            ]
+            self.agent_img = load_overlay("img/agent.png", (40, 36))
+            self.goal_flag_img = load_overlay("img/goal_flag.png", (24, 32))
+            self.letter_s_img = load_overlay("img/letter_s.png", (12, 20))
+            self.letter_g_img = load_overlay("img/letter_g.png", (12, 20))
+        assert self.ice_crack_imgs is not None
         desc = self.desc.tolist()
         assert isinstance(desc, list), f"desc should be a list or an array, got {desc}"
+
+        def blit_overlay(img, col, row, anchor):
+            cx, cy = col * self.cell_size[0], row * self.cell_size[1]
+            w, h = img.get_size()
+            if anchor == "corner":
+                margin = round(self.cell_size[0] * 0.06)
+                self.window_surface.blit(img, (cx + margin, cy + margin))
+            elif anchor == "flag":  # planted, bottom-centered on the tile
+                x = cx + (self.cell_size[0] - w) / 2
+                y = cy + self.cell_size[1] - h - round(self.cell_size[1] * 0.12)
+                self.window_surface.blit(img, (x, y))
+            else:  # centered on the tile
+                x = cx + (self.cell_size[0] - w) / 2
+                y = cy + (self.cell_size[1] - h) / 2
+                self.window_surface.blit(img, (x, y))
+
         for y in range(self.nrow):
             for x in range(self.ncol):
                 pos = (x * self.cell_size[0], y * self.cell_size[1])
                 rect = (*pos, *self.cell_size)
+                tile = desc[y][x]
 
-                self.window_surface.blit(self.ice_img, pos)
-                if desc[y][x] == b"H":
+                if tile == b"H":
                     self.window_surface.blit(self.hole_img, pos)
-                elif desc[y][x] == b"G":
-                    self.window_surface.blit(self.goal_img, pos)
-                elif desc[y][x] == b"S":
-                    self.window_surface.blit(self.start_img, pos)
+                else:
+                    self.window_surface.blit(self.ice_img, pos)
+                    if tile == b"F":
+                        # scatter subtle cracks on some frozen tiles; deterministic
+                        # by position so the texture stays stable across frames
+                        crack = (x * 3 + y * 5) % 7
+                        if crack < len(self.ice_crack_imgs):
+                            self.window_surface.blit(self.ice_crack_imgs[crack], pos)
+                    elif tile == b"S":
+                        blit_overlay(self.letter_s_img, x, y, "corner")
+                    elif tile == b"G":
+                        blit_overlay(self.goal_flag_img, x, y, "flag")
+                        blit_overlay(self.letter_g_img, x, y, "corner")
 
                 pygame.draw.rect(self.window_surface, (180, 200, 230), rect, 1)
 
-        # paint the elf
+        # paint the agent (single sprite, no facing direction); if it fell in a
+        # hole the hole tile already covers the cell, so leave the agent hidden
         bot_row, bot_col = self.s // self.ncol, self.s % self.ncol
-        cell_rect = (bot_col * self.cell_size[0], bot_row * self.cell_size[1])
-        last_action = self.lastaction if self.lastaction is not None else 1
-        elf_img = self.elf_images[last_action]
-
-        if desc[bot_row][bot_col] == b"H":
-            self.window_surface.blit(self.cracked_hole_img, cell_rect)
-        else:
-            self.window_surface.blit(elf_img, cell_rect)
+        if desc[bot_row][bot_col] != b"H":
+            blit_overlay(self.agent_img, bot_col, bot_row, "center")
 
         if mode == "human":
             pygame.event.pump()
@@ -490,7 +505,3 @@ class FrozenLakeEnv(Env):
 
             pygame.display.quit()
             pygame.quit()
-
-
-# Elf and stool from https://franuka.itch.io/rpg-snow-tileset
-# All other assets by Mel Tillery http://www.cyaneus.com/

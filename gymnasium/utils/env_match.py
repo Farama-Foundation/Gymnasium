@@ -25,11 +25,10 @@ def check_environments_match(
         env_b: Second environment to check.
         num_steps: number of timesteps to test for, setting to 0 tests only resetting.
         seed: used the seed the reset & actions.
-        skip_obs: If `True` it does not check for equivalence of the observation.
-        skip_rew: If `True` it does not check for equivalence of the observation.
-        skip_terminal: If `True` it does not check for equivalence of the observation.
-        skip_truncated: If `True` it does not check for equivalence of the observation.
-        skip_info: If `True` it does not check for equivalence of the observation.
+        skip_obs: If `True` it does not check for equivalence of the observation space or the observations.
+        skip_rew: If `True` it does not check for equivalence of the rewards.
+        skip_terminal: If `True` it does not check for equivalence of the terminated signals.
+        skip_truncated: If `True` it does not check for equivalence of the truncated signals.
         skip_render: If `True` it does not check for equivalent renders. note:the render checked are automatically skipped if `render_mode` is not set or is "human".
         info_comparison: The options are
             If "equivalence" then checks if the `info`s are identical,
@@ -53,7 +52,7 @@ def check_environments_match(
     ]
 
     assert env_a.action_space == env_b.action_space
-    assert skip_obs or env_b.observation_space == env_b.observation_space
+    assert skip_obs or env_a.observation_space == env_b.observation_space
 
     env_a.action_space.seed(seed)
     obs_a, info_a = env_a.reset(seed=seed)
@@ -120,7 +119,7 @@ def check_environments_match(
             )
         if not skip_render:
             assert np.all(env_a.render() == env_b.render()), (
-                "stepping render is not equivalent in step = {step}"
+                f"stepping render is not equivalent in step = {step}"
             )
 
         if terminal_a or truncated_a or terminal_b or truncated_b:
@@ -148,5 +147,5 @@ def check_environments_match(
                 )
             if not skip_render:
                 assert np.all(env_a.render() == env_b.render()), (
-                    "resetting render is not equivalent in step = {step}"
+                    f"resetting render is not equivalent in step = {step}"
                 )
