@@ -10,7 +10,20 @@ from numpy.typing import NDArray
 
 import gymnasium as gym
 from gymnasium.spaces import Box, Discrete
+from gymnasium.spaces.dict import Dict
 from gymnasium.spaces.space import Space
+from gymnasium.spaces.tuple import Tuple
+
+
+def _advance_rng(space: Space[Any]) -> None:
+    """Advance the generators copied by batch_space, including container children."""
+    space.np_random.random()
+    if isinstance(space, Dict):
+        for subspace in space.spaces.values():
+            _advance_rng(subspace)
+    elif isinstance(space, Tuple):
+        for subspace in space.spaces:
+            _advance_rng(subspace)
 
 
 class GraphInstance(NamedTuple):
@@ -234,9 +247,9 @@ class Graph(Space[GraphInstance]):
             self.node_space, num_nodes
         )
         sampled_nodes = sample_batch_node_space.sample(**node_sample_kwargs)
-        # The batch_space function deepcopies the node_space's np_random therefore to avoid generating the same samples each time
-        #   we need to get the updated np_random
-        self.node_space.np_random.random()
+        # batch_space copies child generators too, so advancing only a container's
+        # generator would leave its features identical across samples.
+        _advance_rng(self.node_space)
 
         # It is valid to sample one node and one edge (self loop)
         if num_nodes >= 1 and num_edges >= 1 and self.edge_space is not None:
@@ -245,7 +258,7 @@ class Graph(Space[GraphInstance]):
             )
 
             sampled_edges = sample_batch_edge_space.sample(**edge_sample_kwargs)
-            self.edge_space.np_random.random()
+            _advance_rng(self.edge_space)
         else:
             sampled_edges = None
 
