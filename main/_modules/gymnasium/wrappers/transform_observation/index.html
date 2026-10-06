@@ -1100,7 +1100,9 @@
 <span class="sd">                observation dictionary will contain both the original</span>
 <span class="sd">                observations and the pixel observations.</span>
 <span class="sd">            render_key: Optional custom string specifying the pixel key. Defaults to "pixels"</span>
-<span class="sd">            obs_key: Optional custom string specifying the obs key. Defaults to "state"</span>
+<span class="sd">            obs_key: Optional custom string specifying the obs key. Defaults to "state".</span>
+<span class="sd">                Must differ from ``render_key`` when ``render_only=False`` and the</span>
+<span class="sd">                original observation space is not a :class:`spaces.Dict`.</span>
 <span class="sd">        """</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -1143,6 +1145,10 @@
                 <span class="n">observation_space</span><span class="o">=</span><span class="n">obs_space</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">render_key</span> <span class="o">==</span> <span class="n">obs_key</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"AddRenderObservation render_key and obs_key must be different, got </span><span class="si">{</span><span class="n">render_key</span><span class="si">!r}</span><span class="s2"> for both"</span>
+                <span class="p">)</span>
             <span class="n">obs_space</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
                 <span class="p">{</span><span class="n">obs_key</span><span class="p">:</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span> <span class="n">render_key</span><span class="p">:</span> <span class="n">pixel_space</span><span class="p">}</span>
             <span class="p">)</span>

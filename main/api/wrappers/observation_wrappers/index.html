@@ -862,7 +862,9 @@ observation will only include pixels. If <code class="docutils literal notransla
 observation dictionary will contain both the original
 observations and the pixel observations.</p></li>
 <li><p><strong>render_key</strong> – Optional custom string specifying the pixel key. Defaults to “pixels”</p></li>
-<li><p><strong>obs_key</strong> – Optional custom string specifying the obs key. Defaults to “state”</p></li>
+<li><p><strong>obs_key</strong> – Optional custom string specifying the obs key. Defaults to “state”.
+Must differ from <code class="docutils literal notranslate"><span class="pre">render_key</span></code> when <code class="docutils literal notranslate"><span class="pre">render_only=False</span></code> and the
+original observation space is not a <code class="xref py py-class docutils literal notranslate"><span class="pre">spaces.Dict</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
