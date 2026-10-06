@@ -11,6 +11,12 @@ import numpy as np
 
 from gymnasium import spaces
 from gymnasium.envs.functional_jax_env import FunctionalJaxEnv
+from gymnasium.envs.toy_text.cliffwalking import (
+    AGENT_OFFSET,
+    ART_CELL_SIZE,
+    FLAG_OFFSET,
+    LETTER_OFFSET,
+)
 from gymnasium.error import DependencyNotInstalled
 from gymnasium.experimental.functional import ActType, FuncEnv
 from gymnasium.utils import EzPickle
@@ -29,14 +35,12 @@ class RenderStateType(NamedTuple):
     nS: int
     cell_size: tuple[int, int]
     cliff: np.ndarray
-    elf_images: tuple[pygame.Surface, pygame.Surface, pygame.Surface, pygame.Surface]
+    agent_img: pygame.Surface
     start_img: pygame.Surface
     goal_img: pygame.Surface
-    bg_imgs: tuple[str, str]
-    mountain_bg_img: tuple[pygame.Surface, pygame.Surface]
-    near_cliff_imgs: tuple[str, str]
-    near_cliff_img: tuple[pygame.Surface, pygame.Surface]
-    cliff_img: pygame.Surface
+    goal_flag_img: pygame.Surface
+    ground_img: pygame.Surface
+    cliff_imgs: tuple[pygame.Surface, pygame.Surface, pygame.Surface, pygame.Surface]
 
 
 # RenderStateType =RenderState #Tuple["pygame.Surface", Tuple[int, int], int, Tuple[int, int], "numpy.ndarray", Tuple["pygame.Surface", "pygame.Surface", "pygame.Surface", "pygame.Surface"], "pygame.Surface", "pygame.Surface", Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], Tuple[str, str], Tuple["pygame.surface", "pygame.surface"], "pygame.surface"]
@@ -226,7 +230,7 @@ class CliffWalkingFunctional(
                 'pygame is not installed, run `pip install "gymnasium[classic_control]"`'
             ) from e
 
-        cell_size = (60, 60)
+        cell_size = (64, 64)
         window_size = (
             4 * cell_size[0],
             12 * cell_size[1],
@@ -241,47 +245,14 @@ class CliffWalkingFunctional(
         cliff = np.zeros(shape, dtype=bool)
         cliff[3, 1:-1] = True
 
-        hikers = [
-            path.join(path.dirname(__file__), "../toy_text/img/elf_up.png"),
-            path.join(path.dirname(__file__), "../toy_text/img/elf_right.png"),
-            path.join(path.dirname(__file__), "../toy_text/img/elf_down.png"),
-            path.join(path.dirname(__file__), "../toy_text/img/elf_left.png"),
-        ]
+        scale = cell_size[0] / ART_CELL_SIZE
 
-        cell_size = (60, 60)
-
-        elf_images = [
-            pygame.transform.scale(pygame.image.load(f_name), cell_size)
-            for f_name in hikers
-        ]
-        file_name = path.join(path.dirname(__file__), "../toy_text/img/stool.png")
-        start_img = pygame.transform.scale(pygame.image.load(file_name), cell_size)
-        file_name = path.join(path.dirname(__file__), "../toy_text/img/cookie.png")
-        goal_img = pygame.transform.scale(pygame.image.load(file_name), cell_size)
-        bg_imgs = [
-            path.join(path.dirname(__file__), "../toy_text/img/mountain_bg1.png"),
-            path.join(path.dirname(__file__), "../toy_text/img/mountain_bg2.png"),
-        ]
-        mountain_bg_img = [
-            pygame.transform.scale(pygame.image.load(f_name), cell_size)
-            for f_name in bg_imgs
-        ]
-        near_cliff_imgs = [
-            path.join(
-                path.dirname(__file__), "../toy_text/img/mountain_near-cliff1.png"
-            ),
-            path.join(
-                path.dirname(__file__), "../toy_text/img/mountain_near-cliff2.png"
-            ),
-        ]
-        near_cliff_img = [
-            pygame.transform.scale(pygame.image.load(f_name), cell_size)
-            for f_name in near_cliff_imgs
-        ]
-        file_name = path.join(
-            path.dirname(__file__), "../toy_text/img/mountain_cliff.png"
-        )
-        cliff_img = pygame.transform.scale(pygame.image.load(file_name), cell_size)
+        def load(name):
+            img = pygame.image.load(
+                path.join(path.dirname(__file__), "../toy_text/img/cliff_walking", name)
+            )
+            size = (round(img.get_width() * scale), round(img.get_height() * scale))
+            return pygame.transform.scale(img, size)
 
         return RenderStateType(
             screen=screen,
@@ -289,14 +260,15 @@ class CliffWalkingFunctional(
             nS=nS,
             cell_size=cell_size,
             cliff=cliff,
-            elf_images=tuple(elf_images),
-            start_img=start_img,
-            goal_img=goal_img,
-            bg_imgs=tuple(bg_imgs),
-            mountain_bg_img=tuple(mountain_bg_img),
-            near_cliff_imgs=tuple(near_cliff_imgs),
-            near_cliff_img=tuple(near_cliff_img),
-            cliff_img=cliff_img,
+            agent_img=load("agent.png"),
+            start_img=load("letter_s.png"),
+            goal_img=load("letter_g.png"),
+            goal_flag_img=load("goal_flag.png"),
+            ground_img=load("tile_ground.png"),
+            cliff_imgs=tuple(
+                load(f"tile_cliff_{name}.png")
+                for name in ("left", "mid_a", "mid_b", "right")
+            ),
         )
 
     def render_image(
@@ -315,34 +287,42 @@ class CliffWalkingFunctional(
             nS,
             cell_size,
             cliff,
-            elf_images,
+            agent_img,
             start_img,
             goal_img,
-            bg_imgs,
-            mountain_bg_img,
-            near_cliff_imgs,
-            near_cliff_img,
-            cliff_img,
+            goal_flag_img,
+            ground_img,
+            cliff_imgs,
         ) = render_state
+
+        scale = cell_size[0] / ART_CELL_SIZE
+        cliff_left, cliff_mid_a, cliff_mid_b, cliff_right = cliff_imgs
+        cliff_cols = np.flatnonzero(cliff.any(axis=0))
+        letter_dx, letter_dy = (round(v * scale) for v in LETTER_OFFSET)
+        flag_dx, flag_dy = (round(v * scale) for v in FLAG_OFFSET)
+        agent_dx, agent_dy = (round(v * scale) for v in AGENT_OFFSET)
 
         for s in range(nS):
             row, col = np.unravel_index(s, shape)
             pos = (col * cell_size[0], row * cell_size[1])
-            check_board_mask = row % 2 ^ col % 2
-            window_surface.blit(mountain_bg_img[check_board_mask], pos)
+            window_surface.blit(ground_img, pos)
 
             if cliff[row, col]:
-                window_surface.blit(cliff_img, pos)
-            if row < shape[0] - 1 and cliff[row + 1, col]:
-                window_surface.blit(near_cliff_img[check_board_mask], pos)
+                if col == cliff_cols[0]:
+                    tile = cliff_left
+                elif col == cliff_cols[-1]:
+                    tile = cliff_right
+                else:
+                    tile = cliff_mid_a if col % 2 == 0 else cliff_mid_b
+                window_surface.blit(tile, pos)
+            letter_pos = (pos[0] + letter_dx, pos[1] + letter_dy)
             if s == 36:
-                window_surface.blit(start_img, pos)
+                window_surface.blit(start_img, letter_pos)
             if s == nS - 1:
-                window_surface.blit(goal_img, pos)
+                window_surface.blit(goal_img, letter_pos)
+                window_surface.blit(goal_flag_img, (pos[0] + flag_dx, pos[1] + flag_dy))
             if s == state.player_position[0] * 12 + state.player_position[1]:
-                elf_pos = (pos[0], pos[1] - 0.1 * cell_size[1])
-                last_action = state.last_action if state.last_action != -1 else 2
-                window_surface.blit(elf_images[last_action], elf_pos)
+                window_surface.blit(agent_img, (pos[0] + agent_dx, pos[1] + agent_dy))
 
         return render_state, np.transpose(
             np.array(pygame.surfarray.pixels3d(window_surface)), axes=(1, 0, 2)
