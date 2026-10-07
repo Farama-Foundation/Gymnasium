@@ -137,20 +137,10 @@ def test_equivalence_with_wrapper_autoreset_modes(
     num_steps: int = 50,
     max_episode_steps: int = 7,
 ):
-    """With a single sub-environment, the vector wrapper should exactly match `NormalizeObservation` within the vector env."""
-    if autoreset_mode == AutoresetMode.SAME_STEP:
-        # `info["final_obs"]` isn't normalized, therefore, same-step autoreset is rejected
-        with pytest.raises(ValueError, match="Expected autoreset_mode to be"):
-            wrappers.vector.NormalizeObservation(
-                gym.make_vec(
-                    env_id,
-                    num_envs=1,
-                    vectorization_mode="sync",
-                    vector_kwargs={"autoreset_mode": autoreset_mode},
-                )
-            )
-        return
+    """With a single sub-environment, the vector wrapper should exactly match `NormalizeObservation` within the vector env.
 
+    For same-step autoreset, this includes `info["final_obs"]` and the final observations being included in the statistics.
+    """
     vec_env = wrappers.vector.NormalizeObservation(
         gym.make_vec(
             env_id,
@@ -177,10 +167,13 @@ def test_equivalence_with_wrapper_autoreset_modes(
     num_episode_ends = 0
     for _ in range(num_steps):
         action = vec_env.action_space.sample()
-        vec_obs, vec_rew, vec_term, vec_trunc, _ = vec_env.step(action)
-        per_env_obs, per_env_rew, per_env_term, per_env_trunc, _ = per_env.step(action)
+        vec_obs, vec_rew, vec_term, vec_trunc, vec_info = vec_env.step(action)
+        per_env_obs, per_env_rew, per_env_term, per_env_trunc, per_env_info = (
+            per_env.step(action)
+        )
 
         assert data_equivalence(vec_obs, per_env_obs)
+        assert data_equivalence(vec_info, per_env_info)
         assert data_equivalence(vec_rew, per_env_rew)
         assert data_equivalence(vec_term, per_env_term)
         assert data_equivalence(vec_trunc, per_env_trunc)

@@ -10,8 +10,9 @@ Vector wrappers don't all support every [autoreset mode](https://farama.org/Vect
 
 | Wrapper | Next-step | Same-step | Disabled |
 |---------|:---------:|:---------:|:--------:|
-| Observation wrappers (`VectorObservationWrapper` subclasses, including `VectorizeTransformObservation`) | ✓ | ✗ (`info["final_obs"]` is not transformed) | ✓ |
-| `NormalizeObservation` | ✓ | ✗ | ✓ (only resets of all sub-environments, partial `reset_mask` resets are rejected) |
+| `VectorizeTransformObservation` and its subclasses (`FilterObservation`, `FlattenObservation`, `GrayscaleObservation`, `ResizeObservation`, `ReshapeObservation`, `RescaleObservation`, `DtypeObservation`) | ✓ | ✓ (`info["final_obs"]` is transformed for each sub-environment) | ✓ |
+| `TransformObservation` and other `VectorObservationWrapper` subclasses | ✓ | ✗ (`info["final_obs"]` is not transformed) | ✓ |
+| `NormalizeObservation` | ✓ | ✓ (`info["final_obs"]` is normalized and included in the statistics) | ✓ (only resets of all sub-environments, partial `reset_mask` resets are rejected) |
 | Action wrappers (`VectorActionWrapper` subclasses, including `VectorizeTransformAction`) | ✓ | ✓ | ✓ |
 | Reward wrappers (`VectorRewardWrapper` subclasses, including `VectorizeTransformReward`) | ✓ | ✓ | ✓ |
 | `NormalizeReward` | ✓ | ✓ | ✓ |

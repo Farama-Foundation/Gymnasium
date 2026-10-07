@@ -106,10 +106,12 @@ def check_vector_wrapper_equivalence(
     `max_episode_steps` is kept small so every sub-environment is reset (via autoreset or `reset_mask`)
     multiple times within `num_steps`, exercising the autoreset code paths of each mode.
     """
-    if autoreset_mode == AutoresetMode.SAME_STEP and issubclass(
-        vector_wrapper, VectorObservationWrapper
+    if (
+        autoreset_mode == AutoresetMode.SAME_STEP
+        and issubclass(vector_wrapper, VectorObservationWrapper)
+        and not vector_wrapper.supports_same_step_autoreset
     ):
-        # Vector observation wrappers don't transform `info["final_obs"]`, therefore, reject same-step autoreset
+        # Vector observation wrappers that don't transform `info["final_obs"]` reject same-step autoreset
         with pytest.raises(ValueError, match="Expected autoreset_mode to be"):
             vector_wrapper(
                 gym.make_vec(

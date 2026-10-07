@@ -153,6 +153,9 @@ class VectorizeTransformObservation(
             """Constructor for the fake environment."""
             self.observation_space = observation_space
 
+    # `info["final_obs"]` is individually transformed by `step`
+    supports_same_step_autoreset = True
+
     autoreset_mode: AutoresetMode
     wrapper: transform_observation.TransformObservation
     single_observation_space: Space

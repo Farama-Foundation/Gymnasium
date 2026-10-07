@@ -546,7 +546,12 @@ class VectorObservationWrapper(
     """Wraps the vectorized environment to allow a modular transformation of the observation.
 
     Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.
+
+    By default, same-step autoreset is not supported as ``info["final_obs"]`` is not transformed.
+    Subclasses that transform ``info["final_obs"]`` can set ``supports_same_step_autoreset = True``.
     """
+
+    supports_same_step_autoreset: bool = False
 
     def __init__(self, env: VectorEnv[ObsType, ActType, ArrayType]) -> None:
         """Vector observation wrapper that batch transforms observations.
@@ -560,10 +565,16 @@ class VectorObservationWrapper(
                 f"Vector environment ({env}) is missing `autoreset_mode` metadata key."
             )
         else:
-            if env.metadata["autoreset_mode"] not in (
-                AutoresetMode.NEXT_STEP,
-                AutoresetMode.DISABLED,
-            ):
+            supported_modes = (
+                (
+                    AutoresetMode.NEXT_STEP,
+                    AutoresetMode.SAME_STEP,
+                    AutoresetMode.DISABLED,
+                )
+                if self.supports_same_step_autoreset
+                else (AutoresetMode.NEXT_STEP, AutoresetMode.DISABLED)
+            )
+            if env.metadata["autoreset_mode"] not in supported_modes:
                 raise ValueError(
                     f"Expected autoreset_mode to be NEXT_STEP or DISABLED, got {env.metadata['autoreset_mode']}"
                 )
