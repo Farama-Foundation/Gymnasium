@@ -11,7 +11,7 @@ import gymnasium as gym
 from gymnasium.core import ObsType
 from gymnasium.spaces import Discrete
 from gymnasium.utils.env_checker import data_equivalence
-from gymnasium.vector import VectorEnv
+from gymnasium.vector import AutoresetMode, VectorEnv
 from gymnasium.wrappers.vector import DictInfoToList
 
 
@@ -242,3 +242,84 @@ def test_errors(vector_infos):
 
     with pytest.raises(AssertionError):
         env.reset(options=vector_infos)
+
+
+def _sub_env_info(vector_info: dict[str, Any], i: int) -> dict[str, Any]:
+    """Extracts the info of the `i`-th sub-environment from a vector info using the `_key` masks."""
+    sub_env_info = {}
+    for key, value in vector_info.items():
+        if key.startswith("_") or not vector_info[f"_{key}"][i]:
+            continue
+        sub_env_info[key] = (
+            _sub_env_info(value, i) if isinstance(value, dict) else value[i]
+        )
+    return sub_env_info
+
+
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
+@pytest.mark.parametrize("num_envs", (1, 3))
+def test_autoreset_mode_equivalence(
+    autoreset_mode: AutoresetMode,
+    num_envs: int,
+    env_id: str = "CartPole-v1",
+    num_steps: int = 50,
+    max_episode_steps: int = 7,
+):
+    """Checks the list infos match the dict infos for each autoreset mode, including `final_obs` / `final_info` and partial resets."""
+    make_kwargs = dict(
+        id=env_id,
+        num_envs=num_envs,
+        vectorization_mode="sync",
+        vector_kwargs={"autoreset_mode": autoreset_mode},
+        # Adds nested dict info on episode end
+        wrappers=(gym.wrappers.RecordEpisodeStatistics,),
+        max_episode_steps=max_episode_steps,
+    )
+    list_env = DictInfoToList(gym.make_vec(**make_kwargs))
+    dict_env = gym.make_vec(**make_kwargs)
+
+    _, list_info = list_env.reset(seed=123)
+    _, dict_info = dict_env.reset(seed=123)
+    assert isinstance(list_info, list) and len(list_info) == num_envs
+    for i in range(num_envs):
+        assert data_equivalence(list_info[i], _sub_env_info(dict_info, i))
+
+    list_env.action_space.seed(123)
+    num_episode_ends = 0
+    for _ in range(num_steps):
+        action = list_env.action_space.sample()
+        _, _, terminations, truncations, list_info = list_env.step(action)
+        _, _, _, _, dict_info = dict_env.step(action)
+
+        dones = np.logical_or(terminations, truncations)
+        num_episode_ends += int(np.sum(dones))
+
+        assert isinstance(list_info, list) and len(list_info) == num_envs
+        for i in range(num_envs):
+            # remove the episode time as it isn't deterministic
+            list_sub_info = list_info[i]
+            dict_sub_info = _sub_env_info(dict_info, i)
+            for sub_info in (
+                list_sub_info,
+                dict_sub_info,
+                list_sub_info.get("final_info", {}),
+                dict_sub_info.get("final_info", {}),
+            ):
+                if "episode" in sub_info:
+                    sub_info["episode"].pop("t")
+            assert data_equivalence(list_sub_info, dict_sub_info)
+
+            if autoreset_mode == AutoresetMode.SAME_STEP:
+                assert ("final_obs" in list_info[i]) == dones[i]
+                assert ("final_info" in list_info[i]) == dones[i]
+
+        if autoreset_mode == AutoresetMode.DISABLED and np.any(dones):
+            _, list_info = list_env.reset(options={"reset_mask": dones})
+            _, dict_info = dict_env.reset(options={"reset_mask": dones})
+            for i in range(num_envs):
+                assert data_equivalence(list_info[i], _sub_env_info(dict_info, i))
+
+    assert num_episode_ends >= num_envs * (num_steps // (max_episode_steps + 1))
+
+    list_env.close()
+    dict_env.close()

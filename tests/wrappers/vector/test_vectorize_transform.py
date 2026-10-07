@@ -1,10 +1,14 @@
 from functools import partial
 
 import numpy as np
+import pytest
 
 import gymnasium as gym
-from gymnasium.vector import SyncVectorEnv
+from gymnasium.vector import AutoresetMode, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
+from tests.wrappers.vector.test_vector_wrappers import (
+    check_vector_wrapper_equivalence,
+)
 
 
 def test_vectorize_box_to_dict_action():
@@ -50,3 +54,79 @@ def test_vectorize_dict_to_box_obs():
     obs, _, _, _, _ = envs.step(envs.action_space.sample())
     assert obs in envs.observation_space
     envs.close()
+
+
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
+@pytest.mark.parametrize("num_envs", (1, 3))
+def test_vectorize_transform_observation_equivalence(
+    autoreset_mode: AutoresetMode, num_envs: int
+):
+    check_vector_wrapper_equivalence(
+        autoreset_mode,
+        num_envs,
+        "CartPole-v1",
+        gym.wrappers.vector.VectorizeTransformObservation,
+        {
+            "wrapper": gym.wrappers.TransformObservation,
+            "func": lambda obs: 2 * obs + 1,
+            "observation_space": None,
+        },
+        gym.wrappers.TransformObservation,
+        {"func": lambda obs: 2 * obs + 1, "observation_space": None},
+    )
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="When the action space is unchanged, `VectorizeTransformAction` writes the transformed actions into the input `actions` array, mutating the caller's actions",
+)
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
+@pytest.mark.parametrize("num_envs", (1, 3))
+def test_vectorize_transform_action_equivalence(
+    autoreset_mode: AutoresetMode, num_envs: int
+):
+    check_vector_wrapper_equivalence(
+        autoreset_mode,
+        num_envs,
+        "MountainCarContinuous-v0",
+        gym.wrappers.vector.VectorizeTransformAction,
+        {
+            "wrapper": gym.wrappers.TransformAction,
+            "func": lambda action: 0.5 * action,
+            "action_space": None,
+        },
+        gym.wrappers.TransformAction,
+        {"func": lambda action: 0.5 * action, "action_space": None},
+    )
+
+
+@pytest.mark.parametrize(
+    "autoreset_mode",
+    [
+        pytest.param(
+            AutoresetMode.NEXT_STEP,
+            marks=pytest.mark.xfail(
+                strict=True,
+                reason="The vector wrapper applies `func` to the zero reward of the next-step autoreset step, whereas the sub-environment wrapper is never stepped",
+            ),
+        ),
+        AutoresetMode.SAME_STEP,
+        AutoresetMode.DISABLED,
+    ],
+)
+@pytest.mark.parametrize("num_envs", (1, 3))
+def test_vectorize_transform_reward_equivalence(
+    autoreset_mode: AutoresetMode, num_envs: int
+):
+    check_vector_wrapper_equivalence(
+        autoreset_mode,
+        num_envs,
+        "CartPole-v1",
+        gym.wrappers.vector.VectorizeTransformReward,
+        {
+            "wrapper": gym.wrappers.TransformReward,
+            "func": lambda reward: 2 * reward - 0.5,
+        },
+        gym.wrappers.TransformReward,
+        {"func": lambda reward: 2 * reward - 0.5},
+    )

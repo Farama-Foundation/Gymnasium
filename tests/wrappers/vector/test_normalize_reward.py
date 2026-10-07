@@ -71,20 +71,57 @@ def test_against_wrapper(n_envs=3, n_steps=100, rtol=0.1, atol=0):
     assert np.allclose(env.return_rms.var, vec_env.return_rms.var, rtol=rtol, atol=atol)
 
 
-def test_equivalence_with_wrapper(n_steps=50):
+@pytest.mark.parametrize(
+    "autoreset_mode",
+    [
+        AutoresetMode.NEXT_STEP,
+        pytest.param(
+            AutoresetMode.SAME_STEP,
+            marks=pytest.mark.xfail(
+                strict=True,
+                reason="The vector wrapper zeros the accumulated return when an episode ends (same-step) or on `reset` (disabled), whereas `NormalizeReward` carries `gamma * r_T` into the next episode",
+            ),
+        ),
+        pytest.param(
+            AutoresetMode.DISABLED,
+            marks=pytest.mark.xfail(
+                strict=True,
+                reason="The vector wrapper zeros the accumulated return when an episode ends (same-step) or on `reset` (disabled), whereas `NormalizeReward` carries `gamma * r_T` into the next episode",
+            ),
+        ),
+    ],
+)
+def test_equivalence_with_wrapper(autoreset_mode: AutoresetMode, n_steps=50):
+    """With a single sub-environment, the vector wrapper should exactly match `NormalizeReward` within the vector env."""
+
     def thunk_with_normalize():
         return wrappers.NormalizeReward(thunk())
 
-    per_env = SyncVectorEnv([thunk_with_normalize])
+    per_env = SyncVectorEnv([thunk_with_normalize], autoreset_mode=autoreset_mode)
     per_env.reset(seed=42)
-    for _ in range(n_steps):
-        per_env.step(per_env.action_space.sample())
 
-    vec_env = SyncVectorEnv([thunk])
+    vec_env = SyncVectorEnv([thunk], autoreset_mode=autoreset_mode)
     vec_env = wrappers.vector.NormalizeReward(vec_env)
     vec_env.reset(seed=42)
+
+    num_episode_ends = 0
     for _ in range(n_steps):
-        vec_env.step(vec_env.action_space.sample())
+        action = vec_env.action_space.sample()
+        _, per_env_rew, per_env_term, per_env_trunc, _ = per_env.step(action)
+        _, vec_rew, vec_term, vec_trunc, _ = vec_env.step(action)
+
+        assert np.allclose(vec_rew, per_env_rew, rtol=1e-4)
+        assert np.all(vec_term == per_env_term)
+        assert np.all(vec_trunc == per_env_trunc)
+
+        dones = np.logical_or(vec_term, vec_trunc)
+        num_episode_ends += int(np.sum(dones))
+        if autoreset_mode == AutoresetMode.DISABLED and np.any(dones):
+            per_env.reset(options={"reset_mask": dones})
+            vec_env.reset(options={"reset_mask": dones})
+
+    # The environment terminates every 10 steps
+    assert num_episode_ends >= n_steps // 11
 
     assert vec_env.return_rms.count == per_env.envs[0].return_rms.count
     assert np.allclose(
