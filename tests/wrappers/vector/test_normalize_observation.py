@@ -130,20 +130,7 @@ def test_non_positive_epsilon_is_rejected(epsilon):
     vec_env.close()
 
 
-@pytest.mark.parametrize(
-    "autoreset_mode",
-    [
-        AutoresetMode.NEXT_STEP,
-        AutoresetMode.SAME_STEP,
-        pytest.param(
-            AutoresetMode.DISABLED,
-            marks=pytest.mark.xfail(
-                strict=True,
-                reason="`NormalizeObservation` rejects `AutoresetMode.DISABLED` even though `reset` supports a full `reset_mask`",
-            ),
-        ),
-    ],
-)
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
 def test_equivalence_with_wrapper_autoreset_modes(
     autoreset_mode: AutoresetMode,
     env_id: str = "CartPole-v1",
@@ -214,10 +201,6 @@ def test_equivalence_with_wrapper_autoreset_modes(
     per_env.close()
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="`NormalizeObservation` rejects `AutoresetMode.DISABLED` even though `reset` supports a full `reset_mask`",
-)
 def test_disabled_autoreset_rejects_partial_reset(n_envs: int = 2):
     vec_env = wrappers.vector.NormalizeObservation(
         SyncVectorEnv(

@@ -76,10 +76,6 @@ def test_vectorize_transform_observation_equivalence(
     )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="When the action space is unchanged, `VectorizeTransformAction` writes the transformed actions into the input `actions` array, mutating the caller's actions",
-)
 @pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
 @pytest.mark.parametrize("num_envs", (1, 3))
 def test_vectorize_transform_action_equivalence(
@@ -100,20 +96,7 @@ def test_vectorize_transform_action_equivalence(
     )
 
 
-@pytest.mark.parametrize(
-    "autoreset_mode",
-    [
-        pytest.param(
-            AutoresetMode.NEXT_STEP,
-            marks=pytest.mark.xfail(
-                strict=True,
-                reason="The vector wrapper applies `func` to the zero reward of the next-step autoreset step, whereas the sub-environment wrapper is never stepped",
-            ),
-        ),
-        AutoresetMode.SAME_STEP,
-        AutoresetMode.DISABLED,
-    ],
-)
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
 @pytest.mark.parametrize("num_envs", (1, 3))
 def test_vectorize_transform_reward_equivalence(
     autoreset_mode: AutoresetMode, num_envs: int

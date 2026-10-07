@@ -102,9 +102,12 @@ class NormalizeObservation(
                 f"{self} is missing `autoreset_mode` data. Assuming that the vector environment it follows the `NextStep` autoreset api or autoreset is disabled. Read https://farama.org/Vector-Autoreset-Mode for more details."
             )
         else:
-            if self.env.metadata["autoreset_mode"] not in {AutoresetMode.NEXT_STEP}:
+            if self.env.metadata["autoreset_mode"] not in {
+                AutoresetMode.NEXT_STEP,
+                AutoresetMode.DISABLED,
+            }:
                 raise ValueError(
-                    f"Expected env.metadata['autoreset_mode'] to be AutoresetMode.NEXT_STEP, got {self.env.metadata['autoreset_mode']}"
+                    f"Expected env.metadata['autoreset_mode'] to be AutoresetMode.NEXT_STEP or AutoresetMode.DISABLED, got {self.env.metadata['autoreset_mode']}"
                 )
 
         new_single_space = Box(

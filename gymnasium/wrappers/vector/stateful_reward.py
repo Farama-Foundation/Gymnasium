@@ -136,9 +136,14 @@ class NormalizeReward(
         seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
-        """Resets the environment and clears accumulated reward tracking state."""
-        self.accumulated_reward[:] = 0
-        self._prev_dones[:] = 0
+        """Resets the environment and clears the accumulated reward tracking state of the reset sub-environments."""
+        if options is not None and "reset_mask" in options:
+            reset_mask = options["reset_mask"]
+            self.accumulated_reward[reset_mask] = 0
+            self._prev_dones[reset_mask] = 0
+        else:
+            self.accumulated_reward[:] = 0
+            self._prev_dones[:] = 0
         return super().reset(seed=seed, options=options)
 
     def step(

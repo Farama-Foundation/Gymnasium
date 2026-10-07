@@ -10,16 +10,8 @@ from tests.testing_env import GenericTestEnv
 @pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
 @pytest.mark.parametrize("num_envs", (1, 3))
 def test_record_episode_statistics(
-    autoreset_mode, num_envs, request, env_id="CartPole-v1", num_steps=100
+    autoreset_mode, num_envs, env_id="CartPole-v1", num_steps=100
 ):
-    if autoreset_mode == AutoresetMode.DISABLED and num_envs > 1:
-        request.applymarker(
-            pytest.mark.xfail(
-                strict=True,
-                reason="`SyncVectorEnv.reset` pops `reset_mask` from the shared `options` dict, so the wrapper resets every sub-environment's statistics on a partial reset",
-            )
-        )
-
     wrapper_vector_env: VectorEnv = gym.wrappers.vector.RecordEpisodeStatistics(
         gym.make_vec(
             id=env_id,

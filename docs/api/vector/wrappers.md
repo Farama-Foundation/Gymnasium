@@ -4,6 +4,25 @@ title: Vector Wrappers
 
 # Wrappers
 
+## Autoreset mode support
+
+Vector wrappers don't all support every [autoreset mode](https://farama.org/Vector-Autoreset-Mode), read from the wrapped environment's `metadata["autoreset_mode"]`. Wrappers raise a `ValueError` at construction for an unsupported mode.
+
+| Wrapper | Next-step | Same-step | Disabled |
+|---------|:---------:|:---------:|:--------:|
+| Observation wrappers (`VectorObservationWrapper` subclasses, including `VectorizeTransformObservation`) | ✓ | ✗ (`info["final_obs"]` is not transformed) | ✓ |
+| `NormalizeObservation` | ✓ | ✗ | ✓ (only resets of all sub-environments, partial `reset_mask` resets are rejected) |
+| Action wrappers (`VectorActionWrapper` subclasses, including `VectorizeTransformAction`) | ✓ | ✓ | ✓ |
+| Reward wrappers (`VectorRewardWrapper` subclasses, including `VectorizeTransformReward`) | ✓ | ✓ | ✓ |
+| `NormalizeReward` | ✓ | ✓ | ✓ |
+| `RecordEpisodeStatistics` | ✓ | ✓ | ✓ |
+| `DictInfoToList` | ✓ | ✓ | ✓ |
+| `RecordVideo` | ✓ | ✓ (recorded episodes don't include the final frame) | ✓ |
+
+Unlike the single-environment `NormalizeReward`, the vector `NormalizeReward` restarts a sub-environment's accumulated return once it is reset, i.e., at the end of an episode for same-step autoreset and on `reset` for disabled autoreset.
+
+For next-step autoreset, reward wrappers return the reward of a sub-environment's autoreset step unmodified, as no environment step occurs.
+
 ```{eval-rst}
 .. autoclass:: gymnasium.vector.VectorWrapper
 
