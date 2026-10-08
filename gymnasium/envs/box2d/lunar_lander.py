@@ -779,6 +779,22 @@ class LunarLander(gym.Env, EzPickle):
                 np.array(pygame.surfarray.pixels3d(self.surf)), axes=(1, 0, 2)
             )
 
+    def get_keys_to_action(self):
+        """Return the default keyboard mapping for the discrete action space.
+
+        Maps the A, W and D keys to firing the left, main and right engines.
+        """
+        if not isinstance(self.action_space, spaces.Discrete):
+            raise TypeError(
+                "Keyboard control is only available for the discrete version of LunarLander, "
+                'use gym.make("LunarLander-v3") without continuous=True.'
+            )
+        return {
+            (ord("a"),): 1,  # fire left orientation engine
+            (ord("w"),): 2,  # fire main engine
+            (ord("d"),): 3,  # fire right orientation engine
+        }
+
     def close(self):
         if self.screen is not None:
             import pygame

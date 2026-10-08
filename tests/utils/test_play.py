@@ -87,6 +87,32 @@ def test_play_relevant_keys_with_env_attribute():
     assert game.relevant_keys == {RELEVANT_KEY_1, RELEVANT_KEY_2}
 
 
+def test_lunar_lander_default_keys_to_action():
+    """LunarLander provides an explicit keyboard mapping for `play`."""
+    env = gym.make("LunarLander-v3", render_mode="rgb_array")
+    keys_to_action = env.get_wrapper_attr("get_keys_to_action")()
+
+    assert isinstance(keys_to_action, dict)
+    for key_combination, action in keys_to_action.items():
+        assert all(isinstance(key, int) for key in key_combination)
+        assert action in env.action_space
+
+    env.reset()
+    game = PlayableGame(env)
+    assert game.relevant_keys == {ord("a"), ord("w"), ord("d")}
+    env.close()
+
+
+def test_lunar_lander_continuous_no_keys_to_action():
+    """LunarLanderContinuous has no keyboard mapping as its actions are not discrete."""
+    env = gym.make("LunarLanderContinuous-v3", render_mode="rgb_array")
+
+    with pytest.raises(TypeError):
+        env.get_wrapper_attr("get_keys_to_action")()
+
+    env.close()
+
+
 def test_video_size_no_zoom():
     env = PlayableEnv(render_mode="rgb_array")
     game = PlayableGame(env, dummy_keys_to_action())
