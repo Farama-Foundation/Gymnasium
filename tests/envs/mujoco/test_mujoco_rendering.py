@@ -59,6 +59,35 @@ def test_offscreen_viewer_custom_dimensions(
     viewer.close()
 
 
+def test_offscreen_viewer_grows_framebuffer(model: mujoco.MjModel, data: mujoco.MjData):
+    """Test that the offscreen viewer grows the framebuffer to fit the viewport."""
+    # request a viewport larger than the framebuffer declared by the model
+    width = model.vis.global_.offwidth + 160
+    height = model.vis.global_.offheight + 120
+
+    # initialize viewer
+    viewer = OffScreenViewer(model, data, width=width, height=height)
+
+    # the offscreen framebuffer must have been grown to fit the viewport
+    assert viewer.con.offWidth >= width
+    assert viewer.con.offHeight >= height
+
+    # check that the render method returns an image of the correct shape
+    img = viewer.render(render_mode="rgb_array")
+    assert img.shape == (height, width, 3)
+
+    # the rendered frame must be pixel-identical to one produced by a viewer whose
+    # model declared a large enough framebuffer upfront (with black bands they differ)
+    model.vis.global_.offwidth = width
+    model.vis.global_.offheight = height
+    grown_viewer = OffScreenViewer(model, data, width=width, height=height)
+    assert np.array_equal(img, grown_viewer.render(render_mode="rgb_array"))
+
+    # close viewers after usage
+    viewer.close()
+    grown_viewer.close()
+
+
 @pytest.mark.parametrize(
     "env_id",
     [
