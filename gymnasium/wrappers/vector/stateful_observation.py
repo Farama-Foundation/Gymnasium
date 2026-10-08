@@ -10,11 +10,13 @@ from typing import Any
 import numpy as np
 
 import gymnasium as gym
+from gymnasium.core import ActType
 from gymnasium.error import InvalidBound
 from gymnasium.logger import warn
 from gymnasium.spaces import Box
 from gymnasium.vector.utils import batch_space
 from gymnasium.vector.vector_env import (
+    ArrayType,
     AutoresetMode,
     VectorEnv,
     VectorObservationWrapper,
@@ -24,7 +26,10 @@ from gymnasium.wrappers.utils import RunningMeanStd
 __all__ = ["NormalizeObservation"]
 
 
-class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructorArgs):
+class NormalizeObservation(
+    VectorObservationWrapper[np.ndarray, ActType, np.ndarray, ArrayType],
+    gym.utils.RecordConstructorArgs,
+):
     """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the observation
@@ -69,7 +74,9 @@ class NormalizeObservation(VectorObservationWrapper, gym.utils.RecordConstructor
     epsilon: float
     _update_running_mean: bool
 
-    def __init__(self, env: VectorEnv, epsilon: float = 1e-8) -> None:
+    def __init__(
+        self, env: VectorEnv[np.ndarray, ActType, ArrayType], epsilon: float = 1e-8
+    ) -> None:
         """This wrapper will normalize observations s.t. each coordinate is centered with unit variance.
 
         Args:

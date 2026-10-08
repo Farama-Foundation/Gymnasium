@@ -33,7 +33,7 @@ class MultiBinary(Space[NDArray[np.int8]]):
 
     def __init__(
         self,
-        n: NDArray[np.integer[Any]] | Sequence[int] | int,
+        n: NDArray[np.integer[Any]] | Sequence[int] | int | np.integer[Any],
         seed: int | np.random.Generator | None = None,
     ) -> None:
         """Constructor of :class:`MultiBinary` space.
@@ -43,7 +43,7 @@ class MultiBinary(Space[NDArray[np.int8]]):
                 or some sort of sequence (tuple, list or np.ndarray) if there are multiple axes.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
         """
-        if isinstance(n, int):
+        if isinstance(n, (int, np.integer)):
             self.n = n = int(n)
             input_n = (n,)
             if not (np.asarray(input_n) > 0).all():

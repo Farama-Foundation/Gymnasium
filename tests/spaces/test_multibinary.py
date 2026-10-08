@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from gymnasium.spaces import MultiBinary
 
@@ -52,3 +53,18 @@ def test_sample_zero_probability_at_zero_uniform_draw():
     np.testing.assert_array_equal(sample, [[0, 1, 1], [0, 1, 0]])
     assert sample.dtype == space.dtype
     assert sample in space
+
+
+@pytest.mark.parametrize("n", [np.int64(4), np.int32(4), np.uint8(4), np.prod((2, 2))])
+def test_numpy_integer_n(n):
+    space = MultiBinary(n)
+
+    assert space.n == 4 and isinstance(space.n, int)
+    assert space.shape == (4,)
+    assert space == MultiBinary(4)
+    assert space.sample() in space
+
+
+def test_non_positive_numpy_integer_n():
+    with pytest.raises(ValueError, match="n \\(counts\\) have to be positive"):
+        MultiBinary(np.int64(0))
