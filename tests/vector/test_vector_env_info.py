@@ -118,6 +118,21 @@ def test_vector_add_info():
     assert data_equivalence(vector_infos, expected_vector_infos)
 
 
+def test_vector_add_info_promotes_mixed_int_float():
+    env = VectorEnv()
+    env.num_envs = 2
+
+    vector_infos = env._add_info({}, {"metric": 0}, 0)
+    vector_infos = env._add_info(vector_infos, {"metric": 0.5}, 1)
+    assert np.allclose(vector_infos["metric"], np.array([0.0, 0.5]))
+    assert vector_infos["metric"].dtype == np.float64
+
+    vector_infos = {}
+    vector_infos = env._add_info({}, {"metric": 0.5}, 0)
+    vector_infos = env._add_info(vector_infos, {"metric": 0}, 1)
+    assert np.allclose(vector_infos["metric"], np.array([0.5, 0.0]))
+
+
 class ReturnInfoEnv(gym.Env):
     def __init__(self, infos):
         self.observation_space = Box(0, 1)
