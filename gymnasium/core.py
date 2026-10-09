@@ -3,21 +3,24 @@
 from __future__ import annotations
 
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeAlias, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, SupportsFloat, TypeAlias
 
 import numpy as np
+from typing_extensions import TypeVar
 
 import gymnasium
 from gymnasium import spaces
 from gymnasium.utils import RecordConstructorArgs, seeding
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing import Self
 
     from gymnasium.envs.registration import EnvSpec, WrapperSpec
 
-ObsType = TypeVar("ObsType")
-ActType = TypeVar("ActType")
+# All TypeVars default to `Any` so that generic classes can be partially subscripted,
+# e.g., `Env[np.ndarray]`, with the omitted parameters falling back to `Any`.
+ObsType = TypeVar("ObsType", default=Any)
+ActType = TypeVar("ActType", default=Any)
 
 RenderFrame: TypeAlias = str | np.ndarray | tuple[np.ndarray, np.ndarray]
 
@@ -292,8 +295,8 @@ class Env(Generic[ObsType, ActType]):
         return False
 
 
-WrapperObsType = TypeVar("WrapperObsType")
-WrapperActType = TypeVar("WrapperActType")
+WrapperObsType = TypeVar("WrapperObsType", default=Any)
+WrapperActType = TypeVar("WrapperActType", default=Any)
 
 
 class Wrapper(
