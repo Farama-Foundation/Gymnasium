@@ -704,7 +704,9 @@ class AddRenderObservation(
                 observation dictionary will contain both the original
                 observations and the pixel observations.
             render_key: Optional custom string specifying the pixel key. Defaults to "pixels"
-            obs_key: Optional custom string specifying the obs key. Defaults to "state"
+            obs_key: Optional custom string specifying the obs key. Defaults to "state".
+                Must differ from ``render_key`` when ``render_only=False`` and the
+                original observation space is not a :class:`spaces.Dict`.
         """
         gym.utils.RecordConstructorArgs.__init__(
             self,
@@ -747,6 +749,10 @@ class AddRenderObservation(
                 observation_space=obs_space,
             )
         else:
+            if render_key == obs_key:
+                raise ValueError(
+                    f"AddRenderObservation render_key and obs_key must be different, got {render_key!r} for both"
+                )
             obs_space = spaces.Dict(
                 {obs_key: env.observation_space, render_key: pixel_space}
             )
