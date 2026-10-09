@@ -113,6 +113,7 @@ for env_spec in gym.registry.values():
                 video_path,
                 save_all=True,
                 append_images=frames[1:],
-                duration=50,  # milliseconds for the frame
+                # Match FrozenLake's 500 ms steps for all ToyText GIFs.
+                duration=500 if env_module == "toy_text" else 50,
                 loop=0,
             )
