@@ -23,8 +23,6 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     The legs each consist of three body parts (thigh, shin, foot), and the arms consist of two body parts (upper arm, forearm).
     The environment starts with the humanoid laying on the ground, and then the goal of the environment is to make the humanoid stand up and then keep it standing by applying torques to the various hinges.
 
-    The animation shows a [learned SAC policy from Minari](https://minari.farama.org/datasets/mujoco/humanoidstandup/expert-v0/), using position and velocity observations.
-
 
     ## Action Space
     ```{figure} action_space_figures/humanoid.png
