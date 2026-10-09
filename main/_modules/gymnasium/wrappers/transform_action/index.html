@@ -609,7 +609,7 @@
 <span class="sd">        &gt;&gt;&gt; obs, *_ = env.step([-0.3, -0.5])</span>
 <span class="sd">        &gt;&gt;&gt; obs</span>
 <span class="sd">        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
-<span class="sd">                0.11442572, -1.18958125, -1.97979484,  0.1054461 , -0.10896341])</span>
+<span class="sd">                0.11442572, -1.18958125, -1.97979484,  0.10544613, -0.10896536])</span>
 <span class="sd">        &gt;&gt;&gt; env = DiscretizeAction(env, bins=10)</span>
 <span class="sd">        &gt;&gt;&gt; env.action_space</span>
 <span class="sd">        Discrete(100)</span>
@@ -617,7 +617,7 @@
 <span class="sd">        &gt;&gt;&gt; obs, *_ = env.step(32)</span>
 <span class="sd">        &gt;&gt;&gt; obs</span>
 <span class="sd">        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
-<span class="sd">                0.11442572, -1.18958118, -1.97979484,  0.1054461 , -0.10896341])</span>
+<span class="sd">                0.11442572, -1.18958118, -1.97979484,  0.10544613, -0.10896536])</span>
 
 <span class="sd">    Example 2 - Discretize Reacher action space with MultiDiscrete:</span>
 <span class="sd">        &gt;&gt;&gt; env = gym.make("Reacher-v5")</span>
@@ -627,7 +627,7 @@
 <span class="sd">        &gt;&gt;&gt; obs, *_ = env.step([-0.3, -0.5])</span>
 <span class="sd">        &gt;&gt;&gt; obs</span>
 <span class="sd">        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
-<span class="sd">                0.11442572, -1.18958125, -1.97979484,  0.1054461 , -0.10896341])</span>
+<span class="sd">                0.11442572, -1.18958125, -1.97979484,  0.10544613, -0.10896536])</span>
 <span class="sd">        &gt;&gt;&gt; env = DiscretizeAction(env, bins=10, multidiscrete=True)</span>
 <span class="sd">        &gt;&gt;&gt; env.action_space</span>
 <span class="sd">        MultiDiscrete([10 10])</span>
@@ -635,7 +635,7 @@
 <span class="sd">        &gt;&gt;&gt; obs, *_ = env.step([3, 2])</span>
 <span class="sd">        &gt;&gt;&gt; obs</span>
 <span class="sd">        array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
-<span class="sd">                0.11442572, -1.18958118, -1.97979484,  0.1054461 , -0.10896341])</span>
+<span class="sd">                0.11442572, -1.18958118, -1.97979484,  0.10544613, -0.10896536])</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
