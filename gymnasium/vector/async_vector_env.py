@@ -333,7 +333,9 @@ class AsyncVectorEnv(
 
         Args:
             seed: The environment reset seeds
-            options: If to return the options
+            options: Options passed to each sub-environment. A boolean NumPy array
+                ``reset_mask`` selects which sub-environments to reset. This mask is
+                not passed to the sub-environments or removed from ``options``.
 
         Returns:
             A batch of observations and info from the vectorized environment.
@@ -352,7 +354,7 @@ class AsyncVectorEnv(
 
         Args:
             seed: List of seeds for each environment
-            options: The reset option
+            options: Options as described in :meth:`reset`.
 
         Raises:
             ClosedEnvironmentError: If the environment was closed (if :meth:`close` was previously called).
@@ -378,6 +380,8 @@ class AsyncVectorEnv(
             )
 
         if options is not None and "reset_mask" in options:
+            # Preserve the mask for vector wrappers and subsequent resets.
+            options = options.copy()
             reset_mask = options.pop("reset_mask")
             if not isinstance(reset_mask, np.ndarray):
                 raise TypeError(
