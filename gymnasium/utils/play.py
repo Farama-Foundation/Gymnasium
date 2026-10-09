@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from collections import deque
 from collections.abc import Callable, Iterable
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeAlias
 
 import numpy as np
+from typing_extensions import TypeVar
 
 import gymnasium as gym
 from gymnasium import Env, logger
@@ -41,7 +42,9 @@ except ImportError:
 
 _ObsT_contra = TypeVar("_ObsT_contra", contravariant=True)
 _ActT_contra = TypeVar("_ActT_contra", contravariant=True)
-_ActionKey = TypeVar("_ActionKey", bound=tuple[str | int, ...] | str | int)
+_ActionKeyBound: TypeAlias = tuple[str | int, ...] | str | int
+# `ActType` has a default, so `_ActionKey` needs one to follow it in `play`'s signature
+_ActionKey = TypeVar("_ActionKey", bound=_ActionKeyBound, default=_ActionKeyBound)
 
 
 class MissingKeysToAction(Exception):
@@ -345,7 +348,7 @@ def play(
     while game.running:
         if done:
             done = False
-            obs = env.reset(seed=seed)
+            obs, _ = env.reset(seed=seed)
         elif wait_on_player is False or len(game.pressed_keys) > 0:
             action = key_code_to_action.get(tuple(sorted(game.pressed_keys)), noop)
             prev_obs = obs

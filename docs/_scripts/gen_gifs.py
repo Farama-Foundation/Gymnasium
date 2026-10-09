@@ -1,5 +1,6 @@
 import os
 import re
+from collections import defaultdict
 
 import numpy as np
 from PIL import Image
@@ -11,17 +12,21 @@ from gymnasium.envs.registration import find_highest_version, get_env_id
 LENGTH = 300
 
 # envs a uniformly random policy illustrates poorly, recorded from a policy
-# trained with Q-learning instead
-learned_policy_env_names = [
-    "CliffWalking",
-]
+# trained with Q-learning instead, mapped to their Q-learning arguments.
+# Blackjack is stochastic, so it needs a small learning rate and many episodes.
+learned_policy_envs = {
+    "CliffWalking": {},
+    "Taxi": {"episodes": 5000},
+    "Blackjack": {"episodes": 200_000, "alpha": 0.01},
+}
 
 
 def learn_policy(env_id, episodes=2000, alpha=0.5, gamma=0.99, seed=0):
-    """Tabular Q-learning, returns the greedy action for each state."""
+    """Tabular Q-learning, returns a dict of the greedy action for each visited state."""
     env = gym.make(env_id)
     rng = np.random.default_rng(seed)
-    q_table = np.zeros((env.observation_space.n, env.action_space.n))
+    # keyed by observation so tuple observations (Blackjack) work as well as ints
+    q_table = defaultdict(lambda: np.zeros(env.action_space.n))
 
     for episode in range(episodes):
         epsilon = max(0.05, 1.0 - episode / (episodes * 0.5))
@@ -34,10 +39,10 @@ def learn_policy(env_id, episodes=2000, alpha=0.5, gamma=0.99, seed=0):
                 action = int(q_table[obs].argmax())
 
             next_obs, reward, terminated, truncated, _ = env.step(action)
-            q_table[obs, action] += alpha * (
+            q_table[obs][action] += alpha * (
                 reward
                 + gamma * q_table[next_obs].max() * (not terminated)
-                - q_table[obs, action]
+                - q_table[obs][action]
             )
             obs = next_obs
 
@@ -45,7 +50,7 @@ def learn_policy(env_id, episodes=2000, alpha=0.5, gamma=0.99, seed=0):
                 break
 
     env.close()
-    return q_table.argmax(axis=1)
+    return {state: int(values.argmax()) for state, values in q_table.items()}
 
 
 exclude_env_names = [
@@ -79,8 +84,8 @@ for env_spec in gym.registry.values():
                 continue
 
             policy = None
-            if env_spec.name in learned_policy_env_names:
-                policy = learn_policy(env_spec.id)
+            if env_spec.name in learned_policy_envs:
+                policy = learn_policy(env_spec.id, **learned_policy_envs[env_spec.name])
 
             # obtain and save LENGTH frames worth of steps
             frames = []
@@ -88,10 +93,10 @@ for env_spec in gym.registry.values():
             while len(frames) <= LENGTH:
                 frames.append(Image.fromarray(env.render()))
 
-                if policy is None:
+                if policy is None or obs not in policy:
                     action = env.action_space.sample()
                 else:
-                    action = int(policy[obs])
+                    action = policy[obs]
 
                 obs, _, terminated, truncated, _ = env.step(action)
                 if terminated or truncated:

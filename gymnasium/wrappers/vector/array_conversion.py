@@ -6,9 +6,8 @@ from types import ModuleType
 from typing import Any
 
 import gymnasium as gym
-from gymnasium.core import ActType, ObsType
+from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.vector import VectorEnv, VectorWrapper
-from gymnasium.vector.vector_env import ArrayType
 from gymnasium.wrappers.array_conversion import (
     Device,
     array_conversion,
@@ -18,7 +17,11 @@ from gymnasium.wrappers.array_conversion import (
 __all__ = ["ArrayConversion"]
 
 
-class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
+class ArrayConversion(
+    # The reward and termination/truncation arrays are converted too, so they're typed as `Any`
+    VectorWrapper[WrapperObsType, WrapperActType, ObsType, ActType, Any],
+    gym.utils.RecordConstructorArgs,
+):
     """Wraps a vector environment returning Array API compatible arrays so that it can be interacted with through a specific framework.
 
     Popular Array API frameworks include ``numpy``, ``torch``, ``jax.numpy``, ``cupy`` etc. With this wrapper, you can convert outputs from your environment to
@@ -36,7 +39,7 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[ObsType, ActType, Any],
         env_xp: ModuleType,
         target_xp: ModuleType,
         env_device: Device | None = None,
@@ -59,8 +62,8 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
         self._target_device = target_device
 
     def step(
-        self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict]:
+        self, actions: WrapperActType
+    ) -> tuple[WrapperObsType, Any, Any, Any, dict[str, Any]]:
         """Transforms the action to the specified xp module array type.
 
         Args:
@@ -69,8 +72,10 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
         Returns:
             A tuple containing xp versions of the next observation, reward, termination, truncation, and extra info.
         """
-        actions = array_conversion(actions, xp=self._env_xp, device=self._env_device)
-        obs, reward, terminated, truncated, info = self.env.step(actions)
+        env_actions = array_conversion(
+            actions, xp=self._env_xp, device=self._env_device
+        )
+        obs, reward, terminated, truncated, info = self.env.step(env_actions)
 
         return (
             array_conversion(obs, xp=self._target_xp, device=self._target_device),
@@ -87,7 +92,7 @@ class ArrayConversion(VectorWrapper, gym.utils.RecordConstructorArgs):
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
         """Resets the environment returning xp-based observation and info.
 
         Args:

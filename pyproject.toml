@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 name = "gymnasium"
 description = "A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)."
 readme = "README.md"
-requires-python = ">= 3.10"
+requires-python = ">= 3.11"
 authors = [{ name = "Farama Foundation", email = "contact@farama.org" }]
 license = { text = "MIT License" }
 keywords = ["Reinforcement Learning", "game", "RL", "AI", "gymnasium"]
@@ -16,7 +16,6 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -27,7 +26,7 @@ classifiers = [
 dependencies = [
     "numpy >=1.22.0",
     "cloudpickle >=1.2.0",
-    "typing-extensions >=4.3.0",
+    "typing-extensions >=4.12.0",  # For PEP696
     "farama-notifications >=0.0.1",
 ]
 dynamic = ["version"]
@@ -132,8 +131,8 @@ ignore = [
 convention = "google"
 
 [tool.ty.src]
-include = ["gymnasium"]
-exclude = ["tests", "**/node_modules", "**/__pycache__"]
+include = ["gymnasium", "tests/test_typing.py"]
+exclude = ["**/node_modules", "**/__pycache__"]
 
 [tool.ty.analysis]
 replace-imports-with-any = ["Box2D.**", "mujoco.**", "glfw.**"]
@@ -143,7 +142,7 @@ respect-type-ignore-comments = false
 error-on-warning = false
 
 [tool.ty.environment]
-python-version = "3.10"
+python-version = "3.11"
 python-platform = "all"
 extra-paths = []
 
@@ -156,6 +155,15 @@ missing-argument = "warn"                 # TODO remove
 unresolved-attribute = "warn"             # TODO remove
 unresolved-import = "warn"                # TODO remove
 unsupported-operator = "warn"             # TODO remove
+
+# `tests/test_typing.py` checks the wrapper type parameters, so any regression must be an error
+[[tool.ty.overrides]]
+include = ["tests/test_typing.py"]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "error"
+invalid-return-type = "error"
+type-assertion-failure = "error"
 
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning:gymnasium.*:"]
