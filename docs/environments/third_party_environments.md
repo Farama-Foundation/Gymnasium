@@ -403,7 +403,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.3.0-blue)
   ![GitHub stars](https://img.shields.io/github/stars/Tempip/linkgym)
-
+  
   A Gymnasium environment for 5G NR link adaptation (MCS selection) built on NVIDIA Sionna SYS. The channel is 3GPP TDL fading or ray-traced with Sionna RT, including a published dataset of Munich streets and a generator for your own scenes. It comes with classical baselines (ILLA, OLLA, oracle) and an evaluation protocol with common random numbers and confidence intervals.
   
 - [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
