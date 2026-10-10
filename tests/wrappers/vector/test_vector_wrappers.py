@@ -59,7 +59,7 @@ def custom_environments():
         ),
         ("CarRacing-v3", "DtypeObservation", {"dtype": np.int32}),
         # ("CartPole-v1", "RenderObservation", {}),  # not implemented
-        # ("CartPole-v1", "TimeAwareObservation", {}),  # not implemented
+        ("CartPole-v1", "TimeAwareObservation", {}),
         # ("CartPole-v1", "FrameStackObservation", {}),  # not implemented
         # ("CartPole-v1", "DelayObservation", {}),  # not implemented
         ("MountainCarContinuous-v0", "ClipAction", {}),
@@ -81,10 +81,19 @@ def test_vector_wrapper_equivalence(
     vectorization_mode: str = "sync",
     num_steps: int = 50,
 ):
+    # Exercise the new stateful wrapper with the requested autoreset mode.
+    vector_kwargs = (
+        {"autoreset_mode": autoreset_mode}
+        if wrapper_name == "TimeAwareObservation"
+        else {}
+    )
     vector_wrapper = getattr(wrappers.vector, wrapper_name)
     wrapper_vector_env: VectorEnv = vector_wrapper(
         gym.make_vec(
-            id=env_id, num_envs=num_envs, vectorization_mode=vectorization_mode
+            id=env_id,
+            num_envs=num_envs,
+            vectorization_mode=vectorization_mode,
+            vector_kwargs=vector_kwargs,
         ),
         **kwargs,
     )
@@ -94,6 +103,7 @@ def test_vector_wrapper_equivalence(
         num_envs=num_envs,
         vectorization_mode=vectorization_mode,
         wrappers=(lambda env: env_wrapper(env, **kwargs),),
+        vector_kwargs=vector_kwargs,
     )
 
     assert wrapper_vector_env.action_space == vector_wrapper_env.action_space
