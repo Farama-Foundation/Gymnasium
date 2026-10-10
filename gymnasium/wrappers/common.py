@@ -534,6 +534,7 @@ class RecordEpisodeStatistics(
         self.episode_start_time: float = -1
         self.episode_returns: float = 0.0
         self.episode_lengths: int = 0
+        self._prev_done: bool = False
 
         self.time_queue: deque[float] = deque(maxlen=buffer_length)
         self.return_queue: deque[float] = deque(maxlen=buffer_length)
@@ -545,10 +546,17 @@ class RecordEpisodeStatistics(
         """Steps through the environment, recording the episode statistics."""
         obs, reward, terminated, truncated, info = super().step(action)
 
-        self.episode_returns += reward
-        self.episode_lengths += 1
+        if self._prev_done:
+            # Stepping after an episode ended without calling `reset` means the environment
+            #   is autoreset (see `Autoreset`), so this step resets it for the next episode.
+            self.episode_returns = 0.0
+            self.episode_lengths = 0
+        else:
+            self.episode_returns += reward
+            self.episode_lengths += 1
 
-        if terminated or truncated:
+        self._prev_done = terminated or truncated
+        if self._prev_done:
             assert self._stats_key not in info
 
             episode_time_length = round(
@@ -578,5 +586,6 @@ class RecordEpisodeStatistics(
         self.episode_start_time = time.perf_counter()
         self.episode_returns = 0.0
         self.episode_lengths = 0
+        self._prev_done = False
 
         return obs, info
