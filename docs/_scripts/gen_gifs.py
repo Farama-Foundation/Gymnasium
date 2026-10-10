@@ -60,7 +60,7 @@ exclude_env_names = [
     "FrozenLake8x8",
     "LunarLanderContinuous",
     "BipedalWalkerHardcore",
-    "HumanoidStandup",  # preserve the learned-policy animation
+    "HumanoidStandup",
     "phys2d/CartPole",
     "phys2d/Pendulum",
     "tabular/Blackjack",
