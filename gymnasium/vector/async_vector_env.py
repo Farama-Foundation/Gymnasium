@@ -853,7 +853,7 @@ def _async_worker(
                             observation_space, index, observation, shared_memory
                         )
                         observation = None
-                        autoreset = False
+                    autoreset = False
 
                     # release before `send`, which blocks until the main process reads the pipe
                     if permit_held:
