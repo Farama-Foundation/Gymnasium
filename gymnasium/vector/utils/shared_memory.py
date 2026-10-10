@@ -28,6 +28,7 @@ from gymnasium.spaces import (
     Tuple,
     flatten,
 )
+from gymnasium.vector.utils.space_utils import batch_space, iterate
 
 if TYPE_CHECKING:
     from typing import Never
@@ -240,8 +241,14 @@ def _read_one_of_from_shared_memory(
     # typeshed bug: `Array[_SimpleCData[c_int64]]` is missing `__buffer__` method stubs
     sample_indexes = np.frombuffer(shared_memory[0].get_obj(), dtype=np.int64)  # ty:ignore[no-matching-overload]
 
+    # unbatch each subspace's samples, as indexing a `Dict` or `Tuple` batch does not select an environment
     subspace_samples = tuple(
-        read_from_shared_memory(subspace, memory, n=n)
+        tuple(
+            iterate(
+                batch_space(subspace, n=n),
+                read_from_shared_memory(subspace, memory, n=n),
+            )
+        )
         for (memory, subspace) in zip(shared_memory[1:], space.spaces, strict=True)
     )
     return tuple(
