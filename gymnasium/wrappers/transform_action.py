@@ -300,14 +300,18 @@ class DiscretizeAction(
                 )
             self.bins = np.array(bins)
 
-        self.bin_centers = [
-            0.5
-            * (
-                np.linspace(self.low[i], self.high[i], self.bins[i] + 1)[:-1]
-                + np.linspace(self.low[i], self.high[i], self.bins[i] + 1)[1:]
-            )
-            for i in range(self.n_dims)
-        ]
+        self.bin_centers = []
+        for i in range(self.n_dims):
+            with np.errstate(over="ignore", invalid="ignore"):
+                edges = np.linspace(self.low[i], self.high[i], self.bins[i] + 1)
+                centers = 0.5 * (edges[:-1] + edges[1:])
+            # The edge spacing or midpoint sum can overflow despite finite bounds.
+            # Keep the original rounding except where interpolation overflowed.
+            overflow = ~np.isfinite(centers)
+            if np.any(overflow):
+                weights = (np.arange(self.bins[i])[overflow] + 0.5) / self.bins[i]
+                centers[overflow] = (1 - weights) * self.low[i] + weights * self.high[i]
+            self.bin_centers.append(centers)
 
         if self.multidiscrete:
             self.action_space = MultiDiscrete(self.bins)
