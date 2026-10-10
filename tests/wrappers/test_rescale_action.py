@@ -75,3 +75,24 @@ def test_rescale_action_equal_bounds():
             min_action=np.array([-1, 2], dtype=np.float32),
             max_action=np.array([1, 2], dtype=np.float32),
         )
+
+
+def test_rescale_action_fixed_bound():
+    """A component that can only be one value stays that value."""
+    env = GenericTestEnv(
+        step_func=record_action_step,
+        action_space=Box(
+            np.array([0, 1], dtype=np.float32),
+            np.array([1, 1], dtype=np.float32),
+        ),
+    )
+    wrapped_env = RescaleAction(
+        env,
+        min_action=np.array([-1, -1], dtype=np.float32),
+        max_action=np.array([1, 1], dtype=np.float32),
+    )
+
+    action = np.array([0.0, 0.5], dtype=np.float32)
+    assert action in wrapped_env.action_space
+    _, _, _, _, info = wrapped_env.step(action)
+    assert np.all(info["action"] == np.array([0.5, 1.0], dtype=np.float32))
