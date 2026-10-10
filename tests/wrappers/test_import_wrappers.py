@@ -1,6 +1,8 @@
 """Test suite for import wrappers."""
 
 import re
+import subprocess
+import sys
 
 import pytest
 
@@ -50,3 +52,34 @@ def test_renamed_wrappers(wrapper_name):
         assert getattr(gymnasium.wrappers.vector, no_vector_wrapper_name)
     else:
         assert getattr(gymnasium.wrappers, new_wrapper_name)
+
+
+@pytest.mark.parametrize(
+    "missing_module, wrapper_name",
+    [
+        ("array_api_compat", "gymnasium.wrappers.ArrayConversion"),
+        ("packaging", "gymnasium.wrappers.ArrayConversion"),
+        ("array_api_compat", "gymnasium.wrappers.vector.ArrayConversion"),
+        ("jax", "gymnasium.wrappers.JaxToNumpy"),
+        ("jax", "gymnasium.wrappers.vector.JaxToNumpy"),
+        ("jax", "gymnasium.wrappers.vector.JaxToTorch"),
+        ("torch", "gymnasium.wrappers.NumpyToTorch"),
+        ("torch", "gymnasium.wrappers.vector.NumpyToTorch"),
+        ("torch", "gymnasium.wrappers.vector.JaxToTorch"),
+    ],
+)
+def test_array_conversion_missing_dependency(missing_module, wrapper_name):
+    """Check that the array conversion wrappers raise `DependencyNotInstalled` when a dependency is missing."""
+    code = (
+        "import sys\n"
+        f"sys.modules[{missing_module!r}] = None\n"
+        "import gymnasium\n"
+        f"{wrapper_name}\n"
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", code], capture_output=True, text=True, check=False
+    )
+
+    assert result.returncode != 0
+    assert "gymnasium.error.DependencyNotInstalled" in result.stderr
+    assert 'pip install "gymnasium[' in result.stderr
