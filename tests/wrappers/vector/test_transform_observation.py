@@ -4,8 +4,11 @@ import numpy as np
 import pytest
 
 from gymnasium import spaces, wrappers
-from gymnasium.vector import SyncVectorEnv
+from gymnasium.vector import AutoresetMode, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
+from tests.wrappers.vector.test_vector_wrappers import (
+    check_vector_wrapper_equivalence,
+)
 
 
 def create_env():
@@ -98,3 +101,18 @@ def test_warning_on_mismatched_single_observation_space(
                 high=np.array([[10, -5, 10]] * n_envs, dtype=np.float32) + 100,
             ),
         )
+
+
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
+@pytest.mark.parametrize("num_envs", (1, 3))
+def test_equivalence_with_wrapper(autoreset_mode: AutoresetMode, num_envs: int):
+    """Checks equivalence with `TransformObservation` applied to each sub-environment for an element-wise func."""
+    check_vector_wrapper_equivalence(
+        autoreset_mode,
+        num_envs,
+        "CartPole-v1",
+        wrappers.vector.TransformObservation,
+        {"func": lambda obs: 2 * obs + 1},
+        wrappers.TransformObservation,
+        {"func": lambda obs: 2 * obs + 1, "observation_space": None},
+    )

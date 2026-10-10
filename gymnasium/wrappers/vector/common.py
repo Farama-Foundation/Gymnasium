@@ -123,10 +123,11 @@ class RecordEpisodeStatistics(
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment using kwargs and resets the episode returns and lengths."""
+        # The vector environment pops `reset_mask` from `options`, therefore, it is read before resetting
+        reset_mask = None if options is None else options.get("reset_mask")
         obs, info = super().reset(seed=seed, options=options)
 
-        if options is not None and "reset_mask" in options:
-            reset_mask = options.pop("reset_mask")
+        if reset_mask is not None:
             if not isinstance(reset_mask, np.ndarray):
                 raise TypeError(
                     f"`options['reset_mask']` must be a numpy array, got {type(reset_mask)}"

@@ -3,9 +3,11 @@
 import numpy as np
 import pytest
 
+import gymnasium as gym
 from gymnasium import spaces, wrappers
 from gymnasium.error import InvalidBound
-from gymnasium.vector import SyncVectorEnv
+from gymnasium.utils.env_checker import data_equivalence
+from gymnasium.vector import AutoresetMode, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
 
 
@@ -125,4 +127,83 @@ def test_non_positive_epsilon_is_rejected(epsilon):
     vec_env = SyncVectorEnv([create_env])
     with pytest.raises(InvalidBound, match="`epsilon` should be strictly positive"):
         wrappers.vector.NormalizeObservation(vec_env, epsilon=epsilon)
+    vec_env.close()
+
+
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
+def test_equivalence_with_wrapper_autoreset_modes(
+    autoreset_mode: AutoresetMode,
+    env_id: str = "CartPole-v1",
+    num_steps: int = 50,
+    max_episode_steps: int = 7,
+):
+    """With a single sub-environment, the vector wrapper should exactly match `NormalizeObservation` within the vector env.
+
+    For same-step autoreset, this includes `info["final_obs"]` and the final observations being included in the statistics.
+    """
+    vec_env = wrappers.vector.NormalizeObservation(
+        gym.make_vec(
+            env_id,
+            num_envs=1,
+            vectorization_mode="sync",
+            vector_kwargs={"autoreset_mode": autoreset_mode},
+            max_episode_steps=max_episode_steps,
+        )
+    )
+    per_env = gym.make_vec(
+        env_id,
+        num_envs=1,
+        vectorization_mode="sync",
+        vector_kwargs={"autoreset_mode": autoreset_mode},
+        wrappers=(wrappers.NormalizeObservation,),
+        max_episode_steps=max_episode_steps,
+    )
+
+    vec_obs, _ = vec_env.reset(seed=123)
+    per_env_obs, _ = per_env.reset(seed=123)
+    assert data_equivalence(vec_obs, per_env_obs)
+
+    vec_env.action_space.seed(123)
+    num_episode_ends = 0
+    for _ in range(num_steps):
+        action = vec_env.action_space.sample()
+        vec_obs, vec_rew, vec_term, vec_trunc, vec_info = vec_env.step(action)
+        per_env_obs, per_env_rew, per_env_term, per_env_trunc, per_env_info = (
+            per_env.step(action)
+        )
+
+        assert data_equivalence(vec_obs, per_env_obs)
+        assert data_equivalence(vec_info, per_env_info)
+        assert data_equivalence(vec_rew, per_env_rew)
+        assert data_equivalence(vec_term, per_env_term)
+        assert data_equivalence(vec_trunc, per_env_trunc)
+
+        dones = np.logical_or(vec_term, vec_trunc)
+        num_episode_ends += int(np.sum(dones))
+        if autoreset_mode == AutoresetMode.DISABLED and np.any(dones):
+            vec_obs, _ = vec_env.reset(options={"reset_mask": dones})
+            per_env_obs, _ = per_env.reset(options={"reset_mask": dones})
+            assert data_equivalence(vec_obs, per_env_obs)
+
+    assert num_episode_ends >= num_steps // (max_episode_steps + 1)
+    assert np.allclose(vec_env.obs_rms.mean, per_env.envs[0].obs_rms.mean)
+    assert np.allclose(vec_env.obs_rms.var, per_env.envs[0].obs_rms.var)
+    assert vec_env.obs_rms.count == per_env.envs[0].obs_rms.count
+
+    vec_env.close()
+    per_env.close()
+
+
+def test_disabled_autoreset_rejects_partial_reset(n_envs: int = 2):
+    vec_env = wrappers.vector.NormalizeObservation(
+        SyncVectorEnv(
+            [create_env for _ in range(n_envs)], autoreset_mode=AutoresetMode.DISABLED
+        )
+    )
+    vec_env.reset(seed=123)
+    with pytest.raises(ValueError, match="does not support partial resets"):
+        vec_env.reset(options={"reset_mask": np.array([True, False])})
+
+    # A full reset through `reset_mask` is still allowed
+    vec_env.reset(options={"reset_mask": np.array([True, True])})
     vec_env.close()

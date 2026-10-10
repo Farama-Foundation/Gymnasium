@@ -71,20 +71,45 @@ def test_against_wrapper(n_envs=3, n_steps=100, rtol=0.1, atol=0):
     assert np.allclose(env.return_rms.var, vec_env.return_rms.var, rtol=rtol, atol=atol)
 
 
-def test_equivalence_with_wrapper(n_steps=50):
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
+def test_equivalence_with_wrapper(autoreset_mode: AutoresetMode, n_steps=50):
+    """With a single sub-environment, the vector wrapper should match `NormalizeReward` within the vector env.
+
+    Unlike `NormalizeReward`, which carries `gamma * r_T` into the next episode, the vector wrapper restarts
+    the accumulated return once a sub-environment is reset, i.e., at the end of the episode for same-step autoreset
+    and on `reset` for disabled autoreset. Therefore, the single-env wrapper's return is restarted at the same points.
+    """
+
     def thunk_with_normalize():
         return wrappers.NormalizeReward(thunk())
 
-    per_env = SyncVectorEnv([thunk_with_normalize])
+    per_env = SyncVectorEnv([thunk_with_normalize], autoreset_mode=autoreset_mode)
     per_env.reset(seed=42)
-    for _ in range(n_steps):
-        per_env.step(per_env.action_space.sample())
 
-    vec_env = SyncVectorEnv([thunk])
+    vec_env = SyncVectorEnv([thunk], autoreset_mode=autoreset_mode)
     vec_env = wrappers.vector.NormalizeReward(vec_env)
     vec_env.reset(seed=42)
+
+    num_episode_ends = 0
     for _ in range(n_steps):
-        vec_env.step(vec_env.action_space.sample())
+        action = vec_env.action_space.sample()
+        _, per_env_rew, per_env_term, per_env_trunc, _ = per_env.step(action)
+        _, vec_rew, vec_term, vec_trunc, _ = vec_env.step(action)
+
+        assert np.allclose(vec_rew, per_env_rew, rtol=1e-4)
+        assert np.all(vec_term == per_env_term)
+        assert np.all(vec_trunc == per_env_trunc)
+
+        dones = np.logical_or(vec_term, vec_trunc)
+        num_episode_ends += int(np.sum(dones))
+        if autoreset_mode == AutoresetMode.DISABLED and np.any(dones):
+            per_env.reset(options={"reset_mask": dones})
+            vec_env.reset(options={"reset_mask": dones})
+        if autoreset_mode != AutoresetMode.NEXT_STEP and dones[0]:
+            per_env.envs[0].discounted_reward = np.array([0.0])
+
+    # The environment terminates every 10 steps
+    assert num_episode_ends >= n_steps // 11
 
     assert vec_env.return_rms.count == per_env.envs[0].return_rms.count
     assert np.allclose(
@@ -94,6 +119,31 @@ def test_equivalence_with_wrapper(n_steps=50):
         vec_env.return_rms.var, per_env.envs[0].return_rms.var, rtol=1e-4
     )
     per_env.close()
+    vec_env.close()
+
+
+def test_partial_reset_only_clears_reset_sub_envs(n_envs=3):
+    """A partial reset must only restart the accumulated return of the sub-environments being reset."""
+    vec_env = wrappers.vector.NormalizeReward(
+        SyncVectorEnv(
+            [thunk for _ in range(n_envs)], autoreset_mode=AutoresetMode.DISABLED
+        )
+    )
+    vec_env.reset(seed=123)
+    for _ in range(3):
+        vec_env.step(vec_env.action_space.sample())
+
+    # Sets distinct accumulated rewards and episode ends to check the per sub-environment reset
+    vec_env.accumulated_reward[:] = [1.0, 2.0, 3.0]
+    vec_env._prev_dones[:] = [1.0, 1.0, 0.0]
+
+    vec_env.reset(options={"reset_mask": np.array([True, False, False])})
+    assert np.all(vec_env.accumulated_reward == [0.0, 2.0, 3.0])
+    assert np.all(vec_env._prev_dones == [0.0, 1.0, 0.0])
+
+    vec_env.reset(seed=123)
+    assert np.all(vec_env.accumulated_reward == 0.0)
+    assert np.all(vec_env._prev_dones == 0.0)
     vec_env.close()
 
 

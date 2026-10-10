@@ -181,26 +181,17 @@ class VectorizeTransformAction(
         Returns:
             The updated actions using the wrapper func
         """
-        if self.same_out:
-            actions_out = concatenate(
+        # The transformed actions are written into `self.out` rather than `actions` to avoid mutating the caller's actions
+        actions_out = deepcopy(
+            concatenate(
                 self.env.single_action_space,
                 tuple(
                     self.wrapper.func(action)
                     for action in iterate(self.action_space, actions)
                 ),
-                actions,
+                self.out,
             )
-        else:
-            actions_out = deepcopy(
-                concatenate(
-                    self.env.single_action_space,
-                    tuple(
-                        self.wrapper.func(action)
-                        for action in iterate(self.action_space, actions)
-                    ),
-                    self.out,
-                )
-            )
+        )
         # ty doesn't support `@single_dispatch` yet
         return actions_out  # ty:ignore[invalid-return-type]
 
