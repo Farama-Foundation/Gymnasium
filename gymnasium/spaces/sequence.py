@@ -193,10 +193,13 @@ class Sequence(Space[tuple[Any, ...] | Any]):
         """Return boolean specifying if x is a valid member of this space."""
         # by definition, any sequence is an iterable
         if self.stack:
-            return all(
-                item in self.feature_space
-                for item in gym.vector.utils.iterate(self.stacked_feature_space, x)
-            )
+            try:
+                return all(
+                    item in self.feature_space
+                    for item in gym.vector.utils.iterate(self.stacked_feature_space, x)
+                )
+            except (TypeError, ValueError, KeyError, IndexError):
+                return False
         else:
             return isinstance(x, tuple) and all(
                 self.feature_space.contains(item) for item in x

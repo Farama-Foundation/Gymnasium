@@ -128,3 +128,19 @@ def test_sample_with_probability():
     assert np.all(value in space for value in sample)
     counts = np.bincount(sample[:], minlength=3) / len(sample)
     np.testing.assert_allclose(counts, probability[1], atol=0.05)
+
+
+def test_contains_stack_invalid_inputs():
+    """Tests that `contains` returns False rather than raising for invalid inputs when `stack=True`."""
+    box_space = gym.spaces.Sequence(gym.spaces.Box(0, 1, shape=(2,)), stack=True)
+    discrete_space = gym.spaces.Sequence(gym.spaces.Discrete(3), stack=True)
+    dict_space = gym.spaces.Sequence(
+        gym.spaces.Dict({"a": gym.spaces.Discrete(3), "b": gym.spaces.Box(0, 1)}),
+        stack=True,
+    )
+
+    assert box_space.contains(None) is False
+    assert box_space.contains(0.5) is False
+    assert discrete_space.contains(np.int64(1)) is False
+    assert dict_space.contains({}) is False
+    assert dict_space.contains({"a": 0, "b": 0}) is False
