@@ -397,6 +397,36 @@ def test_infinite_space(low, high, shape, dtype):
     assert np.all(np.sign(space.low) <= np.sign(sample))
 
 
+@pytest.mark.parametrize("dtype", [np.int8, np.int16, np.int32, np.int64])
+@pytest.mark.parametrize("bound_dtype", [np.float32, np.float64])
+def test_infinite_array_bounds(dtype, bound_dtype):
+    """Tests that an infinite bound passed as an array reaches the dtype's limit.
+
+    The limit used to be written into the caller's float array before the cast,
+    so a limit that float dtype cannot represent rounded up and overflowed the
+    cast: ``np.int64`` max in any float, ``np.int32`` max in ``float32``.
+    """
+    space = Box(
+        low=np.array([-np.inf, 0], dtype=bound_dtype),
+        high=np.array([0, np.inf], dtype=bound_dtype),
+        dtype=dtype,
+    )
+
+    assert space.low[0] == np.iinfo(dtype).min
+    assert space.high[1] == np.iinfo(dtype).max
+
+
+def test_bounds_are_not_modified_in_place():
+    """Tests that Box leaves the low and high arrays it was given alone."""
+    low = np.array([-np.inf, 0.0], dtype=np.float32)
+    high = np.array([0.0, np.inf], dtype=np.float32)
+
+    Box(low=low, high=high, dtype=np.int64)
+
+    assert np.isneginf(low[0])
+    assert np.isposinf(high[1])
+
+
 def test_equality():
     # Check if two spaces are equivalent.
     space_a = Box(low=0, high=1, shape=[2], dtype=np.float32)
