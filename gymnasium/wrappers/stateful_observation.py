@@ -313,11 +313,14 @@ class FrameStackObservation(
     is an array with shape [3], so if we stack 4 observations, the processed observation
     has shape [4, 3].
 
+    Observations are copied before being retained, so an environment can reuse its
+    observation buffer without changing earlier frames.
+
     Users have options for the padded observation used:
 
      * "reset" (default) - The reset value is repeated
      * "zero" - A "zero"-like instance of the observation space
-     * custom - An instance of the observation space
+     * custom - An instance of the observation space, copied at construction
 
     No vector version of the wrapper exists.
 
@@ -396,7 +399,7 @@ class FrameStackObservation(
         ):
             self.padding_value: ObsType = create_zero_array(env.observation_space)
         elif padding_type in env.observation_space:
-            self.padding_value = padding_type
+            self.padding_value = deepcopy(padding_type)
             padding_type = "_custom"
         else:
             if isinstance(padding_type, str):
@@ -429,7 +432,7 @@ class FrameStackObservation(
             Stacked observations, reward, terminated, truncated, and info from the environment
         """
         obs, reward, terminated, truncated, info = self.env.step(action)
-        self.obs_queue.append(obs)
+        self.obs_queue.append(deepcopy(obs))
 
         updated_obs = deepcopy(
             concatenate(self.env.observation_space, self.obs_queue, self.stacked_obs)
@@ -449,6 +452,7 @@ class FrameStackObservation(
             The stacked observations and info
         """
         obs, info = self.env.reset(seed=seed, options=options)
+        obs = deepcopy(obs)
 
         if self.padding_type == "reset":
             self.padding_value = obs
