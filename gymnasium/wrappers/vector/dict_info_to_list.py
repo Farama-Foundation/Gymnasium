@@ -114,7 +114,9 @@ class DictInfoToList(VectorWrapper[ObsType, ActType, ObsType, ActType, ArrayType
         list_info = [{} for _ in range(self.num_envs)]
 
         for key, value in vector_infos.items():
-            if key.startswith("_"):
+            # Skip the boolean masks (``_key`` paired with ``key``), but not info keys
+            #   that start with an underscore themselves, e.g., ``_key`` with mask ``__key``
+            if key.startswith("_") and key[1:] in vector_infos:
                 continue
 
             binary_key = f"_{key}"
