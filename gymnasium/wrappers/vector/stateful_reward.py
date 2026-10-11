@@ -32,6 +32,11 @@ class NormalizeReward(
         The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
         instantiated or the policy was changed recently.
 
+    Note:
+        Unlike :class:`gymnasium.wrappers.NormalizeReward`, which carries the discounted return into the next episode
+        unless the episode terminates, the accumulated return of a sub-environment is restarted once it is reset,
+        i.e., at the end of an episode for same-step autoreset and on ``reset`` for disabled autoreset.
+
     Example without the normalize reward wrapper:
         >>> import gymnasium as gym
         >>> import numpy as np

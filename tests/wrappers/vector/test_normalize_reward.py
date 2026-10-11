@@ -8,6 +8,7 @@ from gymnasium.core import ActType
 from gymnasium.error import InvalidBound
 from gymnasium.vector import AutoresetMode, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
+from tests.wrappers.vector.utils import EpisodeEndTracker, make_staggered_vector_env
 
 
 def reset_func(self, seed: int | None = None, options: dict | None = None):
@@ -90,7 +91,8 @@ def test_equivalence_with_wrapper(autoreset_mode: AutoresetMode, n_steps=50):
     vec_env = wrappers.vector.NormalizeReward(vec_env)
     vec_env.reset(seed=42)
 
-    num_episode_ends = 0
+    # The environment terminates every 10 steps
+    tracker = EpisodeEndTracker(1, episode_lengths=[10])
     for _ in range(n_steps):
         action = vec_env.action_space.sample()
         _, per_env_rew, per_env_term, per_env_trunc, _ = per_env.step(action)
@@ -100,16 +102,14 @@ def test_equivalence_with_wrapper(autoreset_mode: AutoresetMode, n_steps=50):
         assert np.all(vec_term == per_env_term)
         assert np.all(vec_trunc == per_env_trunc)
 
-        dones = np.logical_or(vec_term, vec_trunc)
-        num_episode_ends += int(np.sum(dones))
+        dones = tracker.update(vec_term, vec_trunc)
         if autoreset_mode == AutoresetMode.DISABLED and np.any(dones):
             per_env.reset(options={"reset_mask": dones})
             vec_env.reset(options={"reset_mask": dones})
         if autoreset_mode != AutoresetMode.NEXT_STEP and dones[0]:
             per_env.envs[0].discounted_reward = np.array([0.0])
 
-    # The environment terminates every 10 steps
-    assert num_episode_ends >= n_steps // 11
+    tracker.check(n_steps)
 
     assert vec_env.return_rms.count == per_env.envs[0].return_rms.count
     assert np.allclose(
@@ -118,6 +118,67 @@ def test_equivalence_with_wrapper(autoreset_mode: AutoresetMode, n_steps=50):
     assert np.allclose(
         vec_env.return_rms.var, per_env.envs[0].return_rms.var, rtol=1e-4
     )
+    per_env.close()
+    vec_env.close()
+
+
+def step_id_reward_step_func(self, action: ActType):
+    self.step_id += 1
+    return self.observation_space.sample(), float(self.step_id), False, False, {}
+
+
+def step_id_reward_thunk():
+    return GenericTestEnv(step_func=step_id_reward_step_func, reset_func=reset_func)
+
+
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
+def test_staggered_accumulated_reward(
+    autoreset_mode: AutoresetMode, num_envs=3, n_steps=50
+):
+    """With sub-environments resetting on different steps, each accumulated return matches `NormalizeReward` applied to that sub-environment.
+
+    The single-env wrapper's return is restarted at the same points as the vector wrapper, see `test_equivalence_with_wrapper`.
+    """
+    per_env = make_staggered_vector_env(
+        step_id_reward_thunk,
+        num_envs,
+        autoreset_mode,
+        wrappers=(wrappers.NormalizeReward,),
+    )
+    vec_env = wrappers.vector.NormalizeReward(
+        make_staggered_vector_env(step_id_reward_thunk, num_envs, autoreset_mode)
+    )
+    per_env.reset(seed=42)
+    vec_env.reset(seed=42)
+
+    tracker = EpisodeEndTracker(num_envs)
+    for _ in range(n_steps):
+        action = vec_env.action_space.sample()
+        _, _, per_env_term, per_env_trunc, _ = per_env.step(action)
+        _, _, vec_term, vec_trunc, _ = vec_env.step(action)
+        assert np.all(vec_term == per_env_term)
+        assert np.all(vec_trunc == per_env_trunc)
+
+        dones = tracker.update(vec_term, vec_trunc)
+        # For same-step autoreset, the accumulated return is restarted within the step,
+        # while for disabled autoreset, it is restarted on `reset`
+        if autoreset_mode == AutoresetMode.SAME_STEP:
+            for i in np.flatnonzero(dones):
+                per_env.envs[i].discounted_reward = np.array([0.0])
+
+        for i in range(num_envs):
+            assert np.isclose(
+                vec_env.accumulated_reward[i], per_env.envs[i].discounted_reward[0]
+            ), f"sub-environment {i}"
+
+        if autoreset_mode == AutoresetMode.DISABLED and np.any(dones):
+            per_env.reset(options={"reset_mask": dones})
+            vec_env.reset(options={"reset_mask": dones})
+            for i in np.flatnonzero(dones):
+                per_env.envs[i].discounted_reward = np.array([0.0])
+            assert np.all(vec_env.accumulated_reward[dones] == 0.0)
+
+    tracker.check(n_steps)
     per_env.close()
     vec_env.close()
 

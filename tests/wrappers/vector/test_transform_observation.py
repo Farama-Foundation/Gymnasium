@@ -6,9 +6,7 @@ import pytest
 from gymnasium import spaces, wrappers
 from gymnasium.vector import AutoresetMode, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
-from tests.wrappers.vector.test_vector_wrappers import (
-    check_vector_wrapper_equivalence,
-)
+from tests.wrappers.vector.utils import check_vector_wrapper_equivalence
 
 
 def create_env():

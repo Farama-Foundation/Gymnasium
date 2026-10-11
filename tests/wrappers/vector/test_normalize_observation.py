@@ -8,7 +8,9 @@ from gymnasium import spaces, wrappers
 from gymnasium.error import InvalidBound
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import AutoresetMode, SyncVectorEnv
+from gymnasium.wrappers.utils import RunningMeanStd
 from tests.testing_env import GenericTestEnv
+from tests.wrappers.vector.utils import EpisodeEndTracker, make_staggered_vector_env
 
 
 def create_env():
@@ -207,3 +209,73 @@ def test_disabled_autoreset_rejects_partial_reset(n_envs: int = 2):
     # A full reset through `reset_mask` is still allowed
     vec_env.reset(options={"reset_mask": np.array([True, True])})
     vec_env.close()
+
+
+@pytest.mark.parametrize(
+    "autoreset_mode", [AutoresetMode.NEXT_STEP, AutoresetMode.SAME_STEP]
+)
+def test_staggered_autoreset(
+    autoreset_mode: AutoresetMode,
+    env_id: str = "CartPole-v1",
+    num_envs: int = 3,
+    num_steps: int = 50,
+):
+    """With sub-environments resetting on different steps, the observations and `info["final_obs"]` are normalized by the shared statistics.
+
+    For same-step autoreset, only the final observations of the sub-environments that reset are included in the statistics.
+    Disabled autoreset is excluded as partial resets are rejected (see `test_disabled_autoreset_rejects_partial_reset`).
+    """
+    vec_env = wrappers.vector.NormalizeObservation(
+        make_staggered_vector_env(env_id, num_envs, autoreset_mode)
+    )
+    raw_env = make_staggered_vector_env(env_id, num_envs, autoreset_mode)
+
+    obs_rms = RunningMeanStd(
+        shape=vec_env.single_observation_space.shape,
+        dtype=vec_env.single_observation_space.dtype,
+    )
+
+    def normalize(obs: np.ndarray) -> np.ndarray:
+        obs_rms.update(obs)
+        return ((obs - obs_rms.mean) / np.sqrt(obs_rms.var + vec_env.epsilon)).astype(
+            np.float32
+        )
+
+    vec_obs, _ = vec_env.reset(seed=123)
+    raw_obs, _ = raw_env.reset(seed=123)
+    assert np.allclose(vec_obs, normalize(raw_obs))
+
+    vec_env.action_space.seed(123)
+    tracker = EpisodeEndTracker(num_envs)
+    for _ in range(num_steps):
+        action = vec_env.action_space.sample()
+        vec_obs, _, vec_term, vec_trunc, vec_info = vec_env.step(action)
+        raw_obs, _, raw_term, raw_trunc, raw_info = raw_env.step(action)
+        assert np.all(vec_term == raw_term) and np.all(vec_trunc == raw_trunc)
+
+        if "final_obs" in raw_info:
+            final_obs_mask = raw_info["_final_obs"]
+            assert np.all(vec_info["_final_obs"] == final_obs_mask)
+
+            expected_final_obs = normalize(
+                np.stack(raw_info["final_obs"][final_obs_mask])
+            )
+            for i, expected in zip(
+                np.flatnonzero(final_obs_mask), expected_final_obs, strict=True
+            ):
+                assert np.allclose(vec_info["final_obs"][i], expected)
+            for i in np.flatnonzero(~final_obs_mask):
+                assert vec_info["final_obs"][i] is None
+        else:
+            assert "final_obs" not in vec_info
+
+        assert np.allclose(vec_obs, normalize(raw_obs))
+        tracker.update(vec_term, vec_trunc)
+
+    tracker.check(num_steps)
+    assert np.allclose(vec_env.obs_rms.mean, obs_rms.mean)
+    assert np.allclose(vec_env.obs_rms.var, obs_rms.var)
+    assert vec_env.obs_rms.count == obs_rms.count
+
+    vec_env.close()
+    raw_env.close()

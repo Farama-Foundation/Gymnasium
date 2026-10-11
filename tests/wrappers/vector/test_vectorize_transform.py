@@ -6,9 +6,7 @@ import pytest
 import gymnasium as gym
 from gymnasium.vector import AutoresetMode, SyncVectorEnv
 from tests.testing_env import GenericTestEnv
-from tests.wrappers.vector.test_vector_wrappers import (
-    check_vector_wrapper_equivalence,
-)
+from tests.wrappers.vector.utils import check_vector_wrapper_equivalence
 
 
 def test_vectorize_box_to_dict_action():

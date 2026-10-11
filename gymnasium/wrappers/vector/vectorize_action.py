@@ -146,7 +146,6 @@ class VectorizeTransformAction(
     single_action_space: Space
     action_space: Space
 
-    same_out: bool
     out: np.ndarray
 
     def __init__(
@@ -168,7 +167,6 @@ class VectorizeTransformAction(
         self.single_action_space = self.wrapper.action_space
         self.action_space = batch_space(self.single_action_space, self.num_envs)
 
-        self.same_out = self.action_space == self.env.action_space
         # ty doesn't support `@single_dispatch` yet
         self.out = create_empty_array(self.env.single_action_space, self.num_envs)  # ty:ignore[invalid-assignment]
 
