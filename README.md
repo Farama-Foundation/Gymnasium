@@ -76,10 +76,16 @@ If you are financially able to do so and would like to support the development o
 You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032) as:
 
 ```
-@article{towers2024gymnasium,
-  title={Gymnasium: A Standard Interface for Reinforcement Learning Environments},
-  author={Towers, Mark and Kwiatkowski, Ariel and Terry, Jordan and Balis, John U and De Cola, Gianluca and Deleu, Tristan and Goul{\~a}o, Manuel and Kallinteris, Andreas and Krimmel, Markus and KG, Arjun and others},
-  journal={arXiv preprint arXiv:2407.17032},
-  year={2024}
+@inproceedings{NEURIPS2025_d7ff1795,
+ author = {Towers, Mark and Kwiatkowski, Ariel and Balis, John and De Cola, Gianluca and Deleu, Tristan and Goul\~{a}o, Manuel and Andreas, Kallinteris and Krimmel, Markus and KG, Arjun and Perez-Vicente, Rodrigo and Terry, J and Pierr\'{e}, Andrea and Schulhoff, Sander and Tai, Jun Jet and Tan, Hannah and Younis, Omar G.},
+ booktitle = {Advances in Neural Information Processing Systems},
+ doi = {10.52202/085713-4916},
+ editor = {D. Belgrave and C. Zhang and H. Lin and R. Pascanu and P. Koniusz and M. Ghassemi and N. Chen},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {Gymnasium: A Standard Interface for Reinforcement Learning Environments},
+ url = {https://proceedings.neurips.cc/paper_files/paper/2025/file/d7ff1795e8527f6443371c3933bdb52b-Paper-Datasets_and_Benchmarks_Track.pdf},
+ volume = {38, Main Conference},
+ year = {2025}
 }
 ```
