@@ -94,7 +94,7 @@ tutorials/third-party-tutorials
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Gymnasium>
-Paper <https://arxiv.org/abs/2407.17032>
+Paper <https://proceedings.neurips.cc/paper_files/paper/2025/hash/d7ff1795e8527f6443371c3933bdb52b-Abstract-Datasets_and_Benchmarks_Track.html>
 gymnasium_release_notes/index
 gym_release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/README.md>
