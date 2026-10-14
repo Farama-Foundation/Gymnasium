@@ -231,6 +231,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Reinforce Tactics is a turn-based strategy game designed for reinforcement learning research, combining tactical grid-based combat with an economy system while supporting multiple AI opponent types including rule-based bots, LLM-powered agents, and trainable RL models.
 
+- [Spatial-Gym: Step-by-step spatial reasoning on SPaRC grid puzzles](https://github.com/lkaesberg/Spatial-Gym)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.4.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/lkaesberg/Spatial-Gym)
+
+  Spatial-Gym turns the 1,000 SPaRC grid puzzles into a Gymnasium environment for step-by-step spatial reasoning. The agent draws a line from the start node to the end node one cell at a time (`Discrete(4)`), and the line must obey every rule on the board. An episode ends with a reward of +1 if the path matches a stored solution and -1 otherwise, with +0.01 or -0.01 per step for staying on or leaving a solution path. Observations are either grid arrays or the SPaRC text grid, so the same puzzles work for RL and LLM agents, and an optional mode lets the agent backtrack. Install with `pip install Spatial-Gym`.
+
 - [Tetris Gymnasium: A fully configurable Gymnasium compatible Tetris environment](https://github.com/Max-We/Tetris-Gymnasium)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)
