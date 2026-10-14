@@ -60,7 +60,6 @@ exclude_env_names = [
     "FrozenLake8x8",
     "LunarLanderContinuous",
     "BipedalWalkerHardcore",
-    # Preserve GIFs generated with trained policies.
     "Acrobot",
     "Ant",
     "BipedalWalker",
