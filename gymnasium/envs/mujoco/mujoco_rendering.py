@@ -172,7 +172,11 @@ class BaseRender:
 
 
 class OffScreenViewer(BaseRender):
-    """Offscreen rendering class with opengl context."""
+    """Offscreen rendering class with opengl context.
+
+    The offscreen framebuffer is grown to fit the requested viewport if the model
+    declares a smaller one, but is never shrunk below the declared size.
+    """
 
     def __init__(
         self,
@@ -183,6 +187,12 @@ class OffScreenViewer(BaseRender):
         max_geom: int = 1000,
         visual_options: dict[int, bool] | None = None,
     ):
+        # Ensure the offscreen framebuffer can hold the requested viewport.
+        # MjrContext snapshots model.vis.global_.off* at construction, so the
+        # model's declared size must be grown before the context is created.
+        model.vis.global_.offwidth = max(model.vis.global_.offwidth, width)
+        model.vis.global_.offheight = max(model.vis.global_.offheight, height)
+
         # We must make GLContext before MjrContext
         self._get_opengl_backend(width, height)
 
@@ -725,8 +735,11 @@ class MujocoRenderer:
             model: MjModel data structure of the MuJoCo simulation
             data: MjData data structure of the MuJoCo simulation
             default_cam_config: dictionary with attribute values of the viewer's default camera, https://mujoco.readthedocs.io/en/latest/XMLreference.html?highlight=camera#visual-global
-            width: width of the OpenGL rendering context
-            height: height of the OpenGL rendering context
+            width: width of the OpenGL rendering context. The offscreen framebuffer
+                is grown to this size if the model declares a smaller one, but never
+                shrunk below the declared size
+            height: height of the OpenGL rendering context, grown but never shrunk
+                in the same way as `width`
             max_geom: maximum number of geometries to render
             camera_id: The integer camera id from which to render the frame in the MuJoCo simulation
             camera_name: The string name of the camera from which to render the frame in the MuJoCo simulation. This argument should not be passed if using cameara_id instead and vice versa
