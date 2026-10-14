@@ -546,7 +546,12 @@ class VectorObservationWrapper(
     """Wraps the vectorized environment to allow a modular transformation of the observation.
 
     Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.
+
+    By default, same-step autoreset is not supported as ``info["final_obs"]`` is not transformed.
+    Subclasses that transform ``info["final_obs"]`` can set ``supports_same_step_autoreset = True``.
     """
+
+    supports_same_step_autoreset: bool = False
 
     def __init__(self, env: VectorEnv[ObsType, ActType, ArrayType]) -> None:
         """Vector observation wrapper that batch transforms observations.
@@ -560,10 +565,16 @@ class VectorObservationWrapper(
                 f"Vector environment ({env}) is missing `autoreset_mode` metadata key."
             )
         else:
-            if env.metadata["autoreset_mode"] not in (
-                AutoresetMode.NEXT_STEP,
-                AutoresetMode.DISABLED,
-            ):
+            supported_modes = (
+                (
+                    AutoresetMode.NEXT_STEP,
+                    AutoresetMode.SAME_STEP,
+                    AutoresetMode.DISABLED,
+                )
+                if self.supports_same_step_autoreset
+                else (AutoresetMode.NEXT_STEP, AutoresetMode.DISABLED)
+            )
+            if env.metadata["autoreset_mode"] not in supported_modes:
                 raise ValueError(
                     f"Expected autoreset_mode to be NEXT_STEP or DISABLED, got {env.metadata['autoreset_mode']}"
                 )
@@ -634,6 +645,18 @@ class VectorActionWrapper(
         raise NotImplementedError
 
 
+def _array_namespace_and_device(array: Any) -> tuple[Any, Any]:
+    """Returns the Array API namespace and device of a non-numpy array, e.g., a jax or torch array."""
+    try:
+        from array_api_compat import array_namespace, device
+    except ImportError as e:
+        raise gym.error.DependencyNotInstalled(
+            f'Array API packages are not installed therefore cannot handle {type(array)} arrays, run `pip install "gymnasium[array-api]"`'
+        ) from e
+
+    return array_namespace(array), device(array)
+
+
 class VectorRewardWrapper(VectorWrapper[ObsType, ActType, ObsType, ActType, ArrayType]):
     """Wraps the vectorized environment to allow a modular transformation of the reward.
 
@@ -648,12 +671,64 @@ class VectorRewardWrapper(VectorWrapper[ObsType, ActType, ObsType, ActType, Arra
         """
         super().__init__(env)
 
+        self._autoreset_mode = self.env.metadata.get(
+            "autoreset_mode", AutoresetMode.NEXT_STEP
+        )
+        self._prev_dones = np.zeros((self.num_envs,), dtype=np.bool_)
+
+    def reset(
+        self,
+        *,
+        seed: int | list[int] | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Resets the environment and the tracking of which sub-environments will autoreset on the next step."""
+        if options is not None and "reset_mask" in options:
+            reset_mask = options["reset_mask"]
+            if isinstance(self._prev_dones, np.ndarray):
+                self._prev_dones[reset_mask] = False
+            else:
+                xp, device = _array_namespace_and_device(self._prev_dones)
+                self._prev_dones = xp.logical_and(
+                    self._prev_dones,
+                    xp.asarray(np.logical_not(reset_mask), device=device),
+                )
+        else:
+            self._prev_dones = np.zeros((self.num_envs,), dtype=np.bool_)
+        return self.env.reset(seed=seed, options=options)
+
     def step(
         self, actions: ActType
     ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
-        """Steps through the environment returning a reward modified by :meth:`reward`."""
+        """Steps through the environment returning a reward modified by :meth:`reward`.
+
+        For next-step autoreset, the reward of a sub-environment's autoreset step is not an environment reward
+        therefore, it is returned unmodified, equivalent to applying the wrapper to each sub-environment.
+        """
         observations, rewards, terminations, truncations, infos = self.env.step(actions)
-        return observations, self.rewards(rewards), terminations, truncations, infos
+
+        transformed_rewards = self.rewards(rewards)
+        if self._autoreset_mode != AutoresetMode.NEXT_STEP:
+            return observations, transformed_rewards, terminations, truncations, infos
+
+        if isinstance(transformed_rewards, np.ndarray):
+            if np.any(self._prev_dones):
+                transformed_rewards = np.where(
+                    self._prev_dones, rewards, transformed_rewards
+                )
+            self._prev_dones = np.logical_or(terminations, truncations)
+        else:
+            # Non-numpy rewards (e.g., jax or torch) are masked within their own array namespace and device
+            xp, device = _array_namespace_and_device(transformed_rewards)
+            transformed_rewards = xp.where(
+                xp.asarray(self._prev_dones, device=device),
+                rewards,
+                transformed_rewards,
+            )
+            done_xp, _ = _array_namespace_and_device(terminations)
+            self._prev_dones = done_xp.logical_or(terminations, truncations)
+
+        return observations, transformed_rewards, terminations, truncations, infos
 
     def rewards(self, rewards: ArrayType) -> ArrayType:
         """Transform the reward before returning it.
