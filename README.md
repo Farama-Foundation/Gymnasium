@@ -73,7 +73,7 @@ If you are financially able to do so and would like to support the development o
 
 ## Citation
 
-You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032) as:
+You can cite Gymnasium using our [related paper](https://proceedings.neurips.cc/paper_files/paper/2025/hash/d7ff1795e8527f6443371c3933bdb52b-Abstract-Datasets_and_Benchmarks_Track.html) as:
 
 ```
 @inproceedings{NEURIPS2025_d7ff1795,
