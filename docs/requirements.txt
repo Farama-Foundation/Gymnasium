@@ -2,10 +2,10 @@ sphinx
 sphinx-copybutton>=0.5.2
 sphinx-autobuild
 myst-parser
-sphinx-gallery==0.14.0
+sphinx-gallery==0.22.1
 celshast
 moviepy
-pygame
+pygame-ce
 sphinx_github_changelog
 ale_py
 tabulate

@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false # This ensures all matrix combinations run even if one fails
       matrix:
-        python-version: ["3.12"]
+        python-version: ["3.15"]
         tutorial-group:
           - gymnasium_basics
           - training_agents
