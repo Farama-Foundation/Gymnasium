@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import numpy as np
 import pytest
 
@@ -82,6 +84,71 @@ def test_carracing_domain_randomize():
     assert (grass_color != env.grass_color).all(), (
         f"Have same grass color after reset. Before: {grass_color}, after: {env.grass_color}."
     )
+
+
+class _FakeCar:
+    """Stand-in for the car body passed to ``FrictionDetector``."""
+
+    def __init__(self):
+        self.tiles = set()
+
+
+def _fake_contact(tile, car):
+    """Build the minimal duck-typed contact that ``FrictionDetector`` reads."""
+    return SimpleNamespace(
+        fixtureA=SimpleNamespace(body=SimpleNamespace(userData=tile)),
+        fixtureB=SimpleNamespace(body=SimpleNamespace(userData=car)),
+    )
+
+
+def test_carracing_lap_completion():
+    """Completing a lap must set ``new_lap``, terminating the episode.
+
+    The car starts the episode sitting on tile 0, so that tile is already marked
+    as visited before the lap begins. The lap-completion check therefore has to
+    run on every contact with tile 0, not only the first one.
+    """
+    env: CarRacing = gym.make("CarRacing-v3", lap_complete_percent=0.95).unwrapped
+    env.reset(seed=0)
+
+    detector = env.contactListener_keepref
+    car = _FakeCar()
+
+    assert env.new_lap is False
+    assert env.road[0].road_visited is True, "the car should start on tile 0"
+
+    # Drive a full lap, touching every tile in order.
+    for tile in env.road:
+        detector.BeginContact(_fake_contact(tile, car))
+        detector.EndContact(_fake_contact(tile, car))
+
+    assert env.tile_visited_count == len(env.track)
+
+    # Cross the start/finish line again to complete the lap.
+    detector.BeginContact(_fake_contact(env.road[0], car))
+    detector.EndContact(_fake_contact(env.road[0], car))
+
+    assert env.new_lap is True
+
+
+def test_carracing_no_lap_completion_below_percent():
+    """Crossing the start/finish line early must not complete the lap."""
+    env: CarRacing = gym.make("CarRacing-v3", lap_complete_percent=0.95).unwrapped
+    env.reset(seed=0)
+
+    detector = env.contactListener_keepref
+    car = _FakeCar()
+
+    # Visit half the track, then cross the start/finish line.
+    for tile in env.road[: len(env.road) // 2]:
+        detector.BeginContact(_fake_contact(tile, car))
+        detector.EndContact(_fake_contact(tile, car))
+
+    detector.BeginContact(_fake_contact(env.road[0], car))
+    detector.EndContact(_fake_contact(env.road[0], car))
+
+    assert env.tile_visited_count / len(env.track) < 0.95
+    assert env.new_lap is False
 
 
 def test_slippery_cliffwalking():
