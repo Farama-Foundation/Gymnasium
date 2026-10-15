@@ -210,6 +210,8 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
             f"Expects the mask length to be equal to the number of actions, mask length: {len(sub_mask)}, action: {sub_nvec}"
         )
 
+        # NumPy int64 + uint64 promotes to float64, which can lose the offset.
+        # Add the sampled index and start as Python integers instead.
         if mask_type == "mask":
             assert sub_mask.dtype == np.int8, (
                 f"Expects the mask dtype to be np.int8, actual dtype: {sub_mask.dtype}"
@@ -221,7 +223,9 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
             )
 
             if np.any(valid_action_mask):
-                return self.np_random.choice(np.where(valid_action_mask)[0]) + sub_start
+                return int(self.np_random.choice(np.where(valid_action_mask)[0])) + int(
+                    sub_start
+                )
             else:
                 return sub_start
         elif mask_type == "probability":
@@ -237,13 +241,12 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
             )
 
             normalized_sub_mask = sub_mask / np.sum(sub_mask)
-            return (
+            return int(
                 self.np_random.choice(
                     np.where(valid_action_mask)[0],
                     p=normalized_sub_mask[valid_action_mask],
                 )
-                + sub_start
-            )
+            ) + int(sub_start)
         raise ValueError(f"Unsupported mask type: {mask_type}")
 
     def contains(self, x: Any) -> bool:
