@@ -261,7 +261,11 @@ class Graph(Space[GraphInstance]):
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, GraphInstance) and x.nodes is not None:
             # Checks the nodes
-            nodes = list(gym.vector.utils.iterate(self.batch_node_space, x.nodes))
+            try:
+                nodes = list(gym.vector.utils.iterate(self.batch_node_space, x.nodes))
+            except (IndexError, KeyError, TypeError, ValueError):
+                return False
+
             if all(node in self.node_space for node in nodes):
                 # Check the edges and edge links which are optional
                 if x.edges is not None and x.edge_links is not None:
@@ -269,9 +273,13 @@ class Graph(Space[GraphInstance]):
                         x.edge_links, np.ndarray
                     ):
                         # Use iterate to handle all space types (Dict, Tuple, etc.)
-                        edges = list(
-                            gym.vector.utils.iterate(self.batch_edge_space, x.edges)
-                        )
+                        try:
+                            edges = list(
+                                gym.vector.utils.iterate(self.batch_edge_space, x.edges)
+                            )
+                        except (IndexError, KeyError, TypeError, ValueError):
+                            return False
+
                         if all(edge in self.edge_space for edge in edges):
                             if np.issubdtype(x.edge_links.dtype, np.integer):
                                 if x.edge_links.shape == (len(edges), 2):
