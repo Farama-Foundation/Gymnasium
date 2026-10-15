@@ -121,7 +121,7 @@ class TimeAwareObservation(
     To flatten the observation, use the :attr:`flatten` parameter which will use the
     :func:`gymnasium.spaces.utils.flatten` function.
 
-    No vector version of the wrapper exists.
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.TimeAwareObservation`.
 
     Example:
         >>> import gymnasium as gym
