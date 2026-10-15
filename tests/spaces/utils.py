@@ -130,6 +130,15 @@ TESTING_COMPOSITE_SPACES = [
         node_space=Tuple((Dict({"a": Discrete(3)}), MultiBinary(2))),
         edge_space=Tuple((Discrete(4), Box(0, 1, shape=(2,)))),
     ),
+    # Fixed-count Graph spaces
+    Graph(Discrete(4, start=2), None, num_nodes=3, num_edges=0),
+    Graph(MultiDiscrete([3, 4]), MultiBinary(2), num_nodes=3, num_edges=2),
+    Graph(
+        Dict({"pos": Box(-1, 1, shape=(2,)), "type": Discrete(3)}),
+        Tuple((Discrete(4), Box(0, 1, shape=()))),
+        num_nodes=3,
+        num_edges=2,
+    ),
     # Note: Text, Sequence, Graph, and OneOf as node/edge spaces have broken
     # JSON serialization in Graph.to_jsonable/from_jsonable
     # Graph(node_space=Sequence(Discrete(3)), edge_space=None),
