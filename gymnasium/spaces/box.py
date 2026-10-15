@@ -138,8 +138,8 @@ class Box(Space[NDArray[_ScalarT_co]]):
         this value across all dimensions.
 
         Args:
-            low (SupportsFloat | np.ndarray): Lower bounds of the intervals. If integer, must be at least ``-2**63``.
-            high (SupportsFloat | np.ndarray]): Upper bounds of the intervals. If integer, must be at most ``2**63 - 2``.
+            low (SupportsFloat | np.ndarray): Lower bounds of the intervals.
+            high (SupportsFloat | np.ndarray]): Upper bounds of the intervals.
             shape (Optional[Sequence[int]]): The shape is inferred from the shape of `low` or `high` `np.ndarray`s with
                 `low` and `high` scalars defaulting to a shape of (1,)
             dtype: The dtype of the elements of the space. If this is an integer type, the :class:`Box` is essentially a discrete space.
@@ -430,7 +430,10 @@ class Box(Space[NDArray[_ScalarT_co]]):
                 f"Box.sample cannot be provided a probability mask, actual value: {probability}"
             )
 
-        high = self.high if self.dtype.kind == "f" else self.high.astype("int64") + 1
+        # for integer dtypes, `high + 1` is the exclusive upper bound of the samples
+        # (floored below); it is computed in float64, the precision `uniform` samples
+        # in, as it can overflow the dtype or int64 (e.g. `high` is the uint64 max)
+        high = self.high if self.dtype.kind == "f" else self.high.astype(np.float64) + 1
         sample = np.empty(self.shape)
 
         # Masking arrays which classify the coordinates according to interval type
@@ -462,20 +465,19 @@ class Box(Space[NDArray[_ScalarT_co]]):
         # clip values that would underflow/overflow
         if np.issubdtype(self.dtype, np.integer):
             iinfo = np.iinfo(cast("np.dtype[np.integer]", self.dtype))
-            dtype_min, dtype_max = iinfo.min, iinfo.max
-            if self.dtype == np.int64:
-                # float64 cannot exactly represent the int64 limits, so keep a
-                # margin to stay within the dtype range after the cast below
-                # (narrower signed dtypes are exactly representable in float64)
-                dtype_min += 2
-                dtype_max -= 2
+            dtype_min, dtype_max = float(iinfo.min), float(iinfo.max)
+            if dtype_max > iinfo.max:
+                # float64 cannot represent the int64 and uint64 max, which round up to
+                # 2**63 and 2**64, so use the largest float64 within the dtype range
+                # (the minimums and the limits of narrower dtypes are exact in float64)
+                dtype_max = np.nextafter(dtype_max, 0)
             sample = sample.clip(min=dtype_min, max=dtype_max)
 
         sample = sample.astype(self.dtype)
 
-        # float64 values have lower than integer precision near int64 min/max, so clip
-        # again in case something has been cast to an out-of-bounds value
-        if self.dtype == np.int64:
+        # float64 values have lower than integer precision for 64-bit integers, so clip
+        # again in case something has been rounded outside of the bounds
+        if self.dtype.kind in ("i", "u") and self.dtype.itemsize == 8:
             sample = sample.clip(min=self.low, max=self.high)
 
         return sample
