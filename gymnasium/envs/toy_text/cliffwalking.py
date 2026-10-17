@@ -17,6 +17,13 @@ LEFT = 3
 
 POSITION_MAPPING = {UP: [-1, 0], RIGHT: [0, 1], DOWN: [1, 0], LEFT: [0, -1]}
 
+# The pixel art is authored against a 64x64 cell; sprites smaller than a full
+# tile sit at these offsets within it.
+ART_CELL_SIZE = 64
+LETTER_OFFSET = (8, 8)
+FLAG_OFFSET = (28, 16)
+AGENT_OFFSET = (20, 20)
+
 
 class CliffWalkingEnv(Env):
     """
@@ -134,20 +141,19 @@ class CliffWalkingEnv(Env):
         self.render_mode = render_mode
 
         # pygame utils
-        self.cell_size = (60, 60)
+        self.cell_size = (64, 64)
         self.window_size = (
             self.shape[1] * self.cell_size[1],
             self.shape[0] * self.cell_size[0],
         )
         self.window_surface = None
         self.clock = None
-        self.elf_images = None
+        self.agent_img = None
         self.start_img = None
         self.goal_img = None
-        self.cliff_img = None
-        self.mountain_bg_img = None
-        self.near_cliff_img = None
-        self.tree_img = None
+        self.goal_flag_img = None
+        self.cliff_imgs = None
+        self.ground_img = None
 
     def _limit_coordinates(self, coord: np.ndarray) -> np.ndarray:
         """Prevent the agent from falling out of the grid world."""
@@ -243,69 +249,61 @@ class CliffWalkingEnv(Env):
                 self.window_surface = pygame.Surface(self.window_size)
         if self.clock is None:
             self.clock = pygame.time.Clock()
-        if self.elf_images is None:
-            hikers = [
-                path.join(path.dirname(__file__), "img/elf_up.png"),
-                path.join(path.dirname(__file__), "img/elf_right.png"),
-                path.join(path.dirname(__file__), "img/elf_down.png"),
-                path.join(path.dirname(__file__), "img/elf_left.png"),
-            ]
-            self.elf_images = [
-                pygame.transform.scale(pygame.image.load(f_name), self.cell_size)
-                for f_name in hikers
-            ]
+        scale = self.cell_size[0] / ART_CELL_SIZE
+
+        def load(name):
+            img = pygame.image.load(
+                path.join(path.dirname(__file__), "img/cliff_walking", name)
+            )
+            size = (round(img.get_width() * scale), round(img.get_height() * scale))
+            return pygame.transform.scale(img, size)
+
+        if self.ground_img is None:
+            self.ground_img = load("tile_ground.png")
+        if self.cliff_imgs is None:
+            self.cliff_imgs = {
+                name: load(f"tile_cliff_{name}.png")
+                for name in ("left", "mid_a", "mid_b", "right")
+            }
         if self.start_img is None:
-            file_name = path.join(path.dirname(__file__), "img/stool.png")
-            self.start_img = pygame.transform.scale(
-                pygame.image.load(file_name), self.cell_size
-            )
+            self.start_img = load("letter_s.png")
         if self.goal_img is None:
-            file_name = path.join(path.dirname(__file__), "img/cookie.png")
-            self.goal_img = pygame.transform.scale(
-                pygame.image.load(file_name), self.cell_size
-            )
-        if self.mountain_bg_img is None:
-            bg_imgs = [
-                path.join(path.dirname(__file__), "img/mountain_bg1.png"),
-                path.join(path.dirname(__file__), "img/mountain_bg2.png"),
-            ]
-            self.mountain_bg_img = [
-                pygame.transform.scale(pygame.image.load(f_name), self.cell_size)
-                for f_name in bg_imgs
-            ]
-        if self.near_cliff_img is None:
-            near_cliff_imgs = [
-                path.join(path.dirname(__file__), "img/mountain_near-cliff1.png"),
-                path.join(path.dirname(__file__), "img/mountain_near-cliff2.png"),
-            ]
-            self.near_cliff_img = [
-                pygame.transform.scale(pygame.image.load(f_name), self.cell_size)
-                for f_name in near_cliff_imgs
-            ]
-        if self.cliff_img is None:
-            file_name = path.join(path.dirname(__file__), "img/mountain_cliff.png")
-            self.cliff_img = pygame.transform.scale(
-                pygame.image.load(file_name), self.cell_size
-            )
+            self.goal_img = load("letter_g.png")
+        if self.goal_flag_img is None:
+            self.goal_flag_img = load("goal_flag.png")
+        if self.agent_img is None:
+            self.agent_img = load("agent.png")
+
+        cliff_cols = np.flatnonzero(self._cliff.any(axis=0))
+        letter_dx, letter_dy = (round(v * scale) for v in LETTER_OFFSET)
+        flag_dx, flag_dy = (round(v * scale) for v in FLAG_OFFSET)
+        agent_dx, agent_dy = (round(v * scale) for v in AGENT_OFFSET)
 
         for s in range(self.nS):
             row, col = np.unravel_index(s, self.shape)
             pos = (col * self.cell_size[0], row * self.cell_size[1])
-            check_board_mask = row % 2 ^ col % 2
-            self.window_surface.blit(self.mountain_bg_img[check_board_mask], pos)
+            self.window_surface.blit(self.ground_img, pos)
 
             if self._cliff[row, col]:
-                self.window_surface.blit(self.cliff_img, pos)
-            if row < self.shape[0] - 1 and self._cliff[row + 1, col]:
-                self.window_surface.blit(self.near_cliff_img[check_board_mask], pos)
+                if col == cliff_cols[0]:
+                    tile = self.cliff_imgs["left"]
+                elif col == cliff_cols[-1]:
+                    tile = self.cliff_imgs["right"]
+                else:
+                    tile = self.cliff_imgs["mid_a" if col % 2 == 0 else "mid_b"]
+                self.window_surface.blit(tile, pos)
+            letter_pos = (pos[0] + letter_dx, pos[1] + letter_dy)
             if s == self.start_state_index:
-                self.window_surface.blit(self.start_img, pos)
+                self.window_surface.blit(self.start_img, letter_pos)
             if s == self.nS - 1:
-                self.window_surface.blit(self.goal_img, pos)
+                self.window_surface.blit(self.goal_img, letter_pos)
+                self.window_surface.blit(
+                    self.goal_flag_img, (pos[0] + flag_dx, pos[1] + flag_dy)
+                )
             if s == self.s:
-                elf_pos = (pos[0], pos[1] - 0.1 * self.cell_size[1])
-                last_action = self.lastaction if self.lastaction is not None else 2
-                self.window_surface.blit(self.elf_images[last_action], elf_pos)
+                self.window_surface.blit(
+                    self.agent_img, (pos[0] + agent_dx, pos[1] + agent_dy)
+                )
 
         if mode == "human":
             pygame.event.pump()
@@ -351,5 +349,4 @@ class CliffWalkingEnv(Env):
             pygame.quit()
 
 
-# Elf and stool from https://franuka.itch.io/rpg-snow-tileset
-# All other assets by ____
+# Pixel art assets by ____

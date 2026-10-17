@@ -3,33 +3,22 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Generic
+from typing import Any
 
 import numpy as np
+from typing_extensions import TypeVar
 
 from gymnasium import Env
+from gymnasium.core import ActType, ObsType
 from gymnasium.vector import VectorEnv, VectorRewardWrapper
+from gymnasium.vector.vector_env import ArrayType
 from gymnasium.wrappers import transform_reward
 
-if TYPE_CHECKING:
-    from typing_extensions import TypeVar
-
-    _ArrayT_contra = TypeVar(
-        "_ArrayT_contra", bound=np.ndarray, contravariant=True, default=Any
-    )
-    _ArrayT_co = TypeVar(
-        "_ArrayT_co", bound=np.ndarray, covariant=True, default=_ArrayT_contra
-    )
-else:
-    from typing import TypeVar
-
-    _ArrayT_contra = TypeVar("_ArrayT_contra", bound=np.ndarray, contravariant=True)
-    _ArrayT_co = TypeVar("_ArrayT_co", bound=np.ndarray, covariant=True)
-
-_ArrayT = TypeVar("_ArrayT", bound=np.ndarray)
+# `VectorizeTransformReward.rewards` updates the reward array in place, so it needs an `np.ndarray`
+_ArrayT = TypeVar("_ArrayT", bound=np.ndarray, default=np.ndarray)
 
 
-class TransformReward(VectorRewardWrapper, Generic[_ArrayT_contra, _ArrayT_co]):
+class TransformReward(VectorRewardWrapper[ObsType, ActType, ArrayType]):
     """A reward wrapper that allows a custom function to modify the step reward.
 
     Example with reward transformation:
@@ -50,10 +39,12 @@ class TransformReward(VectorRewardWrapper, Generic[_ArrayT_contra, _ArrayT_co]):
                [-4.3118435e-01, -1.5342437e-03]], dtype=float32)
     """
 
-    func: Callable[[_ArrayT_contra], _ArrayT_co]
+    func: Callable[[ArrayType], ArrayType]
 
     def __init__(
-        self, env: VectorEnv, func: Callable[[_ArrayT_contra], _ArrayT_co]
+        self,
+        env: VectorEnv[ObsType, ActType, ArrayType],
+        func: Callable[[ArrayType], ArrayType],
     ) -> None:
         """Initialize LambdaReward wrapper.
 
@@ -65,12 +56,12 @@ class TransformReward(VectorRewardWrapper, Generic[_ArrayT_contra, _ArrayT_co]):
 
         self.func = func
 
-    def rewards(self, rewards: _ArrayT_contra) -> _ArrayT_co:
+    def rewards(self, rewards: ArrayType) -> ArrayType:
         """Apply function to reward."""
         return self.func(rewards)
 
 
-class VectorizeTransformReward(VectorRewardWrapper):
+class VectorizeTransformReward(VectorRewardWrapper[ObsType, ActType, _ArrayT]):
     """Vectorizes a single-agent transform reward wrapper for vector environments.
 
     An example such that applies a ReLU to the reward:
@@ -90,7 +81,7 @@ class VectorizeTransformReward(VectorRewardWrapper):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[ObsType, ActType, _ArrayT],
         wrapper: type[transform_reward.TransformReward],
         **kwargs: Any,
     ) -> None:
@@ -112,7 +103,7 @@ class VectorizeTransformReward(VectorRewardWrapper):
         return rewards
 
 
-class ClipReward(VectorizeTransformReward):
+class ClipReward(VectorizeTransformReward[ObsType, ActType, _ArrayT]):
     """A wrapper that clips the rewards for an environment between an upper and lower bound.
 
     Example with clipped rewards:
@@ -132,7 +123,7 @@ class ClipReward(VectorizeTransformReward):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[ObsType, ActType, _ArrayT],
         min_reward: float | np.ndarray | None = None,
         max_reward: float | np.ndarray | None = None,
     ) -> None:

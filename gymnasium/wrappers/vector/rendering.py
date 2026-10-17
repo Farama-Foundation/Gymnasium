@@ -22,7 +22,10 @@ if TYPE_CHECKING:
     import pygame
 
 
-class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
+class HumanRendering(
+    VectorWrapper[ObsType, ActType, ObsType, ActType, ArrayType],
+    gym.utils.RecordConstructorArgs,
+):
     """Adds support for Human-based Rendering for Vector-based environments."""
 
     ACCEPTED_RENDER_MODES = [
@@ -40,7 +43,11 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
     clock: pygame.time.Clock | None
     metadata: dict[str, Any]
 
-    def __init__(self, env: VectorEnv, screen_size: tuple[int, int] | None = None):
+    def __init__(
+        self,
+        env: VectorEnv[ObsType, ActType, ArrayType],
+        screen_size: tuple[int, int] | None = None,
+    ):
         """Constructor for Human Rendering of Vector-based environments.
 
         Args:
@@ -206,7 +213,7 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
 
 
 class RecordVideo(
-    gym.vector.VectorWrapper,
+    VectorWrapper[ObsType, ActType, ObsType, ActType, np.ndarray],
     gym.utils.RecordConstructorArgs,
 ):
     """Adds support for video recording for Vector-based environments.
@@ -260,7 +267,7 @@ class RecordVideo(
 
     def __init__(
         self,
-        env: gym.vector.VectorEnv,
+        env: VectorEnv[ObsType, ActType, np.ndarray],
         video_folder: str,
         video_aspect_ratio: tuple[int, int] = (1, 1),
         record_first_only: bool = False,
@@ -445,7 +452,7 @@ class RecordVideo(
 
     def step(
         self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+    ) -> tuple[ObsType, np.ndarray, np.ndarray, np.ndarray, dict[str, Any]]:
         """Steps through the environment using action, recording observations if :attr:`self.recording`."""
         obs, rewards, terminations, truncations, info = self.env.step(actions)
         self.step_id += 1

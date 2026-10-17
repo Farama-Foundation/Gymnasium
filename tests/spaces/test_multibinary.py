@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from gymnasium.spaces import MultiBinary
 
@@ -32,3 +33,18 @@ def test_sample_probabilities():
     for i in range(4):
         counts = np.sum(samples[:, i]) / len(samples)
         np.testing.assert_allclose(counts, probabilities[i], atol=0.05)
+
+
+@pytest.mark.parametrize("n", [np.int64(4), np.int32(4), np.uint8(4), np.prod((2, 2))])
+def test_numpy_integer_n(n):
+    space = MultiBinary(n)
+
+    assert space.n == 4 and isinstance(space.n, int)
+    assert space.shape == (4,)
+    assert space == MultiBinary(4)
+    assert space.sample() in space
+
+
+def test_non_positive_numpy_integer_n():
+    with pytest.raises(ValueError, match="n \\(counts\\) have to be positive"):
+        MultiBinary(np.int64(0))
