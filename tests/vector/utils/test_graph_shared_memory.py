@@ -213,7 +213,10 @@ def test_graph_spawn_error_cleanup():
     processes = tuple(env.processes)
     try:
         env.reset()
-        with pytest.raises(ValueError, match="edge_links"):
+        with (
+            pytest.warns(UserWarning, match="ERROR:"),
+            pytest.raises(ValueError, match="edge_links"),
+        ):
             env.step(np.zeros(1, dtype=np.int64))
     finally:
         env.close(terminate=True)
