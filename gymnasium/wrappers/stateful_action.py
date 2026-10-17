@@ -1,4 +1,4 @@
-"""Stateful action wrappers - ``StickyAction`` and ``RepeatAction``."""
+"""Stateful action wrappers - ``StickyAction``, ``RepeatAction`` and ``ActionChunk``."""
 
 from __future__ import annotations
 
@@ -9,8 +9,9 @@ import numpy as np
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType, WrapperActType, WrapperObsType
 from gymnasium.error import InvalidBound, InvalidProbability
+from gymnasium.wrappers.common import Autoreset
 
-__all__ = ["StickyAction", "RepeatAction"]
+__all__ = ["StickyAction", "RepeatAction", "ActionChunk"]
 
 
 class StickyAction(
@@ -218,3 +219,166 @@ class RepeatAction(
             if terminated or truncated:
                 break
         return obs, total_reward, terminated, truncated, info
+
+
+class ActionChunk(
+    gym.Wrapper[ObsType, np.ndarray, ObsType, np.ndarray],
+    gym.utils.RecordConstructorArgs,
+):
+    """Execute a fixed-length sequence of distinct Box actions in one outer step.
+
+    This is useful for sequence-predicting policies such as `Diffusion Policy
+    <https://diffusion-policy.cs.columbia.edu/>`_, which execute several actions
+    before predicting another sequence. This wrapper only handles execution;
+    it does not implement a policy or change Gymnasium's scalar reward API.
+
+    The action space has shape ``(chunk_size, *env.action_space.shape)``. The
+    entire NumPy action array is validated before executing any action. Execution
+    stops on termination or truncation and returns the last observation, the sum
+    of the executed rewards, and the last inner info dictionary. No reset occurs
+    inside a chunk. Call :meth:`reset` before the first chunk, after an episode
+    ends, or after an inner step fails.
+
+    ``info[info_key]`` contains float64 ``rewards`` and boolean ``valid_mask``
+    arrays of length ``chunk_size``, plus ``length`` (the executed step count).
+    Unexecuted entries contain zero and False. Other intermediate observations
+    and info dictionaries are not retained. The reserved info key and its
+    underscore-prefixed vector mask key must not occur in inner reset/step info.
+
+    Place TimeLimit, RecordEpisodeStatistics and FrameStackObservation inside
+    this wrapper to count individual environment steps, or outside to count
+    chunks. An inner Autoreset or ActionChunk wrapper is rejected. An outer
+    Autoreset is supported; its reset-only step discards the whole input chunk.
+    Custom environments that reset themselves inside step are unsupported.
+
+    To preserve a per-step discounted objective, training code can compute
+    ``sum(gamma**i * rewards[i] for i in range(length))`` and bootstrap with
+    ``gamma**length`` (respecting termination). The returned reward is an
+    undiscounted scalar sum; a fixed chunk-level discount generally describes a
+    different objective when chunks end early.
+
+    No vector wrapper is provided. Wrap each scalar environment before creating
+    a SyncVectorEnv or AsyncVectorEnv. Under same-step autoreset, the completed
+    chunk's metadata is in ``final_info``; reset-only next-step calls have no
+    chunk metadata. Vector info presence masks distinguish these cases.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> env = ActionChunk(gym.make("Pendulum-v1"), chunk_size=4)
+        >>> observation, info = env.reset(seed=42)
+        >>> observation, reward, terminated, truncated, info = env.step(env.action_space.sample())
+        >>> info["action_chunk"]["length"]
+        4
+        >>> env.close()
+    """
+
+    def __init__(
+        self,
+        env: gym.Env[ObsType, np.ndarray],
+        chunk_size: int,
+        *,
+        info_key: str = "action_chunk",
+    ):
+        """Initialize sequential action execution for a single Box-action environment.
+
+        Args:
+            env: The scalar environment, without an inner autoreset wrapper.
+            chunk_size: Positive number of actions supplied per outer step.
+            info_key: Nonempty info namespace, which must not start with an underscore.
+        """
+        if not isinstance(env, gym.Env) or not isinstance(
+            env.action_space, gym.spaces.Box
+        ):
+            raise TypeError(
+                "ActionChunk requires a scalar environment with a Box action space."
+            )
+        if isinstance(chunk_size, (bool, np.bool_)) or not isinstance(
+            chunk_size, (int, np.integer)
+        ):
+            raise TypeError("chunk_size must be an integer.")
+        if chunk_size < 1:
+            raise ValueError("chunk_size must be positive.")
+        if not isinstance(info_key, str) or not info_key or info_key.startswith("_"):
+            raise ValueError(
+                "info_key must be a nonempty string without a leading underscore."
+            )
+        inner = env
+        while isinstance(inner, gym.Wrapper):
+            if isinstance(inner, (Autoreset, ActionChunk)):
+                raise ValueError(
+                    "ActionChunk cannot contain an Autoreset or another ActionChunk wrapper."
+                )
+            inner = inner.env
+
+        gym.utils.RecordConstructorArgs.__init__(
+            self, chunk_size=chunk_size, info_key=info_key
+        )
+        gym.Wrapper.__init__(self, env)
+        self.chunk_size = int(chunk_size)
+        self.info_key = info_key
+        self.action_space = gym.vector.utils.batch_space(
+            env.action_space, self.chunk_size
+        )
+        self._needs_reset = True
+
+    def _check_info(self, info: dict[str, Any]) -> None:
+        """Keep chunk metadata and vector presence masks free of collisions."""
+        if self.info_key in info or f"_{self.info_key}" in info:
+            raise ValueError(
+                f"ActionChunk reserved info key collision: {self.info_key!r}. Choose another info_key."
+            )
+
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Reset the environment and allow a new chunk after a successful reset."""
+        self._needs_reset = True
+        observation, info = self.env.reset(seed=seed, options=options)
+        self._check_info(info)
+        self._needs_reset = False
+        return observation, info
+
+    def step(
+        self, action: np.ndarray
+    ) -> tuple[ObsType, float, bool, bool, dict[str, Any]]:
+        """Validate the complete action block, then execute until it ends or the episode finishes."""
+        if self._needs_reset:
+            raise gym.error.ResetNeeded(
+                "Call reset before executing another action chunk."
+            )
+        if not isinstance(action, np.ndarray):
+            raise TypeError("ActionChunk actions must be NumPy arrays.")
+        if action not in self.action_space:
+            raise ValueError(f"Action chunk must belong to {self.action_space}.")
+        actions = action.copy()
+        rewards = np.zeros(self.chunk_size, dtype=np.float64)
+        valid_mask = np.zeros(self.chunk_size, dtype=np.bool_)
+        total_reward = 0.0
+        # Any failure after execution begins leaves the environment requiring reset.
+        self._needs_reset = True
+        for index in range(self.chunk_size):
+            inner_action = np.array(
+                actions[index], dtype=self.env.action_space.dtype, copy=True
+            )
+            observation, reward, terminated, truncated, info = self.env.step(
+                inner_action
+            )
+            self._check_info(info)
+            if isinstance(reward, np.ndarray) and reward.ndim != 0:
+                raise TypeError(
+                    "ActionChunk requires a scalar reward for every inner step."
+                )
+            reward_value = float(reward)
+            rewards[index] = reward_value
+            total_reward += reward_value
+            valid_mask[index] = True
+            if terminated or truncated:
+                break
+        info = dict(info)
+        info[self.info_key] = {
+            "rewards": rewards,
+            "valid_mask": valid_mask,
+            "length": index + 1,
+        }
+        self._needs_reset = bool(terminated or truncated)
+        return observation, total_reward, terminated, truncated, info
