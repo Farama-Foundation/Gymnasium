@@ -227,6 +227,11 @@ class ActionChunk(
 ):
     """Execute a fixed-length sequence of distinct Box actions in one outer step.
 
+    This is useful for sequence-predicting policies such as `Diffusion Policy
+    <https://diffusion-policy.cs.columbia.edu/>`_, which execute several actions
+    before predicting another sequence. This wrapper only handles execution;
+    it does not implement a policy or change Gymnasium's scalar reward API.
+
     The action space has shape ``(chunk_size, *env.action_space.shape)``. The
     entire NumPy action array is validated before executing any action. Execution
     stops on termination or truncation and returns the last observation, the sum
