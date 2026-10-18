@@ -98,7 +98,7 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
         Args:
             nvec: vector of counts of each categorical variable. This will usually be a list of integers. However,
                 you may also pass a more complicated numpy array if you'd like the space to have several axes.
-            dtype: This should be some kind of integer type.
+            dtype: This should be some kind of integer type. All categorical ranges must fit within it.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
             start: Optionally, the starting value the element of each class will take (defaults to 0).
         """
@@ -127,6 +127,13 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
             )
         if not (self.nvec > 0).all():
             raise ValueError("nvec (counts) have to be positive")
+
+        # Subtract nonnegative counts from the dtype limit, so this check cannot
+        # overflow even when the requested upper endpoint is unrepresentable.
+        if np.any(self.start > np.iinfo(self.dtype).max - (self.nvec - 1)):
+            raise ValueError(
+                f"The range defined by start + nvec - 1 exceeds the maximum of the dtype {self.dtype}"
+            )
 
         super().__init__(self.nvec.shape, self.dtype, seed)
 
