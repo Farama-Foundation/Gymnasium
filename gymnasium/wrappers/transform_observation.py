@@ -575,6 +575,9 @@ class DtypeObservation(
 
     Note:
         This is only compatible with :class:`Box`, :class:`Discrete`, :class:`MultiDiscrete` and :class:`MultiBinary` observation spaces
+        For :class:`MultiDiscrete` observations, floating-point dtypes produce a
+        :class:`Box` with the original minimum and maximum values; integer dtypes
+        preserve the :class:`MultiDiscrete` space.
 
     A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.DtypeObservation`.
 
@@ -614,11 +617,18 @@ class DtypeObservation(
                 dtype=self.dtype,
             )
         elif isinstance(env.observation_space, spaces.MultiDiscrete):
-            new_observation_space = spaces.MultiDiscrete(
-                env.observation_space.nvec,
-                dtype=dtype,
-                start=env.observation_space.start,
-            )
+            if np.issubdtype(dtype, np.floating):
+                new_observation_space = spaces.Box(
+                    low=env.observation_space.start,
+                    high=env.observation_space.start + env.observation_space.nvec - 1,
+                    dtype=dtype,
+                )
+            else:
+                new_observation_space = spaces.MultiDiscrete(
+                    env.observation_space.nvec,
+                    dtype=dtype,
+                    start=env.observation_space.start,
+                )
         elif isinstance(env.observation_space, spaces.MultiBinary):
             new_observation_space = spaces.Box(
                 low=0,
