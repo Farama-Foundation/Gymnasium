@@ -22,7 +22,8 @@ except ImportError as e:
         'pymunk is not installed, run `pip install "gymnasium[pymunk]"`'
     ) from e
 
-
+# constants for collision detection
+WHEEL, TILE = 1, 2
 SIZE = 0.02
 ENGINE_POWER = 100000000 * SIZE * SIZE
 WHEEL_MOMENT_OF_INERTIA = 4000 * SIZE * SIZE
@@ -112,7 +113,7 @@ class Car:
             front_k = 1.0 if wy > 0 else 1.0
 
             w = pymunk.Body()
-            w.position = (init_x + wx * SIZE, init_y + wy * SIZE)
+            w.position = self.hull.local_to_world((wx * SIZE, wy * SIZE))
             w.angle = init_angle
             w_shape = pymunk.Poly(
                 w, [(x * front_k * SIZE, y * front_k * SIZE) for x, y in WHEEL_POLY]
@@ -120,8 +121,9 @@ class Car:
             w_shape.density = 0.1
             w_shape.filter = pymunk.ShapeFilter(group=0, categories=0x20, mask=0x01)
             w_shape.elasticity = 0.0
+            w_shape.collision_type = WHEEL
 
-            joint = pymunk.PivotJoint(self.hull, w, w.position)
+            joint = pymunk.PivotJoint(self.hull, w, (wx * SIZE, wy * SIZE), (0, 0))
             joint.collide_bodies = False
 
             limit = pymunk.RotaryLimitJoint(self.hull, w, -0.4, 0.4)
@@ -183,9 +185,8 @@ class Car:
         """Advance car physics by one time step."""
         for w in self.wheels:
             # Steer each wheel
-            joint_angle = (
-                w.angle - self.hull.angle
-            )  # calculate relative angle between wheel and hull
+            rel_w = w.angular_velocity - self.hull.angular_velocity
+            joint_angle = (w.angle - self.hull.angle) + rel_w * dt  # predicted angle
             dir = np.sign(w.steer - joint_angle)
             val = abs(w.steer - joint_angle)
             w.motor.rate = -dir * min(50.0 * val, 3.0)
