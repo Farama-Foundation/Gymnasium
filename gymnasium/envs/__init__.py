@@ -121,6 +121,7 @@ register(
     reward_threshold=300,
 )
 
+# 3.12 warning, 3.13 error, 3.14 remove
 register(
     id="CarRacing-v3",
     entry_point="gymnasium.envs.box2d.car_racing:CarRacing",
