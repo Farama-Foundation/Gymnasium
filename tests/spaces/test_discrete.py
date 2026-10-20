@@ -219,3 +219,26 @@ def test_contains_out_of_dtype_range_returns_false(n, start, dtype, element):
 def test_dtype_error(dtype):
     with pytest.raises(TypeError, match="Invalid Discrete dtype"):
         Discrete(4, dtype=dtype)
+
+
+@pytest.mark.parametrize(
+    "n, start, dtype",
+    [
+        (127, 100, np.int8),  # largest value 226 > int8 max 127
+        (3, -200, np.int8),  # start below int8 min -128
+        (2, 255, np.uint8),  # largest value 256 > uint8 max 255
+    ],
+)
+def test_start_exceeding_dtype(n, start, dtype):
+    """A Discrete whose range exceeds the dtype's range is rejected at construction."""
+    with pytest.raises(ValueError, match="not representable"):
+        Discrete(n, start=start, dtype=dtype)
+
+
+def test_start_at_dtype_boundary():
+    """A range whose largest value is exactly the dtype max is still valid."""
+    space = Discrete(28, start=100, dtype=np.int8)  # largest value 127 == int8 max
+    assert space.contains(100)
+    assert space.contains(127)
+    for _ in range(50):
+        assert space.contains(space.sample())
