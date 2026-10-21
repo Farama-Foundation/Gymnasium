@@ -242,3 +242,32 @@ def test_start_at_dtype_boundary():
     assert space.contains(127)
     for _ in range(50):
         assert space.contains(space.sample())
+
+
+@pytest.mark.parametrize("count_type", [int, np.int64, np.uint64])
+@pytest.mark.parametrize(
+    "n,start,dtype",
+    [
+        (256, -128, np.int8),
+        (256, 0, np.uint8),
+        (65536, -32768, np.int16),
+        (2**32, -(2**31), np.int32),
+    ],
+)
+def test_count_must_fit_even_when_values_fit(count_type, n, start, dtype):
+    """Do not wrap a NumPy count to zero when the value range itself fits."""
+    with pytest.raises(OverflowError):
+        Discrete(count_type(n), start=start, dtype=dtype)
+
+
+@pytest.mark.parametrize(
+    "dtype",
+    [np.int8, np.uint8, np.int16, np.uint16, np.int32, np.uint32, np.int64, np.uint64],
+)
+def test_numpy_count_at_dtype_max(dtype):
+    """Retain supported maximum counts and representable samples."""
+    n = np.iinfo(dtype).max
+    space = Discrete(dtype(n), start=0, dtype=dtype, seed=12)
+    assert int(space.n) == n
+    for _ in range(10):
+        assert space.contains(space.sample())
