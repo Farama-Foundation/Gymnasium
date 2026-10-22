@@ -708,3 +708,23 @@ def test_reset_state(env_name: str, version: str):
 
     env = gym.make(f"{env_name}-{version}")
     check_mujoco_reset_state(env)
+
+
+@pytest.mark.parametrize("version", ["v5", "v4"])
+def test_half_cheetah_mass(version: str, capfd):
+    """Check that HalfCheetah's mass matches the deprecated `settotalmass="14"` without MuJoCo's deprecation warning."""
+    env = gym.make(f"HalfCheetah-{version}").unwrapped
+    assert isinstance(env, MujocoEnv)
+    assert "settotalmass" not in "".join(capfd.readouterr())
+
+    # Reference: the model with the default density (1000) rescaled to a total mass of 14
+    with open(env.fullpath) as file:
+        xml = file.read().replace(' density="660.8849500774735"', "")
+    ref_model = mujoco.MjModel.from_xml_string(xml)
+    mujoco.mj_setTotalmass(ref_model, 14)
+
+    assert np.isclose(env.model.body_mass.sum(), 14)
+    np.testing.assert_allclose(env.model.body_mass, ref_model.body_mass, atol=1e-12)
+    np.testing.assert_allclose(
+        env.model.body_inertia, ref_model.body_inertia, atol=1e-12
+    )

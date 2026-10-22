@@ -33,10 +33,11 @@
 
 -->
 <mujoco model="cheetah">
-  <compiler angle="radian" coordinate="local" inertiafromgeom="true" settotalmass="14"/>
+  <compiler angle="radian" coordinate="local" inertiafromgeom="true"/>
   <default>
     <joint armature=".1" damping=".01" limited="true" solimplimit="0 .8 .03" solreflimit=".02 1" stiffness="8"/>
-    <geom conaffinity="0" condim="3" contype="1" friction=".4 .1 .1" rgba="0.8 0.6 .4 1" solimp="0.0 0.8 0.01" solref="0.02 1"/>
+    <!-- density = 1000 * 14 / 21.1837..., gives a total mass of 14 (replaces the deprecated `settotalmass="14"`) -->
+    <geom density="660.8849500774735" conaffinity="0" condim="3" contype="1" friction=".4 .1 .1" rgba="0.8 0.6 .4 1" solimp="0.0 0.8 0.01" solref="0.02 1"/>
     <motor ctrllimited="true" ctrlrange="-1 1"/>
   </default>
   <size nstack="300000" nuser_geom="1"/>

@@ -134,6 +134,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
         - Restored the `xml_file` argument (was removed in `v4`).
         - Renamed `info["reward_run"]` to `info["reward_forward"]` to be consistent with the other environments.
+        - Replaced the deprecated `settotalmass="14"` compiler attribute in `half_cheetah.xml` with an equivalent geom `density`, the total mass remains 14 (backported to `v4`).
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen). Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
