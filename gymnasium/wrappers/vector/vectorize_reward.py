@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from copy import copy
 from typing import Any
 
 import numpy as np
@@ -99,11 +98,11 @@ class VectorizeTransformReward(VectorRewardWrapper[ObsType, ActType, _ArrayT]):
 
     def rewards(self, rewards: _ArrayT) -> _ArrayT:
         """Iterates over the reward updating each with the wrapper func."""
-        # Copies the rewards to avoid mutating the vector environment's rewards
-        rewards = copy(rewards)
+        # Writes into a new array to avoid mutating the vector environment's rewards
+        rewards_out = np.empty_like(rewards)
         for i, r in enumerate(rewards):
-            rewards[i] = self.wrapper.func(r)
-        return rewards
+            rewards_out[i] = self.wrapper.func(r)
+        return rewards_out
 
 
 class ClipReward(VectorizeTransformReward[ObsType, ActType, _ArrayT]):

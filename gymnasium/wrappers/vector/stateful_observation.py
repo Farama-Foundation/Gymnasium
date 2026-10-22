@@ -20,6 +20,7 @@ from gymnasium.vector.vector_env import (
     AutoresetMode,
     VectorEnv,
     VectorObservationWrapper,
+    VectorWrapper,
 )
 from gymnasium.wrappers.utils import RunningMeanStd
 
@@ -79,9 +80,6 @@ class NormalizeObservation(
     epsilon: float
     _update_running_mean: bool
 
-    # `info["final_obs"]` is normalized by `step`
-    supports_same_step_autoreset = True
-
     autoreset_mode: AutoresetMode
 
     def __init__(
@@ -105,7 +103,8 @@ class NormalizeObservation(
             )
 
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
-        VectorObservationWrapper.__init__(self, env)
+        # Skips `VectorObservationWrapper.__init__` as it rejects same-step autoreset, supported by `step` normalizing `info["final_obs"]`
+        VectorWrapper.__init__(self, env)
 
         if "autoreset_mode" not in self.env.metadata:
             warn(

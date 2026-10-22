@@ -547,11 +547,8 @@ class VectorObservationWrapper(
 
     Equivalent to :class:`gymnasium.ObservationWrapper` for vectorized environments.
 
-    By default, same-step autoreset is not supported as ``info["final_obs"]`` is not transformed.
-    Subclasses that transform ``info["final_obs"]`` can set ``supports_same_step_autoreset = True``.
+    Same-step autoreset is not supported as ``info["final_obs"]`` is not transformed.
     """
-
-    supports_same_step_autoreset: bool = False
 
     def __init__(self, env: VectorEnv[ObsType, ActType, ArrayType]) -> None:
         """Vector observation wrapper that batch transforms observations.
@@ -565,16 +562,10 @@ class VectorObservationWrapper(
                 f"Vector environment ({env}) is missing `autoreset_mode` metadata key."
             )
         else:
-            supported_modes = (
-                (
-                    AutoresetMode.NEXT_STEP,
-                    AutoresetMode.SAME_STEP,
-                    AutoresetMode.DISABLED,
-                )
-                if self.supports_same_step_autoreset
-                else (AutoresetMode.NEXT_STEP, AutoresetMode.DISABLED)
-            )
-            if env.metadata["autoreset_mode"] not in supported_modes:
+            if env.metadata["autoreset_mode"] not in (
+                AutoresetMode.NEXT_STEP,
+                AutoresetMode.DISABLED,
+            ):
                 raise ValueError(
                     f"Expected autoreset_mode to be NEXT_STEP or DISABLED, got {env.metadata['autoreset_mode']}"
                 )
@@ -645,18 +636,6 @@ class VectorActionWrapper(
         raise NotImplementedError
 
 
-def _array_namespace_and_device(array: Any) -> tuple[Any, Any]:
-    """Returns the Array API namespace and device of a non-numpy array, e.g., a jax or torch array."""
-    try:
-        from array_api_compat import array_namespace, device
-    except ImportError as e:
-        raise gym.error.DependencyNotInstalled(
-            f'Array API packages are not installed therefore cannot handle {type(array)} arrays, run `pip install "gymnasium[array-api]"`'
-        ) from e
-
-    return array_namespace(array), device(array)
-
-
 class VectorRewardWrapper(VectorWrapper[ObsType, ActType, ObsType, ActType, ArrayType]):
     """Wraps the vectorized environment to allow a modular transformation of the reward.
 
@@ -684,15 +663,7 @@ class VectorRewardWrapper(VectorWrapper[ObsType, ActType, ObsType, ActType, Arra
     ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment and the tracking of which sub-environments will autoreset on the next step."""
         if options is not None and "reset_mask" in options:
-            reset_mask = options["reset_mask"]
-            if isinstance(self._prev_dones, np.ndarray):
-                self._prev_dones[reset_mask] = False
-            else:
-                xp, device = _array_namespace_and_device(self._prev_dones)
-                self._prev_dones = xp.logical_and(
-                    self._prev_dones,
-                    xp.asarray(np.logical_not(reset_mask), device=device),
-                )
+            self._prev_dones[options["reset_mask"]] = False
         else:
             self._prev_dones = np.zeros((self.num_envs,), dtype=np.bool_)
         return self.env.reset(seed=seed, options=options)
@@ -711,22 +682,11 @@ class VectorRewardWrapper(VectorWrapper[ObsType, ActType, ObsType, ActType, Arra
         if self._autoreset_mode != AutoresetMode.NEXT_STEP:
             return observations, transformed_rewards, terminations, truncations, infos
 
-        if isinstance(transformed_rewards, np.ndarray):
-            if np.any(self._prev_dones):
-                transformed_rewards = np.where(
-                    self._prev_dones, rewards, transformed_rewards
-                )
-            self._prev_dones = np.logical_or(terminations, truncations)
-        else:
-            # Non-numpy rewards (e.g., jax or torch) are masked within their own array namespace and device
-            xp, device = _array_namespace_and_device(transformed_rewards)
-            transformed_rewards = xp.where(
-                xp.asarray(self._prev_dones, device=device),
-                rewards,
-                transformed_rewards,
+        if np.any(self._prev_dones):
+            transformed_rewards = np.where(
+                self._prev_dones, rewards, transformed_rewards
             )
-            done_xp, _ = _array_namespace_and_device(terminations)
-            self._prev_dones = done_xp.logical_or(terminations, truncations)
+        self._prev_dones = np.logical_or(terminations, truncations)
 
         return observations, transformed_rewards, terminations, truncations, infos
 
