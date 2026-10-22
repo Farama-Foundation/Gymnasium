@@ -125,7 +125,14 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
         reset_noise_scale: float = 0.01,
         **kwargs,
     ):
-        utils.EzPickle.__init__(self, xml_file, frame_skip, reset_noise_scale, **kwargs)
+        utils.EzPickle.__init__(
+            self,
+            xml_file,
+            frame_skip,
+            default_camera_config,
+            reset_noise_scale,
+            **kwargs,
+        )
         observation_space = Box(low=-np.inf, high=np.inf, shape=(4,), dtype=np.float64)
 
         self._reset_noise_scale = reset_noise_scale

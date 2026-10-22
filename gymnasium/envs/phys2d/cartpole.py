@@ -34,7 +34,7 @@ class CartPoleParams:
     masspole: float = 0.1
     total_mass: float = masspole + masscart
     length: float = 0.5
-    polemass_length: float = masspole + length
+    polemass_length: float = masspole * length
     force_mag: float = 10.0
     tau: float = 0.02
     theta_threshold_radians: float = 12 * 2 * np.pi / 360
@@ -262,8 +262,13 @@ class CartPoleFunctional(
         pygame.quit()
 
     def get_default_params(self, **kwargs) -> CartPoleParams:
-        """Returns the default parameters for the environment."""
-        return CartPoleParams(**kwargs)
+        """Returns the default parameters for the environment, ``total_mass`` and ``polemass_length`` are derived from the other parameters unless given."""
+        params = CartPoleParams(**kwargs)
+        if "total_mass" not in kwargs:
+            params = params.replace(total_mass=params.masspole + params.masscart)
+        if "polemass_length" not in kwargs:
+            params = params.replace(polemass_length=params.masspole * params.length)
+        return params
 
 
 class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
@@ -272,10 +277,11 @@ class CartPoleJaxEnv(FunctionalJaxEnv, EzPickle):
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
-        """Constructor for the CartPole where the kwargs are applied to the functional environment."""
+        """Constructor for the CartPole where the kwargs are used to set the environment parameters (see :class:`CartPoleParams`)."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
 
-        env = CartPoleFunctional(**kwargs)
+        env = CartPoleFunctional()
+        env.bind_params(env.get_default_params(**kwargs))
         env.transform(jax.jit)
 
         FunctionalJaxEnv.__init__(
@@ -303,7 +309,7 @@ class CartPoleJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
         max_episode_steps: int = 200,
         **kwargs: Any,
     ):
-        """Constructor for the vectorized CartPole where the kwargs are applied to the functional environment."""
+        """Constructor for the vectorized CartPole where the kwargs are used to set the environment parameters (see :class:`CartPoleParams`)."""
         EzPickle.__init__(
             self,
             num_envs=num_envs,
@@ -312,7 +318,8 @@ class CartPoleJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
             **kwargs,
         )
 
-        env = CartPoleFunctional(**kwargs)
+        env = CartPoleFunctional()
+        env.bind_params(env.get_default_params(**kwargs))
         env.transform(jax.jit)
 
         FunctionalJaxVectorEnv.__init__(

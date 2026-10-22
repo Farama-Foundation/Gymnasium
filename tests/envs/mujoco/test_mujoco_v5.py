@@ -1,4 +1,6 @@
 import collections
+import inspect
+import pickle
 import warnings
 
 import mujoco
@@ -744,3 +746,43 @@ def test_reacher_fingertip_matches_joint_fk(version: str):
         assert abs(fingertip[1] - expected_y) < 1e-12
 
     env.close()
+
+
+@pytest.mark.parametrize("env_name", ALL_MUJOCO_ENVS)
+def test_ezpickle_args(env_name: str):
+    """Verify that the `EzPickle` arguments match the constructor arguments, such that pickled environments keep their arguments."""
+    env_class = type(gym.make(f"{env_name}-v5").unwrapped)
+    signature = inspect.signature(env_class.__init__)
+
+    kwargs = {
+        name: param.default + 0.5
+        for name, param in signature.parameters.items()
+        if isinstance(param.default, float)
+    }
+    env = env_class(**kwargs)
+
+    pickled_args = signature.bind(
+        env, *env._ezpickle_args, **env._ezpickle_kwargs
+    ).arguments
+    for name, value in kwargs.items():
+        assert pickled_args[name] == value, name
+
+    pickled_env = pickle.loads(pickle.dumps(env))
+    unpickled_args = signature.bind(
+        pickled_env, *pickled_env._ezpickle_args, **pickled_env._ezpickle_kwargs
+    ).arguments
+    for name, value in kwargs.items():
+        assert unpickled_args[name] == value, name
+
+
+def test_humanoid_standup_uph_cost_weight():
+    """Verify that `uph_cost_weight` scales the `reward_linup` term."""
+    action = np.zeros(17)
+    reward_linups = []
+    for uph_cost_weight in [1.0, 2.0]:
+        env = gym.make("HumanoidStandup-v5", uph_cost_weight=uph_cost_weight)
+        env.reset(seed=0)
+        _, _, _, _, info = env.step(action)
+        reward_linups.append(info["reward_linup"])
+
+    assert np.isclose(reward_linups[1], 2 * reward_linups[0])
