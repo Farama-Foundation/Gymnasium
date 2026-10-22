@@ -7,7 +7,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.spaces import Box
-from gymnasium.wrappers import ResizeObservation
+from gymnasium.wrappers import GrayscaleObservation, ResizeObservation
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import (
     check_obs,
@@ -29,6 +29,11 @@ from tests.wrappers.utils import (
             reset_func=record_random_obs_reset,
             step_func=record_random_obs_step,
         ),
+        GenericTestEnv(
+            observation_space=Box(0, 255, shape=(60, 60, 1), dtype=np.uint8),
+            reset_func=record_random_obs_reset,
+            step_func=record_random_obs_step,
+        ),
     ),
 )
 def test_resize_observation_wrapper(env):
@@ -43,6 +48,30 @@ def test_resize_observation_wrapper(env):
 
     obs, _, _, _, info = wrapped_env.step(None)
     check_obs(env, wrapped_env, obs, info["obs"])
+
+
+@pytest.mark.parametrize("keep_dim", (False, True))
+@pytest.mark.parametrize("shape", ((3, 4), (1, 1)))
+def test_resize_grayscale_observation(keep_dim, shape):
+    """Resizing preserves the grayscale wrapper's choice of channel dimension."""
+    env = GenericTestEnv(
+        observation_space=Box(0, 255, shape=(6, 8, 3), dtype=np.uint8),
+        reset_func=record_random_obs_reset,
+        step_func=record_random_obs_step,
+    )
+    wrapped_env = ResizeObservation(GrayscaleObservation(env, keep_dim=keep_dim), shape)
+    expected_shape = shape + ((1,) if keep_dim else ())
+    assert wrapped_env.observation_space.shape == expected_shape
+
+    obs, _ = wrapped_env.reset()
+    assert obs.shape == expected_shape
+    assert obs.dtype == np.uint8
+    assert obs in wrapped_env.observation_space
+
+    obs, _, _, _, _ = wrapped_env.step(None)
+    assert obs.shape == expected_shape
+    assert obs.dtype == np.uint8
+    assert obs in wrapped_env.observation_space
 
 
 @pytest.mark.parametrize("shape", ((10, 10), (20, 20), (60, 60), (100, 100)))

@@ -1,0 +1,22 @@
+/* Reserve a row for the button so it cannot cover code on narrow screens. */
+div.highlight:has(> button.copybtn) pre {
+    padding-top: 3em;
+}
+
+/* Keep the native button discoverable without a mouse, including on touch. */
+div.highlight button.copybtn {
+    opacity: 1;
+    color: var(--color-code-foreground);
+    background-color: var(--color-code-background);
+    border-color: var(--color-foreground-border);
+}
+
+div.highlight button.copybtn:hover,
+div.highlight button.copybtn:active {
+    background-color: var(--color-background-hover);
+}
+
+div.highlight button.copybtn:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}

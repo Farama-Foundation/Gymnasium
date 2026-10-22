@@ -228,6 +228,17 @@ def test_is_space_dtype_shape_equiv(space):
     assert is_space_dtype_shape_equiv(space, space) is True
 
 
+def test_tuple_dtype_shape_equivalence():
+    """Tuple compatibility requires equal lengths before comparing components."""
+    short = gym.spaces.Tuple((gym.spaces.Discrete(2),))
+    long = gym.spaces.Tuple((gym.spaces.Discrete(2), gym.spaces.Discrete(3)))
+    equal = gym.spaces.Tuple((gym.spaces.Discrete(2),))
+
+    assert is_space_dtype_shape_equiv(short, long) is False
+    assert is_space_dtype_shape_equiv(long, short) is False
+    assert is_space_dtype_shape_equiv(short, equal) is True
+
+
 @pytest.mark.parametrize("space_1", TESTING_SPACES, ids=TESTING_SPACES_IDS)
 def test_all_space_pairs_for_is_space_dtype_shape_equiv(space_1):
     """Practically check that the `is_space_dtype_shape_equiv` works as expected for `shared_memory`."""

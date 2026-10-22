@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from gymnasium.spaces import Box, Discrete
+from gymnasium.spaces import Box, Discrete, MultiDiscrete
 from gymnasium.wrappers import DiscretizeAction
 from tests.testing_env import GenericTestEnv
 
@@ -54,3 +54,44 @@ def test_discretize_action_dtype():
     """Tests the discretize action wrapper with spaces that should raise an error."""
     with pytest.raises((TypeError,)):
         DiscretizeAction(GenericTestEnv(action_space=Discrete(10)))
+
+
+def test_discretize_action_multidimensional_box():
+    """DiscretizeAction should accept any finite Box, not only 1-D.
+
+    ``n_dims`` was taken from ``shape[0]``, so a Box of shape ``(2, 2)``
+    produced Discrete(4) instead of Discrete(16), reconstructed actions had
+    the wrong shape, and a scalar Box raised IndexError.
+    """
+    env = GenericTestEnv(action_space=Box(0, 1, shape=(2, 2), dtype=np.float32))
+    wrapped = DiscretizeAction(env, bins=2)
+    assert wrapped.action_space == Discrete(16)
+    for i in range(wrapped.action_space.n):
+        act = wrapped.action(i)
+        assert np.shape(act) == (2, 2)
+        assert env.action_space.contains(act)
+        assert wrapped.revert_action(act) == i
+
+
+def test_discretize_action_scalar_box():
+    """A 0-D Box action space should discretize without IndexError."""
+    env = GenericTestEnv(action_space=Box(0, 1, shape=(), dtype=np.float32))
+    wrapped = DiscretizeAction(env, bins=2)
+    assert wrapped.action_space == Discrete(2)
+    act = wrapped.action(0)
+    assert env.action_space.contains(act)
+    assert wrapped.revert_action(act) == 0
+
+
+def test_discretize_action_multidimensional_box_multidiscrete():
+    """multidiscrete=True on a (2, 2) Box should yield MultiDiscrete of length 4."""
+    env = GenericTestEnv(action_space=Box(0, 1, shape=(2, 2), dtype=np.float32))
+    wrapped = DiscretizeAction(env, bins=2, multidiscrete=True)
+    assert wrapped.action_space == MultiDiscrete([2, 2, 2, 2])
+    assert len(wrapped.action_space) == 4
+    for _ in range(16):
+        act_discrete = wrapped.action_space.sample()
+        act = wrapped.action(act_discrete)
+        assert np.shape(act) == (2, 2)
+        assert env.action_space.contains(act)
+        assert np.all(wrapped.revert_action(act) == act_discrete)

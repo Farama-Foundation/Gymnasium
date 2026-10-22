@@ -228,7 +228,7 @@ class DiscretizeAction(
         >>> obs, *_ = env.step([-0.3, -0.5])
         >>> obs
         array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
-                0.11442572, -1.18958125, -1.97979484,  0.1054461 , -0.10896341])
+                0.11442572, -1.18958125, -1.97979484,  0.10544613, -0.10896536])
         >>> env = DiscretizeAction(env, bins=10)
         >>> env.action_space
         Discrete(100)
@@ -236,7 +236,7 @@ class DiscretizeAction(
         >>> obs, *_ = env.step(32)
         >>> obs
         array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
-                0.11442572, -1.18958118, -1.97979484,  0.1054461 , -0.10896341])
+                0.11442572, -1.18958118, -1.97979484,  0.10544613, -0.10896536])
 
     Example 2 - Discretize Reacher action space with MultiDiscrete:
         >>> env = gym.make("Reacher-v5")
@@ -246,7 +246,7 @@ class DiscretizeAction(
         >>> obs, *_ = env.step([-0.3, -0.5])
         >>> obs
         array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
-                0.11442572, -1.18958125, -1.97979484,  0.1054461 , -0.10896341])
+                0.11442572, -1.18958125, -1.97979484,  0.10544613, -0.10896536])
         >>> env = DiscretizeAction(env, bins=10, multidiscrete=True)
         >>> env.action_space
         MultiDiscrete([10 10])
@@ -254,7 +254,7 @@ class DiscretizeAction(
         >>> obs, *_ = env.step([3, 2])
         >>> obs
         array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,
-                0.11442572, -1.18958118, -1.97979484,  0.1054461 , -0.10896341])
+                0.11442572, -1.18958118, -1.97979484,  0.10544613, -0.10896536])
     """
 
     def __init__(
@@ -275,9 +275,9 @@ class DiscretizeAction(
                 "DiscretizeAction is only compatible with Box continuous actions."
             )
 
-        self.low = env.action_space.low
-        self.high = env.action_space.high
-        self.n_dims = self.low.shape[0]
+        self.low = np.ravel(env.action_space.low)
+        self.high = np.ravel(env.action_space.high)
+        self.n_dims = int(self.low.size)
 
         if np.any(np.isinf(self.low)) or np.any(np.isinf(self.high)):
             raise ValueError(
@@ -324,10 +324,13 @@ class DiscretizeAction(
             self.bin_centers[i][min(max(idx, 0), self.bins[i] - 1)]
             for i, idx in enumerate(indices)
         ]
-        return np.array(centers, dtype=self.env.action_space.dtype)
+        return np.array(centers, dtype=self.env.action_space.dtype).reshape(
+            self.env.action_space.shape
+        )
 
     def revert_action(self, action):
         """Converts a discretized action to a possible continuous action (the center of the closest bin)."""
+        action = np.ravel(action)
         indices = [
             np.argmin(np.abs(self.bin_centers[i] - action[i]))
             for i in range(self.n_dims)

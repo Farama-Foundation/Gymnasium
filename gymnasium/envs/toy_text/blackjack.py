@@ -6,6 +6,70 @@ import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.error import DependencyNotInstalled
 
+# The pixel art is authored at 4x, so every position is a multiple of 4.
+ART_PIXEL = 4
+SCREEN_SIZE = (384, 376)
+FELT_COLOR = (196, 216, 158)
+DEALER_LABEL_POS = (40, 32)
+DEALER_CARD_POS = (96, 72)
+HIDDEN_CARD_POS = (208, 72)
+PLAYER_LABEL_POS = (40, 208)
+PLAYER_SUM_TOP = 248
+USABLE_ACE_TOP = 328
+LABEL_DIGIT_GAP = 12
+SMALL_DIGIT_GAP = 4
+BIG_DIGIT_GAP = 12
+
+
+def draw_table(surface, player_sum, dealer_card_value, usable_ace, dealer_card):
+    """Draws the table onto ``surface``, with ``dealer_card`` naming the face-up card, e.g. ``"KS"``."""
+    import pygame
+
+    def load(name):
+        return pygame.image.load(
+            os.path.join(os.path.dirname(__file__), "img", "blackjack", f"{name}.png")
+        )
+
+    def blit_digits(number, size, gap, pos):
+        x, y = pos
+        for digit in str(int(number)):
+            img = load(f"digit_{size}_{digit}")
+            surface.blit(img, (x, y))
+            x += img.get_width() + gap
+
+    def centred_x(width):
+        return (SCREEN_SIZE[0] - width) // 2 // ART_PIXEL * ART_PIXEL
+
+    surface.fill(FELT_COLOR)
+
+    dealer_label = load("label_dealer")
+    surface.blit(dealer_label, DEALER_LABEL_POS)
+    blit_digits(
+        dealer_card_value,
+        "small",
+        SMALL_DIGIT_GAP,
+        (
+            DEALER_LABEL_POS[0] + dealer_label.get_width() + LABEL_DIGIT_GAP,
+            DEALER_LABEL_POS[1],
+        ),
+    )
+    surface.blit(load(f"card_{dealer_card}"), DEALER_CARD_POS)
+    surface.blit(load("card_back"), HIDDEN_CARD_POS)
+
+    surface.blit(load("label_player"), PLAYER_LABEL_POS)
+    digits = str(int(player_sum))
+    digit_width = load("digit_big_0").get_width()
+    sum_width = len(digits) * digit_width + (len(digits) - 1) * BIG_DIGIT_GAP
+    blit_digits(
+        player_sum, "big", BIG_DIGIT_GAP, (centred_x(sum_width), PLAYER_SUM_TOP)
+    )
+
+    if usable_ace:
+        usable_ace_label = load("label_usable_ace")
+        surface.blit(
+            usable_ace_label, (centred_x(usable_ace_label.get_width()), USABLE_ACE_TOP)
+        )
+
 
 def cmp(a, b):
     return float(a > b) - float(a < b)
@@ -254,98 +318,25 @@ class BlackjackEnv(gym.Env):
                 'pygame is not installed, run `pip install "gymnasium[toy-text]"`'
             ) from e
 
-        player_sum, dealer_card_value, usable_ace = self._get_obs()
-        screen_width, screen_height = 600, 500
-        card_img_height = screen_height // 3
-        card_img_width = int(card_img_height * 142 / 197)
-        spacing = screen_height // 20
-
-        bg_color = (7, 99, 36)
-        white = (255, 255, 255)
-
         if not hasattr(self, "screen"):
             pygame.display.init()
-            pygame.font.init()
             if self.render_mode == "human":
-                self.screen = pygame.display.set_mode((screen_width, screen_height))
+                self.screen = pygame.display.set_mode(SCREEN_SIZE)
             else:
-                self.screen = pygame.Surface((screen_width, screen_height))
+                self.screen = pygame.Surface(SCREEN_SIZE)
 
         if not hasattr(self, "clock"):
             self.clock = pygame.time.Clock()
 
-        self.screen.fill(bg_color)
-
-        def get_image(path):
-            cwd = os.path.dirname(__file__)
-            image = pygame.image.load(os.path.join(cwd, path))
-            return image
-
-        def get_font(path, size):
-            cwd = os.path.dirname(__file__)
-            font = pygame.font.Font(os.path.join(cwd, path), size)
-            return font
-
-        small_font = get_font(
-            os.path.join("font", "Minecraft.ttf"), screen_height // 15
-        )
-        dealer_text = small_font.render(
-            "Dealer: " + str(dealer_card_value), True, white
-        )
-        dealer_text_rect = self.screen.blit(dealer_text, (spacing, spacing))
-
-        def scale_card_img(card_img):
-            return pygame.transform.scale(card_img, (card_img_width, card_img_height))
-
-        dealer_card_img = scale_card_img(
-            get_image(
-                os.path.join(
-                    "img",
-                    f"{self.dealer_top_card_suit}{self.dealer_top_card_value_str}.png",
-                )
-            )
-        )
-        dealer_card_rect = self.screen.blit(
-            dealer_card_img,
-            (
-                screen_width // 2 - card_img_width - spacing // 2,
-                dealer_text_rect.bottom + spacing,
-            ),
+        player_sum, dealer_card_value, usable_ace = self._get_obs()
+        draw_table(
+            self.screen,
+            player_sum,
+            dealer_card_value,
+            usable_ace,
+            self.dealer_top_card_value_str + self.dealer_top_card_suit,
         )
 
-        hidden_card_img = scale_card_img(get_image(os.path.join("img", "Card.png")))
-        self.screen.blit(
-            hidden_card_img,
-            (
-                screen_width // 2 + spacing // 2,
-                dealer_text_rect.bottom + spacing,
-            ),
-        )
-
-        player_text = small_font.render("Player", True, white)
-        player_text_rect = self.screen.blit(
-            player_text, (spacing, dealer_card_rect.bottom + 1.5 * spacing)
-        )
-
-        large_font = get_font(os.path.join("font", "Minecraft.ttf"), screen_height // 6)
-        player_sum_text = large_font.render(str(player_sum), True, white)
-        player_sum_text_rect = self.screen.blit(
-            player_sum_text,
-            (
-                screen_width // 2 - player_sum_text.get_width() // 2,
-                player_text_rect.bottom + spacing,
-            ),
-        )
-
-        if usable_ace:
-            usable_ace_text = small_font.render("usable ace", True, white)
-            self.screen.blit(
-                usable_ace_text,
-                (
-                    screen_width // 2 - usable_ace_text.get_width() // 2,
-                    player_sum_text_rect.bottom + spacing // 2,
-                ),
-            )
         if self.render_mode == "human":
             pygame.event.pump()
             pygame.display.update()
@@ -363,4 +354,4 @@ class BlackjackEnv(gym.Env):
             pygame.quit()
 
 
-# Pixel art from Mariia Khmelnytska (https://www.123rf.com/photo_104453049_stock-vector-pixel-art-playing-cards-standart-deck-vector-set.html)
+# Pixel art assets by ____

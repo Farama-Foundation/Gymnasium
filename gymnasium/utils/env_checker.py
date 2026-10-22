@@ -230,7 +230,10 @@ def check_step_determinism(env: gym.Env, seed: int = 123) -> None:
     env.reset(seed=seed)
     obs_1, rew_1, term_1, trunc_1, info_1 = env.step(action)
 
-    assert orig_rng.bit_generator.state == seeded_rng.bit_generator.state, (
+    # A seeded reset can replace the environment's random number generator.
+    current_rng = env.unwrapped._np_random
+    assert current_rng is not None, "env.reset() should have initialized env._np_random"
+    assert current_rng.bit_generator.state == seeded_rng.bit_generator.state, (
         "The `.np_random` is not properly been updated after step."
     )
 

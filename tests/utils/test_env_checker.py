@@ -312,6 +312,30 @@ def test_check_step_determinism(test, step_func, message: str):
         check_step_determinism(GenericTestEnv(step_func=step_func))
 
 
+@pytest.mark.parametrize("second_draw_count", (1, 2))
+@pytest.mark.parametrize("declared_nondeterministic", (False, True))
+def test_check_step_determinism_rng_state(second_draw_count, declared_nondeterministic):
+    """Compare RNG state even when the first transition's outputs are identical."""
+    draw_counts = iter((1, second_draw_count))
+
+    def step_func(self, action):
+        self.np_random.random(next(draw_counts))
+        return np.zeros(1, dtype=np.float32), 0.0, False, False, {}
+
+    env = GenericTestEnv(step_func=step_func)
+    env.spec.nondeterministic = declared_nondeterministic
+    check_reset_seed_determinism(env)
+
+    if second_draw_count != 1 and not declared_nondeterministic:
+        with pytest.raises(
+            AssertionError,
+            match="not properly been updated after step",
+        ):
+            check_step_determinism(env)
+    else:
+        check_step_determinism(env)
+
+
 def test_check_step_determinism_snapshots_reused_observations():
     """Detect a changing step result before a reused buffer is overwritten."""
     observation_space = spaces.Box(0, 100, (1,), dtype=np.float32)

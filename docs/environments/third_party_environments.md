@@ -111,6 +111,12 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Gym Trading Env simulates stock (or crypto) market from historical data. It was designed to be fast and easily customizable.
 
+- [tradefloor: Simulated stock markets with a limit order book per company](https://github.com/simoncoombes/tradefloor)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-%3E%3D0.29-blue)
+
+  tradefloor generates simulated stock markets in which each company has a limit order book and an economy runs underneath. Its `TradingEnv` takes a target portfolio weight per stock as the action, and the policy's orders fill against the book and move prices, so the reward, the step's change in net worth, includes the cost of its own trading. Each seed is a new market, and any episode can be replayed exactly from its seed. Install with `pip install "tradefloor[rl]"`.
+
 ### Electrical / Energy environments
 *Manage the flow of Electrons.*
 
@@ -224,6 +230,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![GitHub stars](https://img.shields.io/github/stars/kuds/reinforce-tactics)
 
   Reinforce Tactics is a turn-based strategy game designed for reinforcement learning research, combining tactical grid-based combat with an economy system while supporting multiple AI opponent types including rule-based bots, LLM-powered agents, and trainable RL models.
+
+- [Spatial-Gym: Step-by-step spatial reasoning on SPaRC grid puzzles](https://github.com/lkaesberg/Spatial-Gym)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.4.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/lkaesberg/Spatial-Gym)
+
+  Spatial-Gym turns the 1,000 SPaRC grid puzzles into a Gymnasium environment for step-by-step spatial reasoning. The agent draws a line from the start node to the end node one cell at a time (`Discrete(4)`), and the line must obey every rule on the board. An episode ends with a reward of +1 if the path matches a stored solution and -1 otherwise, with +0.01 or -0.01 per step for staying on or leaving a solution path. Observations are either grid arrays or the SPaRC text grid, so the same puzzles work for RL and LLM agents, and an optional mode lets the agent backtrack. Install with `pip install Spatial-Gym`.
 
 - [Tetris Gymnasium: A fully configurable Gymnasium compatible Tetris environment](https://github.com/Max-We/Tetris-Gymnasium)
 
@@ -393,6 +406,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
 ### Telecommunication Systems environments
 *Interact and/or manage wireless and/or wired telecommunication systems.*
+- [linkgym: 5G NR link adaptation on NVIDIA Sionna](https://github.com/Tempip/linkgym)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.3.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/Tempip/linkgym)
+
+  A Gymnasium environment for 5G NR link adaptation (MCS selection) built on NVIDIA Sionna SYS. The channel is 3GPP TDL fading or ray-traced with Sionna RT, including a published dataset of Munich streets and a generator for your own scenes. It comes with classical baselines (ILLA, OLLA, oracle) and an evaluation protocol with common random numbers and confidence intervals.
+
 - [mobile-env: Environments for coordination of wireless mobile networks](https://github.com/stefanbschneider/mobile-env)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.28.1-blue)

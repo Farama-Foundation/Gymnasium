@@ -30,7 +30,9 @@ from gymnasium.spaces import (
 )
 
 if TYPE_CHECKING:
-    from typing_extensions import Never, Unpack
+    from typing import Never
+
+    from typing_extensions import Unpack
 
 __all__ = ["create_shared_memory", "read_from_shared_memory", "write_to_shared_memory"]
 
