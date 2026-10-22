@@ -10,6 +10,20 @@ When a sub-environment's episode ends (`terminated or truncated` is `True`), it 
 * {ref}`Same-step <autoreset-same-step>` (`AutoresetMode.SAME_STEP`) - the sub-environment is reset within the step that its episode ends.
 * {ref}`Disabled <autoreset-disabled>` (`AutoresetMode.DISABLED`) - the sub-environment isn't reset automatically, the user resets it with `reset(options={"reset_mask": ...})`.
 
+The animation below follows a sub-environment whose episode ends after its third step (`s₃` is its final observation), showing the observation returned by each vector environment call in each mode.
+
+```{image} /_static/diagrams/autoreset_modes.svg
+:alt: Animated timeline of the observations returned by each call for the next-step, same-step and disabled autoreset modes
+:align: center
+:class: only-light
+```
+
+```{image} /_static/diagrams/autoreset_modes_dark.svg
+:alt: Animated timeline of the observations returned by each call for the next-step, same-step and disabled autoreset modes
+:align: center
+:class: only-dark
+```
+
 A training algorithm written for one mode won't sample correctly from a vector environment using another, so check which mode an environment uses and which modes your wrappers and algorithms support.
 
 ## Choosing and reading the mode
