@@ -1,8 +1,10 @@
 """Test suite for Autoreset wrapper."""
 
 import numpy as np
+import pytest
 
 import gymnasium as gym
+from gymnasium.vector import AutoresetMode
 from gymnasium.wrappers import Autoreset
 from tests.testing_env import GenericTestEnv
 
@@ -58,3 +60,62 @@ def test_autoreset_wrapper_autoreset():
     assert info == {"count": 0}
 
     env.close()
+
+
+def test_autoreset_wrapper_same_step_autoreset():
+    """Tests the autoreset wrapper resets within the terminating step for same-step autoreset."""
+    env = GenericTestEnv(reset_func=autoreset_reset_func, step_func=autoreset_step_func)
+    env = Autoreset(env, autoreset_mode=AutoresetMode.SAME_STEP)
+    assert env.metadata["autoreset_mode"] == AutoresetMode.SAME_STEP
+
+    obs, info = env.reset()
+    assert obs == np.array([0])
+    assert info == {"count": 0}
+
+    for count in (1, 2):
+        obs, reward, terminated, truncated, info = env.step(0)
+        assert obs == np.array([count])
+        assert reward == 0
+        assert (terminated or truncated) is False
+        assert info == {"count": count}
+
+    # The terminating step returns the reset observation and info with the final observation and info
+    obs, reward, terminated, truncated, info = env.step(0)
+    assert obs == np.array([0])
+    assert reward == 1
+    assert (terminated or truncated) is True
+    assert info["count"] == 0
+    assert info["final_obs"] == np.array([3])
+    assert info["final_info"] == {"count": 3}
+
+    # The next step is the first step of the next episode
+    obs, reward, terminated, truncated, info = env.step(0)
+    assert obs == np.array([1])
+    assert reward == 0
+    assert (terminated or truncated) is False
+    assert info == {"count": 1}
+
+    env.close()
+
+
+@pytest.mark.parametrize(
+    "autoreset_mode, expected",
+    [
+        (AutoresetMode.NEXT_STEP, AutoresetMode.NEXT_STEP),
+        ("NextStep", AutoresetMode.NEXT_STEP),
+        ("SameStep", AutoresetMode.SAME_STEP),
+    ],
+)
+def test_autoreset_wrapper_metadata(autoreset_mode, expected):
+    env = GenericTestEnv(reset_func=autoreset_reset_func, step_func=autoreset_step_func)
+    env = Autoreset(env, autoreset_mode=autoreset_mode)
+    assert env.autoreset_mode == expected
+    assert env.metadata["autoreset_mode"] == expected
+    # The wrapped environment's metadata isn't modified
+    assert "autoreset_mode" not in env.env.metadata
+
+
+def test_autoreset_wrapper_disabled():
+    env = GenericTestEnv(reset_func=autoreset_reset_func, step_func=autoreset_step_func)
+    with pytest.raises(ValueError, match="DISABLED"):
+        Autoreset(env, autoreset_mode=AutoresetMode.DISABLED)
