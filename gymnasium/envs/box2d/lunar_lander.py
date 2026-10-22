@@ -68,12 +68,26 @@ class ContactDetector(contactListener):
             self.env.game_over = True
         for i in range(2):
             if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
-                self.env.legs[i].ground_contact = True
+                # Count touching ground contacts per leg: a leg can touch
+                # several ground edge fixtures at once (e.g. while sliding
+                # across the joint between two segments), and its flag must
+                # only drop when the last contact ends.
+                self.env.legs[i].ground_contact_count = (
+                    getattr(self.env.legs[i], "ground_contact_count", 0) + 1
+                )
+                self.env.legs[i].ground_contact = (
+                    self.env.legs[i].ground_contact_count > 0
+                )
 
     def EndContact(self, contact):
         for i in range(2):
             if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
-                self.env.legs[i].ground_contact = False
+                self.env.legs[i].ground_contact_count = (
+                    max(0, getattr(self.env.legs[i], "ground_contact_count", 0)) - 1
+                )
+                self.env.legs[i].ground_contact = (
+                    self.env.legs[i].ground_contact_count > 0
+                )
 
 
 class LunarLander(gym.Env, EzPickle):
