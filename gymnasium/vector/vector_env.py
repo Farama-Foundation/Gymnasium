@@ -39,10 +39,73 @@ __all__ = [
 
 
 class AutoresetMode(Enum):
-    """Enum representing the different autoreset modes, next step, same step and disabled."""
+    """The autoreset modes of a vector environment, deciding when a sub-environment is reset after its episode ends.
 
+    The mode of a vector environment is given by ``metadata["autoreset_mode"]`` and, for :class:`SyncVectorEnv` and
+    :class:`AsyncVectorEnv`, is set with the ``autoreset_mode`` argument (an ``AutoresetMode`` or its string value).
+    See https://gymnasium.farama.org/api/vector/autoreset/ for details and example training loops for each mode.
+
+    Examples:
+        The first sub-environment's episode is truncated on the first step, the second sub-environment's continues.
+
+        >>> import numpy as np
+        >>> import gymnasium as gym
+        >>> from gymnasium.vector import AutoresetMode, SyncVectorEnv
+        >>> env_fns = [lambda: gym.make("CartPole-v1", max_episode_steps=1), lambda: gym.make("CartPole-v1")]
+
+        Next-step (default), the sub-environment is reset on the following step, ignoring its action, with zero reward
+
+        >>> envs = SyncVectorEnv(env_fns, autoreset_mode=AutoresetMode.NEXT_STEP)
+        >>> envs.metadata["autoreset_mode"]
+        <AutoresetMode.NEXT_STEP: 'NextStep'>
+        >>> _ = envs.reset(seed=0)
+        >>> obs, rewards, terminations, truncations, infos = envs.step(np.array([1, 1]))
+        >>> rewards, truncations
+        (array([1., 1.]), array([ True, False]))
+        >>> obs, rewards, terminations, truncations, infos = envs.step(np.array([1, 1]))
+        >>> obs[0]  # the reset observation
+        array([0.03132702, 0.04127556, 0.01066358, 0.02294966], dtype=float32)
+        >>> rewards, truncations
+        (array([0., 1.]), array([False, False]))
+        >>> envs.close()
+
+        Same-step, the sub-environment is reset within the same step, with the final observation and info in ``infos``
+
+        >>> envs = SyncVectorEnv(env_fns, autoreset_mode="SameStep")
+        >>> _ = envs.reset(seed=0)
+        >>> obs, rewards, terminations, truncations, infos = envs.step(np.array([1, 1]))
+        >>> obs[0]  # the reset observation
+        array([0.03132702, 0.04127556, 0.01066358, 0.02294966], dtype=float32)
+        >>> rewards, truncations
+        (array([1., 1.]), array([ True, False]))
+        >>> infos["_final_obs"]
+        array([ True, False])
+        >>> infos["final_obs"][0]
+        array([ 0.01323574,  0.17272775, -0.04686959, -0.3551522 ], dtype=float32)
+        >>> envs.close()
+
+        Disabled, the sub-environment must be reset by the user with a ``reset_mask``, other sub-environments are unaffected
+
+        >>> envs = SyncVectorEnv(env_fns, autoreset_mode=AutoresetMode.DISABLED)
+        >>> _ = envs.reset(seed=0)
+        >>> obs, rewards, terminations, truncations, infos = envs.step(np.array([1, 1]))
+        >>> obs
+        array([[ 0.01323574,  0.17272775, -0.04686959, -0.3551522 ],
+               [ 0.00208309,  0.24066003, -0.03468674, -0.2588293 ]],
+              dtype=float32)
+        >>> obs, infos = envs.reset(options={"reset_mask": np.logical_or(terminations, truncations)})
+        >>> obs
+        array([[ 0.03132702,  0.04127556,  0.01066358,  0.02294966],
+               [ 0.00208309,  0.24066003, -0.03468674, -0.2588293 ]],
+              dtype=float32)
+        >>> envs.close()
+    """
+
+    #: Sub-environments are reset on the step after their episode ends (the default).
     NEXT_STEP = "NextStep"
+    #: Sub-environments are reset within the step that their episode ends.
     SAME_STEP = "SameStep"
+    #: Sub-environments are not reset automatically, use ``reset(options={"reset_mask": mask})``.
     DISABLED = "Disabled"
 
 
@@ -62,12 +125,15 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     vector environments that contains several unique arguments for modifying environment qualities, number of environment,
     vectorizer type, vectorizer arguments.
 
-    To avoid having to wait for all sub-environments to terminated before resetting, implementations can autoreset
-    sub-environments on episode end (`terminated or truncated is True`). This is crucial for correct implementing training
-    algorithms with vector environments. By default, Gymnasium's implementation uses `next-step` autoreset, with
-    :class:`AutoresetMode` enum as the options. The mode used by vector environment should be available in `metadata["autoreset_mode"]`.
-    Warning, some vector implementations or training algorithms will only support particular autoreset modes.
-    For more information, read https://farama.org/Vector-Autoreset-Mode.
+    To avoid having to wait for all sub-environments to end before resetting, sub-environments are reset individually
+    when their episode ends (`terminated or truncated is True`), with the :class:`AutoresetMode` deciding when:
+    on the next step (``AutoresetMode.NEXT_STEP``, the default for Gymnasium's implementations), within the same step
+    (``AutoresetMode.SAME_STEP``) or only when the user calls ``reset(options={"reset_mask": mask})``
+    (``AutoresetMode.DISABLED``). The mode used by a vector environment should be available in ``metadata["autoreset_mode"]``.
+    As the mode changes what :meth:`step` returns at the end of an episode, training code must handle it correctly.
+    Warning, some vector implementations, wrappers or training algorithms will only support particular autoreset modes.
+    See https://gymnasium.farama.org/api/vector/autoreset/ for each mode's behaviour and example training loops,
+    and https://farama.org/Vector-Autoreset-Mode for background.
 
     Note:
         The info parameter of :meth:`reset` and :meth:`step` was originally implemented before v0.25 as a list
@@ -183,8 +249,19 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             Batch of (observations, rewards, terminations, truncations, infos)
 
         Note:
-            As the vector environments autoreset for a terminating and truncating sub-environments, this will occur on
-            the next step after `terminated or truncated is True`.
+            What is returned for a sub-environment whose episode ends depends on the autoreset mode,
+            ``metadata["autoreset_mode"]``, see https://gymnasium.farama.org/api/vector/autoreset/.
+
+            - ``AutoresetMode.NEXT_STEP`` (default) - The final observation, reward, termination, truncation and info
+              are returned as normal. On the next step, the sub-environment's action is ignored and it is reset,
+              returning the reset observation and info with a reward of zero and no termination or truncation.
+            - ``AutoresetMode.SAME_STEP`` - The sub-environment is reset within the same step, returning the reset
+              observation and info with the final reward, termination and truncation. The final observation and info
+              are in ``infos["final_obs"]`` and ``infos["final_info"]``, masked by ``infos["_final_obs"]`` and
+              ``infos["_final_info"]``.
+            - ``AutoresetMode.DISABLED`` - The final observation, reward, termination, truncation and info are
+              returned as normal, and the sub-environment must be reset with ``reset(options={"reset_mask": mask})``
+              before it is stepped again.
 
         Example:
             >>> import gymnasium as gym
@@ -202,7 +279,7 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
             array([1., 1., 1.])
             >>> terminations
             array([False, False, False])
-            >>> terminations
+            >>> truncations
             array([False, False, False])
             >>> infos
             {}

@@ -4,9 +4,10 @@ title: Vector Wrappers
 
 # Wrappers
 
+(vector-wrappers-autoreset-support)=
 ## Autoreset mode support
 
-Vector wrappers don't all support every [autoreset mode](https://farama.org/Vector-Autoreset-Mode), read from the wrapped environment's `metadata["autoreset_mode"]`. Wrappers raise a `ValueError` at construction for an unsupported mode.
+Vector wrappers don't all support every [autoreset mode](autoreset.md), read from the wrapped environment's `metadata["autoreset_mode"]`. Wrappers raise a `ValueError` at construction for an unsupported mode.
 
 | Wrapper | Next-step | Same-step | Disabled |
 |---------|:---------:|:---------:|:--------:|

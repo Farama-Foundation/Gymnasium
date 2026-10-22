@@ -177,7 +177,7 @@ class Autoreset(
 ):
     """The wrapped environment is automatically reset when a terminated or truncated state is reached.
 
-    This follows the vector autoreset api (see https://farama.org/Vector-Autoreset-Mode) with two modes:
+    This follows the vector autoreset api (see https://gymnasium.farama.org/api/vector/autoreset/) with two modes:
      * ``AutoresetMode.NEXT_STEP`` - On the step after an episode terminates or truncates, the environment is reset.
      * ``AutoresetMode.SAME_STEP`` - On the step that an episode terminates or truncates, the environment is reset,
        returning the reset observation and info with the episode's final observation and info in
