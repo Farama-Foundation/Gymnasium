@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import numpy as np
 from numpy.typing import NDArray
@@ -62,7 +62,7 @@ class MultiBinary(Space[NDArray[np.int8]]):
     @property
     def shape(self) -> tuple[int, ...]:
         """Has stricter type than gym.Space - never None."""
-        return self._shape  # type: ignore
+        return cast("tuple[int, ...]", self._shape)
 
     @property
     def is_np_flattenable(self) -> Literal[True]:
