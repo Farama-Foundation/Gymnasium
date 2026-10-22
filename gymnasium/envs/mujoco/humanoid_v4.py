@@ -20,6 +20,8 @@ def mass_center(model, data):
 
 
 class HumanoidEnv(MujocoEnv, utils.EzPickle):
+    """`Humanoid-v4`, kept for reproducibility. See `Humanoid-v5` (:class:`gymnasium.envs.mujoco.humanoid_v5.HumanoidEnv`) for the documentation and the changes in `v5`."""
+
     metadata = {
         "render_modes": [
             "human",

@@ -45,7 +45,7 @@ For next-step autoreset, reward wrappers return the reward of a sub-environment'
     .. automethod:: gymnasium.vector.VectorRewardWrapper.rewards
 ```
 
-## Vector Only wrappers
+## Vector only wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.vector.DictInfoToList
@@ -55,13 +55,15 @@ For next-step autoreset, reward wrappers return the reward of a sub-environment'
 .. autoclass:: gymnasium.wrappers.vector.VectorizeTransformReward
 ```
 
-## Vectorized Common wrappers
+## Vectorized common wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.vector.RecordEpisodeStatistics
+.. autoclass:: gymnasium.wrappers.vector.RecordVideo
+.. autoclass:: gymnasium.wrappers.vector.HumanRendering
 ```
 
-## Implemented Observation wrappers
+## Implemented observation wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.vector.TransformObservation
@@ -75,7 +77,7 @@ For next-step autoreset, reward wrappers return the reward of a sub-environment'
 .. autoclass:: gymnasium.wrappers.vector.NormalizeObservation
 ```
 
-## Implemented Action wrappers
+## Implemented action wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.vector.TransformAction
@@ -83,7 +85,7 @@ For next-step autoreset, reward wrappers return the reward of a sub-environment'
 .. autoclass:: gymnasium.wrappers.vector.RescaleAction
 ```
 
-## Implemented Reward wrappers
+## Implemented reward wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.vector.TransformReward
@@ -91,7 +93,7 @@ For next-step autoreset, reward wrappers return the reward of a sub-environment'
 .. autoclass:: gymnasium.wrappers.vector.NormalizeReward
 ```
 
-## Implemented Data Conversion wrappers
+## Implemented data conversion wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.vector.ArrayConversion

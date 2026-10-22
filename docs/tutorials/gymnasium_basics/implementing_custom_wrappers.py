@@ -27,10 +27,10 @@ Before following this tutorial, make sure to check out the docs of the :mod:`gym
 # dictionaries into numpy arrays, as in the following example).
 #
 # Imagine you have a 2D navigation task where the environment returns dictionaries as observations with
-# keys ``"agent_position"`` and ``"target_position"``. A common thing to do might be to throw away some degrees of
-# freedom and only consider the position of the target relative to the agent, i.e.
-# ``observation["target_position"] - observation["agent_position"]``. For this, you could implement an
-# observation wrapper like this:
+# keys ``"agent"`` and ``"target"`` (like the ``GridWorldEnv`` from :doc:`environment_creation`). A common thing to do
+# might be to throw away some degrees of freedom and only consider the position of the target relative to the agent,
+# i.e. ``observation["target"] - observation["agent"]``. For this, you could implement an observation wrapper like
+# this:
 
 import numpy as np
 
@@ -42,10 +42,13 @@ from gymnasium.spaces import Box, Discrete
 class RelativePosition(ObservationWrapper):
     def __init__(self, env):
         super().__init__(env)
-        self.observation_space = Box(shape=(2,), low=-np.inf, high=np.inf)
+        self.observation_space = Box(
+            shape=(2,), low=-np.inf, high=np.inf, dtype=np.float32
+        )
 
     def observation(self, obs):
-        return obs["target"] - obs["agent"]
+        # cast to the dtype of the new observation space (the positions are integers)
+        return (obs["target"] - obs["agent"]).astype(np.float32)
 
 
 # %%
@@ -71,11 +74,11 @@ class DiscreteActions(ActionWrapper):
 
 
 env = gym.make("LunarLanderContinuous-v3")
-# print(env.action_space)  # Box(-1.0, 1.0, (2,), float32)
+print(env.action_space)  # Box(-1.0, 1.0, (2,), float32)
 wrapped_env = DiscreteActions(
     env, [np.array([1, 0]), np.array([-1, 0]), np.array([0, 1]), np.array([0, -1])]
 )
-# print(wrapped_env.action_space)  # Discrete(4)
+print(wrapped_env.action_space)  # Discrete(4)
 
 
 # %%
@@ -116,23 +119,48 @@ class ClipReward(RewardWrapper):
 # If you do this, you can access the environment that was passed
 # to your wrapper (which *still* might be wrapped in some other wrapper) by accessing the attribute :attr:`env`.
 #
-# Let's also take a look at an example for this case. Most MuJoCo environments return a reward that consists
-# of different terms: For instance, there might be a term that rewards the agent for completing the task and one term that
-# penalizes large actions (i.e. energy usage). Usually, you can pass weight parameters for those terms during
-# initialization of the environment. However, *Reacher* does not allow you to do this! Nevertheless, all individual terms
-# of the reward are returned in `info`, so let us build a wrapper for Reacher that allows us to weight those terms:
+# Let's also take a look at an example for this case. *Reacher* returns a dense reward: the negative distance between
+# its fingertip and the target, plus a penalty for large actions (the weights of both terms can be set with the
+# ``reward_dist_weight`` and ``reward_control_weight`` arguments of ``Reacher-v5``). Suppose that we instead want a sparse
+# goal-reaching task: a reward of 1 when the fingertip is within some distance of the target, with the episode
+# terminating at that point. This changes the reward, the termination signal and the ``info`` at once, so we override
+# :meth:`gymnasium.Wrapper.step`. The last two entries of Reacher's observation are the fingertip position relative to
+# the target:
 
 
-class ReacherRewardWrapper(Wrapper):
-    def __init__(self, env, reward_dist_weight, reward_ctrl_weight):
+class ReacherSparseReward(Wrapper):
+    def __init__(self, env, distance_threshold=0.02):
         super().__init__(env)
-        self.reward_dist_weight = reward_dist_weight
-        self.reward_ctrl_weight = reward_ctrl_weight
+        self.distance_threshold = distance_threshold
 
     def step(self, action):
         obs, _, terminated, truncated, info = self.env.step(action)
-        reward = (
-            self.reward_dist_weight * info["reward_dist"]
-            + self.reward_ctrl_weight * info["reward_ctrl"]
-        )
-        return obs, reward, terminated, truncated, info
+        distance = np.linalg.norm(obs[-2:])
+        success = bool(distance < self.distance_threshold)
+
+        info["is_success"] = success
+        reward = 1.0 if success else 0.0
+        return obs, reward, terminated or success, truncated, info
+
+
+env = ReacherSparseReward(gym.make("Reacher-v5"))
+obs, info = env.reset(seed=42)
+obs, reward, terminated, truncated, info = env.step(env.action_space.sample())
+print(reward, terminated, info["is_success"])
+
+# %%
+# Wrappers without a subclass, and vector wrappers
+# ------------------------------------------------
+# For a simple transformation, you don't need to write a class: :class:`gymnasium.wrappers.TransformObservation`,
+# :class:`gymnasium.wrappers.TransformAction` and :class:`gymnasium.wrappers.TransformReward` take a function
+# (for example, a ``lambda``) and apply it to the observations, actions or rewards:
+
+from gymnasium.wrappers import TransformReward
+
+env = TransformReward(gym.make("CartPole-v1"), lambda r: 0.01 * r)
+
+# %%
+# Vector environments have their own wrapper base classes, :class:`gymnasium.vector.VectorWrapper`,
+# :class:`gymnasium.vector.VectorObservationWrapper`, :class:`gymnasium.vector.VectorActionWrapper` and
+# :class:`gymnasium.vector.VectorRewardWrapper`, which work the same way on batches of observations, actions and
+# rewards. See :doc:`/api/vector/wrappers` for the vector versions of the built-in wrappers.

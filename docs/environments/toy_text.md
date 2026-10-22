@@ -18,6 +18,12 @@ toy_text/frozen_lake.md
    :file: toy_text/list.html
 ```
 
+The unique dependencies for this set of environments (used for rendering) can be installed via:
+
+````bash
+pip install "gymnasium[toy-text]"
+````
+
 Toy text environments are designed to be extremely simple, with small discrete state and action spaces, and hence easy to learn. As a result, they are suitable for debugging implementations of reinforcement learning algorithms.
 
 Environments are configurable via arguments specified in each environment's documentation.

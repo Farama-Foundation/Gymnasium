@@ -41,7 +41,7 @@ as the agent in this case has no idea about this time-limit.
 # More formally, a common example of bootstrapping in RL is updating the estimate of the Q-value function,
 #
 # .. math::
-#   Q_{target}(o_t, a_t) = r_t + \gamma . \max_a(Q(o_{t+1}, a_{t+1}))
+#   Q_{target}(o_t, a_t) = r_t + \gamma \cdot \max_{a} Q(o_{t+1}, a)
 #
 #
 # In classical RL, the new ``Q`` estimate is a weighted average of the previous ``Q`` estimate and ``Q_target`` while in Deep
@@ -81,3 +81,29 @@ as the agent in this case has no idea about this time-limit.
 #   # This was needed in previous versions.
 #
 #   vf_target = rew + gamma * (1 - terminated) * vf_next_state
+
+# %%
+# Vector environments
+# -------------------
+#
+# With a vector environment, each sub-environment resets automatically when its episode ends, so the observation
+# needed to bootstrap a truncated episode depends on the autoreset mode
+# (``gymnasium.vector.AutoresetMode``, readable from ``envs.metadata["autoreset_mode"]``, see :doc:`/api/vector`):
+#
+# - ``NEXT_STEP`` (the default): the step on which the episode ends returns the final observation as usual, so
+#   ``vf_next_state`` can be computed from ``next_obs``. The *following* call to ``step`` resets that
+#   sub-environment and ignores its action; this autoreset step is not a real transition and should be masked out
+#   of the update (see :doc:`/tutorials/training_agents/vector_a2c`).
+# - ``SAME_STEP``: the sub-environment is reset within the same step, so ``next_obs`` is already the first
+#   observation of the next episode. The final observation is in ``info["final_obs"]``, for the sub-environments
+#   where ``info["_final_obs"]`` is ``True``.
+#
+# .. code:: python
+#
+#   # SAME_STEP autoreset mode
+#   next_obs, rew, terminated, truncated, info = envs.step(actions)
+#   bootstrap_obs = next_obs.copy()
+#   if "final_obs" in info:
+#       for i in np.where(info["_final_obs"])[0]:
+#           bootstrap_obs[i] = info["final_obs"][i]
+#   vf_target = rew + gamma * (1 - terminated) * vf(bootstrap_obs)

@@ -1,4 +1,4 @@
-"""A collection of runtime performance bencharks, useful for debugging performance related issues."""
+"""A collection of runtime performance benchmarks, useful for debugging performance related issues."""
 
 import time
 from collections.abc import Callable

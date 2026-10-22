@@ -24,12 +24,12 @@ def check_environments_match(
         env_a: First environment to check.
         env_b: Second environment to check.
         num_steps: number of timesteps to test for, setting to 0 tests only resetting.
-        seed: used the seed the reset & actions.
+        seed: The seed used to reset both environments and to seed `env_a`'s action space for sampling actions.
         skip_obs: If `True` it does not check for equivalence of the observation space or the observations.
         skip_rew: If `True` it does not check for equivalence of the rewards.
         skip_terminal: If `True` it does not check for equivalence of the terminated signals.
         skip_truncated: If `True` it does not check for equivalence of the truncated signals.
-        skip_render: If `True` it does not check for equivalent renders. note:the render checked are automatically skipped if `render_mode` is not set or is "human".
+        skip_render: If `True` it does not check for equivalent renders. Note: the render checks are automatically skipped if either environment's `render_mode` is `None` or "human".
         info_comparison: The options are
             If "equivalence" then checks if the `info`s are identical,
             If "superset" checks if `info_b` is a (non-strict) superset of `info_a`

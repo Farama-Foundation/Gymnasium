@@ -32,17 +32,19 @@ Recording agent behavior serves several important purposes in RL development:
 - Create timelapse videos of learning
 
 ```{eval-rst}
-.. py:currentmodule: gymnasium.wrappers
+.. py:currentmodule:: gymnasium.wrappers
 
 Gymnasium provides two essential wrappers for recording: :class:`RecordEpisodeStatistics` for numerical data and :class:`RecordVideo` for visual recordings. The first tracks episode metrics like total rewards, episode length, and time taken. The second generates MP4 videos of agent behavior using environment renderings.
 
 We'll show how to use these wrappers for two common scenarios: recording data for every episode (typically during evaluation) and recording data periodically (during training).
 ```
 
+{class}`~gymnasium.wrappers.RecordVideo` uses [MoviePy](https://zulko.github.io/moviepy/) to write the videos, so install it first with `pip install "gymnasium[other]"` (or `pip install moviepy`).
+
 ## Recording Every Episode (Evaluation)
 
 ```{eval-rst}
-.. py:currentmodule: gymnasium.wrappers
+.. py:currentmodule:: gymnasium.wrappers
 
 When evaluating a trained agent, you typically want to record several episodes to understand average performance and consistency. Here's how to set this up with :class:`RecordEpisodeStatistics` and :class:`RecordVideo`.
 ```
@@ -100,13 +102,18 @@ print(f'Episode rewards: {list(env.return_queue)}')
 print(f'Episode lengths: {list(env.length_queue)}')
 
 # Calculate some useful metrics
-avg_reward = np.sum(env.return_queue)
-avg_length = np.sum(env.length_queue)
+avg_reward = np.mean(env.return_queue)
+avg_length = np.mean(env.length_queue)
 std_reward = np.std(env.return_queue)
+
+# What counts as "success" depends on the environment.
+# CartPole-v1 is considered solved at an episode reward of 475 (see env.spec.reward_threshold)
+success_threshold = env.spec.reward_threshold
+success_rate = np.mean([r >= success_threshold for r in env.return_queue])
 
 print(f'\nAverage reward: {avg_reward:.2f} ± {std_reward:.2f}')
 print(f'Average episode length: {avg_length:.1f} steps')
-print(f'Success rate: {sum(1 for r in env.return_queue if r > 0) / len(env.return_queue):.1%}')
+print(f'Success rate: {success_rate:.1%}')
 ```
 
 ### Understanding the Output
@@ -118,16 +125,23 @@ After running this code, you'll find:
 - Useful for seeing exactly how your agent behaves
 - Can be shared, embedded in presentations, or analyzed frame-by-frame
 
-**Console Output**: Episode-by-episode performance plus summary statistics
-```
-Episode 1: 23 steps, reward = 23.0
-Episode 2: 15 steps, reward = 15.0
-Episode 3: 200 steps, reward = 200.0
-Episode 4: 67 steps, reward = 67.0
+**Console Output**: Episode-by-episode performance plus summary statistics. With the random policy, CartPole episodes are short and none reach the success threshold (your numbers will differ from run to run):
+```text
+Starting evaluation for 4 episodes...
+Videos will be saved to: cartpole-agent/
+Episode 1: 11 steps, reward = 11.0
+Episode 2: 18 steps, reward = 18.0
+Episode 3: 20 steps, reward = 20.0
+Episode 4: 19 steps, reward = 19.0
 
-Average reward: 76.25 ± 78.29
-Average episode length: 76.2 steps
-Success rate: 100.0%
+Evaluation Summary:
+Episode durations: [0.007185, 0.011346, 0.012267, 0.012769]
+Episode rewards: [11.0, 18.0, 20.0, 19.0]
+Episode lengths: [11, 18, 20, 19]
+
+Average reward: 17.00 ± 3.54
+Average episode length: 17.0 steps
+Success rate: 0.0%
 ```
 
 **Statistics Queues**: Time, reward, and length data for each episode
@@ -136,7 +150,7 @@ Success rate: 100.0%
 - `env.length_queue`: Number of steps in each episode
 
 ```{eval-rst}
-.. py:currentmodule: gymnasium.wrappers
+.. py:currentmodule:: gymnasium.wrappers
 
 In the script above, the :class:`RecordVideo` wrapper saves videos with filenames like "eval-episode-0.mp4" in the specified folder. The ``episode_trigger=lambda x: True`` ensures every episode is recorded.
 
@@ -180,6 +194,10 @@ print(f"Starting training for {num_training_episodes} episodes")
 print(f"Videos will be recorded every {training_period} episodes")
 print(f"Videos saved to: cartpole-training/")
 
+# RecordEpisodeStatistics only keeps the last 100 episodes (`buffer_length`),
+# so keep our own history of every episode's reward for plotting later
+episode_rewards = []
+
 for episode_num in range(num_training_episodes):
     obs, info = env.reset()
     episode_over = False
@@ -193,6 +211,7 @@ for episode_num in range(num_training_episodes):
     # Log episode statistics (available in info after episode ends)
     if "episode" in info:
         episode_data = info["episode"]
+        episode_rewards.append(episode_data['r'])
         logging.info(f"Episode {episode_num}: "
                     f"reward={episode_data['r']:.1f}, "
                     f"length={episode_data['l']}, "
@@ -200,8 +219,8 @@ for episode_num in range(num_training_episodes):
 
         # Additional analysis for milestone episodes
         if episode_num % 1000 == 0:
-            # Look at recent performance (last 100 episodes)
-            recent_rewards = list(env.return_queue)[-100:]
+            # Look at recent performance (the last 100 episodes in the buffer)
+            recent_rewards = list(env.return_queue)
             if recent_rewards:
                 avg_recent = sum(recent_rewards) / len(recent_rewards)
                 print(f"  -> Average reward over last 100 episodes: {avg_recent:.1f}")
@@ -221,9 +240,9 @@ env.close()
 ```python
 import matplotlib.pyplot as plt
 
-# Plot learning progress
-episodes = range(len(env.return_queue))
-rewards = list(env.return_queue)
+# Plot learning progress using the full history collected during training
+rewards = episode_rewards
+episodes = range(len(rewards))
 
 plt.figure(figsize=(10, 6))
 plt.plot(episodes, rewards, alpha=0.3, label='Episode Rewards')
@@ -248,8 +267,10 @@ plt.show()
 
 For more sophisticated projects, integrate with experiment tracking tools:
 
+<!-- test: skip -->
 ```python
 # Example with Weights & Biases (wandb)
+import os
 import wandb
 
 # Initialize experiment tracking
