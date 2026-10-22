@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import functools
 from collections.abc import Callable
 from typing import Any, Generic, TypeVar
 
@@ -108,6 +109,14 @@ class FuncEnv(
         self.terminal = func(self.terminal)
         self.state_info = func(self.state_info)
         self.step_info = func(self.transition_info)
+
+    def bind_params(self, params: Params):
+        """Binds ``params`` to the environment functions so that they are used instead of the default parameters.
+
+        This must be called before other transformations (e.g., ``jax.jit``) so that ``params`` are treated as constants.
+        """
+        self.transform(lambda func: functools.partial(func, params=params))
+        self.render_image = functools.partial(self.render_image, params=params)
 
     def render_image(
         self,

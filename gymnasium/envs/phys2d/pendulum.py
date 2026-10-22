@@ -248,10 +248,11 @@ class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
     }
 
     def __init__(self, render_mode: str | None = None, **kwargs: Any):
-        """Constructor where the kwargs are passed to the base environment to modify the parameters."""
+        """Constructor for the Pendulum where the kwargs are used to set the environment parameters (see :class:`PendulumParams`)."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
 
-        env = PendulumFunctional(**kwargs)
+        env = PendulumFunctional()
+        env.bind_params(env.get_default_params(**kwargs))
         env.transform(jax.jit)
 
         super().__init__(
@@ -262,7 +263,7 @@ class PendulumJaxEnv(FunctionalJaxEnv, EzPickle):
 
 
 class PendulumJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
-    """Jax-based implementation of the vectorized CartPole environment."""
+    """Jax-based implementation of the vectorized Pendulum environment."""
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
@@ -273,7 +274,7 @@ class PendulumJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
         max_episode_steps: int = 200,
         **kwargs: Any,
     ):
-        """Constructor for the vectorized CartPole where the kwargs are applied to the functional environment."""
+        """Constructor for the vectorized Pendulum where the kwargs are used to set the environment parameters (see :class:`PendulumParams`)."""
         EzPickle.__init__(
             self,
             num_envs=num_envs,
@@ -282,7 +283,8 @@ class PendulumJaxVectorEnv(FunctionalJaxVectorEnv, EzPickle):
             **kwargs,
         )
 
-        env = PendulumFunctional(**kwargs)
+        env = PendulumFunctional()
+        env.bind_params(env.get_default_params(**kwargs))
         env.transform(jax.jit)
 
         FunctionalJaxVectorEnv.__init__(

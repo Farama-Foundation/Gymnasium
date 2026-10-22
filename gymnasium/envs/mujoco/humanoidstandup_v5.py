@@ -441,7 +441,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
         return self._get_obs(), reward, False, False, info
 
     def _get_rew(self, pos_after: float, action):
-        uph_cost = (pos_after - 0) / self.model.opt.timestep
+        uph_cost = self._uph_cost_weight * (pos_after - 0) / self.model.opt.timestep
 
         quad_ctrl_cost = self._ctrl_cost_weight * np.square(self.data.ctrl).sum()
 
