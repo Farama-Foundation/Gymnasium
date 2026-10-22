@@ -443,9 +443,10 @@ class BlackJackJaxEnv(FunctionalJaxEnv, EzPickle):
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
     def __init__(self, render_mode: str | None = None, **kwargs):
-        """Initializes Gym wrapper for blackjack functional env."""
+        """Initializes Gym wrapper for blackjack functional env where the kwargs are used to set the environment parameters (see :class:`BlackJackParams`)."""
         EzPickle.__init__(self, render_mode=render_mode, **kwargs)
-        env = BlackjackFunctional(**kwargs)
+        env = BlackjackFunctional()
+        env.bind_params(env.get_default_params(**kwargs))
         env.transform(jax.jit)
 
         super().__init__(

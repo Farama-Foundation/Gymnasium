@@ -345,10 +345,10 @@ class CliffWalkingJaxEnv(FunctionalJaxEnv, EzPickle):
 
     metadata = {"render_modes": ["rgb_array"], "render_fps": 50, "jax": True}
 
-    def __init__(self, render_mode: str | None = None, **kwargs):
+    def __init__(self, render_mode: str | None = None):
         """Initializes Gym wrapper for cliffwalking functional env."""
-        EzPickle.__init__(self, render_mode=render_mode, **kwargs)
-        env = CliffWalkingFunctional(**kwargs)
+        EzPickle.__init__(self, render_mode=render_mode)
+        env = CliffWalkingFunctional()
         env.transform(jax.jit)
 
         super().__init__(
