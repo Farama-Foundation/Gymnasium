@@ -381,6 +381,69 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="wrappers">
 <h1>Wrappers<a class="headerlink" href="#wrappers" title="Link to this heading">¶</a></h1>
+<section id="autoreset-mode-support">
+<h2>Autoreset mode support<a class="headerlink" href="#autoreset-mode-support" title="Link to this heading">¶</a></h2>
+<p>Vector wrappers don’t all support every <a class="reference external" href="https://farama.org/Vector-Autoreset-Mode">autoreset mode</a>, read from the wrapped environment’s <code class="docutils literal notranslate"><span class="pre">metadata[&quot;autoreset_mode&quot;]</span></code>. Wrappers raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> at construction for an unsupported mode.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Wrapper</p></th>
+<th class="head text-center"><p>Next-step</p></th>
+<th class="head text-center"><p>Same-step</p></th>
+<th class="head text-center"><p>Disabled</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">VectorizeTransformObservation</span></code> and its subclasses (<code class="docutils literal notranslate"><span class="pre">FilterObservation</span></code>, <code class="docutils literal notranslate"><span class="pre">FlattenObservation</span></code>, <code class="docutils literal notranslate"><span class="pre">GrayscaleObservation</span></code>, <code class="docutils literal notranslate"><span class="pre">ResizeObservation</span></code>, <code class="docutils literal notranslate"><span class="pre">ReshapeObservation</span></code>, <code class="docutils literal notranslate"><span class="pre">RescaleObservation</span></code>, <code class="docutils literal notranslate"><span class="pre">DtypeObservation</span></code>)</p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓ (<code class="docutils literal notranslate"><span class="pre">info[&quot;final_obs&quot;]</span></code> is transformed for each sub-environment)</p></td>
+<td class="text-center"><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">TransformObservation</span></code> and other <code class="docutils literal notranslate"><span class="pre">VectorObservationWrapper</span></code> subclasses</p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✗ (<code class="docutils literal notranslate"><span class="pre">info[&quot;final_obs&quot;]</span></code> is not transformed)</p></td>
+<td class="text-center"><p>✓</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">NormalizeObservation</span></code></p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓ (<code class="docutils literal notranslate"><span class="pre">info[&quot;final_obs&quot;]</span></code> is normalized and included in the statistics)</p></td>
+<td class="text-center"><p>✓ (only resets of all sub-environments, partial <code class="docutils literal notranslate"><span class="pre">reset_mask</span></code> resets are rejected)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Action wrappers (<code class="docutils literal notranslate"><span class="pre">VectorActionWrapper</span></code> subclasses, including <code class="docutils literal notranslate"><span class="pre">VectorizeTransformAction</span></code>)</p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓</p></td>
+</tr>
+<tr class="row-even"><td><p>Reward wrappers (<code class="docutils literal notranslate"><span class="pre">VectorRewardWrapper</span></code> subclasses, including <code class="docutils literal notranslate"><span class="pre">VectorizeTransformReward</span></code>)</p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">NormalizeReward</span></code></p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">DictInfoToList</span></code></p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RecordVideo</span></code></p></td>
+<td class="text-center"><p>✓</p></td>
+<td class="text-center"><p>✓ (recorded episodes don’t include the final frame)</p></td>
+<td class="text-center"><p>✓</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Unlike the single-environment <code class="docutils literal notranslate"><span class="pre">NormalizeReward</span></code>, the vector <code class="docutils literal notranslate"><span class="pre">NormalizeReward</span></code> restarts a sub-environment’s accumulated return once it is reset, i.e., at the end of an episode for same-step autoreset and on <code class="docutils literal notranslate"><span class="pre">reset</span></code> for disabled autoreset.</p>
+<p>For next-step autoreset, reward wrappers return the reward of a sub-environment’s autoreset step unmodified, as no environment step occurs.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.vector.VectorWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.vector.</span></span><span class="sig-name descname"><span class="pre">VectorWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/vector/vector_env/#VectorWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorWrapper" title="Link to this definition">¶</a></dt>
@@ -432,6 +495,7 @@ The reward and termination/truncation <code class="docutils literal notranslate"
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.vector.</span></span><span class="sig-name descname"><span class="pre">VectorObservationWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/vector/vector_env/#VectorObservationWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.VectorObservationWrapper" title="Link to this definition">¶</a></dt>
 <dd><p>Wraps the vectorized environment to allow a modular transformation of the observation.</p>
 <p>Equivalent to <a class="reference internal" href="../../wrappers/observation_wrappers/#gymnasium.ObservationWrapper" title="gymnasium.ObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ObservationWrapper</span></code></a> for vectorized environments.</p>
+<p>Same-step autoreset is not supported as <code class="docutils literal notranslate"><span class="pre">info[&quot;final_obs&quot;]</span></code> is not transformed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>env</strong> – Vector environment.</p>
@@ -505,6 +569,7 @@ The reward and termination/truncation <code class="docutils literal notranslate"
 
 </dd></dl>
 
+</section>
 <section id="vector-only-wrappers">
 <h2>Vector Only wrappers<a class="headerlink" href="#vector-only-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
@@ -1032,6 +1097,12 @@ If <cite>False</cite>, the calculated statistics are used but not updated anymor
 <p>The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
 newly instantiated or the policy was changed recently.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For same-step autoreset, <code class="docutils literal notranslate"><span class="pre">info[&quot;final_obs&quot;]</span></code> is normalized and included in the statistics before the
+step’s observations, matching the update order of <a class="reference internal" href="../../wrappers/observation_wrappers/#gymnasium.wrappers.NormalizeObservation" title="gymnasium.wrappers.NormalizeObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.NormalizeObservation</span></code></a>.
+Partial resets (<code class="docutils literal notranslate"><span class="pre">reset_mask</span></code> with any <code class="docutils literal notranslate"><span class="pre">False</span></code> values) are not supported for disabled autoreset.</p>
+</div>
 <dl>
 <dt>Example without the normalize observation wrapper:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">"sync"</span><span class="p">)</span>
@@ -1295,6 +1366,12 @@ If False, the calculated statistics are used but not updated anymore; this may b
 <p>The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
 instantiated or the policy was changed recently.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unlike <a class="reference internal" href="../../wrappers/reward_wrappers/#gymnasium.wrappers.NormalizeReward" title="gymnasium.wrappers.NormalizeReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.NormalizeReward</span></code></a>, which carries the discounted return into the next episode
+unless the episode terminates, the accumulated return of a sub-environment is restarted once it is reset,
+i.e., at the end of an episode for same-step autoreset and on <code class="docutils literal notranslate"><span class="pre">reset</span></code> for disabled autoreset.</p>
+</div>
 <dl>
 <dt>Example without the normalize reward wrapper:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -1529,6 +1606,7 @@ data or device transfers.</p>
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Wrappers</a><ul>
+<li><a class="reference internal" href="#autoreset-mode-support">Autoreset mode support</a><ul>
 <li><a class="reference internal" href="#gymnasium.vector.VectorWrapper"><code class="docutils literal notranslate"><span class="pre">VectorWrapper</span></code></a><ul>
 <li><a class="reference internal" href="#gymnasium.vector.VectorWrapper.step"><code class="docutils literal notranslate"><span class="pre">VectorWrapper.step()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.vector.VectorWrapper.reset"><code class="docutils literal notranslate"><span class="pre">VectorWrapper.reset()</span></code></a></li>
@@ -1546,6 +1624,8 @@ data or device transfers.</p>
 </li>
 <li><a class="reference internal" href="#gymnasium.vector.VectorRewardWrapper"><code class="docutils literal notranslate"><span class="pre">VectorRewardWrapper</span></code></a><ul>
 <li><a class="reference internal" href="#gymnasium.vector.VectorRewardWrapper.rewards"><code class="docutils literal notranslate"><span class="pre">VectorRewardWrapper.rewards()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#vector-only-wrappers">Vector Only wrappers</a><ul>

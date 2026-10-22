@@ -406,6 +406,11 @@
 <span class="sd">        The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly</span>
 <span class="sd">        instantiated or the policy was changed recently.</span>
 
+<span class="sd">    Note:</span>
+<span class="sd">        Unlike :class:`gymnasium.wrappers.NormalizeReward`, which carries the discounted return into the next episode</span>
+<span class="sd">        unless the episode terminates, the accumulated return of a sub-environment is restarted once it is reset,</span>
+<span class="sd">        i.e., at the end of an episode for same-step autoreset and on ``reset`` for disabled autoreset.</span>
+
 <span class="sd">    Example without the normalize reward wrapper:</span>
 <span class="sd">        &gt;&gt;&gt; import gymnasium as gym</span>
 <span class="sd">        &gt;&gt;&gt; import numpy as np</span>
@@ -510,9 +515,14 @@
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">"""Resets the environment and clears accumulated reward tracking state."""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">accumulated_reward</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prev_dones</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="w">        </span><span class="sd">"""Resets the environment and clears the accumulated reward tracking state of the reset sub-environments."""</span>
+        <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">"reset_mask"</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
+            <span class="n">reset_mask</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="s2">"reset_mask"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accumulated_reward</span><span class="p">[</span><span class="n">reset_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prev_dones</span><span class="p">[</span><span class="n">reset_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accumulated_reward</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prev_dones</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>

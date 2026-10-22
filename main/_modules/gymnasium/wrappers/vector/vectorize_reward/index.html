@@ -475,9 +475,11 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">rewards</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rewards</span><span class="p">:</span> <span class="n">_ArrayT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ArrayT</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Iterates over the reward updating each with the wrapper func."""</span>
+        <span class="c1"># Writes into a new array to avoid mutating the vector environment's rewards</span>
+        <span class="n">rewards_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">rewards</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rewards</span><span class="p">):</span>
-            <span class="n">rewards</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">rewards</span></div>
+            <span class="n">rewards_out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrapper</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rewards_out</span></div>
 
 
 
