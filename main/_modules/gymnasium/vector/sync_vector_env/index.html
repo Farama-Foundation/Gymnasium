@@ -244,6 +244,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/autoreset/">Autoreset Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
@@ -465,7 +466,9 @@
 <span class="sd">            observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.</span>
 <span class="sd">                'different' defines that there can be multiple observation spaces with the same length but different high/low values batched together. Passing a ``Space`` object</span>
 <span class="sd">                allows the user to set some custom observation space mode not covered by 'same' or 'different.'</span>
-<span class="sd">            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.</span>
+<span class="sd">            autoreset_mode: When sub-environments are reset after their episode ends, either an :class:`AutoresetMode`</span>
+<span class="sd">                or its string value (``"NextStep"``, ``"SameStep"`` or ``"Disabled"``), recorded in ``metadata["autoreset_mode"]``.</span>
+<span class="sd">                See https://gymnasium.farama.org/api/vector/autoreset/ for more information.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            RuntimeError: If the observation space of some sub-environment does not match observation_space</span>
@@ -579,7 +582,8 @@
 <span class="sd">                * ``None`` - random seeds for all environment</span>
 <span class="sd">                * ``int`` - ``[seed, seed+1, ..., seed+n]``</span>
 <span class="sd">                * List of ints - ``[1, 2, 3, ..., n]``</span>
-<span class="sd">            options: Option information used for each sub-environment</span>
+<span class="sd">            options: Option information used for each sub-environment, ``options["reset_mask"]``, a boolean array of shape ``(num_envs,)``,</span>
+<span class="sd">                resets only the masked sub-environments, as needed for ``AutoresetMode.DISABLED``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Concatenated observations and info from each sub-environment</span>

@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="A standard API for reinforcement learning and a diverse set of reference environments (formerly Gym)" />
     <meta property="og:url" content="https://gymnasium.farama.org/api/vector/wrappers.html" /><meta property="og:image" content="https://gymnasium.farama.org/_static/img/gymnasium-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="AsyncVectorEnv" href="../async_vector_env/" /><link rel="prev" title="Vectorize" href="../" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Autoreset Mode" href="../autoreset/" /><link rel="prev" title="Vectorize" href="../" />
         <link rel="canonical" href="https://gymnasium.farama.org/api/vector/wrappers.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
@@ -245,6 +245,7 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Vectorize</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../autoreset/">Autoreset Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../utils/">Utility functions</a></li>
@@ -382,8 +383,8 @@
             <section class="tex2jax_ignore mathjax_ignore" id="wrappers">
 <h1>Wrappers<a class="headerlink" href="#wrappers" title="Link to this heading">¶</a></h1>
 <section id="autoreset-mode-support">
-<h2>Autoreset mode support<a class="headerlink" href="#autoreset-mode-support" title="Link to this heading">¶</a></h2>
-<p>Vector wrappers don’t all support every <a class="reference external" href="https://farama.org/Vector-Autoreset-Mode">autoreset mode</a>, read from the wrapped environment’s <code class="docutils literal notranslate"><span class="pre">metadata[&quot;autoreset_mode&quot;]</span></code>. Wrappers raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> at construction for an unsupported mode.</p>
+<span id="vector-wrappers-autoreset-support"></span><h2>Autoreset mode support<a class="headerlink" href="#autoreset-mode-support" title="Link to this heading">¶</a></h2>
+<p>Vector wrappers don’t all support every <a class="reference internal" href="../autoreset/"><span class="std std-doc">autoreset mode</span></a>, read from the wrapped environment’s <code class="docutils literal notranslate"><span class="pre">metadata[&quot;autoreset_mode&quot;]</span></code>. Wrappers raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> at construction for an unsupported mode.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -1541,12 +1542,12 @@ data or device transfers.</p>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../async_vector_env/">
+            <a class="next-page" href="../autoreset/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">AsyncVectorEnv</div>
+                <div class="title">Autoreset Mode</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>

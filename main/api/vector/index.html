@@ -245,6 +245,7 @@
 </li>
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Vectorize</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autoreset/">Autoreset Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="utils/">Utility functions</a></li>
@@ -400,12 +401,15 @@ input/outputs. For <cite>info</cite>, the data is kept as a dictionary such that
 <p>For creating environments, <code class="xref py py-func docutils literal notranslate"><span class="pre">make_vec()</span></code> is a vector environment equivalent to <code class="xref py py-func docutils literal notranslate"><span class="pre">make()</span></code> for easily creating
 vector environments that contains several unique arguments for modifying environment qualities, number of environment,
 vectorizer type, vectorizer arguments.</p>
-<p>To avoid having to wait for all sub-environments to terminated before resetting, implementations can autoreset
-sub-environments on episode end (<cite>terminated or truncated is True</cite>). This is crucial for correct implementing training
-algorithms with vector environments. By default, Gymnasium’s implementation uses <cite>next-step</cite> autoreset, with
-<code class="xref py py-class docutils literal notranslate"><span class="pre">AutoresetMode</span></code> enum as the options. The mode used by vector environment should be available in <cite>metadata[“autoreset_mode”]</cite>.
-Warning, some vector implementations or training algorithms will only support particular autoreset modes.
-For more information, read <a class="reference external" href="https://farama.org/Vector-Autoreset-Mode">https://farama.org/Vector-Autoreset-Mode</a>.</p>
+<p>To avoid having to wait for all sub-environments to end before resetting, sub-environments are reset individually
+when their episode ends (<cite>terminated or truncated is True</cite>), with the <a class="reference internal" href="autoreset/#gymnasium.vector.AutoresetMode" title="gymnasium.vector.AutoresetMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoresetMode</span></code></a> deciding when:
+on the next step (<code class="docutils literal notranslate"><span class="pre">AutoresetMode.NEXT_STEP</span></code>, the default for Gymnasium’s implementations), within the same step
+(<code class="docutils literal notranslate"><span class="pre">AutoresetMode.SAME_STEP</span></code>) or only when the user calls <code class="docutils literal notranslate"><span class="pre">reset(options={&quot;reset_mask&quot;:</span> <span class="pre">mask})</span></code>
+(<code class="docutils literal notranslate"><span class="pre">AutoresetMode.DISABLED</span></code>). The mode used by a vector environment should be available in <code class="docutils literal notranslate"><span class="pre">metadata[&quot;autoreset_mode&quot;]</span></code>.
+As the mode changes what <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> returns at the end of an episode, training code must handle it correctly.
+Warning, some vector implementations, wrappers or training algorithms will only support particular autoreset modes.
+See <a class="reference external" href="https://gymnasium.farama.org/api/vector/autoreset/">https://gymnasium.farama.org/api/vector/autoreset/</a> for each mode’s behaviour and example training loops,
+and <a class="reference external" href="https://farama.org/Vector-Autoreset-Mode">https://farama.org/Vector-Autoreset-Mode</a> for background.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The info parameter of <a class="reference internal" href="#gymnasium.vector.VectorEnv.reset" title="gymnasium.vector.VectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> and <a class="reference internal" href="#gymnasium.vector.VectorEnv.step" title="gymnasium.vector.VectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> was originally implemented before v0.25 as a list
@@ -482,8 +486,20 @@ array for each key. To use the old info style, utilise the <code class="xref py 
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>As the vector environments autoreset for a terminating and truncating sub-environments, this will occur on
-the next step after <cite>terminated or truncated is True</cite>.</p>
+<p>What is returned for a sub-environment whose episode ends depends on the autoreset mode,
+<code class="docutils literal notranslate"><span class="pre">metadata[&quot;autoreset_mode&quot;]</span></code>, see <a class="reference external" href="https://gymnasium.farama.org/api/vector/autoreset/">https://gymnasium.farama.org/api/vector/autoreset/</a>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">AutoresetMode.NEXT_STEP</span></code> (default) - The final observation, reward, termination, truncation and info
+are returned as normal. On the next step, the sub-environment’s action is ignored and it is reset,
+returning the reset observation and info with a reward of zero and no termination or truncation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AutoresetMode.SAME_STEP</span></code> - The sub-environment is reset within the same step, returning the reset
+observation and info with the final reward, termination and truncation. The final observation and info
+are in <code class="docutils literal notranslate"><span class="pre">infos[&quot;final_obs&quot;]</span></code> and <code class="docutils literal notranslate"><span class="pre">infos[&quot;final_info&quot;]</span></code>, masked by <code class="docutils literal notranslate"><span class="pre">infos[&quot;_final_obs&quot;]</span></code> and
+<code class="docutils literal notranslate"><span class="pre">infos[&quot;_final_info&quot;]</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AutoresetMode.DISABLED</span></code> - The final observation, reward, termination, truncation and info are
+returned as normal, and the sub-environment must be reset with <code class="docutils literal notranslate"><span class="pre">reset(options={&quot;reset_mask&quot;:</span> <span class="pre">mask})</span></code>
+before it is stepped again.</p></li>
+</ul>
 </div>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
@@ -501,7 +517,7 @@ the next step after <cite>terminated or truncated is True</cite>.</p>
 <span class="go">array([1., 1., 1.])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">terminations</span>
 <span class="go">array([False, False, False])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">terminations</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">truncations</span>
 <span class="go">array([False, False, False])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">infos</span>
 <span class="go">{}</span>
@@ -665,6 +681,10 @@ the seed will take the value -1.</p>
 
 </section>
 </section>
+<section id="autoreset-mode">
+<h2>Autoreset Mode<a class="headerlink" href="#autoreset-mode" title="Link to this heading">¶</a></h2>
+<p>When a sub-environment’s episode ends, vector environments reset it according to their <a class="reference internal" href="autoreset/#gymnasium.vector.AutoresetMode" title="gymnasium.vector.AutoresetMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.AutoresetMode</span></code></a>: on the next step (<code class="docutils literal notranslate"><span class="pre">NEXT_STEP</span></code>, the default), within the same step (<code class="docutils literal notranslate"><span class="pre">SAME_STEP</span></code>), or only when the user calls <code class="docutils literal notranslate"><span class="pre">reset(options={&quot;reset_mask&quot;:</span> <span class="pre">...})</span></code> (<code class="docutils literal notranslate"><span class="pre">DISABLED</span></code>). The mode changes what <code class="docutils literal notranslate"><span class="pre">step()</span></code> returns at the end of an episode and is given by <code class="docutils literal notranslate"><span class="pre">metadata[&quot;autoreset_mode&quot;]</span></code>. See <a class="reference internal" href="autoreset/"><span class="std std-doc">Autoreset Mode</span></a> for each mode’s behaviour and example training loops.</p>
+</section>
 <section id="making-vector-environments">
 <h2>Making Vector Environments<a class="headerlink" href="#making-vector-environments" title="Link to this heading">¶</a></h2>
 <p>To create vector environments, gymnasium provides <a class="reference internal" href="../registry/#gymnasium.make_vec" title="gymnasium.make_vec"><code class="xref py py-func docutils literal notranslate"><span class="pre">gymnasium.make_vec()</span></code></a> as an equivalent function to <a class="reference internal" href="../registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-func docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a>.</p>
@@ -770,6 +790,7 @@ the seed will take the value -1.</p>
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#autoreset-mode">Autoreset Mode</a></li>
 <li><a class="reference internal" href="#making-vector-environments">Making Vector Environments</a></li>
 </ul>
 </li>

@@ -244,6 +244,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/autoreset/">Autoreset Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
@@ -530,7 +531,9 @@
 <span class="sd">                'different' defines that there can be multiple observation spaces with different parameters though requires the same shape and dtype,</span>
 <span class="sd">                warning, may raise unexpected errors. Passing a ``Tuple[Space, Space]`` object allows defining a custom ``single_observation_space`` and</span>
 <span class="sd">                ``observation_space``, warning, may raise unexpected errors.</span>
-<span class="sd">            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.</span>
+<span class="sd">            autoreset_mode: When sub-environments are reset after their episode ends, either an :class:`AutoresetMode`</span>
+<span class="sd">                or its string value (``"NextStep"``, ``"SameStep"`` or ``"Disabled"``), recorded in ``metadata["autoreset_mode"]``.</span>
+<span class="sd">                See https://gymnasium.farama.org/api/vector/autoreset/ for more information.</span>
 <span class="sd">            max_concurrency: The maximum number of environments that can be executing (i.e. in ``reset`` or ``step``)</span>
 <span class="sd">                at any one time. If ``None`` (default), no limit is applied and all environments are executed in</span>
 <span class="sd">                parallel. When set, a shared semaphore limits how many worker processes can run an environment call</span>
@@ -709,7 +712,8 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            seed: The environment reset seeds</span>
-<span class="sd">            options: If to return the options</span>
+<span class="sd">            options: Option information used for each sub-environment, ``options["reset_mask"]``, a boolean array of shape ``(num_envs,)``,</span>
+<span class="sd">                resets only the masked sub-environments, as needed for ``AutoresetMode.DISABLED``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A batch of observations and info from the vectorized environment.</span>
@@ -729,7 +733,8 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            seed: List of seeds for each environment</span>
-<span class="sd">            options: The reset option</span>
+<span class="sd">            options: Option information used for each sub-environment, ``options["reset_mask"]``, a boolean array of shape ``(num_envs,)``,</span>
+<span class="sd">                resets only the masked sub-environments, as needed for ``AutoresetMode.DISABLED``.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ClosedEnvironmentError: If the environment was closed (if :meth:`close` was previously called).</span>

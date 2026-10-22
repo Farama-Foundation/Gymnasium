@@ -244,6 +244,7 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/vector/">Vectorize</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Vectorize</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/wrappers/">Wrappers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/autoreset/">Autoreset Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/async_vector_env/">AsyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/sync_vector_env/">SyncVectorEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/vector/utils/">Utility functions</a></li>
@@ -554,7 +555,7 @@
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""The wrapped environment is automatically reset when a terminated or truncated state is reached.</span>
 
-<span class="sd">    This follows the vector autoreset api (see https://farama.org/Vector-Autoreset-Mode) with two modes:</span>
+<span class="sd">    This follows the vector autoreset api (see https://gymnasium.farama.org/api/vector/autoreset/) with two modes:</span>
 <span class="sd">     * ``AutoresetMode.NEXT_STEP`` - On the step after an episode terminates or truncates, the environment is reset.</span>
 <span class="sd">     * ``AutoresetMode.SAME_STEP`` - On the step that an episode terminates or truncates, the environment is reset,</span>
 <span class="sd">       returning the reset observation and info with the episode's final observation and info in</span>
