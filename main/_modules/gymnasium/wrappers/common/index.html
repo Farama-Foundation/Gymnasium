@@ -398,6 +398,7 @@
     <span class="n">env_reset_passive_checker</span><span class="p">,</span>
     <span class="n">env_step_passive_checker</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.vector.vector_env</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoresetMode</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvSpec</span>
@@ -553,22 +554,45 @@
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">"""The wrapped environment is automatically reset when a terminated or truncated state is reached.</span>
 
-<span class="sd">    This follows the vector autoreset api where on the step after an episode terminates or truncated then the environment is reset.</span>
+<span class="sd">    This follows the vector autoreset api (see https://farama.org/Vector-Autoreset-Mode) with two modes:</span>
+<span class="sd">     * ``AutoresetMode.NEXT_STEP`` - On the step after an episode terminates or truncates, the environment is reset.</span>
+<span class="sd">     * ``AutoresetMode.SAME_STEP`` - On the step that an episode terminates or truncates, the environment is reset,</span>
+<span class="sd">       returning the reset observation and info with the episode's final observation and info in</span>
+<span class="sd">       ``info["final_obs"]`` and ``info["final_info"]``.</span>
+
+<span class="sd">    The autoreset mode is added to the environment metadata as ``"autoreset_mode"``.</span>
 
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.24.0 - Initially added as `AutoResetWrapper`</span>
 <span class="sd">     * v1.0.0 - renamed to `Autoreset` and autoreset order was changed to reset on the step after the environment terminates or truncates. As a result, `"final_observation"` and `"final_info"` is removed.</span>
+<span class="sd">     * v1.5.0 - Adds ``autoreset_mode`` argument for ``AutoresetMode.SAME_STEP`` support and ``"autoreset_mode"`` to the environment metadata</span>
 <span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
+        <span class="n">autoreset_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">AutoresetMode</span> <span class="o">=</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (gym.Env): The environment to apply the wrapper</span>
+<span class="sd">            autoreset_mode: The autoreset mode, either ``AutoresetMode.NEXT_STEP`` or ``AutoresetMode.SAME_STEP``</span>
 <span class="sd">        """</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">autoreset_mode</span><span class="o">=</span><span class="n">autoreset_mode</span><span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">autoreset_mode</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">autoreset_mode</span><span class="p">,</span> <span class="n">AutoresetMode</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">AutoresetMode</span><span class="p">(</span><span class="n">autoreset_mode</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">DISABLED</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"`Autoreset` doesn't support `AutoresetMode.DISABLED`, expected `AutoresetMode.NEXT_STEP` or `AutoresetMode.SAME_STEP`"</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="s2">"autoreset_mode"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span><span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoreset</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
@@ -589,6 +613,14 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            The autoreset environment :meth:`step`</span>
 <span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">SAME_STEP</span><span class="p">:</span>
+            <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
+                <span class="n">final_obs</span><span class="p">,</span> <span class="n">final_info</span> <span class="o">=</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span>
+                <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+                <span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">info</span><span class="p">,</span> <span class="s2">"final_obs"</span><span class="p">:</span> <span class="n">final_obs</span><span class="p">,</span> <span class="s2">"final_info"</span><span class="p">:</span> <span class="n">final_info</span><span class="p">}</span>
+            <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoreset</span><span class="p">:</span>
             <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
             <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
@@ -886,6 +918,13 @@
 <span class="sd">    Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via</span>
 <span class="sd">    :attr:`wrapped_env.return_queue` and :attr:`wrapped_env.length_queue` respectively.</span>
 
+<span class="sd">    The statistics restart for each episode depending on ``env.metadata["autoreset_mode"]``:</span>
+<span class="sd">     * ``AutoresetMode.NEXT_STEP`` (see :class:`Autoreset`) - The step after an episode ends resets the environment</span>
+<span class="sd">       so isn't counted in the next episode.</span>
+<span class="sd">     * ``AutoresetMode.SAME_STEP`` - The environment resets within the step that the episode ends,</span>
+<span class="sd">       so the statistics restart immediately.</span>
+<span class="sd">     * ``AutoresetMode.DISABLED`` or no ``autoreset_mode`` - The statistics restart when :meth:`reset` is called.</span>
+
 <span class="sd">    Attributes:</span>
 <span class="sd">     * time_queue: The time length of the last ``deque_size``-many episodes</span>
 <span class="sd">     * return_queue: The cumulative rewards of the last ``deque_size``-many episodes</span>
@@ -894,6 +933,7 @@
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.15.4 - Initially added</span>
 <span class="sd">     * v1.0.0 - Removed vector environment support (see :class:`gymnasium.wrappers.vector.RecordEpisodeStatistics`) and add attribute ``time_queue``</span>
+<span class="sd">     * v1.5.0 - Fixed the statistics accumulating across episodes for autoreset environments</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -921,6 +961,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
+        <span class="n">autoreset_mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"autoreset_mode"</span><span class="p">,</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">DISABLED</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">autoreset_mode</span><span class="p">,</span> <span class="n">AutoresetMode</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Expected env.metadata['autoreset_mode'] to be an AutoresetMode, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">autoreset_mode</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_mode</span> <span class="o">=</span> <span class="n">autoreset_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_done</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">time_queue</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">buffer_length</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">return_queue</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">buffer_length</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">length_queue</span><span class="p">:</span> <span class="n">deque</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="n">buffer_length</span><span class="p">)</span>
@@ -931,10 +979,18 @@
 <span class="w">        </span><span class="sd">"""Steps through the environment, recording the episode statistics."""</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span> <span class="o">+=</span> <span class="n">reward</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_done</span><span class="p">:</span>
+            <span class="c1"># The step after a termination or truncation resets the environment</span>
+            <span class="c1"># and doesn't count towards the next episode's statistics.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span> <span class="o">+=</span> <span class="n">reward</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_done</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">info</span>
 
             <span class="n">episode_time_length</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span>
@@ -951,7 +1007,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">length_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">episode_count</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_mode</span> <span class="o">==</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">SAME_STEP</span><span class="p">:</span>
+                <span class="c1"># The environment has already been reset, restart the statistics</span>
+                <span class="c1"># immediately rather than on the next step.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 
@@ -964,6 +1026,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_returns</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">episode_lengths</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autoreset_done</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span></div>
 

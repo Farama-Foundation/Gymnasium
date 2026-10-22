@@ -566,6 +566,16 @@ A vector version of the wrapper exists, <a class="reference internal" href="../.
 </div>
 <p>Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.return_queue</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">wrapped_env.length_queue</span></code> respectively.</p>
+<dl class="simple">
+<dt>The statistics restart for each episode depending on <code class="docutils literal notranslate"><span class="pre">env.metadata[&quot;autoreset_mode&quot;]</span></code>:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">AutoresetMode.NEXT_STEP</span></code> (see <a class="reference internal" href="#gymnasium.wrappers.Autoreset" title="gymnasium.wrappers.Autoreset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Autoreset</span></code></a>) - The step after an episode ends resets the environment
+so isn’t counted in the next episode.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AutoresetMode.SAME_STEP</span></code> - The environment resets within the step that the episode ends,
+so the statistics restart immediately.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AutoresetMode.DISABLED</span></code> or no <code class="docutils literal notranslate"><span class="pre">autoreset_mode</span></code> - The statistics restart when <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> is called.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -579,6 +589,7 @@ A vector version of the wrapper exists, <a class="reference internal" href="../.
 <dt>Change logs:</dt><dd><ul class="simple">
 <li><p>v0.15.4 - Initially added</p></li>
 <li><p>v1.0.0 - Removed vector environment support (see <a class="reference internal" href="../../vector/wrappers/#gymnasium.wrappers.vector.RecordEpisodeStatistics" title="gymnasium.wrappers.vector.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector.RecordEpisodeStatistics</span></code></a>) and add attribute <code class="docutils literal notranslate"><span class="pre">time_queue</span></code></p></li>
+<li><p>v1.5.0 - Fixed the statistics accumulating across episodes for autoreset environments</p></li>
 </ul>
 </dd>
 </dl>
@@ -665,19 +676,32 @@ optimization benefits of FrameStack Wrapper.</p></li>
 <h2>Uncommon Wrappers<a class="headerlink" href="#uncommon-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.Autoreset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">Autoreset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/common/#Autoreset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.Autoreset" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">Autoreset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">AutoresetMode</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">AutoresetMode.NEXT_STEP</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/common/#Autoreset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.Autoreset" title="Link to this definition">¶</a></dt>
 <dd><p>The wrapped environment is automatically reset when a terminated or truncated state is reached.</p>
-<p>This follows the vector autoreset api where on the step after an episode terminates or truncated then the environment is reset.</p>
+<dl class="simple">
+<dt>This follows the vector autoreset api (see <a class="reference external" href="https://farama.org/Vector-Autoreset-Mode">https://farama.org/Vector-Autoreset-Mode</a>) with two modes:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">AutoresetMode.NEXT_STEP</span></code> - On the step after an episode terminates or truncates, the environment is reset.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AutoresetMode.SAME_STEP</span></code> - On the step that an episode terminates or truncates, the environment is reset,
+returning the reset observation and info with the episode’s final observation and info in
+<code class="docutils literal notranslate"><span class="pre">info[&quot;final_obs&quot;]</span></code> and <code class="docutils literal notranslate"><span class="pre">info[&quot;final_info&quot;]</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The autoreset mode is added to the environment metadata as <code class="docutils literal notranslate"><span class="pre">&quot;autoreset_mode&quot;</span></code>.</p>
 <dl class="simple">
 <dt>Change logs:</dt><dd><ul class="simple">
 <li><p>v0.24.0 - Initially added as <cite>AutoResetWrapper</cite></p></li>
 <li><p>v1.0.0 - renamed to <cite>Autoreset</cite> and autoreset order was changed to reset on the step after the environment terminates or truncates. As a result, <cite>“final_observation”</cite> and <cite>“final_info”</cite> is removed.</p></li>
+<li><p>v1.5.0 - Adds <code class="docutils literal notranslate"><span class="pre">autoreset_mode</span></code> argument for <code class="docutils literal notranslate"><span class="pre">AutoresetMode.SAME_STEP</span></code> support and <code class="docutils literal notranslate"><span class="pre">&quot;autoreset_mode&quot;</span></code> to the environment metadata</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>env</strong> (<em>gym.Env</em>) – The environment to apply the wrapper</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>gym.Env</em>) – The environment to apply the wrapper</p></li>
+<li><p><strong>autoreset_mode</strong> – The autoreset mode, either <code class="docutils literal notranslate"><span class="pre">AutoresetMode.NEXT_STEP</span></code> or <code class="docutils literal notranslate"><span class="pre">AutoresetMode.SAME_STEP</span></code></p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
