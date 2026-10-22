@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
-from typing import TYPE_CHECKING, Any, Generic, Literal, overload
+from typing import TYPE_CHECKING, Any, Generic, Literal, cast, overload
 
 import numpy as np
 
@@ -107,7 +107,7 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
         # determine dtype
         if dtype is None:
             raise TypeError(f"Invalid Discrete dtype, cannot be {dtype}.")
-        self.dtype = np.dtype(dtype)
+        self.dtype = cast("np.dtype[_IntegerT_co]", np.dtype(dtype))
 
         #  * check that dtype is an accepted dtype
         if not (np.issubdtype(self.dtype, np.integer)):
@@ -193,7 +193,10 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
             )
         # uniform sampling
         else:
-            return self.start + self.np_random.integers(self.n, dtype=self.dtype.type)
+            return cast(
+                "_IntegerT_co",
+                self.start + self.np_random.integers(self.n, dtype=self.dtype.type),
+            )
 
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space.
