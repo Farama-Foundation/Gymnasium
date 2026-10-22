@@ -11,7 +11,7 @@ import numpy as np
 from gymnasium import Space
 from gymnasium.core import ActType, Env, ObsType, WrapperObsType
 from gymnasium.logger import warn
-from gymnasium.vector import VectorEnv, VectorObservationWrapper
+from gymnasium.vector import VectorEnv, VectorObservationWrapper, VectorWrapper
 from gymnasium.vector.utils import batch_space, concatenate, create_empty_array, iterate
 from gymnasium.vector.vector_env import ArrayType, AutoresetMode
 from gymnasium.wrappers import transform_observation
@@ -173,7 +173,8 @@ class VectorizeTransformObservation(
             wrapper: The wrapper to vectorize
             **kwargs: Keyword argument for the wrapper
         """
-        super().__init__(env)
+        # Skips `VectorObservationWrapper.__init__` as it rejects same-step autoreset, supported by `step` transforming `info["final_obs"]`
+        VectorWrapper.__init__(self, env)
 
         if "autoreset_mode" not in env.metadata:
             warn(

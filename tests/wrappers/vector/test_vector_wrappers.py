@@ -17,10 +17,9 @@ import pytest
 import gymnasium as gym
 from gymnasium import wrappers
 from gymnasium.spaces import Box, Dict, Discrete
-from gymnasium.utils.env_checker import data_equivalence
-from gymnasium.vector import VectorEnv
 from gymnasium.vector.vector_env import AutoresetMode
 from tests.testing_env import GenericTestEnv
+from tests.wrappers.vector.utils import check_vector_wrapper_equivalence
 
 
 @pytest.fixture
@@ -37,9 +36,7 @@ def custom_environments():
     del gym.registry["DictObsEnv-v0"]
 
 
-@pytest.mark.parametrize(
-    "autoreset_mode", [AutoresetMode.NEXT_STEP, AutoresetMode.SAME_STEP]
-)
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
 @pytest.mark.parametrize("num_envs", (1, 3))
 @pytest.mark.parametrize(
     "env_id, wrapper_name, kwargs",
@@ -78,51 +75,14 @@ def test_vector_wrapper_equivalence(
     wrapper_name: str,
     kwargs: dict[str, Any],
     custom_environments,  # pytest fixture
-    vectorization_mode: str = "sync",
-    num_steps: int = 50,
 ):
-    vector_wrapper = getattr(wrappers.vector, wrapper_name)
-    wrapper_vector_env: VectorEnv = vector_wrapper(
-        gym.make_vec(
-            id=env_id, num_envs=num_envs, vectorization_mode=vectorization_mode
-        ),
-        **kwargs,
+    """Checks that `VectorWrapper(VectorEnv)` and `VectorEnv(Wrapper)` are equivalent for every autoreset mode."""
+    check_vector_wrapper_equivalence(
+        autoreset_mode,
+        num_envs,
+        env_id,
+        getattr(wrappers.vector, wrapper_name),
+        kwargs,
+        getattr(wrappers, wrapper_name),
+        kwargs,
     )
-    env_wrapper = getattr(wrappers, wrapper_name)
-    vector_wrapper_env = gym.make_vec(
-        id=env_id,
-        num_envs=num_envs,
-        vectorization_mode=vectorization_mode,
-        wrappers=(lambda env: env_wrapper(env, **kwargs),),
-    )
-
-    assert wrapper_vector_env.action_space == vector_wrapper_env.action_space
-    assert wrapper_vector_env.observation_space == vector_wrapper_env.observation_space
-    assert (
-        wrapper_vector_env.single_action_space == vector_wrapper_env.single_action_space
-    )
-    assert (
-        wrapper_vector_env.single_observation_space
-        == vector_wrapper_env.single_observation_space
-    )
-
-    assert wrapper_vector_env.num_envs == vector_wrapper_env.num_envs
-
-    wrapper_vector_obs, wrapper_vector_info = wrapper_vector_env.reset(seed=123)
-    vector_wrapper_obs, vector_wrapper_info = vector_wrapper_env.reset(seed=123)
-
-    assert data_equivalence(wrapper_vector_obs, vector_wrapper_obs)
-    assert data_equivalence(wrapper_vector_info, vector_wrapper_info)
-
-    for _ in range(num_steps):
-        action = wrapper_vector_env.action_space.sample()
-        wrapper_vector_step_returns = wrapper_vector_env.step(action)
-        vector_wrapper_step_returns = vector_wrapper_env.step(action)
-
-        for wrapper_vector_return, vector_wrapper_return in zip(
-            wrapper_vector_step_returns, vector_wrapper_step_returns, strict=True
-        ):
-            assert data_equivalence(wrapper_vector_return, vector_wrapper_return)
-
-    wrapper_vector_env.close()
-    vector_wrapper_env.close()

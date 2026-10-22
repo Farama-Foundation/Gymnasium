@@ -5,17 +5,21 @@ import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector import AutoresetMode, SyncVectorEnv, VectorEnv
 from tests.testing_env import GenericTestEnv
+from tests.wrappers.vector.utils import EpisodeEndTracker, make_staggered_vector_env
 
 
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
 @pytest.mark.parametrize("num_envs", (1, 3))
-def test_record_episode_statistics(num_envs, env_id="CartPole-v1", num_steps=100):
+def test_record_episode_statistics(
+    autoreset_mode, num_envs, env_id="CartPole-v1", num_steps=50
+):
     wrapper_vector_env: VectorEnv = gym.wrappers.vector.RecordEpisodeStatistics(
-        gym.make_vec(id=env_id, num_envs=num_envs, vectorization_mode="sync"),
+        make_staggered_vector_env(env_id, num_envs, autoreset_mode),
     )
-    vector_wrapper_env = gym.make_vec(
-        id=env_id,
-        num_envs=num_envs,
-        vectorization_mode="sync",
+    vector_wrapper_env = make_staggered_vector_env(
+        env_id,
+        num_envs,
+        autoreset_mode,
         wrappers=(gym.wrappers.RecordEpisodeStatistics,),
     )
 
@@ -37,7 +41,9 @@ def test_record_episode_statistics(num_envs, env_id="CartPole-v1", num_steps=100
     assert data_equivalence(wrapper_vector_obs, vector_wrapper_obs)
     assert data_equivalence(wrapper_vector_info, vector_wrapper_info)
 
-    for _ in range(1, num_steps + 1):
+    wrapper_vector_env.action_space.seed(123)
+    tracker = EpisodeEndTracker(num_envs)
+    for _ in range(num_steps):
         action = wrapper_vector_env.action_space.sample()
         (
             wrapper_vector_obs,
@@ -59,6 +65,17 @@ def test_record_episode_statistics(num_envs, env_id="CartPole-v1", num_steps=100
         assert data_equivalence(wrapper_vector_terminated, vector_wrapper_terminated)
         assert data_equivalence(wrapper_vector_truncated, vector_wrapper_truncated)
 
+        # For same-step autoreset, the sub-environment's episode statistics are in `final_info`
+        # as the sub-environment is reset within the step, while the vector wrapper adds them to `info`
+        if (
+            autoreset_mode == AutoresetMode.SAME_STEP
+            and "final_info" in vector_wrapper_info
+            and "episode" in vector_wrapper_info["final_info"]
+        ):
+            vector_wrapper_final_info = vector_wrapper_info["final_info"]
+            vector_wrapper_info["episode"] = vector_wrapper_final_info.pop("episode")
+            vector_wrapper_info["_episode"] = vector_wrapper_final_info.pop("_episode")
+
         if "episode" in wrapper_vector_info:
             wrapper_vector_time = wrapper_vector_info["episode"].pop("t")
             vector_wrapper_time = vector_wrapper_info["episode"].pop("t")
@@ -70,6 +87,20 @@ def test_record_episode_statistics(num_envs, env_id="CartPole-v1", num_steps=100
             vector_wrapper_info["episode"].pop("_t")
 
         assert data_equivalence(wrapper_vector_info, vector_wrapper_info)
+
+        dones = tracker.update(wrapper_vector_terminated, wrapper_vector_truncated)
+        if autoreset_mode == AutoresetMode.DISABLED and np.any(dones):
+            wrapper_vector_obs, wrapper_vector_info = wrapper_vector_env.reset(
+                options={"reset_mask": dones}
+            )
+            vector_wrapper_obs, vector_wrapper_info = vector_wrapper_env.reset(
+                options={"reset_mask": dones}
+            )
+            assert data_equivalence(wrapper_vector_obs, vector_wrapper_obs)
+            assert data_equivalence(wrapper_vector_info, vector_wrapper_info)
+
+    tracker.check(num_steps)
+    assert wrapper_vector_env.episode_count == np.sum(tracker.num_episode_ends)
 
     wrapper_vector_env.close()
     vector_wrapper_env.close()
