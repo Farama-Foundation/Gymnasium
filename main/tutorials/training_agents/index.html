@@ -197,7 +197,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -371,7 +371,7 @@
                 </svg>
               </button>
             </div>
-            <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
               <div class="visually-hidden">Toggle table of contents sidebar</div>
               <i class="icon"><svg>
                   <use href="#svg-toc"></use>
@@ -383,6 +383,61 @@
             <section id="training-agents">
 <span id="sphx-glr-tutorials-training-agents"></span><h1>Training Agents<a class="headerlink" href="#training-agents" title="Link to this heading">¶</a></h1>
 <p id="gallery-section-name">The most common application of Gymnasium is for training RL agents. Therefore, these tutorials aim to show a range of example implementations for different environments.</p>
+<p>Each tutorial trains a small agent from scratch with a compact, readable algorithm, so the full loop
+(collecting experience, updating the policy or value function, and evaluating the result) stays
+visible instead of being hidden behind a training library.</p>
+<section id="what-the-tutorials-cover">
+<h2>What the tutorials cover<a class="headerlink" href="#what-the-tutorials-cover" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Solving Blackjack with Tabular Q-Learning</strong> - Q-learning with an epsilon-greedy policy on
+<code class="docutils literal notranslate"><span class="pre">Blackjack-v1</span></code>, including a heatmap of the learned state-action values.</p></li>
+<li><p><strong>Solving FrozenLake with Tabular Q-Learning</strong> - the same algorithm on <code class="docutils literal notranslate"><span class="pre">FrozenLake-v1</span></code>, compared
+across map sizes and exploration schedules.</p></li>
+<li><p><strong>Training using REINFORCE for Mujoco</strong> - a PyTorch implementation of REINFORCE, a Monte-Carlo
+policy gradient method, on <code class="docutils literal notranslate"><span class="pre">InvertedPendulum-v4</span></code>.</p></li>
+<li><p><strong>Speeding up A2C Training with Vector Envs</strong> - an A2C implementation trained with
+<code class="docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code> and <code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code> on <code class="docutils literal notranslate"><span class="pre">LunarLander-v3</span></code>, showing how running environments in
+parallel increases throughput.</p></li>
+</ul>
+</section>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading">¶</a></h2>
+<p>The tutorials require Python 3.11 or newer, <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code>, and the plotting and progress-bar packages
+used by the training scripts:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install gymnasium matplotlib pandas seaborn tqdm</span>
+</pre></div>
+</div>
+<p>The two deep reinforcement learning tutorials also need PyTorch and the extra for the environment
+they train on:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install "gymnasium[mujoco,box2d]" torch</span>
+</pre></div>
+</div>
+<p><em>Training using REINFORCE for Mujoco</em> trains on <code class="docutils literal notranslate"><span class="pre">InvertedPendulum-v4</span></code> from the <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> extra and
+<em>Speeding up A2C Training with Vector Envs</em> trains on <code class="docutils literal notranslate"><span class="pre">LunarLander-v3</span></code> from the <code class="docutils literal notranslate"><span class="pre">box2d</span></code> extra.</p>
+</section>
+<section id="running-a-tutorial-locally">
+<h2>Running a tutorial locally<a class="headerlink" href="#running-a-tutorial-locally" title="Link to this heading">¶</a></h2>
+<p>Every tutorial page ends with a <em>Download Python source code</em> link. Save the file and run it from a
+terminal:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python blackjack_q_learning.py</span>
+</pre></div>
+</div>
+<p>Training takes time: Blackjack trains for 100,000 episodes, FrozenLake for 2,000 episodes per run
+across several map sizes, REINFORCE for 5,000 episodes and A2C for 1,000 updates in several parallel
+environments. Lower the episode, update and timestep counts while experimenting, and raise them again
+for a final run.</p>
+<p>The vector environment tutorial explains how to wrap the training script in
+<code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">&quot;__main__&quot;:</span></code>, which <code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code> needs on platforms that start processes with
+<code class="docutils literal notranslate"><span class="pre">spawn</span></code> (macOS and Windows).</p>
+</section>
+<section id="where-to-go-next">
+<h2>Where to go next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://gymnasium.farama.org/tutorials/gymnasium_basics/">Gymnasium Basics</a> covers the
+<code class="docutils literal notranslate"><span class="pre">reset</span></code> / <code class="docutils literal notranslate"><span class="pre">step</span></code> loop and wrappers if you are new to Gymnasium.</p></li>
+<li><p><a class="reference external" href="https://gymnasium.farama.org/api/vector/">Vector environments</a> documents the vector API used by
+the A2C tutorial.</p></li>
+</ul>
 <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This tutorial demonstrates how to use action masking in the Taxi environment to improve reinfor..."><img alt="" src="../../_images/sphx_glr_action_masking_taxi_thumb.png" />
 <p><a class="reference internal" href="action_masking_taxi/#sphx-glr-tutorials-training-agents-action-masking-taxi-py"><span class="std std-ref">Action Masking in the Taxi Environment</span></a></p>
   <div class="sphx-glr-thumbnail-title">Action Masking in the Taxi Environment</div>
@@ -400,6 +455,7 @@
   <div class="sphx-glr-thumbnail-title">Speeding up A2C Training with Vector Envs</div>
 </div></div><div class="toctree-wrapper compound">
 </div>
+</section>
 </section>
 
           </article>
@@ -459,8 +515,30 @@
           
         </footer>
       </div>
-      <aside class="toc-drawer no-toc">
+      <aside class="toc-drawer">
         
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">Training Agents</a><ul>
+<li><a class="reference internal" href="#what-the-tutorials-cover">What the tutorials cover</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#running-a-tutorial-locally">Running a tutorial locally</a></li>
+<li><a class="reference internal" href="#where-to-go-next">Where to go next</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
         
         
       </aside>

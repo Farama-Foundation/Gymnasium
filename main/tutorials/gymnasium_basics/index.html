@@ -197,7 +197,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -371,7 +371,7 @@
                 </svg>
               </button>
             </div>
-            <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
               <div class="visually-hidden">Toggle table of contents sidebar</div>
               <i class="icon"><svg>
                   <use href="#svg-toc"></use>
@@ -382,7 +382,60 @@
             
             <section id="gymnasium-basics">
 <span id="sphx-glr-tutorials-gymnasium-basics"></span><h1>Gymnasium Basics<a class="headerlink" href="#gymnasium-basics" title="Link to this heading">¶</a></h1>
-<p id="gallery-section-name">The aim of these tutorials is to showcase the fundamental API of Gymnasium to help users implement it</p>
+<p id="gallery-section-name">The aim of these tutorials is to showcase the fundamental API of Gymnasium to help users implement it.</p>
+<p>Each tutorial is a self-contained Python script: its page shows the code next to the output, and the
+script can be downloaded from the same page to run and modify locally.</p>
+<section id="what-the-tutorials-cover">
+<h2>What the tutorials cover<a class="headerlink" href="#what-the-tutorials-cover" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Make your own custom environment</strong> - generate a new environment from the Farama
+<code class="docutils literal notranslate"><span class="pre">gymnasium-env-template</span></code> with Copier, then implement its spaces, transitions, rendering,
+registration and tests.</p></li>
+<li><p><strong>Implementing custom wrappers</strong> - subclass <code class="docutils literal notranslate"><span class="pre">ObservationWrapper</span></code>, <code class="docutils literal notranslate"><span class="pre">ActionWrapper</span></code>,
+<code class="docutils literal notranslate"><span class="pre">RewardWrapper</span></code> and <code class="docutils literal notranslate"><span class="pre">Wrapper</span></code> to change the observations, actions or rewards of an existing
+environment.</p></li>
+<li><p><strong>Handling time limits</strong> - the difference between <code class="docutils literal notranslate"><span class="pre">terminated</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated</span></code>, and why
+bootstrapping should stop only on <code class="docutils literal notranslate"><span class="pre">terminated</span></code>.</p></li>
+<li><p><strong>Load custom quadruped robot environments</strong> - pass an MJCF or URDF model to a MuJoCo environment
+with the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument, then tune its simulation, termination, reward and observation
+parameters.</p></li>
+</ul>
+</section>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading">¶</a></h2>
+<p>The tutorials require Python 3.11 or newer with <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code> installed:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install gymnasium</span>
+</pre></div>
+</div>
+<p>Three of the tutorials also use optional dependencies:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">copier</span> <span class="pre">&quot;gymnasium[classic-control]&quot;</span></code> for <em>Make your own custom environment</em>, which
+walks through the Copier template and renders the example environment with <code class="docutils literal notranslate"><span class="pre">pygame</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[box2d]&quot;</span></code> for <em>Implementing custom wrappers</em>, which wraps
+<code class="docutils literal notranslate"><span class="pre">LunarLanderContinuous-v3</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[mujoco]&quot;</span></code> for <em>Load custom quadruped robot environments</em>, which wraps
+<code class="docutils literal notranslate"><span class="pre">Ant-v5</span></code>.</p></li>
+</ul>
+</section>
+<section id="running-a-tutorial-locally">
+<h2>Running a tutorial locally<a class="headerlink" href="#running-a-tutorial-locally" title="Link to this heading">¶</a></h2>
+<p>Every tutorial page ends with a <em>Download Python source code</em> link. Save the file and run it from a
+terminal, for example:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python implementing_custom_wrappers.py</span>
+</pre></div>
+</div>
+<p>The tutorials are written to be read as much as run: the printed output and figures are part of the
+explanation, so the rendered page is the primary reference and the script is there to experiment
+with.</p>
+</section>
+<section id="where-to-go-next">
+<h2>Where to go next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://gymnasium.farama.org/introduction/basic_usage/">Basic usage</a> introduces the
+<code class="docutils literal notranslate"><span class="pre">reset</span></code> / <code class="docutils literal notranslate"><span class="pre">step</span></code> loop, spaces and wrappers that every tutorial builds on.</p></li>
+<li><p>The <a class="reference external" href="https://gymnasium.farama.org/api/env/">API reference</a> documents the environment API in
+full.</p></li>
+</ul>
 <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This tutorial shows how to create new environment and links to relevant useful wrappers, utilit..."><img alt="" src="../../_images/sphx_glr_environment_creation_thumb.png" />
 <p><a class="reference internal" href="environment_creation/#sphx-glr-tutorials-gymnasium-basics-environment-creation-py"><span class="std std-ref">Make your own custom environment</span></a></p>
   <div class="sphx-glr-thumbnail-title">Make your own custom environment</div>
@@ -397,6 +450,7 @@
   <div class="sphx-glr-thumbnail-title">Load custom quadruped robot environments</div>
 </div></div><div class="toctree-wrapper compound">
 </div>
+</section>
 </section>
 
           </article>
@@ -456,8 +510,30 @@
           
         </footer>
       </div>
-      <aside class="toc-drawer no-toc">
+      <aside class="toc-drawer">
         
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">Gymnasium Basics</a><ul>
+<li><a class="reference internal" href="#what-the-tutorials-cover">What the tutorials cover</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#running-a-tutorial-locally">Running a tutorial locally</a></li>
+<li><a class="reference internal" href="#where-to-go-next">Where to go next</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
         
         
       </aside>

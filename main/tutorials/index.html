@@ -386,6 +386,61 @@
 <section id="training-agents">
 <h1>Training Agents<a class="headerlink" href="#training-agents" title="Link to this heading">¶</a></h1>
 <p>The most common application of Gymnasium is for training RL agents. Therefore, these tutorials aim to show a range of example implementations for different environments.</p>
+<p>Each tutorial trains a small agent from scratch with a compact, readable algorithm, so the full loop
+(collecting experience, updating the policy or value function, and evaluating the result) stays
+visible instead of being hidden behind a training library.</p>
+<section id="what-the-tutorials-cover">
+<h2>What the tutorials cover<a class="headerlink" href="#what-the-tutorials-cover" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Solving Blackjack with Tabular Q-Learning</strong> - Q-learning with an epsilon-greedy policy on
+<code class="docutils literal notranslate"><span class="pre">Blackjack-v1</span></code>, including a heatmap of the learned state-action values.</p></li>
+<li><p><strong>Solving FrozenLake with Tabular Q-Learning</strong> - the same algorithm on <code class="docutils literal notranslate"><span class="pre">FrozenLake-v1</span></code>, compared
+across map sizes and exploration schedules.</p></li>
+<li><p><strong>Training using REINFORCE for Mujoco</strong> - a PyTorch implementation of REINFORCE, a Monte-Carlo
+policy gradient method, on <code class="docutils literal notranslate"><span class="pre">InvertedPendulum-v4</span></code>.</p></li>
+<li><p><strong>Speeding up A2C Training with Vector Envs</strong> - an A2C implementation trained with
+<code class="docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code> and <code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code> on <code class="docutils literal notranslate"><span class="pre">LunarLander-v3</span></code>, showing how running environments in
+parallel increases throughput.</p></li>
+</ul>
+</section>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading">¶</a></h2>
+<p>The tutorials require Python 3.11 or newer, <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code>, and the plotting and progress-bar packages
+used by the training scripts:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install gymnasium matplotlib pandas seaborn tqdm</span>
+</pre></div>
+</div>
+<p>The two deep reinforcement learning tutorials also need PyTorch and the extra for the environment
+they train on:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install "gymnasium[mujoco,box2d]" torch</span>
+</pre></div>
+</div>
+<p><em>Training using REINFORCE for Mujoco</em> trains on <code class="docutils literal notranslate"><span class="pre">InvertedPendulum-v4</span></code> from the <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> extra and
+<em>Speeding up A2C Training with Vector Envs</em> trains on <code class="docutils literal notranslate"><span class="pre">LunarLander-v3</span></code> from the <code class="docutils literal notranslate"><span class="pre">box2d</span></code> extra.</p>
+</section>
+<section id="running-a-tutorial-locally">
+<h2>Running a tutorial locally<a class="headerlink" href="#running-a-tutorial-locally" title="Link to this heading">¶</a></h2>
+<p>Every tutorial page ends with a <em>Download Python source code</em> link. Save the file and run it from a
+terminal:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python blackjack_q_learning.py</span>
+</pre></div>
+</div>
+<p>Training takes time: Blackjack trains for 100,000 episodes, FrozenLake for 2,000 episodes per run
+across several map sizes, REINFORCE for 5,000 episodes and A2C for 1,000 updates in several parallel
+environments. Lower the episode, update and timestep counts while experimenting, and raise them again
+for a final run.</p>
+<p>The vector environment tutorial explains how to wrap the training script in
+<code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">&quot;__main__&quot;:</span></code>, which <code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code> needs on platforms that start processes with
+<code class="docutils literal notranslate"><span class="pre">spawn</span></code> (macOS and Windows).</p>
+</section>
+<section id="where-to-go-next">
+<h2>Where to go next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://gymnasium.farama.org/tutorials/gymnasium_basics/">Gymnasium Basics</a> covers the
+<code class="docutils literal notranslate"><span class="pre">reset</span></code> / <code class="docutils literal notranslate"><span class="pre">step</span></code> loop and wrappers if you are new to Gymnasium.</p></li>
+<li><p><a class="reference external" href="https://gymnasium.farama.org/api/vector/">Vector environments</a> documents the vector API used by
+the A2C tutorial.</p></li>
+</ul>
 <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This tutorial demonstrates how to use action masking in the Taxi environment to improve reinfor..."><img alt="" src="../_images/sphx_glr_action_masking_taxi_thumb.png" />
 <p><a class="reference internal" href="training_agents/action_masking_taxi/#sphx-glr-tutorials-training-agents-action-masking-taxi-py"><span class="std std-ref">Action Masking in the Taxi Environment</span></a></p>
   <div class="sphx-glr-thumbnail-title">Action Masking in the Taxi Environment</div>
@@ -402,9 +457,63 @@
 <p><a class="reference internal" href="training_agents/vector_a2c/#sphx-glr-tutorials-training-agents-vector-a2c-py"><span class="std std-ref">Speeding up A2C Training with Vector Envs</span></a></p>
   <div class="sphx-glr-thumbnail-title">Speeding up A2C Training with Vector Envs</div>
 </div></div></section>
-<section id="gymnasium-basics">
-<h1>Gymnasium Basics<a class="headerlink" href="#gymnasium-basics" title="Link to this heading">¶</a></h1>
-<p>The aim of these tutorials is to showcase the fundamental API of Gymnasium to help users implement it</p>
+</section>
+<section id="id1">
+<h1>Gymnasium Basics<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<p>The aim of these tutorials is to showcase the fundamental API of Gymnasium to help users implement it.</p>
+<p>Each tutorial is a self-contained Python script: its page shows the code next to the output, and the
+script can be downloaded from the same page to run and modify locally.</p>
+<section id="id2">
+<h2>What the tutorials cover<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Make your own custom environment</strong> - generate a new environment from the Farama
+<code class="docutils literal notranslate"><span class="pre">gymnasium-env-template</span></code> with Copier, then implement its spaces, transitions, rendering,
+registration and tests.</p></li>
+<li><p><strong>Implementing custom wrappers</strong> - subclass <code class="docutils literal notranslate"><span class="pre">ObservationWrapper</span></code>, <code class="docutils literal notranslate"><span class="pre">ActionWrapper</span></code>,
+<code class="docutils literal notranslate"><span class="pre">RewardWrapper</span></code> and <code class="docutils literal notranslate"><span class="pre">Wrapper</span></code> to change the observations, actions or rewards of an existing
+environment.</p></li>
+<li><p><strong>Handling time limits</strong> - the difference between <code class="docutils literal notranslate"><span class="pre">terminated</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated</span></code>, and why
+bootstrapping should stop only on <code class="docutils literal notranslate"><span class="pre">terminated</span></code>.</p></li>
+<li><p><strong>Load custom quadruped robot environments</strong> - pass an MJCF or URDF model to a MuJoCo environment
+with the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument, then tune its simulation, termination, reward and observation
+parameters.</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>Requirements<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>The tutorials require Python 3.11 or newer with <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code> installed:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install gymnasium</span>
+</pre></div>
+</div>
+<p>Three of the tutorials also use optional dependencies:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">copier</span> <span class="pre">&quot;gymnasium[classic-control]&quot;</span></code> for <em>Make your own custom environment</em>, which
+walks through the Copier template and renders the example environment with <code class="docutils literal notranslate"><span class="pre">pygame</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[box2d]&quot;</span></code> for <em>Implementing custom wrappers</em>, which wraps
+<code class="docutils literal notranslate"><span class="pre">LunarLanderContinuous-v3</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[mujoco]&quot;</span></code> for <em>Load custom quadruped robot environments</em>, which wraps
+<code class="docutils literal notranslate"><span class="pre">Ant-v5</span></code>.</p></li>
+</ul>
+</section>
+<section id="id4">
+<h2>Running a tutorial locally<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>Every tutorial page ends with a <em>Download Python source code</em> link. Save the file and run it from a
+terminal, for example:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python implementing_custom_wrappers.py</span>
+</pre></div>
+</div>
+<p>The tutorials are written to be read as much as run: the printed output and figures are part of the
+explanation, so the rendered page is the primary reference and the script is there to experiment
+with.</p>
+</section>
+<section id="id5">
+<h2>Where to go next<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://gymnasium.farama.org/introduction/basic_usage/">Basic usage</a> introduces the
+<code class="docutils literal notranslate"><span class="pre">reset</span></code> / <code class="docutils literal notranslate"><span class="pre">step</span></code> loop, spaces and wrappers that every tutorial builds on.</p></li>
+<li><p>The <a class="reference external" href="https://gymnasium.farama.org/api/env/">API reference</a> documents the environment API in
+full.</p></li>
+</ul>
 <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This tutorial shows how to create new environment and links to relevant useful wrappers, utilit..."><img alt="" src="../_images/sphx_glr_environment_creation_thumb.png" />
 <p><a class="reference internal" href="gymnasium_basics/environment_creation/#sphx-glr-tutorials-gymnasium-basics-environment-creation-py"><span class="std std-ref">Make your own custom environment</span></a></p>
   <div class="sphx-glr-thumbnail-title">Make your own custom environment</div>
@@ -427,6 +536,7 @@
 <p><a class="reference download internal" download="" href="../_downloads/a5659940aa3f8f568547d47752a43172/tutorials_jupyter.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">all</span> <span class="pre">examples</span> <span class="pre">in</span> <span class="pre">Jupyter</span> <span class="pre">notebooks:</span> <span class="pre">tutorials_jupyter.zip</span></code></a></p>
 </div>
 </div>
+</section>
 </section>
 
           </article>
