@@ -382,23 +382,116 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="speeding-up-training">
 <h1>Speeding Up Training<a class="headerlink" href="#speeding-up-training" title="Link to this heading">¶</a></h1>
-<p>Reinforcement Learning can be a computationally difficult problem that is both sample inefficient and difficult to scale to more complex environments.
-In this page, we are going to talk about general strategies for speeding up training: vectorizing environments, optimizing training and algorithmic heuristics.</p>
+<p>Reinforcement learning is a computationally difficult problem that is both sample inefficient and difficult to scale to more complex environments.
+In this page, we are going to talk about general strategies for speeding up training: vectorizing environments, optimizing the training loop and algorithmic heuristics.</p>
 <section id="vectorized-environments">
 <h2>Vectorized environments<a class="headerlink" href="#vectorized-environments" title="Link to this heading">¶</a></h2>
-<p>Normally in training, agents will sample from a single environment limiting the number of steps (samples) per second to the speed of the environment. Training can be substantially increased through acting in multiple environments at the same time, referred to as vectorized environments where multiple instances of the same environment run in parallel (on multiple CPUs). Gymnasium provide two built in classes to vectorize most generic environments: <a class="reference internal" href="../../api/vector/sync_vector_env/#gymnasium.vector.SyncVectorEnv" title="gymnasium.vector.SyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.SyncVectorEnv</span></code></a> and <a class="reference internal" href="../../api/vector/async_vector_env/#gymnasium.vector.AsyncVectorEnv" title="gymnasium.vector.AsyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.AsyncVectorEnv</span></code></a> which can be easily created with <a class="reference internal" href="../../api/registry/#gymnasium.make_vec" title="gymnasium.make_vec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make_vec()</span></code></a>.</p>
-<p>It should be noted that vectorizing environments might require changes to your training algorithm and can cause instability in training for very large numbers of sub-environments.</p>
+<p>Stepping a single environment limits the number of samples per second an agent can collect to the speed of that environment. A vectorized environment runs several copies of the same environment and steps them with a single call, which increases the number of samples per second and hands the training algorithm a batch of transitions. Gymnasium provides two classes for this, <a class="reference internal" href="../../api/vector/sync_vector_env/#gymnasium.vector.SyncVectorEnv" title="gymnasium.vector.SyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.SyncVectorEnv</span></code></a> and <a class="reference internal" href="../../api/vector/async_vector_env/#gymnasium.vector.AsyncVectorEnv" title="gymnasium.vector.AsyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.AsyncVectorEnv</span></code></a>, as well as <a class="reference internal" href="../../api/registry/#gymnasium.make_vec" title="gymnasium.make_vec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make_vec()</span></code></a> to create either of them from an environment id.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+
+<span class="c1"># Four CartPole environments stepped together in the current process</span>
+<span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">"sync"</span><span class="p">)</span>
+
+<span class="n">observations</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">observations</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># (4, 4): one observation per environment</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>  <span class="c1"># MultiDiscrete([2 2 2 2])</span>
+
+<span class="n">actions</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># (4,): one action per environment</span>
+
+<span class="n">observations</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rewards</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># (4,): one reward per environment</span>
+
+<span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The observations, rewards and the <code class="docutils literal notranslate"><span class="pre">terminated</span></code> / <code class="docutils literal notranslate"><span class="pre">truncated</span></code> flags carry one entry per sub-environment, and every value in <code class="docutils literal notranslate"><span class="pre">info</span></code> is an array with one entry per sub-environment.</p>
+<p>The vector environment also resets sub-environments by itself. Whenever a sub-environment returns <code class="docutils literal notranslate"><span class="pre">terminated</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated</span></code>, the vector environment resets it before the next <code class="docutils literal notranslate"><span class="pre">step</span></code> call, so the reset logic of a single-environment training loop is usually removed when the loop is moved onto a vector environment. Because of this, a batch can mix continuing sub-environments with one or more that were just reset, and the <code class="docutils literal notranslate"><span class="pre">terminated</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated</span></code> arrays are what the training algorithm should use to mask the data of each sub-environment. See the <a class="reference external" href="https://farama.org/Vector-Autoreset-Mode">vector environments API</a> for the details of the autoreset modes.</p>
+<section id="synchronous-or-asynchronous">
+<h3>Synchronous or asynchronous<a class="headerlink" href="#synchronous-or-asynchronous" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Execution</p></th>
+<th class="head"><p>Overhead</p></th>
+<th class="head"><p>When to use it</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">SyncVectorEnv</span></code></p></td>
+<td><p>Sub-environments step one after another in the current process</p></td>
+<td><p>None</p></td>
+<td><p>Fast Python environments, debugging, and algorithms that only need the batched data</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv</span></code></p></td>
+<td><p>Every sub-environment runs in its own process</p></td>
+<td><p>Inter-process communication for observations and actions</p></td>
+<td><p>Environments whose own code (simulation, rendering, Python loops) is the bottleneck</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="c1"># Eight environments in eight processes. This is usually only faster</span>
+    <span class="c1"># when the environment is the bottleneck, not the training loop.</span>
+    <span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span>
+        <span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">"async"</span>
+    <span class="p">)</span>
+    <span class="n">observations</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">observations</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># (8, 4)</span>
+    <span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><a class="reference internal" href="../../api/vector/async_vector_env/#gymnasium.vector.AsyncVectorEnv" title="gymnasium.vector.AsyncVectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.AsyncVectorEnv</span></code></a> starts one process per sub-environment. Platforms that create processes with <code class="docutils literal notranslate"><span class="pre">spawn</span></code> (Windows and macOS) require the entry point of the script to be guarded with <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">&quot;__main__&quot;:</span></code>, as in the example above, otherwise each process re-imports and re-runs the script.</p>
+</div>
+<p>The number of sub-environments is usually chosen based on the number of available CPU cores. Throughput stops improving once the CPU is saturated, and very large numbers of environments can also make training less stable because every update is computed from more independent episodes. Synchronous vector environments avoid the communication cost entirely, and they are often the better default for small or fast environments.</p>
+</section>
 </section>
 <section id="optimizing-training">
 <h2>Optimizing training<a class="headerlink" href="#optimizing-training" title="Link to this heading">¶</a></h2>
-<p>Speeding up training can generally be achieved through optimizing your code, in particular, for deep reinforcement learning that use GPUs in training through the need to transfer data to and from RAM and the GPU memory.</p>
-<p>For code written in PyTorch and Jax, they provide the ability to <code class="docutils literal notranslate"><span class="pre">jit</span></code> (just in time compilation) the code order for CPU, GPU and TPU (for jax) to decrease the training time taken.</p>
+<p>After the environments, the training loop is usually the next bottleneck. Rendering is expensive, so create the environments with <code class="docutils literal notranslate"><span class="pre">render_mode=None</span></code> and only wrap them with the video recording wrappers when a recording is actually needed, rather than for every training run.</p>
+<p>For deep reinforcement learning, most of the remaining time is spent in the neural network and in moving data between the CPU and the accelerator. Compiling the model or the update step reduces the Python overhead of the step, and keeping the observations, actions and targets on the accelerator avoids a round trip to the CPU for every batch.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="c1"># `model` is a torch.nn.Module, e.g. the policy network.</span>
+<span class="c1"># The first call is slow, the following calls are faster.</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The equivalent for JAX is to decorate the update step with <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code> and to keep the parameters and the batch on the accelerator. Compilation only pays off when the shapes of the inputs do not change between calls, which is another reason to step a fixed batch of environments.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
+
+<span class="c1"># JIT the update step and keep the batch on the accelerator</span>
+<span class="n">update_step</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">(</span><span class="n">update_step</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="algorithmic-heuristics">
 <h2>Algorithmic heuristics<a class="headerlink" href="#algorithmic-heuristics" title="Link to this heading">¶</a></h2>
-<p>Academic researchers are consistently exploring new optimizations to improve agent performance and reduce the number of samples required to train an agent.
-In particular, sample efficient reinforcement learning is a specialist sub-field of reinforcement learning that explores optimizations for training algorithms and environment heuristics that reduce the number of agent observation need for an agent to maximise performance.
-As the field is consistently improving, we refer readers to find to survey papers and the latest research to know what the most efficient algorithmic improves that exist currently.</p>
+<p>Academic researchers are consistently exploring new optimizations that reduce the number of samples required to train an agent.
+Sample-efficient reinforcement learning is a specialist sub-field of reinforcement learning that studies optimizations for training algorithms and environment heuristics that reduce the number of agent observations needed to maximize performance.</p>
+<p>Common heuristics that can reduce the number of environment steps are:</p>
+<ul class="simple">
+<li><p><strong>Reward shaping</strong>: adding intermediate rewards for progress towards the task, so the agent does not have to discover the goal by chance.</p></li>
+<li><p><strong>Frame skipping and action repetition</strong>: repeating an action over several environment steps, which reduces the number of decisions the agent has to make.</p></li>
+<li><p><strong>Observation normalization</strong>: rescaling observations with wrappers such as <a class="reference internal" href="../../api/wrappers/table/"><span class="doc std std-doc">NormalizeObservation</span></a>, so that a single learning rate works across features.</p></li>
+<li><p><strong>Curriculum learning</strong>: starting with an easier version of the task and increasing the difficulty as the agent improves.</p></li>
+</ul>
+<p>As the field is consistently improving, we refer readers to survey papers and the latest research for the algorithmic improvements that are currently the most effective.</p>
+</section>
+<section id="where-to-go-next">
+<h2>Where to go next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../api/vector/"><span class="doc std std-doc">Vector environments API</span></a> for the full vector environment API.</p></li>
+<li><p><a class="reference internal" href="../../tutorials/training_agents/vector_a2c/"><span class="doc std std-doc">Vector A2C tutorial</span></a> for a training loop that uses vectorized environments.</p></li>
+<li><p><a class="reference internal" href="../train_agent/"><span class="doc std std-doc">Train an Agent</span></a> for a first end-to-end training example.</p></li>
+<li><p><a class="reference internal" href="../record_agent/"><span class="doc std std-doc">Record an Agent</span></a> for recording videos and episode statistics.</p></li>
+</ul>
 </section>
 </section>
 
@@ -418,7 +511,19 @@ As the field is consistently improving, we refer readers to find to survey paper
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            
+            <a class="prev-page" href="../record_agent/">
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Recording Agents</div>
+                
+              </div>
+            </a>
           </div>
           <div class="bottom-of-page">
             <div class="left-details">
@@ -460,9 +565,13 @@ As the field is consistently improving, we refer readers to find to survey paper
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Speeding Up Training</a><ul>
-<li><a class="reference internal" href="#vectorized-environments">Vectorized environments</a></li>
+<li><a class="reference internal" href="#vectorized-environments">Vectorized environments</a><ul>
+<li><a class="reference internal" href="#synchronous-or-asynchronous">Synchronous or asynchronous</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#optimizing-training">Optimizing training</a></li>
 <li><a class="reference internal" href="#algorithmic-heuristics">Algorithmic heuristics</a></li>
+<li><a class="reference internal" href="#where-to-go-next">Where to go next</a></li>
 </ul>
 </li>
 </ul>
