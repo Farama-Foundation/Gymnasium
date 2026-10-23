@@ -50,7 +50,7 @@ For environments that can't be updated, see the compatibility guide section belo
 import gym
 
 # Environment creation and seeding
-env = gym.make("LunarLander-v3", options={})
+env = gym.make("LunarLander-v2")
 env.seed(123)
 observation = env.reset()
 
@@ -64,7 +64,10 @@ while not done:
 env.close()
 ```
 
-### New v0.26+ Code (Including v1.0.0)
+### New v1.0.0+ Code
+
+The same code works on v0.26 to v0.29 if `LunarLander-v3` is replaced with `LunarLander-v2`, as `LunarLander-v3` was added in v1.0.0.
+
 ```python
 import gymnasium as gym  # Note: 'gymnasium' not 'gym'
 
@@ -72,7 +75,7 @@ import gymnasium as gym  # Note: 'gymnasium' not 'gym'
 env = gym.make("LunarLander-v3", render_mode="human")
 
 # Reset with seed parameter
-observation, info = env.reset(seed=123, options={})
+observation, info = env.reset(seed=123)
 
 # Training loop with terminated/truncated distinction
 done = False
@@ -289,13 +292,15 @@ Some environments were moved or removed:
 import gym
 env = gym.make("FetchReach-v1")  # No longer available
 
-# NEW: Moved to separate package
+# NEW: Moved to separate packages, which register their environments on import
 import gymnasium
 
-import gymnasium_robotics
 import ale_py
+import gymnasium_robotics
 
-gymnasium.register_envs((gymnasium_robotics, ale_py))
+# `register_envs` is a no-op, it only stops IDEs and linters removing the "unused" imports
+gymnasium.register_envs(ale_py)
+gymnasium.register_envs(gymnasium_robotics)
 
 env = gymnasium.make("FetchReach-v1")
 env = gymnasium.make("ALE/Pong-v5")
@@ -320,7 +325,7 @@ env = gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
 env = gymnasium.make("GymV21Environment-v0", env=OldV21Env())
 
 # Gym v0.26 style environments
-env = gymnasium.make("GymV26Environment-v0", env_id="Cartpole-v1")
+env = gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
 # or
 env = gymnasium.make("GymV26Environment-v0", env=OldV26Env())
 ```
@@ -330,7 +335,7 @@ env = gymnasium.make("GymV26Environment-v0", env=OldV26Env())
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.utils.step_api_compatibility
 
-If environments implement the (old) done step API, Gymnasium provides functions (:meth:`convert_to_terminated_truncated_step_api` and :meth:`convert_to_done_step_api`) that will convert an environment with the old step API (using ``done``) to the new step API (using ``termination`` and ``truncation``), and vice versa.
+If environments implement the (old) done step API, Gymnasium provides functions (:func:`convert_to_terminated_truncated_step_api` and :func:`convert_to_done_step_api`) that will convert a step's return values from the old step API (using ``done``) to the new step API (using ``terminated`` and ``truncated``), and vice versa. :func:`step_api_compatibility` can be used to convert to either API.
 ```
 
 ## Testing Your Migration
@@ -347,7 +352,7 @@ After migrating, verify that:
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.utils.env_checker
 
-Use the :meth:`check_env` to verify their implementation.
+Use the :func:`check_env` to verify their implementation.
 ```
 
 ## Getting Help
