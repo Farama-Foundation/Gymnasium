@@ -428,7 +428,7 @@
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">player_sum</span></code>: Current hand value (4-21)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dealer_card</span></code>: Dealer’s face-up card (1-10)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">usable_ace</span></code>: Whether player has usable ace (True/False)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">usable_ace</span></code>: Whether player has a usable ace (1) or not (0)</p></li>
 </ul>
 </li>
 <li><p><strong>Actions</strong>: 0 = Stand, 1 = Hit</p></li>
@@ -439,7 +439,13 @@
 <section id="executing-an-action">
 <h2>Executing an action<a class="headerlink" href="#executing-an-action" title="Link to this heading">¶</a></h2>
 <p>After receiving our first observation from <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code>, we use <code class="docutils literal notranslate"><span class="pre">env.step(action)</span></code> to interact with the environment. This function takes an action and returns five important values:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Blackjack-v1"</span><span class="p">)</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># a random action, for now</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 </pre></div>
 </div>
 <ul class="simple">
@@ -514,7 +520,7 @@
         <span class="c1"># Track learning progress</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">training_error</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Choose an action using epsilon-greedy strategy.</span>
 
 <span class="sd">        Returns:</span>
@@ -530,11 +536,11 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
+        <span class="n">obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
         <span class="n">action</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">reward</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">terminated</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-        <span class="n">next_obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">],</span>
+        <span class="n">next_obs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Update Q-value based on experience.</span>
 
@@ -568,11 +574,13 @@
 <section id="understanding-the-q-learning-update">
 <h3>Understanding the Q-Learning Update<a class="headerlink" href="#understanding-the-q-learning-update" title="Link to this heading">¶</a></h3>
 <p>The core learning happens in the <code class="docutils literal notranslate"><span class="pre">update</span></code> method. Let’s break down the math:</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Current estimate: Q(state, action)</span>
 <span class="n">current_q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">obs</span><span class="p">][</span><span class="n">action</span><span class="p">]</span>
 
 <span class="c1"># What we actually experienced: reward + discounted future value</span>
-<span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
+<span class="c1"># (no future value if the episode terminated)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">discount_factor</span> <span class="o">*</span> <span class="p">(</span><span class="ow">not</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">q_values</span><span class="p">[</span><span class="n">next_obs</span><span class="p">])</span>
 
 <span class="c1"># How wrong were we?</span>
 <span class="n">error</span> <span class="o">=</span> <span class="n">target</span> <span class="o">-</span> <span class="n">current_q</span>
@@ -644,22 +652,23 @@
 </section>
 <section id="what-to-expect-during-training">
 <h3>What to Expect During Training<a class="headerlink" href="#what-to-expect-during-training" title="Link to this heading">¶</a></h3>
+<p>These numbers come from running the code on this page; yours will vary a little between runs. For reference, a purely random policy wins about 28% of hands.</p>
 <p><strong>Early episodes (0-10,000)</strong>:</p>
 <ul class="simple">
 <li><p>Agent acts mostly randomly (high epsilon)</p></li>
-<li><p>Wins about 43% of hands (slightly worse than random due to poor strategy)</p></li>
+<li><p>Wins about 30% of hands, close to the random policy</p></li>
 <li><p>Large learning errors as Q-values are very inaccurate</p></li>
 </ul>
 <p><strong>Middle episodes (10,000-50,000)</strong>:</p>
 <ul class="simple">
-<li><p>Agent starts finding good strategies</p></li>
-<li><p>Win rate improves to 45-48%</p></li>
+<li><p>Agent starts finding good strategies as epsilon decreases</p></li>
+<li><p>Win rate improves to about 37%</p></li>
 <li><p>Learning errors decrease as estimates get better</p></li>
 </ul>
 <p><strong>Later episodes (50,000+)</strong>:</p>
 <ul class="simple">
-<li><p>Agent converges to near-optimal strategy</p></li>
-<li><p>Win rate plateaus around 49% (theoretical maximum for this game)</p></li>
+<li><p>Epsilon reaches its minimum of 0.1, so 10% of actions are still random</p></li>
+<li><p>Win rate plateaus around 41%</p></li>
 <li><p>Small learning errors as Q-values stabilize</p></li>
 </ul>
 </section>
@@ -720,8 +729,8 @@
 </div>
 <section id="interpreting-the-results">
 <h3>Interpreting the Results<a class="headerlink" href="#interpreting-the-results" title="Link to this heading">¶</a></h3>
-<p><strong>Reward Plot</strong>: Should show gradual improvement from ~-0.05 (slightly negative) to ~-0.01 (near optimal). Blackjack is a difficult game - even perfect play loses slightly due to the house edge.</p>
-<p><strong>Episode Length</strong>: Should stabilize around 2-3 actions per episode. Very short episodes suggest the agent is standing too early; very long episodes suggest hitting too often.</p>
+<p><strong>Reward Plot</strong>: Should show gradual improvement from about -0.4 (random play) to about -0.08 to -0.1 by the end of training. Blackjack is a difficult game - even perfect play loses slightly due to the house edge, so the average reward stays negative.</p>
+<p><strong>Episode Length</strong>: Should stay around 1.4-1.6 actions per episode, as most hands end after standing or hitting once or twice. Much shorter episodes suggest the agent is standing too early; much longer episodes suggest hitting too often.</p>
 <p><strong>Training Error</strong>: Should decrease over time, indicating the agent’s predictions are getting more accurate. Large spikes early in training are normal as the agent encounters new situations.</p>
 </section>
 </section>
@@ -812,11 +821,18 @@
 <span class="n">test_agent</span><span class="p">(</span><span class="n">agent</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Without exploration, the trained agent wins about 42-43% of hands with an average reward of about -0.05, for example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Test Results over 1000 episodes:
+Win Rate: 43.6%
+Average Reward: -0.036
+Standard Deviation: 0.952
+</pre></div>
+</div>
 <p>Good Blackjack performance:</p>
 <ul class="simple">
-<li><p><strong>Win rate</strong>: 42-45% (house edge makes &gt;50% impossible)</p></li>
-<li><p><strong>Average reward</strong>: -0.02 to +0.01</p></li>
-<li><p><strong>Consistency</strong>: Low standard deviation indicates reliable strategy</p></li>
+<li><p><strong>Win rate</strong>: 42-44% (the house edge makes &gt;50% impossible)</p></li>
+<li><p><strong>Average reward</strong>: slightly negative, around -0.05 (a random policy gets about -0.4)</p></li>
+<li><p><strong>Standard deviation</strong>: close to 1, since every hand ends in a win (+1), loss (-1) or draw (0). It won’t shrink with better play, so judge the agent by its average reward over many episodes</p></li>
 </ul>
 </section>
 <section id="next-steps">

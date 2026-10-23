@@ -405,13 +405,14 @@
 <li><p>Catch training issues early</p></li>
 <li><p>Create timelapse videos of learning</p></li>
 </ul>
-<p>Gymnasium provides two essential wrappers for recording: <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> for numerical data and <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code> for visual recordings. The first tracks episode metrics like total rewards, episode length, and time taken. The second generates MP4 videos of agent behavior using environment renderings.</p>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code> writes the videos with MoviePy, which is installed with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[other]&quot;</span></code>; <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> has no additional dependencies.</p>
+<p>Gymnasium provides two essential wrappers for recording: <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a> for numerical data and <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a> for visual recordings. The first tracks episode metrics like total rewards, episode length, and time taken. The second generates MP4 videos of agent behavior using environment renderings.</p>
+<p><a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a> writes the videos with MoviePy, which is installed with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[other]&quot;</span></code>; <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a> has no additional dependencies.</p>
 <p>We’ll show how to use these wrappers for two common scenarios: recording data for every episode (typically during evaluation) and recording data periodically (during training).</p>
+<p><a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a> uses <a class="reference external" href="https://zulko.github.io/moviepy/">MoviePy</a> to write the videos, so install it first with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[other]&quot;</span></code> (or <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">moviepy</span></code>).</p>
 </section>
 <section id="recording-every-episode-evaluation">
 <h2>Recording Every Episode (Evaluation)<a class="headerlink" href="#recording-every-episode-evaluation" title="Link to this heading">¶</a></h2>
-<p>When evaluating a trained agent, you typically want to record several episodes to understand average performance and consistency. Here’s how to set this up with <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code>.</p>
+<p>When evaluating a trained agent, you typically want to record several episodes to understand average performance and consistency. Here’s how to set this up with <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a> and <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span><span class="p">,</span> <span class="n">RecordVideo</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -503,8 +504,8 @@ Episodes reaching the time limit: 0/4
 <li><p><code class="docutils literal notranslate"><span class="pre">env.return_queue</span></code>: Total reward for each episode</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">env.length_queue</span></code>: Number of steps in each episode</p></li>
 </ul>
-<p>In the script above, the <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code> wrapper saves videos with filenames like “eval-episode-0.mp4” in the specified folder. The <code class="docutils literal notranslate"><span class="pre">episode_trigger=lambda</span> <span class="pre">x:</span> <span class="pre">True</span></code> ensures every episode is recorded.</p>
-<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> wrapper tracks performance metrics in internal queues that we access after evaluation to compute averages and other statistics.</p>
+<p>In the script above, the <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordVideo" title="gymnasium.wrappers.RecordVideo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code></a> wrapper saves videos with filenames like “eval-episode-0.mp4” in the specified folder. The <code class="docutils literal notranslate"><span class="pre">episode_trigger=lambda</span> <span class="pre">x:</span> <span class="pre">True</span></code> ensures every episode is recorded.</p>
+<p>The <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.RecordEpisodeStatistics" title="gymnasium.wrappers.RecordEpisodeStatistics"><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a> wrapper tracks performance metrics in internal queues that we access after evaluation to compute averages and other statistics.</p>
 <p>For computational efficiency during evaluation, it’s possible to implement this with vector environments to evaluate N episodes in parallel rather than sequentially.</p>
 </section>
 </section>
@@ -541,6 +542,10 @@ Episodes reaching the time limit: 0/4
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Videos will be recorded every </span><span class="si">{</span><span class="n">training_period</span><span class="si">}</span><span class="s2"> episodes"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Videos saved to: cartpole-training/"</span><span class="p">)</span>
 
+<span class="c1"># RecordEpisodeStatistics only keeps the last 100 episodes (`buffer_length`),</span>
+<span class="c1"># so keep our own history of every episode's reward for plotting later</span>
+<span class="n">episode_rewards</span> <span class="o">=</span> <span class="p">[]</span>
+
 <span class="k">for</span> <span class="n">episode_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_training_episodes</span><span class="p">):</span>
     <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
     <span class="n">episode_over</span> <span class="o">=</span> <span class="kc">False</span>
@@ -554,6 +559,7 @@ Episodes reaching the time limit: 0/4
     <span class="c1"># Log episode statistics (available in info after episode ends)</span>
     <span class="k">if</span> <span class="s2">"episode"</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>
         <span class="n">episode_data</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">"episode"</span><span class="p">]</span>
+        <span class="n">episode_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">episode_data</span><span class="p">[</span><span class="s1">'r'</span><span class="p">])</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Episode </span><span class="si">{</span><span class="n">episode_num</span><span class="si">}</span><span class="s2">: "</span>
                     <span class="sa">f</span><span class="s2">"reward=</span><span class="si">{</span><span class="n">episode_data</span><span class="p">[</span><span class="s1">'r'</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, "</span>
                     <span class="sa">f</span><span class="s2">"length=</span><span class="si">{</span><span class="n">episode_data</span><span class="p">[</span><span class="s1">'l'</span><span class="p">]</span><span class="si">}</span><span class="s2">, "</span>
@@ -561,8 +567,8 @@ Episodes reaching the time limit: 0/4
 
         <span class="c1"># Additional analysis for milestone episodes</span>
         <span class="k">if</span> <span class="n">episode_num</span> <span class="o">%</span> <span class="mi">1000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># Look at recent performance (last 100 episodes)</span>
-            <span class="n">recent_rewards</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)[</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span>
+            <span class="c1"># Look at recent performance (the last 100 episodes in the buffer)</span>
+            <span class="n">recent_rewards</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">recent_rewards</span><span class="p">:</span>
                 <span class="n">avg_recent</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">recent_rewards</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">recent_rewards</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  -&gt; Average reward over last 100 episodes: </span><span class="si">{</span><span class="n">avg_recent</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -582,9 +588,9 @@ Episodes reaching the time limit: 0/4
 <p><strong>Learning Curves</strong>: Plot episode statistics over time</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
-<span class="c1"># Plot learning progress</span>
-<span class="n">episodes</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">))</span>
-<span class="n">rewards</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span>
+<span class="c1"># Plot learning progress using the full history collected during training</span>
+<span class="n">rewards</span> <span class="o">=</span> <span class="n">episode_rewards</span>
+<span class="n">episodes</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rewards</span><span class="p">))</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">episodes</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Episode Rewards'</span><span class="p">)</span>
@@ -610,6 +616,7 @@ Episodes reaching the time limit: 0/4
 <section id="integration-with-experiment-tracking">
 <h2>Integration with Experiment Tracking<a class="headerlink" href="#integration-with-experiment-tracking" title="Link to this heading">¶</a></h2>
 <p>For more sophisticated projects, integrate with experiment tracking tools:</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example with Weights &amp; Biases (wandb); install it with `pip install wandb`</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 

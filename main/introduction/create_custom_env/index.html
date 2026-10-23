@@ -434,7 +434,7 @@
 </ul>
 <p>This provides a clear learning problem that’s simple enough to understand but non-trivial to solve optimally.</p>
 <hr class="docutils" />
-<p>This page provides a complete implementation of creating custom environments with Gymnasium. For a more <a class="reference internal" href="../../tutorials/gymnasium_basics/environment_creation/"><span class="doc std std-doc">complete tutorial</span></a> with rendering.</p>
+<p>This page provides a complete implementation of creating custom environments with Gymnasium. For a longer tutorial that also covers rendering with PyGame, see the <a class="reference internal" href="../../tutorials/gymnasium_basics/environment_creation/"><span class="doc std std-doc">environment creation tutorial</span></a>.</p>
 <p>We recommend that you familiarise yourself with the <a class="reference internal" href="../basic_usage/"><span class="doc std std-doc">basic usage</span></a> before reading this page!</p>
 <p>We will implement our GridWorld game as a 2-dimensional square grid of fixed size. The agent can move vertically or horizontally between grid cells in each timestep, and the goal is to navigate to a target that has been placed randomly at the beginning of the episode.</p>
 </section>
@@ -443,7 +443,7 @@
 <h2>Environment <code class="docutils literal notranslate"><span class="pre">__init__</span></code><a class="headerlink" href="#environment-init" title="Link to this heading">¶</a></h2>
 <p>Like all environments, our custom environment will inherit from <a class="reference internal" href="../../api/env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Env</span></code></a> that defines the structure all environments must follow. One of the requirements is defining the observation and action spaces, which declare what inputs (actions) and outputs (observations) are valid for this environment.</p>
 <p>As outlined in our design, our agent has four discrete actions (move in cardinal directions), so we’ll use <code class="docutils literal notranslate"><span class="pre">Discrete(4)</span></code> space.</p>
-<p>For our observation, we have several options. We could represent the full grid as a 2D array, or use coordinate positions, or even a 3D array with separate “layers” for agent and target. For this tutorial, we’ll use a simple dictionary format like <code class="docutils literal notranslate"><span class="pre">{&quot;agent&quot;:</span> <span class="pre">array([1,</span> <span class="pre">0]),</span> <span class="pre">&quot;target&quot;:</span> <span class="pre">array([0,</span> <span class="pre">3])}</span></code> where the arrays represent x,y coordinates.</p>
+<p>For our observation, we have several options. We could represent the full grid as a 2D array, or use coordinate positions, or even a 3D array with separate “layers” for agent and target. For this tutorial, we’ll use a simple dictionary format like <code class="docutils literal notranslate"><span class="pre">{&quot;agent&quot;:</span> <span class="pre">array([1,</span> <span class="pre">0]),</span> <span class="pre">&quot;target&quot;:</span> <span class="pre">array([0,</span> <span class="pre">3])}</span></code> where the arrays are <code class="docutils literal notranslate"><span class="pre">[row,</span> <span class="pre">col]</span></code> grid coordinates (row 0 is the top row, as in a NumPy array).</p>
 <p>This choice makes the observation human-readable and easy to debug. We’ll declare this as a <a class="reference internal" href="../../api/spaces/composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> space with the agent and target spaces being <a class="reference internal" href="../../api/spaces/fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a> spaces that contain integer coordinates.</p>
 <p>For a full list of possible spaces to use with an environment, see <a class="reference internal" href="../../api/spaces/"><span class="doc std std-doc">spaces</span></a></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
@@ -472,8 +472,8 @@
         <span class="c1"># Dict space gives us structured, human-readable observations</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">"agent"</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>   <span class="c1"># [x, y] coordinates</span>
-                <span class="s2">"target"</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>  <span class="c1"># [x, y] coordinates</span>
+                <span class="s2">"agent"</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>   <span class="c1"># [row, col] coordinates</span>
+                <span class="s2">"target"</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>  <span class="c1"># [row, col] coordinates</span>
             <span class="p">}</span>
         <span class="p">)</span>
 
@@ -494,6 +494,7 @@
 <section id="constructing-observations">
 <h2>Constructing Observations<a class="headerlink" href="#constructing-observations" title="Link to this heading">¶</a></h2>
 <p>Since we need to compute observations in both <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code></a> and <a class="reference internal" href="../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code></a>, it’s convenient to have a helper method <code class="docutils literal notranslate"><span class="pre">_get_obs</span></code> that translates the environment’s internal state into the observation format. This keeps our code DRY (Don’t Repeat Yourself) and makes it easier to modify the observation format later.</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Convert internal state to observation format.</span>
 
@@ -512,6 +513,7 @@
 </div>
 <p>Returning copies is not optional: an environment that returns its internal arrays directly fails <code class="docutils literal notranslate"><span class="pre">check_env</span></code> with an error that the observations returned by <code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> share an object, and a user who stores an observation would silently see the environment’s state change underneath it.</p>
 <p>We can also implement a similar method for auxiliary information returned by <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code></a> and <a class="reference internal" href="../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code></a>. In our case, we’ll provide the Manhattan distance between agent and target - this can be useful for debugging and understanding agent progress, but shouldn’t be used by the learning algorithm itself.</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Compute auxiliary information for debugging.</span>
 
@@ -531,6 +533,7 @@
 <h2>Reset function<a class="headerlink" href="#reset-function" title="Link to this heading">¶</a></h2>
 <p>The <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> method starts a new episode. It takes two optional parameters: <code class="docutils literal notranslate"><span class="pre">seed</span></code> for reproducible random generation and <code class="docutils literal notranslate"><span class="pre">options</span></code> for additional configuration. On the first line, you must call <code class="docutils literal notranslate"><span class="pre">super().reset(seed=seed)</span></code> to properly initialize the random number generator.</p>
 <p>In our GridWorld environment, <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> randomly places the agent and target on the grid, ensuring they don’t start in the same location. We return both the initial observation and info as a tuple.</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Start a new episode.</span>
 
@@ -564,12 +567,15 @@
 <section id="step-function">
 <h2>Step function<a class="headerlink" href="#step-function" title="Link to this heading">¶</a></h2>
 <p>The <a class="reference internal" href="../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> method contains the core environment logic. It takes an action, updates the environment state, and returns the results. This is where the physics, game rules, and reward logic live.</p>
-<p>For GridWorld, we need to:
-1. Convert the discrete action to a movement direction
-2. Update the agent’s position (with boundary checking)
-3. Calculate the reward based on whether the target was reached
-4. Determine if the episode should end
-5. Return all the required information</p>
+<p>For GridWorld, we need to:</p>
+<ol class="arabic simple">
+<li><p>Convert the discrete action to a movement direction</p></li>
+<li><p>Update the agent’s position (with boundary checking)</p></li>
+<li><p>Calculate the reward based on whether the target was reached</p></li>
+<li><p>Determine if the episode should end</p></li>
+<li><p>Return all the required information</p></li>
+</ol>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Execute one timestep within the environment.</span>
 
@@ -606,22 +612,106 @@
 </pre></div>
 </div>
 </section>
+<section id="the-complete-environment">
+<h2>The Complete Environment<a class="headerlink" href="#the-complete-environment" title="Link to this heading">¶</a></h2>
+<p>Putting the pieces together, here is the full environment in one place, ready to copy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GridWorldEnv</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"render_modes"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"human"</span><span class="p">],</span> <span class="s2">"render_fps"</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">render_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">=</span> <span class="n">render_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">"agent"</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>   <span class="c1"># [row, col] coordinates</span>
+                <span class="s2">"target"</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>  <span class="c1"># [row, col] coordinates</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_action_to_direction</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>   <span class="c1"># Move right (column + 1)</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>  <span class="c1"># Move up (row - 1)</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]),</span>  <span class="c1"># Move left (column - 1)</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>   <span class="c1"># Move down (row + 1)</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"agent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="s2">"target"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="o">.</span><span class="n">copy</span><span class="p">()}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"distance"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span>
+        <span class="k">while</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_info</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_to_direction</span><span class="p">[</span><span class="n">action</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">+</span> <span class="n">direction</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="n">terminated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">)</span>
+        <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">reward</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">terminated</span> <span class="k">else</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">(),</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_info</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">"human"</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="s2">""</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">([</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">):</span>
+                        <span class="n">line</span> <span class="o">+=</span> <span class="s2">"A "</span>
+                    <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">([</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">):</span>
+                        <span class="n">line</span> <span class="o">+=</span> <span class="s2">"T "</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">+=</span> <span class="s2">". "</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
 <section id="common-environment-design-pitfalls">
 <h2>Common Environment Design Pitfalls<a class="headerlink" href="#common-environment-design-pitfalls" title="Link to this heading">¶</a></h2>
 <p>Now that you’ve seen the basic structure, let’s discuss common mistakes beginners make:</p>
 <section id="reward-design-issues">
 <h3>Reward Design Issues<a class="headerlink" href="#reward-design-issues" title="Link to this heading">¶</a></h3>
 <p><strong>Problem</strong>: Only rewarding at the very end (sparse rewards)</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This makes learning very difficult!</span>
+<!-- test: skip -->
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fine for our small 5x5 grid, but in larger or harder environments</span>
+<span class="c1"># a random agent may rarely see any reward, making learning slow</span>
 <span class="n">reward</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">terminated</span> <span class="k">else</span> <span class="mi">0</span>
 </pre></div>
 </div>
-<p><strong>Better</strong>: Provide intermediate feedback</p>
+<p><strong>Often better</strong>: Provide intermediate feedback</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Option 1: Small step penalty to encourage efficiency</span>
 <span class="n">reward</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">terminated</span> <span class="k">else</span> <span class="o">-</span><span class="mf">0.01</span>
 
-<span class="c1"># Option 2: Distance-based reward shaping</span>
-<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">)</span>
+<span class="c1"># Option 2: Distance-based reward shaping (Manhattan distance, as in _get_info)</span>
+<span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="nb">ord</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">reward</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">terminated</span> <span class="k">else</span> <span class="o">-</span><span class="mf">0.1</span> <span class="o">*</span> <span class="n">distance</span>
 </pre></div>
 </div>
@@ -629,6 +719,7 @@
 <section id="state-representation-problems">
 <h3>State Representation Problems<a class="headerlink" href="#state-representation-problems" title="Link to this heading">¶</a></h3>
 <p><strong>Problem</strong>: Including irrelevant information or missing crucial details</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Too much info - agent doesn't need grid size in every observation</span>
 <span class="n">obs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"agent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">,</span> <span class="s2">"size"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">}</span>
 
@@ -637,6 +728,7 @@
 </pre></div>
 </div>
 <p><strong>Better</strong>: Include exactly what’s needed for optimal decisions</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Just right - positions are sufficient for navigation</span>
 <span class="n">obs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"agent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">}</span>
 </pre></div>
@@ -645,6 +737,7 @@
 <section id="action-space-issues">
 <h3>Action Space Issues<a class="headerlink" href="#action-space-issues" title="Link to this heading">¶</a></h3>
 <p><strong>Problem</strong>: Actions that don’t make sense or are impossible to execute</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bad: Agent can move diagonally but environment doesn't support it</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Discrete</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>  <span class="c1"># 8 directions including diagonals</span>
 
@@ -656,6 +749,7 @@
 <section id="boundary-handling-errors">
 <h3>Boundary Handling Errors<a class="headerlink" href="#boundary-handling-errors" title="Link to this heading">¶</a></h3>
 <p><strong>Problem</strong>: Allowing invalid states or unclear boundary behavior</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Bad: Agent can go outside the grid</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">+</span> <span class="n">direction</span>  <span class="c1"># No bounds checking!</span>
 
@@ -665,6 +759,7 @@
 </pre></div>
 </div>
 <p><strong>Better</strong>: Clear, consistent boundary handling</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Clear: Agent stays in place when hitting boundaries</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">+</span> <span class="n">direction</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
@@ -696,12 +791,12 @@
 <span class="go">&gt;&gt;&gt; env</span>
 <span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;GridWorldEnv&lt;gymnasium_env/GridWorld-v0&gt;&gt;&gt;&gt;&gt;</span>
 
-<span class="gp"># </span>Customize<span class="w"> </span>environment<span class="w"> </span>parameters
+<span class="go">&gt;&gt;&gt; # Customize environment parameters</span>
 <span class="go">&gt;&gt;&gt; env = gym.make("gymnasium_env/GridWorld-v0", size=10)</span>
 <span class="go">&gt;&gt;&gt; env.unwrapped.size</span>
 <span class="go">10</span>
 
-<span class="gp"># </span>Create<span class="w"> </span>multiple<span class="w"> </span>environments<span class="w"> </span><span class="k">for</span><span class="w"> </span>parallel<span class="w"> </span>training
+<span class="go">&gt;&gt;&gt; # Create multiple environments for parallel training</span>
 <span class="go">&gt;&gt;&gt; vec_env = gym.make_vec("gymnasium_env/GridWorld-v0", num_envs=3)</span>
 <span class="go">&gt;&gt;&gt; vec_env</span>
 <span class="go">SyncVectorEnv(gymnasium_env/GridWorld-v0, num_envs=3)</span>
@@ -714,6 +809,8 @@
 <section id="check-environment-validity">
 <h3>Check Environment Validity<a class="headerlink" href="#check-environment-validity" title="Link to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.utils.env_checker</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_env</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">)</span>
 
 <span class="c1"># `check_env` validates the base environment; running it on the wrapped</span>
 <span class="c1"># environment returned by `gym.make` makes the checker warn about the wrappers</span>
@@ -742,20 +839,29 @@
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Action </span><span class="si">{</span><span class="n">action</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">old_pos</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">new_pos</span><span class="si">}</span><span class="s2">, reward=</span><span class="si">{</span><span class="n">reward</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Positions are <code class="docutils literal notranslate"><span class="pre">[row,</span> <span class="pre">col]</span></code>, so “up” decreases the row, and moving into a wall leaves the agent where it is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Starting</span> <span class="n">position</span> <span class="o">-</span> <span class="n">Agent</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">3</span><span class="p">],</span> <span class="n">Target</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">Action</span> <span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">4</span><span class="p">],</span> <span class="n">reward</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">Action</span> <span class="mi">1</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">4</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">4</span><span class="p">],</span> <span class="n">reward</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">Action</span> <span class="mi">2</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">4</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">3</span><span class="p">],</span> <span class="n">reward</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">Action</span> <span class="mi">3</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span> <span class="mi">3</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">3</span><span class="p">],</span> <span class="n">reward</span><span class="o">=</span><span class="mi">0</span>
+</pre></div>
+</div>
 </section>
 <section id="common-debug-issues">
 <h3>Common Debug Issues<a class="headerlink" href="#common-debug-issues" title="Link to this heading">¶</a></h3>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Issue 1: Forgot to call super().reset()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="c1"># super().reset(seed=seed)  # ❌ Missing this line</span>
     <span class="c1"># Results in: possibly incorrect seeding</span>
 
 <span class="c1"># Issue 2: Mixing up coordinate conventions</span>
-<span class="c1"># Using Cartesian [x, y] instead of NumPy [row, col] causes visual confusion</span>
-<span class="c1"># when rendering, since row 0 is at the top of the screen:</span>
+<span class="c1"># Our positions are NumPy-style [row, col], with row 0 at the top of the screen.</span>
+<span class="c1"># Writing directions as Cartesian [x, y] instead moves the agent the wrong way:</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">_action_to_direction</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="mi">0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>   <span class="c1"># Intended as "right" but this changes row</span>
-    <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>   <span class="c1"># Intended as "up" but this changes column</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>   <span class="c1"># ❌ Intended as "right" but this changes the row (moves down)</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>   <span class="c1"># ❌ Intended as "up" but this changes the column (moves right)</span>
 <span class="p">}</span>
 
 <span class="c1"># Issue 3: Not handling boundaries properly</span>
@@ -775,18 +881,18 @@
 <span class="go">&gt;&gt;&gt; env.observation_space</span>
 <span class="go">Dict('agent': Box(0, 4, (2,), int64), 'target': Box(0, 4, (2,), int64))</span>
 
-<span class="go">&gt;&gt;&gt; obs, info = env.reset()</span>
+<span class="go">&gt;&gt;&gt; obs, info = env.reset(seed=42)</span>
 <span class="go">&gt;&gt;&gt; obs</span>
-<span class="go">{'agent': array([4, 1]), 'target': array([2, 4])}</span>
+<span class="go">{'agent': array([0, 3]), 'target': array([3, 2])}</span>
 
 <span class="go">&gt;&gt;&gt; # Wrap it to flatten observations into a single array</span>
 <span class="go">&gt;&gt;&gt; wrapped_env = FlattenObservation(env)</span>
 <span class="go">&gt;&gt;&gt; wrapped_env.observation_space</span>
 <span class="go">Box(0, 4, (4,), int64)</span>
 
-<span class="go">&gt;&gt;&gt; obs, info = wrapped_env.reset()</span>
-<span class="go">&gt;&gt;&gt; obs</span>
-<span class="go">array([3, 0, 2, 1])  # [agent_x, agent_y, target_x, target_y]</span>
+<span class="go">&gt;&gt;&gt; obs, info = wrapped_env.reset(seed=42)</span>
+<span class="go">&gt;&gt;&gt; obs  # [agent_row, agent_col, target_row, target_col]</span>
+<span class="go">array([0, 3, 3, 2])</span>
 </pre></div>
 </div>
 <p>This is particularly useful when working with algorithms that expect specific input formats (like neural networks that need 1D arrays instead of dictionaries).</p>
@@ -797,31 +903,42 @@
 <section id="adding-rendering">
 <h3>Adding Rendering<a class="headerlink" href="#adding-rendering" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">metadata</span></code> and the <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> argument added to <code class="docutils literal notranslate"><span class="pre">__init__</span></code> are what enable rendering: add a <code class="docutils literal notranslate"><span class="pre">render</span></code> method that reads <code class="docutils literal notranslate"><span class="pre">self.render_mode</span></code>, then create the environment with <code class="docutils literal notranslate"><span class="pre">render_mode=&quot;human&quot;</span></code> and call <code class="docutils literal notranslate"><span class="pre">render</span></code> after each step.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Render the environment for human viewing."""</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">"human"</span><span class="p">:</span>
-        <span class="c1"># Print a simple ASCII representation</span>
-        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>  <span class="c1"># Top to bottom</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="s2">""</span>
-            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">):</span>
-                    <span class="n">row</span> <span class="o">+=</span> <span class="s2">"A "</span>  <span class="c1"># Agent</span>
-                <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">):</span>
-                    <span class="n">row</span> <span class="o">+=</span> <span class="s2">"T "</span>  <span class="c1"># Target</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">row</span> <span class="o">+=</span> <span class="s2">". "</span>  <span class="c1"># Empty</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">()</span>
+<!-- test: skip -->
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Render the environment for human viewing."""</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">"human"</span><span class="p">:</span>
+            <span class="c1"># Print a simple ASCII grid, row 0 at the top</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="s2">""</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">([</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">):</span>
+                        <span class="n">line</span> <span class="o">+=</span> <span class="s2">"A "</span>  <span class="c1"># Agent</span>
+                    <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">([</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">):</span>
+                        <span class="n">line</span> <span class="o">+=</span> <span class="s2">"T "</span>  <span class="c1"># Target</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">line</span> <span class="o">+=</span> <span class="s2">". "</span>  <span class="c1"># Empty</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">()</span>
 </pre></div>
 </div>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>
-<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>  <span class="c1"># prints the grid to the terminal</span>
+</pre></div>
+</div>
+<p>This shows the agent (<code class="docutils literal notranslate"><span class="pre">A</span></code>) and target (<code class="docutils literal notranslate"><span class="pre">T</span></code>) from the seeded reset above:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>. . . A .
+. . . . .
+. . . . .
+. . T . .
+. . . . .
 </pre></div>
 </div>
 </section>
 <section id="parameterized-environments">
 <h3>Parameterized Environments<a class="headerlink" href="#parameterized-environments" title="Link to this heading">¶</a></h3>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">reward_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">step_penalty</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">reward_scale</span> <span class="o">=</span> <span class="n">reward_scale</span>
@@ -962,6 +1079,7 @@
 <li><a class="reference internal" href="#constructing-observations">Constructing Observations</a></li>
 <li><a class="reference internal" href="#reset-function">Reset function</a></li>
 <li><a class="reference internal" href="#step-function">Step function</a></li>
+<li><a class="reference internal" href="#the-complete-environment">The Complete Environment</a></li>
 <li><a class="reference internal" href="#common-environment-design-pitfalls">Common Environment Design Pitfalls</a><ul>
 <li><a class="reference internal" href="#reward-design-issues">Reward Design Issues</a></li>
 <li><a class="reference internal" href="#state-representation-problems">State Representation Problems</a></li>

@@ -408,6 +408,18 @@ At its heart, Gymnasium provides an API (application programming interface) for 
 </pre></div>
 </div>
 <p>This function will return an <a class="reference internal" href="../../api/env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">Env</span></code></a> for users to interact with. To see all environments you can create, use <a class="reference internal" href="../../api/registry/#gymnasium.pprint_registry" title="gymnasium.pprint_registry"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pprint_registry()</span></code></a>. Furthermore, <a class="reference internal" href="../../api/registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make()</span></code></a> provides a number of additional arguments for specifying keywords to the environment, adding more or less wrappers, etc. See <a class="reference internal" href="../../api/registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make()</span></code></a> for more information.</p>
+<p>For example, you can change the episode time limit with <code class="docutils literal notranslate"><span class="pre">max_episode_steps</span></code>, or pass keyword arguments through to the environment itself (see each environment’s documentation for its arguments). The environment’s <a class="reference internal" href="../../api/env/#gymnasium.Env.spec" title="gymnasium.Env.spec"><code class="xref py py-attr docutils literal notranslate"><span class="pre">spec</span></code></a> records how it was made, and <a class="reference internal" href="../../api/env/#gymnasium.Env.metadata" title="gymnasium.Env.metadata"><code class="xref py py-attr docutils literal notranslate"><span class="pre">metadata</span></code></a> lists the render modes it supports:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
+<span class="go">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">"render_modes"</span><span class="p">]</span>
+<span class="go">['human', 'rgb_array']</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"LunarLander-v3"</span><span class="p">,</span> <span class="n">continuous</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># an environment-specific argument</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">Box(-1.0, 1.0, (2,), float32)</span>
+</pre></div>
+</div>
 </section>
 <section id="understanding-the-agent-environment-loop">
 <h2>Understanding the Agent-Environment Loop<a class="headerlink" href="#understanding-the-agent-environment-loop" title="Link to this heading">¶</a></h2>
@@ -467,7 +479,7 @@ At its heart, Gymnasium provides an API (application programming interface) for 
 <section id="explaining-the-code-step-by-step">
 <h3>Explaining the Code Step by Step<a class="headerlink" href="#explaining-the-code-step-by-step" title="Link to this heading">¶</a></h3>
 <p>First, an environment is created using <a class="reference internal" href="../../api/registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make()</span></code></a> with an optional <code class="docutils literal notranslate"><span class="pre">&quot;render_mode&quot;</span></code> parameter that specifies how the environment should be visualized. See <a class="reference internal" href="../../api/env/#gymnasium.Env.render" title="gymnasium.Env.render"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.render()</span></code></a> for details on different render modes. The render mode determines whether you see a visual window (“human”), get image arrays (“rgb_array”), or run without visuals (None - fastest for training).</p>
-<p>After initializing the environment, we <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code></a> the environment to get the first observation along with additional information. This is like starting a new game or episode. For initializing the environment with a particular random seed or options (see the environment documentation for possible values) use the <code class="docutils literal notranslate"><span class="pre">seed</span></code> or <code class="docutils literal notranslate"><span class="pre">options</span></code> parameters with <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code>.</p>
+<p>After initializing the environment, we <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code></a> the environment to get the first observation along with additional information. This is like starting a new game or episode. For initializing the environment with a particular random seed or options (see the environment documentation for possible values) use the <code class="docutils literal notranslate"><span class="pre">seed</span></code> or <code class="docutils literal notranslate"><span class="pre">options</span></code> parameters with <code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code> (see <a class="reference internal" href="#basic-usage-seeding"><span class="std std-ref">Reproducibility and seeding</span></a> below).</p>
 <p>As we want to continue the agent-environment loop until the environment ends (which happens in an unknown number of timesteps), we define <code class="docutils literal notranslate"><span class="pre">episode_over</span></code> as a variable to control our while loop.</p>
 <p>Next, the agent performs an action in the environment. <a class="reference internal" href="../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code></a> executes the selected action (in our example, random with <code class="docutils literal notranslate"><span class="pre">env.action_space.sample()</span></code>) to update the environment. This action can be imagined as moving a robot, pressing a button on a game controller, or making a trading decision. As a result, the agent receives a new observation from the updated environment along with a reward for taking the action. This reward could be positive for good actions (like successfully balancing the pole) or negative for bad actions (like letting the pole fall). One such action-observation exchange is called a <strong>timestep</strong>.</p>
 <p>However, after some timesteps, the environment may end - this is called the terminal state. For instance, the robot may have crashed, or succeeded in completing a task, or we may want to stop after a fixed number of timesteps. In Gymnasium, if the environment has terminated due to the task being completed or failed, this is returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code> as <code class="docutils literal notranslate"><span class="pre">terminated=True</span></code>. If we want the environment to end after a fixed number of timesteps (like a time limit), the environment issues a <code class="docutils literal notranslate"><span class="pre">truncated=True</span></code> signal. If either <code class="docutils literal notranslate"><span class="pre">terminated</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated</span></code> are <code class="docutils literal notranslate"><span class="pre">True</span></code>, we end the episode. In most cases, you’ll want to restart the environment with <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> to begin a new episode.</p>
@@ -476,9 +488,11 @@ At its heart, Gymnasium provides an API (application programming interface) for 
 <section id="action-and-observation-spaces">
 <h2>Action and observation spaces<a class="headerlink" href="#action-and-observation-spaces" title="Link to this heading">¶</a></h2>
 <p>Every environment specifies the format of valid actions and observations with the <a class="reference internal" href="../../api/env/#gymnasium.Env.action_space" title="gymnasium.Env.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">action_space</span></code></a> and <a class="reference internal" href="../../api/env/#gymnasium.Env.observation_space" title="gymnasium.Env.observation_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observation_space</span></code></a> attributes. This is helpful for knowing both the expected input and output of the environment, as all valid actions and observations should be contained within their respective spaces. In the example above, we sampled random actions via <code class="docutils literal notranslate"><span class="pre">env.action_space.sample()</span></code> instead of using an intelligent agent policy that maps observations to actions (which is what you’ll learn to build).</p>
-<p>Understanding these spaces is crucial for building agents:
-- <strong>Action Space</strong>: What can your agent do? (discrete choices, continuous values, etc.)
-- <strong>Observation Space</strong>: What can your agent see? (images, numbers, structured data, etc.)</p>
+<p>Understanding these spaces is crucial for building agents:</p>
+<ul class="simple">
+<li><p><strong>Action Space</strong>: What can your agent do? (discrete choices, continuous values, etc.)</p></li>
+<li><p><strong>Observation Space</strong>: What can your agent see? (images, numbers, structured data, etc.)</p></li>
+</ul>
 <p>Importantly, <code class="xref py py-attr docutils literal notranslate"><span class="pre">Env.action_space</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">Env.observation_space</span></code> are instances of <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>, a high-level python class that provides key functions: <code class="xref py py-meth docutils literal notranslate"><span class="pre">Space.contains()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">Space.sample()</span></code>. Gymnasium supports a wide range of spaces:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="../../api/spaces/fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a>: describes bounded space with upper and lower limits of any n-dimensional shape (like continuous control or image pixels).</p></li>
@@ -502,7 +516,7 @@ At its heart, Gymnasium provides an API (application programming interface) for 
 
 <span class="c1"># Box observation space (continuous values)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Observation space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># Box with 4 values</span>
-<span class="c1"># Box([-4.8, -inf, -0.418, -inf], [4.8, inf, 0.418, inf])</span>
+<span class="c1"># Box([-4.8 -inf -0.41887903 -inf], [4.8 inf 0.41887903 inf], (4,), float32)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Sample observation: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># Random valid observation</span>
 </pre></div>
 </div>
@@ -517,13 +531,13 @@ At its heart, Gymnasium provides an API (application programming interface) for 
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Start with a complex observation space</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CarRacing-v3"</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(96, 96, 3)  # 96x96 RGB image</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># 96x96 RGB image</span>
+<span class="go">(96, 96, 3)</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Wrap it to flatten the observation into a 1D array</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">FlattenObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(27648,)  # All pixels in a single array</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># All pixels in a single array</span>
+<span class="go">(27648,)</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># This makes it easier to use with some algorithms that expect 1D input</span>
 </pre></div>
@@ -540,7 +554,24 @@ At its heart, Gymnasium provides an API (application programming interface) for 
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span>
 <span class="go">&lt;FlattenObservation&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;CarRacing&lt;CarRacing-v3&gt;&gt;&gt;&gt;&gt;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">unwrapped</span>
-<span class="go">&lt;gymnasium.envs.box2d.car_racing.CarRacing object at 0x7f04efcb8850&gt;</span>
+<span class="go">&lt;gymnasium.envs.box2d.car_racing.CarRacing object at 0x...&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="reproducibility-and-seeding">
+<span id="basic-usage-seeding"></span><h2>Reproducibility and seeding<a class="headerlink" href="#reproducibility-and-seeding" title="Link to this heading">¶</a></h2>
+<p>To get the same results every time you run your code, pass a <code class="docutils literal notranslate"><span class="pre">seed</span></code> to the first <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a>. Later calls to <code class="docutils literal notranslate"><span class="pre">reset()</span></code> without a seed continue from the seeded random number generator, so you only need to seed once. Spaces have their own random number generator, so seed the action space too if you sample random actions:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># the same seed gives the same starting state</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="go">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+<span class="go">[0, 1, 1]</span>
 </pre></div>
 </div>
 </section>
@@ -552,6 +583,7 @@ At its heart, Gymnasium provides an API (application programming interface) for 
 <li><p>Episodes end immediately: Check if you’re properly handling the reset between episodes</p></li>
 </ul>
 <p><strong>Common Code Mistakes:</strong></p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># ❌ Wrong - forgetting to reset</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
 <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>  <span class="c1"># Error!</span>
@@ -568,7 +600,7 @@ At its heart, Gymnasium provides an API (application programming interface) for 
 <p>Now that you understand the basics, you’re ready to:</p>
 <ol class="arabic simple">
 <li><p><strong><a class="reference internal" href="../train_agent/"><span class="doc std std-doc">Train an actual agent</span></a></strong> - Replace random actions with intelligence</p></li>
-<li><p><strong><a class="reference internal" href="../create_custom_env/"><span class="doc std std-doc">Create custom environments</span></a></strong> - Build your own RL problems</p></li>
+<li><p><strong><a class="reference internal" href="../create_custom_env/"><span class="doc std std-doc">Create custom environments</span></a></strong> - Build your own RL problems (and check them with <a class="reference internal" href="../../api/utils/#gymnasium.utils.env_checker.check_env" title="gymnasium.utils.env_checker.check_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">check_env()</span></code></a>)</p></li>
 <li><p><strong><a class="reference internal" href="../record_agent/"><span class="doc std std-doc">Record agent behavior</span></a></strong> - Save videos and data from training</p></li>
 <li><p><strong><a class="reference internal" href="../speed_up_env/"><span class="doc std std-doc">Speed up training</span></a></strong> - Use vectorized environments and other optimizations</p></li>
 </ol>
@@ -643,6 +675,7 @@ At its heart, Gymnasium provides an API (application programming interface) for 
 </li>
 <li><a class="reference internal" href="#action-and-observation-spaces">Action and observation spaces</a></li>
 <li><a class="reference internal" href="#modifying-the-environment">Modifying the environment</a></li>
+<li><a class="reference internal" href="#reproducibility-and-seeding">Reproducibility and seeding</a></li>
 <li><a class="reference internal" href="#common-issues-for-beginners">Common Issues for Beginners</a></li>
 <li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>

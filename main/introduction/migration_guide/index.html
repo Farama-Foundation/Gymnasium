@@ -387,6 +387,7 @@
 <p><strong>If you’re new to Gymnasium</strong>: You can probably skip this page! This guide is for users migrating from older versions of OpenAI Gym. If you’re just starting with RL, head to <a class="reference internal" href="../basic_usage/"><span class="doc std std-doc">Basic Usage</span></a> instead.</p>
 <p><strong>If you’re migrating from OpenAI Gym</strong>: This guide will help you update your code to work with Gymnasium. The changes are significant but straightforward once you understand the reasoning behind them.</p>
 <p><strong>If you’re updating old tutorials</strong>: Many online RL tutorials use the old v0.21 API. This guide shows you how to modernize that code.</p>
+<p><strong>If you’re upgrading from Gym v0.26 or Gymnasium v0.26-v0.29</strong>: Your code already uses the new step API, so jump to <a class="reference internal" href="#migration-v1"><span class="std std-ref">Migrating from v0.26-v0.29 to v1.0</span></a>, which covers the smaller changes made in Gymnasium v1.0.</p>
 </section>
 <section id="why-did-the-api-change">
 <h2>Why Did the API Change?<a class="headerlink" href="#why-did-the-api-change" title="Link to this heading">¶</a></h2>
@@ -398,7 +399,7 @@
 <li><p><strong>Rendering complexity</strong>: Switching between visual modes was unnecessarily complicated</p></li>
 <li><p><strong>Reproducibility problems</strong>: Subtle bugs made it difficult to reproduce research results</p></li>
 </ul>
-<p>For environments that can’t be updated, see the compatibility guide section below.</p>
+<p>For environments that can’t be updated, see <a class="reference internal" href="#migration-compatibility-helpers"><span class="std std-ref">Compatibility Helpers</span></a> below.</p>
 </section>
 <section id="quick-reference-complete-changes-table">
 <h2>Quick Reference: Complete Changes Table<a class="headerlink" href="#quick-reference-complete-changes-table" title="Link to this heading">¶</a></h2>
@@ -460,6 +461,7 @@
 <h2>Side-by-Side Code Comparison<a class="headerlink" href="#side-by-side-code-comparison" title="Link to this heading">¶</a></h2>
 <section id="old-v0-21-code">
 <h3>Old v0.21 Code<a class="headerlink" href="#old-v0-21-code" title="Link to this heading">¶</a></h3>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gym</span>
 
 <span class="c1"># Environment creation and seeding</span>
@@ -510,6 +512,7 @@
 <p><strong>Old</strong>: <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gym</span></code>
 <strong>New</strong>: <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">gymnasium</span> <span class="pre">as</span> <span class="pre">gym</span></code></p>
 <p>Why: Gymnasium is a separate project that maintains and improves upon the original Gym codebase.</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gym</span>
 
@@ -522,6 +525,7 @@
 <h3>2. Seeding and Random Number Generation<a class="headerlink" href="#seeding-and-random-number-generation" title="Link to this heading">¶</a></h3>
 <p>The biggest conceptual change is how randomness is handled.</p>
 <p><strong>Old v0.21</strong>: Separate <code class="docutils literal notranslate"><span class="pre">seed()</span></code> method</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
 <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>  <span class="c1"># Set random seed</span>
 <span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>  <span class="c1"># Reset environment</span>
@@ -534,20 +538,26 @@
 </div>
 <p><strong>Why this changed</strong>: Some environments (especially emulated games) can only set their random state at the beginning of an episode, not mid-episode. The old approach could lead to inconsistent behavior.</p>
 <p><strong>Practical impact</strong>:</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD: Seeding applied to all future episodes</span>
 <span class="n">env</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
     <span class="n">obs</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-<span class="c1"># NEW: Each episode can have its own seed</span>
+<span class="c1"># NEW: Seed the first reset only; later resets continue from the seeded</span>
+<span class="c1"># random number generator, so the whole run is still reproducible</span>
+<span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-    <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span> <span class="o">+</span> <span class="n">episode</span><span class="p">)</span>  <span class="c1"># Each episode gets unique seed</span>
+    <span class="c1"># ... episode code ...</span>
+    <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>You can pass a seed to any reset (e.g. <code class="docutils literal notranslate"><span class="pre">seed=42</span> <span class="pre">+</span> <span class="pre">episode</span></code>), but that is rarely needed: seeding once is enough for reproducibility.</p>
 </section>
 <section id="environment-reset-changes">
 <h3>3. Environment Reset Changes<a class="headerlink" href="#environment-reset-changes" title="Link to this heading">¶</a></h3>
 <p><strong>Old v0.21</strong>: Returns only observation</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">observation</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -576,11 +586,13 @@
 <h3>4. Step Function: The <code class="docutils literal notranslate"><span class="pre">done</span></code> → <code class="docutils literal notranslate"><span class="pre">terminated</span></code>/<code class="docutils literal notranslate"><span class="pre">truncated</span></code> Split<a class="headerlink" href="#step-function-the-done-terminated-truncated-split" title="Link to this heading">¶</a></h3>
 <p>This is the most important change for training algorithms.</p>
 <p><strong>Old v0.21</strong>: Single <code class="docutils literal notranslate"><span class="pre">done</span></code> flag</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>New v0.26+</strong>: Separate <code class="docutils literal notranslate"><span class="pre">terminated</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated</span></code> flags</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+<span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><strong>Why this matters</strong>:</p>
@@ -589,6 +601,7 @@
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">truncated</span></code></strong>: Episode ended due to external constraints (time limit, step limit, etc.)</p></li>
 </ul>
 <p>This distinction is crucial for value function bootstrapping in RL algorithms:</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD (ambiguous)</span>
 <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
     <span class="c1"># Should we bootstrap? We don't know if this was natural termination or time limit!</span>
@@ -602,18 +615,16 @@
 </pre></div>
 </div>
 <p><strong>Migration strategy</strong>:</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple migration (works for many cases)</span>
-<span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-<span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+<span class="n">next_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+<span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>  <span class="c1"># use `done` only to decide when to reset</span>
 
 <span class="c1"># Better migration (preserves RL algorithm correctness)</span>
-<span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">terminated</span><span class="p">:</span>
-    <span class="c1"># Episode naturally ended - use reward as-is</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span>
-<span class="k">elif</span> <span class="n">truncated</span><span class="p">:</span>
-    <span class="c1"># Episode cut short - may need to estimate remaining value</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="n">discount</span> <span class="o">*</span> <span class="n">estimate_value</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+<span class="n">next_obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+<span class="c1"># Only bootstrap from the next state if the episode didn't terminate.</span>
+<span class="c1"># A truncated episode (e.g. time limit) still has future value.</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">value_function</span><span class="p">(</span><span class="n">next_obs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>For more information, see our <a class="reference external" href="https://farama.org/Gymnasium-Terminated-Truncated-Step-API">blog post</a> about it.</p>
@@ -621,6 +632,7 @@
 <section id="render-mode-changes">
 <h3>5. Render Mode Changes<a class="headerlink" href="#render-mode-changes" title="Link to this heading">¶</a></h3>
 <p><strong>Old v0.21</strong>: Render mode specified each time</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
 <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>     <span class="c1"># Visual window</span>
 <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">)</span> <span class="c1"># Get pixel array</span>
@@ -629,11 +641,13 @@
 <p><strong>New v0.26+</strong>: Render mode fixed at creation</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>     <span class="c1"># For visual display</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">)</span> <span class="c1"># For recording</span>
-<span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>  <span class="c1"># Uses the mode specified at creation</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">frame</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>  <span class="c1"># Uses the mode specified at creation</span>
 </pre></div>
 </div>
 <p><strong>Why this changed</strong>: Some environments can’t switch render modes on-the-fly. Fixing the mode at creation enables better optimization and prevents bugs.</p>
 <p><strong>Practical implications</strong>:</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD: Could switch modes dynamically</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
@@ -657,6 +671,7 @@
 <h2>TimeLimit Wrapper Changes<a class="headerlink" href="#timelimit-wrapper-changes" title="Link to this heading">¶</a></h2>
 <p>The <a class="reference internal" href="../../api/wrappers/misc_wrappers/#gymnasium.wrappers.TimeLimit" title="gymnasium.wrappers.TimeLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TimeLimit</span></code></a> wrapper behavior also changed to align with the new termination model.</p>
 <p><strong>Old v0.21</strong>: Added <code class="docutils literal notranslate"><span class="pre">TimeLimit.truncated</span></code> to info dict</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">done</span> <span class="ow">and</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'TimeLimit.truncated'</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
     <span class="c1"># Episode ended due to time limit</span>
@@ -664,6 +679,7 @@
 </pre></div>
 </div>
 <p><strong>New v0.26+</strong>: Uses the <code class="docutils literal notranslate"><span class="pre">truncated</span></code> return value</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">truncated</span><span class="p">:</span>
     <span class="c1"># Episode ended due to time limit (or other truncation)</span>
@@ -680,9 +696,11 @@
 <section id="removed-environments">
 <h3>Removed Environments<a class="headerlink" href="#removed-environments" title="Link to this heading">¶</a></h3>
 <p>Some environments were moved or removed:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD: Robotics environments in main gym</span>
+<!-- test: skip -->
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD: Robotics and Atari environments in main gym</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gym</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"FetchReach-v1"</span><span class="p">)</span>  <span class="c1"># No longer available</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Pong-v0"</span><span class="p">)</span>
 
 <span class="c1"># NEW: Moved to separate packages, which register their environments on import</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
@@ -694,17 +712,127 @@
 <span class="n">gymnasium</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">ale_py</span><span class="p">)</span>
 <span class="n">gymnasium</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">gymnasium_robotics</span><span class="p">)</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"FetchReach-v1"</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"FetchReach-v4"</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"ALE/Pong-v5"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 </section>
+<section id="migrating-from-v0-26-v0-29-to-v1-0">
+<span id="migration-v1"></span><h2>Migrating from v0.26-v0.29 to v1.0<a class="headerlink" href="#migrating-from-v0-26-v0-29-to-v1-0" title="Link to this heading">¶</a></h2>
+<p>Gymnasium v1.0 kept the <code class="docutils literal notranslate"><span class="pre">reset</span></code> / <code class="docutils literal notranslate"><span class="pre">step</span></code> API from v0.26, so most code written for Gym v0.26 or Gymnasium v0.26-v0.29 only needs a few changes. The full list is in the <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v1.0.0">v1.0.0 release notes</a>.</p>
+<section id="third-party-environments-must-be-imported">
+<h3>Third-party environments must be imported<a class="headerlink" href="#third-party-environments-must-be-imported" title="Link to this heading">¶</a></h3>
+<p>Previously, installed packages such as <code class="docutils literal notranslate"><span class="pre">ale-py</span></code> registered their environments behind the scenes, so <code class="docutils literal notranslate"><span class="pre">gym.make(&quot;ALE/Pong-v5&quot;)</span></code> worked without importing them. This plugin system was removed, so import the package first:</p>
+<!-- test: skip -->
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ale_py</span>
+
+<span class="n">gym</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">ale_py</span><span class="p">)</span>  <span class="c1"># optional, stops IDEs and linters removing the import</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"ALE/Pong-v5"</span><span class="p">)</span>
+
+<span class="c1"># or let `make` import the module for you with "module:env_id"</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"ale_py:ALE/Pong-v5"</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="vector-environments">
+<h3>Vector environments<a class="headerlink" href="#vector-environments" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gym.vector.make</span></code> was replaced by <a class="reference internal" href="../../api/registry/#gymnasium.make_vec" title="gymnasium.make_vec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make_vec()</span></code></a>, which uses the synchronous vectorizer by default (<code class="docutils literal notranslate"><span class="pre">vector.make</span></code> used the asynchronous one). Choose with <code class="docutils literal notranslate"><span class="pre">vectorization_mode=&quot;sync&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;async&quot;</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../api/vector/#gymnasium.vector.VectorEnv" title="gymnasium.vector.VectorEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.VectorEnv</span></code></a> no longer inherits from <a class="reference internal" href="../../api/env/#gymnasium.Env" title="gymnasium.Env"><code class="xref py py-class docutils literal notranslate"><span class="pre">Env</span></code></a>, so wrappers for single environments (<code class="docutils literal notranslate"><span class="pre">gymnasium.wrappers</span></code>) and vector environments (<code class="docutils literal notranslate"><span class="pre">gymnasium.wrappers.vector</span></code>) are now separate. The base vector wrapper <code class="docutils literal notranslate"><span class="pre">VectorEnvWrapper</span></code> was renamed to <a class="reference internal" href="../../api/vector/wrappers/#gymnasium.vector.VectorWrapper" title="gymnasium.vector.VectorWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.VectorWrapper</span></code></a>.</p></li>
+<li><p>Autoreset changed. In v0.29, a sub-environment was reset in the same <code class="docutils literal notranslate"><span class="pre">step</span></code> that its episode ended, and the last observation was stored in <code class="docutils literal notranslate"><span class="pre">info[&quot;final_observation&quot;]</span></code>. In v1.0 the default is <code class="docutils literal notranslate"><span class="pre">AutoresetMode.NEXT_STEP</span></code>: the sub-environment is reset during the <em>next</em> <code class="docutils literal notranslate"><span class="pre">step</span></code> call, which ignores that sub-environment’s action and returns its reset observation with a reward of 0. Skip that step’s data when training, as in the example below.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+
+<span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">"sync"</span><span class="p">)</span>
+
+<span class="n">replay_buffer</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">autoreset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">200</span><span class="p">):</span>
+    <span class="n">actions</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+    <span class="n">next_obs</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">,</span> <span class="n">infos</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">envs</span><span class="o">.</span><span class="n">num_envs</span><span class="p">):</span>
+        <span class="c1"># Skip the reset step of sub-environments whose episode ended last step</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">autoreset</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+            <span class="n">replay_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">actions</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">rewards</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">terminations</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">truncations</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">next_obs</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+            <span class="p">)</span>
+
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">next_obs</span>
+    <span class="n">autoreset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">)</span>
+
+<span class="n">envs</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To keep the v0.29 behaviour, where the reset happens in the same step and the last observation is in <code class="docutils literal notranslate"><span class="pre">infos[&quot;final_obs&quot;]</span></code> (renamed from <code class="docutils literal notranslate"><span class="pre">&quot;final_observation&quot;</span></code>), pass <code class="docutils literal notranslate"><span class="pre">vector_kwargs={&quot;autoreset_mode&quot;:</span> <span class="pre">gym.vector.AutoresetMode.SAME_STEP}</span></code> to <code class="docutils literal notranslate"><span class="pre">gym.make_vec</span></code>.</p>
+</section>
+<section id="renamed-and-removed-wrappers">
+<h3>Renamed and removed wrappers<a class="headerlink" href="#renamed-and-removed-wrappers" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>v0.29</strong></p></th>
+<th class="head"><p><strong>v1.0</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AutoResetWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Autoreset</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">FrameStack</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">FrameStackObservation</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PixelObservationWrapper</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">AddRenderObservation</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">VectorListInfo</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">vector.DictInfoToList</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">monitoring.VideoRecorder</span></code></p></td>
+<td><p>Removed, use <code class="docutils literal notranslate"><span class="pre">RecordVideo</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">StepAPICompatibility</span></code>, <code class="docutils literal notranslate"><span class="pre">EnvCompatibility</span></code></p></td>
+<td><p>Removed, use <a class="reference external" href="https://shimmy.farama.org/">Shimmy</a> for old Gym environments</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gym.make(...,</span> <span class="pre">apply_api_compatibility=True)</span></code></p></td>
+<td><p>Removed, the argument is now passed to the environment and raises a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="accessing-attributes-through-wrappers">
+<h3>Accessing attributes through wrappers<a class="headerlink" href="#accessing-attributes-through-wrappers" title="Link to this heading">¶</a></h3>
+<p>Wrappers no longer forward unknown attributes to the environment they wrap (this was deprecated in v0.29), so <code class="docutils literal notranslate"><span class="pre">env.gravity</span></code> raises an <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code> on a wrapped environment. Use <code class="docutils literal notranslate"><span class="pre">get_wrapper_attr</span></code> (or <code class="docutils literal notranslate"><span class="pre">env.unwrapped</span></code>) instead, and <code class="docutils literal notranslate"><span class="pre">set_wrapper_attr</span></code> to change a value:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">get_wrapper_attr</span><span class="p">(</span><span class="s2">"gravity"</span><span class="p">)</span>
+<span class="go">9.8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">gravity</span>
+<span class="go">9.8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">set_wrapper_attr</span><span class="p">(</span><span class="s2">"gravity"</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">gravity</span>
+<span class="go">5.0</span>
+</pre></div>
+</div>
+</section>
+<section id="environment-versions">
+<h3>Environment versions<a class="headerlink" href="#environment-versions" title="Link to this heading">¶</a></h3>
+<p>Some environments were updated with new version numbers, so update their IDs: <code class="docutils literal notranslate"><span class="pre">LunarLander-v2</span></code> → <code class="docutils literal notranslate"><span class="pre">LunarLander-v3</span></code>, <code class="docutils literal notranslate"><span class="pre">CarRacing-v2</span></code> → <code class="docutils literal notranslate"><span class="pre">CarRacing-v3</span></code>, and the MuJoCo environments gained <code class="docutils literal notranslate"><span class="pre">v5</span></code> versions (e.g. <code class="docutils literal notranslate"><span class="pre">Ant-v5</span></code>).</p>
+</section>
+</section>
 <section id="compatibility-helpers">
-<h2>Compatibility Helpers<a class="headerlink" href="#compatibility-helpers" title="Link to this heading">¶</a></h2>
+<span id="migration-compatibility-helpers"></span><h2>Compatibility Helpers<a class="headerlink" href="#compatibility-helpers" title="Link to this heading">¶</a></h2>
 <section id="loading-openai-gym-environments">
 <h3>Loading OpenAI Gym environments<a class="headerlink" href="#loading-openai-gym-environments" title="Link to this heading">¶</a></h3>
-<p>For environments that can’t be updated to Gymnasium, we provide compatibility wrappers either for v21 and v26 style environments, where either the environment name or the environment itself can be passed.</p>
+<p>For environments that can’t be updated to Gymnasium, <a class="reference external" href="https://shimmy.farama.org/">Shimmy</a> provides compatibility environments for v0.21 and v0.26 style environments, where either the environment name or the environment itself can be passed.</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shimmy</span>  <span class="c1"># install shimmy with `pip install shimmy`</span>
 
@@ -745,7 +873,7 @@
 <h2>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading">¶</a></h2>
 <p><strong>If you encounter issues during migration</strong>:</p>
 <ol class="arabic simple">
-<li><p><strong>Check the compatibility guide</strong>: Some old environments can be used with compatibility wrappers</p></li>
+<li><p><strong>Check the <a class="reference internal" href="#migration-compatibility-helpers"><span class="std std-ref">compatibility helpers</span></a></strong>: Some old environments can be used with Shimmy’s compatibility environments</p></li>
 <li><p><strong>Look at the environment documentation</strong>: Each environment may have specific migration notes</p></li>
 <li><p><strong>Test with simple environments first</strong>: Start with CartPole before moving to complex environments</p></li>
 <li><p><strong>Compare old vs new behavior</strong>: Run the same code with both APIs to understand differences</p></li>
@@ -754,7 +882,7 @@
 <ul class="simple">
 <li><p><a class="reference external" href="https://gymnasium.farama.org/api/env">Gymnasium API documentation</a></p></li>
 <li><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues">GitHub issues</a> for bug reports</p></li>
-<li><p><a class="reference external" href="https://discord.com/invite/bnJ6kubTg6">Discord community</a> for questions</p></li>
+<li><p><a class="reference external" href="https://discord.gg/bnJ6kubTg6">Discord community</a> for questions</p></li>
 </ul>
 </section>
 </section>
@@ -848,6 +976,14 @@
 <li><a class="reference internal" href="#timelimit-wrapper-changes">TimeLimit Wrapper Changes</a></li>
 <li><a class="reference internal" href="#environment-specific-changes">Environment-Specific Changes</a><ul>
 <li><a class="reference internal" href="#removed-environments">Removed Environments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#migrating-from-v0-26-v0-29-to-v1-0">Migrating from v0.26-v0.29 to v1.0</a><ul>
+<li><a class="reference internal" href="#third-party-environments-must-be-imported">Third-party environments must be imported</a></li>
+<li><a class="reference internal" href="#vector-environments">Vector environments</a></li>
+<li><a class="reference internal" href="#renamed-and-removed-wrappers">Renamed and removed wrappers</a></li>
+<li><a class="reference internal" href="#accessing-attributes-through-wrappers">Accessing attributes through wrappers</a></li>
+<li><a class="reference internal" href="#environment-versions">Environment versions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#compatibility-helpers">Compatibility Helpers</a><ul>
