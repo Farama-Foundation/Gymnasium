@@ -1,6 +1,6 @@
 ---
 layout: "contents"
-title: Create custom env
+title: Create a Custom Environment
 ---
 
 # Create a Custom Environment
@@ -88,10 +88,16 @@ import gymnasium as gym
 
 
 class GridWorldEnv(gym.Env):
+    # The render modes and the frame rate are declared in the metadata so that
+    # `check_env` and the wrappers know how the environment can be rendered
+    metadata = {"render_modes": ["human"], "render_fps": 4}
 
-    def __init__(self, size: int = 5):
+    def __init__(self, size: int = 5, render_mode: Optional[str] = None):
         # The size of the square grid (5x5 by default)
         self.size = size
+
+        # The render mode is passed by `gym.make(..., render_mode=...)`
+        self.render_mode = render_mode
 
         # Initialize positions - will be set randomly in reset()
         # Using -1,-1 as "uninitialized" state
@@ -135,11 +141,20 @@ Since we need to compute observations in both :meth:`Env.reset` and :meth:`Env.s
         Returns:
             dict: Observation with agent and target positions
         """
-        return {"agent": self._agent_location, "target": self._target_location}
+        # Return copies of the internal arrays: an observation returned by
+        # `reset` or `step` must not change when the environment is stepped,
+        # and modifying it must not change the environment (`check_env` tests
+        # exactly this).
+        return {
+            "agent": self._agent_location.copy(),
+            "target": self._target_location.copy(),
+        }
 ```
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
+
+Returning copies is not optional: an environment that returns its internal arrays directly fails ``check_env`` with an error that the observations returned by ``reset`` and ``step`` share an object, and a user who stores an observation would silently see the environment's state change underneath it.
 
 We can also implement a similar method for auxiliary information returned by :meth:`Env.reset` and :meth:`Env.step`. In our case, we'll provide the Manhattan distance between agent and target - this can be useful for debugging and understanding agent progress, but shouldn't be used by the learning algorithm itself.
 ```
@@ -350,12 +365,14 @@ For a more complete guide on registering custom environments (including with str
 Once registered, you can check all available environments with :meth:`gymnasium.pprint_registry` and create instances with :meth:`gymnasium.make`. You can also create vectorized versions with :meth:`gymnasium.make_vec`.
 ```
 
-```python
-import gymnasium as gym
-
-# Create the environment like any built-in environment
+```console
+>>> import gymnasium as gym
 >>> env = gym.make("gymnasium_env/GridWorld-v0")
-<OrderEnforcing<PassiveEnvChecker<GridWorld<gymnasium_env/GridWorld-v0>>>>
+
+# The environment is wrapped with TimeLimit (because max_episode_steps=300),
+# OrderEnforcing and PassiveEnvChecker
+>>> env
+<TimeLimit<OrderEnforcing<PassiveEnvChecker<GridWorldEnv<gymnasium_env/GridWorld-v0>>>>>
 
 # Customize environment parameters
 >>> env = gym.make("gymnasium_env/GridWorld-v0", size=10)
@@ -364,6 +381,7 @@ import gymnasium as gym
 
 # Create multiple environments for parallel training
 >>> vec_env = gym.make_vec("gymnasium_env/GridWorld-v0", num_envs=3)
+>>> vec_env
 SyncVectorEnv(gymnasium_env/GridWorld-v0, num_envs=3)
 ```
 
@@ -376,9 +394,10 @@ When your environment doesn't work as expected, here are common debugging strate
 ```python
 from gymnasium.utils.env_checker import check_env
 
-# This will catch many common issues
+# `check_env` validates the base environment; running it on the wrapped
+# environment returned by `gym.make` makes the checker warn about the wrappers
 try:
-    check_env(env)
+    check_env(env.unwrapped)
     print("Environment passes all checks!")
 except Exception as e:
     print(f"Environment has issues: {e}")
@@ -425,11 +444,11 @@ self._agent_location = self._agent_location + direction  # ❌ No bounds checkin
 
 Sometimes you want to modify your environment's behavior without changing the core implementation. Wrappers are perfect for this - they let you add functionality like changing observation formats, adding time limits, or modifying rewards without touching your original environment code.
 
-```python
+```console
 >>> from gymnasium.wrappers import FlattenObservation
 
 >>> # Original observation is a dictionary
->>> env = gym.make('gymnasium_env/GridWorld-v0')
+>>> env = gym.make("gymnasium_env/GridWorld-v0")
 >>> env.observation_space
 Dict('agent': Box(0, 4, (2,), int64), 'target': Box(0, 4, (2,), int64))
 
@@ -454,6 +473,9 @@ This is particularly useful when working with algorithms that expect specific in
 Once you have the basics working, you might want to add more sophisticated features:
 
 ### Adding Rendering
+
+The `metadata` and the `render_mode` argument added to `__init__` are what enable rendering: add a `render` method that reads `self.render_mode`, then create the environment with `render_mode="human"` and call `render` after each step.
+
 ```python
 def render(self):
     """Render the environment for human viewing."""
@@ -470,6 +492,12 @@ def render(self):
                     row += ". "  # Empty
             print(row)
         print()
+```
+
+```python
+env = gym.make("gymnasium_env/GridWorld-v0", render_mode="human")
+env.reset(seed=0)
+env.render()  # prints the grid to the terminal
 ```
 
 ### Parameterized Environments
