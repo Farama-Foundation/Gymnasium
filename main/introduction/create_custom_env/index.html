@@ -452,10 +452,16 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GridWorldEnv</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+    <span class="c1"># The render modes and the frame rate are declared in the metadata so that</span>
+    <span class="c1"># `check_env` and the wrappers know how the environment can be rendered</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"render_modes"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"human"</span><span class="p">],</span> <span class="s2">"render_fps"</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">render_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># The size of the square grid (5x5 by default)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+
+        <span class="c1"># The render mode is passed by `gym.make(..., render_mode=...)`</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">=</span> <span class="n">render_mode</span>
 
         <span class="c1"># Initialize positions - will be set randomly in reset()</span>
         <span class="c1"># Using -1,-1 as "uninitialized" state</span>
@@ -494,9 +500,17 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: Observation with agent and target positions</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">"agent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">}</span>
+        <span class="c1"># Return copies of the internal arrays: an observation returned by</span>
+        <span class="c1"># `reset` or `step` must not change when the environment is stepped,</span>
+        <span class="c1"># and modifying it must not change the environment (`check_env` tests</span>
+        <span class="c1"># exactly this).</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"agent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="s2">"target"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+        <span class="p">}</span>
 </pre></div>
 </div>
+<p>Returning copies is not optional: an environment that returns its internal arrays directly fails <code class="docutils literal notranslate"><span class="pre">check_env</span></code> with an error that the observations returned by <code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> share an object, and a user who stores an observation would silently see the environment’s state change underneath it.</p>
 <p>We can also implement a similar method for auxiliary information returned by <a class="reference internal" href="../../api/env/#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.reset()</span></code></a> and <a class="reference internal" href="../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code></a>. In our case, we’ll provide the Manhattan distance between agent and target - this can be useful for debugging and understanding agent progress, but shouldn’t be used by the learning algorithm itself.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Compute auxiliary information for debugging.</span>
@@ -674,20 +688,23 @@
 </div>
 <p>For a more complete guide on registering custom environments (including with string entry points), please read the full <a class="reference internal" href="../../tutorials/gymnasium_basics/environment_creation/"><span class="doc std std-doc">create environment</span></a> tutorial.</p>
 <p>Once registered, you can check all available environments with <a class="reference internal" href="../../api/registry/#gymnasium.pprint_registry" title="gymnasium.pprint_registry"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.pprint_registry()</span></code></a> and create instances with <a class="reference internal" href="../../api/registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a>. You can also create vectorized versions with <a class="reference internal" href="../../api/registry/#gymnasium.make_vec" title="gymnasium.make_vec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make_vec()</span></code></a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt; import gymnasium as gym</span>
+<span class="go">&gt;&gt;&gt; env = gym.make("gymnasium_env/GridWorld-v0")</span>
 
-<span class="c1"># Create the environment like any built-in environment</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">)</span>
-<span class="o">&lt;</span><span class="n">OrderEnforcing</span><span class="o">&lt;</span><span class="n">PassiveEnvChecker</span><span class="o">&lt;</span><span class="n">GridWorld</span><span class="o">&lt;</span><span class="n">gymnasium_env</span><span class="o">/</span><span class="n">GridWorld</span><span class="o">-</span><span class="n">v0</span><span class="o">&gt;&gt;&gt;&gt;</span>
+<span class="gp"># </span>The<span class="w"> </span>environment<span class="w"> </span>is<span class="w"> </span>wrapped<span class="w"> </span>with<span class="w"> </span>TimeLimit<span class="w"> </span><span class="o">(</span>because<span class="w"> </span><span class="nv">max_episode_steps</span><span class="o">=</span><span class="m">300</span><span class="o">)</span>,
+<span class="gp"># </span>OrderEnforcing<span class="w"> </span>and<span class="w"> </span>PassiveEnvChecker
+<span class="go">&gt;&gt;&gt; env</span>
+<span class="go">&lt;TimeLimit&lt;OrderEnforcing&lt;PassiveEnvChecker&lt;GridWorldEnv&lt;gymnasium_env/GridWorld-v0&gt;&gt;&gt;&gt;&gt;</span>
 
-<span class="c1"># Customize environment parameters</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="o">.</span><span class="n">size</span>
-<span class="mi">10</span>
+<span class="gp"># </span>Customize<span class="w"> </span>environment<span class="w"> </span>parameters
+<span class="go">&gt;&gt;&gt; env = gym.make("gymnasium_env/GridWorld-v0", size=10)</span>
+<span class="go">&gt;&gt;&gt; env.unwrapped.size</span>
+<span class="go">10</span>
 
-<span class="c1"># Create multiple environments for parallel training</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="n">vec_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">SyncVectorEnv</span><span class="p">(</span><span class="n">gymnasium_env</span><span class="o">/</span><span class="n">GridWorld</span><span class="o">-</span><span class="n">v0</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp"># </span>Create<span class="w"> </span>multiple<span class="w"> </span>environments<span class="w"> </span><span class="k">for</span><span class="w"> </span>parallel<span class="w"> </span>training
+<span class="go">&gt;&gt;&gt; vec_env = gym.make_vec("gymnasium_env/GridWorld-v0", num_envs=3)</span>
+<span class="go">&gt;&gt;&gt; vec_env</span>
+<span class="go">SyncVectorEnv(gymnasium_env/GridWorld-v0, num_envs=3)</span>
 </pre></div>
 </div>
 </section>
@@ -698,9 +715,10 @@
 <h3>Check Environment Validity<a class="headerlink" href="#check-environment-validity" title="Link to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.utils.env_checker</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_env</span>
 
-<span class="c1"># This will catch many common issues</span>
+<span class="c1"># `check_env` validates the base environment; running it on the wrapped</span>
+<span class="c1"># environment returned by `gym.make` makes the checker warn about the wrappers</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">check_env</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="n">check_env</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">"Environment passes all checks!"</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Environment has issues: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
@@ -750,24 +768,24 @@
 <section id="using-wrappers">
 <h2>Using Wrappers<a class="headerlink" href="#using-wrappers" title="Link to this heading">¶</a></h2>
 <p>Sometimes you want to modify your environment’s behavior without changing the core implementation. Wrappers are perfect for this - they let you add functionality like changing observation formats, adding time limits, or modifying rewards without touching your original environment code.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">FlattenObservation</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt; from gymnasium.wrappers import FlattenObservation</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Original observation is a dictionary</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'gymnasium_env/GridWorld-v0'</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">&gt;&gt;&gt; # Original observation is a dictionary</span>
+<span class="go">&gt;&gt;&gt; env = gym.make("gymnasium_env/GridWorld-v0")</span>
+<span class="go">&gt;&gt;&gt; env.observation_space</span>
 <span class="go">Dict('agent': Box(0, 4, (2,), int64), 'target': Box(0, 4, (2,), int64))</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">&gt;&gt;&gt; obs, info = env.reset()</span>
+<span class="go">&gt;&gt;&gt; obs</span>
 <span class="go">{'agent': array([4, 1]), 'target': array([2, 4])}</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Wrap it to flatten observations into a single array</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">FlattenObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">&gt;&gt;&gt; # Wrap it to flatten observations into a single array</span>
+<span class="go">&gt;&gt;&gt; wrapped_env = FlattenObservation(env)</span>
+<span class="go">&gt;&gt;&gt; wrapped_env.observation_space</span>
 <span class="go">Box(0, 4, (4,), int64)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">&gt;&gt;&gt; obs, info = wrapped_env.reset()</span>
+<span class="go">&gt;&gt;&gt; obs</span>
 <span class="go">array([3, 0, 2, 1])  # [agent_x, agent_y, target_x, target_y]</span>
 </pre></div>
 </div>
@@ -778,6 +796,7 @@
 <p>Once you have the basics working, you might want to add more sophisticated features:</p>
 <section id="adding-rendering">
 <h3>Adding Rendering<a class="headerlink" href="#adding-rendering" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">metadata</span></code> and the <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> argument added to <code class="docutils literal notranslate"><span class="pre">__init__</span></code> are what enable rendering: add a <code class="docutils literal notranslate"><span class="pre">render</span></code> method that reads <code class="docutils literal notranslate"><span class="pre">self.render_mode</span></code>, then create the environment with <code class="docutils literal notranslate"><span class="pre">render_mode=&quot;human&quot;</span></code> and call <code class="docutils literal notranslate"><span class="pre">render</span></code> after each step.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Render the environment for human viewing."""</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">"human"</span><span class="p">:</span>
@@ -793,6 +812,11 @@
                     <span class="n">row</span> <span class="o">+=</span> <span class="s2">". "</span>  <span class="c1"># Empty</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">render</span><span class="p">()</span>  <span class="c1"># prints the grid to the terminal</span>
 </pre></div>
 </div>
 </section>
