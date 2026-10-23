@@ -36,6 +36,8 @@ Recording agent behavior serves several important purposes in RL development:
 
 Gymnasium provides two essential wrappers for recording: :class:`RecordEpisodeStatistics` for numerical data and :class:`RecordVideo` for visual recordings. The first tracks episode metrics like total rewards, episode length, and time taken. The second generates MP4 videos of agent behavior using environment renderings.
 
+:class:`RecordVideo` writes the videos with MoviePy, which is installed with ``pip install "gymnasium[other]"``; :class:`RecordEpisodeStatistics` has no additional dependencies.
+
 We'll show how to use these wrappers for two common scenarios: recording data for every episode (typically during evaluation) and recording data periodically (during training).
 ```
 
@@ -91,22 +93,26 @@ for episode_num in range(num_eval_episodes):
 
     print(f"Episode {episode_num + 1}: {step_count} steps, reward = {episode_reward}")
 
+time_limit = env.spec.max_episode_steps
+
+# Close the environment once all the videos have been written
 env.close()
 
-# Print summary statistics
-print(f'\nEvaluation Summary:')
-print(f'Episode durations: {list(env.time_queue)}')
-print(f'Episode rewards: {list(env.return_queue)}')
-print(f'Episode lengths: {list(env.length_queue)}')
+# The wrappers keep the last buffer_length episode statistics in queues
+print("\nEvaluation Summary:")
+print(f"Episode durations: {list(env.time_queue)}")
+print(f"Episode rewards: {list(env.return_queue)}")
+print(f"Episode lengths: {list(env.length_queue)}")
 
-# Calculate some useful metrics
-avg_reward = np.sum(env.return_queue)
-avg_length = np.sum(env.length_queue)
+# The queues hold one value per episode, so the averages use np.mean
+avg_reward = np.mean(env.return_queue)
+avg_length = np.mean(env.length_queue)
 std_reward = np.std(env.return_queue)
 
-print(f'\nAverage reward: {avg_reward:.2f} ± {std_reward:.2f}')
-print(f'Average episode length: {avg_length:.1f} steps')
-print(f'Success rate: {sum(1 for r in env.return_queue if r > 0) / len(env.return_queue):.1%}')
+print(f"\nAverage reward: {avg_reward:.2f} ± {std_reward:.2f}")
+print(f"Average episode length: {avg_length:.1f} steps")
+reached_limit = sum(1 for length in env.length_queue if length >= time_limit)
+print(f"Episodes reaching the time limit: {reached_limit}/{len(env.length_queue)}")
 ```
 
 ### Understanding the Output
@@ -119,15 +125,15 @@ After running this code, you'll find:
 - Can be shared, embedded in presentations, or analyzed frame-by-frame
 
 **Console Output**: Episode-by-episode performance plus summary statistics
-```
+```text
 Episode 1: 23 steps, reward = 23.0
 Episode 2: 15 steps, reward = 15.0
 Episode 3: 200 steps, reward = 200.0
 Episode 4: 67 steps, reward = 67.0
 
-Average reward: 76.25 ± 78.29
+Average reward: 76.25 ± 74.14
 Average episode length: 76.2 steps
-Success rate: 100.0%
+Episodes reaching the time limit: 0/4
 ```
 
 **Statistics Queues**: Time, reward, and length data for each episode
@@ -249,7 +255,9 @@ plt.show()
 For more sophisticated projects, integrate with experiment tracking tools:
 
 ```python
-# Example with Weights & Biases (wandb)
+# Example with Weights & Biases (wandb); install it with `pip install wandb`
+import os
+
 import wandb
 
 # Initialize experiment tracking
