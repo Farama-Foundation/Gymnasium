@@ -702,7 +702,7 @@ class MujocoRenderer:
     """This is the MuJoCo renderer manager class for every MuJoCo environment.
 
     The class has two main public methods available:
-    - :meth:`render` - Renders the environment in three possible modes: "human", "rgb_array", or "depth_array"
+    - :meth:`render` - Renders the environment in four possible modes: "human", "rgb_array", "depth_array", or "rgbd_tuple"
     - :meth:`close` - Closes all contexts initialized with the renderer
 
     """
@@ -719,7 +719,7 @@ class MujocoRenderer:
         camera_name: str | None = None,
         visual_options: dict[int, bool] | None = None,
     ):
-        """A wrapper for clipping continuous actions within the valid bound.
+        """Renders a MuJoCo simulation with on-screen ("human") and off-screen ("rgb_array", "depth_array", "rgbd_tuple") viewers.
 
         Args:
             model: MjModel data structure of the MuJoCo simulation
@@ -729,7 +729,8 @@ class MujocoRenderer:
             height: height of the OpenGL rendering context
             max_geom: maximum number of geometries to render
             camera_id: The integer camera id from which to render the frame in the MuJoCo simulation
-            camera_name: The string name of the camera from which to render the frame in the MuJoCo simulation. This argument should not be passed if using cameara_id instead and vice versa
+            camera_name: The string name of the camera from which to render the frame in the MuJoCo simulation. This argument should not be passed if using camera_id instead and vice versa
+            visual_options: dictionary mapping `mujoco.mjtVisFlag` flags to booleans, applied to the viewer's visualization options (`mjvOption.flags`)
         """
         self.model = model
         self.data = data

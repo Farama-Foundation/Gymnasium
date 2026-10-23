@@ -45,7 +45,7 @@ def cmp(a, b):
 
 
 def random_card(key):
-    """Draws a randowm card (with replacement)."""
+    """Draws a random card (with replacement)."""
     key = random.split(key)[0]
     choice = random.choice(key, deck, shape=(1,))
 
@@ -69,7 +69,7 @@ def draw_card(key, hand, index):
 
 
 def usable_ace(hand):
-    """Checks to se if a hand has a usable ace."""
+    """Checks to see if a hand has a usable ace."""
     return jnp.logical_and(jnp.any(hand == 1), jnp.sum(hand) + 10 <= 21)
 
 
@@ -281,7 +281,7 @@ class BlackjackFunctional(
         rng: PRNGKeyType,
         params: BlackJackParams | type[BlackJackParams] = BlackJackParams,
     ) -> EnvState:
-        """Blackjack initial observataion function."""
+        """Blackjack initial observation function."""
         player_hand = jnp.zeros(21)
         dealer_hand = jnp.zeros(21)
         player_hand, rng = draw_hand(rng, player_hand)
