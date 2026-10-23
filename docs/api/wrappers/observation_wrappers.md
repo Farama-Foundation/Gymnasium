@@ -1,3 +1,7 @@
+---
+title: Observation Wrappers
+---
+
 # Observation Wrappers
 
 ```{eval-rst}
@@ -6,7 +10,7 @@
     .. automethod:: gymnasium.ObservationWrapper.observation
 ```
 
-## Implemented Wrappers
+## Implemented wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.TransformObservation
@@ -23,4 +27,5 @@
 .. autoclass:: gymnasium.wrappers.ReshapeObservation
 .. autoclass:: gymnasium.wrappers.RescaleObservation
 .. autoclass:: gymnasium.wrappers.TimeAwareObservation
+.. autoclass:: gymnasium.wrappers.DiscretizeObservation
 ```

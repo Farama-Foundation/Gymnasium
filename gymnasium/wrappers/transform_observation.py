@@ -791,9 +791,9 @@ class DiscretizeObservation(
           -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.
           1.         1.       ], (8,), float32)
         >>> obs, _ = env.reset(seed=42)
-        >>> obs
-        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,
-               -0.05269805,  0.        ,  0.        ], dtype=float32)
+        >>> obs.round(3)
+        array([ 0.002,  1.418,  0.233,  0.32 , -0.003, -0.053,  0.   ,  0.   ],
+              dtype=float32)
         >>> env = DiscretizeObservation(env, bins=3)
         >>> env.observation_space
         Discrete(6561)
@@ -808,9 +808,9 @@ class DiscretizeObservation(
           -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.
           1.         1.       ], (8,), float32)
         >>> obs, _ = env.reset(seed=42)
-        >>> obs
-        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,
-               -0.05269805,  0.        ,  0.        ], dtype=float32)
+        >>> obs.round(3)
+        array([ 0.002,  1.418,  0.233,  0.32 , -0.003, -0.053,  0.   ,  0.   ],
+              dtype=float32)
         >>> env = DiscretizeObservation(env, bins=3, multidiscrete=True)
         >>> env.observation_space
         MultiDiscrete([3 3 3 3 3 3 3 3])

@@ -49,7 +49,7 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`
     - :attr:`metadata` - The metadata of the environment, e.g. `{"render_modes": ["rgb_array", "human"], "render_fps": 30}`. For Jax or Torch, this can be indicated to users with `"jax"=True` or `"torch"=True`.
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
-      ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.
+      ``super().reset(seed=seed)`` and when accessing :attr:`np_random`.
 
     .. seealso:: For modifying or extending environments use the :class:`gymnasium.Wrapper` class
 
@@ -111,10 +111,6 @@ class Env(Generic[ObsType, ActType]):
                 hidden from observations, or individual reward terms that are combined to produce the total reward.
                 In OpenAI Gym <v26, it contains "TimeLimit.truncated" to distinguish truncation and termination,
                 however this is deprecated in favour of returning terminated and truncated variables.
-            done (bool): (Deprecated) A boolean value for if the episode has ended, in which case further :meth:`step` calls will
-                return undefined results. This was removed in OpenAI Gym v26 in favor of terminated and truncated attributes.
-                A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,
-                a certain timelimit was exceeded, or the physics simulation has entered an invalid state.
 
         Note:
             Users commonly keep the data from every timestep, most obviously in a replay or rollout buffer, so each
@@ -154,7 +150,6 @@ class Env(Generic[ObsType, ActType]):
                 and the env's :attr:`np_random_seed` will *not* be altered.
                 If you pass an integer, the PRNG will be reset even if it already exists.
                 Usually, you want to pass an integer *right after the environment has been initialized and then never again*.
-                Please refer to the minimal example above to see this paradigm in action.
             options (optional dict): Additional information to specify how the environment is reset (optional,
                 depending on the specific environment)
 
@@ -227,8 +222,7 @@ class Env(Generic[ObsType, ActType]):
     def np_random_seed(self) -> int:
         """Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.
 
-        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
-        the seed will take the value -1.
+        If :attr:`np_random` was set directly instead of through :meth:`reset`, the seed will take the value -1.
 
         Returns:
             int: the seed of the current `np_random` or -1, if the seed of the rng is unknown
@@ -261,7 +255,7 @@ class Env(Generic[ObsType, ActType]):
         self._np_random_seed = -1
 
     def __str__(self) -> str:
-        """Returns a string of the environment with :attr:`spec` id's if :attr:`spec.
+        """Returns a string of the environment, including the :attr:`spec` id if :attr:`spec` is not ``None``.
 
         Returns:
             A string identifying the environment

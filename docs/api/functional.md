@@ -4,6 +4,10 @@ title: Functional
 
 # Functional Env
 
+```{warning}
+The functional API is experimental, in `gymnasium.experimental`, and may change in future releases.
+```
+
 ```{eval-rst}
 .. autoclass:: gymnasium.experimental.functional.FuncEnv
 
@@ -24,7 +28,7 @@ title: Functional
     .. automethod:: gymnasium.experimental.functional.FuncEnv.render_close
 ```
 
-## Converting Jax-based Functional environments to standard Env
+## Converting Jax-based functional environments to standard Env and VectorEnv
 
 ```{eval-rst}
 .. autoclass:: gymnasium.envs.functional_jax_env.FunctionalJaxEnv
@@ -32,4 +36,10 @@ title: Functional
     .. automethod:: gymnasium.envs.functional_jax_env.FunctionalJaxEnv.reset
     .. automethod:: gymnasium.envs.functional_jax_env.FunctionalJaxEnv.step
     .. automethod:: gymnasium.envs.functional_jax_env.FunctionalJaxEnv.render
+
+.. autoclass:: gymnasium.envs.functional_jax_env.FunctionalJaxVectorEnv
+
+    .. automethod:: gymnasium.envs.functional_jax_env.FunctionalJaxVectorEnv.reset
+    .. automethod:: gymnasium.envs.functional_jax_env.FunctionalJaxVectorEnv.step
+    .. automethod:: gymnasium.envs.functional_jax_env.FunctionalJaxVectorEnv.render
 ```

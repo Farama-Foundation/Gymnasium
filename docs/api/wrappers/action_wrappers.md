@@ -1,6 +1,10 @@
+---
+title: Action Wrappers
+---
+
 # Action Wrappers
 
-## Base Class
+## Base class
 
 ```{eval-rst}
 .. autoclass:: gymnasium.ActionWrapper
@@ -8,7 +12,7 @@
     .. automethod:: gymnasium.ActionWrapper.action
 ```
 
-## Available Action Wrappers
+## Implemented wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.TransformAction
@@ -16,4 +20,5 @@
 .. autoclass:: gymnasium.wrappers.RescaleAction
 .. autoclass:: gymnasium.wrappers.StickyAction
 .. autoclass:: gymnasium.wrappers.RepeatAction
+.. autoclass:: gymnasium.wrappers.DiscretizeAction
 ```
