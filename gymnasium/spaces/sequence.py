@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import numpy as np
 from numpy.typing import NDArray
@@ -106,8 +106,9 @@ class Sequence(Space[tuple[Any, ...] | Any]):
 
     def sample(
         self,
-        mask: tuple[None | int | NDArray[np.integer], Any] | None = None,
-        probability: tuple[None | int | NDArray[np.integer], Any] | None = None,
+        mask: tuple[None | int | np.integer | NDArray[np.integer], Any] | None = None,
+        probability: tuple[None | int | np.integer | NDArray[np.integer], Any]
+        | None = None,
     ) -> tuple[Any, ...] | Any:
         """Generates a single random sample from this space.
 
@@ -116,7 +117,7 @@ class Sequence(Space[tuple[Any, ...] | Any]):
                 If you specify ``mask``, it is expected to be a tuple of the form ``(length_mask, sample_mask)`` where ``length_mask`` is
 
                 * ``None`` - The length will be randomly drawn from a geometric distribution
-                * ``int`` - Fixed length
+                * ``int`` or ``np.integer`` - Fixed length
                 * ``np.ndarray`` of integers - Length of the sampled sequence is randomly drawn from this array.
 
                 The second element of the tuple ``sample_mask`` specifies how the feature space will be sampled.
@@ -158,9 +159,9 @@ class Sequence(Space[tuple[Any, ...] | Any]):
 
     def generate_sample_length(
         self,
-        length_mask: None | np.integer | NDArray[np.integer],
+        length_mask: None | int | np.integer | NDArray[np.integer],
         mask_type: None | str,
-    ) -> int:
+    ) -> int | np.integer:
         """Generate the sample length for a given length mask and mask type."""
         if length_mask is not None:
             if np.issubdtype(type(length_mask), np.integer):
@@ -168,7 +169,8 @@ class Sequence(Space[tuple[Any, ...] | Any]):
                     f"Expects the length mask of `{mask_type}` to be greater than or equal to zero, actual value: {length_mask}"
                 )
 
-                return length_mask
+                # NumPy's subtype check does not narrow the union for type checkers.
+                return cast("int | np.integer", length_mask)
             elif isinstance(length_mask, np.ndarray):
                 assert len(length_mask.shape) == 1, (
                     f"Expects the shape of the length mask of `{mask_type}` to be 1-dimensional, actual shape: {length_mask.shape}"
