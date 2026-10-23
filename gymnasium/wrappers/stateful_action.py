@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any, SupportsFloat
 
 import numpy as np
@@ -21,6 +22,9 @@ class StickyAction(
     This wrapper follows the implementation proposed by `Machado et al., 2018 <https://arxiv.org/pdf/1709.06009.pdf>`_
     in Section 5.2 on page 12, and adds the possibility to repeat the action for
     more than one step.
+
+    The previous action is copied so that in-place updates to a mutable action
+    between steps do not change the action being repeated.
 
     No vector version of the wrapper exists.
 
@@ -138,7 +142,7 @@ class StickyAction(
             self.num_repeats = 0
             self.repeats_taken = 0
 
-        self.last_action = action
+        self.last_action = deepcopy(action)
         return action
 
 
