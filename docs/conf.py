@@ -145,6 +145,7 @@ tutorial_sorting = {
     "tutorials/training_agents": [
         "blackjack_q_learning",
         "frozenlake_q_learning",
+        "action_masking_taxi",
         "mujoco_reinforce",
         "vector_a2c",
         "*",

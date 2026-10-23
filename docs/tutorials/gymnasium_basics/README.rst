@@ -16,9 +16,9 @@ What the tutorials cover
   registration and tests.
 - **Implementing custom wrappers** - subclass ``ObservationWrapper``, ``ActionWrapper``,
   ``RewardWrapper`` and ``Wrapper`` to change the observations, actions or rewards of an existing
-  environment.
-- **Handling time limits** - the difference between ``terminated`` and ``truncated``, and why
-  bootstrapping should stop only on ``terminated``.
+  environment, and where to find the function-based and vector wrappers.
+- **Handling time limits** - the difference between ``terminated`` and ``truncated``, why
+  bootstrapping should stop only on ``terminated``, and how this works with vector environments.
 - **Load custom quadruped robot environments** - pass an MJCF or URDF model to a MuJoCo environment
   with the ``xml_file`` argument, then tune its simulation, termination, reward and observation
   parameters.
@@ -36,8 +36,8 @@ Three of the tutorials also use optional dependencies:
 
 - ``pip install copier "gymnasium[classic-control]"`` for *Make your own custom environment*, which
   walks through the Copier template and renders the example environment with ``pygame``.
-- ``pip install "gymnasium[box2d]"`` for *Implementing custom wrappers*, which wraps
-  ``LunarLanderContinuous-v3``.
+- ``pip install "gymnasium[box2d,mujoco]"`` for *Implementing custom wrappers*, which wraps
+  ``LunarLanderContinuous-v3`` and ``Reacher-v5``.
 - ``pip install "gymnasium[mujoco]"`` for *Load custom quadruped robot environments*, which wraps
   ``Ant-v5``.
 
