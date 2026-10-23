@@ -49,6 +49,20 @@ env = gym.make('CartPole-v1')
 This function will return an :class:`Env` for users to interact with. To see all environments you can create, use :meth:`pprint_registry`. Furthermore, :meth:`make` provides a number of additional arguments for specifying keywords to the environment, adding more or less wrappers, etc. See :meth:`make` for more information.
 ```
 
+For example, you can change the episode time limit with `max_episode_steps`, or pass keyword arguments through to the environment itself (see each environment's documentation for its arguments). The environment's {attr}`~gymnasium.Env.spec` records how it was made, and {attr}`~gymnasium.Env.metadata` lists the render modes it supports:
+
+```python
+>>> env = gym.make("CartPole-v1", max_episode_steps=100)
+>>> env.spec.max_episode_steps
+100
+>>> env.metadata["render_modes"]
+['human', 'rgb_array']
+
+>>> env = gym.make("LunarLander-v3", continuous=True)  # an environment-specific argument
+>>> env.action_space
+Box(-1.0, 1.0, (2,), float32)
+```
+
 ## Understanding the Agent-Environment Loop
 
 In reinforcement learning, the classic "agent-environment loop" pictured below represents how learning happens in RL. It's simpler than it might first appear:
@@ -122,7 +136,7 @@ env.close()
 
 First, an environment is created using :meth:`make` with an optional ``"render_mode"`` parameter that specifies how the environment should be visualized. See :meth:`Env.render` for details on different render modes. The render mode determines whether you see a visual window ("human"), get image arrays ("rgb_array"), or run without visuals (None - fastest for training).
 
-After initializing the environment, we :meth:`Env.reset` the environment to get the first observation along with additional information. This is like starting a new game or episode. For initializing the environment with a particular random seed or options (see the environment documentation for possible values) use the ``seed`` or ``options`` parameters with :meth:`reset`.
+After initializing the environment, we :meth:`Env.reset` the environment to get the first observation along with additional information. This is like starting a new game or episode. For initializing the environment with a particular random seed or options (see the environment documentation for possible values) use the ``seed`` or ``options`` parameters with :meth:`reset` (see :ref:`basic-usage-seeding` below).
 
 As we want to continue the agent-environment loop until the environment ends (which happens in an unknown number of timesteps), we define ``episode_over`` as a variable to control our while loop.
 
@@ -139,6 +153,7 @@ However, after some timesteps, the environment may end - this is called the term
 Every environment specifies the format of valid actions and observations with the :attr:`action_space` and :attr:`observation_space` attributes. This is helpful for knowing both the expected input and output of the environment, as all valid actions and observations should be contained within their respective spaces. In the example above, we sampled random actions via ``env.action_space.sample()`` instead of using an intelligent agent policy that maps observations to actions (which is what you'll learn to build).
 
 Understanding these spaces is crucial for building agents:
+
 - **Action Space**: What can your agent do? (discrete choices, continuous values, etc.)
 - **Observation Space**: What can your agent see? (images, numbers, structured data, etc.)
 
@@ -171,7 +186,7 @@ print(f"Sample action: {env.action_space.sample()}")  # 0 or 1
 
 # Box observation space (continuous values)
 print(f"Observation space: {env.observation_space}")  # Box with 4 values
-# Box([-4.8, -inf, -0.418, -inf], [4.8, inf, 0.418, inf])
+# Box([-4.8 -inf -0.41887903 -inf], [4.8 inf 0.41887903 inf], (4,), float32)
 print(f"Sample observation: {env.observation_space.sample()}")  # Random valid observation
 ```
 
@@ -193,13 +208,13 @@ To wrap an environment, you first initialize a base environment, then pass it al
 
 >>> # Start with a complex observation space
 >>> env = gym.make("CarRacing-v3")
->>> env.observation_space.shape
-(96, 96, 3)  # 96x96 RGB image
+>>> env.observation_space.shape  # 96x96 RGB image
+(96, 96, 3)
 
 >>> # Wrap it to flatten the observation into a 1D array
 >>> wrapped_env = FlattenObservation(env)
->>> wrapped_env.observation_space.shape
-(27648,)  # All pixels in a single array
+>>> wrapped_env.observation_space.shape  # All pixels in a single array
+(27648,)
 
 >>> # This makes it easier to use with some algorithms that expect 1D input
 ```
@@ -227,7 +242,26 @@ If you have a wrapped environment and want to access the original environment un
 >>> wrapped_env
 <FlattenObservation<TimeLimit<OrderEnforcing<PassiveEnvChecker<CarRacing<CarRacing-v3>>>>>>
 >>> wrapped_env.unwrapped
-<gymnasium.envs.box2d.car_racing.CarRacing object at 0x7f04efcb8850>
+<gymnasium.envs.box2d.car_racing.CarRacing object at 0x...>
+```
+
+(basic-usage-seeding)=
+## Reproducibility and seeding
+
+To get the same results every time you run your code, pass a ``seed`` to the first {meth}`~gymnasium.Env.reset`. Later calls to ``reset()`` without a seed continue from the seeded random number generator, so you only need to seed once. Spaces have their own random number generator, so seed the action space too if you sample random actions:
+
+```python
+>>> env = gym.make("CartPole-v1")
+>>> obs, info = env.reset(seed=42)
+>>> obs
+array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32)
+>>> obs, info = env.reset(seed=42)  # the same seed gives the same starting state
+>>> obs
+array([ 0.0273956 , -0.00611216,  0.03585979,  0.0197368 ], dtype=float32)
+>>> env.action_space.seed(42)
+42
+>>> [int(env.action_space.sample()) for _ in range(3)]
+[0, 1, 1]
 ```
 
 ## Common Issues for Beginners
@@ -237,6 +271,7 @@ If you have a wrapped environment and want to access the original environment un
 - Episodes end immediately: Check if you're properly handling the reset between episodes
 
 **Common Code Mistakes:**
+<!-- test: skip -->
 ```python
 # ❌ Wrong - forgetting to reset
 env = gym.make("CartPole-v1")
@@ -253,6 +288,6 @@ obs, reward, terminated, truncated, info = env.step(action)  # Now this works
 Now that you understand the basics, you're ready to:
 
 1. **[Train an actual agent](train_agent)** - Replace random actions with intelligence
-2. **[Create custom environments](create_custom_env)** - Build your own RL problems
+2. **[Create custom environments](create_custom_env)** - Build your own RL problems (and check them with {func}`~gymnasium.utils.env_checker.check_env`)
 3. **[Record agent behavior](record_agent)** - Save videos and data from training
 4. **[Speed up training](speed_up_env)** - Use vectorized environments and other optimizations
