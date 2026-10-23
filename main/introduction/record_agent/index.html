@@ -406,6 +406,7 @@
 <li><p>Create timelapse videos of learning</p></li>
 </ul>
 <p>Gymnasium provides two essential wrappers for recording: <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> for numerical data and <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code> for visual recordings. The first tracks episode metrics like total rewards, episode length, and time taken. The second generates MP4 videos of agent behavior using environment renderings.</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">RecordVideo</span></code> writes the videos with MoviePy, which is installed with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[other]&quot;</span></code>; <code class="xref py py-class docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code> has no additional dependencies.</p>
 <p>We’ll show how to use these wrappers for two common scenarios: recording data for every episode (typically during evaluation) and recording data periodically (during training).</p>
 </section>
 <section id="recording-every-episode-evaluation">
@@ -454,22 +455,26 @@
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Episode </span><span class="si">{</span><span class="n">episode_num</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">step_count</span><span class="si">}</span><span class="s2"> steps, reward = </span><span class="si">{</span><span class="n">episode_reward</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
+<span class="n">time_limit</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
+
+<span class="c1"># Close the environment once all the videos have been written</span>
 <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-<span class="c1"># Print summary statistics</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Evaluation Summary:'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Episode durations: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">time_queue</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Episode rewards: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Episode lengths: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="c1"># The wrappers keep the last buffer_length episode statistics in queues</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Evaluation Summary:"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Episode durations: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">time_queue</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Episode rewards: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Episode lengths: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="c1"># Calculate some useful metrics</span>
-<span class="n">avg_reward</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span>
-<span class="n">avg_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">)</span>
+<span class="c1"># The queues hold one value per episode, so the averages use np.mean</span>
+<span class="n">avg_reward</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span>
+<span class="n">avg_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">)</span>
 <span class="n">std_reward</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="se">\n</span><span class="s1">Average reward: </span><span class="si">{</span><span class="n">avg_reward</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> ± </span><span class="si">{</span><span class="n">std_reward</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Average episode length: </span><span class="si">{</span><span class="n">avg_length</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1"> steps'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Success rate: </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">)</span><span class="si">:</span><span class="s1">.1%</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Average reward: </span><span class="si">{</span><span class="n">avg_reward</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">std_reward</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Average episode length: </span><span class="si">{</span><span class="n">avg_length</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> steps"</span><span class="p">)</span>
+<span class="n">reached_limit</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">length</span> <span class="ow">in</span> <span class="n">env</span><span class="o">.</span><span class="n">length_queue</span> <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;=</span> <span class="n">time_limit</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Episodes reaching the time limit: </span><span class="si">{</span><span class="n">reached_limit</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 <section id="understanding-the-output">
@@ -482,14 +487,14 @@
 <li><p>Can be shared, embedded in presentations, or analyzed frame-by-frame</p></li>
 </ul>
 <p><strong>Console Output</strong>: Episode-by-episode performance plus summary statistics</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Episode 1: 23 steps, reward = 23.0
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Episode 1: 23 steps, reward = 23.0
 Episode 2: 15 steps, reward = 15.0
 Episode 3: 200 steps, reward = 200.0
 Episode 4: 67 steps, reward = 67.0
 
-Average reward: 76.25 ± 78.29
+Average reward: 76.25 ± 74.14
 Average episode length: 76.2 steps
-Success rate: 100.0%
+Episodes reaching the time limit: 0/4
 </pre></div>
 </div>
 <p><strong>Statistics Queues</strong>: Time, reward, and length data for each episode</p>
@@ -605,7 +610,9 @@ Success rate: 100.0%
 <section id="integration-with-experiment-tracking">
 <h2>Integration with Experiment Tracking<a class="headerlink" href="#integration-with-experiment-tracking" title="Link to this heading">¶</a></h2>
 <p>For more sophisticated projects, integrate with experiment tracking tools:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example with Weights &amp; Biases (wandb)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example with Weights &amp; Biases (wandb); install it with `pip install wandb`</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">wandb</span>
 
 <span class="c1"># Initialize experiment tracking</span>
