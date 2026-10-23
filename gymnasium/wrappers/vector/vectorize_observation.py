@@ -278,7 +278,7 @@ class FilterObservation(
 
         Args:
             env: The vector environment to wrap
-            filter_keys: The subspaces to be included, use a list of strings or integers for ``Dict`` and ``Tuple`` spaces respectivesly
+            filter_keys: The subspaces to be included, use a list of strings or integers for ``Dict`` and ``Tuple`` spaces respectively
         """
         super().__init__(
             env, transform_observation.FilterObservation, filter_keys=filter_keys

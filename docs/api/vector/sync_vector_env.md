@@ -1,3 +1,7 @@
+---
+title: SyncVectorEnv
+---
+
 # SyncVectorEnv
 
 ```{eval-rst}
@@ -12,7 +16,7 @@
     .. automethod:: gymnasium.vector.SyncVectorEnv.set_attr
 ```
 
-## Additional Methods
+## Additional methods
 
 ```{eval-rst}
 .. autoproperty:: gymnasium.vector.SyncVectorEnv.np_random
