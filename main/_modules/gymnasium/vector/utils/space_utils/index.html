@@ -527,6 +527,8 @@
     <span class="k">return</span> <span class="n">batched_space</span>
 
 
+<div class="viewcode-block" id="batch_differing_spaces">
+<a class="viewcode-back" href="../../../../../api/vector/utils/#gymnasium.vector.utils.batch_differing_spaces">[docs]</a>
 <span class="nd">@singledispatch</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">batch_differing_spaces</span><span class="p">(</span><span class="n">spaces</span><span class="p">:</span> <span class="n">_PySequence</span><span class="p">[</span><span class="n">Space</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Space</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Batch a Sequence of spaces where subspaces to contain minor differences.</span>
@@ -558,7 +560,8 @@
             <span class="sa">f</span><span class="s2">"Requires the Space type to have a registered `batch_differing_space`, current list: </span><span class="si">{</span><span class="n">batch_differing_spaces</span><span class="o">.</span><span class="n">registry</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">batch_differing_spaces</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]))(</span><span class="n">spaces</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">batch_differing_spaces</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">spaces</span><span class="p">[</span><span class="mi">0</span><span class="p">]))(</span><span class="n">spaces</span><span class="p">)</span></div>
+
 
 
 <span class="nd">@batch_differing_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>

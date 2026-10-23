@@ -424,7 +424,7 @@
 <span class="sd">    - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`</span>
 <span class="sd">    - :attr:`metadata` - The metadata of the environment, e.g. `{"render_modes": ["rgb_array", "human"], "render_fps": 30}`. For Jax or Torch, this can be indicated to users with `"jax"=True` or `"torch"=True`.</span>
 <span class="sd">    - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during</span>
-<span class="sd">      ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.</span>
+<span class="sd">      ``super().reset(seed=seed)`` and when accessing :attr:`np_random`.</span>
 
 <span class="sd">    .. seealso:: For modifying or extending environments use the :class:`gymnasium.Wrapper` class</span>
 
@@ -488,10 +488,6 @@
 <span class="sd">                hidden from observations, or individual reward terms that are combined to produce the total reward.</span>
 <span class="sd">                In OpenAI Gym &lt;v26, it contains "TimeLimit.truncated" to distinguish truncation and termination,</span>
 <span class="sd">                however this is deprecated in favour of returning terminated and truncated variables.</span>
-<span class="sd">            done (bool): (Deprecated) A boolean value for if the episode has ended, in which case further :meth:`step` calls will</span>
-<span class="sd">                return undefined results. This was removed in OpenAI Gym v26 in favor of terminated and truncated attributes.</span>
-<span class="sd">                A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,</span>
-<span class="sd">                a certain timelimit was exceeded, or the physics simulation has entered an invalid state.</span>
 
 <span class="sd">        Note:</span>
 <span class="sd">            Users commonly keep the data from every timestep, most obviously in a replay or rollout buffer, so each</span>
@@ -534,7 +530,6 @@
 <span class="sd">                and the env's :attr:`np_random_seed` will *not* be altered.</span>
 <span class="sd">                If you pass an integer, the PRNG will be reset even if it already exists.</span>
 <span class="sd">                Usually, you want to pass an integer *right after the environment has been initialized and then never again*.</span>
-<span class="sd">                Please refer to the minimal example above to see this paradigm in action.</span>
 <span class="sd">            options (optional dict): Additional information to specify how the environment is reset (optional,</span>
 <span class="sd">                depending on the specific environment)</span>
 
@@ -614,8 +609,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">np_random_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.</span>
 
-<span class="sd">        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,</span>
-<span class="sd">        the seed will take the value -1.</span>
+<span class="sd">        If :attr:`np_random` was set directly instead of through :meth:`reset`, the seed will take the value -1.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            int: the seed of the current `np_random` or -1, if the seed of the rng is unknown</span>
@@ -648,7 +642,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_np_random_seed</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Returns a string of the environment with :attr:`spec` id's if :attr:`spec.</span>
+<span class="w">        </span><span class="sd">"""Returns a string of the environment, including the :attr:`spec` id if :attr:`spec` is not ``None``.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A string identifying the environment</span>
@@ -668,20 +662,29 @@
         <span class="c1"># propagate exception</span>
         <span class="k">return</span> <span class="kc">False</span>
 
+<div class="viewcode-block" id="Env.has_wrapper_attr">
+<a class="viewcode-back" href="../../../api/env/#gymnasium.Env.has_wrapper_attr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_wrapper_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Checks if the attribute `name` exists in the environment."""</span>
-        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="Env.get_wrapper_attr">
+<a class="viewcode-back" href="../../../api/env/#gymnasium.Env.get_wrapper_attr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_wrapper_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Gets the attribute `name` from the environment."""</span>
-        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="Env.set_wrapper_attr">
+<a class="viewcode-back" href="../../../api/env/#gymnasium.Env.set_wrapper_attr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_wrapper_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Sets the attribute `name` on the environment with `value`, see `Wrapper.set_wrapper_attr` for more info."""</span>
         <span class="k">if</span> <span class="n">force</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
+</div>
 
 
 
@@ -824,12 +827,15 @@
         <span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="Wrapper.has_wrapper_attr">
+<a class="viewcode-back" href="../../../api/wrappers/#gymnasium.Wrapper.has_wrapper_attr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_wrapper_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Checks if the given attribute is within the wrapper or its environment."""</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">has_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">has_wrapper_attr</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="Wrapper.get_wrapper_attr">
 <a class="viewcode-back" href="../../../api/wrappers/#gymnasium.Wrapper.get_wrapper_attr">[docs]</a>

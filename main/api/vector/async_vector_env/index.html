@@ -571,7 +571,7 @@ environment, otherwise a single value is set for all environments.</p></li>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>ValueError</strong> – Values must be a list or tuple with length equal to the number of environments.</p></li>
-<li><p><strong>AlreadyPendingCallError</strong> – Calling <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.set_attr" title="gymnasium.vector.AsyncVectorEnv.set_attr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_attr()</span></code></a> while waiting for a pending call to complete.</p></li>
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.AlreadyPendingCallError" title="gymnasium.error.AlreadyPendingCallError"><strong>AlreadyPendingCallError</strong></a> – Calling <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.set_attr" title="gymnasium.vector.AsyncVectorEnv.set_attr"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_attr()</span></code></a> while waiting for a pending call to complete.</p></li>
 </ul>
 </dd>
 </dl>
@@ -579,8 +579,140 @@ environment, otherwise a single value is set for all environments.</p></li>
 
 </dd></dl>
 
+<section id="asynchronous-methods">
+<h2>Asynchronous methods<a class="headerlink" href="#asynchronous-methods" title="Link to this heading">¶</a></h2>
+<p><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset" title="gymnasium.vector.AsyncVectorEnv.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a>, <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step" title="gymnasium.vector.AsyncVectorEnv.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> and <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.call" title="gymnasium.vector.AsyncVectorEnv.call"><code class="xref py py-meth docutils literal notranslate"><span class="pre">call()</span></code></a> are each implemented as a pair of methods: an <code class="docutils literal notranslate"><span class="pre">_async</span></code> method that sends the command to the worker processes and returns immediately, and a <code class="docutils literal notranslate"><span class="pre">_wait</span></code> method that blocks until the results are returned. These can be used directly to run other code while the sub-environments step.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.vector.AsyncVectorEnv.reset_async">
+<span class="sig-prename descclassname"><span class="pre">AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">reset_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/async_vector_env/#AsyncVectorEnv.reset_async"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.AsyncVectorEnv.reset_async" title="Link to this definition">¶</a></dt>
+<dd><p>Send calls to the <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset" title="gymnasium.vector.AsyncVectorEnv.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a> methods of the sub-environments.</p>
+<p>To get the results of these calls, you may invoke <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset_wait" title="gymnasium.vector.AsyncVectorEnv.reset_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset_wait()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> – List of seeds for each environment</p></li>
+<li><p><strong>options</strong> – Option information used for each sub-environment, <code class="docutils literal notranslate"><span class="pre">options[&quot;reset_mask&quot;]</span></code>, a boolean array of shape <code class="docutils literal notranslate"><span class="pre">(num_envs,)</span></code>,
+resets only the masked sub-environments, as needed for <code class="docutils literal notranslate"><span class="pre">AutoresetMode.DISABLED</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.ClosedEnvironmentError" title="gymnasium.error.ClosedEnvironmentError"><strong>ClosedEnvironmentError</strong></a> – If the environment was closed (if <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.close" title="gymnasium.vector.AsyncVectorEnv.close"><code class="xref py py-meth docutils literal notranslate"><span class="pre">close()</span></code></a> was previously called).</p></li>
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.AlreadyPendingCallError" title="gymnasium.error.AlreadyPendingCallError"><strong>AlreadyPendingCallError</strong></a> – If the environment is already waiting for a pending call to another
+    method (e.g. <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_async" title="gymnasium.vector.AsyncVectorEnv.step_async"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step_async()</span></code></a>). This can be caused by two consecutive
+    calls to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset_async" title="gymnasium.vector.AsyncVectorEnv.reset_async"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset_async()</span></code></a>, with no call to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset_wait" title="gymnasium.vector.AsyncVectorEnv.reset_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset_wait()</span></code></a> in between.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.vector.AsyncVectorEnv.reset_wait">
+<span class="sig-prename descclassname"><span class="pre">AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">reset_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/async_vector_env/#AsyncVectorEnv.reset_wait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.AsyncVectorEnv.reset_wait" title="Link to this definition">¶</a></dt>
+<dd><p>Waits for the calls triggered by <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset_async" title="gymnasium.vector.AsyncVectorEnv.reset_async"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset_async()</span></code></a> to finish and returns the results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout</strong> – Number of seconds before the call to <code class="docutils literal notranslate"><span class="pre">reset_wait</span></code> times out. If <cite>None</cite>, the call to <code class="docutils literal notranslate"><span class="pre">reset_wait</span></code> never times out.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>A tuple of batched observations and list of dictionaries</strong></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.ClosedEnvironmentError" title="gymnasium.error.ClosedEnvironmentError"><strong>ClosedEnvironmentError</strong></a> – If the environment was closed (if <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.close" title="gymnasium.vector.AsyncVectorEnv.close"><code class="xref py py-meth docutils literal notranslate"><span class="pre">close()</span></code></a> was previously called).</p></li>
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.NoAsyncCallError" title="gymnasium.error.NoAsyncCallError"><strong>NoAsyncCallError</strong></a> – If <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset_wait" title="gymnasium.vector.AsyncVectorEnv.reset_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset_wait()</span></code></a> was called without any prior call to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset_async" title="gymnasium.vector.AsyncVectorEnv.reset_async"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset_async()</span></code></a>.</p></li>
+<li><p><strong>TimeoutError</strong> – If <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset_wait" title="gymnasium.vector.AsyncVectorEnv.reset_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset_wait()</span></code></a> timed out.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.vector.AsyncVectorEnv.step_async">
+<span class="sig-prename descclassname"><span class="pre">AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">step_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/async_vector_env/#AsyncVectorEnv.step_async"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.AsyncVectorEnv.step_async" title="Link to this definition">¶</a></dt>
+<dd><p>Send the calls to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Env.step()</span></code> to each sub-environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>actions</strong> – Batch of actions. element of <a class="reference internal" href="../#gymnasium.vector.VectorEnv.action_space" title="gymnasium.vector.VectorEnv.action_space"><code class="xref py py-attr docutils literal notranslate"><span class="pre">VectorEnv.action_space</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.ClosedEnvironmentError" title="gymnasium.error.ClosedEnvironmentError"><strong>ClosedEnvironmentError</strong></a> – If the environment was closed (if <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.close" title="gymnasium.vector.AsyncVectorEnv.close"><code class="xref py py-meth docutils literal notranslate"><span class="pre">close()</span></code></a> was previously called).</p></li>
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.AlreadyPendingCallError" title="gymnasium.error.AlreadyPendingCallError"><strong>AlreadyPendingCallError</strong></a> – If the environment is already waiting for a pending call to another
+    method (e.g. <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset_async" title="gymnasium.vector.AsyncVectorEnv.reset_async"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset_async()</span></code></a>). This can be caused by two consecutive
+    calls to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_async" title="gymnasium.vector.AsyncVectorEnv.step_async"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step_async()</span></code></a>, with no call to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_wait" title="gymnasium.vector.AsyncVectorEnv.step_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step_wait()</span></code></a> in
+    between.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.vector.AsyncVectorEnv.step_wait">
+<span class="sig-prename descclassname"><span class="pre">AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">step_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">NDArray</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/async_vector_env/#AsyncVectorEnv.step_wait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.AsyncVectorEnv.step_wait" title="Link to this definition">¶</a></dt>
+<dd><p>Wait for the calls to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step" title="gymnasium.vector.AsyncVectorEnv.step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step</span></code></a> in each sub-environment to finish.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout</strong> – Number of seconds before the call to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_wait" title="gymnasium.vector.AsyncVectorEnv.step_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step_wait()</span></code></a> times out. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the call to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_wait" title="gymnasium.vector.AsyncVectorEnv.step_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step_wait()</span></code></a> never times out.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>The batched environment step information,</strong> (<em>obs, reward, terminated, truncated, info</em>)</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.ClosedEnvironmentError" title="gymnasium.error.ClosedEnvironmentError"><strong>ClosedEnvironmentError</strong></a> – If the environment was closed (if <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.close" title="gymnasium.vector.AsyncVectorEnv.close"><code class="xref py py-meth docutils literal notranslate"><span class="pre">close()</span></code></a> was previously called).</p></li>
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.NoAsyncCallError" title="gymnasium.error.NoAsyncCallError"><strong>NoAsyncCallError</strong></a> – If <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_wait" title="gymnasium.vector.AsyncVectorEnv.step_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step_wait()</span></code></a> was called without any prior call to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_async" title="gymnasium.vector.AsyncVectorEnv.step_async"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step_async()</span></code></a>.</p></li>
+<li><p><strong>TimeoutError</strong> – If <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_wait" title="gymnasium.vector.AsyncVectorEnv.step_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step_wait()</span></code></a> timed out.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.vector.AsyncVectorEnv.call_async">
+<span class="sig-prename descclassname"><span class="pre">AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">call_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">object</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/async_vector_env/#AsyncVectorEnv.call_async"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.AsyncVectorEnv.call_async" title="Link to this definition">¶</a></dt>
+<dd><p>Calls the method with name asynchronously and apply args and kwargs to the method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – Name of the method or property to call.</p></li>
+<li><p><strong>*args</strong> – Arguments to apply to the method call.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to apply to the method call.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.ClosedEnvironmentError" title="gymnasium.error.ClosedEnvironmentError"><strong>ClosedEnvironmentError</strong></a> – If the environment was closed (if <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.close" title="gymnasium.vector.AsyncVectorEnv.close"><code class="xref py py-meth docutils literal notranslate"><span class="pre">close()</span></code></a> was previously called).</p></li>
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.AlreadyPendingCallError" title="gymnasium.error.AlreadyPendingCallError"><strong>AlreadyPendingCallError</strong></a> – Calling <cite>call_async</cite> while waiting for a pending call to complete</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.vector.AsyncVectorEnv.call_wait">
+<span class="sig-prename descclassname"><span class="pre">AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">call_wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/gymnasium/vector/async_vector_env/#AsyncVectorEnv.call_wait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.vector.AsyncVectorEnv.call_wait" title="Link to this definition">¶</a></dt>
+<dd><p>Calls all parent pipes and waits for the results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>timeout</strong> – Number of seconds before the call to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_wait" title="gymnasium.vector.AsyncVectorEnv.step_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step_wait()</span></code></a> times out.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code> (default), the call to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_wait" title="gymnasium.vector.AsyncVectorEnv.step_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step_wait()</span></code></a> never times out.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>List of the results of the individual calls to the method or property for each environment.</strong></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.NoAsyncCallError" title="gymnasium.error.NoAsyncCallError"><strong>NoAsyncCallError</strong></a> – Calling <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.call_wait" title="gymnasium.vector.AsyncVectorEnv.call_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">call_wait()</span></code></a> without any prior call to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.call_async" title="gymnasium.vector.AsyncVectorEnv.call_async"><code class="xref py py-meth docutils literal notranslate"><span class="pre">call_async()</span></code></a>.</p></li>
+<li><p><strong>TimeoutError</strong> – The call to <a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.call_wait" title="gymnasium.vector.AsyncVectorEnv.call_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">call_wait()</span></code></a> has timed out after timeout second(s).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="additional-methods">
-<h2>Additional Methods<a class="headerlink" href="#additional-methods" title="Link to this heading">¶</a></h2>
+<h2>Additional methods<a class="headerlink" href="#additional-methods" title="Link to this heading">¶</a></h2>
 <dl class="py property">
 <dt class="sig sig-object py" id="gymnasium.vector.AsyncVectorEnv.np_random">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">AsyncVectorEnv.</span></span><span class="sig-name descname"><span class="pre">np_random</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Generator</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.vector.AsyncVectorEnv.np_random" title="Link to this definition">¶</a></dt>
@@ -675,7 +807,16 @@ environment, otherwise a single value is set for all environments.</p></li>
 <li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.set_attr"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.set_attr()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#additional-methods">Additional Methods</a><ul>
+<li><a class="reference internal" href="#asynchronous-methods">Asynchronous methods</a><ul>
+<li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset_async"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.reset_async()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.reset_wait"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.reset_wait()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_async"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.step_async()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.step_wait"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.step_wait()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.call_async"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.call_async()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.call_wait"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.call_wait()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#additional-methods">Additional methods</a><ul>
 <li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.np_random"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.np_random</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.vector.AsyncVectorEnv.np_random_seed"><code class="docutils literal notranslate"><span class="pre">AsyncVectorEnv.np_random_seed</span></code></a></li>
 </ul>

@@ -1059,6 +1059,8 @@
     <span class="k">return</span> <span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">high</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">max_flatdim</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
 
+<div class="viewcode-block" id="is_space_dtype_shape_equiv">
+<a class="viewcode-back" href="../../../../api/spaces/utils/#gymnasium.spaces.utils.is_space_dtype_shape_equiv">[docs]</a>
 <span class="nd">@singledispatch</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_space_dtype_shape_equiv</span><span class="p">(</span><span class="n">space_1</span><span class="p">:</span> <span class="n">Space</span><span class="p">,</span> <span class="n">space_2</span><span class="p">:</span> <span class="n">Space</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Returns if two spaces share a common dtype and shape (plus any critical variables).</span>
@@ -1077,7 +1079,8 @@
             <span class="s2">"`check_dtype_shape_equivalence` doesn't support Generic Gymnasium Spaces, "</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">()</span></div>
+
 
 
 <span class="nd">@is_space_dtype_shape_equiv</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Box</span><span class="p">)</span>

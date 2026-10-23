@@ -580,6 +580,8 @@
 
 
 
+<div class="viewcode-block" id="DiscretizeAction">
+<a class="viewcode-back" href="../../../../api/wrappers/action_wrappers/#gymnasium.wrappers.DiscretizeAction">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DiscretizeAction</span><span class="p">(</span>
     <span class="n">TransformAction</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">WrapperActType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
@@ -727,7 +729,8 @@
         <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">):</span>
             <span class="n">indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flat_index</span> <span class="o">%</span> <span class="n">b</span><span class="p">)</span>
             <span class="n">flat_index</span> <span class="o">//=</span> <span class="n">b</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">indices</span><span class="p">))</span></div>
+
 </pre></div>
           </article>
         </div>

@@ -404,7 +404,7 @@ Returns the first agent observation for an episode and information, i.e. metrics
 <li><p><a class="reference internal" href="../registry/#gymnasium.spec" title="gymnasium.spec"><code class="xref py py-attr docutils literal notranslate"><span class="pre">spec</span></code></a> - An environment spec that contains the information used to initialize the environment from <a class="reference internal" href="../registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#gymnasium.Env.metadata" title="gymnasium.Env.metadata"><code class="xref py py-attr docutils literal notranslate"><span class="pre">metadata</span></code></a> - The metadata of the environment, e.g. <cite>{“render_modes”: [“rgb_array”, “human”], “render_fps”: 30}</cite>. For Jax or Torch, this can be indicated to users with <cite>“jax”=True</cite> or <cite>“torch”=True</cite>.</p></li>
 <li><p><a class="reference internal" href="#gymnasium.Env.np_random" title="gymnasium.Env.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a> - The random number generator for the environment. This is automatically assigned during
-<code class="docutils literal notranslate"><span class="pre">super().reset(seed=seed)</span></code> and when assessing <a class="reference internal" href="#gymnasium.Env.np_random" title="gymnasium.Env.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a>.</p></li>
+<code class="docutils literal notranslate"><span class="pre">super().reset(seed=seed)</span></code> and when accessing <a class="reference internal" href="#gymnasium.Env.np_random" title="gymnasium.Env.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a>.</p></li>
 </ul>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -457,10 +457,6 @@ This might, for instance, contain: metrics that describe the agent’s performan
 hidden from observations, or individual reward terms that are combined to produce the total reward.
 In OpenAI Gym &lt;v26, it contains “TimeLimit.truncated” to distinguish truncation and termination,
 however this is deprecated in favour of returning terminated and truncated variables.</p></li>
-<li><p><strong>done</strong> (<em>bool</em>) – (Deprecated) A boolean value for if the episode has ended, in which case further <a class="reference internal" href="#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">step()</span></code></a> calls will
-return undefined results. This was removed in OpenAI Gym v26 in favor of terminated and truncated attributes.
-A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,
-a certain timelimit was exceeded, or the physics simulation has entered an invalid state.</p></li>
 </ul>
 </dd>
 </dl>
@@ -496,8 +492,7 @@ a seed will be chosen from some source of entropy (e.g. timestamp or /dev/urando
 However, if the environment already has a PRNG and <code class="docutils literal notranslate"><span class="pre">seed=None</span></code> is passed, the PRNG will <em>not</em> be reset
 and the env’s <a class="reference internal" href="#gymnasium.Env.np_random_seed" title="gymnasium.Env.np_random_seed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random_seed</span></code></a> will <em>not</em> be altered.
 If you pass an integer, the PRNG will be reset even if it already exists.
-Usually, you want to pass an integer <em>right after the environment has been initialized and then never again</em>.
-Please refer to the minimal example above to see this paradigm in action.</p></li>
+Usually, you want to pass an integer <em>right after the environment has been initialized and then never again</em>.</p></li>
 <li><p><strong>options</strong> (<em>optional dict</em>) – Additional information to specify how the environment is reset (optional,
 depending on the specific environment)</p></li>
 </ul>
@@ -561,13 +556,31 @@ in the environment initialised, i.e., <code class="docutils literal notranslate"
 Calling <code class="docutils literal notranslate"><span class="pre">close</span></code> on an already closed environment has no effect and won’t raise an error.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.Env.has_wrapper_attr">
+<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">has_wrapper_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/gymnasium/core/#Env.has_wrapper_attr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Env.has_wrapper_attr" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if the attribute <cite>name</cite> exists in the environment.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.Env.get_wrapper_attr">
+<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">get_wrapper_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/gymnasium/core/#Env.get_wrapper_attr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Env.get_wrapper_attr" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the attribute <cite>name</cite> from the environment.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gymnasium.Env.set_wrapper_attr">
+<span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">set_wrapper_attr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/gymnasium/core/#Env.set_wrapper_attr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.Env.set_wrapper_attr" title="Link to this definition">¶</a></dt>
+<dd><p>Sets the attribute <cite>name</cite> on the environment with <cite>value</cite>, see <cite>Wrapper.set_wrapper_attr</cite> for more info.</p>
+</dd></dl>
+
 </section>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gymnasium.Env.action_space">
 <span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">action_space</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.Space"><span class="pre">spaces.Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gymnasium.Env.action_space" title="Link to this definition">¶</a></dt>
-<dd><p>The Space object corresponding to valid actions, all valid actions should be contained with the space. For example, if the action space is of type <cite>Discrete</cite> and gives the value <cite>Discrete(2)</cite>, this means there are two valid discrete actions: <cite>0</cite> &amp; <cite>1</cite>.</p>
+<dd><p>The Space object corresponding to valid actions, all valid actions should be contained within the space. For example, if the action space is of type <cite>Discrete</cite> and gives the value <cite>Discrete(2)</cite>, this means there are two valid discrete actions: <cite>0</cite> &amp; <cite>1</cite>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
 <span class="go">Discrete(2)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
@@ -603,7 +616,7 @@ Calling <code class="docutils literal notranslate"><span class="pre">close</span
 <dl class="py attribute">
 <dt class="sig sig-object py" id="gymnasium.Env.spec">
 <span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">spec</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../registry/#gymnasium.envs.registration.EnvSpec" title="gymnasium.envs.registration.EnvSpec"><span class="pre">EnvSpec</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#gymnasium.Env.spec" title="Link to this definition">¶</a></dt>
-<dd><p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">EnvSpec</span></code> of the environment normally set during <a class="reference internal" href="../registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a></p>
+<dd><p>The <a class="reference internal" href="../registry/#gymnasium.envs.registration.EnvSpec" title="gymnasium.envs.registration.EnvSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnvSpec</span></code></a> of the environment normally set during <a class="reference internal" href="../registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-func docutils literal notranslate"><span class="pre">gymnasium.make()</span></code></a></p>
 </dd></dl>
 
 <dl class="py property">
@@ -632,8 +645,7 @@ Calling <code class="docutils literal notranslate"><span class="pre">close</span
 <dt class="sig sig-object py" id="gymnasium.Env.np_random_seed">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Env.</span></span><span class="sig-name descname"><span class="pre">np_random_seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#gymnasium.Env.np_random_seed" title="Link to this definition">¶</a></dt>
 <dd><p>Returns the environment’s internal <code class="xref py py-attr docutils literal notranslate"><span class="pre">_np_random_seed</span></code> that if not set will first initialise with a random int as seed.</p>
-<p>If <a class="reference internal" href="#gymnasium.Env.np_random_seed" title="gymnasium.Env.np_random_seed"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random_seed</span></code></a> was set directly instead of through <a class="reference internal" href="#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_np_random_through_seed()</span></code>,
-the seed will take the value -1.</p>
+<p>If <a class="reference internal" href="#gymnasium.Env.np_random" title="gymnasium.Env.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">np_random</span></code></a> was set directly instead of through <a class="reference internal" href="#gymnasium.Env.reset" title="gymnasium.Env.reset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">reset()</span></code></a>, the seed will take the value -1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>int</strong> – the seed of the current <cite>np_random</cite> or -1, if the seed of the rng is unknown</p>
@@ -648,7 +660,7 @@ the seed will take the value -1.</p>
 </section>
 <section id="creating-environments">
 <h2>Creating environments<a class="headerlink" href="#creating-environments" title="Link to this heading">¶</a></h2>
-<p>To create an environment, gymnasium provides <a class="reference internal" href="../registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make()</span></code></a> to initialise the environment along with several important wrappers. Furthermore, gymnasium provides <a class="reference internal" href="../registry/#gymnasium.make_vec" title="gymnasium.make_vec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make_vec()</span></code></a> for creating vector environments and to view all the environment that can be created use <a class="reference internal" href="../registry/#gymnasium.pprint_registry" title="gymnasium.pprint_registry"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pprint_registry()</span></code></a>.</p>
+<p>To create an environment, gymnasium provides <a class="reference internal" href="../registry/#gymnasium.make" title="gymnasium.make"><code class="xref py py-func docutils literal notranslate"><span class="pre">make()</span></code></a> to initialise the environment along with several important wrappers. Furthermore, gymnasium provides <a class="reference internal" href="../registry/#gymnasium.make_vec" title="gymnasium.make_vec"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_vec()</span></code></a> for creating vector environments and to view all the environment that can be created use <a class="reference internal" href="../registry/#gymnasium.pprint_registry" title="gymnasium.pprint_registry"><code class="xref py py-func docutils literal notranslate"><span class="pre">pprint_registry()</span></code></a>.</p>
 </section>
 </section>
 
@@ -728,6 +740,9 @@ the seed will take the value -1.</p>
 <li><a class="reference internal" href="#gymnasium.Env.reset"><code class="docutils literal notranslate"><span class="pre">Env.reset()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.Env.render"><code class="docutils literal notranslate"><span class="pre">Env.render()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.Env.close"><code class="docutils literal notranslate"><span class="pre">Env.close()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Env.has_wrapper_attr"><code class="docutils literal notranslate"><span class="pre">Env.has_wrapper_attr()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Env.get_wrapper_attr"><code class="docutils literal notranslate"><span class="pre">Env.get_wrapper_attr()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.Env.set_wrapper_attr"><code class="docutils literal notranslate"><span class="pre">Env.set_wrapper_attr()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#attributes">Attributes</a><ul>

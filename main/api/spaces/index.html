@@ -516,8 +516,8 @@ check after <a class="reference internal" href="#gymnasium.spaces.Space.seed" ti
 
 </section>
 <section id="fundamental-spaces">
-<h2>Fundamental Spaces<a class="headerlink" href="#fundamental-spaces" title="Link to this heading">¶</a></h2>
-<p>Gymnasium has a number of fundamental spaces that are used as building boxes for more complex spaces.</p>
+<h2>Fundamental spaces<a class="headerlink" href="#fundamental-spaces" title="Link to this heading">¶</a></h2>
+<p>Gymnasium has a number of fundamental spaces that are used as building blocks for more complex spaces.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.Box" title="gymnasium.spaces.Box"><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></a> - Supports continuous (and discrete) vectors or matrices, used for vector observations, images, etc</p></li>
 <li><p><a class="reference internal" href="fundamental/#gymnasium.spaces.Discrete" title="gymnasium.spaces.Discrete"><code class="xref py py-class docutils literal notranslate"><span class="pre">Discrete</span></code></a> - Supports a single discrete number of values with an optional start for the values</p></li>
@@ -527,7 +527,7 @@ check after <a class="reference internal" href="#gymnasium.spaces.Space.seed" ti
 </ul>
 </section>
 <section id="composite-spaces">
-<h2>Composite Spaces<a class="headerlink" href="#composite-spaces" title="Link to this heading">¶</a></h2>
+<h2>Composite spaces<a class="headerlink" href="#composite-spaces" title="Link to this heading">¶</a></h2>
 <p>Often environment spaces require joining fundamental spaces together for vectorised environments, separate agents or readability of the space.</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="composite/#gymnasium.spaces.Dict" title="gymnasium.spaces.Dict"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a> - Supports a dictionary of keys and subspaces, used for a fixed number of unordered spaces</p></li>
@@ -542,24 +542,26 @@ check after <a class="reference internal" href="#gymnasium.spaces.Space.seed" ti
 <p>Gymnasium contains a number of helpful utility functions for flattening and unflattening spaces.
 This can be important for passing information to neural networks.</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatdim" title="gymnasium.spaces.utils.flatdim"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flatdim</span></code></a> - The number of dimensions the flattened space will contain</p></li>
-<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten_space" title="gymnasium.spaces.utils.flatten_space"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flatten_space</span></code></a> - Flattens a space for which the <code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flattened</span></code> space instances will contain</p></li>
-<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten" title="gymnasium.spaces.utils.flatten"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flatten</span></code></a> - Flattens an instance of a space that is contained within the flattened version of the space</p></li>
-<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.unflatten" title="gymnasium.spaces.utils.unflatten"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.unflatten</span></code></a> - The reverse of the <a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten_space" title="gymnasium.spaces.utils.flatten_space"><code class="xref py py-class docutils literal notranslate"><span class="pre">utils.flatten_space</span></code></a> function</p></li>
+<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatdim" title="gymnasium.spaces.utils.flatdim"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.flatdim()</span></code></a> - The number of dimensions the flattened space will contain</p></li>
+<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten_space" title="gymnasium.spaces.utils.flatten_space"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.flatten_space()</span></code></a> - Flattens a space into the space that contains the <a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten" title="gymnasium.spaces.utils.flatten"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.flatten()</span></code></a> instances</p></li>
+<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten" title="gymnasium.spaces.utils.flatten"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.flatten()</span></code></a> - Flattens an instance of a space that is contained within the flattened version of the space</p></li>
+<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.unflatten" title="gymnasium.spaces.utils.unflatten"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.unflatten()</span></code></a> - The reverse of the <a class="reference internal" href="utils/#gymnasium.spaces.utils.flatten" title="gymnasium.spaces.utils.flatten"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.flatten()</span></code></a> function</p></li>
+<li><p><a class="reference internal" href="utils/#gymnasium.spaces.utils.is_space_dtype_shape_equiv" title="gymnasium.spaces.utils.is_space_dtype_shape_equiv"><code class="xref py py-func docutils literal notranslate"><span class="pre">utils.is_space_dtype_shape_equiv()</span></code></a> - Checks if two spaces have the same dtype and shape, used to check if spaces can be batched together</p></li>
 </ul>
 </section>
 <section id="vector-utility-functions">
-<h2>Vector Utility functions<a class="headerlink" href="#vector-utility-functions" title="Link to this heading">¶</a></h2>
+<h2>Vector utility functions<a class="headerlink" href="#vector-utility-functions" title="Link to this heading">¶</a></h2>
 <p>When vectorizing environments, it is necessary to modify the observation and action spaces for new batched spaces sizes.
 Therefore, Gymnasium provides a number of additional functions used when using a space with a Vector environment.</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.batch_space" title="gymnasium.vector.utils.batch_space"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.batch_space</span></code></a> - Transforms a space into the equivalent space for <code class="docutils literal notranslate"><span class="pre">n</span></code> users</p></li>
-<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.concatenate" title="gymnasium.vector.utils.concatenate"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.concatenate</span></code></a> - Concatenates a space’s samples into a pre-generated space</p></li>
-<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.iterate" title="gymnasium.vector.utils.iterate"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.iterate</span></code></a> - Iterate over the batched space’s samples</p></li>
-<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.create_empty_array" title="gymnasium.vector.utils.create_empty_array"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.create_empty_array</span></code></a> - Creates an empty sample for an space (generally used with <code class="docutils literal notranslate"><span class="pre">concatenate</span></code>)</p></li>
-<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.create_shared_memory" title="gymnasium.vector.utils.create_shared_memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.create_shared_memory</span></code></a> - Creates a shared memory for asynchronous (multiprocessing) environment</p></li>
-<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.read_from_shared_memory" title="gymnasium.vector.utils.read_from_shared_memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.read_from_shared_memory</span></code></a> - Reads a shared memory for asynchronous (multiprocessing) environment</p></li>
-<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.write_to_shared_memory" title="gymnasium.vector.utils.write_to_shared_memory"><code class="xref py py-class docutils literal notranslate"><span class="pre">vector.utils.write_to_shared_memory</span></code></a> - Write to a shared memory for asynchronous (multiprocessing) environment</p></li>
+<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.batch_space" title="gymnasium.vector.utils.batch_space"><code class="xref py py-func docutils literal notranslate"><span class="pre">vector.utils.batch_space()</span></code></a> - Transforms a space into the equivalent space for <code class="docutils literal notranslate"><span class="pre">n</span></code> users</p></li>
+<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.batch_differing_spaces" title="gymnasium.vector.utils.batch_differing_spaces"><code class="xref py py-func docutils literal notranslate"><span class="pre">vector.utils.batch_differing_spaces()</span></code></a> - Batches a sequence of spaces of the same type that have different parameters, e.g., <code class="docutils literal notranslate"><span class="pre">Box</span></code> spaces with different bounds</p></li>
+<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.concatenate" title="gymnasium.vector.utils.concatenate"><code class="xref py py-func docutils literal notranslate"><span class="pre">vector.utils.concatenate()</span></code></a> - Concatenates a space’s samples into a pre-generated space</p></li>
+<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.iterate" title="gymnasium.vector.utils.iterate"><code class="xref py py-func docutils literal notranslate"><span class="pre">vector.utils.iterate()</span></code></a> - Iterate over the batched space’s samples</p></li>
+<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.create_empty_array" title="gymnasium.vector.utils.create_empty_array"><code class="xref py py-func docutils literal notranslate"><span class="pre">vector.utils.create_empty_array()</span></code></a> - Creates an empty sample for an space (generally used with <code class="docutils literal notranslate"><span class="pre">concatenate</span></code>)</p></li>
+<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.create_shared_memory" title="gymnasium.vector.utils.create_shared_memory"><code class="xref py py-func docutils literal notranslate"><span class="pre">vector.utils.create_shared_memory()</span></code></a> - Creates a shared memory for asynchronous (multiprocessing) environment</p></li>
+<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.read_from_shared_memory" title="gymnasium.vector.utils.read_from_shared_memory"><code class="xref py py-func docutils literal notranslate"><span class="pre">vector.utils.read_from_shared_memory()</span></code></a> - Reads a shared memory for asynchronous (multiprocessing) environment</p></li>
+<li><p><a class="reference internal" href="../vector/utils/#gymnasium.vector.utils.write_to_shared_memory" title="gymnasium.vector.utils.write_to_shared_memory"><code class="xref py py-func docutils literal notranslate"><span class="pre">vector.utils.write_to_shared_memory()</span></code></a> - Write to a shared memory for asynchronous (multiprocessing) environment</p></li>
 </ul>
 </section>
 </section>
@@ -650,10 +652,10 @@ Therefore, Gymnasium provides a number of additional functions used when using a
 <li><a class="reference internal" href="#gymnasium.spaces.Space.from_jsonable"><code class="docutils literal notranslate"><span class="pre">Space.from_jsonable()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#fundamental-spaces">Fundamental Spaces</a></li>
-<li><a class="reference internal" href="#composite-spaces">Composite Spaces</a></li>
+<li><a class="reference internal" href="#fundamental-spaces">Fundamental spaces</a></li>
+<li><a class="reference internal" href="#composite-spaces">Composite spaces</a></li>
 <li><a class="reference internal" href="#utility-functions">Utility functions</a></li>
-<li><a class="reference internal" href="#vector-utility-functions">Vector Utility functions</a></li>
+<li><a class="reference internal" href="#vector-utility-functions">Vector utility functions</a></li>
 </ul>
 </li>
 </ul>

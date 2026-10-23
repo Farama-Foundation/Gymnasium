@@ -413,7 +413,7 @@ wrapper by setting <code class="xref py py-attr docutils literal notranslate"><s
 </dd></dl>
 
 <section id="implemented-wrappers">
-<h2>Implemented Wrappers<a class="headerlink" href="#implemented-wrappers" title="Link to this heading">¶</a></h2>
+<h2>Implemented wrappers<a class="headerlink" href="#implemented-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.TransformObservation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">TransformObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">WrapperObsType</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#TransformObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.TransformObservation" title="Link to this definition">¶</a></dt>
@@ -803,7 +803,7 @@ newly instantiated or the policy was changed recently.</p>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>InvalidBound</strong> – If <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is not strictly positive.</p>
+<dd class="field-even"><p><a class="reference internal" href="../../utils/#gymnasium.error.InvalidBound" title="gymnasium.error.InvalidBound"><strong>InvalidBound</strong></a> – If <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is not strictly positive.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1047,6 +1047,74 @@ otherwise return time as remaining timesteps before truncation</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.DiscretizeObservation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">DiscretizeObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multidiscrete</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_observation/#DiscretizeObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.DiscretizeObservation" title="Link to this definition">¶</a></dt>
+<dd><p>Uniformly discretizes a continuous Box observation space into a single Discrete space.</p>
+<dl>
+<dt>Example 1 - Discretize MountainCar observation space:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"MountainCar-v0"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box([-1.2  -0.07], [0.6  0.07], (2,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([-0.4452088,  0.       ], dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">DiscretizeObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Discrete(100)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">45</span>
+</pre></div>
+</div>
+</dd>
+<dt>Example 2 - Discretize LunarLander observation space:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"LunarLander-v3"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box([ -2.5        -2.5       -10.        -10.         -6.2831855 -10.</span>
+<span class="go">  -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.</span>
+<span class="go">  1.         1.       ], (8,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">array([ 0.002,  1.418,  0.233,  0.32 , -0.003, -0.053,  0.   ,  0.   ],</span>
+<span class="go">      dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">DiscretizeObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Discrete(6561)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">4005</span>
+</pre></div>
+</div>
+</dd>
+<dt>Example 3 - Discretize LunarLander observation space with MultiDiscrete:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"LunarLander-v3"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">Box([ -2.5        -2.5       -10.        -10.         -6.2831855 -10.</span>
+<span class="go">  -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.</span>
+<span class="go">  1.         1.       ], (8,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">array([ 0.002,  1.418,  0.233,  0.32 , -0.003, -0.053,  0.   ,  0.   ],</span>
+<span class="go">      dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">DiscretizeObservation</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">multidiscrete</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+<span class="go">MultiDiscrete([3 3 3 3 3 3 3 3])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([1, 2, 1, 1, 1, 1, 0, 0])</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap.</p></li>
+<li><p><strong>bins</strong> – int or tuple of ints (number of bins per dimension).</p></li>
+<li><p><strong>multidiscrete</strong> – If True, use MultiDiscrete space instead of flattening to Discrete.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -1124,7 +1192,7 @@ otherwise return time as remaining timesteps before truncation</p></li>
 <li><a class="reference internal" href="#gymnasium.ObservationWrapper.observation"><code class="docutils literal notranslate"><span class="pre">ObservationWrapper.observation()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#implemented-wrappers">Implemented Wrappers</a><ul>
+<li><a class="reference internal" href="#implemented-wrappers">Implemented wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.TransformObservation"><code class="docutils literal notranslate"><span class="pre">TransformObservation</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.DelayObservation"><code class="docutils literal notranslate"><span class="pre">DelayObservation</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.DtypeObservation"><code class="docutils literal notranslate"><span class="pre">DtypeObservation</span></code></a></li>
@@ -1139,6 +1207,7 @@ otherwise return time as remaining timesteps before truncation</p></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.ReshapeObservation"><code class="docutils literal notranslate"><span class="pre">ReshapeObservation</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.RescaleObservation"><code class="docutils literal notranslate"><span class="pre">RescaleObservation</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.TimeAwareObservation"><code class="docutils literal notranslate"><span class="pre">TimeAwareObservation</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.DiscretizeObservation"><code class="docutils literal notranslate"><span class="pre">DiscretizeObservation</span></code></a></li>
 </ul>
 </li>
 </ul>

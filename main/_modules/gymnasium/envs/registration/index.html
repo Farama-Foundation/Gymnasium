@@ -495,15 +495,20 @@
 <span class="w">        </span><span class="sd">"""Calls after the spec is created to extract the namespace, name and version from the environment id."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">parse_env_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
+<div class="viewcode-block" id="EnvSpec.make">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.EnvSpec.make">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Env</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Calls ``make`` using the environment spec and any keyword arguments."""</span>
-        <span class="k">return</span> <span class="n">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">make</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="EnvSpec.to_json">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.EnvSpec.to_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Converts the environment spec into a json compatible string.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A jsonifyied string for the environment spec</span>
+<span class="sd">            A jsonified string for the environment spec</span>
 <span class="sd">        """</span>
         <span class="n">env_spec_dict</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="c1"># As the namespace, name and version are initialised after `init` then we remove the attributes</span>
@@ -514,7 +519,8 @@
         <span class="c1"># To check that the environment spec can be transformed to a json compatible type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_can_jsonify</span><span class="p">(</span><span class="n">env_spec_dict</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">env_spec_dict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">env_spec_dict</span><span class="p">)</span></div>
+
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_check_can_jsonify</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -534,6 +540,8 @@
                     <span class="sa">f</span><span class="s2">"Callable found in </span><span class="si">{</span><span class="n">spec_name</span><span class="si">}</span><span class="s2"> for </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> attribute with value=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">. Currently, Gymnasium does not support serialising callables."</span>
                 <span class="p">)</span>
 
+<div class="viewcode-block" id="EnvSpec.from_json">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.EnvSpec.from_json">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_json</span><span class="p">(</span><span class="n">json_env_spec</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Converts a JSON string into a specification stack.</span>
@@ -563,8 +571,11 @@
                 <span class="sa">f</span><span class="s2">"An issue occurred when trying to make </span><span class="si">{</span><span class="n">parsed_env_spec</span><span class="si">}</span><span class="s2"> an EnvSpec"</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
-        <span class="k">return</span> <span class="n">env_spec</span>
+        <span class="k">return</span> <span class="n">env_spec</span></div>
 
+
+<div class="viewcode-block" id="EnvSpec.pprint">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.EnvSpec.pprint">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pprint</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">disable_print</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -618,15 +629,19 @@
             <span class="k">return</span> <span class="n">output</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div>
+</div>
 
 
 
+<div class="viewcode-block" id="VectorizeMode">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.VectorizeMode">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VectorizeMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""All possible vectorization modes used in `make_vec`."""</span>
+<span class="w">    </span><span class="sd">"""All possible vectorization modes used in :func:`gymnasium.make_vec`, passed as its ``vectorization_mode`` argument."""</span>
 
     <span class="n">ASYNC</span> <span class="o">=</span> <span class="s2">"async"</span>
     <span class="n">SYNC</span> <span class="o">=</span> <span class="s2">"sync"</span>
-    <span class="n">VECTOR_ENTRY_POINT</span> <span class="o">=</span> <span class="s2">"vector_entry_point"</span>
+    <span class="n">VECTOR_ENTRY_POINT</span> <span class="o">=</span> <span class="s2">"vector_entry_point"</span></div>
+
 
 
 <span class="c1"># Global registry of environments. Meant to be accessed through `register` and `make`</span>
@@ -936,9 +951,21 @@
 
 
 
+<div class="viewcode-block" id="register_envs">
+<a class="viewcode-back" href="../../../../api/registry/#gymnasium.register_envs">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_envs</span><span class="p">(</span><span class="n">env_module</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""A No-op function such that it can appear to IDEs that a module is used."""</span>
-    <span class="k">pass</span>
+<span class="w">    </span><span class="sd">"""A no-op function such that it appears to IDEs and linters that a module is used.</span>
+
+<span class="sd">    Third-party packages often register their environments when imported. Passing the imported module to this</span>
+<span class="sd">    function stops the import from being flagged or removed as unused.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import ale_py  # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; gym.register_envs(ale_py)  # doctest: +SKIP</span>
+<span class="sd">        &gt;&gt;&gt; env = gym.make("ALE/Pong-v5")  # doctest: +SKIP</span>
+<span class="sd">    """</span>
+    <span class="k">pass</span></div>
+
 
 
 <div class="viewcode-block" id="namespace">

@@ -383,7 +383,7 @@
             <section class="tex2jax_ignore mathjax_ignore" id="action-wrappers">
 <h1>Action Wrappers<a class="headerlink" href="#action-wrappers" title="Link to this heading">¶</a></h1>
 <section id="base-class">
-<h2>Base Class<a class="headerlink" href="#base-class" title="Link to this heading">¶</a></h2>
+<h2>Base class<a class="headerlink" href="#base-class" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.ActionWrapper">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.</span></span><span class="sig-name descname"><span class="pre">ActionWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/core/#ActionWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.ActionWrapper" title="Link to this definition">¶</a></dt>
@@ -418,8 +418,8 @@ the <code class="xref py py-meth docutils literal notranslate"><span class="pre"
 </dd></dl>
 
 </section>
-<section id="available-action-wrappers">
-<h2>Available Action Wrappers<a class="headerlink" href="#available-action-wrappers" title="Link to this heading">¶</a></h2>
+<section id="implemented-wrappers">
+<h2>Implemented wrappers<a class="headerlink" href="#implemented-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.TransformAction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">TransformAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">WrapperActType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="p"><span class="pre">[</span></span><span class="pre">WrapperActType</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_action/#TransformAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.TransformAction" title="Link to this definition">¶</a></dt>
@@ -528,7 +528,7 @@ or <code class="xref py py-attr docutils literal notranslate"><span class="pre">
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>InvalidBound</strong> – If a component of <code class="docutils literal notranslate"><span class="pre">min_action</span></code> equals the matching component of <code class="docutils literal notranslate"><span class="pre">max_action</span></code>.</p>
+<dd class="field-even"><p><a class="reference internal" href="../../utils/#gymnasium.error.InvalidBound" title="gymnasium.error.InvalidBound"><strong>InvalidBound</strong></a> – If a component of <code class="docutils literal notranslate"><span class="pre">min_action</span></code> equals the matching component of <code class="docutils literal notranslate"><span class="pre">max_action</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -617,6 +617,78 @@ is truncated during repetition, the loop stops early.</p>
 </dl>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.DiscretizeAction">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">DiscretizeAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multidiscrete</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/transform_action/#DiscretizeAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.DiscretizeAction" title="Link to this definition">¶</a></dt>
+<dd><p>Uniformly discretizes a continuous Box action space into a single Discrete space.</p>
+<dl>
+<dt>Example 1 - Discretize Pendulum action space:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Pendulum-v1"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">Box(-2.0, 2.0, (1,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">([</span><span class="o">-</span><span class="mf">0.6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([-0.17606162,  0.9843792 ,  0.5292768 ], dtype=float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">DiscretizeAction</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">Discrete(10)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([-0.17606162,  0.9843792 ,  0.5292768 ], dtype=float32)</span>
+</pre></div>
+</div>
+</dd>
+<dt>Example 2 - Discretize Reacher action space:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Reacher-v5"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">Box(-1.0, 1.0, (2,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">([</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
+<span class="go">        0.11442572, -1.18958125, -1.97979484,  0.10544613, -0.10896536])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">DiscretizeAction</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">Discrete(100)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
+<span class="go">        0.11442572, -1.18958118, -1.97979484,  0.10544613, -0.10896536])</span>
+</pre></div>
+</div>
+</dd>
+<dt>Example 2 - Discretize Reacher action space with MultiDiscrete:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Reacher-v5"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">Box(-1.0, 1.0, (2,), float32)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">([</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
+<span class="go">        0.11442572, -1.18958125, -1.97979484,  0.10544613, -0.10896536])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">DiscretizeAction</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">multidiscrete</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+<span class="go">MultiDiscrete([10 10])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span>
+<span class="go">array([ 0.99908342,  0.99948506,  0.04280567, -0.03208766,  0.10445588,</span>
+<span class="go">        0.11442572, -1.18958118, -1.97979484,  0.10544613, -0.10896536])</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment to wrap.</p></li>
+<li><p><strong>bins</strong> – int or tuple of ints (number of bins per dimension).</p></li>
+<li><p><strong>multidiscrete</strong> – If True, use MultiDiscrete action space instead of flattening to Discrete.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -690,19 +762,20 @@ is truncated during repetition, the loop stops early.</p>
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Action Wrappers</a><ul>
-<li><a class="reference internal" href="#base-class">Base Class</a><ul>
+<li><a class="reference internal" href="#base-class">Base class</a><ul>
 <li><a class="reference internal" href="#gymnasium.ActionWrapper"><code class="docutils literal notranslate"><span class="pre">ActionWrapper</span></code></a><ul>
 <li><a class="reference internal" href="#gymnasium.ActionWrapper.action"><code class="docutils literal notranslate"><span class="pre">ActionWrapper.action()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#available-action-wrappers">Available Action Wrappers</a><ul>
+<li><a class="reference internal" href="#implemented-wrappers">Implemented wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.TransformAction"><code class="docutils literal notranslate"><span class="pre">TransformAction</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.ClipAction"><code class="docutils literal notranslate"><span class="pre">ClipAction</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.RescaleAction"><code class="docutils literal notranslate"><span class="pre">RescaleAction</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.StickyAction"><code class="docutils literal notranslate"><span class="pre">StickyAction</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.RepeatAction"><code class="docutils literal notranslate"><span class="pre">RepeatAction</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.DiscretizeAction"><code class="docutils literal notranslate"><span class="pre">DiscretizeAction</span></code></a></li>
 </ul>
 </li>
 </ul>

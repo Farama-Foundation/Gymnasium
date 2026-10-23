@@ -1164,6 +1164,8 @@
 
 
 
+<div class="viewcode-block" id="DiscretizeObservation">
+<a class="viewcode-back" href="../../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.DiscretizeObservation">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DiscretizeObservation</span><span class="p">(</span>
     <span class="n">TransformObservation</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">],</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="p">,</span>
@@ -1191,9 +1193,9 @@
 <span class="sd">          -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.</span>
 <span class="sd">          1.         1.       ], (8,), float32)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
-<span class="sd">        &gt;&gt;&gt; obs</span>
-<span class="sd">        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,</span>
-<span class="sd">               -0.05269805,  0.        ,  0.        ], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; obs.round(3)</span>
+<span class="sd">        array([ 0.002,  1.418,  0.233,  0.32 , -0.003, -0.053,  0.   ,  0.   ],</span>
+<span class="sd">              dtype=float32)</span>
 <span class="sd">        &gt;&gt;&gt; env = DiscretizeObservation(env, bins=3)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space</span>
 <span class="sd">        Discrete(6561)</span>
@@ -1208,9 +1210,9 @@
 <span class="sd">          -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.</span>
 <span class="sd">          1.         1.       ], (8,), float32)</span>
 <span class="sd">        &gt;&gt;&gt; obs, _ = env.reset(seed=42)</span>
-<span class="sd">        &gt;&gt;&gt; obs</span>
-<span class="sd">        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,</span>
-<span class="sd">               -0.05269805,  0.        ,  0.        ], dtype=float32)</span>
+<span class="sd">        &gt;&gt;&gt; obs.round(3)</span>
+<span class="sd">        array([ 0.002,  1.418,  0.233,  0.32 , -0.003, -0.053,  0.   ,  0.   ],</span>
+<span class="sd">              dtype=float32)</span>
 <span class="sd">        &gt;&gt;&gt; env = DiscretizeObservation(env, bins=3, multidiscrete=True)</span>
 <span class="sd">        &gt;&gt;&gt; env.observation_space</span>
 <span class="sd">        MultiDiscrete([3 3 3 3 3 3 3 3])</span>
@@ -1316,7 +1318,8 @@
         <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bins</span><span class="p">):</span>
             <span class="n">indices</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">flat_index</span> <span class="o">%</span> <span class="n">b</span><span class="p">)</span>
             <span class="n">flat_index</span> <span class="o">//=</span> <span class="n">b</span>
-        <span class="k">return</span> <span class="n">indices</span>
+        <span class="k">return</span> <span class="n">indices</span></div>
+
 </pre></div>
           </article>
         </div>

@@ -572,7 +572,7 @@ The reward and termination/truncation <code class="docutils literal notranslate"
 
 </section>
 <section id="vector-only-wrappers">
-<h2>Vector Only wrappers<a class="headerlink" href="#vector-only-wrappers" title="Link to this heading">¶</a></h2>
+<h2>Vector only wrappers<a class="headerlink" href="#vector-only-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.vector.DictInfoToList">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">DictInfoToList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/dict_info_to_list/#DictInfoToList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.DictInfoToList" title="Link to this definition">¶</a></dt>
@@ -770,7 +770,7 @@ The following example illustrate use-cases where a custom lambda observation wra
 
 </section>
 <section id="vectorized-common-wrappers">
-<h2>Vectorized Common wrappers<a class="headerlink" href="#vectorized-common-wrappers" title="Link to this heading">¶</a></h2>
+<h2>Vectorized common wrappers<a class="headerlink" href="#vectorized-common-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.vector.RecordEpisodeStatistics">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">RecordEpisodeStatistics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stats_key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'episode'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/common/#RecordEpisodeStatistics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.RecordEpisodeStatistics" title="Link to this definition">¶</a></dt>
@@ -831,9 +831,77 @@ is used to indicate the environment index which has a terminated or truncated ep
 </dl>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.vector.RecordVideo">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">RecordVideo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_aspect_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_first_only</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rl-video'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gc_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">lambda</span> <span class="pre">episode:</span> <span class="pre">...</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/rendering/#RecordVideo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.RecordVideo" title="Link to this definition">¶</a></dt>
+<dd><p>Adds support for video recording for Vector-based environments.</p>
+<p>The class is the same as gymnasium.wrappers.rendering.RecordVideo, but
+expects multiple frames when rendering the environment (one for each
+environment of the VectorEnv). Frames are concatenated into one frame such
+that its aspect ratio is as close as possible to the desired one.</p>
+<p>Examples - Run 5 environments for 200 timesteps, and save the video every 5 episodes:
+&gt;&gt;&gt; import os
+&gt;&gt;&gt; import gymnasium as gym
+&gt;&gt;&gt; from gymnasium.wrappers.vector import RecordVideo
+&gt;&gt;&gt; envs = gym.make_vec(“CartPole-v1”, num_envs=5, render_mode=”rgb_array”)
+&gt;&gt;&gt; envs = RecordVideo(
+…     envs,
+…     video_folder=”save_videos_5envs”,
+…     video_aspect_ratio=(1,1),
+…     episode_trigger=lambda t: t % 5 == 0,
+… )
+&gt;&gt;&gt; _ = envs.reset(seed=123)
+&gt;&gt;&gt; _ = envs.action_space.seed(123)
+&gt;&gt;&gt; for i in range(200):
+…     actions = envs.action_space.sample()
+…     _ = envs.step(actions)
+&gt;&gt;&gt; envs.close()
+&gt;&gt;&gt; len(os.listdir(“save_videos_5envs”))
+2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment that will be wrapped</p></li>
+<li><p><strong>video_folder</strong> (<em>str</em>) – The folder where the recordings will be stored</p></li>
+<li><p><strong>video_aspect_ratio</strong> (<em>tuple</em>) – the desired aspect ratio of the video concatenating all environments. For example, (1, 1) means an
+aspect ratio of 1:1, while (16, 9) means 16:9.</p></li>
+<li><p><strong>record_first_only</strong> (<em>bool</em>) – if True, only the first environment is recorded.</p></li>
+<li><p><strong>episode_trigger</strong> – Function that accepts an integer and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff a recording should be started at this episode</p></li>
+<li><p><strong>step_trigger</strong> – Function that accepts an integer and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff a recording should be started at this step</p></li>
+<li><p><strong>video_length</strong> (<em>int</em>) – The length of recorded episodes. If 0, entire episodes are recorded.
+Otherwise, snippets of the specified length are captured</p></li>
+<li><p><strong>name_prefix</strong> (<em>str</em>) – Will be prepended to the filename of the recordings</p></li>
+<li><p><strong>fps</strong> (<em>int</em>) – The frame per second in the video. Provides a custom video fps for environment, if <code class="docutils literal notranslate"><span class="pre">None</span></code> then
+the environment metadata <code class="docutils literal notranslate"><span class="pre">render_fps</span></code> key is used if it exists, otherwise a default value of 30 is used.</p></li>
+<li><p><strong>disable_logger</strong> (<em>bool</em>) – Whether to disable moviepy logger or not, default it is disabled</p></li>
+<li><p><strong>gc_trigger</strong> – Function that accepts an integer and returns <code class="docutils literal notranslate"><span class="pre">True</span></code> iff garbage collection should be performed after this episode</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For vector environments that use same-step autoreset (see <a class="reference external" href="https://farama.org/Vector-Autoreset-Mode">https://farama.org/Vector-Autoreset-Mode</a> for more details)
+then the final frame of the episode will not be included in the video.</p>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.vector.HumanRendering">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">HumanRendering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/rendering/#HumanRendering"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.HumanRendering" title="Link to this definition">¶</a></dt>
+<dd><p>Adds support for Human-based Rendering for Vector-based environments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The vector environment</p></li>
+<li><p><strong>screen_size</strong> – The rendering screen size otherwise the environment sub-env render size is used</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="implemented-observation-wrappers">
-<h2>Implemented Observation wrappers<a class="headerlink" href="#implemented-observation-wrappers" title="Link to this heading">¶</a></h2>
+<h2>Implemented observation wrappers<a class="headerlink" href="#implemented-observation-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.vector.TransformObservation">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">TransformObservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">WrapperObsType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/vectorize_observation/#TransformObservation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.TransformObservation" title="Link to this definition">¶</a></dt>
@@ -915,7 +983,7 @@ Otherwise, the <code class="docutils literal notranslate"><span class="pre">Vect
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> – The vector environment to wrap</p></li>
-<li><p><strong>filter_keys</strong> – The subspaces to be included, use a list of strings or integers for <code class="docutils literal notranslate"><span class="pre">Dict</span></code> and <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> spaces respectivesly</p></li>
+<li><p><strong>filter_keys</strong> – The subspaces to be included, use a list of strings or integers for <code class="docutils literal notranslate"><span class="pre">Dict</span></code> and <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> spaces respectively</p></li>
 </ul>
 </dd>
 </dl>
@@ -1143,14 +1211,14 @@ Partial resets (<code class="docutils literal notranslate"><span class="pre">res
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>InvalidBound</strong> – If <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is not strictly positive.</p>
+<dd class="field-even"><p><a class="reference internal" href="../../utils/#gymnasium.error.InvalidBound" title="gymnasium.error.InvalidBound"><strong>InvalidBound</strong></a> – If <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is not strictly positive.</p>
 </dd>
 </dl>
 </dd></dl>
 
 </section>
 <section id="implemented-action-wrappers">
-<h2>Implemented Action wrappers<a class="headerlink" href="#implemented-action-wrappers" title="Link to this heading">¶</a></h2>
+<h2>Implemented action wrappers<a class="headerlink" href="#implemented-action-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.vector.TransformAction">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">TransformAction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">WrapperActType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">single_action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../spaces/#gymnasium.spaces.Space" title="gymnasium.spaces.space.Space"><span class="pre">Space</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/vectorize_action/#TransformAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.TransformAction" title="Link to this definition">¶</a></dt>
@@ -1288,7 +1356,7 @@ provide an <code class="xref py py-attr docutils literal notranslate"><span clas
 
 </section>
 <section id="implemented-reward-wrappers">
-<h2>Implemented Reward wrappers<a class="headerlink" href="#implemented-reward-wrappers" title="Link to this heading">¶</a></h2>
+<h2>Implemented reward wrappers<a class="headerlink" href="#implemented-reward-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.vector.TransformReward">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">TransformReward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ArrayType</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/vectorize_reward/#TransformReward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.TransformReward" title="Link to this definition">¶</a></dt>
@@ -1421,14 +1489,14 @@ i.e., at the end of an episode for same-step autoreset and on <code class="docut
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>InvalidBound</strong> – If <code class="docutils literal notranslate"><span class="pre">gamma</span></code> is outside <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, or if <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is not strictly positive.</p>
+<dd class="field-even"><p><a class="reference internal" href="../../utils/#gymnasium.error.InvalidBound" title="gymnasium.error.InvalidBound"><strong>InvalidBound</strong></a> – If <code class="docutils literal notranslate"><span class="pre">gamma</span></code> is outside <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>, or if <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> is not strictly positive.</p>
 </dd>
 </dl>
 </dd></dl>
 
 </section>
 <section id="implemented-data-conversion-wrappers">
-<h2>Implemented Data Conversion wrappers<a class="headerlink" href="#implemented-data-conversion-wrappers" title="Link to this heading">¶</a></h2>
+<h2>Implemented data conversion wrappers<a class="headerlink" href="#implemented-data-conversion-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.vector.ArrayConversion">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.vector.</span></span><span class="sig-name descname"><span class="pre">ArrayConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../#gymnasium.vector.VectorEnv" title="gymnasium.vector.vector_env.VectorEnv"><span class="pre">VectorEnv</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_xp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModuleType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_xp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModuleType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/vector/array_conversion/#ArrayConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.vector.ArrayConversion" title="Link to this definition">¶</a></dt>
@@ -1629,18 +1697,20 @@ data or device transfers.</p>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#vector-only-wrappers">Vector Only wrappers</a><ul>
+<li><a class="reference internal" href="#vector-only-wrappers">Vector only wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.DictInfoToList"><code class="docutils literal notranslate"><span class="pre">DictInfoToList</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.VectorizeTransformObservation"><code class="docutils literal notranslate"><span class="pre">VectorizeTransformObservation</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.VectorizeTransformAction"><code class="docutils literal notranslate"><span class="pre">VectorizeTransformAction</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.VectorizeTransformReward"><code class="docutils literal notranslate"><span class="pre">VectorizeTransformReward</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#vectorized-common-wrappers">Vectorized Common wrappers</a><ul>
+<li><a class="reference internal" href="#vectorized-common-wrappers">Vectorized common wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.RecordEpisodeStatistics"><code class="docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.vector.RecordVideo"><code class="docutils literal notranslate"><span class="pre">RecordVideo</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.vector.HumanRendering"><code class="docutils literal notranslate"><span class="pre">HumanRendering</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#implemented-observation-wrappers">Implemented Observation wrappers</a><ul>
+<li><a class="reference internal" href="#implemented-observation-wrappers">Implemented observation wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.TransformObservation"><code class="docutils literal notranslate"><span class="pre">TransformObservation</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.FilterObservation"><code class="docutils literal notranslate"><span class="pre">FilterObservation</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.FlattenObservation"><code class="docutils literal notranslate"><span class="pre">FlattenObservation</span></code></a></li>
@@ -1652,19 +1722,19 @@ data or device transfers.</p>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.NormalizeObservation"><code class="docutils literal notranslate"><span class="pre">NormalizeObservation</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#implemented-action-wrappers">Implemented Action wrappers</a><ul>
+<li><a class="reference internal" href="#implemented-action-wrappers">Implemented action wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.TransformAction"><code class="docutils literal notranslate"><span class="pre">TransformAction</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.ClipAction"><code class="docutils literal notranslate"><span class="pre">ClipAction</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.RescaleAction"><code class="docutils literal notranslate"><span class="pre">RescaleAction</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#implemented-reward-wrappers">Implemented Reward wrappers</a><ul>
+<li><a class="reference internal" href="#implemented-reward-wrappers">Implemented reward wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.TransformReward"><code class="docutils literal notranslate"><span class="pre">TransformReward</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.ClipReward"><code class="docutils literal notranslate"><span class="pre">ClipReward</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.NormalizeReward"><code class="docutils literal notranslate"><span class="pre">NormalizeReward</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#implemented-data-conversion-wrappers">Implemented Data Conversion wrappers</a><ul>
+<li><a class="reference internal" href="#implemented-data-conversion-wrappers">Implemented data conversion wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.ArrayConversion"><code class="docutils literal notranslate"><span class="pre">ArrayConversion</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.JaxToNumpy"><code class="docutils literal notranslate"><span class="pre">JaxToNumpy</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.vector.JaxToTorch"><code class="docutils literal notranslate"><span class="pre">JaxToTorch</span></code></a></li>

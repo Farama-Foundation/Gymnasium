@@ -399,14 +399,14 @@ This randomly selected seed is returned as the second value of the tuple.</p>
 <dd class="field-even"><p><strong>A NumPy-based Random Number Generator and generator seed</strong></p>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>Error</strong> – Seed must be a non-negative integer</p>
+<dd class="field-odd"><p><a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><strong>Error</strong></a> – Seed must be a non-negative integer</p>
 </dd>
 </dl>
 </dd></dl>
 
 </section>
 <section id="environment-checking">
-<h2>Environment Checking<a class="headerlink" href="#environment-checking" title="Link to this heading">¶</a></h2>
+<h2>Environment checking<a class="headerlink" href="#environment-checking" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.utils.env_checker.check_env">
 <span class="sig-prename descclassname"><span class="pre">gymnasium.utils.env_checker.</span></span><span class="sig-name descname"><span class="pre">check_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_render_check</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_close_check</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/gymnasium/utils/env_checker/#check_env"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.utils.env_checker.check_env" title="Link to this definition">¶</a></dt>
@@ -421,6 +421,33 @@ Furthermore, the function will call the <a class="reference internal" href="../e
 <li><p><strong>warn</strong> – Ignored, previously silenced particular warnings</p></li>
 <li><p><strong>skip_render_check</strong> – Whether to skip the checks for the render method. False by default (useful for the CI)</p></li>
 <li><p><strong>skip_close_check</strong> – Whether to skip the checks for the close method. False by default</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="gymnasium.utils.env_match.check_environments_match">
+<span class="sig-prename descclassname"><span class="pre">gymnasium.utils.env_match.</span></span><span class="sig-name descname"><span class="pre">check_environments_match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_a</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_rew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_terminal</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_truncated</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip_render</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_comparison</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'equivalence'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/gymnasium/utils/env_match/#check_environments_match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.utils.env_match.check_environments_match" title="Link to this definition">¶</a></dt>
+<dd><p>Checks if the environments <cite>env_a</cite> &amp; <cite>env_b</cite> are identical.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env_a</strong> – First environment to check.</p></li>
+<li><p><strong>env_b</strong> – Second environment to check.</p></li>
+<li><p><strong>num_steps</strong> – number of timesteps to test for, setting to 0 tests only resetting.</p></li>
+<li><p><strong>seed</strong> – The seed used to reset both environments and to seed <cite>env_a</cite>’s action space for sampling actions.</p></li>
+<li><p><strong>skip_obs</strong> – If <cite>True</cite> it does not check for equivalence of the observation space or the observations.</p></li>
+<li><p><strong>skip_rew</strong> – If <cite>True</cite> it does not check for equivalence of the rewards.</p></li>
+<li><p><strong>skip_terminal</strong> – If <cite>True</cite> it does not check for equivalence of the terminated signals.</p></li>
+<li><p><strong>skip_truncated</strong> – If <cite>True</cite> it does not check for equivalence of the truncated signals.</p></li>
+<li><p><strong>skip_render</strong> – If <cite>True</cite> it does not check for equivalent renders. Note: the render checks are automatically skipped if either environment’s <cite>render_mode</cite> is <cite>None</cite> or “human”.</p></li>
+<li><p><strong>info_comparison</strong> – The options are
+If “equivalence” then checks if the <cite>info`s are identical,
+If “superset” checks if `info_b</cite> is a (non-strict) superset of <cite>info_a</cite>
+If “keys-equivalence” checks if the <cite>info`s keys are identical (while ignoring the values).
+If “keys-superset” checks if the `info_b`s keys are a superset of `info_a</cite>’s keys.
+If “skip” no checks are made at the <cite>info</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -563,7 +590,7 @@ and uses the returned values to update live plots of the metrics.</p>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>DependencyNotInstalled</strong> – If matplotlib is not installed</p>
+<dd class="field-even"><p><a class="reference internal" href="#gymnasium.error.DependencyNotInstalled" title="gymnasium.error.DependencyNotInstalled"><strong>DependencyNotInstalled</strong></a> – If matplotlib is not installed</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -636,9 +663,30 @@ However, philosophers are still not sure whether it is still the same dog.</p>
 <p>Uses the <code class="docutils literal notranslate"><span class="pre">args</span></code> and <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> from the object’s constructor for pickling.</p>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.utils.RecordConstructorArgs">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.utils.</span></span><span class="sig-name descname"><span class="pre">RecordConstructorArgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_disable_deepcopy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/utils/record_constructor/#RecordConstructorArgs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.utils.RecordConstructorArgs" title="Link to this definition">¶</a></dt>
+<dd><p>Records all arguments passed to constructor to <cite>_saved_kwargs</cite>.</p>
+<p>This can be used to save and reproduce class constructor arguments.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If two class inherit from RecordConstructorArgs then the first class to call <cite>RecordConstructorArgs.__init__(self, …)</cite> will have
+their kwargs saved will all subsequent <cite>RecordConstructorArgs.__init__</cite> being ignored.</p>
+<p>Therefore, always call <cite>RecordConstructorArgs.__init__</cite> before the <cite>Class.__init__</cite></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_disable_deepcopy</strong> – If to not deepcopy the kwargs passed</p></li>
+<li><p><strong>**kwargs</strong> – Arguments to save</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="save-rendering-videos">
-<h2>Save Rendering Videos<a class="headerlink" href="#save-rendering-videos" title="Link to this heading">¶</a></h2>
+<h2>Save rendering videos<a class="headerlink" href="#save-rendering-videos" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.utils.save_video.save_video">
 <span class="sig-prename descclassname"><span class="pre">gymnasium.utils.save_video.</span></span><span class="sig-name descname"><span class="pre">save_video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_folder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_trigger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">video_length</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rl-video'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_starting_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/gymnasium/utils/save_video/#save_video"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.utils.save_video.save_video" title="Link to this definition">¶</a></dt>
@@ -706,7 +754,7 @@ You need to specify either fps or duration.</p></li>
 
 </section>
 <section id="old-to-new-step-api-compatibility">
-<h2>Old to New Step API Compatibility<a class="headerlink" href="#old-to-new-step-api-compatibility" title="Link to this heading">¶</a></h2>
+<h2>Old to new step API compatibility<a class="headerlink" href="#old-to-new-step-api-compatibility" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.utils.step_api_compatibility.step_api_compatibility">
 <span class="sig-prename descclassname"><span class="pre">gymnasium.utils.step_api_compatibility.</span></span><span class="sig-name descname"><span class="pre">step_api_compatibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_returns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_truncation_bool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_vector_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/gymnasium/utils/step_api_compatibility/#step_api_compatibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.utils.step_api_compatibility.step_api_compatibility" title="Link to this definition">¶</a></dt>
@@ -774,8 +822,8 @@ wrapper is written in new API, and the final step output is desired to be in old
 
 </section>
 <section id="runtime-performance-benchmark">
-<h2>Runtime Performance benchmark<a class="headerlink" href="#runtime-performance-benchmark" title="Link to this heading">¶</a></h2>
-<p>Sometimes is neccary to measure your environment’s runtime performance, and ensure no performance regressions take place.
+<h2>Runtime performance benchmark<a class="headerlink" href="#runtime-performance-benchmark" title="Link to this heading">¶</a></h2>
+<p>Sometimes it is necessary to measure your environment’s runtime performance, and ensure no performance regressions take place.
 These tests require manual inspection of its outputs:</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="gymnasium.utils.performance.benchmark_step">
@@ -844,6 +892,152 @@ slightly longer while its final step completes.</p></li>
 <p>Note: does not work with <cite>render_mode=’human’</cite>
 :param env: the environment to benchmarked (Note: must be renderable).
 :param target_duration: the duration of the benchmark in seconds (note: it will go slightly over it).</p>
+</dd></dl>
+
+</section>
+<section id="module-gymnasium.error">
+<span id="errors"></span><h2>Errors<a class="headerlink" href="#module-gymnasium.error" title="Link to this heading">¶</a></h2>
+<p>Set of Error classes for gymnasium.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.AlreadyPendingCallError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">AlreadyPendingCallError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/error/#AlreadyPendingCallError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.AlreadyPendingCallError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when <cite>reset</cite>, or <cite>step</cite> is called asynchronously (e.g. with <cite>reset_async</cite>, or <cite>step_async</cite> respectively), and <cite>reset_async</cite>, or <cite>step_async</cite> (respectively) is called again (without a complete call to <cite>reset_wait</cite>, or <cite>step_wait</cite> respectively).</p>
+<p>Initialises the exception with name attributes.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.ClosedEnvironmentError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">ClosedEnvironmentError</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#ClosedEnvironmentError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.ClosedEnvironmentError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Trying to call <cite>reset</cite>, or <cite>step</cite>, while the environment is closed.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.CustomSpaceError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">CustomSpaceError</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#CustomSpaceError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.CustomSpaceError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>The space is a custom gymnasium.Space instance, and is not supported by <cite>AsyncVectorEnv</cite> with <cite>shared_memory=True</cite>.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.DependencyNotInstalled">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">DependencyNotInstalled</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#DependencyNotInstalled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.DependencyNotInstalled" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Raised when the user has not installed a dependency.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.DeprecatedEnv">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">DeprecatedEnv</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#DeprecatedEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.DeprecatedEnv" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Raised when the user requests an env from the registry with an older version number than the latest env with the same name.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.DeprecatedWrapper">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">DeprecatedWrapper</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#DeprecatedWrapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.DeprecatedWrapper" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ImportError</span></code></p>
+<p>Error message for importing an old version of a wrapper.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.Error">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">Error</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#Error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.Error" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error superclass.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.InvalidAction">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">InvalidAction</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#InvalidAction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.InvalidAction" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Raised when the user performs an action not contained within the action space.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.InvalidBound">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">InvalidBound</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#InvalidBound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.InvalidBound" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Raised when the clipping an array with invalid upper and/or lower bound.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.InvalidMetadata">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">InvalidMetadata</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#InvalidMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.InvalidMetadata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Raised when the metadata of an environment is not valid.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.InvalidProbability">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">InvalidProbability</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#InvalidProbability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.InvalidProbability" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Raised when given an invalid value for a probability.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.MissingArgument">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">MissingArgument</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#MissingArgument"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.MissingArgument" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Raised when a required argument in the initializer is missing.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.NameNotFound">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">NameNotFound</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#NameNotFound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.NameNotFound" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.UnregisteredEnv" title="gymnasium.error.UnregisteredEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnregisteredEnv</span></code></a></p>
+<p>Raised when the user requests an env from the registry where the name doesn’t exist.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.NamespaceNotFound">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">NamespaceNotFound</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#NamespaceNotFound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.NamespaceNotFound" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.UnregisteredEnv" title="gymnasium.error.UnregisteredEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnregisteredEnv</span></code></a></p>
+<p>Raised when the user requests an env from the registry where the namespace doesn’t exist.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.NoAsyncCallError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">NoAsyncCallError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/gymnasium/error/#NoAsyncCallError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.NoAsyncCallError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when an asynchronous <cite>reset</cite>, or <cite>step</cite> is not running, but <cite>reset_wait</cite>, or <cite>step_wait</cite> (respectively) is called.</p>
+<p>Initialises the exception with name attributes.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.RegistrationError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">RegistrationError</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#RegistrationError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.RegistrationError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Raised when the user attempts to register an invalid env. For example, an unversioned env when a versioned env exists.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.ResetNeeded">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">ResetNeeded</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#ResetNeeded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.ResetNeeded" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>When the order enforcing is violated, i.e. step or render is called before reset.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.UnregisteredEnv">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">UnregisteredEnv</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#UnregisteredEnv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.UnregisteredEnv" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Raised when the user requests an env from the registry that does not actually exist.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.UnsupportedMode">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">UnsupportedMode</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#UnsupportedMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.UnsupportedMode" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.Error" title="gymnasium.error.Error"><code class="xref py py-class docutils literal notranslate"><span class="pre">Error</span></code></a></p>
+<p>Raised when the user requests a rendering mode not supported by the environment.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="gymnasium.error.VersionNotFound">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.error.</span></span><span class="sig-name descname"><span class="pre">VersionNotFound</span></span><a class="reference internal" href="../../_modules/gymnasium/error/#VersionNotFound"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.error.VersionNotFound" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gymnasium.error.UnregisteredEnv" title="gymnasium.error.UnregisteredEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">UnregisteredEnv</span></code></a></p>
+<p>Raised when the user requests an env from the registry where the version doesn’t exist.</p>
 </dd></dl>
 
 </section>
@@ -923,8 +1117,9 @@ slightly longer while its final step completes.</p></li>
 <li><a class="reference internal" href="#gymnasium.utils.seeding.np_random"><code class="docutils literal notranslate"><span class="pre">np_random()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#environment-checking">Environment Checking</a><ul>
+<li><a class="reference internal" href="#environment-checking">Environment checking</a><ul>
 <li><a class="reference internal" href="#gymnasium.utils.env_checker.check_env"><code class="docutils literal notranslate"><span class="pre">check_env()</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.env_match.check_environments_match"><code class="docutils literal notranslate"><span class="pre">check_environments_match()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#visualization">Visualization</a><ul>
@@ -941,24 +1136,48 @@ slightly longer while its final step completes.</p></li>
 </li>
 <li><a class="reference internal" href="#environment-pickling">Environment pickling</a><ul>
 <li><a class="reference internal" href="#gymnasium.utils.ezpickle.EzPickle"><code class="docutils literal notranslate"><span class="pre">EzPickle</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.utils.RecordConstructorArgs"><code class="docutils literal notranslate"><span class="pre">RecordConstructorArgs</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#save-rendering-videos">Save Rendering Videos</a><ul>
+<li><a class="reference internal" href="#save-rendering-videos">Save rendering videos</a><ul>
 <li><a class="reference internal" href="#gymnasium.utils.save_video.save_video"><code class="docutils literal notranslate"><span class="pre">save_video()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.utils.save_video.capped_cubic_video_schedule"><code class="docutils literal notranslate"><span class="pre">capped_cubic_video_schedule()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#old-to-new-step-api-compatibility">Old to New Step API Compatibility</a><ul>
+<li><a class="reference internal" href="#old-to-new-step-api-compatibility">Old to new step API compatibility</a><ul>
 <li><a class="reference internal" href="#gymnasium.utils.step_api_compatibility.step_api_compatibility"><code class="docutils literal notranslate"><span class="pre">step_api_compatibility()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.utils.step_api_compatibility.convert_to_terminated_truncated_step_api"><code class="docutils literal notranslate"><span class="pre">convert_to_terminated_truncated_step_api()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.utils.step_api_compatibility.convert_to_done_step_api"><code class="docutils literal notranslate"><span class="pre">convert_to_done_step_api()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#runtime-performance-benchmark">Runtime Performance benchmark</a><ul>
+<li><a class="reference internal" href="#runtime-performance-benchmark">Runtime performance benchmark</a><ul>
 <li><a class="reference internal" href="#gymnasium.utils.performance.benchmark_step"><code class="docutils literal notranslate"><span class="pre">benchmark_step()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.utils.performance.benchmark_vector_step"><code class="docutils literal notranslate"><span class="pre">benchmark_vector_step()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.utils.performance.benchmark_init"><code class="docutils literal notranslate"><span class="pre">benchmark_init()</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.utils.performance.benchmark_render"><code class="docutils literal notranslate"><span class="pre">benchmark_render()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-gymnasium.error">Errors</a><ul>
+<li><a class="reference internal" href="#gymnasium.error.AlreadyPendingCallError"><code class="docutils literal notranslate"><span class="pre">AlreadyPendingCallError</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.ClosedEnvironmentError"><code class="docutils literal notranslate"><span class="pre">ClosedEnvironmentError</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.CustomSpaceError"><code class="docutils literal notranslate"><span class="pre">CustomSpaceError</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.DependencyNotInstalled"><code class="docutils literal notranslate"><span class="pre">DependencyNotInstalled</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.DeprecatedEnv"><code class="docutils literal notranslate"><span class="pre">DeprecatedEnv</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.DeprecatedWrapper"><code class="docutils literal notranslate"><span class="pre">DeprecatedWrapper</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.Error"><code class="docutils literal notranslate"><span class="pre">Error</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.InvalidAction"><code class="docutils literal notranslate"><span class="pre">InvalidAction</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.InvalidBound"><code class="docutils literal notranslate"><span class="pre">InvalidBound</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.InvalidMetadata"><code class="docutils literal notranslate"><span class="pre">InvalidMetadata</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.InvalidProbability"><code class="docutils literal notranslate"><span class="pre">InvalidProbability</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.MissingArgument"><code class="docutils literal notranslate"><span class="pre">MissingArgument</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.NameNotFound"><code class="docutils literal notranslate"><span class="pre">NameNotFound</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.NamespaceNotFound"><code class="docutils literal notranslate"><span class="pre">NamespaceNotFound</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.NoAsyncCallError"><code class="docutils literal notranslate"><span class="pre">NoAsyncCallError</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.RegistrationError"><code class="docutils literal notranslate"><span class="pre">RegistrationError</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.ResetNeeded"><code class="docutils literal notranslate"><span class="pre">ResetNeeded</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.UnregisteredEnv"><code class="docutils literal notranslate"><span class="pre">UnregisteredEnv</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.UnsupportedMode"><code class="docutils literal notranslate"><span class="pre">UnsupportedMode</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.error.VersionNotFound"><code class="docutils literal notranslate"><span class="pre">VersionNotFound</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -383,7 +383,7 @@
             <section class="tex2jax_ignore mathjax_ignore" id="misc-wrappers">
 <h1>Misc Wrappers<a class="headerlink" href="#misc-wrappers" title="Link to this heading">¶</a></h1>
 <section id="common-wrappers">
-<h2>Common Wrappers<a class="headerlink" href="#common-wrappers" title="Link to this heading">¶</a></h2>
+<h2>Common wrappers<a class="headerlink" href="#common-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.TimeLimit">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">TimeLimit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_episode_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/common/#TimeLimit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.TimeLimit" title="Link to this definition">¶</a></dt>
@@ -665,7 +665,7 @@ optimization benefits of FrameStack Wrapper.</p></li>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>DependencyNotInstalled</strong> – opencv-python package not installed</p></li>
+<li><p><a class="reference internal" href="../../utils/#gymnasium.error.DependencyNotInstalled" title="gymnasium.error.DependencyNotInstalled"><strong>DependencyNotInstalled</strong></a> – opencv-python package not installed</p></li>
 <li><p><strong>ValueError</strong> – Disable frame-skipping in the original env</p></li>
 </ul>
 </dd>
@@ -674,7 +674,7 @@ optimization benefits of FrameStack Wrapper.</p></li>
 
 </section>
 <section id="uncommon-wrappers">
-<h2>Uncommon Wrappers<a class="headerlink" href="#uncommon-wrappers" title="Link to this heading">¶</a></h2>
+<h2>Uncommon wrappers<a class="headerlink" href="#uncommon-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.Autoreset">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">Autoreset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">autoreset_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="../../vector/autoreset/#gymnasium.vector.AutoresetMode" title="gymnasium.vector.vector_env.AutoresetMode"><span class="pre">AutoresetMode</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">AutoresetMode.NEXT_STEP</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/common/#Autoreset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.Autoreset" title="Link to this definition">¶</a></dt>
@@ -727,7 +727,7 @@ No vector version of the wrapper exists.</p>
 <dt>Change logs:</dt><dd><ul class="simple">
 <li><p>v0.24.1 - Initially added however broken in several ways</p></li>
 <li><p>v0.25.0 - Bugs was all fixed</p></li>
-<li><p>v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and inregular bound shapes</p></li>
+<li><p>v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and irregular bound shapes</p></li>
 </ul>
 </dd>
 </dl>
@@ -902,13 +902,72 @@ will always return an empty list:</p>
 </dl>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.AddWhiteNoise">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">AddWhiteNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probability_of_noise_per_pixel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_noise_grayscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/rendering/#AddWhiteNoise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.AddWhiteNoise" title="Link to this definition">¶</a></dt>
+<dd><p>Randomly replaces pixels with white noise.</p>
+<p>If used with <code class="docutils literal notranslate"><span class="pre">render_mode=&quot;rgb_array&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">AddRenderObservation</span></code>, it will
+make observations noisy.
+The environment may also become partially-observable, turning the MDP into a POMDP.</p>
+<dl>
+<dt>Example - Every pixel will be replaced by white noise with probability 0.5:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"LunarLander-v3"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">AddWhiteNoise</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">probability_of_noise_per_pixel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">HumanRendering</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment that is being wrapped</p></li>
+<li><p><strong>probability_of_noise_per_pixel</strong> – the probability that a pixel is white noise</p></li>
+<li><p><strong>is_noise_grayscale</strong> – if True, RGB noise is converted to grayscale</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gymnasium.wrappers.ObstructView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">ObstructView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstructed_pixels_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstruction_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_noise_grayscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/rendering/#ObstructView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.ObstructView" title="Link to this definition">¶</a></dt>
+<dd><p>Randomly obstructs rendering with white noise patches.</p>
+<p>If used with <code class="docutils literal notranslate"><span class="pre">render_mode=&quot;rgb_array&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">AddRenderObservation</span></code>, it will
+make observations noisy.
+The number of patches depends on how many pixels we want to obstruct.
+Depending on the size of the patches, the environment may become
+partially-observable, turning the MDP into a POMDP.</p>
+<dl>
+<dt>Example - Obstruct 50% of the pixels with patches of size 50x50 pixels:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"LunarLander-v3"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">ObstructView</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">obstructed_pixels_ratio</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">obstruction_width</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">HumanRendering</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obs</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> – The environment that is being wrapped</p></li>
+<li><p><strong>obstructed_pixels_ratio</strong> – the percentage of pixels obstructed with white noise</p></li>
+<li><p><strong>obstruction_width</strong> – the width of the obstruction patches</p></li>
+<li><p><strong>is_noise_grayscale</strong> – if True, RGB noise is converted to grayscale</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="data-conversion-wrappers">
-<h2>Data Conversion Wrappers<a class="headerlink" href="#data-conversion-wrappers" title="Link to this heading">¶</a></h2>
+<h2>Data conversion wrappers<a class="headerlink" href="#data-conversion-wrappers" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="gymnasium.wrappers.ArrayConversion">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gymnasium.wrappers.</span></span><span class="sig-name descname"><span class="pre">ArrayConversion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../env/#gymnasium.Env" title="gymnasium.core.Env"><span class="pre">Env</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_xp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModuleType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_xp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ModuleType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env_device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/gymnasium/wrappers/array_conversion/#ArrayConversion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gymnasium.wrappers.ArrayConversion" title="Link to this definition">¶</a></dt>
-<dd><p>Wraps an Array API compatible environment so that it can be interacted with with another Array API framework.</p>
+<dd><p>Wraps an Array API compatible environment so that it can be interacted with another Array API framework.</p>
 <p>Popular Array API frameworks include <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">torch</span></code>, <code class="docutils literal notranslate"><span class="pre">jax.numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">cupy</span></code> etc. With this wrapper, you can convert outputs from your environment to
 any of these frameworks. Conversely, actions are automatically mapped back to the environment framework, if possible without moving the
 data or device transfers.</p>
@@ -1159,22 +1218,24 @@ A vector version of the wrapper exists, <a class="reference internal" href="../.
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Misc Wrappers</a><ul>
-<li><a class="reference internal" href="#common-wrappers">Common Wrappers</a><ul>
+<li><a class="reference internal" href="#common-wrappers">Common wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.TimeLimit"><code class="docutils literal notranslate"><span class="pre">TimeLimit</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.RecordVideo"><code class="docutils literal notranslate"><span class="pre">RecordVideo</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.RecordEpisodeStatistics"><code class="docutils literal notranslate"><span class="pre">RecordEpisodeStatistics</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.AtariPreprocessing"><code class="docutils literal notranslate"><span class="pre">AtariPreprocessing</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#uncommon-wrappers">Uncommon Wrappers</a><ul>
+<li><a class="reference internal" href="#uncommon-wrappers">Uncommon wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.Autoreset"><code class="docutils literal notranslate"><span class="pre">Autoreset</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.PassiveEnvChecker"><code class="docutils literal notranslate"><span class="pre">PassiveEnvChecker</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.HumanRendering"><code class="docutils literal notranslate"><span class="pre">HumanRendering</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.OrderEnforcing"><code class="docutils literal notranslate"><span class="pre">OrderEnforcing</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.RenderCollection"><code class="docutils literal notranslate"><span class="pre">RenderCollection</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.AddWhiteNoise"><code class="docutils literal notranslate"><span class="pre">AddWhiteNoise</span></code></a></li>
+<li><a class="reference internal" href="#gymnasium.wrappers.ObstructView"><code class="docutils literal notranslate"><span class="pre">ObstructView</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#data-conversion-wrappers">Data Conversion Wrappers</a><ul>
+<li><a class="reference internal" href="#data-conversion-wrappers">Data conversion wrappers</a><ul>
 <li><a class="reference internal" href="#gymnasium.wrappers.ArrayConversion"><code class="docutils literal notranslate"><span class="pre">ArrayConversion</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.JaxToNumpy"><code class="docutils literal notranslate"><span class="pre">JaxToNumpy</span></code></a></li>
 <li><a class="reference internal" href="#gymnasium.wrappers.JaxToTorch"><code class="docutils literal notranslate"><span class="pre">JaxToTorch</span></code></a></li>

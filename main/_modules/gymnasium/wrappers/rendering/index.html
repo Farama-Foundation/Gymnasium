@@ -974,6 +974,8 @@
 
 
 
+<div class="viewcode-block" id="AddWhiteNoise">
+<a class="viewcode-back" href="../../../../api/wrappers/misc_wrappers/#gymnasium.wrappers.AddWhiteNoise">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AddWhiteNoise</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
@@ -1047,9 +1049,12 @@
             <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">probability_of_noise_per_pixel</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">noise</span><span class="p">,</span> <span class="n">render_out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">noise</span><span class="p">,</span> <span class="n">render_out</span><span class="p">)</span></div>
 
 
+
+<div class="viewcode-block" id="ObstructView">
+<a class="viewcode-back" href="../../../../api/wrappers/misc_wrappers/#gymnasium.wrappers.ObstructView">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ObstructView</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">],</span> <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span>
 <span class="p">):</span>
@@ -1143,7 +1148,8 @@
                 <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">noise</span><span class="p">,</span> <span class="n">render_out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">noise</span><span class="p">,</span> <span class="n">render_out</span><span class="p">)</span></div>
+
 </pre></div>
           </article>
         </div>

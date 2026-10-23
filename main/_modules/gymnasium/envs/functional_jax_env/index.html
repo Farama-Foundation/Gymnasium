@@ -485,10 +485,16 @@
 
 
 
+<div class="viewcode-block" id="FunctionalJaxVectorEnv">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxVectorEnv">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FunctionalJaxVectorEnv</span><span class="p">(</span>
     <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">VectorEnv</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">StateType</span><span class="p">]</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">"""A vector env implementation for functional Jax envs."""</span>
+<span class="w">    </span><span class="sd">"""A conversion layer for jax-based functional environments to a :class:`gymnasium.vector.VectorEnv`.</span>
+
+<span class="sd">    The functional environment's methods are vectorized with :func:`jax.vmap`, so all ``num_envs`` sub-environments</span>
+<span class="sd">    are stepped in a single call and the observations, rewards, terminations and truncations are jax arrays.</span>
+<span class="sd">    """</span>
 
     <span class="n">state</span><span class="p">:</span> <span class="n">StateType</span>
     <span class="n">rng</span><span class="p">:</span> <span class="n">PRNGKeyType</span>
@@ -502,7 +508,16 @@
         <span class="n">render_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">spec</span><span class="p">:</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Initialize the environment from a FuncEnv."""</span>
+<span class="w">        </span><span class="sd">"""Initialize the environment from a FuncEnv.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            func_env: The functional environment to vectorize</span>
+<span class="sd">            num_envs: The number of sub-environments</span>
+<span class="sd">            max_episode_steps: The number of steps after which a sub-environment is truncated, ``0`` for no time limit</span>
+<span class="sd">            metadata: The environment metadata, defaults to ``{"autoreset_mode": AutoresetMode.NEXT_STEP}``</span>
+<span class="sd">            render_mode: The render mode, only ``"rgb_array"`` is supported</span>
+<span class="sd">            spec: The environment spec</span>
+<span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"autoreset_mode"</span><span class="p">:</span> <span class="n">AutoresetMode</span><span class="o">.</span><span class="n">NEXT_STEP</span><span class="p">}</span>
@@ -537,6 +552,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">)</span>
 
+<div class="viewcode-block" id="FunctionalJaxVectorEnv.reset">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxVectorEnv.reset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Resets the environment."""</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
@@ -553,8 +570,11 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">jnp</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span>
+        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span></div>
 
+
+<div class="viewcode-block" id="FunctionalJaxVectorEnv.step">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxVectorEnv.step">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Steps through the environment using the action."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -597,8 +617,11 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">next_state</span>
 
-        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
+        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span></div>
 
+
+<div class="viewcode-block" id="FunctionalJaxVectorEnv.render">
+<a class="viewcode-back" href="../../../../api/functional/#gymnasium.envs.functional_jax_env.FunctionalJaxVectorEnv.render">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Returns the render state if `render_mode` is "rgb_array"."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_mode</span> <span class="o">==</span> <span class="s2">"rgb_array"</span><span class="p">:</span>
@@ -607,13 +630,15 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">image</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Closes the environments and render state if set."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">func_env</span><span class="o">.</span><span class="n">render_close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">render_state</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">render_state</span> <span class="o">=</span> <span class="kc">None</span></div>
+
 </pre></div>
           </article>
         </div>

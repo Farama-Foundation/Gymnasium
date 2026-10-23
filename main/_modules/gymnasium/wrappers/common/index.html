@@ -599,7 +599,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">WrapperObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">"""Resets the environment and sets autoreset to False preventing."""</span>
+<span class="w">        </span><span class="sd">"""Resets the environment and sets autoreset to False, so the next step isn't an autoreset step."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autoreset</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
@@ -655,7 +655,7 @@
 <span class="sd">    Change logs:</span>
 <span class="sd">     * v0.24.1 - Initially added however broken in several ways</span>
 <span class="sd">     * v0.25.0 - Bugs was all fixed</span>
-<span class="sd">     * v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and inregular bound shapes</span>
+<span class="sd">     * v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and irregular bound shapes</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">ActType</span><span class="p">]):</span>
