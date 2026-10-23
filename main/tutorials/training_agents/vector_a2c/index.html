@@ -306,9 +306,6 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -387,10 +384,12 @@
 </div>
 <section id="speeding-up-a2c-training-with-vector-envs">
 <span id="sphx-glr-tutorials-training-agents-vector-a2c-py"></span><h1>Speeding up A2C Training with Vector Envs<a class="headerlink" href="#speeding-up-a2c-training-with-vector-envs" title="Link to this heading">¶</a></h1>
-<p>This tutorial demonstrates training with vector environments to it speed up.</p>
+<p>This tutorial demonstrates training with vector environments to speed it up.
+It assumes familiarity with the vector environment API (<a class="reference internal" href="../../../api/vector/"><span class="doc">Vectorize</span></a>) and basic deep RL with PyTorch.</p>
+<p>Dependencies: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[box2d]&quot;</span> <span class="pre">torch</span> <span class="pre">matplotlib</span> <span class="pre">tqdm</span></code>.</p>
 <section id="notice">
 <h2>Notice<a class="headerlink" href="#notice" title="Link to this heading">¶</a></h2>
-<p>If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from <code class="docutils literal notranslate"><span class="pre">gym.make_vec=</span></code> or <code class="docutils literal notranslate"><span class="pre">gym.vector.AsyncVectorEnv</span></code> to the end of the code by <code class="docutils literal notranslate"><span class="pre">if__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code>.</p>
+<p>If you encounter a RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from <code class="docutils literal notranslate"><span class="pre">gym.make_vec</span></code> or <code class="docutils literal notranslate"><span class="pre">gym.vector.AsyncVectorEnv</span></code> to the end of the code by <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">__name__</span> <span class="pre">==</span> <span class="pre">'__main__'</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">An</span> <span class="pre">attempt</span> <span class="pre">has</span> <span class="pre">been</span> <span class="pre">made</span> <span class="pre">to</span> <span class="pre">start</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">process</span> <span class="pre">before</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">process</span> <span class="pre">has</span> <span class="pre">finished</span> <span class="pre">its</span> <span class="pre">bootstrapping</span> <span class="pre">phase.</span></code></p>
 <hr class="docutils" />
 </section>
@@ -409,7 +408,7 @@ between variance and bias of the advantage estimates.</p>
 <p>The A2C agent class is initialized with the number of features of the input state, the number of actions the agent can take,
 the learning rates and the number of environments that run in parallel to collect experiences. The actor and critic networks are defined
 and their respective optimizers are initialized. The forward pass of the networks takes in a batched vector of states and returns a tensor of state values
-and a tensor of action logits. The select_action method returns a tuple of the chosen actions, the log-probs of those actions, and the state values for each action.
+and a tensor of action logits. The select_action method returns a tuple of the chosen actions, the log-probs of those actions, and the state values for each state.
 In addition, it also returns the entropy of the policy distribution, which is subtracted from the loss later (with a weighting factor <cite>ent_coef</cite>) to encourage exploration.</p>
 <p>The get_losses function calculates the losses for the actor and critic networks (using GAE), which are then updated using the update_parameters function.</p>
 <hr class="docutils" />
@@ -436,7 +435,7 @@ In addition, it also returns the entropy of the policy distribution, which is su
 <p>The Actor-Critic combines elements of value-based and policy-based methods. In A2C, the agent has two separate neural networks:
 a critic network that estimates the state-value function, and an actor network that outputs logits for a categorical probability distribution over all actions.
 The critic network is trained to minimize the mean squared error between the predicted state values and the actual returns received by the agent
-(this is equivalent to minimizing the squared advantages, because the advantage of an action is as the difference between the return and the state-value: A(s,a) = Q(s,a) - V(s).
+(this is equivalent to minimizing the squared advantages, because the advantage of an action is the difference between the return and the state-value: A(s,a) = Q(s,a) - V(s).
 The actor network is trained to maximize the expected return by selecting actions that have high expected values according to the critic network.</p>
 <p>The focus of this tutorial will not be on the details of A2C itself. Instead, the tutorial will focus on how to use vectorized environments
 and domain randomization to accelerate the training process for A2C (and other reinforcement learning algorithms).</p>
@@ -503,11 +502,11 @@ and domain randomization to accelerate the training process for A2C (and other r
 <span class="sd">            x: A batched vector of states.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            state_values: A tensor with the state values, with shape [n_envs,].</span>
+<span class="sd">            state_values: A tensor with the state values, with shape [n_envs, 1].</span>
 <span class="sd">            action_logits_vec: A tensor with the action logits, with shape [n_envs, n_actions].</span>
 <span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-        <span class="n">state_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># shape: [n_envs,]</span>
+        <span class="n">state_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">critic</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># shape: [n_envs, 1]</span>
         <span class="n">action_logits_vec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">actor</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># shape: [n_envs, n_actions]</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">state_values</span><span class="p">,</span> <span class="n">action_logits_vec</span><span class="p">)</span>
 
@@ -515,15 +514,16 @@ and domain randomization to accelerate the training process for A2C (and other r
         <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Returns a tuple of the chosen actions and the log-probs of those actions.</span>
+<span class="sd">        Samples an action for each environment from the current policy.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x: A batched vector of states.</span>
+<span class="sd">            x: A batched vector of states, with shape [n_envs, n_features].</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            actions: A tensor with the actions, with shape [n_steps_per_update, n_envs].</span>
-<span class="sd">            action_log_probs: A tensor with the log-probs of the actions, with shape [n_steps_per_update, n_envs].</span>
-<span class="sd">            state_values: A tensor with the state values, with shape [n_steps_per_update, n_envs].</span>
+<span class="sd">            actions: A tensor with the actions, with shape [n_envs].</span>
+<span class="sd">            action_log_probs: A tensor with the log-probs of the actions, with shape [n_envs].</span>
+<span class="sd">            state_values: A tensor with the state values, with shape [n_envs, 1].</span>
+<span class="sd">            entropy: A tensor with the entropy of the policy distribution, with shape [n_envs].</span>
 <span class="sd">        """</span>
         <span class="n">state_values</span><span class="p">,</span> <span class="n">action_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">action_pd</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span>
@@ -539,8 +539,10 @@ and domain randomization to accelerate the training process for A2C (and other r
         <span class="n">rewards</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">action_log_probs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">value_preds</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">last_value</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">entropy</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">masks</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">valid</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">lam</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">ent_coef</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -554,11 +556,18 @@ and domain randomization to accelerate the training process for A2C (and other r
 <span class="sd">            rewards: A tensor with the rewards for each time step in the episode, with shape [n_steps_per_update, n_envs].</span>
 <span class="sd">            action_log_probs: A tensor with the log-probs of the actions taken at each time step in the episode, with shape [n_steps_per_update, n_envs].</span>
 <span class="sd">            value_preds: A tensor with the state value predictions for each time step in the episode, with shape [n_steps_per_update, n_envs].</span>
-<span class="sd">            masks: A tensor with the masks for each time step in the episode, with shape [n_steps_per_update, n_envs].</span>
+<span class="sd">            last_value: A tensor with the value predictions of the states observed after the last step, with shape [n_envs],</span>
+<span class="sd">                used to bootstrap the advantage of the last step.</span>
+<span class="sd">            entropy: A tensor with the entropy of the policy at each time step, with shape [n_steps_per_update, n_envs].</span>
+<span class="sd">            masks: A tensor that is 0 where the step terminated the episode (so there is no future value to bootstrap from)</span>
+<span class="sd">                and 1 otherwise, with shape [n_steps_per_update, n_envs].</span>
+<span class="sd">            valid: A tensor that is 0 for autoreset steps (the step after an episode ended, where the action was ignored</span>
+<span class="sd">                and the environment was reset) and 1 otherwise, with shape [n_steps_per_update, n_envs].</span>
 <span class="sd">            gamma: The discount factor.</span>
 <span class="sd">            lam: The GAE hyperparameter. (lam=1 corresponds to Monte-Carlo sampling with high variance and no bias,</span>
 <span class="sd">                                          and lam=0 corresponds to normal TD-Learning that has a low variance but is biased</span>
 <span class="sd">                                          because the estimates are generated by a Neural Net).</span>
+<span class="sd">            ent_coef: The coefficient of the entropy bonus.</span>
 <span class="sd">            device: The device to run the computations on (e.g. CPU or GPU).</span>
 
 <span class="sd">        Returns:</span>
@@ -570,19 +579,24 @@ and domain randomization to accelerate the training process for A2C (and other r
 
         <span class="c1"># compute the advantages using GAE</span>
         <span class="n">gae</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
-            <span class="n">td_error</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">rewards</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">masks</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">value_preds</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">value_preds</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
-            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">)):</span>
+            <span class="n">next_value</span> <span class="o">=</span> <span class="n">value_preds</span><span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">t</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">T</span> <span class="k">else</span> <span class="n">last_value</span>
+            <span class="n">td_error</span> <span class="o">=</span> <span class="n">rewards</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">masks</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">next_value</span> <span class="o">-</span> <span class="n">value_preds</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
             <span class="n">gae</span> <span class="o">=</span> <span class="n">td_error</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">lam</span> <span class="o">*</span> <span class="n">masks</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">*</span> <span class="n">gae</span>
+            <span class="c1"># an autoreset step is not a real transition, so it gets no advantage</span>
+            <span class="c1"># and must not leak into the advantage of the step before it</span>
+            <span class="n">gae</span> <span class="o">=</span> <span class="n">gae</span> <span class="o">*</span> <span class="n">valid</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
             <span class="n">advantages</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">gae</span>
 
-        <span class="c1"># calculate the loss of the minibatch for actor and critic</span>
-        <span class="n">critic_loss</span> <span class="o">=</span> <span class="n">advantages</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="c1"># calculate the loss of the minibatch for actor and critic,</span>
+        <span class="c1"># averaging only over the valid (non-autoreset) transitions</span>
+        <span class="n">n_valid</span> <span class="o">=</span> <span class="n">valid</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">critic_loss</span> <span class="o">=</span> <span class="n">advantages</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n_valid</span>
 
         <span class="c1"># give a bonus for higher entropy to encourage exploration</span>
         <span class="n">actor_loss</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="o">-</span><span class="p">(</span><span class="n">advantages</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="o">*</span> <span class="n">action_log_probs</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="n">ent_coef</span> <span class="o">*</span> <span class="n">entropy</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="o">-</span><span class="p">(</span><span class="n">advantages</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span> <span class="o">*</span> <span class="n">action_log_probs</span> <span class="o">*</span> <span class="n">valid</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n_valid</span>
+            <span class="o">-</span> <span class="n">ent_coef</span> <span class="o">*</span> <span class="p">(</span><span class="n">entropy</span> <span class="o">*</span> <span class="n">valid</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">n_valid</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">critic_loss</span><span class="p">,</span> <span class="n">actor_loss</span><span class="p">)</span>
 
@@ -611,10 +625,10 @@ and domain randomization to accelerate the training process for A2C (and other r
 <p>When you calculate the losses for the two Neural Networks over only one epoch, it might have a high variance. With vectorized environments,
 we can play with <cite>n_envs</cite> in parallel and thus get up to a linear speedup (meaning that in theory, we collect samples <cite>n_envs</cite> times quicker)
 that we can use to calculate the loss for the current policy and critic network. When we are using more samples to calculate the loss,
-it will have a lower variance and theirfore leads to quicker learning.</p>
+it will have a lower variance and therefore leads to quicker learning.</p>
 <p>A2C is a synchronous method, meaning that the parameter updates to Networks take place deterministically (after each sampling phase),
 but we can still make use of asynchronous vector envs to spawn multiple processes for parallel environment execution.</p>
-<p>The simplest way to create vector environments is by calling <cite>gym.vector.make</cite>, which creates multiple instances of the same environment:</p>
+<p>The simplest way to create vector environments is by calling <code class="docutils literal notranslate"><span class="pre">gym.make_vec</span></code>, which creates multiple instances of the same environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">"LunarLander-v3"</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -622,7 +636,7 @@ but we can still make use of asynchronous vector envs to spawn multiple processe
 <section id="domain-randomization">
 <h2>Domain Randomization<a class="headerlink" href="#domain-randomization" title="Link to this heading">¶</a></h2>
 <p>If we want to randomize the environment for training to get more robust agents (that can deal with different parameterizations of an environment
-and theirfore might have a higher degree of generalization), we can set the desired parameters manually or use a pseudo-random number generator to generate them.</p>
+and therefore might have a higher degree of generalization), we can set the desired parameters manually or use a pseudo-random number generator to generate them.</p>
 <p>Manually setting up 3 parallel ‘LunarLander-v3’ envs with different parameters:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">SyncVectorEnv</span><span class="p">(</span>
     <span class="p">[</span>
@@ -696,7 +710,7 @@ to generate a new set of pseudo-random parameters.</p>
 <span class="n">critic_lr</span> <span class="o">=</span> <span class="mf">0.005</span>
 
 <span class="c1"># Note: the actor has a slower learning rate so that the value targets become</span>
-<span class="c1"># more stationary and are theirfore easier to estimate for the critic</span>
+<span class="c1"># more stationary and are therefore easier to estimate for the critic</span>
 
 <span class="c1"># environment setup</span>
 <span class="k">if</span> <span class="n">randomize_domain</span><span class="p">:</span>
@@ -748,6 +762,16 @@ This is because each environment resets automatically once the episode finishes 
 an episode because of the random seeds). As a result, we are also not collecting data in <cite>episodes</cite>, but rather just play a certain number of steps
 (<cite>n_steps_per_update</cite>) in each environment (as an example, this could mean that we play 20 timesteps to finish an episode and then
 use the rest of the timesteps to begin a new one).</p>
+<p>By default, vector environments use the <code class="docutils literal notranslate"><span class="pre">NEXT_STEP</span></code> autoreset mode [3]. When an episode ends on step <code class="docutils literal notranslate"><span class="pre">t</span></code>
+(<code class="docutils literal notranslate"><span class="pre">terminated</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated</span></code>), the observation returned is the final observation of that episode, and only the
+<em>next</em> call to <code class="docutils literal notranslate"><span class="pre">step</span></code> resets that environment. On that autoreset step, the action is ignored, the reward is 0 and the
+returned observation is the first observation of the new episode. This has two consequences for the training loop:</p>
+<ul class="simple">
+<li><p>The autoreset step is not a real transition, so we record it in a <code class="docutils literal notranslate"><span class="pre">valid</span></code> mask (computed from the previous step’s
+<code class="docutils literal notranslate"><span class="pre">terminated</span> <span class="pre">|</span> <span class="pre">truncated</span></code>) and exclude it from the actor and critic losses.</p></li>
+<li><p>Because the final observation is still the input on the autoreset step, its value estimate is available to bootstrap
+a truncated episode, while the <code class="docutils literal notranslate"><span class="pre">masks</span></code> tensor (0 on <code class="docutils literal notranslate"><span class="pre">terminated</span></code>) stops bootstrapping for terminated episodes.</p></li>
+</ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># create a wrapper environment to save episode returns and episode lengths</span>
 <span class="n">envs_wrapper</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span>
     <span class="n">envs</span><span class="p">,</span> <span class="n">buffer_length</span><span class="o">=</span><span class="n">n_envs</span> <span class="o">*</span> <span class="n">n_updates</span>
@@ -756,6 +780,10 @@ use the rest of the timesteps to begin a new one).</p>
 <span class="n">critic_losses</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">actor_losses</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">entropies</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># whether each environment's episode ended on the previous step,</span>
+<span class="c1"># so that the next step is an autoreset step (``NEXT_STEP`` autoreset mode)</span>
+<span class="n">autoreset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_envs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
 
 <span class="c1"># use tqdm to get a progress bar for training</span>
 <span class="k">for</span> <span class="n">sample_phase</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_updates</span><span class="p">)):</span>
@@ -768,6 +796,7 @@ use the rest of the timesteps to begin a new one).</p>
     <span class="n">ep_action_log_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_steps_per_update</span><span class="p">,</span> <span class="n">n_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
     <span class="n">ep_entropies</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_steps_per_update</span><span class="p">,</span> <span class="n">n_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
     <span class="n">masks</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_steps_per_update</span><span class="p">,</span> <span class="n">n_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_steps_per_update</span><span class="p">,</span> <span class="n">n_envs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
     <span class="c1"># at the start of training reset all envs to get an initial state</span>
     <span class="k">if</span> <span class="n">sample_phase</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -785,22 +814,32 @@ use the rest of the timesteps to begin a new one).</p>
             <span class="n">actions</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="p">)</span>
 
-        <span class="n">ep_value_preds</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">state_value_preds</span><span class="p">)</span>
+        <span class="n">ep_value_preds</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">state_value_preds</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">ep_rewards</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">rewards</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
         <span class="n">ep_action_log_probs</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">action_log_probs</span>
         <span class="n">ep_entropies</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">entropy</span>
 
         <span class="c1"># add a mask (for the return calculation later);</span>
         <span class="c1"># for each env the mask is 1 if the episode is ongoing and 0 if it is terminated (not by truncation!)</span>
-        <span class="n">masks</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="ow">not</span> <span class="n">term</span> <span class="k">for</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">terminated</span><span class="p">])</span>
+        <span class="n">masks</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">terminated</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># the transition is invalid if this step was an autoreset step</span>
+        <span class="n">valid</span><span class="p">[</span><span class="n">step</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">autoreset</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">autoreset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">)</span>
+
+    <span class="c1"># value of the states after the last step, to bootstrap the last advantage</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">last_value</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">states</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># calculate the losses for actor and critic</span>
     <span class="n">critic_loss</span><span class="p">,</span> <span class="n">actor_loss</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">get_losses</span><span class="p">(</span>
         <span class="n">ep_rewards</span><span class="p">,</span>
         <span class="n">ep_action_log_probs</span><span class="p">,</span>
         <span class="n">ep_value_preds</span><span class="p">,</span>
+        <span class="n">last_value</span><span class="p">,</span>
         <span class="n">ep_entropies</span><span class="p">,</span>
         <span class="n">masks</span><span class="p">,</span>
+        <span class="n">valid</span><span class="p">,</span>
         <span class="n">gamma</span><span class="p">,</span>
         <span class="n">lam</span><span class="p">,</span>
         <span class="n">ent_coef</span><span class="p">,</span>
@@ -813,7 +852,7 @@ use the rest of the timesteps to begin a new one).</p>
     <span class="c1"># log the losses and entropy</span>
     <span class="n">critic_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">critic_loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
     <span class="n">actor_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">actor_loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-    <span class="n">entropies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ep_entropies</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+    <span class="n">entropies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ep_entropies</span><span class="p">[</span><span class="n">valid</span><span class="o">.</span><span class="n">bool</span><span class="p">()]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
 </pre></div>
 </div>
 </section>
@@ -906,7 +945,7 @@ agent was trained until the mean training returns were above -120). The slower t
 because the gradients of the environments are good enough after a relatively low number of environments
 (especially if the environment is not very complex). In this case, increasing the number of environments
 does not increase the learning speed, and actually increases the runtime, possibly due to the additional time
-needed to calculate the gradients. For LunarLander-v3, the best performing configuration used a AsyncVectorEnv
+needed to calculate the gradients. For LunarLander-v3, the best performing configuration used an AsyncVectorEnv
 with 10 parallel environments, but environments with a higher complexity may require more
 parallel environments to achieve optimal performance.</p>
 <img alt="runtime_until_threshold_plot" src="../../../_images/vector_env_runtime_until_threshold.png" />
@@ -930,7 +969,7 @@ parallel environments to achieve optimal performance.</p>
 
 <span class="sd">""" load network weights """</span>
 <span class="k">if</span> <span class="n">load_weights</span><span class="p">:</span>
-    <span class="n">agent</span> <span class="o">=</span> <span class="n">A2C</span><span class="p">(</span><span class="n">obs_shape</span><span class="p">,</span> <span class="n">action_shape</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">critic_lr</span><span class="p">,</span> <span class="n">actor_lr</span><span class="p">)</span>
+    <span class="n">agent</span> <span class="o">=</span> <span class="n">A2C</span><span class="p">(</span><span class="n">obs_shape</span><span class="p">,</span> <span class="n">action_shape</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">critic_lr</span><span class="p">,</span> <span class="n">actor_lr</span><span class="p">,</span> <span class="n">n_envs</span><span class="p">)</span>
 
     <span class="n">agent</span><span class="o">.</span><span class="n">actor</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">actor_weights_path</span><span class="p">))</span>
     <span class="n">agent</span><span class="o">.</span><span class="n">critic</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">critic_weights_path</span><span class="p">))</span>
@@ -984,7 +1023,7 @@ parallel environments to achieve optimal performance.</p>
         <span class="c1"># update if the environment is done</span>
         <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
 
-<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>

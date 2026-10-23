@@ -306,9 +306,6 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Action Masking in the Taxi Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#running-the-experiment">Running the Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#visualizing-results">Visualizing Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -387,7 +384,9 @@
 </div>
 <section id="action-masking-in-the-taxi-environment">
 <span id="sphx-glr-tutorials-training-agents-action-masking-taxi-py"></span><h1>Action Masking in the Taxi Environment<a class="headerlink" href="#action-masking-in-the-taxi-environment" title="Link to this heading">¶</a></h1>
-<p>This tutorial demonstrates how to use action masking in the Taxi environment to improve reinforcement learning performance by preventing invalid actions.</p>
+<p>This tutorial demonstrates how to use action masking in the Taxi environment to improve reinforcement learning performance by preventing invalid actions.
+It assumes familiarity with tabular Q-learning, for example from <a class="reference internal" href="../blackjack_q_learning/"><span class="doc">Solving Blackjack with Tabular Q-Learning</span></a>.</p>
+<p>Dependencies: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[toy-text]&quot;</span> <span class="pre">matplotlib</span></code>.</p>
 <p>The Taxi environment is a classic grid world problem where a taxi needs to pick up a passenger and drop them off at their destination. In this environment, not all actions are valid at every state - for example, you can’t drive through walls or pick up a passenger when you’re not at their location.</p>
 <p>Action masking is a technique that helps reinforcement learning agents avoid selecting invalid actions by providing a binary mask that indicates which actions are valid in the current state. This can significantly improve learning efficiency and performance.</p>
 <section id="understanding-the-taxi-environment">
@@ -408,13 +407,12 @@ This mask is a binary array where 1 indicates a valid action and 0 indicates an 
 <h2>How Action Masking Works<a class="headerlink" href="#how-action-masking-works" title="Link to this heading">¶</a></h2>
 <p>Action masking works by constraining the agent’s action selection to only valid actions:</p>
 <ol class="arabic simple">
-<li><p>During exploration: When selecting random actions, we only choose from the set of valid actions</p></li>
-<li><p>During exploitation: When selecting the best action based on Q-values, we only consider Q-values for valid actions</p></li>
-<li><p>During Q-learning updates: We compute the maximum future Q-value only over valid actions in the next state</p></li>
+<li><p>During exploration: when selecting random actions, we only choose from the set of valid actions.</p></li>
+<li><p>During exploitation: when selecting the best action based on Q-values, we only consider Q-values for valid actions.</p></li>
+<li><p>During Q-learning updates: we compute the maximum future Q-value only over valid actions in the next state.</p></li>
 </ol>
 <p>Let’s implement this step by step:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -437,7 +435,7 @@ This mask is a binary array where 1 indicates a valid action and 0 indicates an 
 <span class="w">    </span><span class="sd">"""Train a Q-learning agent with or without action masking."""</span>
     <span class="c1"># Set random seeds for reproducibility</span>
     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
     <span class="c1"># Initialize Q-table</span>
     <span class="n">n_states</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">n</span>
@@ -451,23 +449,18 @@ This mask is a binary array where 1 indicates a valid action and 0 indicates an 
         <span class="c1"># Reset environment</span>
         <span class="n">state</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span> <span class="o">+</span> <span class="n">episode</span><span class="p">)</span>
         <span class="n">total_reward</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">terminated</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">done</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">):</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">):</span>
             <span class="c1"># Get action mask if using it</span>
             <span class="n">action_mask</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">"action_mask"</span><span class="p">]</span> <span class="k">if</span> <span class="n">use_action_mask</span> <span class="k">else</span> <span class="kc">None</span>
 
             <span class="c1"># Epsilon-greedy action selection with masking</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
-                <span class="c1"># Random action selection</span>
-                <span class="k">if</span> <span class="n">use_action_mask</span><span class="p">:</span>
-                    <span class="c1"># Only select from valid actions</span>
-                    <span class="n">valid_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">action_mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">valid_actions</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># Select from all actions</span>
-                    <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_actions</span><span class="p">)</span>
+                <span class="c1"># Random action selection. ``Discrete.sample`` accepts a mask and</span>
+                <span class="c1"># only samples actions where the mask is 1.</span>
+                <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="n">action_mask</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Greedy action selection</span>
                 <span class="k">if</span> <span class="n">use_action_mask</span><span class="p">:</span>
@@ -482,27 +475,30 @@ This mask is a binary array where 1 indicates a valid action and 0 indicates an 
                     <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">q_table</span><span class="p">[</span><span class="n">state</span><span class="p">])</span>
 
             <span class="c1"># Take action and observe result</span>
-            <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="n">next_state</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
             <span class="n">total_reward</span> <span class="o">+=</span> <span class="n">reward</span>
 
             <span class="c1"># Q-learning update</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">done</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">use_action_mask</span><span class="p">:</span>
-                    <span class="c1"># Only consider valid next actions for bootstrapping</span>
-                    <span class="n">next_mask</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">"action_mask"</span><span class="p">]</span>
-                    <span class="n">valid_next_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">next_mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_next_actions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">next_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q_table</span><span class="p">[</span><span class="n">next_state</span><span class="p">,</span> <span class="n">valid_next_actions</span><span class="p">])</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">next_max</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">use_action_mask</span><span class="p">:</span>
+                <span class="c1"># Only consider valid next actions for bootstrapping</span>
+                <span class="n">next_mask</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">"action_mask"</span><span class="p">]</span>
+                <span class="n">valid_next_actions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">next_mask</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_next_actions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">next_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q_table</span><span class="p">[</span><span class="n">next_state</span><span class="p">,</span> <span class="n">valid_next_actions</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># Consider all next actions</span>
-                    <span class="n">next_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q_table</span><span class="p">[</span><span class="n">next_state</span><span class="p">])</span>
+                    <span class="n">next_max</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Consider all next actions</span>
+                <span class="n">next_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q_table</span><span class="p">[</span><span class="n">next_state</span><span class="p">])</span>
 
-                <span class="c1"># Update Q-value</span>
-                <span class="n">q_table</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">q_table</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
-                    <span class="n">reward</span> <span class="o">+</span> <span class="n">discount_factor</span> <span class="o">*</span> <span class="n">next_max</span> <span class="o">-</span> <span class="n">q_table</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span>
-                <span class="p">)</span>
+            <span class="c1"># Update Q-value. The update runs on every step, including the last one,</span>
+            <span class="c1"># so the final drop-off reward is learned. Only a terminal state</span>
+            <span class="c1"># (``terminated``) has no future value; a time-limit truncation still</span>
+            <span class="c1"># bootstraps from ``next_state``.</span>
+            <span class="n">td_target</span> <span class="o">=</span> <span class="n">reward</span> <span class="o">+</span> <span class="n">discount_factor</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">next_max</span>
+            <span class="n">q_table</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="n">q_table</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span> <span class="o">+</span> <span class="n">learning_rate</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">td_target</span> <span class="o">-</span> <span class="n">q_table</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span>
+            <span class="p">)</span>
 
             <span class="n">state</span> <span class="o">=</span> <span class="n">next_state</span>
 
@@ -516,15 +512,16 @@ This mask is a binary array where 1 indicates a valid action and 0 indicates an 
 </pre></div>
 </div>
 </section>
-</section>
 <section id="running-the-experiment">
-<h1>Running the Experiment<a class="headerlink" href="#running-the-experiment" title="Link to this heading">¶</a></h1>
+<h2>Running the Experiment<a class="headerlink" href="#running-the-experiment" title="Link to this heading">¶</a></h2>
 <p>Now we’ll run experiments to compare the performance of Q-learning agents with and without action masking.
 We’ll use multiple random seeds to ensure robust statistical comparison.</p>
-<p>The experiment setup:
-- 12 independent runs with different random seeds
-- 5000 episodes per run
-- Standard Q-learning hyperparameters <code class="docutils literal notranslate"><span class="pre">(α=0.1,</span> <span class="pre">γ=0.95,</span> <span class="pre">ε=0.1)</span></code></p>
+<p>The experiment setup:</p>
+<ul class="simple">
+<li><p>12 independent runs with different random seeds</p></li>
+<li><p>5000 episodes per run</p></li>
+<li><p>Standard Q-learning hyperparameters <code class="docutils literal notranslate"><span class="pre">(α=0.1,</span> <span class="pre">γ=0.95,</span> <span class="pre">ε=0.1)</span></code></p></li>
+</ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Experiment parameters</span>
 <span class="n">n_runs</span> <span class="o">=</span> <span class="mi">12</span>
 <span class="n">episodes</span> <span class="o">=</span> <span class="mi">5000</span>
@@ -574,7 +571,7 @@ We’ll use multiple random seeds to ensure robust statistical comparison.</p>
 </div>
 </section>
 <section id="visualizing-results">
-<h1>Visualizing Results<a class="headerlink" href="#visualizing-results" title="Link to this heading">¶</a></h1>
+<h2>Visualizing Results<a class="headerlink" href="#visualizing-results" title="Link to this heading">¶</a></h2>
 <p>After running all experiments, we calculate statistics and create visualizations to compare the performance of both approaches.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate statistics across runs</span>
 <span class="n">masked_mean_rewards</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s2">"mean_reward"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">masked_results_list</span><span class="p">]</span>
@@ -641,21 +638,25 @@ We’ll use multiple random seeds to ensure robust statistical comparison.</p>
 <img alt="../../../_images/taxi_v3_action_masking_comparison.png" src="../../../_images/taxi_v3_action_masking_comparison.png" />
 </section>
 <section id="results-analysis">
-<h1>Results Analysis<a class="headerlink" href="#results-analysis" title="Link to this heading">¶</a></h1>
+<h2>Results Analysis<a class="headerlink" href="#results-analysis" title="Link to this heading">¶</a></h2>
 <p>The comparison demonstrates several important benefits of using action masking:</p>
-<p>Key Benefits of Action Masking:</p>
-<p>1. Faster Convergence: Agents with action masking typically learn faster because they don’t waste time exploring
-invalid actions.</p>
-<ol class="arabic simple" start="2">
-<li><p>Better Performance: By focusing only on valid actions, the agent can achieve higher rewards more consistently.</p></li>
-<li><p>More Stable Learning: Action masking reduces the variance in learning by eliminating the randomness associated with invalid action selection.</p></li>
-<li><p>Practical Applicability: In real-world scenarios, action masking prevents agents from taking actions that could be dangerous or impossible.</p></li>
+<ol class="arabic simple">
+<li><p><strong>Faster convergence</strong>: agents with action masking learn faster because they don’t waste time exploring
+invalid actions.</p></li>
+<li><p><strong>Better performance</strong>: by focusing only on valid actions, the agent achieves higher rewards more consistently.</p></li>
+<li><p><strong>More stable learning</strong>: action masking reduces the variance in learning by eliminating the randomness
+associated with invalid action selection.</p></li>
+<li><p><strong>Practical applicability</strong>: in real-world scenarios, action masking prevents agents from taking actions that
+could be dangerous or impossible.</p></li>
 </ol>
-<p>Reminder of Key Implementation Details</p>
+<p>Reminder of the key implementation details:</p>
 <ul class="simple">
-<li><p>Action Selection: We filter available actions using <code class="docutils literal notranslate"><span class="pre">np.nonzero(action_mask</span> <span class="pre">==</span> <span class="pre">1)[0]</span></code> to get only valid actions</p></li>
-<li><p>Q-Value Updates: When computing the maximum future Q-value, we only consider valid  actions in the next state</p></li>
-<li><p>Exploration: Random action selection is constrained to the set of valid actions</p></li>
+<li><p><strong>Action selection</strong>: we filter available actions using <code class="docutils literal notranslate"><span class="pre">np.nonzero(action_mask</span> <span class="pre">==</span> <span class="pre">1)[0]</span></code> to get only valid actions.</p></li>
+<li><p><strong>Q-value updates</strong>: when computing the maximum future Q-value, we only consider valid actions in the next state.
+The update also runs on the final step of an episode; only <code class="docutils literal notranslate"><span class="pre">terminated</span></code> removes the bootstrapped future value,
+while a time-limit <code class="docutils literal notranslate"><span class="pre">truncated</span></code> still bootstraps.</p></li>
+<li><p><strong>Exploration</strong>: random action selection uses <code class="docutils literal notranslate"><span class="pre">env.action_space.sample(mask=action_mask)</span></code>, which only samples
+valid actions.</p></li>
 </ul>
 <p>This approach ensures that the agent never selects invalid actions while still maintaining the exploration-exploitation balance necessary for effective learning.</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-training-agents-action-masking-taxi-py">
@@ -666,6 +667,7 @@ invalid actions.</p>
 <p><a class="reference download internal" download="" href="../../../_downloads/f568409c70f62ce68a7552285b9724db/action_masking_taxi.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">action_masking_taxi.ipynb</span></code></a></p>
 </div>
 </div>
+</section>
 </section>
 
           </article>
@@ -740,11 +742,11 @@ invalid actions.</p>
 <li><a class="reference internal" href="#">Action Masking in the Taxi Environment</a><ul>
 <li><a class="reference internal" href="#understanding-the-taxi-environment">Understanding the Taxi Environment</a></li>
 <li><a class="reference internal" href="#how-action-masking-works">How Action Masking Works</a></li>
-</ul>
-</li>
 <li><a class="reference internal" href="#running-the-experiment">Running the Experiment</a></li>
 <li><a class="reference internal" href="#visualizing-results">Visualizing Results</a></li>
 <li><a class="reference internal" href="#results-analysis">Results Analysis</a></li>
+</ul>
+</li>
 </ul>
 
             </div>

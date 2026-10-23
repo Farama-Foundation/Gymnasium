@@ -306,9 +306,6 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -394,9 +391,9 @@ script can be downloaded from the same page to run and modify locally.</p>
 registration and tests.</p></li>
 <li><p><strong>Implementing custom wrappers</strong> - subclass <code class="docutils literal notranslate"><span class="pre">ObservationWrapper</span></code>, <code class="docutils literal notranslate"><span class="pre">ActionWrapper</span></code>,
 <code class="docutils literal notranslate"><span class="pre">RewardWrapper</span></code> and <code class="docutils literal notranslate"><span class="pre">Wrapper</span></code> to change the observations, actions or rewards of an existing
-environment.</p></li>
-<li><p><strong>Handling time limits</strong> - the difference between <code class="docutils literal notranslate"><span class="pre">terminated</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated</span></code>, and why
-bootstrapping should stop only on <code class="docutils literal notranslate"><span class="pre">terminated</span></code>.</p></li>
+environment, and where to find the function-based and vector wrappers.</p></li>
+<li><p><strong>Handling time limits</strong> - the difference between <code class="docutils literal notranslate"><span class="pre">terminated</span></code> and <code class="docutils literal notranslate"><span class="pre">truncated</span></code>, why
+bootstrapping should stop only on <code class="docutils literal notranslate"><span class="pre">terminated</span></code>, and how this works with vector environments.</p></li>
 <li><p><strong>Load custom quadruped robot environments</strong> - pass an MJCF or URDF model to a MuJoCo environment
 with the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument, then tune its simulation, termination, reward and observation
 parameters.</p></li>
@@ -412,8 +409,8 @@ parameters.</p></li>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">copier</span> <span class="pre">&quot;gymnasium[classic-control]&quot;</span></code> for <em>Make your own custom environment</em>, which
 walks through the Copier template and renders the example environment with <code class="docutils literal notranslate"><span class="pre">pygame</span></code>.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[box2d]&quot;</span></code> for <em>Implementing custom wrappers</em>, which wraps
-<code class="docutils literal notranslate"><span class="pre">LunarLanderContinuous-v3</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[box2d,mujoco]&quot;</span></code> for <em>Implementing custom wrappers</em>, which wraps
+<code class="docutils literal notranslate"><span class="pre">LunarLanderContinuous-v3</span></code> and <code class="docutils literal notranslate"><span class="pre">Reacher-v5</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[mujoco]&quot;</span></code> for <em>Load custom quadruped robot environments</em>, which wraps
 <code class="docutils literal notranslate"><span class="pre">Ant-v5</span></code>.</p></li>
 </ul>

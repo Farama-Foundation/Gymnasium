@@ -2,14 +2,17 @@
 Speeding up A2C Training with Vector Envs
 =========================================
 
-This tutorial demonstrates training with vector environments to it speed up.
+This tutorial demonstrates training with vector environments to speed it up.
+It assumes familiarity with the vector environment API (:doc:`/api/vector`) and basic deep RL with PyTorch.
+
+Dependencies: ``pip install "gymnasium[box2d]" torch matplotlib tqdm``.
 """
 
 # %%
 # Notice
 # ------
 #
-# If you encounter an RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from ``gym.make_vec=`` or ``gym.vector.AsyncVectorEnv`` to the end of the code by ``if__name__ == '__main__'``.
+# If you encounter a RuntimeError like the following comment raised on multiprocessing/spawn.py, wrap up the code from ``gym.make_vec`` or ``gym.vector.AsyncVectorEnv`` to the end of the code by ``if __name__ == '__main__'``.
 #
 # ``An attempt has been made to start a new process before the current process has finished its bootstrapping phase.``
 #
@@ -40,7 +43,7 @@ This tutorial demonstrates training with vector environments to it speed up.
 # The A2C agent class is initialized with the number of features of the input state, the number of actions the agent can take,
 # the learning rates and the number of environments that run in parallel to collect experiences. The actor and critic networks are defined
 # and their respective optimizers are initialized. The forward pass of the networks takes in a batched vector of states and returns a tensor of state values
-# and a tensor of action logits. The select_action method returns a tuple of the chosen actions, the log-probs of those actions, and the state values for each action.
+# and a tensor of action logits. The select_action method returns a tuple of the chosen actions, the log-probs of those actions, and the state values for each state.
 # In addition, it also returns the entropy of the policy distribution, which is subtracted from the loss later (with a weighting factor `ent_coef`) to encourage exploration.
 #
 # The get_losses function calculates the losses for the actor and critic networks (using GAE), which are then updated using the update_parameters function.
@@ -75,7 +78,7 @@ import gymnasium as gym
 # The Actor-Critic combines elements of value-based and policy-based methods. In A2C, the agent has two separate neural networks:
 # a critic network that estimates the state-value function, and an actor network that outputs logits for a categorical probability distribution over all actions.
 # The critic network is trained to minimize the mean squared error between the predicted state values and the actual returns received by the agent
-# (this is equivalent to minimizing the squared advantages, because the advantage of an action is as the difference between the return and the state-value: A(s,a) = Q(s,a) - V(s).
+# (this is equivalent to minimizing the squared advantages, because the advantage of an action is the difference between the return and the state-value: A(s,a) = Q(s,a) - V(s).
 # The actor network is trained to maximize the expected return by selecting actions that have high expected values according to the critic network.
 #
 # The focus of this tutorial will not be on the details of A2C itself. Instead, the tutorial will focus on how to use vectorized environments
@@ -151,11 +154,11 @@ class A2C(nn.Module):
             x: A batched vector of states.
 
         Returns:
-            state_values: A tensor with the state values, with shape [n_envs,].
+            state_values: A tensor with the state values, with shape [n_envs, 1].
             action_logits_vec: A tensor with the action logits, with shape [n_envs, n_actions].
         """
         x = torch.Tensor(x).to(self.device)
-        state_values = self.critic(x)  # shape: [n_envs,]
+        state_values = self.critic(x)  # shape: [n_envs, 1]
         action_logits_vec = self.actor(x)  # shape: [n_envs, n_actions]
         return (state_values, action_logits_vec)
 
@@ -163,15 +166,16 @@ class A2C(nn.Module):
         self, x: np.ndarray
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
         """
-        Returns a tuple of the chosen actions and the log-probs of those actions.
+        Samples an action for each environment from the current policy.
 
         Args:
-            x: A batched vector of states.
+            x: A batched vector of states, with shape [n_envs, n_features].
 
         Returns:
-            actions: A tensor with the actions, with shape [n_steps_per_update, n_envs].
-            action_log_probs: A tensor with the log-probs of the actions, with shape [n_steps_per_update, n_envs].
-            state_values: A tensor with the state values, with shape [n_steps_per_update, n_envs].
+            actions: A tensor with the actions, with shape [n_envs].
+            action_log_probs: A tensor with the log-probs of the actions, with shape [n_envs].
+            state_values: A tensor with the state values, with shape [n_envs, 1].
+            entropy: A tensor with the entropy of the policy distribution, with shape [n_envs].
         """
         state_values, action_logits = self.forward(x)
         action_pd = torch.distributions.Categorical(
@@ -187,8 +191,10 @@ class A2C(nn.Module):
         rewards: torch.Tensor,
         action_log_probs: torch.Tensor,
         value_preds: torch.Tensor,
+        last_value: torch.Tensor,
         entropy: torch.Tensor,
         masks: torch.Tensor,
+        valid: torch.Tensor,
         gamma: float,
         lam: float,
         ent_coef: float,
@@ -202,11 +208,18 @@ class A2C(nn.Module):
             rewards: A tensor with the rewards for each time step in the episode, with shape [n_steps_per_update, n_envs].
             action_log_probs: A tensor with the log-probs of the actions taken at each time step in the episode, with shape [n_steps_per_update, n_envs].
             value_preds: A tensor with the state value predictions for each time step in the episode, with shape [n_steps_per_update, n_envs].
-            masks: A tensor with the masks for each time step in the episode, with shape [n_steps_per_update, n_envs].
+            last_value: A tensor with the value predictions of the states observed after the last step, with shape [n_envs],
+                used to bootstrap the advantage of the last step.
+            entropy: A tensor with the entropy of the policy at each time step, with shape [n_steps_per_update, n_envs].
+            masks: A tensor that is 0 where the step terminated the episode (so there is no future value to bootstrap from)
+                and 1 otherwise, with shape [n_steps_per_update, n_envs].
+            valid: A tensor that is 0 for autoreset steps (the step after an episode ended, where the action was ignored
+                and the environment was reset) and 1 otherwise, with shape [n_steps_per_update, n_envs].
             gamma: The discount factor.
             lam: The GAE hyperparameter. (lam=1 corresponds to Monte-Carlo sampling with high variance and no bias,
                                           and lam=0 corresponds to normal TD-Learning that has a low variance but is biased
                                           because the estimates are generated by a Neural Net).
+            ent_coef: The coefficient of the entropy bonus.
             device: The device to run the computations on (e.g. CPU or GPU).
 
         Returns:
@@ -218,19 +231,24 @@ class A2C(nn.Module):
 
         # compute the advantages using GAE
         gae = 0.0
-        for t in reversed(range(T - 1)):
-            td_error = (
-                rewards[t] + gamma * masks[t] * value_preds[t + 1] - value_preds[t]
-            )
+        for t in reversed(range(T)):
+            next_value = value_preds[t + 1] if t + 1 < T else last_value
+            td_error = rewards[t] + gamma * masks[t] * next_value - value_preds[t]
             gae = td_error + gamma * lam * masks[t] * gae
+            # an autoreset step is not a real transition, so it gets no advantage
+            # and must not leak into the advantage of the step before it
+            gae = gae * valid[t]
             advantages[t] = gae
 
-        # calculate the loss of the minibatch for actor and critic
-        critic_loss = advantages.pow(2).mean()
+        # calculate the loss of the minibatch for actor and critic,
+        # averaging only over the valid (non-autoreset) transitions
+        n_valid = valid.sum()
+        critic_loss = advantages.pow(2).sum() / n_valid
 
         # give a bonus for higher entropy to encourage exploration
         actor_loss = (
-            -(advantages.detach() * action_log_probs).mean() - ent_coef * entropy.mean()
+            -(advantages.detach() * action_log_probs * valid).sum() / n_valid
+            - ent_coef * (entropy * valid).sum() / n_valid
         )
         return (critic_loss, actor_loss)
 
@@ -260,12 +278,12 @@ class A2C(nn.Module):
 # When you calculate the losses for the two Neural Networks over only one epoch, it might have a high variance. With vectorized environments,
 # we can play with `n_envs` in parallel and thus get up to a linear speedup (meaning that in theory, we collect samples `n_envs` times quicker)
 # that we can use to calculate the loss for the current policy and critic network. When we are using more samples to calculate the loss,
-# it will have a lower variance and theirfore leads to quicker learning.
+# it will have a lower variance and therefore leads to quicker learning.
 #
 # A2C is a synchronous method, meaning that the parameter updates to Networks take place deterministically (after each sampling phase),
 # but we can still make use of asynchronous vector envs to spawn multiple processes for parallel environment execution.
 #
-# The simplest way to create vector environments is by calling `gym.vector.make`, which creates multiple instances of the same environment:
+# The simplest way to create vector environments is by calling ``gym.make_vec``, which creates multiple instances of the same environment:
 #
 
 envs = gym.make_vec("LunarLander-v3", num_envs=3, max_episode_steps=600)
@@ -276,7 +294,7 @@ envs = gym.make_vec("LunarLander-v3", num_envs=3, max_episode_steps=600)
 # --------------------
 #
 # If we want to randomize the environment for training to get more robust agents (that can deal with different parameterizations of an environment
-# and theirfore might have a higher degree of generalization), we can set the desired parameters manually or use a pseudo-random number generator to generate them.
+# and therefore might have a higher degree of generalization), we can set the desired parameters manually or use a pseudo-random number generator to generate them.
 #
 # Manually setting up 3 parallel 'LunarLander-v3' envs with different parameters:
 
@@ -368,7 +386,7 @@ actor_lr = 0.001
 critic_lr = 0.005
 
 # Note: the actor has a slower learning rate so that the value targets become
-# more stationary and are theirfore easier to estimate for the critic
+# more stationary and are therefore easier to estimate for the critic
 
 # environment setup
 if randomize_domain:
@@ -423,6 +441,16 @@ agent = A2C(obs_shape, action_shape, device, critic_lr, actor_lr, n_envs)
 # (`n_steps_per_update`) in each environment (as an example, this could mean that we play 20 timesteps to finish an episode and then
 # use the rest of the timesteps to begin a new one).
 #
+# By default, vector environments use the ``NEXT_STEP`` autoreset mode [3]. When an episode ends on step ``t``
+# (``terminated`` or ``truncated``), the observation returned is the final observation of that episode, and only the
+# *next* call to ``step`` resets that environment. On that autoreset step, the action is ignored, the reward is 0 and the
+# returned observation is the first observation of the new episode. This has two consequences for the training loop:
+#
+# - The autoreset step is not a real transition, so we record it in a ``valid`` mask (computed from the previous step's
+#   ``terminated | truncated``) and exclude it from the actor and critic losses.
+# - Because the final observation is still the input on the autoreset step, its value estimate is available to bootstrap
+#   a truncated episode, while the ``masks`` tensor (0 on ``terminated``) stops bootstrapping for terminated episodes.
+#
 
 # create a wrapper environment to save episode returns and episode lengths
 envs_wrapper = gym.wrappers.vector.RecordEpisodeStatistics(
@@ -432,6 +460,10 @@ envs_wrapper = gym.wrappers.vector.RecordEpisodeStatistics(
 critic_losses = []
 actor_losses = []
 entropies = []
+
+# whether each environment's episode ended on the previous step,
+# so that the next step is an autoreset step (``NEXT_STEP`` autoreset mode)
+autoreset = np.zeros(n_envs, dtype=bool)
 
 # use tqdm to get a progress bar for training
 for sample_phase in tqdm(range(n_updates)):
@@ -444,6 +476,7 @@ for sample_phase in tqdm(range(n_updates)):
     ep_action_log_probs = torch.zeros(n_steps_per_update, n_envs, device=device)
     ep_entropies = torch.zeros(n_steps_per_update, n_envs, device=device)
     masks = torch.zeros(n_steps_per_update, n_envs, device=device)
+    valid = torch.zeros(n_steps_per_update, n_envs, device=device)
 
     # at the start of training reset all envs to get an initial state
     if sample_phase == 0:
@@ -461,22 +494,32 @@ for sample_phase in tqdm(range(n_updates)):
             actions.cpu().numpy()
         )
 
-        ep_value_preds[step] = torch.squeeze(state_value_preds)
+        ep_value_preds[step] = state_value_preds.squeeze(-1)
         ep_rewards[step] = torch.tensor(rewards, device=device)
         ep_action_log_probs[step] = action_log_probs
         ep_entropies[step] = entropy
 
         # add a mask (for the return calculation later);
         # for each env the mask is 1 if the episode is ongoing and 0 if it is terminated (not by truncation!)
-        masks[step] = torch.tensor([not term for term in terminated])
+        masks[step] = torch.tensor(np.logical_not(terminated), device=device)
+
+        # the transition is invalid if this step was an autoreset step
+        valid[step] = torch.tensor(np.logical_not(autoreset), device=device)
+        autoreset = np.logical_or(terminated, truncated)
+
+    # value of the states after the last step, to bootstrap the last advantage
+    with torch.no_grad():
+        last_value = agent.forward(states)[0].squeeze(-1)
 
     # calculate the losses for actor and critic
     critic_loss, actor_loss = agent.get_losses(
         ep_rewards,
         ep_action_log_probs,
         ep_value_preds,
+        last_value,
         ep_entropies,
         masks,
+        valid,
         gamma,
         lam,
         ent_coef,
@@ -489,7 +532,7 @@ for sample_phase in tqdm(range(n_updates)):
     # log the losses and entropy
     critic_losses.append(critic_loss.detach().cpu().numpy())
     actor_losses.append(actor_loss.detach().cpu().numpy())
-    entropies.append(ep_entropies.detach().mean().cpu().numpy())
+    entropies.append(ep_entropies[valid.bool()].detach().mean().cpu().numpy())
 
 
 # %%
@@ -611,7 +654,7 @@ plt.show()
 # because the gradients of the environments are good enough after a relatively low number of environments
 # (especially if the environment is not very complex). In this case, increasing the number of environments
 # does not increase the learning speed, and actually increases the runtime, possibly due to the additional time
-# needed to calculate the gradients. For LunarLander-v3, the best performing configuration used a AsyncVectorEnv
+# needed to calculate the gradients. For LunarLander-v3, the best performing configuration used an AsyncVectorEnv
 # with 10 parallel environments, but environments with a higher complexity may require more
 # parallel environments to achieve optimal performance.
 #
@@ -644,7 +687,7 @@ if save_weights:
 
 """ load network weights """
 if load_weights:
-    agent = A2C(obs_shape, action_shape, device, critic_lr, actor_lr)
+    agent = A2C(obs_shape, action_shape, device, critic_lr, actor_lr, n_envs)
 
     agent.actor.load_state_dict(torch.load(actor_weights_path))
     agent.critic.load_state_dict(torch.load(critic_weights_path))
@@ -700,7 +743,7 @@ for episode in range(n_showcase_episodes):
         # update if the environment is done
         done = terminated or truncated
 
-env.close()
+    env.close()
 
 
 # %%

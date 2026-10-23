@@ -306,9 +306,6 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -387,7 +384,10 @@
 </div>
 <section id="solving-blackjack-with-tabular-q-learning">
 <span id="sphx-glr-tutorials-training-agents-blackjack-q-learning-py"></span><h1>Solving Blackjack with Tabular Q-Learning<a class="headerlink" href="#solving-blackjack-with-tabular-q-learning" title="Link to this heading">¶</a></h1>
-<p>This tutorial trains an agent for BlackJack using tabular Q-learning.</p>
+<p>This tutorial trains an agent for BlackJack using tabular Q-learning.
+<a class="reference internal" href="../../../introduction/train_agent/"><span class="doc">Training an Agent</span></a> gives a shorter version of the same agent; this tutorial also walks through
+the environment’s observations and actions and visualizes the learned state values and policy.</p>
+<p>Dependencies: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[toy-text]&quot;</span> <span class="pre">matplotlib</span> <span class="pre">seaborn</span> <span class="pre">tqdm</span></code>.</p>
 <a class="only-light reference internal image-reference" href="../../../_images/blackjack_AE_loop.jpg"><img alt="agent-environment-diagram" class="only-light" src="../../../_images/blackjack_AE_loop.jpg" style="width: 650px;" />
 </a>
 <a class="only-dark reference internal image-reference" href="../../../_images/blackjack_AE_loop_dark.png"><img alt="agent-environment-diagram" class="only-dark" src="../../../_images/blackjack_AE_loop_dark.png" style="width: 650px;" />
@@ -403,7 +403,7 @@ Full documentation can be found at <a class="reference external" href="https://g
 dealers without exceeding 21.</p>
 <dl class="simple">
 <dt><strong>Actions</strong>: Agents can pick between two actions:</dt><dd><ul class="simple">
-<li><p>stand (0): the player takes no more cards</p></li>
+<li><p>stick (0): the player takes no more cards</p></li>
 <li><p>hit (1): the player will be given another card, however the player could get over 21 and bust</p></li>
 </ul>
 </dd>
@@ -449,20 +449,18 @@ favorite discrete RL algorithm. The presented solution uses <em>Q-learning</em>
 <h2>Observing the environment<a class="headerlink" href="#observing-the-environment" title="Link to this heading">¶</a></h2>
 <p>First of all, we call <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> to start an episode. This function
 resets the environment to a starting position and returns an initial
-<code class="docutils literal notranslate"><span class="pre">observation</span></code>. We usually also set <code class="docutils literal notranslate"><span class="pre">done</span> <span class="pre">=</span> <span class="pre">False</span></code>. This variable
-will be useful later to check if a game is terminated (i.e., the player wins or loses).</p>
+<code class="docutils literal notranslate"><span class="pre">observation</span></code>. Passing a <code class="docutils literal notranslate"><span class="pre">seed</span></code> makes the episode reproducible.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># reset the environment to get the first observation</span>
-<span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
-<span class="c1"># observation = (16, 9, False)</span>
+<span class="c1"># observation = (17, 10, 0)</span>
 </pre></div>
 </div>
 <p>Note that our observation is a 3-tuple consisting of 3 values:</p>
 <ul class="simple">
 <li><p>The players current sum</p></li>
 <li><p>Value of the dealers face-up card</p></li>
-<li><p>Boolean whether the player holds a usable ace (An ace is usable if it
+<li><p>Whether the player holds a usable ace, as 0 or 1 (an ace is usable if it
 counts as 11 without busting)</p></li>
 </ul>
 </section>
@@ -472,7 +470,7 @@ counts as 11 without busting)</p></li>
 <code class="docutils literal notranslate"><span class="pre">env.step(action)</span></code> function to interact with the environment. This
 function takes an action as input and executes it in the environment.
 Because that action changes the state of the environment, it returns
-four useful variables to us. These are:</p>
+five useful variables to us. These are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">next_state</span></code>: This is the observation that the agent will receive
 after taking the action.</p></li>
@@ -496,13 +494,14 @@ agent has left. If the agent has 0 lives, then the episode is over.</p>
 loop because rendering slows down training by a lot. Rather try to build
 an extra loop to evaluate and showcase the agent after training.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># sample a random action from all valid actions</span>
+<span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 <span class="c1"># action=1</span>
 
 <span class="c1"># execute the action in our environment and receive infos from the environment</span>
 <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
-<span class="c1"># observation=(24, 10, False)</span>
+<span class="c1"># observation=(27, 10, 0)</span>
 <span class="c1"># reward=-1.0</span>
 <span class="c1"># terminated=True</span>
 <span class="c1"># truncated=False</span>
@@ -519,7 +518,7 @@ harmful if the agent learns on invalid data).</p>
 <h2>Building an agent<a class="headerlink" href="#building-an-agent" title="Link to this heading">¶</a></h2>
 <p>Let’s build a <code class="docutils literal notranslate"><span class="pre">Q-learning</span> <span class="pre">agent</span></code> to solve <em>Blackjack-v1</em>! We’ll need
 some functions for picking an action and updating the agents action
-values. To ensure that the agents explores the environment, one possible
+values. To ensure that the agent explores the environment, one possible
 solution is the <code class="docutils literal notranslate"><span class="pre">epsilon-greedy</span></code> strategy, where we pick a random
 action with the percentage <code class="docutils literal notranslate"><span class="pre">epsilon</span></code> and the greedy action (currently
 valued as the best) <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">epsilon</span></code>.</p>
@@ -591,7 +590,7 @@ valued as the best) <code class="docutils literal notranslate"><span class="pre"
 </pre></div>
 </div>
 <p>To train the agent, we will let the agent play one episode (one complete
-game is called an episode) at a time and then update it’s Q-values after
+game is called an episode) at a time and then update its Q-values after
 each step (one single action in a game is called a step).</p>
 <p>The agent will have to experience a lot of episodes to explore the
 environment sufficiently.</p>
@@ -653,14 +652,14 @@ the n_episodes by 10x and lower the learning_rate (e.g. to 0.001).</p>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Episode lengths"</span><span class="p">)</span>
 <span class="n">length_moving_average</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">rolling_length</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"same"</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">length_queue</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">rolling_length</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"valid"</span>
     <span class="p">)</span>
     <span class="o">/</span> <span class="n">rolling_length</span>
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">length_moving_average</span><span class="p">)),</span> <span class="n">length_moving_average</span><span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Training Error"</span><span class="p">)</span>
 <span class="n">training_error_moving_average</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">training_error</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">rolling_length</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"same"</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">agent</span><span class="o">.</span><span class="n">training_error</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">rolling_length</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"valid"</span><span class="p">)</span>
     <span class="o">/</span> <span class="n">rolling_length</span>
 <span class="p">)</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">training_error_moving_average</span><span class="p">)),</span> <span class="n">training_error_moving_average</span><span class="p">)</span>
@@ -769,12 +768,10 @@ so that any used resources by the environment will be closed.</p>
 </section>
 <section id="think-you-can-do-better">
 <h2>Think you can do better?<a class="headerlink" href="#think-you-can-do-better" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># You can visualize the environment using the play function</span>
-<span class="c1"># and try to win a few games.</span>
-</pre></div>
-</div>
+<p>You can visualize the environment using the play function
+and try to win a few games.</p>
 <p>Hopefully this Tutorial helped you get a grip of how to interact with
-OpenAI-Gym environments and sets you on a journey to solve many more RL
+Gymnasium environments and sets you on a journey to solve many more RL
 challenges.</p>
 <p>It is recommended that you solve this environment by yourself (project
 based learning is really effective!). You can apply your favorite

@@ -306,9 +306,6 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -406,10 +403,10 @@ by implementing the <a class="reference internal" href="../../../api/wrappers/ob
 update the observation space, if the transformation changes the shape of observations (e.g. by transforming
 dictionaries into numpy arrays, as in the following example).</p>
 <p>Imagine you have a 2D navigation task where the environment returns dictionaries as observations with
-keys <code class="docutils literal notranslate"><span class="pre">&quot;agent_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;target_position&quot;</span></code>. A common thing to do might be to throw away some degrees of
-freedom and only consider the position of the target relative to the agent, i.e.
-<code class="docutils literal notranslate"><span class="pre">observation[&quot;target_position&quot;]</span> <span class="pre">-</span> <span class="pre">observation[&quot;agent_position&quot;]</span></code>. For this, you could implement an
-observation wrapper like this:</p>
+keys <code class="docutils literal notranslate"><span class="pre">&quot;agent&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;target&quot;</span></code> (like the <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code> from <a class="reference internal" href="../environment_creation/"><span class="doc">Make your own custom environment</span></a>). A common thing to do
+might be to throw away some degrees of freedom and only consider the position of the target relative to the agent,
+i.e. <code class="docutils literal notranslate"><span class="pre">observation[&quot;target&quot;]</span> <span class="pre">-</span> <span class="pre">observation[&quot;agent&quot;]</span></code>. For this, you could implement an observation wrapper like
+this:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
@@ -420,10 +417,13 @@ observation wrapper like this:</p>
 <span class="k">class</span><span class="w"> </span><span class="nc">RelativePosition</span><span class="p">(</span><span class="n">ObservationWrapper</span><span class="p">):</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">low</span><span class="o">=-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">obs</span><span class="p">[</span><span class="s2">"target"</span><span class="p">]</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">"agent"</span><span class="p">]</span>
+        <span class="c1"># cast to the dtype of the new observation space (the positions are integers)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s2">"target"</span><span class="p">]</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">"agent"</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -446,11 +446,11 @@ to use a finite subset of actions. Then, you might want to implement the followi
 
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"LunarLanderContinuous-v3"</span><span class="p">)</span>
-<span class="c1"># print(env.action_space)  # Box(-1.0, 1.0, (2,), float32)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>  <span class="c1"># Box(-1.0, 1.0, (2,), float32)</span>
 <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">DiscreteActions</span><span class="p">(</span>
     <span class="n">env</span><span class="p">,</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
 <span class="p">)</span>
-<span class="c1"># print(wrapped_env.action_space)  # Discrete(4)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>  <span class="c1"># Discrete(4)</span>
 </pre></div>
 </div>
 </section>
@@ -488,26 +488,49 @@ Such wrappers can be implemented by inheriting from <a class="reference internal
 </ul>
 <p>If you do this, you can access the environment that was passed
 to your wrapper (which <em>still</em> might be wrapped in some other wrapper) by accessing the attribute <code class="xref py py-attr docutils literal notranslate"><span class="pre">env</span></code>.</p>
-<p>Let’s also take a look at an example for this case. Most MuJoCo environments return a reward that consists
-of different terms: For instance, there might be a term that rewards the agent for completing the task and one term that
-penalizes large actions (i.e. energy usage). Usually, you can pass weight parameters for those terms during
-initialization of the environment. However, <em>Reacher</em> does not allow you to do this! Nevertheless, all individual terms
-of the reward are returned in <cite>info</cite>, so let us build a wrapper for Reacher that allows us to weight those terms:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ReacherRewardWrapper</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">reward_dist_weight</span><span class="p">,</span> <span class="n">reward_ctrl_weight</span><span class="p">):</span>
+<p>Let’s also take a look at an example for this case. <em>Reacher</em> returns a dense reward: the negative distance between
+its fingertip and the target, plus a penalty for large actions (the weights of both terms can be set with the
+<code class="docutils literal notranslate"><span class="pre">reward_dist_weight</span></code> and <code class="docutils literal notranslate"><span class="pre">reward_control_weight</span></code> arguments of <code class="docutils literal notranslate"><span class="pre">Reacher-v5</span></code>). Suppose that we instead want a sparse
+goal-reaching task: a reward of 1 when the fingertip is within some distance of the target, with the episode
+terminating at that point. This changes the reward, the termination signal and the <code class="docutils literal notranslate"><span class="pre">info</span></code> at once, so we override
+<a class="reference internal" href="../../../api/wrappers/#gymnasium.Wrapper.step" title="gymnasium.Wrapper.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.Wrapper.step()</span></code></a>. The last two entries of Reacher’s observation are the fingertip position relative to
+the target:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ReacherSparseReward</span><span class="p">(</span><span class="n">Wrapper</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">distance_threshold</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reward_dist_weight</span> <span class="o">=</span> <span class="n">reward_dist_weight</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reward_ctrl_weight</span> <span class="o">=</span> <span class="n">reward_ctrl_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_threshold</span> <span class="o">=</span> <span class="n">distance_threshold</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-        <span class="n">reward</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reward_dist_weight</span> <span class="o">*</span> <span class="n">info</span><span class="p">[</span><span class="s2">"reward_dist"</span><span class="p">]</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_ctrl_weight</span> <span class="o">*</span> <span class="n">info</span><span class="p">[</span><span class="s2">"reward_ctrl"</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_threshold</span><span class="p">)</span>
+
+        <span class="n">info</span><span class="p">[</span><span class="s2">"is_success"</span><span class="p">]</span> <span class="o">=</span> <span class="n">success</span>
+        <span class="n">reward</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">success</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">success</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
+
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">ReacherSparseReward</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Reacher-v5"</span><span class="p">))</span>
+<span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">info</span><span class="p">[</span><span class="s2">"is_success"</span><span class="p">])</span>
 </pre></div>
 </div>
+</section>
+<section id="wrappers-without-a-subclass-and-vector-wrappers">
+<h2>Wrappers without a subclass, and vector wrappers<a class="headerlink" href="#wrappers-without-a-subclass-and-vector-wrappers" title="Link to this heading">¶</a></h2>
+<p>For a simple transformation, you don’t need to write a class: <a class="reference internal" href="../../../api/wrappers/observation_wrappers/#gymnasium.wrappers.TransformObservation" title="gymnasium.wrappers.TransformObservation"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.TransformObservation</span></code></a>,
+<a class="reference internal" href="../../../api/wrappers/action_wrappers/#gymnasium.wrappers.TransformAction" title="gymnasium.wrappers.TransformAction"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.TransformAction</span></code></a> and <a class="reference internal" href="../../../api/wrappers/reward_wrappers/#gymnasium.wrappers.TransformReward" title="gymnasium.wrappers.TransformReward"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.wrappers.TransformReward</span></code></a> take a function
+(for example, a <code class="docutils literal notranslate"><span class="pre">lambda</span></code>) and apply it to the observations, actions or rewards:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransformReward</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">TransformReward</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">r</span><span class="p">:</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Vector environments have their own wrapper base classes, <a class="reference internal" href="../../../api/vector/wrappers/#gymnasium.vector.VectorWrapper" title="gymnasium.vector.VectorWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.VectorWrapper</span></code></a>,
+<a class="reference internal" href="../../../api/vector/wrappers/#gymnasium.vector.VectorObservationWrapper" title="gymnasium.vector.VectorObservationWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.VectorObservationWrapper</span></code></a>, <a class="reference internal" href="../../../api/vector/wrappers/#gymnasium.vector.VectorActionWrapper" title="gymnasium.vector.VectorActionWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.VectorActionWrapper</span></code></a> and
+<a class="reference internal" href="../../../api/vector/wrappers/#gymnasium.vector.VectorRewardWrapper" title="gymnasium.vector.VectorRewardWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.vector.VectorRewardWrapper</span></code></a>, which work the same way on batches of observations, actions and
+rewards. See <a class="reference internal" href="../../../api/vector/wrappers/"><span class="doc">Wrappers</span></a> for the vector versions of the built-in wrappers.</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-gymnasium-basics-implementing-custom-wrappers-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../../_downloads/edd29dab6b748d30e0d5574912999157/implementing_custom_wrappers.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">implementing_custom_wrappers.py</span></code></a></p>
@@ -593,6 +616,7 @@ of the reward are returned in <cite>info</cite>, so let us build a wrapper for R
 <li><a class="reference internal" href="#inheriting-from-gymnasium-actionwrapper">Inheriting from <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.ActionWrapper</span></code></a></li>
 <li><a class="reference internal" href="#inheriting-from-gymnasium-rewardwrapper">Inheriting from <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.RewardWrapper</span></code></a></li>
 <li><a class="reference internal" href="#inheriting-from-gymnasium-wrapper">Inheriting from <code class="xref py py-class docutils literal notranslate"><span class="pre">gymnasium.Wrapper</span></code></a></li>
+<li><a class="reference internal" href="#wrappers-without-a-subclass-and-vector-wrappers">Wrappers without a subclass, and vector wrappers</a></li>
 </ul>
 </li>
 </ul>

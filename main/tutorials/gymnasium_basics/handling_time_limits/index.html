@@ -306,9 +306,6 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -418,7 +415,7 @@ continued. This is an example of handling truncation.</p>
 <p>More formally, a common example of bootstrapping in RL is updating the estimate of the Q-value function,</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[Q_{target}(o_t, a_t) = r_t + \gamma . \max_a(Q(o_{t+1}, a_{t+1}))\]</div>
+\[Q_{target}(o_t, a_t) = r_t + \gamma \cdot \max_{a} Q(o_{t+1}, a)\]</div>
 </div>
 <p>In classical RL, the new <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is a weighted average of the previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate and <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> while in Deep
 Q-Learning, the error between <code class="docutils literal notranslate"><span class="pre">Q_target</span></code> and the previous <code class="docutils literal notranslate"><span class="pre">Q</span></code> estimate is minimized.</p>
@@ -447,6 +444,30 @@ The correct way to handle terminations and truncations now is,</p>
 <span class="c1"># This was needed in previous versions.</span>
 
 <span class="n">vf_target</span> <span class="o">=</span> <span class="n">rew</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">vf_next_state</span>
+</pre></div>
+</div>
+</section>
+<section id="vector-environments">
+<h2>Vector environments<a class="headerlink" href="#vector-environments" title="Link to this heading">¶</a></h2>
+<p>With a vector environment, each sub-environment resets automatically when its episode ends, so the observation
+needed to bootstrap a truncated episode depends on the autoreset mode
+(<code class="docutils literal notranslate"><span class="pre">gymnasium.vector.AutoresetMode</span></code>, readable from <code class="docutils literal notranslate"><span class="pre">envs.metadata[&quot;autoreset_mode&quot;]</span></code>, see <a class="reference internal" href="../../../api/vector/"><span class="doc">Vectorize</span></a>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NEXT_STEP</span></code> (the default): the step on which the episode ends returns the final observation as usual, so
+<code class="docutils literal notranslate"><span class="pre">vf_next_state</span></code> can be computed from <code class="docutils literal notranslate"><span class="pre">next_obs</span></code>. The <em>following</em> call to <code class="docutils literal notranslate"><span class="pre">step</span></code> resets that
+sub-environment and ignores its action; this autoreset step is not a real transition and should be masked out
+of the update (see <a class="reference internal" href="../../training_agents/vector_a2c/"><span class="doc">Speeding up A2C Training with Vector Envs</span></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SAME_STEP</span></code>: the sub-environment is reset within the same step, so <code class="docutils literal notranslate"><span class="pre">next_obs</span></code> is already the first
+observation of the next episode. The final observation is in <code class="docutils literal notranslate"><span class="pre">info[&quot;final_obs&quot;]</span></code>, for the sub-environments
+where <code class="docutils literal notranslate"><span class="pre">info[&quot;_final_obs&quot;]</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># SAME_STEP autoreset mode</span>
+<span class="n">next_obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">envs</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">actions</span><span class="p">)</span>
+<span class="n">bootstrap_obs</span> <span class="o">=</span> <span class="n">next_obs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="k">if</span> <span class="s2">"final_obs"</span> <span class="ow">in</span> <span class="n">info</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">"_final_obs"</span><span class="p">])[</span><span class="mi">0</span><span class="p">]:</span>
+        <span class="n">bootstrap_obs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s2">"final_obs"</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+<span class="n">vf_target</span> <span class="o">=</span> <span class="n">rew</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">terminated</span><span class="p">)</span> <span class="o">*</span> <span class="n">vf</span><span class="p">(</span><span class="n">bootstrap_obs</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-gymnasium-basics-handling-time-limits-py">
@@ -534,6 +555,7 @@ The correct way to handle terminations and truncations now is,</p>
 <li><a class="reference internal" href="#truncation">Truncation</a></li>
 <li><a class="reference internal" href="#importance-in-learning-code">Importance in learning code</a></li>
 <li><a class="reference internal" href="#solution">Solution</a></li>
+<li><a class="reference internal" href="#vector-environments">Vector environments</a></li>
 </ul>
 </li>
 </ul>

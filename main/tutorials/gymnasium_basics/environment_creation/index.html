@@ -306,9 +306,6 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../training_agents/">Training Agents</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../training_agents/action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../training_agents/mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -458,8 +455,8 @@ randomly at the beginning of the episode.</p>
 <li><p>Observations provide the location of the target and agent.</p></li>
 <li><p>There are 4 actions in our environment, corresponding to the
 movements “right”, “up”, “left”, and “down”.</p></li>
-<li><p>A done signal is issued as soon as the agent has navigated to the
-grid cell where the target is located.</p></li>
+<li><p>The episode terminates (<code class="docutils literal notranslate"><span class="pre">terminated=True</span></code>) as soon as the agent has
+navigated to the grid cell where the target is located.</p></li>
 <li><p>Rewards are binary and sparse, meaning that the immediate reward is
 always zero, unless the agent has reached the target, then it is 1.</p></li>
 </ul>
@@ -564,9 +561,16 @@ declaration of <code class="docutils literal notranslate"><span class="pre">Grid
 <code class="docutils literal notranslate"><span class="pre">step</span></code>, it is often convenient to have a (private) method <code class="docutils literal notranslate"><span class="pre">_get_obs</span></code>
 that translates the environment’s state into an observation. However,
 this is not mandatory and you may as well compute observations in
-<code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> separately:</p>
+<code class="docutils literal notranslate"><span class="pre">reset</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> separately. We return copies of the location
+arrays, because the user keeps the observations returned to them: if we
+returned <code class="docutils literal notranslate"><span class="pre">self._agent_location</span></code> directly, a later in-place change to
+the environment’s state would also change observations the user already
+holds (<a class="reference internal" href="../../../api/utils/#gymnasium.utils.env_checker.check_env" title="gymnasium.utils.env_checker.check_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">gymnasium.utils.env_checker.check_env()</span></code></a> checks for this):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_get_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">"agent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="s2">"target"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"agent"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+        <span class="s2">"target"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+    <span class="p">}</span>
 </pre></div>
 </div>
 <p>We can also implement a similar method for the auxiliary information
@@ -589,8 +593,8 @@ in <code class="docutils literal notranslate"><span class="pre">step</span></cod
 <h3>Reset<a class="headerlink" href="#reset" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">reset</span></code> method will be called to initiate a new episode. You may
 assume that the <code class="docutils literal notranslate"><span class="pre">step</span></code> method will not be called before <code class="docutils literal notranslate"><span class="pre">reset</span></code> has
-been called. Moreover, <code class="docutils literal notranslate"><span class="pre">reset</span></code> should be called whenever a done signal
-has been issued. Users may pass the <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword to <code class="docutils literal notranslate"><span class="pre">reset</span></code> to
+been called. Moreover, <code class="docutils literal notranslate"><span class="pre">reset</span></code> should be called whenever the episode
+has ended, i.e. <code class="docutils literal notranslate"><span class="pre">terminated</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>. Users may pass the <code class="docutils literal notranslate"><span class="pre">seed</span></code> keyword to <code class="docutils literal notranslate"><span class="pre">reset</span></code> to
 initialize any random number generator that is used by the environment
 to a deterministic state. It is recommended to use the random number
 generator <code class="docutils literal notranslate"><span class="pre">self.np_random</span></code> that is provided by the environment’s base
@@ -636,9 +640,11 @@ environment after applying that action and returns the 5-tuple
 <code class="docutils literal notranslate"><span class="pre">(observation,</span> <span class="pre">reward,</span> <span class="pre">terminated,</span> <span class="pre">truncated,</span> <span class="pre">info)</span></code>. See
 <a class="reference internal" href="../../../api/env/#gymnasium.Env.step" title="gymnasium.Env.step"><code class="xref py py-meth docutils literal notranslate"><span class="pre">gymnasium.Env.step()</span></code></a>. Once the new state of the environment has
 been computed, we can check whether it is a terminal state and we set
-<code class="docutils literal notranslate"><span class="pre">done</span></code> accordingly. Since we are using sparse binary rewards in
-<code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code>, computing <code class="docutils literal notranslate"><span class="pre">reward</span></code> is trivial once we know
-<code class="docutils literal notranslate"><span class="pre">done</span></code>.To gather <code class="docutils literal notranslate"><span class="pre">observation</span></code> and <code class="docutils literal notranslate"><span class="pre">info</span></code>, we can again make
+<code class="docutils literal notranslate"><span class="pre">terminated</span></code> accordingly. <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code> has no time limit of its
+own, so <code class="docutils literal notranslate"><span class="pre">truncated</span></code> is always <code class="docutils literal notranslate"><span class="pre">False</span></code> here (a time limit can be
+added at registration, see below). Since we are using sparse binary
+rewards in <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code>, computing <code class="docutils literal notranslate"><span class="pre">reward</span></code> is trivial once we know
+<code class="docutils literal notranslate"><span class="pre">terminated</span></code>. To gather <code class="docutils literal notranslate"><span class="pre">observation</span></code> and <code class="docutils literal notranslate"><span class="pre">info</span></code>, we can again make
 use of <code class="docutils literal notranslate"><span class="pre">_get_obs</span></code> and <code class="docutils literal notranslate"><span class="pre">_get_info</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
     <span class="c1"># Map the action (element of {0,1,2,3}) to the direction we walk in</span>
@@ -647,7 +653,7 @@ use of <code class="docutils literal notranslate"><span class="pre">_get_obs</sp
     <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span> <span class="o">+</span> <span class="n">direction</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="p">)</span>
-    <span class="c1"># An episode is done iff the agent has reached the target</span>
+    <span class="c1"># An episode terminates iff the agent has reached the target</span>
     <span class="n">terminated</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agent_location</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target_location</span><span class="p">)</span>
     <span class="n">reward</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">terminated</span> <span class="k">else</span> <span class="mi">0</span>  <span class="c1"># Binary sparse rewards</span>
     <span class="n">observation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_obs</span><span class="p">()</span>
@@ -763,6 +769,7 @@ must be registered as follows. We will choose to put this code in
 <span class="n">register</span><span class="p">(</span>
     <span class="nb">id</span><span class="o">=</span><span class="s2">"gymnasium_env/GridWorld-v0"</span><span class="p">,</span>
     <span class="n">entry_point</span><span class="o">=</span><span class="s2">"gymnasium_env.envs:GridWorldEnv"</span><span class="p">,</span>
+    <span class="n">max_episode_steps</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -775,11 +782,11 @@ the appropriate ID should then be used during environment creation.</p>
 <p>The keyword argument <code class="docutils literal notranslate"><span class="pre">max_episode_steps=300</span></code> will ensure that
 GridWorld environments that are instantiated via <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> will
 be wrapped in a <code class="docutils literal notranslate"><span class="pre">TimeLimit</span></code> wrapper (see <a class="reference external" href="/api/wrappers">the wrapper
-documentation</a> for more information). A done signal
-will then be produced if the agent has reached the target <em>or</em> 300 steps
-have been executed in the current episode. To distinguish truncation and
-termination, you can check <code class="docutils literal notranslate"><span class="pre">info[&quot;TimeLimit.truncated&quot;]</span></code>.</p>
-<p>Apart from <code class="docutils literal notranslate"><span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">entrypoint</span></code>, you may pass the following
+documentation</a> for more information). The episode
+then ends if the agent has reached the target (<code class="docutils literal notranslate"><span class="pre">terminated=True</span></code>)
+<em>or</em> 300 steps have been executed in the current episode
+(<code class="docutils literal notranslate"><span class="pre">truncated=True</span></code>).</p>
+<p>Apart from <code class="docutils literal notranslate"><span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">entry_point</span></code>, you may pass the following
 additional keyword arguments to <code class="docutils literal notranslate"><span class="pre">register</span></code>:</p>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
@@ -794,7 +801,7 @@ additional keyword arguments to <code class="docutils literal notranslate"><span
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reward_threshold</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>The reward threshold before the task is  considered solved</p></td>
+<td><p>The reward threshold before the task is considered solved</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">nondeterministic</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
@@ -809,9 +816,24 @@ additional keyword arguments to <code class="docutils literal notranslate"><span
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">order_enforce</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-<td><p>Whether to wrap the environment in an  <code class="docutils literal notranslate"><span class="pre">OrderEnforcing</span></code> wrapper</p></td>
+<td><p>Whether to wrap the environment in an <code class="docutils literal notranslate"><span class="pre">OrderEnforcing</span></code> wrapper</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">disable_env_checker</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>Whether to skip the <code class="docutils literal notranslate"><span class="pre">PassiveEnvChecker</span></code> wrapper that checks the environment’s API on its first calls</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">additional_wrappers</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tuple</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">()</span></code></p></td>
+<td><p>Extra wrappers (as <code class="docutils literal notranslate"><span class="pre">WrapperSpec</span></code>) to apply to the environment when it is made</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vector_entry_point</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>The entry point of a vectorized implementation, used by <code class="docutils literal notranslate"><span class="pre">gymnasium.make_vec</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kwargs</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
 <td><p>The default kwargs to pass to the environment class</p></td>
@@ -820,7 +842,8 @@ additional keyword arguments to <code class="docutils literal notranslate"><span
 </table>
 </div>
 <p>Most of these keywords (except for <code class="docutils literal notranslate"><span class="pre">max_episode_steps</span></code>,
-<code class="docutils literal notranslate"><span class="pre">order_enforce</span></code> and <code class="docutils literal notranslate"><span class="pre">kwargs</span></code>) do not alter the behavior of
+<code class="docutils literal notranslate"><span class="pre">order_enforce</span></code>, <code class="docutils literal notranslate"><span class="pre">disable_env_checker</span></code>, <code class="docutils literal notranslate"><span class="pre">additional_wrappers</span></code> and
+<code class="docutils literal notranslate"><span class="pre">kwargs</span></code>) do not alter the behavior of
 environment instances but merely provide some extra information about
 your environment. After registration, our custom <code class="docutils literal notranslate"><span class="pre">GridWorldEnv</span></code>
 environment can be created with
@@ -855,7 +878,7 @@ to do so is as follows:</p>
 <span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"0.0.1"</span>
 <span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
 <span class="w">  </span><span class="s2">"gymnasium"</span><span class="p">,</span>
-<span class="w">  </span><span class="s2">"pygame==2.1.3"</span><span class="p">,</span>
+<span class="w">  </span><span class="s2">"pygame-ce&gt;=2.1.3"</span><span class="p">,</span>
 <span class="w">  </span><span class="s2">"pre-commit"</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
@@ -905,15 +928,15 @@ array:</p>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'gymnasium_env/GridWorld-v0'</span><span class="p">)</span>
 <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">FlattenObservation</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">())</span>     <span class="c1"># E.g.  [3 0 3 3], {}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># (array([4, 3, 2, 1]), {'distance': np.float64(4.0)})</span>
 </pre></div>
 </div>
 <p>Wrappers have the big advantage that they make environments highly
 modular. For instance, instead of flattening the observations from
 GridWorld, you might only want to look at the relative position of the
-target and the agent. In the section on
-<a class="reference external" href="/api/wrappers/observation_wrappers/#observation-wrappers">ObservationWrappers</a> we have
-implemented a wrapper that does this job. This wrapper is also available
+target and the agent. In the <a class="reference internal" href="../implementing_custom_wrappers/"><span class="doc">Implementing Custom Wrappers</span></a>
+tutorial we have implemented a wrapper, <code class="docutils literal notranslate"><span class="pre">RelativePosition</span></code>, that does
+this job. This wrapper is also available
 in <code class="docutils literal notranslate"><span class="pre">gymnasium_env/wrappers/relative_position.py</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium_env</span>
@@ -921,7 +944,7 @@ in <code class="docutils literal notranslate"><span class="pre">gymnasium_env/wr
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'gymnasium_env/GridWorld-v0'</span><span class="p">)</span>
 <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">RelativePosition</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">())</span>     <span class="c1"># E.g.  [-3  3], {}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>  <span class="c1"># (array([-2, -2]), {'distance': np.float64(4.0)})</span>
 </pre></div>
 </div>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-gymnasium-basics-environment-creation-py">

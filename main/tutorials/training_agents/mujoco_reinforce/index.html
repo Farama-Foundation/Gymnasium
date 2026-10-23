@@ -306,9 +306,6 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../frozenlake_q_learning/">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Training using REINFORCE for Mujoco</a></li>
@@ -390,11 +387,12 @@
 <a class="reference internal image-reference" href="../../../_images/mujoco_reinforce_fig1.gif"><img alt="agent-environment-diagram" src="../../../_images/mujoco_reinforce_fig1.gif" style="width: 400px;" />
 </a>
 <p>This tutorial implements REINFORCE with neural networks for a MuJoCo environment.</p>
+<p>Dependencies: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[mujoco]&quot;</span> <span class="pre">torch</span> <span class="pre">matplotlib</span> <span class="pre">pandas</span> <span class="pre">seaborn</span></code>.</p>
 <p>We will be using <strong>REINFORCE</strong>, one of the earliest policy gradient methods. Unlike going under the burden of learning a value function first and then deriving a policy out of it,
 REINFORCE optimizes the policy directly. In other words, it is trained to maximize the probability of Monte-Carlo returns. More on that later.</p>
 <p><strong>Inverted Pendulum</strong> is Mujoco’s cartpole but now powered by the Mujoco physics simulator -
 which allows more complex experiments (such as varying the effects of gravity).
-This environment involves a cart that can moved linearly, with a pole fixed on it at one end and having another end free.
+This environment involves a cart that can be moved linearly, with a pole fixed on it at one end and having another end free.
 The cart can be pushed left or right, and the goal is to balance the pole on the top of the cart by applying forces on the cart.
 More information on the environment could be found at <a class="reference external" href="https://gymnasium.farama.org/environments/mujoco/inverted_pendulum/">https://gymnasium.farama.org/environments/mujoco/inverted_pendulum/</a></p>
 <p><strong>Training Objectives</strong>: To balance the pole (inverted pendulum) on top of the cart</p>
@@ -509,7 +507,7 @@ tuning was done.</p>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs_space_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">action_space_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initializes an agent that learns a policy via REINFORCE algorithm [1]</span>
-<span class="sd">        to solve the task at hand (Inverted Pendulum v4).</span>
+<span class="sd">        to solve the task at hand (Inverted Pendulum v5).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            obs_space_dims: Dimension of the observation space</span>
@@ -579,34 +577,31 @@ tuning was done.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">rewards</span> <span class="o">=</span> <span class="p">[]</span>
 </pre></div>
 </div>
-<p>Now lets train the policy using REINFORCE to master the task of Inverted Pendulum.</p>
-<p>Following is the overview of the training procedure</p>
-<blockquote>
-<div><dl>
-<dt>for seed in random seeds</dt><dd><p>reinitialize agent</p>
-<dl>
-<dt>for episode in range of max number of episodes</dt><dd><dl>
-<dt>until episode is done</dt><dd><p>sample action based on current observation</p>
-<p>take action and receive reward and next observation</p>
-<p>store action take, its probability, and the observed reward</p>
-</dd>
-</dl>
-<p>update the policy</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</div></blockquote>
+<p>Now let’s train the policy using REINFORCE to master the task of Inverted Pendulum.</p>
+<p>Following is the overview of the training procedure:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>for seed in random seeds
+    reinitialize agent
+
+    for episode in range of max number of episodes
+        until episode is done
+            sample action based on current observation
+
+            take action and receive reward and next observation
+
+            store action taken, its probability, and the observed reward
+        update the policy
+</pre></div>
+</div>
 <p>Note: Deep RL is fairly brittle concerning random seed in a lot of common use cases (<a class="reference external" href="https://spinningup.openai.com/en/latest/spinningup/spinningup.html">https://spinningup.openai.com/en/latest/spinningup/spinningup.html</a>).
 Hence it is important to test out various seeds, which we will be doing.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create and wrap the environment</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"InvertedPendulum-v4"</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"InvertedPendulum-v5"</span><span class="p">)</span>
 <span class="n">wrapped_env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">wrappers</span><span class="o">.</span><span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>  <span class="c1"># Records episode-reward</span>
 
 <span class="n">total_num_episodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">5e3</span><span class="p">)</span>  <span class="c1"># Total number of episodes</span>
-<span class="c1"># Observation-space of InvertedPendulum-v4 (4)</span>
+<span class="c1"># Observation-space of InvertedPendulum-v5 (4)</span>
 <span class="n">obs_space_dims</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="c1"># Action-space of InvertedPendulum-v4 (1)</span>
+<span class="c1"># Action-space of InvertedPendulum-v5 (1)</span>
 <span class="n">action_space_dims</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">rewards_over_seeds</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -637,9 +632,9 @@ Hence it is important to test out various seeds, which we will be doing.</p>
             <span class="n">agent</span><span class="o">.</span><span class="n">rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
 
             <span class="c1"># End the episode when either truncated or terminated is true</span>
-            <span class="c1">#  - truncated: The episode duration reaches max number of timesteps</span>
-            <span class="c1">#  - terminated: Any of the state space values is no longer finite.</span>
-            <span class="c1">#</span>
+            <span class="c1">#  - truncated: The episode duration reaches max number of timesteps (1000)</span>
+            <span class="c1">#  - terminated: The pole falls over (the absolute angle of the pole is greater</span>
+            <span class="c1">#    than 0.2 radians) or any of the observation values is no longer finite.</span>
             <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
 
         <span class="n">reward_over_episodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wrapped_env</span><span class="o">.</span><span class="n">return_queue</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -657,10 +652,10 @@ Hence it is important to test out various seeds, which we will be doing.</p>
 <section id="plot-learning-curve">
 <h2>Plot learning curve<a class="headerlink" href="#plot-learning-curve" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">df1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rewards_over_seeds</span><span class="p">)</span><span class="o">.</span><span class="n">melt</span><span class="p">()</span>
-<span class="n">df1</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"variable"</span><span class="p">:</span> <span class="s2">"episodes"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">:</span> <span class="s2">"reward"</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">"darkgrid"</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="s2">"talk"</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">"rainbow"</span><span class="p">)</span>
+<span class="n">df1</span> <span class="o">=</span> <span class="n">df1</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"variable"</span><span class="p">:</span> <span class="s2">"episodes"</span><span class="p">,</span> <span class="s2">"value"</span><span class="p">:</span> <span class="s2">"reward"</span><span class="p">})</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_theme</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s2">"darkgrid"</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="s2">"talk"</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="s2">"rainbow"</span><span class="p">)</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s2">"episodes"</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">"reward"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df1</span><span class="p">)</span><span class="o">.</span><span class="n">set</span><span class="p">(</span>
-    <span class="n">title</span><span class="o">=</span><span class="s2">"REINFORCE for InvertedPendulum-v4"</span>
+    <span class="n">title</span><span class="o">=</span><span class="s2">"REINFORCE for InvertedPendulum-v5"</span>
 <span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -673,7 +668,7 @@ Hence it is important to test out various seeds, which we will be doing.</p>
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <p>[1] Williams, Ronald J.. “Simple statistical gradient-following
 algorithms for connectionist reinforcement learning.” Machine Learning 8
-(2004): 229-256.</p>
+(1992): 229-256.</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-training-agents-mujoco-reinforce-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../../_downloads/6095f0c7ad0799958d2dcdf642aeeed7/mujoco_reinforce.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">mujoco_reinforce.py</span></code></a></p>

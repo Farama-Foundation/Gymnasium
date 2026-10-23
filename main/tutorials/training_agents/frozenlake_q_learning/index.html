@@ -306,9 +306,6 @@
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Training Agents</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Training Agents</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/">Action Masking in the Taxi Environment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#running-the-experiment">Running the Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#visualizing-results">Visualizing Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../action_masking_taxi/#results-analysis">Results Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../blackjack_q_learning/">Solving Blackjack with Tabular Q-Learning</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Solving Frozenlake with Tabular Q-Learning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../mujoco_reinforce/">Training using REINFORCE for Mujoco</a></li>
@@ -388,6 +385,7 @@
 <section id="solving-frozenlake-with-tabular-q-learning">
 <span id="sphx-glr-tutorials-training-agents-frozenlake-q-learning-py"></span><h1>Solving Frozenlake with Tabular Q-Learning<a class="headerlink" href="#solving-frozenlake-with-tabular-q-learning" title="Link to this heading">¶</a></h1>
 <p>This tutorial trains an agent for FrozenLake using tabular Q-learning.</p>
+<p>Dependencies: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">&quot;gymnasium[toy-text]&quot;</span> <span class="pre">matplotlib</span> <span class="pre">pandas</span> <span class="pre">seaborn</span> <span class="pre">tqdm</span></code>.</p>
 <p>In this post we’ll compare a bunch of different map sizes on the
 <a class="reference external" href="https://gymnasium.farama.org/environments/toy_text/frozen_lake/">FrozenLake</a>
 environment from the reinforcement learning
@@ -448,6 +446,9 @@ Q-learning algorithm.</p>
 </section>
 <section id="the-frozenlake-environment">
 <h2>The FrozenLake environment<a class="headerlink" href="#the-frozenlake-environment" title="Link to this heading">¶</a></h2>
+<p>We first create a single <span class="math notranslate nohighlight">\(5 \times 5\)</span> map (<code class="docutils literal notranslate"><span class="pre">params.map_size</span></code>) to
+look at the action and observation spaces. The experiments below create a
+new map for each size in <code class="docutils literal notranslate"><span class="pre">map_sizes</span></code>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
     <span class="s2">"FrozenLake-v1"</span><span class="p">,</span>
     <span class="n">is_slippery</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">is_slippery</span><span class="p">,</span>
@@ -462,7 +463,7 @@ Q-learning algorithm.</p>
 <h3>Creating the Q-table<a class="headerlink" href="#creating-the-q-table" title="Link to this heading">¶</a></h3>
 <p>In this tutorial we’ll be using Q-learning as our learning algorithm and
 <span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy to decide which action to pick at each step. You
-can have a look at the <a class="reference external" href="#References">References section</a> for some
+can have a look at the <a class="reference internal" href="#references">References</a> section for some
 refreshers on the theory. Now, let’s create our Q-table initialized at
 zero with the states number as rows and the actions number as columns.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">_replace</span><span class="p">(</span><span class="n">action_size</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
@@ -480,7 +481,13 @@ zero with the states number as rows and the actions number as columns.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_qtable</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">new_state</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Update Q(s,a):= Q(s,a) + lr [R(s,a) + gamma * max Q(s',a') - Q(s,a)]"""</span>
+<span class="w">        </span><span class="sd">"""Update Q(s,a):= Q(s,a) + lr [R(s,a) + gamma * max Q(s',a') - Q(s,a)]</span>
+
+<span class="sd">        This update does not use ``terminated`` to stop bootstrapping from terminal states.</span>
+<span class="sd">        In FrozenLake this is harmless: the terminal states (holes and the goal) are never</span>
+<span class="sd">        acted from, so their Q-values stay at zero and ``max Q(s',a')`` is 0 for them anyway.</span>
+<span class="sd">        In general, use ``reward + gamma * (1 - terminated) * max Q(s',a')``.</span>
+<span class="sd">        """</span>
         <span class="n">delta</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">reward</span>
             <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qtable</span><span class="p">[</span><span class="n">new_state</span><span class="p">,</span> <span class="p">:])</span>
@@ -684,9 +691,13 @@ with the following function:</p>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Now we’ll be running our agent on a few increasing maps sizes: -
-<span class="math notranslate nohighlight">\(4 \times 4\)</span>, - <span class="math notranslate nohighlight">\(7 \times 7\)</span>, - <span class="math notranslate nohighlight">\(9 \times 9\)</span>, -
-<span class="math notranslate nohighlight">\(11 \times 11\)</span>.</p>
+<p>Now we’ll be running our agent on a few increasing map sizes:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(4 \times 4\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(7 \times 7\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(9 \times 9\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(11 \times 11\)</span></p></li>
+</ul>
 <p>Putting it all together:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">map_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">11</span><span class="p">]</span>
 <span class="n">res_all</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
