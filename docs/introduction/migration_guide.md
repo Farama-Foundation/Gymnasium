@@ -50,7 +50,7 @@ For environments that can't be updated, see the compatibility guide section belo
 import gym
 
 # Environment creation and seeding
-env = gym.make("LunarLander-v3", options={})
+env = gym.make("LunarLander-v2")
 env.seed(123)
 observation = env.reset()
 
@@ -289,13 +289,14 @@ Some environments were moved or removed:
 import gym
 env = gym.make("FetchReach-v1")  # No longer available
 
-# NEW: Moved to separate package
+# NEW: Moved to separate packages, which register their environments on import
 import gymnasium
 
-import gymnasium_robotics
 import ale_py
+import gymnasium_robotics
 
-gymnasium.register_envs((gymnasium_robotics, ale_py))
+gymnasium.register_envs(gymnasium_robotics)
+gymnasium.register_envs(ale_py)
 
 env = gymnasium.make("FetchReach-v1")
 env = gymnasium.make("ALE/Pong-v5")
@@ -320,7 +321,7 @@ env = gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
 env = gymnasium.make("GymV21Environment-v0", env=OldV21Env())
 
 # Gym v0.26 style environments
-env = gymnasium.make("GymV26Environment-v0", env_id="Cartpole-v1")
+env = gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
 # or
 env = gymnasium.make("GymV26Environment-v0", env=OldV26Env())
 ```
@@ -330,7 +331,7 @@ env = gymnasium.make("GymV26Environment-v0", env=OldV26Env())
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.utils.step_api_compatibility
 
-If environments implement the (old) done step API, Gymnasium provides functions (:meth:`convert_to_terminated_truncated_step_api` and :meth:`convert_to_done_step_api`) that will convert an environment with the old step API (using ``done``) to the new step API (using ``termination`` and ``truncation``), and vice versa.
+If environments implement the (old) done step API, Gymnasium provides functions (:func:`convert_to_terminated_truncated_step_api` and :func:`convert_to_done_step_api`) that will convert an environment with the old step API (using ``done``) to the new step API (using ``termination`` and ``truncation``), and vice versa.
 ```
 
 ## Testing Your Migration
@@ -347,7 +348,7 @@ After migrating, verify that:
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.utils.env_checker
 
-Use the :meth:`check_env` to verify their implementation.
+Use the :func:`check_env` to verify their implementation.
 ```
 
 ## Getting Help
