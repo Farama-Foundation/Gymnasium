@@ -161,6 +161,10 @@ def _flatdim_dict(space: Dict) -> int:
 
 @flatdim.register(Graph)
 def _flatdim_graph(space: Graph):
+    if space.num_nodes is not None:
+        raise ValueError(
+            "Graph flattening preserves graph structure rather than producing a single numpy array."
+        )
     raise ValueError("Cannot get flattened size as the Graph Space has a dynamic size.")
 
 
@@ -641,6 +645,8 @@ def _flatten_space_graph(space: Graph) -> Graph:
         edge_space=(
             flatten_space(space.edge_space) if space.edge_space is not None else None
         ),
+        num_nodes=space.num_nodes,
+        num_edges=space.num_edges,
     )
 
 
@@ -745,6 +751,8 @@ def _is_space_tuple_dtype_shape_equiv(space_1, space_2):
 def _is_space_graph_dtype_shape_equiv(space_1: Graph, space_2):
     return (
         isinstance(space_2, Graph)
+        and space_1.num_nodes == space_2.num_nodes
+        and space_1.num_edges == space_2.num_edges
         and is_space_dtype_shape_equiv(space_1.node_space, space_2.node_space)
         and (
             (space_1.edge_space is None and space_2.edge_space is None)
