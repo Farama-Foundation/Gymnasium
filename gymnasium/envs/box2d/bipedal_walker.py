@@ -118,31 +118,36 @@ class BipedalWalker(gym.Env, EzPickle):
     ```
 
     ## Action Space
-    Actions are motor speed values in the [-1, 1] range for each of the
-    4 joints at both hips and knees.
+    The action is a `Box(-1, 1, (4,), float32)` with one value per joint, in the order
+    hip 1, knee 1, hip 2, knee 2. Each value effectively sets the motor torque of its joint:
+    the sign selects the direction the motor drives the joint, and the absolute value (clipped to `[0, 1]`)
+    scales the maximum motor torque.
 
     ## Observation Space
-    State consists of hull angle speed, angular velocity, horizontal speed,
-    vertical speed, position of joints and joints angular speed, legs contact
-    with ground, and 10 lidar rangefinder measurements. There are no coordinates
-    in the state vector.
+    The observation is a `ndarray` with shape `(24,)`: hull angle, hull angular velocity, horizontal speed,
+    vertical speed, the angle and angular speed of each of the 4 joints, the ground contact of each leg,
+    and 10 lidar rangefinder measurements. There are no coordinates in the state vector.
 
     ## Rewards
     Reward is given for moving forward, totaling 300+ points up to the far end.
-    If the robot falls, it gets -100. Applying motor torque costs a small
-    amount of points. A more optimal agent will get a better score.
+    If the robot falls (or moves past the left end of the terrain), the reward for that step is -100.
+    Applying motor torque costs a small amount of points. A more optimal agent will get a better score.
 
     ## Starting State
     The walker starts standing at the left end of the terrain with the hull
     horizontal, and both legs in the same position with a slight knee angle.
 
-    ## Episode Termination
-    The episode will terminate if the hull gets in contact with the ground or
+    ## Episode End
+    The episode will terminate if the hull gets in contact with the ground,
+    if the walker moves past the left end of the terrain (`x < 0`), or
     if the walker exceeds the right end of the terrain length.
+
+    The episode is truncated after 1600 steps for `BipedalWalker-v3` and 2000 steps for `BipedalWalkerHardcore-v3`.
 
     ## Arguments
 
-    To use the _hardcore_ environment, you need to specify the `hardcore=True`:
+    To use the _hardcore_ environment, you need to specify the `hardcore=True`
+    (or use `BipedalWalkerHardcore-v3`, which also raises the time limit from 1600 to 2000 steps):
 
     ```python
     >>> import gymnasium as gym

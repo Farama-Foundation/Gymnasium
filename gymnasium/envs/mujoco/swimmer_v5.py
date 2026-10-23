@@ -25,13 +25,13 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     * *l<sub>i</sub>*: length of part *i* (*i* ∈ {1...n})
     * *k*: viscous-friction coefficient
 
-    While the default environment has *n* = 3, *l<sub>i</sub>* = 0.1, and *k* = 0.1.
+    While the default environment has *n* = 3, *l<sub>i</sub>* = 1 (with a capsule radius of 0.1), and *k* = 0.1.
     It is possible to pass a custom MuJoCo XML file during construction to increase the number of links, or to tweak any of the parameters.
 
 
     ## Action Space
     ```{figure} action_space_figures/swimmer.png
-    :name: swimmer
+    :name: swimmer_action_space
     ```
 
     The action space is a `Box(-1, 1, (2,), float32)`. An action represents the torques applied between *links*
@@ -115,6 +115,8 @@ class SwimmerEnv(MujocoEnv, utils.EzPickle):
     | Parameter                                  | Type      | Default       |Description                                                                                                                                                                                                  |
     |--------------------------------------------| --------- |-------------- |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
     |`xml_file`                                  | **str**   |`"swimmer.xml"`| Path to a MuJoCo model                                                                                                                                                                                      |
+    | `frame_skip`                               | **int**   | `4`           | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep`                                                                                                           |
+    | `default_camera_config`                    | **dict**  | `None`        | Properties of the `mj_camera` used for rendering                                                                                                                                                           |
     |`forward_reward_weight`                     | **float** | `1`           | Weight for _forward_reward_ term (see `Rewards` section)                                                                                                                                                    |
     |`ctrl_cost_weight`                          | **float** | `1e-4`        | Weight for _ctrl_cost_ term (see `Rewards` section)                                                                                                                                                         |
     |`reset_noise_scale`                         | **float** | `0.1`         | Scale of random perturbations of initial position and velocity (see `Starting State` section)                                                                                                               |
