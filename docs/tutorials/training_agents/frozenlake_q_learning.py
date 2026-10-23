@@ -3,6 +3,8 @@ Solving Frozenlake with Tabular Q-Learning
 ==========================================
 
 This tutorial trains an agent for FrozenLake using tabular Q-learning.
+
+Dependencies: ``pip install "gymnasium[toy-text]" matplotlib pandas seaborn tqdm``.
 """
 
 # %%
@@ -74,6 +76,10 @@ rng = np.random.default_rng(params.seed)
 # The FrozenLake environment
 # --------------------------
 #
+# We first create a single :math:`5 \times 5` map (``params.map_size``) to
+# look at the action and observation spaces. The experiments below create a
+# new map for each size in ``map_sizes``.
+#
 
 env = gym.make(
     "FrozenLake-v1",
@@ -91,7 +97,7 @@ env = gym.make(
 #
 # In this tutorial we'll be using Q-learning as our learning algorithm and
 # :math:`\epsilon`-greedy to decide which action to pick at each step. You
-# can have a look at the `References section <#References>`__ for some
+# can have a look at the `References`_ section for some
 # refreshers on the theory. Now, let's create our Q-table initialized at
 # zero with the states number as rows and the actions number as columns.
 #
@@ -111,7 +117,13 @@ class Qlearning:
         self.reset_qtable()
 
     def update(self, state, action, reward, new_state):
-        """Update Q(s,a):= Q(s,a) + lr [R(s,a) + gamma * max Q(s',a') - Q(s,a)]"""
+        """Update Q(s,a):= Q(s,a) + lr [R(s,a) + gamma * max Q(s',a') - Q(s,a)]
+
+        This update does not use ``terminated`` to stop bootstrapping from terminal states.
+        In FrozenLake this is harmless: the terminal states (holes and the goal) are never
+        acted from, so their Q-values stay at zero and ``max Q(s',a')`` is 0 for them anyway.
+        In general, use ``reward + gamma * (1 - terminated) * max Q(s',a')``.
+        """
         delta = (
             reward
             + self.gamma * np.max(self.qtable[new_state, :])
@@ -342,9 +354,12 @@ def plot_states_actions_distribution(states, actions, map_size):
 
 
 # %%
-# Now we'll be running our agent on a few increasing maps sizes: -
-# :math:`4 \times 4`, - :math:`7 \times 7`, - :math:`9 \times 9`, -
-# :math:`11 \times 11`.
+# Now we'll be running our agent on a few increasing map sizes:
+#
+# - :math:`4 \times 4`
+# - :math:`7 \times 7`
+# - :math:`9 \times 9`
+# - :math:`11 \times 11`
 #
 # Putting it all together:
 #
@@ -404,8 +419,8 @@ for map_size in map_sizes:
 # %%
 # |States actions histogram 4x4 map| |Q-values 4x4 map|
 #
-# .. |States actions histogram 4x4 map| image:: ../../_static/img/tutorials/frozenlake_states_actions_distrib_4x4.png
-# .. |Q-values 4x4 map| image:: ../../_static/img/tutorials/frozenlake_q_values_4x4.png
+# .. |States actions histogram 4x4 map| image:: /_static/img/tutorials/frozenlake_states_actions_distrib_4x4.png
+# .. |Q-values 4x4 map| image:: /_static/img/tutorials/frozenlake_q_values_4x4.png
 #
 #
 
@@ -419,8 +434,8 @@ for map_size in map_sizes:
 # %%
 # |States actions histogram 7x7 map| |Q-values 7x7 map|
 #
-# .. |States actions histogram 7x7 map| image:: ../../_static/img/tutorials/frozenlake_states_actions_distrib_7x7.png
-# .. |Q-values 7x7 map| image:: ../../_static/img/tutorials/frozenlake_q_values_7x7.png
+# .. |States actions histogram 7x7 map| image:: /_static/img/tutorials/frozenlake_states_actions_distrib_7x7.png
+# .. |Q-values 7x7 map| image:: /_static/img/tutorials/frozenlake_q_values_7x7.png
 #
 #
 
@@ -434,8 +449,8 @@ for map_size in map_sizes:
 # %%
 # |States actions histogram 9x9 map| |Q-values 9x9 map|
 #
-# .. |States actions histogram 9x9 map| image:: ../../_static/img/tutorials/frozenlake_states_actions_distrib_9x9.png
-# .. |Q-values 9x9 map| image:: ../../_static/img/tutorials/frozenlake_q_values_9x9.png
+# .. |States actions histogram 9x9 map| image:: /_static/img/tutorials/frozenlake_states_actions_distrib_9x9.png
+# .. |Q-values 9x9 map| image:: /_static/img/tutorials/frozenlake_q_values_9x9.png
 #
 #
 
@@ -449,8 +464,8 @@ for map_size in map_sizes:
 # %%
 # |States actions histogram 11x11 map| |Q-values 11x11 map|
 #
-# .. |States actions histogram 11x11 map| image:: ../../_static/img/tutorials/frozenlake_states_actions_distrib_11x11.png
-# .. |Q-values 11x11 map| image:: ../../_static/img/tutorials/frozenlake_q_values_11x11.png
+# .. |States actions histogram 11x11 map| image:: /_static/img/tutorials/frozenlake_states_actions_distrib_11x11.png
+# .. |Q-values 11x11 map| image:: /_static/img/tutorials/frozenlake_q_values_11x11.png
 #
 #
 
@@ -495,7 +510,7 @@ plot_steps_and_rewards(res_all, st_all)
 # %%
 # |Steps and rewards|
 #
-# .. |Steps and rewards| image:: ../../_static/img/tutorials/frozenlake_steps_and_rewards.png
+# .. |Steps and rewards| image:: /_static/img/tutorials/frozenlake_steps_and_rewards.png
 #
 #
 
