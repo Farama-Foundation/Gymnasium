@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/acrobot.gif"><img alt="../../../_images/acrobot.gif" src="../../../_images/acrobot.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Classic Control environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Classic Control environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -391,6 +391,12 @@
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box([</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-12.566371</span> <span class="pre">-28.274334],</span> <span class="pre">[</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">12.566371</span> <span class="pre">28.274334],</span> <span class="pre">(6,),</span> <span class="pre">float32)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">500</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reward Threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-100.0</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;Acrobot-v1&quot;)</span></code></p></td>
@@ -407,7 +413,7 @@ The system consists of two links connected linearly to form a chain, with one en
 the chain fixed. The joint between the two links is actuated. The goal is to apply
 torques on the actuated joint to swing the free end of the linear chain above a
 given height while starting from the initial state of hanging downwards.</p>
-<p>As seen in the <strong>Gif</strong>: two blue links connected by two green joints. The joint in
+<p>As seen in the <strong>Gif</strong>: two blue links connected by two yellow joints. The joint in
 between the two links is actuated. The goal is to swing the free end of the outer-link
 to reach the target height (black horizontal line above system) by applying torque on
 the actuator.</p>
@@ -515,7 +521,7 @@ uniformly between -0.1 and 0.1. This means both links are pointing downwards wit
 <ol class="arabic simple">
 <li><p>Termination: The free end reaches the target height, which is constructed as:
 <code class="docutils literal notranslate"><span class="pre">-cos(theta1)</span> <span class="pre">-</span> <span class="pre">cos(theta2</span> <span class="pre">+</span> <span class="pre">theta1)</span> <span class="pre">&gt;</span> <span class="pre">1.0</span></code></p></li>
-<li><p>Truncation: Episode length is greater than 500 (200 for v0)</p></li>
+<li><p>Truncation: Episode length reaches 500 (200 for v0)</p></li>
 </ol>
 </section>
 <section id="arguments">
@@ -570,7 +576,7 @@ sine and cosine of each angle instead.
 - Sutton, R. S. (1996). Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding.
     In D. Touretzky, M. C. Mozer, &amp; M. Hasselmo (Eds.), Advances in Neural Information Processing Systems (Vol. 8).
     MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e80b0dc05c48-Paper.pdf
-- Sutton, R. S., Barto, A. G. (2018 ). Reinforcement Learning: An Introduction. The MIT Press.
+- Sutton, R. S., Barto, A. G. (2018). Reinforcement Learning: An Introduction. The MIT Press.
 </pre></div>
 </div>
 </section>

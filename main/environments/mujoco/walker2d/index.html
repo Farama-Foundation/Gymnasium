@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/walker2d.gif"><img alt="../../../_images/walker2d.gif" src="../../../_images/walker2d.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Mujoco environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Mujoco environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -392,7 +392,10 @@
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(17,),</span> <span class="pre">float64)</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>import</p></td>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;Walker2d-v5&quot;)</span></code></p></td>
 </tr>
 </tbody>
@@ -407,7 +410,7 @@ The goal is to walk in the forward (right) direction by applying torque to the s
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<figure class="align-default" id="id2">
+<figure class="align-default" id="walker2d-action-space">
 <img alt="../../../_images/walker2d.png" src="../../../_images/walker2d.png" />
 </figure>
 <p>The action space is a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(6,),</span> <span class="pre">float32)</span></code>. An action represents the torques applied at the hinge joints.</p>
@@ -481,12 +484,12 @@ The goal is to walk in the forward (right) direction by applying torque to the s
 <p>The observation space consists of the following parts (in order):</p>
 <ul class="simple">
 <li><p><em>qpos (8 elements by default):</em> Position values of the robot’s body parts.</p></li>
-<li><p><em>qvel (9 elements):</em> The velocities of these individual body parts (their derivatives).</p></li>
+<li><p><em>qvel (9 elements):</em> The velocities of these individual body parts (their derivatives), clipped to <span class="math notranslate nohighlight">\([-10, 10]\)</span>.</p></li>
 </ul>
 <p>By default, the observation does not include the robot’s x-coordinate (<code class="docutils literal notranslate"><span class="pre">rootx</span></code>).
 This can be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
 In this case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(18,),</span> <span class="pre">float64)</span></code>, where the first observation element is the x-coordinate of the robot.
-Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code>, the x-coordinate are returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with the keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
+Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code>, the x-coordinate is returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with the key <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code>.</p>
 <p>By default, however, the observation space is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(17,),</span> <span class="pre">float64)</span></code> where the elements are as follows:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -614,7 +617,7 @@ Regardless of whether <code class="docutils literal notranslate"><span class="pr
 <td><p>angular velocity (rad/s)</p></td>
 </tr>
 <tr class="row-even"><td><p>14</p></td>
-<td><p>angular velocity of the thigh hinge</p></td>
+<td><p>angular velocity of the left thigh hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>thigh_left_joint</p></td>
@@ -622,7 +625,7 @@ Regardless of whether <code class="docutils literal notranslate"><span class="pr
 <td><p>angular velocity (rad/s)</p></td>
 </tr>
 <tr class="row-odd"><td><p>15</p></td>
-<td><p>angular velocity of the leg hinge</p></td>
+<td><p>angular velocity of the left leg hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>leg_left_joint</p></td>
@@ -630,7 +633,7 @@ Regardless of whether <code class="docutils literal notranslate"><span class="pr
 <td><p>angular velocity (rad/s)</p></td>
 </tr>
 <tr class="row-even"><td><p>16</p></td>
-<td><p>angular velocity of the foot hinge</p></td>
+<td><p>angular velocity of the left foot hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>foot_left_joint</p></td>
@@ -659,7 +662,7 @@ Every timestep that the Walker2d is alive, it receives a fixed reward of value <
 A reward for moving forward,
 this reward would be positive if the Walker2d moves forward (in the positive <span class="math notranslate nohighlight">\(x\)</span> direction / in the right direction).
 <span class="math notranslate nohighlight">\(w_{forward} \times \frac{dx}{dt}\)</span>, where
-<span class="math notranslate nohighlight">\(dx\)</span> is the displacement of the (front) “tip” (<span class="math notranslate nohighlight">\(x_{after-action} - x_{before-action}\)</span>),
+<span class="math notranslate nohighlight">\(dx\)</span> is the displacement of the torso (<code class="docutils literal notranslate"><span class="pre">rootx</span></code>) (<span class="math notranslate nohighlight">\(x_{after-action} - x_{before-action}\)</span>),
 <span class="math notranslate nohighlight">\(dt\)</span> is the time between actions, which depends on the <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> parameter (default is <span class="math notranslate nohighlight">\(4\)</span>),
 and <code class="docutils literal notranslate"><span class="pre">frametime</span></code> which is <span class="math notranslate nohighlight">\(0.002\)</span> - so the default is <span class="math notranslate nohighlight">\(dt = 4 \times 0.002 = 0.008\)</span>,
 <span class="math notranslate nohighlight">\(w_{forward}\)</span> is the <code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code> (default is <span class="math notranslate nohighlight">\(1\)</span>).</p></li>
@@ -684,9 +687,8 @@ The initial velocity state is <span class="math notranslate nohighlight">\(\math
 <p>If <code class="docutils literal notranslate"><span class="pre">terminate_when_unhealthy</span> <span class="pre">is</span> <span class="pre">True</span></code> (which is the default), the environment terminates when the Walker2d is unhealthy.
 The Walker2d is unhealthy if any of the following happens:</p>
 <ol class="arabic simple">
-<li><p>Any of the state space values is no longer finite</p></li>
-<li><p>The z-coordinate of the torso (the height) is <strong>not</strong> in the closed interval given by the <code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code> argument (default to <span class="math notranslate nohighlight">\([0.8, 2.0]\)</span>).</p></li>
-<li><p>The absolute value of the angle (<code class="docutils literal notranslate"><span class="pre">observation[1]</span></code> if <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code>, else <code class="docutils literal notranslate"><span class="pre">observation[2]</span></code>) is <em><strong>not</strong></em> in the closed interval specified by the <code class="docutils literal notranslate"><span class="pre">healthy_angle_range</span></code> argument (default is <span class="math notranslate nohighlight">\([-1, 1]\)</span>).</p></li>
+<li><p>The z-coordinate of the torso (the height) is <strong>not</strong> in the open interval given by the <code class="docutils literal notranslate"><span class="pre">healthy_z_range</span></code> argument (default is <span class="math notranslate nohighlight">\((0.8, 2.0)\)</span>).</p></li>
+<li><p>The angle of the torso (<code class="docutils literal notranslate"><span class="pre">observation[1]</span></code> if <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=True</span></code>, else <code class="docutils literal notranslate"><span class="pre">observation[2]</span></code>) is <strong>not</strong> in the open interval given by the <code class="docutils literal notranslate"><span class="pre">healthy_angle_range</span></code> argument (default is <span class="math notranslate nohighlight">\((-1, 1)\)</span>).</p></li>
 </ol>
 </section>
 <section id="truncation">
@@ -717,6 +719,16 @@ These parameters can be applied during <code class="docutils literal notranslate
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;walker2d_v5.xml&quot;</span></code></p></td>
 <td><p>Path to a MuJoCo model</p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">frame_skip</span></code></p></td>
+<td><p><strong>int</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+<td><p>Number of MuJoCo simulation steps per <code class="docutils literal notranslate"><span class="pre">step()</span></code>, so <span class="math notranslate nohighlight">\(dt = frame\_skip \times\)</span> <code class="docutils literal notranslate"><span class="pre">model.opt.timestep</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default_camera_config</span></code></p></td>
+<td><p><strong>dict</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{&quot;trackbodyid&quot;:</span> <span class="pre">2,</span> <span class="pre">&quot;distance&quot;:</span> <span class="pre">4.0,</span> <span class="pre">&quot;lookat&quot;:</span> <span class="pre">np.array((0.0,</span> <span class="pre">0.0,</span> <span class="pre">1.15)),</span> <span class="pre">&quot;elevation&quot;:</span> <span class="pre">-20.0}</span></code></p></td>
+<td><p>Properties of the <code class="docutils literal notranslate"><span class="pre">mj_camera</span></code> used for rendering</p></td>
+</tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
@@ -725,7 +737,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ctrl_cost_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1e-3</span></code></p></td>
-<td><p>Weight for <em>ctr_cost</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
+<td><p>Weight for <em>ctrl_cost</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code></p></td>
 <td><p><strong>float</strong></p></td>
@@ -772,7 +784,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">env.observation_structure</span></code>, a dictionary for specifying the observation space compose (e.g. <code class="docutils literal notranslate"><span class="pre">qpos</span></code>, <code class="docutils literal notranslate"><span class="pre">qvel</span></code>), useful for building tooling and wrappers for the MuJoCo environments.</p></li>
 <li><p>Return a non-empty <code class="docutils literal notranslate"><span class="pre">info</span></code> with <code class="docutils literal notranslate"><span class="pre">reset()</span></code>, previously an empty dictionary was returned, the new keys are the same state information as <code class="docutils literal notranslate"><span class="pre">step()</span></code>.</p></li>
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> argument, used to configure the <code class="docutils literal notranslate"><span class="pre">dt</span></code> (duration of <code class="docutils literal notranslate"><span class="pre">step()</span></code>), default varies by environment check environment documentation pages.</p></li>
-<li><p>In v2, v3 and v4 the models have different friction values for the two feet (left foot friction == 1.9 and right foot friction == 0.9). The <code class="docutils literal notranslate"><span class="pre">Walker-v5</span></code> model is updated to have the same friction for both feet (set to 1.9). This causes the Walker2d’s the right foot to slide less on the surface and therefore require more force to move (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/477">GitHub issue</a>).</p></li>
+<li><p>In v2, v3 and v4 the models have different friction values for the two feet (left foot friction == 1.9 and right foot friction == 0.9). The <code class="docutils literal notranslate"><span class="pre">Walker2d-v5</span></code> model is updated to have the same friction for both feet (set to 1.9). This causes the Walker2d’s the right foot to slide less on the surface and therefore require more force to move (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/477">GitHub issue</a>).</p></li>
 <li><p>Fixed bug: <code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code> was given on every step (even if the Walker2D is unhealthy), now it is only given if the Walker2d is healthy. The <code class="docutils literal notranslate"><span class="pre">info</span></code> “reward_survive” is updated with this change (related <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/526">GitHub issue</a>).</p></li>
 <li><p>Restored the <code class="docutils literal notranslate"><span class="pre">xml_file</span></code> argument (was removed in <code class="docutils literal notranslate"><span class="pre">v4</span></code>).</p></li>
 <li><p>Added individual reward terms in <code class="docutils literal notranslate"><span class="pre">info</span></code> (<code class="docutils literal notranslate"><span class="pre">info[&quot;reward_forward&quot;]</span></code>, <code class="docutils literal notranslate"><span class="pre">info[&quot;reward_ctrl&quot;]</span></code>, <code class="docutils literal notranslate"><span class="pre">info[&quot;reward_survive&quot;]</span></code>).</p></li>

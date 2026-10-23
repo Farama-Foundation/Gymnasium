@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/half_cheetah.gif"><img alt="../../../_images/half_cheetah.gif" src="../../../_images/half_cheetah.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Mujoco environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Mujoco environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -392,6 +392,12 @@
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(17,),</span> <span class="pre">float64)</span></code></p></td>
 </tr>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reward Threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4800.0</span></code></p></td>
+</tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;HalfCheetah-v5&quot;)</span></code></p></td>
 </tr>
@@ -401,13 +407,13 @@
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>This environment is based on the work of P. Wawrzyński in <a class="reference external" href="http://staff.elka.pw.edu.pl/~pwawrzyn/pub-s/0812_LSCLRR.pdf">“A Cat-Like Robot Real-Time Learning to Run”</a>.
-The HalfCheetah is a 2-dimensional robot consisting of 9 body parts and 8 joints connecting them (including two paws).
+The HalfCheetah is a 2-dimensional robot consisting of 7 body parts (a torso with a head, and a thigh, shin and foot on each of the two legs) connected by 6 hinge joints.
 The goal is to apply torque to the joints to make the cheetah run forward (right) as fast as possible, with a positive reward based on the distance moved forward and a negative reward for moving backward.
 The cheetah’s torso and head are fixed, and torque can only be applied to the other 6 joints over the front and back thighs (which connect to the torso), the shins (which connect to the thighs), and the feet (which connect to the shins).</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<figure class="align-default" id="id2">
+<figure class="align-default" id="half-cheetah-action-space">
 <img alt="../../../_images/half_cheetah.png" src="../../../_images/half_cheetah.png" />
 </figure>
 <p>The action space is a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(6,),</span> <span class="pre">float32)</span></code>. An action represents the torques applied at the hinge joints.</p>
@@ -486,7 +492,7 @@ The cheetah’s torso and head are fixed, and torque can only be applied to the 
 <p>By default, the observation does not include the robot’s x-coordinate (<code class="docutils literal notranslate"><span class="pre">rootx</span></code>).
 This can be included by passing <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation=False</span></code> during construction.
 In this case, the observation space will be a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(18,),</span> <span class="pre">float64)</span></code>, where the first observation element is the x-coordinate of the robot.
-Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code>, the x- and y-coordinates are returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with the keys <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;y_position&quot;</span></code>, respectively.</p>
+Regardless of whether <code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code>, the x-coordinate is returned in <code class="docutils literal notranslate"><span class="pre">info</span></code> with the key <code class="docutils literal notranslate"><span class="pre">&quot;x_position&quot;</span></code>.</p>
 <p>By default, however, the observation space is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(17,),</span> <span class="pre">float64)</span></code> where the elements are as follows:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
@@ -708,6 +714,16 @@ These parameters can be applied during <code class="docutils literal notranslate
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;half_cheetah.xml&quot;</span></code></p></td>
 <td><p>Path to a MuJoCo model</p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">frame_skip</span></code></p></td>
+<td><p><strong>int</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
+<td><p>Number of MuJoCo simulation steps per <code class="docutils literal notranslate"><span class="pre">step()</span></code>, so <span class="math notranslate nohighlight">\(dt = frame\_skip \times\)</span> <code class="docutils literal notranslate"><span class="pre">model.opt.timestep</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default_camera_config</span></code></p></td>
+<td><p><strong>dict</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{&quot;distance&quot;:</span> <span class="pre">4.0}</span></code></p></td>
+<td><p>Properties of the <code class="docutils literal notranslate"><span class="pre">mj_camera</span></code> used for rendering</p></td>
+</tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
@@ -726,7 +742,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exclude_current_positions_from_observation</span></code></p></td>
 <td><p><strong>bool</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
-<td><p>Whether or not to omit the x-coordinate from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">State</span></code> section)</p></td>
+<td><p>Whether or not to omit the x-coordinate from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see <code class="docutils literal notranslate"><span class="pre">Observation</span> <span class="pre">Space</span></code> section)</p></td>
 </tr>
 </tbody>
 </table>

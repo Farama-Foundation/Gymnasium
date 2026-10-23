@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/pendulum.gif"><img alt="../../../_images/pendulum.gif" src="../../../_images/pendulum.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Classic Control environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Classic Control environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -392,7 +392,10 @@
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box([-1.</span> <span class="pre">-1.</span> <span class="pre">-8.],</span> <span class="pre">[1.</span> <span class="pre">1.</span> <span class="pre">8.],</span> <span class="pre">(3,),</span> <span class="pre">float32)</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>import</p></td>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">200</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;Pendulum-v1&quot;)</span></code></p></td>
 </tr>
 </tbody>
@@ -481,19 +484,18 @@ while the maximum reward is zero (pendulum is upright with zero velocity and no 
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The starting state is a random angle in <em>[-pi, pi]</em> and a random angular velocity in <em>[-1,1]</em>.</p>
 </section>
-<section id="episode-truncation">
-<h2>Episode Truncation<a class="headerlink" href="#episode-truncation" title="Link to this heading">¶</a></h2>
-<p>The episode truncates at 200 time steps.</p>
+<section id="episode-end">
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
+<p>The episode is truncated at 200 time steps. There is no termination condition.</p>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">g</span></code>: .</p></li>
-</ul>
 <p>Pendulum has two parameters for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code> with <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> and <code class="docutils literal notranslate"><span class="pre">g</span></code> representing
 the acceleration of gravity measured in <em>(m s<sup>-2</sup>)</em> used to calculate the pendulum dynamics.
 The default value is <code class="docutils literal notranslate"><span class="pre">g</span> <span class="pre">=</span> <span class="pre">10.0</span></code>.
-On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine the new random state.</p>
+On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine the new random state:
+<code class="docutils literal notranslate"><span class="pre">x_init</span></code> bounds the initial angle <code class="docutils literal notranslate"><span class="pre">theta</span></code> and <code class="docutils literal notranslate"><span class="pre">y_init</span></code> bounds the initial angular velocity, which are sampled
+uniformly from <code class="docutils literal notranslate"><span class="pre">[-x_init,</span> <span class="pre">x_init]</span></code> and <code class="docutils literal notranslate"><span class="pre">[-y_init,</span> <span class="pre">y_init]</span></code> respectively.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Pendulum-v1"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">)</span>  <span class="c1"># default g=10.0</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
@@ -578,7 +580,7 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
 <li><a class="reference internal" href="#starting-state">Starting State</a></li>
-<li><a class="reference internal" href="#episode-truncation">Episode Truncation</a></li>
+<li><a class="reference internal" href="#episode-end">Episode End</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>
 </ul>

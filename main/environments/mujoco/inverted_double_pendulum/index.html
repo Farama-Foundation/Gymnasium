@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/inverted_double_pendulum.gif"><img alt="../../../_images/inverted_double_pendulum.gif" src="../../../_images/inverted_double_pendulum.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Mujoco environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Mujoco environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -391,6 +391,12 @@
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(9,),</span> <span class="pre">float64)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reward Threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">9100.0</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;InvertedDoublePendulum-v5&quot;)</span></code></p></td>
@@ -407,7 +413,7 @@ The cart can be pushed left or right, and the goal is to balance the second pole
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<p>The agent take a 1-element vector for actions.
+<p>The agent takes a 1-element vector for actions.
 The action space is a continuous <code class="docutils literal notranslate"><span class="pre">(action)</span></code> in <code class="docutils literal notranslate"><span class="pre">[-1,</span> <span class="pre">1]</span></code>, where <code class="docutils literal notranslate"><span class="pre">action</span></code> represents the
 numerical force applied to the cart (with magnitude representing the amount of force and
 sign representing the direction)</p>
@@ -443,8 +449,8 @@ sign representing the direction)</p>
 <li><p><em>qpos (1 element):</em> Position values of the robot’s cart.</p></li>
 <li><p><em>sin(qpos) (2 elements):</em> The sine of the angles of poles.</p></li>
 <li><p><em>cos(qpos) (2 elements):</em> The cosine of the angles of poles.</p></li>
-<li><p><em>qvel (3 elements):</em> The velocities of these individual body parts (their derivatives).</p></li>
-<li><p><em>qfrc_constraint (1 element):</em> Constraint force of the cart.
+<li><p><em>qvel (3 elements):</em> The velocities of these individual body parts (their derivatives), clipped to <span class="math notranslate nohighlight">\([-10, 10]\)</span>.</p></li>
+<li><p><em>qfrc_constraint (1 element):</em> Constraint force of the cart, clipped to <span class="math notranslate nohighlight">\([-10, 10]\)</span>.
 There is one constraint force for contacts for each degree of freedom (3).
 The approach and handling of constraints by MuJoCo is unique to the simulator and is based on their research.
 More information can be found  in their <a class="reference external" href="https://mujoco.readthedocs.io/en/latest/computation.html"><em>documentation</em></a> or in their paper <a class="reference external" href="https://roboti.us/lab/papers/TodorovICRA14.pdf">“Convex and analytically-invertible dynamics with contacts and constraints: Theory and implementation in MuJoCo”</a>.</p></li>
@@ -528,7 +534,7 @@ More information can be found  in their <a class="reference external" href="http
 <td><p>angular velocity (rad/s)</p></td>
 </tr>
 <tr class="row-even"><td><p>8</p></td>
-<td><p>constraint force - x</p></td>
+<td><p>constraint force on the cart</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
 <td><p>slider</p></td>
@@ -536,20 +542,20 @@ More information can be found  in their <a class="reference external" href="http
 <td><p>Force (N)</p></td>
 </tr>
 <tr class="row-odd"><td><p>excluded</p></td>
-<td><p>constraint force - y</p></td>
+<td><p>constraint torque on the first hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
-<td><p>slider</p></td>
-<td><p>slide</p></td>
-<td><p>Force (N)</p></td>
+<td><p>hinge</p></td>
+<td><p>hinge</p></td>
+<td><p>Torque (N m)</p></td>
 </tr>
 <tr class="row-even"><td><p>excluded</p></td>
-<td><p>constraint force - z</p></td>
+<td><p>constraint torque on the second hinge</p></td>
 <td><p>-Inf</p></td>
 <td><p>Inf</p></td>
-<td><p>slider</p></td>
-<td><p>slide</p></td>
-<td><p>Force (N)</p></td>
+<td><p>hinge2</p></td>
+<td><p>hinge</p></td>
+<td><p>Torque (N m)</p></td>
 </tr>
 </tbody>
 </table>
@@ -565,10 +571,10 @@ it gets a reward of fixed value <code class="docutils literal notranslate"><span
 <li><p><em>distance_penalty</em>:
 This reward is a measure of how far the <em>tip</em> of the second pendulum (the only free end) moves,
 and it is calculated as <span class="math notranslate nohighlight">\(0.01 x_{pole2-tip}^2 + (y_{pole2-tip}-2)^2\)</span>,
-where <span class="math notranslate nohighlight">\(x_{pole2-tip}, y_{pole2-tip}\)</span> are the xy-coordinatesof the tip of the second pole.</p></li>
+where <span class="math notranslate nohighlight">\(x_{pole2-tip}, y_{pole2-tip}\)</span> are the xy-coordinates of the tip of the second pole.</p></li>
 <li><p><em>velocity_penalty</em>:
 A negative reward to penalize the agent for moving too fast.
-<span class="math notranslate nohighlight">\(10^{-3} \omega_1 + 5 \times 10^{-3} \omega_2\)</span>,
+<span class="math notranslate nohighlight">\(10^{-3} \omega_1^2 + 5 \times 10^{-3} \omega_2^2\)</span>,
 where <span class="math notranslate nohighlight">\(\omega_1, \omega_2\)</span> are the angular velocities of the hinges.</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
@@ -585,7 +591,9 @@ The initial velocity state is <span class="math notranslate nohighlight">\(\math
 <h3>Termination<a class="headerlink" href="#termination" title="Link to this heading">¶</a></h3>
 <p>The environment terminates when the Inverted Double Pendulum is unhealthy.
 The Inverted Double Pendulum is unhealthy if any of the following happens:</p>
-<p>1.Termination: The y_coordinate of the tip of the second pole <span class="math notranslate nohighlight">\(\leq 1\)</span>.</p>
+<ol class="arabic simple">
+<li><p>The y-coordinate (height) of the tip of the second pole <span class="math notranslate nohighlight">\(\leq 1\)</span>.</p></li>
+</ol>
 <p>Note: The maximum standing height of the system is 1.2 m when all the parts are perpendicularly vertical on top of each other.</p>
 </section>
 <section id="truncation">
@@ -615,6 +623,16 @@ These parameters can be applied during <code class="docutils literal notranslate
 <td><p><strong>str</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;inverted_double_pendulum.xml&quot;</span></code></p></td>
 <td><p>Path to a MuJoCo model</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">frame_skip</span></code></p></td>
+<td><p><strong>int</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
+<td><p>Number of MuJoCo simulation steps per <code class="docutils literal notranslate"><span class="pre">step()</span></code>, so <span class="math notranslate nohighlight">\(dt = frame\_skip \times\)</span> <code class="docutils literal notranslate"><span class="pre">model.opt.timestep</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default_camera_config</span></code></p></td>
+<td><p><strong>dict</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Properties of the <code class="docutils literal notranslate"><span class="pre">mj_camera</span></code> used for rendering</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">healthy_reward</span></code></p></td>
 <td><p><strong>float</strong></p></td>

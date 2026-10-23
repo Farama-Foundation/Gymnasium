@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/pusher.gif"><img alt="../../../_images/pusher.gif" src="../../../_images/pusher.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Mujoco environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Mujoco environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -391,6 +391,12 @@
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(23,),</span> <span class="pre">float64)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reward Threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;Pusher-v5&quot;)</span></code></p></td>
@@ -406,10 +412,10 @@ The robot consists of shoulder, elbow, forearm and wrist joints.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<figure class="align-default" id="id2">
+<figure class="align-default" id="pusher-action-space">
 <img alt="../../../_images/pusher.png" src="../../../_images/pusher.png" />
 </figure>
-<p>The action space is a <code class="docutils literal notranslate"><span class="pre">Box(-2,</span> <span class="pre">2,</span> <span class="pre">(7,),</span> <span class="pre">float32)</span></code>. An action <code class="docutils literal notranslate"><span class="pre">(a,</span> <span class="pre">b)</span></code> represents the torques applied at the hinge joints.</p>
+<p>The action space is a <code class="docutils literal notranslate"><span class="pre">Box(-2,</span> <span class="pre">2,</span> <span class="pre">(7,),</span> <span class="pre">float32)</span></code>. An action represents the torques applied at the hinge joints.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -493,7 +499,7 @@ The robot consists of shoulder, elbow, forearm and wrist joints.</p>
 <li><p><em>xpos (3 elements):</em> The coordinates of the object to be moved.</p></li>
 <li><p><em>xpos (3 elements):</em> The coordinates of the goal position.</p></li>
 </ul>
-<p>The observation space is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(17,),</span> <span class="pre">float64)</span></code> where the elements are as follows:</p>
+<p>The observation space is a <code class="docutils literal notranslate"><span class="pre">Box(-Inf,</span> <span class="pre">Inf,</span> <span class="pre">(23,),</span> <span class="pre">float64)</span></code> where the elements are as follows:</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -711,23 +717,23 @@ It is measured as the negative squared Euclidean norm of the action, i.e. as <sp
 where <span class="math notranslate nohighlight">\(w_{control}\)</span> is the <code class="docutils literal notranslate"><span class="pre">reward_control_weight</span></code> (default is <span class="math notranslate nohighlight">\(0.1\)</span>).</p></li>
 <li><p><em>reward_near</em>:
 This reward is a measure of how far the <em>fingertip</em> of the pusher (the unattached end) is from the object,
-with a more negative value assigned for when the pusher’s <em>fingertip</em> is further away from the target.
-It is <span class="math notranslate nohighlight">\(-w_{near} \|(P_{fingertip} - P_{target})\|_2\)</span>.
+with a more negative value assigned for when the pusher’s <em>fingertip</em> is further away from the object.
+It is <span class="math notranslate nohighlight">\(-w_{near} \|(P_{fingertip} - P_{object})\|_2\)</span>.
 where <span class="math notranslate nohighlight">\(w_{near}\)</span> is the <code class="docutils literal notranslate"><span class="pre">reward_near_weight</span></code> (default is <span class="math notranslate nohighlight">\(0.5\)</span>).</p></li>
 </ul>
 <p><code class="docutils literal notranslate"><span class="pre">info</span></code> contains the individual reward terms.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
-<p>The initial position state of the Pusher arm is <span class="math notranslate nohighlight">\(0_{6}\)</span>.
+<p>The initial position state of the Pusher arm is <span class="math notranslate nohighlight">\(0_{7}\)</span>.
 The initial position state of the object is <span class="math notranslate nohighlight">\(\mathcal{U}_{[[-0.3, -0.2], [0, 0.2]]}\)</span>.
 The position state of the goal is (permanently) <span class="math notranslate nohighlight">\([0.45, -0.05, -0.323]\)</span>.
-The initial velocity state of the Pusher arm is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-0.005 \times I_{6}, 0.005 \times I_{6}]}\)</span>.
+The initial velocity state of the Pusher arm is <span class="math notranslate nohighlight">\(\mathcal{U}_{[-0.005 \times I_{7}, 0.005 \times I_{7}]}\)</span>.
 The initial velocity state of the object is <span class="math notranslate nohighlight">\(0_2\)</span>.
-The velocity state of the goal is (permanently) <span class="math notranslate nohighlight">\(0_3\)</span>.</p>
+The velocity state of the goal is (permanently) <span class="math notranslate nohighlight">\(0_2\)</span>.</p>
 <p>where <span class="math notranslate nohighlight">\(\mathcal{U}\)</span> is the multivariate uniform continuous distribution.</p>
 <p>Note that the initial position state of the object is sampled until its distance to the goal is <span class="math notranslate nohighlight">\( &gt; 0.17 m\)</span>.</p>
-<p>The default frame rate is 5, with each frame lasting 0.01, so <em>dt = 5 * 0.01 = 0.05</em>.</p>
+<p>The default <code class="docutils literal notranslate"><span class="pre">frame_skip</span></code> is 5, with each MuJoCo timestep lasting 0.01, so <em>dt = 5 * 0.01 = 0.05</em>.</p>
 </section>
 <section id="episode-end">
 <h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
@@ -763,6 +769,16 @@ These parameters can be applied during <code class="docutils literal notranslate
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;pusher_v5.xml&quot;</span></code></p></td>
 <td><p>Path to a MuJoCo model</p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">frame_skip</span></code></p></td>
+<td><p><strong>int</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5</span></code></p></td>
+<td><p>Number of MuJoCo simulation steps per <code class="docutils literal notranslate"><span class="pre">step()</span></code>, so <span class="math notranslate nohighlight">\(dt = frame\_skip \times\)</span> <code class="docutils literal notranslate"><span class="pre">model.opt.timestep</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default_camera_config</span></code></p></td>
+<td><p><strong>dict</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{&quot;trackbodyid&quot;:</span> <span class="pre">-1,</span> <span class="pre">&quot;distance&quot;:</span> <span class="pre">4.0}</span></code></p></td>
+<td><p>Properties of the <code class="docutils literal notranslate"><span class="pre">mj_camera</span></code> used for rendering</p></td>
+</tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reward_near_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
@@ -776,7 +792,7 @@ These parameters can be applied during <code class="docutils literal notranslate
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reward_control_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></td>
-<td><p>Weight for <em>reward_control</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
+<td><p>Weight for <em>reward_ctrl</em> term (see <code class="docutils literal notranslate"><span class="pre">Rewards</span></code> section)</p></td>
 </tr>
 </tbody>
 </table>

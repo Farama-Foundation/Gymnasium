@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/lunar_lander.gif"><img alt="../../../_images/lunar_lander.gif" src="../../../_images/lunar_lander.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Box2D environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Box2D environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -391,6 +391,12 @@
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box([</span> <span class="pre">-2.5</span> <span class="pre">-2.5</span> <span class="pre">-10.</span> <span class="pre">-10.</span> <span class="pre">-6.2831855</span> <span class="pre">-10.</span> <span class="pre">-0.</span> <span class="pre">-0.</span> <span class="pre">],</span> <span class="pre">[</span> <span class="pre">2.5</span> <span class="pre">2.5</span> <span class="pre">10.</span> <span class="pre">10.</span> <span class="pre">6.2831855</span> <span class="pre">10.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">],</span> <span class="pre">(8,),</span> <span class="pre">float32)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reward Threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">200</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;LunarLander-v3&quot;)</span></code></p></td>
@@ -429,6 +435,60 @@ can learn to fly and then land on its first attempt.</p>
 <p>The state is an 8-dimensional vector: the coordinates of the lander in <code class="docutils literal notranslate"><span class="pre">x</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">y</span></code>, its linear
 velocities in <code class="docutils literal notranslate"><span class="pre">x</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">y</span></code>, its angle, its angular velocity, and two booleans
 that represent whether each leg is in contact with the ground or not.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Num</p></th>
+<th class="head"><p>Observation</p></th>
+<th class="head"><p>Min</p></th>
+<th class="head"><p>Max</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">x</span></code> coordinate</p></td>
+<td><p>-2.5</p></td>
+<td><p>2.5</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">y</span></code> coordinate</p></td>
+<td><p>-2.5</p></td>
+<td><p>2.5</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">x</span></code> linear velocity</p></td>
+<td><p>-10</p></td>
+<td><p>10</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">y</span></code> linear velocity</p></td>
+<td><p>-10</p></td>
+<td><p>10</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>angle (rad)</p></td>
+<td><p>-2π</p></td>
+<td><p>2π</p></td>
+</tr>
+<tr class="row-odd"><td><p>5</p></td>
+<td><p>angular velocity</p></td>
+<td><p>-10</p></td>
+<td><p>10</p></td>
+</tr>
+<tr class="row-even"><td><p>6</p></td>
+<td><p>left leg contact with ground (0/1)</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>7</p></td>
+<td><p>right leg contact with ground (0/1)</p></td>
+<td><p>0</p></td>
+<td><p>1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The episode terminates once <code class="docutils literal notranslate"><span class="pre">|x|</span> <span class="pre">&gt;=</span> <span class="pre">1</span></code>, so the <code class="docutils literal notranslate"><span class="pre">x</span></code> coordinate stays well inside these bounds in practice.</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
@@ -443,7 +503,8 @@ sum of the rewards for all the steps within that episode.</p>
 <li><p>is decreased by 0.03 points each frame a side engine is firing.</p></li>
 <li><p>is decreased by 0.3 points each frame the main engine is firing.</p></li>
 </ul>
-<p>The episode receive an additional reward of -100 or +100 points for crashing or landing safely respectively.</p>
+<p>On the final step of a terminated episode, the reward for that step is replaced (not added to) by -100 if
+the lander crashed or left the viewport, or +100 if it came to rest.</p>
 <p>An episode is considered a solution if it scores at least 200 points.</p>
 </section>
 <section id="starting-state">
@@ -451,13 +512,13 @@ sum of the rewards for all the steps within that episode.</p>
 <p>The lander starts at the top center of the viewport with a random initial
 force applied to its center of mass.</p>
 </section>
-<section id="episode-termination">
-<h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Link to this heading">¶</a></h2>
-<p>The episode finishes if:</p>
+<section id="episode-end">
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
+<p>The episode terminates if:</p>
 <ol class="arabic simple">
 <li><p>the lander crashes (the lander body gets in contact with the moon);</p></li>
-<li><p>the lander gets outside of the viewport (<code class="docutils literal notranslate"><span class="pre">x</span></code> coordinate is greater than 1);</p></li>
-<li><p>the lander is not awake. From the <a class="reference external" href="https://box2d.org/documentation/md_simulation.html">Box2D docs</a>,
+<li><p>the lander gets outside of the viewport (the absolute <code class="docutils literal notranslate"><span class="pre">x</span></code> coordinate is greater than or equal to 1);</p></li>
+<li><p>the lander is not awake (it has come to rest, whether or not it is on the landing pad). From the <a class="reference external" href="https://box2d.org/documentation/md_simulation.html">Box2D docs</a>,
 a body which is not awake is a body which doesn’t move and doesn’t collide with any other body:</p></li>
 </ol>
 <blockquote>
@@ -467,6 +528,7 @@ body is awake and collides with a sleeping body, then the sleeping body
 wakes up. Bodies will also wake up if a joint or contact attached to
 them is destroyed.</p>
 </div></blockquote>
+<p>The episode is truncated after 1000 steps (the <code class="docutils literal notranslate"><span class="pre">max_episode_steps</span></code> of <code class="docutils literal notranslate"><span class="pre">LunarLander-v3</span></code> and <code class="docutils literal notranslate"><span class="pre">LunarLanderContinuous-v3</span></code>).</p>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
@@ -491,7 +553,8 @@ booster will fire, and if <code class="docutils literal notranslate"><span class
 from 50% to 100% between -1 and -0.5 (and 0.5 and 1, respectively).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">gravity</span></code> dictates the gravitational constant, this is bounded to be within 0 and -12. Default is -10.0</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">enable_wind</span></code> determines if there will be wind effects applied to the lander. The wind is generated using
-the function <code class="docutils literal notranslate"><span class="pre">tanh(sin(2</span> <span class="pre">k</span> <span class="pre">(t+C))</span> <span class="pre">+</span> <span class="pre">sin(pi</span> <span class="pre">k</span> <span class="pre">(t+C)))</span></code> where <code class="docutils literal notranslate"><span class="pre">k</span></code> is set to 0.01 and <code class="docutils literal notranslate"><span class="pre">C</span></code> is sampled randomly between -9999 and 9999.</p></li>
+the function <code class="docutils literal notranslate"><span class="pre">tanh(sin(2</span> <span class="pre">k</span> <span class="pre">(t+C))</span> <span class="pre">+</span> <span class="pre">sin(pi</span> <span class="pre">k</span> <span class="pre">(t+C)))</span></code> where <code class="docutils literal notranslate"><span class="pre">k</span></code> is set to 0.01 and <code class="docutils literal notranslate"><span class="pre">C</span></code> is sampled randomly between -9999 and 9999.
+Wind and turbulence are only applied while neither leg is in contact with the ground.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">wind_power</span></code> dictates the maximum magnitude of linear wind applied to the craft. The recommended value for
 <code class="docutils literal notranslate"><span class="pre">wind_power</span></code> is between 0.0 and 20.0.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">turbulence_power</span></code> dictates the maximum magnitude of rotational wind applied to the craft.
@@ -601,7 +664,7 @@ This in turn results in an orientation dependent torque being applied to the lan
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
 <li><a class="reference internal" href="#starting-state">Starting State</a></li>
-<li><a class="reference internal" href="#episode-termination">Episode Termination</a></li>
+<li><a class="reference internal" href="#episode-end">Episode End</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>
 <li><a class="reference internal" href="#notes">Notes</a></li>

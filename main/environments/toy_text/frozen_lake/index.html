@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/frozen_lake.gif"><img alt="../../../_images/frozen_lake.gif" src="../../../_images/frozen_lake.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Toy Text environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Toy Text environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -391,6 +391,12 @@
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Discrete(16)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reward Threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.7</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;FrozenLake-v1&quot;)</span></code></p></td>
@@ -415,7 +421,7 @@ to the intended direction sometimes (see <code class="docutils literal notransla
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<p>The action shape is <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> in the range <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">3}</span></code> indicating
+<p>The action space is <code class="docutils literal notranslate"><span class="pre">Discrete(4)</span></code>, an integer in <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3}</span></code> indicating
 which direction to move the player.</p>
 <ul class="simple">
 <li><p>0: Move left</p></li>
@@ -430,7 +436,7 @@ which direction to move the player.</p>
 <code class="docutils literal notranslate"><span class="pre">current_row</span> <span class="pre">*</span> <span class="pre">ncols</span> <span class="pre">+</span> <span class="pre">current_col</span></code> (where both the row and col start at 0).
 Therefore, the observation is returned as an integer.</p>
 <p>For example, the goal position in the 4x4 map can be calculated as follows: 3 * 4 + 3 = 15.
-The number of possible observations is dependent on the size of the map.</p>
+The observation space is <code class="docutils literal notranslate"><span class="pre">Discrete(nrow</span> <span class="pre">*</span> <span class="pre">ncol)</span></code>, so the number of possible observations depends on the size of the map.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
@@ -458,7 +464,7 @@ The number of possible observations is dependent on the size of the map.</p>
 </li>
 <li><p>Truncation (using the time_limit wrapper):</p>
 <ol class="arabic simple">
-<li><p>The length of the episode is 100 for FrozenLake4x4, 200 for FrozenLake8x8.</p></li>
+<li><p>The length of the episode is 100 for <code class="docutils literal notranslate"><span class="pre">FrozenLake-v1</span></code> (4x4 map), 200 for <code class="docutils literal notranslate"><span class="pre">FrozenLake8x8-v1</span></code>.</p></li>
 </ol>
 </li>
 </ul>
@@ -467,7 +473,8 @@ The number of possible observations is dependent on the size of the map.</p>
 <h2>Information<a class="headerlink" href="#information" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">step()</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> return a dict with the following keys:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">p</span></code>: transition probability for the state which will be impacted by the <code class="docutils literal notranslate"><span class="pre">is_slippery</span></code> parameter.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prob</span></code>: transition probability for the state, which depends on the <code class="docutils literal notranslate"><span class="pre">is_slippery</span></code> and <code class="docutils literal notranslate"><span class="pre">success_rate</span></code> parameters
+(always 1.0 on <code class="docutils literal notranslate"><span class="pre">reset()</span></code> or if <code class="docutils literal notranslate"><span class="pre">is_slippery=False</span></code>).</p></li>
 </ul>
 </section>
 <section id="arguments">
@@ -485,7 +492,7 @@ The number of possible observations is dependent on the size of the map.</p>
 </pre></div>
 </div>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">desc=None</span></code>: Used to specify maps non-preloaded maps.
+<li><p><code class="docutils literal notranslate"><span class="pre">desc=None</span></code>: Used to specify non-preloaded maps.
 If <code class="docutils literal notranslate"><span class="pre">desc=None</span></code> then <code class="docutils literal notranslate"><span class="pre">map_name</span></code> will be used. If both <code class="docutils literal notranslate"><span class="pre">desc</span></code> and <code class="docutils literal notranslate"><span class="pre">map_name</span></code> are
 <code class="docutils literal notranslate"><span class="pre">None</span></code> a random 8x8 map with 80% of locations frozen will be generated.</p>
 <p>To Specify a custom map - <code class="docutils literal notranslate"><span class="pre">desc=[&quot;SFFF&quot;,</span> <span class="pre">&quot;FHFH&quot;,</span> <span class="pre">&quot;FFFH&quot;,</span> <span class="pre">&quot;HFFG&quot;]</span></code>

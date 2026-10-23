@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/cliff_walking.gif"><img alt="../../../_images/cliff_walking.gif" src="../../../_images/cliff_walking.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Toy Text environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Toy Text environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -409,13 +409,13 @@ returns to the start location.</p>
 <p>Adapted from Example 6.6 (page 132) from Reinforcement Learning: An Introduction
 by Sutton and Barto [<a href="#cliffwalk_ref">1</a>].</p>
 <p>The cliff can be chosen to be slippery (disabled by default) so the player may move perpendicular
-to the intended direction sometimes (see <a href="#is_slippy"><code class="docutils literal notranslate"><span class="pre">is_slippery</span></code></a>).</p>
+to the intended direction sometimes (see <a href="#is_slippery"><code class="docutils literal notranslate"><span class="pre">is_slippery</span></code></a>).</p>
 <p>With inspiration from:
 <a class="reference external" href="https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py">https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py</a></p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<p>The action shape is <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> in the range <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">3}</span></code> indicating
+<p>The action space is <code class="docutils literal notranslate"><span class="pre">Discrete(4)</span></code>, an integer in <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3}</span></code> indicating
 which direction to move the player.</p>
 <ul class="simple">
 <li><p>0: Move up</p></li>
@@ -432,35 +432,39 @@ the positions of the first 3 rows plus the bottom-left cell.</p>
 <p>The observation is a value representing the player’s current position as
 current_row * ncols + current_col (where both the row and col start at 0).</p>
 <p>For example, the starting position can be calculated as follows: 3 * 12 + 0 = 36.</p>
-<p>The observation is returned as an <code class="docutils literal notranslate"><span class="pre">int()</span></code>.</p>
+<p>The observation space is <code class="docutils literal notranslate"><span class="pre">Discrete(48)</span></code> (one value per grid cell, although only 37 are reachable)
+and the observation is returned as an <code class="docutils literal notranslate"><span class="pre">int()</span></code>.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The episode starts with the player in state <code class="docutils literal notranslate"><span class="pre">[36]</span></code> (location [3, 0]).</p>
 </section>
-<section id="reward">
-<h2>Reward<a class="headerlink" href="#reward" title="Link to this heading">¶</a></h2>
+<section id="rewards">
+<h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>Each time step incurs -1 reward, unless the player stepped into the cliff,
 which incurs -100 reward.</p>
 </section>
 <section id="episode-end">
 <h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
-<p>The episode terminates when the player enters state <code class="docutils literal notranslate"><span class="pre">[47]</span></code> (location [3, 11]).</p>
+<p>The episode terminates when the player enters state <code class="docutils literal notranslate"><span class="pre">[47]</span></code> (location [3, 11]).
+<code class="docutils literal notranslate"><span class="pre">CliffWalking-v1</span></code> has no time limit, so the episode is never truncated.</p>
 </section>
 <section id="information">
 <h2>Information<a class="headerlink" href="#information" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">step()</span></code> and <code class="docutils literal notranslate"><span class="pre">reset()</span></code> return a dict with the following keys:</p>
 <ul class="simple">
-<li><p>“p” - transition proability for the state.</p></li>
+<li><p>“prob” - transition probability for the state.</p></li>
 </ul>
-<p>As cliff walking is not stochastic, the transition probability returned always 1.0.</p>
+<p>The transition probability is always 1.0 if <code class="docutils literal notranslate"><span class="pre">is_slippery=False</span></code> (and on <code class="docutils literal notranslate"><span class="pre">reset()</span></code>), and 1/3 if <code class="docutils literal notranslate"><span class="pre">is_slippery=True</span></code>.</p>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
-<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'CliffWalking-v1'</span><span class="p">)</span>
+<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'CliffWalking-v1'</span><span class="p">,</span> <span class="n">is_slippery</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
+<p><a id="is_slippery"></a><code class="docutils literal notranslate"><span class="pre">is_slippery=False</span></code>: If True, the player moves in the intended direction
+with probability 1/3, and otherwise moves in either perpendicular direction, each with probability 1/3.</p>
 </section>
 <section id="references">
 <h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
@@ -550,7 +554,7 @@ An Introduction” 2020. [Online]. Available: <a class="reference external" href
 <li><a class="reference internal" href="#action-space">Action Space</a></li>
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
 <li><a class="reference internal" href="#starting-state">Starting State</a></li>
-<li><a class="reference internal" href="#reward">Reward</a></li>
+<li><a class="reference internal" href="#rewards">Rewards</a></li>
 <li><a class="reference internal" href="#episode-end">Episode End</a></li>
 <li><a class="reference internal" href="#information">Information</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>

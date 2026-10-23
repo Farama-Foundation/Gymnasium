@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/swimmer.gif"><img alt="../../../_images/swimmer.gif" src="../../../_images/swimmer.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Mujoco environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Mujoco environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -391,6 +391,12 @@
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(8,),</span> <span class="pre">float64)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reward Threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">360.0</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;Swimmer-v5&quot;)</span></code></p></td>
@@ -416,12 +422,12 @@ Problem parameters:</p>
 <li><p><em>l<sub>i</sub></em>: length of part <em>i</em> (<em>i</em> ∈ {1…n})</p></li>
 <li><p><em>k</em>: viscous-friction coefficient</p></li>
 </ul>
-<p>While the default environment has <em>n</em> = 3, <em>l<sub>i</sub></em> = 0.1, and <em>k</em> = 0.1.
+<p>While the default environment has <em>n</em> = 3, <em>l<sub>i</sub></em> = 1 (with a capsule radius of 0.1), and <em>k</em> = 0.1.
 It is possible to pass a custom MuJoCo XML file during construction to increase the number of links, or to tweak any of the parameters.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<figure class="align-default" id="id2">
+<figure class="align-default" id="swimmer-action-space">
 <img alt="../../../_images/swimmer.png" src="../../../_images/swimmer.png" />
 </figure>
 <p>The action space is a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(2,),</span> <span class="pre">float32)</span></code>. An action represents the torques applied between <em>links</em></p>
@@ -625,6 +631,16 @@ These parameters can be applied during <code class="docutils literal notranslate
 <td><p><strong>str</strong></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&quot;swimmer.xml&quot;</span></code></p></td>
 <td><p>Path to a MuJoCo model</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">frame_skip</span></code></p></td>
+<td><p><strong>int</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+<td><p>Number of MuJoCo simulation steps per <code class="docutils literal notranslate"><span class="pre">step()</span></code>, so <span class="math notranslate nohighlight">\(dt = frame\_skip \times\)</span> <code class="docutils literal notranslate"><span class="pre">model.opt.timestep</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default_camera_config</span></code></p></td>
+<td><p><strong>dict</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Properties of the <code class="docutils literal notranslate"><span class="pre">mj_camera</span></code> used for rendering</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">forward_reward_weight</span></code></p></td>
 <td><p><strong>float</strong></p></td>

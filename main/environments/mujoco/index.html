@@ -521,12 +521,13 @@
 </div>
 
     <p>MuJoCo stands for Multi-Joint dynamics with Contact. It is a physics engine for facilitating research and development in robotics, biomechanics, graphics and animation, and other areas where fast and accurate simulation is needed.
-There is physical contact between the robots and their environment - and MuJoCo attempts at getting realistic physics simulations for the possible physical contact dynamics by aiming for physical accuracy and computational efficiency.</p>
+There is physical contact between the robots and their environment - and MuJoCo attempts at getting realistic physics simulations for the possible physical contact dynamics by aiming for physical accuracy and computational efficiency.
+MuJoCo was introduced by Todorov, Erez and Tassa in <a class="reference external" href="https://doi.org/10.1109/IROS.2012.6386109">“MuJoCo: A physics engine for model-based control”</a> (IROS 2012).</p>
 <p>The unique dependencies including the MuJoCo simulator for this set of environments can be installed via:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>gymnasium<span class="o">[</span>mujoco<span class="o">]</span>
 </pre></div>
 </div>
-<p>As of October 2021, DeepMind has acquired MuJoCo and has open-sourced it in 2022, making it free for everyone.
+<p>DeepMind acquired MuJoCo in October 2021 and open-sourced it in 2022, making it free for everyone.
 Using MuJoCo with Gymnasium requires the framework <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> be installed (this dependency is installed with the above command).
 Instructions for installing the MuJoCo engine can be found on their <a class="reference external" href="https://mujoco.org">website</a> and <a class="reference external" href="https://github.com/google-deepmind/mujoco">GitHub repository</a>.</p>
 <p>MuJoCo <code class="docutils literal notranslate"><span class="pre">v3</span></code> environments and older, which relied on the <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> framework, were migrated to the <code class="docutils literal notranslate"><span class="pre">gymnasium-robotics</span></code> package starting with <code class="docutils literal notranslate"><span class="pre">gymnasium</span></code> v1.2. For information on using these older versions, please refer to the <code class="docutils literal notranslate"><span class="pre">gymnasium-robotics</span></code> documentation. The original <code class="docutils literal notranslate"><span class="pre">mujoco-py</span></code> framework can be found in its <a class="reference external" href="https://github.com/openai/mujoco-py/tree/master/mujoco_py">GitHub repository</a>.</p>
@@ -577,7 +578,7 @@ Instructions for installing the MuJoCo engine can be found on their <a class="re
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p>Swimmer</p></td>
-<td><p>3d robot with the goal of swimming</p></td>
+<td><p>2d robot with the goal of swimming</p></td>
 </tr>
 <tr class="row-even"><td><p><strong>Quadruped</strong></p></td>
 <td><p></p></td>
@@ -597,8 +598,9 @@ Instructions for installing the MuJoCo engine can be found on their <a class="re
 </tbody>
 </table>
 </div>
-<p>All of these environments are stochastic in terms of their initial state, with a Gaussian noise added to a fixed initial state in order to add stochasticity.
-The state spaces for MuJoCo environments in Gymnasium consist of two parts that are flattened and concatenated together: the position of the body part and joints (<code class="docutils literal notranslate"><span class="pre">mujoco.MjData.qpos</span></code>) and their corresponding velocity (<code class="docutils literal notranslate"><span class="pre">mujoco.MjData.qvel</span></code>) (more information in the <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#the-state">MuJoCo Physics State Documentation</a>).</p>
+<p>All of these environments are stochastic in terms of their initial state, with uniform or Gaussian noise (depending on the environment) added to a fixed initial state in order to add stochasticity.
+The observation spaces of most MuJoCo environments in Gymnasium are built from the positions of the body parts and joints (<code class="docutils literal notranslate"><span class="pre">mujoco.MjData.qpos</span></code>) and their corresponding velocities (<code class="docutils literal notranslate"><span class="pre">mujoco.MjData.qvel</span></code>), flattened and concatenated together (more information in the <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#the-state">MuJoCo Physics State Documentation</a>).
+Some positions (such as the x-coordinate of the torso) are excluded by default, and several environments transform these values (e.g. Reacher and InvertedDoublePendulum use the sine and cosine of joint angles) or add other quantities such as body positions, inertias and contact forces; see the “Observation Space” section of each environment.</p>
 <!--
 Often some of the first positional elements are omitted from the state space since the reward is calculated based on their values, leaving it up to the algorithm to infer these hidden values indirectly.
 -->
@@ -617,11 +619,11 @@ Often some of the first positional elements are omitted from the state space sin
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">v5</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.3.3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mujoco&gt;=2.3.3</span></code></p></td>
 <td><p>Recommended (most features, the least bugs)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">v4</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">mujoco=&gt;2.1.3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">mujoco&gt;=2.1.3</span></code></p></td>
 <td><p>Maintained for reproducibility</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">v3</span></code></p></td>
@@ -641,17 +643,19 @@ Often some of the first positional elements are omitted from the state space sin
 <h3>Comparing training performance across versions<a class="headerlink" href="#comparing-training-performance-across-versions" title="Link to this heading">¶</a></h3>
 <p>The training performance of <code class="docutils literal notranslate"><span class="pre">v2</span></code> and <code class="docutils literal notranslate"><span class="pre">v3</span></code> is identical assuming the same/default arguments were used.</p>
 <p>The training performance of <code class="docutils literal notranslate"><span class="pre">v2</span></code>/<code class="docutils literal notranslate"><span class="pre">v3</span></code> and <code class="docutils literal notranslate"><span class="pre">v4</span></code> are not directly comparable because of the change to the newer simulator, but the results for not Ant and not Humanoids are comparable (for more information see <a class="reference external" href="https://github.com/openai/gym/pull/2595#issuecomment-1099152505">GitHub Comment #1</a> and <a class="reference external" href="https://github.com/openai/gym/pull/2762#issuecomment-1135362092">GitHub Comment #2</a>).</p>
-<p>The Training performance of <code class="docutils literal notranslate"><span class="pre">v4</span></code> and <code class="docutils literal notranslate"><span class="pre">v5</span></code> is different because of the many changes in the environments, but the Half Cheetah and Swimmer exhibits identical behaviour, Pusher and Swimmer are close (for more information see <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/821">GitHub Issue</a>).</p>
+<p>The Training performance of <code class="docutils literal notranslate"><span class="pre">v4</span></code> and <code class="docutils literal notranslate"><span class="pre">v5</span></code> is different because of the many changes in the environments, but the Half Cheetah and Swimmer exhibit identical behaviour, Pusher and Reacher are close (for more information see <a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/issues/821">GitHub Issue</a>).</p>
 </section>
 <section id="exact-reproducibility">
 <h3>Exact reproducibility<a class="headerlink" href="#exact-reproducibility" title="Link to this heading">¶</a></h3>
-<p>Note: The exact behavior of the MuJoCo simulator changes slightly between <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> versions due to floating point operation ordering (more information of their <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility">Documentation</a>), if exact reproducibility is need besides using the <code class="docutils literal notranslate"><span class="pre">seed</span></code> for experiments the same simulator version should be used.</p>
+<p>Note: The exact behavior of the MuJoCo simulator changes slightly between <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> versions due to floating point operation ordering (more information of their <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility">Documentation</a>), if exact reproducibility is needed besides using the <code class="docutils literal notranslate"><span class="pre">seed</span></code> for experiments the same simulator version should be used.</p>
 </section>
 </section>
 <section id="rendering-arguments">
 <h2>Rendering Arguments<a class="headerlink" href="#rendering-arguments" title="Link to this heading">¶</a></h2>
 <p>All of the MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Ant-v5"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1280</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">720</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gymnasium</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"Ant-v5"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1280</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">720</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -700,8 +704,8 @@ Often some of the first positional elements are omitted from the state space sin
 <td><p>Max number of geometrical objects to render (useful for 3rd-party environments)</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">visual_options</span></code></p></td>
-<td><p><strong>Dict[int, bool]</strong></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+<td><p><strong>dict[int, bool] | None</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
 <td><p>A dictionary with <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/overview.html#mjvisual">mjVisual</a> flags and value pairs, example <code class="docutils literal notranslate"><span class="pre">{mujoco.mjtVisFlag.mjVIS_CONTACTPOINT:</span> <span class="pre">True,</span> <span class="pre">mujoco.mjtVisFlag.mjVIS_CONTACTFORCE:</span> <span class="pre">True}</span></code> (show contact points and forces).</p></td>
 </tr>
 </tbody>
@@ -709,7 +713,7 @@ Often some of the first positional elements are omitted from the state space sin
 </div>
 <section id="rendering-backend">
 <h3>Rendering Backend<a class="headerlink" href="#rendering-backend" title="Link to this heading">¶</a></h3>
-<p>The MuJoCo simulator renders images with OpenGL and can use 3 different back ends “glfw” (default), “egl”, “omesa”, which can be selected by setting an <a class="reference external" href="https://en.wikipedia.org/wiki/Environment_variable">environment variable</a>.</p>
+<p>The MuJoCo simulator renders images with OpenGL and can use 3 different back ends “glfw” (default), “egl”, “osmesa”, which can be selected by setting an <a class="reference external" href="https://en.wikipedia.org/wiki/Environment_variable">environment variable</a>.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>

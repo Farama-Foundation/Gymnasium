@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/blackjack.gif"><img alt="../../../_images/blackjack.gif" src="../../../_images/blackjack.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Toy Text environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Toy Text environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -424,7 +424,7 @@ by Sutton and Barto [<a href="#blackjack_ref">1</a>].</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<p>The action shape is <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> in the range <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1}</span></code> indicating
+<p>The action space is <code class="docutils literal notranslate"><span class="pre">Discrete(2)</span></code>, an integer in <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1}</span></code> indicating
 whether to stick or hit.</p>
 <ul class="simple">
 <li><p>0: Stick</p></li>
@@ -436,7 +436,8 @@ whether to stick or hit.</p>
 <p>The observation consists of a 3-tuple containing: the player’s current sum,
 the value of the dealer’s one showing card (1-10 where 1 is ace),
 and whether the player holds a usable ace (0 or 1).</p>
-<p>The observation is returned as <code class="docutils literal notranslate"><span class="pre">(int(),</span> <span class="pre">int(),</span> <span class="pre">int())</span></code>.</p>
+<p>The observation space is <code class="docutils literal notranslate"><span class="pre">Tuple((Discrete(32),</span> <span class="pre">Discrete(11),</span> <span class="pre">Discrete(2)))</span></code> and
+observations are returned as a tuple of three integers, <code class="docutils literal notranslate"><span class="pre">(player_sum,</span> <span class="pre">dealer_card,</span> <span class="pre">usable_ace)</span></code>.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
@@ -469,8 +470,8 @@ and whether the player holds a usable ace (0 or 1).</p>
 <li><p>lose game: -1</p></li>
 <li><p>draw game: 0</p></li>
 <li><p>win game with natural blackjack:
-+1.5 (if <a href="#nat">natural</a> is True)
-+1 (if <a href="#nat">natural</a> is False)</p></li>
++1.5 (if <a href="#nat">natural</a> is True and <a href="#sab">sab</a> is False)
++1 (otherwise)</p></li>
 </ul>
 </section>
 <section id="episode-end">
@@ -492,13 +493,16 @@ and whether the player holds a usable ace (0 or 1).</p>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
-<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'Blackjack-v1'</span><span class="p">,</span> <span class="n">natural</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'Blackjack-v1'</span><span class="p">,</span> <span class="n">natural</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sab</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><a id="nat"></a><code class="docutils literal notranslate"><span class="pre">natural=False</span></code>: Whether to give an additional reward for
-starting with a natural blackjack, i.e. starting with an ace and ten (sum is 21).</p>
-<p><a id="sab"></a><code class="docutils literal notranslate"><span class="pre">sab=False</span></code>: Whether to follow the exact rules outlined in the book by
-Sutton and Barto. If <code class="docutils literal notranslate"><span class="pre">sab</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the keyword argument <code class="docutils literal notranslate"><span class="pre">natural</span></code> will be ignored.
+starting with a natural blackjack, i.e. starting with an ace and ten (sum is 21).
+This only has an effect if <code class="docutils literal notranslate"><span class="pre">sab=False</span></code>, so it must be passed together with <code class="docutils literal notranslate"><span class="pre">sab=False</span></code>
+when using <code class="docutils literal notranslate"><span class="pre">gym.make(&quot;Blackjack-v1&quot;)</span></code>.</p>
+<p><a id="sab"></a><code class="docutils literal notranslate"><span class="pre">sab=True</span></code>: Whether to follow the exact rules outlined in the book by
+Sutton and Barto. <code class="docutils literal notranslate"><span class="pre">Blackjack-v1</span></code> is registered with <code class="docutils literal notranslate"><span class="pre">sab=True</span></code> (the <code class="docutils literal notranslate"><span class="pre">BlackjackEnv</span></code> class
+itself defaults to <code class="docutils literal notranslate"><span class="pre">sab=False</span></code>). If <code class="docutils literal notranslate"><span class="pre">sab</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the keyword argument <code class="docutils literal notranslate"><span class="pre">natural</span></code> will be ignored.
 If the player achieves a natural blackjack and the dealer does not, the player
 will win (i.e. get a reward of +1). The reverse rule does not apply.
 If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).</p>

@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/car_racing.gif"><img alt="../../../_images/car_racing.gif" src="../../../_images/car_racing.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Box2D environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Box2D environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -391,6 +391,12 @@
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(96,</span> <span class="pre">96,</span> <span class="pre">3),</span> <span class="pre">uint8)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reward Threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">900</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;CarRacing-v3&quot;)</span></code></p></td>
@@ -414,13 +420,13 @@ and turn at the same time.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<p>If continuous there are 3 actions :</p>
+<p>If continuous (the default), the action is a <code class="docutils literal notranslate"><span class="pre">Box([-1,</span> <span class="pre">0,</span> <span class="pre">0],</span> <span class="pre">[1,</span> <span class="pre">1,</span> <span class="pre">1],</span> <span class="pre">(3,),</span> <span class="pre">float32)</span></code>:</p>
 <ul class="simple">
 <li><p>0: steering, -1 is full left, +1 is full right</p></li>
-<li><p>1: gas</p></li>
-<li><p>2: braking</p></li>
+<li><p>1: gas, in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code></p></li>
+<li><p>2: braking, in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code></p></li>
 </ul>
-<p>If discrete there are 5 actions:</p>
+<p>If discrete, the action space is <code class="docutils literal notranslate"><span class="pre">Discrete(5)</span></code>:</p>
 <ul class="simple">
 <li><p>0: do nothing</p></li>
 <li><p>1: steer right</p></li>
@@ -431,21 +437,28 @@ and turn at the same time.</p>
 </section>
 <section id="observation-space">
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
-<p>A top-down 96x96 RGB image of the car and race track.</p>
+<p>A top-down 96x96 RGB image of the car and race track, as a <code class="docutils literal notranslate"><span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(96,</span> <span class="pre">96,</span> <span class="pre">3),</span> <span class="pre">uint8)</span></code>.</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
-<p>The reward is -0.1 every frame and +1000/N for every track tile visited, where N is the total number of tiles
-visited in the track. For example, if you have finished in 732 frames, your reward is 1000 - 0.1*732 = 926.8 points.</p>
+<p>The reward is -0.1 every frame and +1000/N for the first visit to each track tile, where N is the total number
+of tiles in the track. For example, if you have finished in 732 frames, your reward is 1000 - 0.1*732 = 926.8 points.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The car starts at rest in the center of the road.</p>
 </section>
-<section id="episode-termination">
-<h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Link to this heading">¶</a></h2>
-<p>The episode finishes when all the tiles are visited. The car can also go outside the playfield -
-that is, far off the track, in which case it will receive -100 reward and die.</p>
+<section id="episode-end">
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
+<p>The episode terminates when all the tiles are visited, with <code class="docutils literal notranslate"><span class="pre">info[&quot;lap_finished&quot;]</span> <span class="pre">=</span> <span class="pre">True</span></code>.
+The car can also go outside the playfield - that is, far off the track, in which case the reward for that
+step is -100 and the episode terminates with <code class="docutils literal notranslate"><span class="pre">info[&quot;lap_finished&quot;]</span> <span class="pre">=</span> <span class="pre">False</span></code>.</p>
+<p>The episode is truncated after 1000 steps (the <code class="docutils literal notranslate"><span class="pre">max_episode_steps</span></code> of <code class="docutils literal notranslate"><span class="pre">CarRacing-v3</span></code>).</p>
+</section>
+<section id="information">
+<h2>Information<a class="headerlink" href="#information" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">step()</span></code> returns an empty <code class="docutils literal notranslate"><span class="pre">info</span></code> dict, except on termination when it contains <code class="docutils literal notranslate"><span class="pre">lap_finished</span></code> (see above).
+<code class="docutils literal notranslate"><span class="pre">reset()</span></code> returns an empty <code class="docutils literal notranslate"><span class="pre">info</span></code> dict.</p>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
@@ -457,12 +470,17 @@ that is, far off the track, in which case it will receive -100 reward and die.</
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">lap_complete_percent=0.95</span></code> dictates the percentage of tiles that must be visited by
-the agent before a lap is considered complete.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lap_complete_percent=0.95</span></code> is intended to dictate the fraction of tiles that must be visited by
+the agent before a lap is considered complete, checked when the car first visits the start tile.
+However, the start tile is already visited when the episode starts, so this check does not currently
+trigger and a lap is only complete once every tile has been visited.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">domain_randomize=False</span></code> enables the domain randomized variant of the environment.
 In this scenario, the background and track colours are different on every reset.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">continuous=True</span></code> specifies if the agent has continuous (true) or discrete (false) actions.
 See action space section for a description of each.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">verbose=False</span></code> prints track generation information on reset if <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">render_mode</span></code> supports <code class="docutils literal notranslate"><span class="pre">&quot;human&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;rgb_array&quot;</span></code> (a 600x400 image) and <code class="docutils literal notranslate"><span class="pre">&quot;state_pixels&quot;</span></code>
+(a 96x96 image, the same as the observation).</p></li>
 </ul>
 </section>
 <section id="reset-arguments">
@@ -488,7 +506,8 @@ Correspondingly, passing the option <code class="docutils literal notranslate"><
 <section id="version-history">
 <h2>Version History<a class="headerlink" href="#version-history" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>v2: Change truncation to termination when finishing the lap (1.0.0)</p></li>
+<li><p>v3: Change truncation to termination when finishing the lap (1.0.0)</p></li>
+<li><p>v2: Remove <code class="docutils literal notranslate"><span class="pre">CarRacingDiscrete-v1</span></code>, use <code class="docutils literal notranslate"><span class="pre">continuous=False</span></code> instead (0.26.0)</p></li>
 <li><p>v1: Change track completion logic and add domain randomization (0.24.0)</p></li>
 <li><p>v0: Original version</p></li>
 </ul>
@@ -580,7 +599,8 @@ Correspondingly, passing the option <code class="docutils literal notranslate"><
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
 <li><a class="reference internal" href="#starting-state">Starting State</a></li>
-<li><a class="reference internal" href="#episode-termination">Episode Termination</a></li>
+<li><a class="reference internal" href="#episode-end">Episode End</a></li>
+<li><a class="reference internal" href="#information">Information</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
 <li><a class="reference internal" href="#reset-arguments">Reset Arguments</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>

@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/cart_pole.gif"><img alt="../../../_images/cart_pole.gif" src="../../../_images/cart_pole.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Classic Control environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Classic Control environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -391,6 +391,12 @@
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box([-4.8</span> <span class="pre">-inf</span> <span class="pre">-0.41887903</span> <span class="pre">-inf],</span> <span class="pre">[4.8</span> <span class="pre">inf</span> <span class="pre">0.41887903</span> <span class="pre">inf],</span> <span class="pre">(4,),</span> <span class="pre">float32)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">500</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reward Threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">475.0</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;CartPole-v1&quot;)</span></code></p></td>
@@ -408,7 +414,7 @@ in the left and right direction on the cart.</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<p>The action is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(1,)</span></code> which can take values <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1}</span></code> indicating the direction
+<p>The action space is <code class="docutils literal notranslate"><span class="pre">Discrete(2)</span></code>, an integer in <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1}</span></code> indicating the direction
 of the fixed force the cart is pushed with.</p>
 <ul class="simple">
 <li><p>0: Push cart to the left</p></li>
@@ -464,7 +470,8 @@ if the pole angle is not in the range <code class="docutils literal notranslate"
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
-<p>Since the goal is to keep the pole upright for as long as possible, by default, a reward of <code class="docutils literal notranslate"><span class="pre">+1</span></code> is given for every step taken, including the termination step. The default reward threshold is 500 for v1 and 200 for v0 due to the time limit on the environment.</p>
+<p>Since the goal is to keep the pole upright for as long as possible, by default, a reward of <code class="docutils literal notranslate"><span class="pre">+1</span></code> is given for every step taken, including the termination step.
+The maximum episode return is 500 for v1 and 200 for v0 due to the time limit, and the registered reward threshold (<code class="docutils literal notranslate"><span class="pre">env.spec.reward_threshold</span></code>) is 475 for v1 and 195 for v0.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">sutton_barto_reward=True</span></code>, then a reward of <code class="docutils literal notranslate"><span class="pre">0</span></code> is awarded for every non-terminating step and <code class="docutils literal notranslate"><span class="pre">-1</span></code> for the terminating step. As a result, the reward threshold is 0 for v0 and v1.</p>
 </section>
 <section id="starting-state">
@@ -477,12 +484,12 @@ if the pole angle is not in the range <code class="docutils literal notranslate"
 <ol class="arabic simple">
 <li><p>Termination: Pole Angle is greater than ±12°</p></li>
 <li><p>Termination: Cart Position is greater than ±2.4 (center of the cart reaches the edge of the display)</p></li>
-<li><p>Truncation: Episode length is greater than 500 (200 for v0)</p></li>
+<li><p>Truncation: Episode length reaches 500 (200 for v0)</p></li>
 </ol>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
-<p>Cartpole only has <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> as a keyword for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.
+<p>CartPole accepts <code class="docutils literal notranslate"><span class="pre">render_mode</span></code> and <code class="docutils literal notranslate"><span class="pre">sutton_barto_reward</span></code> (see the table below) as keywords for <code class="docutils literal notranslate"><span class="pre">gymnasium.make</span></code>.
 On reset, the <code class="docutils literal notranslate"><span class="pre">options</span></code> parameter allows the user to change the bounds used to determine the new random state.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">)</span>
@@ -514,7 +521,7 @@ On reset, the <code class="docutils literal notranslate"><span class="pre">optio
 </section>
 <section id="vectorized-environment">
 <h2>Vectorized environment<a class="headerlink" href="#vectorized-environment" title="Link to this heading">¶</a></h2>
-<p>To increase steps per seconds, users can use a custom vector environment or with an environment vectorizor.</p>
+<p>To increase steps per seconds, users can use a custom vector environment or with an environment vectorizer.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make_vec</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">num_envs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">vectorization_mode</span><span class="o">=</span><span class="s2">"vector_entry_point"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">envs</span>

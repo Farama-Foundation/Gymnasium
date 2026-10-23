@@ -377,7 +377,7 @@
 <a class="reference internal image-reference" href="../../../_images/bipedal_walker.gif"><img alt="../../../_images/bipedal_walker.gif" src="../../../_images/bipedal_walker.gif" style="width: 200px;" />
 </a>
 </figure>
-<p>This environment is part of the Box2D environments which contains general information about the environment.</p>
+<p>This environment is part of the <a class="reference internal" href="../"><span class="std std-doc">Box2D environments</span></a> which contains general information about the environment.</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -391,6 +391,12 @@
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box([-3.1415927</span> <span class="pre">-5.</span> <span class="pre">-5.</span> <span class="pre">-5.</span> <span class="pre">-3.1415927</span> <span class="pre">-5.</span> <span class="pre">-3.1415927</span> <span class="pre">-5.</span> <span class="pre">-0.</span> <span class="pre">-3.1415927</span> <span class="pre">-5.</span> <span class="pre">-3.1415927</span> <span class="pre">-5.</span> <span class="pre">-0.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">-1.</span> <span class="pre">],</span> <span class="pre">[3.1415927</span> <span class="pre">5.</span> <span class="pre">5.</span> <span class="pre">5.</span> <span class="pre">3.1415927</span> <span class="pre">5.</span> <span class="pre">3.1415927</span> <span class="pre">5.</span> <span class="pre">5.</span> <span class="pre">3.1415927</span> <span class="pre">5.</span> <span class="pre">3.1415927</span> <span class="pre">5.</span> <span class="pre">5.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">1.</span> <span class="pre">],</span> <span class="pre">(24,),</span> <span class="pre">float32)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Max Episode Steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1600</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reward Threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">300</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>import</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">gymnasium.make(&quot;BipedalWalker-v3&quot;)</span></code></p></td>
@@ -416,35 +422,39 @@ to learn from. To run the heuristic:</p>
 </section>
 <section id="action-space">
 <h2>Action Space<a class="headerlink" href="#action-space" title="Link to this heading">¶</a></h2>
-<p>Actions are motor speed values in the [-1, 1] range for each of the
-4 joints at both hips and knees.</p>
+<p>The action is a <code class="docutils literal notranslate"><span class="pre">Box(-1,</span> <span class="pre">1,</span> <span class="pre">(4,),</span> <span class="pre">float32)</span></code> with one value per joint, in the order
+hip 1, knee 1, hip 2, knee 2. Each value effectively sets the motor torque of its joint:
+the sign selects the direction the motor drives the joint, and the absolute value (clipped to <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code>)
+scales the maximum motor torque.</p>
 </section>
 <section id="observation-space">
 <h2>Observation Space<a class="headerlink" href="#observation-space" title="Link to this heading">¶</a></h2>
-<p>State consists of hull angle speed, angular velocity, horizontal speed,
-vertical speed, position of joints and joints angular speed, legs contact
-with ground, and 10 lidar rangefinder measurements. There are no coordinates
-in the state vector.</p>
+<p>The observation is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(24,)</span></code>: hull angle, hull angular velocity, horizontal speed,
+vertical speed, the angle and angular speed of each of the 4 joints, the ground contact of each leg,
+and 10 lidar rangefinder measurements. There are no coordinates in the state vector.</p>
 </section>
 <section id="rewards">
 <h2>Rewards<a class="headerlink" href="#rewards" title="Link to this heading">¶</a></h2>
 <p>Reward is given for moving forward, totaling 300+ points up to the far end.
-If the robot falls, it gets -100. Applying motor torque costs a small
-amount of points. A more optimal agent will get a better score.</p>
+If the robot falls (or moves past the left end of the terrain), the reward for that step is -100.
+Applying motor torque costs a small amount of points. A more optimal agent will get a better score.</p>
 </section>
 <section id="starting-state">
 <h2>Starting State<a class="headerlink" href="#starting-state" title="Link to this heading">¶</a></h2>
 <p>The walker starts standing at the left end of the terrain with the hull
 horizontal, and both legs in the same position with a slight knee angle.</p>
 </section>
-<section id="episode-termination">
-<h2>Episode Termination<a class="headerlink" href="#episode-termination" title="Link to this heading">¶</a></h2>
-<p>The episode will terminate if the hull gets in contact with the ground or
+<section id="episode-end">
+<h2>Episode End<a class="headerlink" href="#episode-end" title="Link to this heading">¶</a></h2>
+<p>The episode will terminate if the hull gets in contact with the ground,
+if the walker moves past the left end of the terrain (<code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&lt;</span> <span class="pre">0</span></code>), or
 if the walker exceeds the right end of the terrain length.</p>
+<p>The episode is truncated after 1600 steps for <code class="docutils literal notranslate"><span class="pre">BipedalWalker-v3</span></code> and 2000 steps for <code class="docutils literal notranslate"><span class="pre">BipedalWalkerHardcore-v3</span></code>.</p>
 </section>
 <section id="arguments">
 <h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading">¶</a></h2>
-<p>To use the <em>hardcore</em> environment, you need to specify the <code class="docutils literal notranslate"><span class="pre">hardcore=True</span></code>:</p>
+<p>To use the <em>hardcore</em> environment, you need to specify the <code class="docutils literal notranslate"><span class="pre">hardcore=True</span></code>
+(or use <code class="docutils literal notranslate"><span class="pre">BipedalWalkerHardcore-v3</span></code>, which also raises the time limit from 1600 to 2000 steps):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"BipedalWalker-v3"</span><span class="p">,</span> <span class="n">hardcore</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"rgb_array"</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">env</span>
@@ -534,7 +544,7 @@ speed; ground has higher friction; lidar rendered less nervously.</p></li>
 <li><a class="reference internal" href="#observation-space">Observation Space</a></li>
 <li><a class="reference internal" href="#rewards">Rewards</a></li>
 <li><a class="reference internal" href="#starting-state">Starting State</a></li>
-<li><a class="reference internal" href="#episode-termination">Episode Termination</a></li>
+<li><a class="reference internal" href="#episode-end">Episode End</a></li>
 <li><a class="reference internal" href="#arguments">Arguments</a></li>
 <li><a class="reference internal" href="#version-history">Version History</a></li>
 <li><a class="reference internal" href="#credits">Credits</a></li>
