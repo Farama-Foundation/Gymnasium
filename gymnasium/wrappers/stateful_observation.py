@@ -568,6 +568,10 @@ class MaxAndSkipObservation(
 ):
     """Skips the N-th frame (observation) and return the max values between the two last observations.
 
+    If the episode terminates or is truncated before ``skip`` steps, the maximum
+    is taken over the last two observations received during that call. If only
+    one step is taken, that step's observation is returned unchanged.
+
     No vector version of the wrapper exists.
 
     Note:
@@ -638,9 +642,9 @@ class MaxAndSkipObservation(
         info = {}
         for i in range(self._skip):
             obs, reward, terminated, truncated, info = self.env.step(action)
-            if i == self._skip - 2:
-                self._obs_buffer[0] = obs
-            if i == self._skip - 1:
+            self._obs_buffer[i % 2] = obs
+            if i == 0:
+                # A one-step episode ending must not include a previous frame.
                 self._obs_buffer[1] = obs
             total_reward += float(reward)
             if terminated or truncated:
