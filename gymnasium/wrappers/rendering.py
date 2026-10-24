@@ -455,7 +455,31 @@ class HumanRendering(
 
     The ``render_mode`` of the wrapped environment must be either ``'rgb_array'`` or ``'rgb_array_list'``.
 
-    No vector version of the wrapper exists.
+    Set ``return_rgb_array=True`` to display frames and return RGB images through
+    this wrapper's :meth:`render`. This option requires a base environment with
+    ``render_mode="rgb_array"`` and keeps that mode on the outer wrapper. Each
+    successful reset/step fetches one uint8 HWC RGB frame, displays it, and caches
+    an independent copy. Calls to render return fresh copies of that cache,
+    without calling the base renderer or processing display events again.
+
+    With this option, reset is required before rendering, and again after a
+    failed reset/step/render update. A terminal frame remains available until
+    reset or close. Closing is idempotent and permanently closes this wrapper.
+    Frame dimensions must remain constant. Depth images and lists are not
+    supported by this option.
+
+    Use ``RecordVideo(HumanRendering(env, return_rgb_array=True), ...)`` to record
+    the same cached frames that are displayed. RenderCollection and
+    AddRenderObservation can likewise wrap this instance. Placing RecordVideo
+    inside HumanRendering can cause extra base render calls. In that order, the
+    recorder then receives the base environment's frames directly, so the base
+    renderer must keep those returned frames stable for recording. The default
+    ``return_rgb_array=False`` behavior and automatic human-rendering fallback
+    in :func:`gymnasium.make` are unchanged.
+
+    A vector version exists, but ``return_rgb_array`` is only supported by this
+    scalar wrapper. Pygame uses a process-wide display; this option does not add
+    support for multiple concurrent windows or background event processing.
 
     Example:
         >>> import gymnasium as gym
@@ -491,18 +515,34 @@ class HumanRendering(
         "depth_array_list",
     ]
 
-    def __init__(self, env: gym.Env[ObsType, ActType]):
+    def __init__(
+        self, env: gym.Env[ObsType, ActType], *, return_rgb_array: bool = False
+    ):
         """Initialize a :class:`HumanRendering` instance.
 
         Args:
             env: The environment that is being wrapped
+            return_rgb_array: Cache the displayed RGB frame and return a copy from render.
         """
-        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.utils.RecordConstructorArgs.__init__(
+            self, return_rgb_array=return_rgb_array
+        )
         gym.Wrapper.__init__(self, env)
 
         self.screen_size = None
         self.window = None  # Has to be initialized before asserts, as self.window is used in auto close
         self.clock = None
+        self.return_rgb_array = return_rgb_array
+        self._cached_rgb_array: np.ndarray | None = None
+        self._needs_reset = True
+        self._closed = False
+
+        if not isinstance(return_rgb_array, bool):
+            raise TypeError("return_rgb_array must be a boolean.")
+        if return_rgb_array and self.env.render_mode != "rgb_array":
+            raise ValueError(
+                "return_rgb_array=True requires env.render_mode='rgb_array'."
+            )
 
         if self.env.render_mode not in self.ACCEPTED_RENDER_MODES:
             raise ValueError(
@@ -513,31 +553,60 @@ class HumanRendering(
                 "The base environment must specify 'render_fps' to be used with the HumanRendering wrapper"
             )
 
-        if "human" not in self.metadata["render_modes"]:
+        if return_rgb_array:
+            self.metadata = deepcopy(self.env.metadata)
+            self.metadata["render_modes"] = ["rgb_array"]
+        elif "human" not in self.metadata["render_modes"]:
             self.metadata = deepcopy(self.env.metadata)
             self.metadata["render_modes"].append("human")
 
     @property
     def render_mode(self):
-        """Always returns ``'human'``."""
-        return "human"
+        """Return ``'rgb_array'`` when frame access is enabled, otherwise ``'human'``."""
+        return "rgb_array" if self.return_rgb_array else "human"
+
+    def _check_open(self):
+        """Reject reuse after closing an RGB-returning wrapper."""
+        if self._closed:
+            raise error.ClosedEnvironmentError(
+                "This HumanRendering wrapper has been closed."
+            )
 
     def step(self, action: ActType) -> tuple[ObsType, SupportsFloat, bool, bool, dict]:
         """Perform a step in the base environment and render a frame to the screen."""
+        if self.return_rgb_array:
+            self._check_open()
+            if self._needs_reset:
+                raise error.ResetNeeded("Call reset before stepping HumanRendering.")
+            self._cached_rgb_array = None
+            self._needs_reset = True
         result = super().step(action)
         self._render_frame()
+        if self.return_rgb_array:
+            self._needs_reset = False
         return result
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[ObsType, dict[str, Any]]:
         """Reset the base environment and render a frame to the screen."""
+        if self.return_rgb_array:
+            self._check_open()
+            self._cached_rgb_array = None
+            self._needs_reset = True
         result = super().reset(seed=seed, options=options)
         self._render_frame()
+        if self.return_rgb_array:
+            self._needs_reset = False
         return result
 
-    def render(self) -> None:
-        """This method doesn't do much, actual rendering is performed in :meth:`step` and :meth:`reset`."""
+    def render(self) -> np.ndarray | None:
+        """Return a copy of the last displayed RGB frame when enabled, otherwise None."""
+        if self.return_rgb_array:
+            self._check_open()
+            if self._needs_reset or self._cached_rgb_array is None:
+                raise error.ResetNeeded("Call reset to obtain a displayed RGB frame.")
+            return self._cached_rgb_array.copy()
         return None
 
     def _render_frame(self):
@@ -556,6 +625,20 @@ class HumanRendering(
         else:
             last_rgb_array = self.env.render()
 
+        if self.return_rgb_array:
+            if not (
+                isinstance(last_rgb_array, np.ndarray)
+                and last_rgb_array.dtype == np.uint8
+                and last_rgb_array.ndim == 3
+                and last_rgb_array.shape[2] == 3
+                and min(last_rgb_array.shape[:2]) > 0
+            ):
+                raise ValueError(
+                    "Expected a nonempty uint8 RGB frame with shape (height, width, 3)."
+                )
+            # Own the exact pixels displayed even when the environment reuses its buffer.
+            last_rgb_array = last_rgb_array.copy()
+
         assert isinstance(last_rgb_array, np.ndarray), (
             f"Expected `env.render()` to return a numpy array, actually returned {type(last_rgb_array)}"
         )
@@ -564,6 +647,9 @@ class HumanRendering(
 
         if self.screen_size is None:
             self.screen_size = rgb_array.shape[:2]
+
+        if self.return_rgb_array and self.screen_size != rgb_array.shape[:2]:
+            raise ValueError("The displayed RGB frame dimensions must remain constant.")
 
         assert self.screen_size == rgb_array.shape[:2], (
             f"The shape of the rgb array has changed from {self.screen_size} to {rgb_array.shape[:2]}"
@@ -581,15 +667,27 @@ class HumanRendering(
         pygame.event.pump()
         self.clock.tick(self.metadata["render_fps"])
         pygame.display.flip()
+        if self.return_rgb_array:
+            self._cached_rgb_array = last_rgb_array
 
     def close(self):
         """Close the rendering window."""
-        if self.window is not None:
-            import pygame
+        if self.return_rgb_array:
+            if self._closed:
+                return
+            self._closed = True
+            self._cached_rgb_array = None
+            self._needs_reset = True
+        try:
+            if self.window is not None:
+                import pygame
 
-            pygame.display.quit()
-            pygame.quit()
-        super().close()
+                pygame.display.quit()
+                pygame.quit()
+        finally:
+            if self.return_rgb_array:
+                self.window = self.clock = self.screen_size = None
+            super().close()
 
 
 class AddWhiteNoise(
