@@ -10,6 +10,76 @@ import gymnasium as gym
 from gymnasium.wrappers import RecordVideo, RenderCollection
 
 
+class ReusableFrameEnv(gym.Env):
+    """Return one mutable RGB array for every render call."""
+
+    metadata = {"render_modes": ["rgb_array"], "render_fps": 4}
+    render_mode = "rgb_array"
+    observation_space = gym.spaces.Discrete(10)
+    action_space = gym.spaces.Discrete(1)
+
+    def __init__(self, transposed):
+        """Optionally expose a non-contiguous view of the reusable buffer."""
+        self.frame = np.zeros((4, 6, 3), dtype=np.uint8)
+        self.transposed = transposed
+        self.count = 0
+
+    def reset(self, *, seed=None, options=None):
+        """Restart the counter without replacing the render buffer."""
+        super().reset(seed=seed)
+        self.count = 0
+        return self.count, {}
+
+    def step(self, action):
+        """Advance the frame's value."""
+        self.count += 1
+        return self.count, 0.0, False, False, {}
+
+    def render(self):
+        """Update and return the same array, or a view of it."""
+        self.frame.fill(self.count)
+        return self.frame.transpose(1, 0, 2) if self.transposed else self.frame
+
+
+@pytest.mark.parametrize("collected", [False, True])
+@pytest.mark.parametrize("transposed", [False, True])
+def test_record_video_preserves_reused_frames(tmp_path, collected, transposed):
+    env = ReusableFrameEnv(transposed)
+    wrapped = RenderCollection(env) if collected else env
+    recorder = RecordVideo(wrapped, str(tmp_path / "videos"))
+    try:
+        recorder.reset(seed=123)
+        recorder.step(0)
+        recorder.step(0)
+        env.frame.fill(99)
+        assert len(recorder.recorded_frames) == 3
+        for count, frame in enumerate(recorder.recorded_frames):
+            np.testing.assert_array_equal(frame, np.full(frame.shape, count, np.uint8))
+            assert not np.shares_memory(frame, env.frame)
+    finally:
+        recorder.close()
+
+
+@pytest.mark.parametrize("pop_frames", [False, True])
+def test_record_video_preserves_frames_returned_to_caller(tmp_path, pop_frames):
+    env = RenderCollection(
+        gym.make("CartPole-v1", render_mode="rgb_array"), pop_frames=pop_frames
+    )
+    recorder = RecordVideo(env, str(tmp_path / "videos"))
+    try:
+        recorder.reset(seed=123)
+        recorder.step(0)
+        returned = recorder.render()
+        expected = [frame.copy() for frame in recorder.recorded_frames]
+        assert returned
+        for frame in returned:
+            frame.fill(0)
+        for frame, snapshot in zip(recorder.recorded_frames, expected, strict=True):
+            np.testing.assert_array_equal(frame, snapshot)
+    finally:
+        recorder.close()
+
+
 def test_video_folder_and_filenames(
     video_folder="custom_video_folder", name_prefix="video-prefix"
 ):
