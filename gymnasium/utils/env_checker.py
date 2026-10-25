@@ -256,7 +256,8 @@ def check_step_determinism(env: gym.Env, seed: int = 123) -> None:
     assert data_equivalence(term_0, term_1, exact=True), (
         "Deterministic step termination are not equivalent for the same seed and action"
     )
-    assert trunc_0 is False and trunc_1 is False, (
+    # `truncated` may be a `np.bool_`, which `env_step_passive_checker` accepts
+    assert not (trunc_0 or trunc_1), (
         "Environment truncates after 1 step, something has gone very wrong."
     )
 
