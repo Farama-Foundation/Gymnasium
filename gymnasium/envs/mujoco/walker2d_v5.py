@@ -25,7 +25,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
 
     ## Action Space
     ```{figure} action_space_figures/walker2d.png
-    :name: walker2d
+    :name: walker2d_action_space
     ```
 
     The action space is a `Box(-1, 1, (6,), float32)`. An action represents the torques applied at the hinge joints.
@@ -44,12 +44,12 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     The observation space consists of the following parts (in order):
 
     - *qpos (8 elements by default):* Position values of the robot's body parts.
-    - *qvel (9 elements):* The velocities of these individual body parts (their derivatives).
+    - *qvel (9 elements):* The velocities of these individual body parts (their derivatives), clipped to $[-10, 10]$.
 
     By default, the observation does not include the robot's x-coordinate (`rootx`).
     This can be included by passing `exclude_current_positions_from_observation=False` during construction.
     In this case, the observation space will be a `Box(-Inf, Inf, (18,), float64)`, where the first observation element is the x-coordinate of the robot.
-    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x-coordinate are returned in `info` with the keys `"x_position"` and `"y_position"`, respectively.
+    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x-coordinate is returned in `info` with the key `"x_position"`.
 
     By default, however, the observation space is a `Box(-Inf, Inf, (17,), float64)` where the elements are as follows:
 
@@ -69,9 +69,9 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     | 11  | angular velocity of the thigh hinge                | -Inf | Inf | thigh_joint                      | hinge | angular velocity (rad/s) |
     | 12  | angular velocity of the leg hinge                  | -Inf | Inf | leg_joint                        | hinge | angular velocity (rad/s) |
     | 13  | angular velocity of the foot hinge                 | -Inf | Inf | foot_joint                       | hinge | angular velocity (rad/s) |
-    | 14  | angular velocity of the thigh hinge                | -Inf | Inf | thigh_left_joint                 | hinge | angular velocity (rad/s) |
-    | 15  | angular velocity of the leg hinge                  | -Inf | Inf | leg_left_joint                   | hinge | angular velocity (rad/s) |
-    | 16  | angular velocity of the foot hinge                 | -Inf | Inf | foot_left_joint                  | hinge | angular velocity (rad/s) |
+    | 14  | angular velocity of the left thigh hinge           | -Inf | Inf | thigh_left_joint                 | hinge | angular velocity (rad/s) |
+    | 15  | angular velocity of the left leg hinge             | -Inf | Inf | leg_left_joint                   | hinge | angular velocity (rad/s) |
+    | 16  | angular velocity of the left foot hinge            | -Inf | Inf | foot_left_joint                  | hinge | angular velocity (rad/s) |
     | excluded | x-coordinate of the torso                     | -Inf | Inf | rootx                            | slide | position (m)             |
 
 
@@ -84,7 +84,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     A reward for moving forward,
     this reward would be positive if the Walker2d moves forward (in the positive $x$ direction / in the right direction).
     $w_{forward} \times \frac{dx}{dt}$, where
-    $dx$ is the displacement of the (front) "tip" ($x_{after-action} - x_{before-action}$),
+    $dx$ is the displacement of the torso (`rootx`) ($x_{after-action} - x_{before-action}$),
     $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is $4$),
     and `frametime` which is $0.002$ - so the default is $dt = 4 \times 0.002 = 0.008$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1$).
@@ -110,9 +110,8 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     If `terminate_when_unhealthy is True` (which is the default), the environment terminates when the Walker2d is unhealthy.
     The Walker2d is unhealthy if any of the following happens:
 
-    1. Any of the state space values is no longer finite
-    2. The z-coordinate of the torso (the height) is **not** in the closed interval given by the `healthy_z_range` argument (default to $[0.8, 2.0]$).
-    3. The absolute value of the angle (`observation[1]` if `exclude_current_positions_from_observation=False`, else `observation[2]`) is ***not*** in the closed interval specified by the `healthy_angle_range` argument (default is $[-1, 1]$).
+    1. The z-coordinate of the torso (the height) is **not** in the open interval given by the `healthy_z_range` argument (default is $(0.8, 2.0)$).
+    2. The angle of the torso (`observation[1]` if `exclude_current_positions_from_observation=True`, else `observation[2]`) is **not** in the open interval given by the `healthy_angle_range` argument (default is $(-1, 1)$).
 
     ### Truncation
     The default duration of an episode is 1000 timesteps.
@@ -130,8 +129,10 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
     | Parameter                                    | Type      | Default           | Description                                                                                                                                                                                         |
     | -------------------------------------------- | --------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     | `xml_file`                                   | **str**   |`"walker2d_v5.xml"`| Path to a MuJoCo model                                                                                                                                                                              |
+    | `frame_skip`                                 | **int**   | `4`               | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep`                                                                                                   |
+    | `default_camera_config`                      | **dict**  | `{"trackbodyid": 2, "distance": 4.0, "lookat": np.array((0.0, 0.0, 1.15)), "elevation": -20.0}` | Properties of the `mj_camera` used for rendering                                                                                                                                                   |
     | `forward_reward_weight`                      | **float** | `1`               | Weight for _forward_reward_ term (see `Rewards` section)                                                                                                                                            |
-    | `ctrl_cost_weight`                           | **float** | `1e-3`            | Weight for _ctr_cost_ term (see `Rewards` section)                                                                                                                                                  |
+    | `ctrl_cost_weight`                           | **float** | `1e-3`            | Weight for _ctrl_cost_ term (see `Rewards` section)                                                                                                                                                  |
     | `healthy_reward`                             | **float** | `1`               | Weight for _healthy_reward_ reward (see `Rewards` section)                                                                                                                                          |
     | `terminate_when_unhealthy`                   | **bool**  | `True`            | If True, issue a `terminated` signal is unhealthy (see `Episode End` section)                                                                                                                          |
     | `healthy_z_range`                            | **tuple** | `(0.8, 2)`        | The z-coordinate of the torso of the walker must be in this range to be considered healthy (see `Episode End` section)                                                                              |
@@ -148,7 +149,7 @@ class Walker2dEnv(MujocoEnv, utils.EzPickle):
         - Added `env.observation_structure`, a dictionary for specifying the observation space compose (e.g. `qpos`, `qvel`), useful for building tooling and wrappers for the MuJoCo environments.
         - Return a non-empty `info` with `reset()`, previously an empty dictionary was returned, the new keys are the same state information as `step()`.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
-        - In v2, v3 and v4 the models have different friction values for the two feet (left foot friction == 1.9 and right foot friction == 0.9). The `Walker-v5` model is updated to have the same friction for both feet (set to 1.9). This causes the Walker2d's the right foot to slide less on the surface and therefore require more force to move (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
+        - In v2, v3 and v4 the models have different friction values for the two feet (left foot friction == 1.9 and right foot friction == 0.9). The `Walker2d-v5` model is updated to have the same friction for both feet (set to 1.9). This causes the Walker2d's the right foot to slide less on the surface and therefore require more force to move (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/477)).
         - Fixed bug: `healthy_reward` was given on every step (even if the Walker2D is unhealthy), now it is only given if the Walker2d is healthy. The `info` "reward_survive" is updated with this change (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/526)).
         - Restored the `xml_file` argument (was removed in `v4`).
         - Added individual reward terms in `info` (`info["reward_forward"]`, `info["reward_ctrl"]`, `info["reward_survive"]`).

@@ -59,7 +59,7 @@ class Continuous_MountainCarEnv(gym.Env):
     The action is a `ndarray` with shape `(1,)`, representing the directional force applied on the car.
     The action is clipped in the range `[-1,1]` and multiplied by a power of 0.0015.
 
-    ## Transition Dynamics:
+    ## Transition Dynamics
 
     Given an action, the mountain car follows the following transition dynamics:
 
@@ -68,10 +68,10 @@ class Continuous_MountainCarEnv(gym.Env):
     *position<sub>t+1</sub> = position<sub>t</sub> + velocity<sub>t+1</sub>*
 
     where force is the action clipped to the range `[-1,1]` and power is a constant 0.0015.
-    The collisions at either end are inelastic with the velocity set to 0 upon collision with the wall.
-    The position is clipped to the range [-1.2, 0.6] and velocity is clipped to the range [-0.07, 0.07].
+    The position is clipped to the range `[-1.2, 0.6]` and velocity is clipped to the range `[-0.07, 0.07]`.
+    The collision with the left wall (position -1.2) is inelastic, with the velocity set to 0 if the car is moving left.
 
-    ## Reward
+    ## Rewards
 
     A negative reward of *-0.1 * action<sup>2</sup>* is received at each timestep to penalise for
     taking actions of large magnitude. If the mountain car reaches the goal then a positive reward of +100
@@ -86,6 +86,7 @@ class Continuous_MountainCarEnv(gym.Env):
 
     The episode ends if either of the following happens:
     1. Termination: The position of the car is greater than or equal to 0.45 (the goal position on top of the right hill)
+    and its velocity is greater than or equal to `goal_velocity` (default 0)
     2. Truncation: The length of the episode is 999.
 
     ## Arguments

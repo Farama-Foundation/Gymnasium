@@ -10,6 +10,8 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 class AntEnv(MujocoEnv, utils.EzPickle):
+    """`Ant-v4`, kept for reproducibility. See `Ant-v5` (:class:`gymnasium.envs.mujoco.ant_v5.AntEnv`) for the documentation and the changes in `v5`."""
+
     metadata = {
         "render_modes": [
             "human",

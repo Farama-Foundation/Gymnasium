@@ -12,6 +12,8 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 class PusherEnv(MujocoEnv, utils.EzPickle):
+    """`Pusher-v4`, kept for reproducibility. See `Pusher-v5` (:class:`gymnasium.envs.mujoco.pusher_v5.PusherEnv`) for the documentation and the changes in `v5`."""
+
     metadata = {
         "render_modes": [
             "human",

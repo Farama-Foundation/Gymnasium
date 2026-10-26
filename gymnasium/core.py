@@ -22,7 +22,9 @@ if TYPE_CHECKING:
 ObsType = TypeVar("ObsType", default=Any)
 ActType = TypeVar("ActType", default=Any)
 
-RenderFrame: TypeAlias = str | np.ndarray | tuple[np.ndarray, np.ndarray]
+RenderFrame: TypeAlias = (
+    str | np.ndarray[Any, Any] | tuple[np.ndarray[Any, Any], np.ndarray[Any, Any]]
+)
 
 
 class Env(Generic[ObsType, ActType]):
@@ -47,7 +49,7 @@ class Env(Generic[ObsType, ActType]):
     - :attr:`spec` - An environment spec that contains the information used to initialize the environment from :meth:`gymnasium.make`
     - :attr:`metadata` - The metadata of the environment, e.g. `{"render_modes": ["rgb_array", "human"], "render_fps": 30}`. For Jax or Torch, this can be indicated to users with `"jax"=True` or `"torch"=True`.
     - :attr:`np_random` - The random number generator for the environment. This is automatically assigned during
-      ``super().reset(seed=seed)`` and when assessing :attr:`np_random`.
+      ``super().reset(seed=seed)`` and when accessing :attr:`np_random`.
 
     .. seealso:: For modifying or extending environments use the :class:`gymnasium.Wrapper` class
 
@@ -109,10 +111,6 @@ class Env(Generic[ObsType, ActType]):
                 hidden from observations, or individual reward terms that are combined to produce the total reward.
                 In OpenAI Gym <v26, it contains "TimeLimit.truncated" to distinguish truncation and termination,
                 however this is deprecated in favour of returning terminated and truncated variables.
-            done (bool): (Deprecated) A boolean value for if the episode has ended, in which case further :meth:`step` calls will
-                return undefined results. This was removed in OpenAI Gym v26 in favor of terminated and truncated attributes.
-                A done signal may be emitted for different reasons: Maybe the task underlying the environment was solved successfully,
-                a certain timelimit was exceeded, or the physics simulation has entered an invalid state.
 
         Note:
             Users commonly keep the data from every timestep, most obviously in a replay or rollout buffer, so each
@@ -121,7 +119,7 @@ class Env(Generic[ObsType, ActType]):
         """
         raise NotImplementedError
 
-    def reset(
+    def reset(  # type: ignore[return]
         self,
         *,
         seed: int | None = None,
@@ -152,7 +150,6 @@ class Env(Generic[ObsType, ActType]):
                 and the env's :attr:`np_random_seed` will *not* be altered.
                 If you pass an integer, the PRNG will be reset even if it already exists.
                 Usually, you want to pass an integer *right after the environment has been initialized and then never again*.
-                Please refer to the minimal example above to see this paradigm in action.
             options (optional dict): Additional information to specify how the environment is reset (optional,
                 depending on the specific environment)
 
@@ -225,8 +222,7 @@ class Env(Generic[ObsType, ActType]):
     def np_random_seed(self) -> int:
         """Returns the environment's internal :attr:`_np_random_seed` that if not set will first initialise with a random int as seed.
 
-        If :attr:`np_random_seed` was set directly instead of through :meth:`reset` or :meth:`set_np_random_through_seed`,
-        the seed will take the value -1.
+        If :attr:`np_random` was set directly instead of through :meth:`reset`, the seed will take the value -1.
 
         Returns:
             int: the seed of the current `np_random` or -1, if the seed of the rng is unknown
@@ -247,7 +243,7 @@ class Env(Generic[ObsType, ActType]):
         return self._np_random
 
     @np_random.setter
-    def np_random(self, value: np.random.Generator):
+    def np_random(self, value: np.random.Generator) -> None:
         """Sets the environment's internal :attr:`_np_random` with the user-provided Generator.
 
         Since it is generally not possible to extract a seed from an instance of a random number generator,
@@ -258,8 +254,8 @@ class Env(Generic[ObsType, ActType]):
         # Setting a numpy rng with -1 will cause a ValueError
         self._np_random_seed = -1
 
-    def __str__(self):
-        """Returns a string of the environment with :attr:`spec` id's if :attr:`spec.
+    def __str__(self) -> str:
+        """Returns a string of the environment, including the :attr:`spec` id if :attr:`spec` is not ``None``.
 
         Returns:
             A string identifying the environment
@@ -273,7 +269,7 @@ class Env(Generic[ObsType, ActType]):
         """Support with-statement for the environment."""
         return self
 
-    def __exit__(self, *args: Any) -> bool:
+    def __exit__(self, *args: Any) -> bool:  # type: ignore[exit-return]
         """Support with-statement for the environment and closes the environment."""
         self.close()
         # propagate exception
@@ -356,20 +352,20 @@ class Wrapper(
         return self.env.close()
 
     @property
-    def np_random_seed(self) -> int | None:
+    def np_random_seed(self) -> int:
         """Returns the base environment's :attr:`np_random_seed`."""
         return self.env.np_random_seed
 
     @property
-    def unwrapped(self) -> Env[ObsType, ActType]:
+    def unwrapped(self) -> Env[ObsType, ActType]:  # type: ignore[override]
         """Returns the base environment of the wrapper.
 
         This will be the bare :class:`gymnasium.Env` environment, underneath all layers of wrappers.
         """
-        return self.env.unwrapped
+        return self.env.unwrapped  # type: ignore[return-value]
 
     @property
-    def spec(self) -> EnvSpec | None:
+    def spec(self) -> EnvSpec | None:  # type: ignore[override]
         """Returns the :attr:`Env` :attr:`spec` attribute with the `WrapperSpec` if the wrapper inherits from `EzPickle`."""
         if self._cached_spec is not None:
             return self._cached_spec
@@ -468,11 +464,11 @@ class Wrapper(
             else:
                 return False
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Returns the wrapper name and the :attr:`env` representation string."""
         return f"<{type(self).__name__}{self.env}>"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Returns the string representation of the wrapper."""
         return str(self)
 
@@ -481,7 +477,7 @@ class Wrapper(
         """Returns the class name of the wrapper."""
         return cls.__name__
 
-    @property
+    @property  # type: ignore[override]
     def action_space(
         self,
     ) -> spaces.Space[ActType] | spaces.Space[WrapperActType]:
@@ -491,10 +487,10 @@ class Wrapper(
         return self._action_space
 
     @action_space.setter
-    def action_space(self, space: spaces.Space[WrapperActType]):
+    def action_space(self, space: spaces.Space[WrapperActType]) -> None:
         self._action_space = space
 
-    @property
+    @property  # type: ignore[override]
     def observation_space(
         self,
     ) -> spaces.Space[ObsType] | spaces.Space[WrapperObsType]:
@@ -504,7 +500,7 @@ class Wrapper(
         return self._observation_space
 
     @observation_space.setter
-    def observation_space(self, space: spaces.Space[WrapperObsType]):
+    def observation_space(self, space: spaces.Space[WrapperObsType]) -> None:
         self._observation_space = space
 
     @property
@@ -515,11 +511,11 @@ class Wrapper(
         return self._metadata
 
     @metadata.setter
-    def metadata(self, value: dict[str, Any]):
+    def metadata(self, value: dict[str, Any]) -> None:
         self._metadata = value
 
     @property
-    def render_mode(self) -> str | None:
+    def render_mode(self) -> str | None:  # type: ignore[override]
         """Returns the :attr:`Env` :attr:`render_mode`."""
         return self.env.render_mode
 
@@ -529,11 +525,11 @@ class Wrapper(
         return self.env.np_random
 
     @np_random.setter
-    def np_random(self, value: np.random.Generator):
+    def np_random(self, value: np.random.Generator) -> None:
         self.env.np_random = value
 
     @property
-    def _np_random(self):
+    def _np_random(self) -> None:  # type: ignore[override]
         """This code will never be run due to __getattr__ being called prior this.
 
         It seems that @property overwrites the variable (`_np_random`) meaning that __getattr__ gets called with the missing variable.
@@ -559,21 +555,21 @@ class ObservationWrapper(Wrapper[WrapperObsType, ActType, ObsType, ActType]):
         Args:
             env: Environment to be wrapped.
         """
-        Wrapper.__init__(self, env)
+        Wrapper.__init__(self, env)  # type: ignore[misc]
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[WrapperObsType, dict[str, Any]]:
         """Modifies the :attr:`env` after calling :meth:`reset`, returning a modified observation using :meth:`self.observation`."""
         obs, info = self.env.reset(seed=seed, options=options)
-        return self.observation(obs), info
+        return self.observation(obs), info  # type: ignore[arg-type]
 
     def step(
         self, action: ActType
     ) -> tuple[WrapperObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Modifies the :attr:`env` after calling :meth:`step` using :meth:`self.observation` on the returned observations."""
         observation, reward, terminated, truncated, info = self.env.step(action)
-        return self.observation(observation), reward, terminated, truncated, info
+        return self.observation(observation), reward, terminated, truncated, info  # type: ignore[arg-type]
 
     def observation(self, observation: ObsType) -> WrapperObsType:
         """Returns a modified observation.
@@ -642,13 +638,13 @@ class ActionWrapper(Wrapper[ObsType, WrapperActType, ObsType, ActType]):
         Args:
             env: Environment to be wrapped.
         """
-        Wrapper.__init__(self, env)
+        Wrapper.__init__(self, env)  # type: ignore[misc]
 
     def step(
         self, action: WrapperActType
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Runs the :attr:`env` :meth:`env.step` using the modified ``action`` from :meth:`self.action`."""
-        return self.env.step(self.action(action))
+        return self.env.step(self.action(action))  # type: ignore[arg-type]
 
     def action(self, action: WrapperActType) -> ActType:
         """Returns a modified action before :meth:`step` is called.

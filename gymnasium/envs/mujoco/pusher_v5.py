@@ -22,10 +22,10 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
     ## Action Space
     ```{figure} action_space_figures/pusher.png
-    :name: pusher
+    :name: pusher_action_space
     ```
 
-    The action space is a `Box(-2, 2, (7,), float32)`. An action `(a, b)` represents the torques applied at the hinge joints.
+    The action space is a `Box(-2, 2, (7,), float32)`. An action represents the torques applied at the hinge joints.
 
     | Num | Action                                                             | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     |-----|--------------------------------------------------------------------|-------------|-------------|----------------------------------|-------|--------------|
@@ -47,7 +47,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     - *xpos (3 elements):* The coordinates of the object to be moved.
     - *xpos (3 elements):* The coordinates of the goal position.
 
-    The observation space is a `Box(-Inf, Inf, (17,), float64)` where the elements are as follows:
+    The observation space is a `Box(-Inf, Inf, (23,), float64)` where the elements are as follows:
 
     | Num | Observation                                              | Min  | Max | Name (in corresponding XML file) | Joint    | Type (Unit)              |
     | --- | -------------------------------------------------------- | ---- | --- | -------------------------------- | -------- | ------------------------ |
@@ -91,26 +91,26 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     where $w_{control}$ is the `reward_control_weight` (default is $0.1$).
     - *reward_near*:
     This reward is a measure of how far the *fingertip* of the pusher (the unattached end) is from the object,
-    with a more negative value assigned for when the pusher's *fingertip* is further away from the target.
-    It is $-w_{near} \|(P_{fingertip} - P_{target})\|_2$.
+    with a more negative value assigned for when the pusher's *fingertip* is further away from the object.
+    It is $-w_{near} \|(P_{fingertip} - P_{object})\|_2$.
     where $w_{near}$ is the `reward_near_weight` (default is $0.5$).
 
     `info` contains the individual reward terms.
 
 
     ## Starting State
-    The initial position state of the Pusher arm is $0_{6}$.
+    The initial position state of the Pusher arm is $0_{7}$.
     The initial position state of the object is $\mathcal{U}_{[[-0.3, -0.2], [0, 0.2]]}$.
     The position state of the goal is (permanently) $[0.45, -0.05, -0.323]$.
-    The initial velocity state of the Pusher arm is $\mathcal{U}_{[-0.005 \times I_{6}, 0.005 \times I_{6}]}$.
+    The initial velocity state of the Pusher arm is $\mathcal{U}_{[-0.005 \times I_{7}, 0.005 \times I_{7}]}$.
     The initial velocity state of the object is $0_2$.
-    The velocity state of the goal is (permanently) $0_3$.
+    The velocity state of the goal is (permanently) $0_2$.
 
     where $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
     Note that the initial position state of the object is sampled until its distance to the goal is $ > 0.17 m$.
 
-    The default frame rate is 5, with each frame lasting 0.01, so *dt = 5 * 0.01 = 0.05*.
+    The default `frame_skip` is 5, with each MuJoCo timestep lasting 0.01, so *dt = 5 * 0.01 = 0.05*.
 
 
     ## Episode End
@@ -133,9 +133,11 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
     | Parameter               | Type       | Default         |Description                                               |
     |-------------------------|------------|-----------------|----------------------------------------------------------|
     | `xml_file`              | **str**    |`"pusher_v5.xml"`| Path to a MuJoCo model                                   |
+    | `frame_skip`            | **int**    | `5`             | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep` |
+    | `default_camera_config` | **dict**   | `{"trackbodyid": -1, "distance": 4.0}` | Properties of the `mj_camera` used for rendering                  |
     | `reward_near_weight`    | **float**  | `0.5`           | Weight for _reward_near_ term (see `Rewards` section)    |
     | `reward_dist_weight`    | **float**  | `1`             | Weight for _reward_dist_ term (see `Rewards` section)    |
-    | `reward_control_weight` | **float**  | `0.1`           | Weight for _reward_control_ term (see `Rewards` section) |
+    | `reward_control_weight` | **float**  | `0.1`           | Weight for _reward_ctrl_ term (see `Rewards` section)    |
 
     ## Version History
     * v5:

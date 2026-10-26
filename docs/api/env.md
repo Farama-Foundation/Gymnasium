@@ -14,13 +14,16 @@ title: Env
 .. automethod:: gymnasium.Env.reset
 .. automethod:: gymnasium.Env.render
 .. automethod:: gymnasium.Env.close
+.. automethod:: gymnasium.Env.has_wrapper_attr
+.. automethod:: gymnasium.Env.get_wrapper_attr
+.. automethod:: gymnasium.Env.set_wrapper_attr
 ```
 
 ## Attributes
 ```{eval-rst}
 .. autoattribute:: gymnasium.Env.action_space
 
-    The Space object corresponding to valid actions, all valid actions should be contained with the space. For example, if the action space is of type `Discrete` and gives the value `Discrete(2)`, this means there are two valid discrete actions: `0` & `1`.
+    The Space object corresponding to valid actions, all valid actions should be contained within the space. For example, if the action space is of type `Discrete` and gives the value `Discrete(2)`, this means there are two valid discrete actions: `0` & `1`.
 
     .. code::
 
@@ -50,7 +53,7 @@ title: Env
 
 .. autoattribute:: gymnasium.Env.spec
 
-    The :class:`EnvSpec` of the environment normally set during :py:meth:`gymnasium.make`
+    The :class:`~gymnasium.envs.registration.EnvSpec` of the environment normally set during :func:`gymnasium.make`
 
 .. autoproperty:: gymnasium.Env.unwrapped
 .. autoproperty:: gymnasium.Env.np_random
@@ -70,5 +73,5 @@ When implementing an environment, the :meth:`Env.reset` and :meth:`Env.step` fun
 ```{eval-rst}
 .. py:currentmodule:: gymnasium
 
-To create an environment, gymnasium provides :meth:`make` to initialise the environment along with several important wrappers. Furthermore, gymnasium provides :meth:`make_vec` for creating vector environments and to view all the environment that can be created use :meth:`pprint_registry`.
+To create an environment, gymnasium provides :func:`make` to initialise the environment along with several important wrappers. Furthermore, gymnasium provides :func:`make_vec` for creating vector environments and to view all the environment that can be created use :func:`pprint_registry`.
 ```

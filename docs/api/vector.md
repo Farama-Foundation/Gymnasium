@@ -7,6 +7,7 @@ title: Vector
 ```{toctree}
 :hidden:
 vector/wrappers
+vector/autoreset
 vector/async_vector_env
 vector/sync_vector_env
 vector/utils
@@ -73,6 +74,10 @@ vector/utils
 .. autoproperty:: gymnasium.vector.VectorEnv.np_random
 .. autoproperty:: gymnasium.vector.VectorEnv.np_random_seed
 ```
+
+## Autoreset Mode
+
+When a sub-environment's episode ends, vector environments reset it according to their {py:class}`gymnasium.vector.AutoresetMode`: on the next step (`NEXT_STEP`, the default), within the same step (`SAME_STEP`), or only when the user calls `reset(options={"reset_mask": ...})` (`DISABLED`). The mode changes what `step()` returns at the end of an episode and is given by `metadata["autoreset_mode"]`. See [Autoreset Mode](vector/autoreset.md) for each mode's behaviour and example training loops.
 
 ## Making Vector Environments
 
