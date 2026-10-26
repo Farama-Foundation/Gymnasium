@@ -221,7 +221,7 @@ class SyncVectorEnv(VectorEnv[ObsType, ActType, np.ndarray], Generic[ObsType, Ac
             )
 
         if options is not None and "reset_mask" in options:
-            reset_mask = options.pop("reset_mask")
+            reset_mask = options["reset_mask"]
             if not isinstance(reset_mask, np.ndarray):
                 raise TypeError(
                     f"`options['reset_mask']` must be a numpy array, got {type(reset_mask)}"
