@@ -759,7 +759,7 @@
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">options</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">"reset_mask"</span> <span class="ow">in</span> <span class="n">options</span><span class="p">:</span>
-            <span class="n">reset_mask</span> <span class="o">=</span> <span class="n">options</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"reset_mask"</span><span class="p">)</span>
+            <span class="n">reset_mask</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="s2">"reset_mask"</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reset_mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">"`options['reset_mask']` must be a numpy array, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">reset_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
