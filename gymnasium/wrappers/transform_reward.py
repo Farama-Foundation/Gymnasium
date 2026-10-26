@@ -100,7 +100,7 @@ class ClipReward(TransformReward[ObsType, ActType], gym.utils.RecordConstructorA
             raise InvalidBound("Both `min_reward` and `max_reward` cannot be None")
 
         elif max_reward is not None and min_reward is not None:
-            if np.any(max_reward - min_reward < 0):
+            if np.any(max_reward < min_reward):
                 raise InvalidBound(
                     f"Min reward ({min_reward}) must be smaller than max reward ({max_reward})"
                 )
