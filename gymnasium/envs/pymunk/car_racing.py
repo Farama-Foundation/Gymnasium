@@ -89,6 +89,9 @@ class FrictionDetector:
     def separate(self, arbiter, space, data):
         """At the end of contact."""
         wheel_shape, tile = arbiter.shapes
+        wheel = wheel_shape.body
+        if wheel is None or not hasattr(wheel, "tiles"):
+            return
         wheel_shape.body.tiles.discard(tile)
 
 
@@ -508,6 +511,13 @@ class CarRacing(gym.Env, EzPickle):
         self.t = 0.0
         self.new_lap = False
         self.road_poly = []
+        self.contactListener = FrictionDetector(self, self.lap_complete_percent)
+        self.space.on_collision(
+            WHEEL,
+            TILE,
+            begin=self.contactListener.begin,
+            separate=self.contactListener.separate,
+        )
 
         if self.domain_randomize:
             randomize = True
@@ -572,7 +582,7 @@ class CarRacing(gym.Env, EzPickle):
                 # Termination due to finishing lap
                 terminated = True
                 info["lap_finished"] = True
-            x, y = self.car.hull.position
+            x, y = self.car.predicted_local_to_world(self.car.hull, (0, 0))
             if abs(x) > PLAYFIELD or abs(y) > PLAYFIELD:
                 terminated = True
                 info["lap_finished"] = False
@@ -612,11 +622,12 @@ class CarRacing(gym.Env, EzPickle):
 
         assert self.car is not None
         # computing transformations
-        angle = -self.car.hull.angle
+        angle = -self.car.predicted_angle(self.car.hull)
         # Animating first second zoom.
         zoom = 0.1 * SCALE * max(1 - self.t, 0) + ZOOM * SCALE * min(self.t, 1)
-        scroll_x = -(self.car.hull.position[0]) * zoom
-        scroll_y = -(self.car.hull.position[1]) * zoom
+        hull_x, hull_y = self.car.predicted_local_to_world(self.car.hull, (0, 0))
+        scroll_x = -hull_x * zoom
+        scroll_y = -hull_y * zoom
         trans = pygame.math.Vector2((scroll_x, scroll_y)).rotate_rad(angle)
         trans = (WINDOW_W / 2 + trans[0], WINDOW_H / 4 + trans[1])
 
@@ -724,7 +735,9 @@ class CarRacing(gym.Env, EzPickle):
                 pygame.draw.polygon(self.surf, points=points, color=color)
 
         # difference between wheel and hull angle
-        steer_angle = self.car.wheels[0].angle - self.car.hull.angle
+        steer_angle = self.car.predicted_angle(
+            self.car.wheels[0]
+        ) - self.car.predicted_angle(self.car.hull)
 
         render_if_min(true_speed, vertical_ind(5, 0.02 * true_speed), (255, 255, 255))
         # ABS sensors

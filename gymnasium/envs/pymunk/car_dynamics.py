@@ -95,6 +95,7 @@ class Car:
 
     def __init__(self, space, init_angle, init_x, init_y):
         """Creates Car object in provided space at the init coordinates and angle."""
+        self.dt = 0
         self.space: pymunk.Space = space
         self.hull: pymunk.Body = _create_car_body(
             self.space, init_x, init_y, init_angle, HULL_PARTS
@@ -125,8 +126,9 @@ class Car:
 
             joint = pymunk.PivotJoint(self.hull, w, (wx * SIZE, wy * SIZE), (0, 0))
             joint.collide_bodies = False
+            joint.error_bias = (1 - 0.9) ** 50
 
-            limit = pymunk.RotaryLimitJoint(self.hull, w, -0.4, 0.4)
+            limit = pymunk.RotaryLimitJoint(self.hull, w, -0.435, 0.435)
             motor = pymunk.SimpleMotor(self.hull, w, 0.0)
             motor.max_force = 180 * 900 * SIZE * SIZE
 
@@ -183,6 +185,7 @@ class Car:
 
     def step(self, dt):
         """Advance car physics by one time step."""
+        self.dt = dt
         for w in self.wheels:
             # Steer each wheel
             rel_w = w.angular_velocity - self.hull.angular_velocity
@@ -201,8 +204,11 @@ class Car:
                 grass = False
 
             # Force
-            forw = pymunk.Vec2d(0, 1).rotated(w.angle)
-            side = pymunk.Vec2d(1, 0).rotated(w.angle)
+            # pymunk moves bodies before applying new velocities, so predict the
+            # angle after the next position update (the angle Box2D would use)
+            w_angle = w.angle + w.angular_velocity * dt
+            forw = pymunk.Vec2d(0, 1).rotated(w_angle)
+            side = pymunk.Vec2d(1, 0).rotated(w_angle)
             v = w.velocity
             vf = forw.dot(v)  # forward speed
             vs = side.dot(v)  # side speed
@@ -300,7 +306,7 @@ class Car:
 
         for obj in self.drawlist:
             for s in obj.shapes:
-                path = [obj.local_to_world(v) for v in s.get_vertices()]
+                path = [self.predicted_local_to_world(obj, v) for v in s.get_vertices()]
                 path = [(coords[0], coords[1]) for coords in path]
                 path = [pygame.math.Vector2(c).rotate_rad(angle) for c in path]
                 path = [
@@ -334,7 +340,7 @@ class Car:
                     (+WHEEL_W * SIZE, +WHEEL_R * c2 * SIZE),
                     (-WHEEL_W * SIZE, +WHEEL_R * c2 * SIZE),
                 ]
-                white_poly = [obj.local_to_world(v) for v in white_poly]
+                white_poly = [self.predicted_local_to_world(obj, v) for v in white_poly]
 
                 white_poly = [(coords[0], coords[1]) for coords in white_poly]
                 white_poly = [
@@ -357,6 +363,25 @@ class Car:
         )
         self.particles.append(p)
         return p
+
+    def predicted_angle(self, body: pymunk.Body) -> float:
+        """Angle of body after pymunk's next position update (the angle Box2D shows)."""
+        return body.angle + body.angular_velocity * self.dt
+
+    def predicted_local_to_world(
+        self, body: pymunk.Body, local: tuple[float, float]
+    ) -> pymunk.Vec2d:
+        """World position of a body-local point after pymunk's next position update.
+
+        pymunk moves bodies before applying new velocities, so after a step its
+        pose is one position update behind Box2D. body.velocity is the velocity
+        of the center of gravity, so predict around it.
+        """
+        cog = body.center_of_gravity
+        cog_world = body.local_to_world(cog) + body.velocity * self.dt
+        return cog_world + (pymunk.Vec2d(*local) - cog).rotated(
+            self.predicted_angle(body)
+        )
 
     def destroy(self):
         """Delete the hull and wheels from pymunk.Space object, sets parameters to None."""
