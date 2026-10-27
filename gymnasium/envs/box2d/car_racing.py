@@ -233,8 +233,8 @@ class CarRacing(gym.Env, EzPickle):
         continuous: bool = True,
     ):
         # Warning on 3.12 / 3.13
-        print(
-            "CarRacing-v3 (Box2D) is deprecated and will be removed in python version 3.14+ "
+        gym.logger.deprecation(
+            "CarRacing-v3 (Box2D) is deprecated and is not available on Python 3.14+. "
             "Use `CarRacing-v4` (pymunk) instead."
         )
         EzPickle.__init__(
