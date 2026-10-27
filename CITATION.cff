@@ -87,7 +87,9 @@ authors:
     orcid: 'https://orcid.org/0009-0004-2783-7932'
 identifiers:
   - type: url
-    value: 'https://arxiv.org/abs/2407.17032'
+    value: 'https://proceedings.neurips.cc/paper_files/paper/2025/hash/d7ff1795e8527f6443371c3933bdb52b-Abstract-Datasets_and_Benchmarks_Track.html'
+  - type: doi
+    value: 10.52202/085713-4916
 repository-code: 'https://github.com/Farama-Foundation/Gymnasium'
 url: 'https://gymnasium.farama.org/'
 abstract: >-

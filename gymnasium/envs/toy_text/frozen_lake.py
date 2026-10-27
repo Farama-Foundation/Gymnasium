@@ -102,7 +102,7 @@ class FrozenLakeEnv(Env):
      Pixel art assets are part of Farama Foundation's shared environment art set.
 
      ## Action Space
-     The action shape is `(1,)` in the range `{0, 3}` indicating
+     The action space is `Discrete(4)`, an integer in `{0, 1, 2, 3}` indicating
      which direction to move the player.
 
      - 0: Move left
@@ -116,7 +116,7 @@ class FrozenLakeEnv(Env):
      Therefore, the observation is returned as an integer.
 
      For example, the goal position in the 4x4 map can be calculated as follows: 3 * 4 + 3 = 15.
-     The number of possible observations is dependent on the size of the map.
+     The observation space is `Discrete(nrow * ncol)`, so the number of possible observations depends on the size of the map.
 
      ## Starting State
      The episode starts with the player in state `[0]` (location [0, 0]).
@@ -138,12 +138,13 @@ class FrozenLakeEnv(Env):
          2. The player reaches the goal at `max(nrow) * max(ncol) - 1` (location `[max(nrow)-1, max(ncol)-1]`).
 
      - Truncation (using the time_limit wrapper):
-         1. The length of the episode is 100 for FrozenLake4x4, 200 for FrozenLake8x8.
+         1. The length of the episode is 100 for `FrozenLake-v1` (4x4 map), 200 for `FrozenLake8x8-v1`.
 
      ## Information
 
      `step()` and `reset()` return a dict with the following keys:
-     - `p`: transition probability for the state which will be impacted by the `is_slippery` parameter.
+     - `prob`: transition probability for the state, which depends on the `is_slippery` and `success_rate` parameters
+       (always 1.0 on `reset()` or if `is_slippery=False`).
 
      ## Arguments
 
@@ -160,7 +161,7 @@ class FrozenLakeEnv(Env):
      )
      ```
 
-     * `desc=None`: Used to specify maps non-preloaded maps.
+     * `desc=None`: Used to specify non-preloaded maps.
          If `desc=None` then `map_name` will be used. If both `desc` and `map_name` are
          `None` a random 8x8 map with 80% of locations frozen will be generated.
 

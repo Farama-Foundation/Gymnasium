@@ -3,6 +3,10 @@ Solving Blackjack with Tabular Q-Learning
 =========================================
 
 This tutorial trains an agent for BlackJack using tabular Q-learning.
+:doc:`/introduction/train_agent` gives a shorter version of the same agent; this tutorial also walks through
+the environment's observations and actions and visualizes the learned state values and policy.
+
+Dependencies: ``pip install "gymnasium[toy-text]" matplotlib seaborn tqdm``.
 """
 
 # %%
@@ -28,7 +32,7 @@ This tutorial trains an agent for BlackJack using tabular Q-learning.
 # dealers without exceeding 21.
 #
 # **Actions**: Agents can pick between two actions:
-#  - stand (0): the player takes no more cards
+#  - stick (0): the player takes no more cards
 #  - hit (1): the player will be given another card, however the player could get over 21 and bust
 #
 # **Approach**: To solve this environment by yourself, you can pick your
@@ -82,15 +86,13 @@ env = gym.make("Blackjack-v1", sab=True)
 #
 # First of all, we call ``env.reset()`` to start an episode. This function
 # resets the environment to a starting position and returns an initial
-# ``observation``. We usually also set ``done = False``. This variable
-# will be useful later to check if a game is terminated (i.e., the player wins or loses).
+# ``observation``. Passing a ``seed`` makes the episode reproducible.
 #
 
 # reset the environment to get the first observation
-done = False
-observation, info = env.reset()
+observation, info = env.reset(seed=4)
 
-# observation = (16, 9, False)
+# observation = (17, 10, 0)
 
 
 # %%
@@ -98,7 +100,7 @@ observation, info = env.reset()
 #
 # -  The players current sum
 # -  Value of the dealers face-up card
-# -  Boolean whether the player holds a usable ace (An ace is usable if it
+# -  Whether the player holds a usable ace, as 0 or 1 (an ace is usable if it
 #    counts as 11 without busting)
 #
 
@@ -111,7 +113,7 @@ observation, info = env.reset()
 # ``env.step(action)`` function to interact with the environment. This
 # function takes an action as input and executes it in the environment.
 # Because that action changes the state of the environment, it returns
-# four useful variables to us. These are:
+# five useful variables to us. These are:
 #
 # -  ``next_state``: This is the observation that the agent will receive
 #    after taking the action.
@@ -138,13 +140,14 @@ observation, info = env.reset()
 #
 
 # sample a random action from all valid actions
+env.action_space.seed(4)
 action = env.action_space.sample()
 # action=1
 
 # execute the action in our environment and receive infos from the environment
 observation, reward, terminated, truncated, info = env.step(action)
 
-# observation=(24, 10, False)
+# observation=(27, 10, 0)
 # reward=-1.0
 # terminated=True
 # truncated=False
@@ -166,7 +169,7 @@ observation, reward, terminated, truncated, info = env.step(action)
 #
 # Let’s build a ``Q-learning agent`` to solve *Blackjack-v1*! We’ll need
 # some functions for picking an action and updating the agents action
-# values. To ensure that the agents explores the environment, one possible
+# values. To ensure that the agent explores the environment, one possible
 # solution is the ``epsilon-greedy`` strategy, where we pick a random
 # action with the percentage ``epsilon`` and the greedy action (currently
 # valued as the best) ``1 - epsilon``.
@@ -242,7 +245,7 @@ class BlackjackAgent:
 
 # %%
 # To train the agent, we will let the agent play one episode (one complete
-# game is called an episode) at a time and then update it’s Q-values after
+# game is called an episode) at a time and then update its Q-values after
 # each step (one single action in a game is called a step).
 #
 # The agent will have to experience a lot of episodes to explore the
@@ -314,14 +317,14 @@ axs[0].plot(range(len(reward_moving_average)), reward_moving_average)
 axs[1].set_title("Episode lengths")
 length_moving_average = (
     np.convolve(
-        np.array(env.length_queue).flatten(), np.ones(rolling_length), mode="same"
+        np.array(env.length_queue).flatten(), np.ones(rolling_length), mode="valid"
     )
     / rolling_length
 )
 axs[1].plot(range(len(length_moving_average)), length_moving_average)
 axs[2].set_title("Training Error")
 training_error_moving_average = (
-    np.convolve(np.array(agent.training_error), np.ones(rolling_length), mode="same")
+    np.convolve(np.array(agent.training_error), np.ones(rolling_length), mode="valid")
     / rolling_length
 )
 axs[2].plot(range(len(training_error_moving_average)), training_error_moving_average)
@@ -440,14 +443,14 @@ plt.show()
 # %%
 # Think you can do better?
 # ------------------------------
-
+#
 # You can visualize the environment using the play function
 # and try to win a few games.
 
 
 # %%
 # Hopefully this Tutorial helped you get a grip of how to interact with
-# OpenAI-Gym environments and sets you on a journey to solve many more RL
+# Gymnasium environments and sets you on a journey to solve many more RL
 # challenges.
 #
 # It is recommended that you solve this environment by yourself (project

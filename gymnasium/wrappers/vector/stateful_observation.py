@@ -20,6 +20,7 @@ from gymnasium.vector.vector_env import (
     AutoresetMode,
     VectorEnv,
     VectorObservationWrapper,
+    VectorWrapper,
 )
 from gymnasium.wrappers.utils import RunningMeanStd
 
@@ -39,6 +40,11 @@ class NormalizeObservation(
     Note:
         The normalization depends on past trajectories and observations will not be normalized correctly if the wrapper was
         newly instantiated or the policy was changed recently.
+
+    Note:
+        For same-step autoreset, ``info["final_obs"]`` is normalized and included in the statistics before the
+        step's observations, matching the update order of :class:`gymnasium.wrappers.NormalizeObservation`.
+        Partial resets (``reset_mask`` with any ``False`` values) are not supported for disabled autoreset.
 
     Example without the normalize observation wrapper:
         >>> import gymnasium as gym
@@ -74,6 +80,8 @@ class NormalizeObservation(
     epsilon: float
     _update_running_mean: bool
 
+    autoreset_mode: AutoresetMode
+
     def __init__(
         self, env: VectorEnv[np.ndarray, ActType, ArrayType], epsilon: float = 1e-8
     ) -> None:
@@ -95,17 +103,20 @@ class NormalizeObservation(
             )
 
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)
-        VectorObservationWrapper.__init__(self, env)
+        # Skips `VectorObservationWrapper.__init__` as it rejects same-step autoreset, supported by `step` normalizing `info["final_obs"]`
+        VectorWrapper.__init__(self, env)
 
         if "autoreset_mode" not in self.env.metadata:
             warn(
                 f"{self} is missing `autoreset_mode` data. Assuming that the vector environment it follows the `NextStep` autoreset api or autoreset is disabled. Read https://farama.org/Vector-Autoreset-Mode for more details."
             )
+            self.autoreset_mode = AutoresetMode.NEXT_STEP
         else:
-            if self.env.metadata["autoreset_mode"] not in {AutoresetMode.NEXT_STEP}:
-                raise ValueError(
-                    f"Expected env.metadata['autoreset_mode'] to be AutoresetMode.NEXT_STEP, got {self.env.metadata['autoreset_mode']}"
+            if not isinstance(self.env.metadata["autoreset_mode"], AutoresetMode):
+                raise TypeError(
+                    f"Expected env.metadata['autoreset_mode'] to be an AutoresetMode, got {type(self.env.metadata['autoreset_mode'])}"
                 )
+            self.autoreset_mode = self.env.metadata["autoreset_mode"]
 
         new_single_space = Box(
             low=-np.inf,
@@ -147,6 +158,32 @@ class NormalizeObservation(
                     "NormalizeObservation does not support partial resets. The 'reset_mask' must contain all True values."
                 )
         return super().reset(seed=seed, options=options)
+
+    def step(
+        self, actions: ActType
+    ) -> tuple[np.ndarray, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        """Steps through the environment, for same-step autoreset normalizing ``info["final_obs"]`` before the observations."""
+        observations, rewards, terminations, truncations, infos = self.env.step(actions)
+
+        if self.autoreset_mode == AutoresetMode.SAME_STEP and "final_obs" in infos:
+            # The final observations occur before the reset observations within the step, therefore, are normalized first
+            final_obs_mask = infos["_final_obs"]
+            final_obs = infos["final_obs"]
+            normalized_final_obs = self.observations(
+                np.stack(final_obs[final_obs_mask])
+            )
+            for i, normalized_obs in zip(
+                np.flatnonzero(final_obs_mask), normalized_final_obs, strict=True
+            ):
+                final_obs[i] = normalized_obs
+
+        return (
+            self.observations(observations),
+            rewards,
+            terminations,
+            truncations,
+            infos,
+        )
 
     def observations(
         self, observations: np.ndarray[tuple[int], np.dtype[np.floating]]

@@ -13,6 +13,8 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
+    """`HumanoidStandup-v4`, kept for reproducibility. See `HumanoidStandup-v5` (:class:`gymnasium.envs.mujoco.humanoidstandup_v5.HumanoidStandupEnv`) for the documentation and the changes in `v5`."""
+
     metadata = {
         "render_modes": [
             "human",

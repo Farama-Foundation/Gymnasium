@@ -13,6 +13,8 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 class HopperEnv(MujocoEnv, utils.EzPickle):
+    """`Hopper-v4`, kept for reproducibility. See `Hopper-v5` (:class:`gymnasium.envs.mujoco.hopper_v5.HopperEnv`) for the documentation and the changes in `v5`."""
+
     metadata = {
         "render_modes": [
             "human",

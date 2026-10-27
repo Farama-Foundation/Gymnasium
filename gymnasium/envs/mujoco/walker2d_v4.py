@@ -13,6 +13,8 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 class Walker2dEnv(MujocoEnv, utils.EzPickle):
+    """`Walker2d-v4`, kept for reproducibility. See `Walker2d-v5` (:class:`gymnasium.envs.mujoco.walker2d_v5.Walker2dEnv`) for the documentation and the changes in `v5`."""
+
     metadata = {
         "render_modes": [
             "human",

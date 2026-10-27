@@ -42,13 +42,13 @@ class CliffWalkingEnv(Env):
     by Sutton and Barto [<a href="#cliffwalk_ref">1</a>].
 
     The cliff can be chosen to be slippery (disabled by default) so the player may move perpendicular
-    to the intended direction sometimes (see <a href="#is_slippy">`is_slippery`</a>).
+    to the intended direction sometimes (see <a href="#is_slippery">`is_slippery`</a>).
 
     With inspiration from:
     [https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py](https://github.com/dennybritz/reinforcement-learning/blob/master/lib/envs/cliff_walking.py)
 
     ## Action Space
-    The action shape is `(1,)` in the range `{0, 3}` indicating
+    The action space is `Discrete(4)`, an integer in `{0, 1, 2, 3}` indicating
     which direction to move the player.
 
     - 0: Move up
@@ -66,31 +66,36 @@ class CliffWalkingEnv(Env):
 
     For example, the starting position can be calculated as follows: 3 * 12 + 0 = 36.
 
-    The observation is returned as an `int()`.
+    The observation space is `Discrete(48)` (one value per grid cell, although only 37 are reachable)
+    and the observation is returned as an `int()`.
 
     ## Starting State
     The episode starts with the player in state `[36]` (location [3, 0]).
 
-    ## Reward
+    ## Rewards
     Each time step incurs -1 reward, unless the player stepped into the cliff,
     which incurs -100 reward.
 
     ## Episode End
     The episode terminates when the player enters state `[47]` (location [3, 11]).
+    `CliffWalking-v1` has no time limit, so the episode is never truncated.
 
     ## Information
 
     `step()` and `reset()` return a dict with the following keys:
-    - "p" - transition proability for the state.
+    - "prob" - transition probability for the state.
 
-    As cliff walking is not stochastic, the transition probability returned always 1.0.
+    The transition probability is always 1.0 if `is_slippery=False` (and on `reset()`), and 1/3 if `is_slippery=True`.
 
     ## Arguments
 
     ```python
     import gymnasium as gym
-    gym.make('CliffWalking-v1')
+    gym.make('CliffWalking-v1', is_slippery=False)
     ```
+
+    <a id="is_slippery"></a>`is_slippery=False`: If True, the player moves in the intended direction
+    with probability 1/3, and otherwise moves in either perpendicular direction, each with probability 1/3.
 
     ## References
     <a id="cliffwalk_ref"></a>[1] R. Sutton and A. Barto, “Reinforcement Learning:

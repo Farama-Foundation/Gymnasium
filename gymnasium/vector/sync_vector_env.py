@@ -91,7 +91,9 @@ class SyncVectorEnv(VectorEnv[ObsType, ActType, np.ndarray], Generic[ObsType, Ac
             observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
                 'different' defines that there can be multiple observation spaces with the same length but different high/low values batched together. Passing a ``Space`` object
                 allows the user to set some custom observation space mode not covered by 'same' or 'different.'
-            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.
+            autoreset_mode: When sub-environments are reset after their episode ends, either an :class:`AutoresetMode`
+                or its string value (``"NextStep"``, ``"SameStep"`` or ``"Disabled"``), recorded in ``metadata["autoreset_mode"]``.
+                See https://gymnasium.farama.org/api/vector/autoreset/ for more information.
 
         Raises:
             RuntimeError: If the observation space of some sub-environment does not match observation_space
@@ -203,7 +205,8 @@ class SyncVectorEnv(VectorEnv[ObsType, ActType, np.ndarray], Generic[ObsType, Ac
                 * ``None`` - random seeds for all environment
                 * ``int`` - ``[seed, seed+1, ..., seed+n]``
                 * List of ints - ``[1, 2, 3, ..., n]``
-            options: Option information used for each sub-environment
+            options: Option information used for each sub-environment, ``options["reset_mask"]``, a boolean array of shape ``(num_envs,)``,
+                resets only the masked sub-environments, as needed for ``AutoresetMode.DISABLED``.
 
         Returns:
             Concatenated observations and info from each sub-environment
@@ -218,7 +221,7 @@ class SyncVectorEnv(VectorEnv[ObsType, ActType, np.ndarray], Generic[ObsType, Ac
             )
 
         if options is not None and "reset_mask" in options:
-            reset_mask = options.pop("reset_mask")
+            reset_mask = options["reset_mask"]
             if not isinstance(reset_mask, np.ndarray):
                 raise TypeError(
                     f"`options['reset_mask']` must be a numpy array, got {type(reset_mask)}"

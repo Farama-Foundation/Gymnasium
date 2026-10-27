@@ -58,7 +58,7 @@ PRNGKeyType: TypeAlias = jax.Array
 
 
 def fell_off(player_position):
-    """Checks to see if the player_position means the player has fallen of the cliff."""
+    """Checks to see if the player_position means the player has fallen off the cliff."""
     return (
         (player_position[0] == 3)
         * (player_position[1] >= 1)
@@ -122,7 +122,7 @@ class CliffWalkingFunctional(
 
     ```python
     import gymnasium as gym
-    gym.make('tablular/CliffWalking-v0')
+    gym.make('tabular/CliffWalking-v0')
     ```
 
     ## References

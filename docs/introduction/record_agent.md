@@ -32,17 +32,21 @@ Recording agent behavior serves several important purposes in RL development:
 - Create timelapse videos of learning
 
 ```{eval-rst}
-.. py:currentmodule: gymnasium.wrappers
+.. py:currentmodule:: gymnasium.wrappers
 
 Gymnasium provides two essential wrappers for recording: :class:`RecordEpisodeStatistics` for numerical data and :class:`RecordVideo` for visual recordings. The first tracks episode metrics like total rewards, episode length, and time taken. The second generates MP4 videos of agent behavior using environment renderings.
+
+:class:`RecordVideo` writes the videos with MoviePy, which is installed with ``pip install "gymnasium[other]"``; :class:`RecordEpisodeStatistics` has no additional dependencies.
 
 We'll show how to use these wrappers for two common scenarios: recording data for every episode (typically during evaluation) and recording data periodically (during training).
 ```
 
+{class}`~gymnasium.wrappers.RecordVideo` uses [MoviePy](https://zulko.github.io/moviepy/) to write the videos, so install it first with `pip install "gymnasium[other]"` (or `pip install moviepy`).
+
 ## Recording Every Episode (Evaluation)
 
 ```{eval-rst}
-.. py:currentmodule: gymnasium.wrappers
+.. py:currentmodule:: gymnasium.wrappers
 
 When evaluating a trained agent, you typically want to record several episodes to understand average performance and consistency. Here's how to set this up with :class:`RecordEpisodeStatistics` and :class:`RecordVideo`.
 ```
@@ -91,22 +95,26 @@ for episode_num in range(num_eval_episodes):
 
     print(f"Episode {episode_num + 1}: {step_count} steps, reward = {episode_reward}")
 
+time_limit = env.spec.max_episode_steps
+
+# Close the environment once all the videos have been written
 env.close()
 
-# Print summary statistics
-print(f'\nEvaluation Summary:')
-print(f'Episode durations: {list(env.time_queue)}')
-print(f'Episode rewards: {list(env.return_queue)}')
-print(f'Episode lengths: {list(env.length_queue)}')
+# The wrappers keep the last buffer_length episode statistics in queues
+print("\nEvaluation Summary:")
+print(f"Episode durations: {list(env.time_queue)}")
+print(f"Episode rewards: {list(env.return_queue)}")
+print(f"Episode lengths: {list(env.length_queue)}")
 
-# Calculate some useful metrics
-avg_reward = np.sum(env.return_queue)
-avg_length = np.sum(env.length_queue)
+# The queues hold one value per episode, so the averages use np.mean
+avg_reward = np.mean(env.return_queue)
+avg_length = np.mean(env.length_queue)
 std_reward = np.std(env.return_queue)
 
-print(f'\nAverage reward: {avg_reward:.2f} ± {std_reward:.2f}')
-print(f'Average episode length: {avg_length:.1f} steps')
-print(f'Success rate: {sum(1 for r in env.return_queue if r > 0) / len(env.return_queue):.1%}')
+print(f"\nAverage reward: {avg_reward:.2f} ± {std_reward:.2f}")
+print(f"Average episode length: {avg_length:.1f} steps")
+reached_limit = sum(1 for length in env.length_queue if length >= time_limit)
+print(f"Episodes reaching the time limit: {reached_limit}/{len(env.length_queue)}")
 ```
 
 ### Understanding the Output
@@ -119,15 +127,15 @@ After running this code, you'll find:
 - Can be shared, embedded in presentations, or analyzed frame-by-frame
 
 **Console Output**: Episode-by-episode performance plus summary statistics
-```
+```text
 Episode 1: 23 steps, reward = 23.0
 Episode 2: 15 steps, reward = 15.0
 Episode 3: 200 steps, reward = 200.0
 Episode 4: 67 steps, reward = 67.0
 
-Average reward: 76.25 ± 78.29
+Average reward: 76.25 ± 74.14
 Average episode length: 76.2 steps
-Success rate: 100.0%
+Episodes reaching the time limit: 0/4
 ```
 
 **Statistics Queues**: Time, reward, and length data for each episode
@@ -136,7 +144,7 @@ Success rate: 100.0%
 - `env.length_queue`: Number of steps in each episode
 
 ```{eval-rst}
-.. py:currentmodule: gymnasium.wrappers
+.. py:currentmodule:: gymnasium.wrappers
 
 In the script above, the :class:`RecordVideo` wrapper saves videos with filenames like "eval-episode-0.mp4" in the specified folder. The ``episode_trigger=lambda x: True`` ensures every episode is recorded.
 
@@ -180,6 +188,10 @@ print(f"Starting training for {num_training_episodes} episodes")
 print(f"Videos will be recorded every {training_period} episodes")
 print(f"Videos saved to: cartpole-training/")
 
+# RecordEpisodeStatistics only keeps the last 100 episodes (`buffer_length`),
+# so keep our own history of every episode's reward for plotting later
+episode_rewards = []
+
 for episode_num in range(num_training_episodes):
     obs, info = env.reset()
     episode_over = False
@@ -193,6 +205,7 @@ for episode_num in range(num_training_episodes):
     # Log episode statistics (available in info after episode ends)
     if "episode" in info:
         episode_data = info["episode"]
+        episode_rewards.append(episode_data['r'])
         logging.info(f"Episode {episode_num}: "
                     f"reward={episode_data['r']:.1f}, "
                     f"length={episode_data['l']}, "
@@ -200,8 +213,8 @@ for episode_num in range(num_training_episodes):
 
         # Additional analysis for milestone episodes
         if episode_num % 1000 == 0:
-            # Look at recent performance (last 100 episodes)
-            recent_rewards = list(env.return_queue)[-100:]
+            # Look at recent performance (the last 100 episodes in the buffer)
+            recent_rewards = list(env.return_queue)
             if recent_rewards:
                 avg_recent = sum(recent_rewards) / len(recent_rewards)
                 print(f"  -> Average reward over last 100 episodes: {avg_recent:.1f}")
@@ -221,9 +234,9 @@ env.close()
 ```python
 import matplotlib.pyplot as plt
 
-# Plot learning progress
-episodes = range(len(env.return_queue))
-rewards = list(env.return_queue)
+# Plot learning progress using the full history collected during training
+rewards = episode_rewards
+episodes = range(len(rewards))
 
 plt.figure(figsize=(10, 6))
 plt.plot(episodes, rewards, alpha=0.3, label='Episode Rewards')
@@ -248,8 +261,11 @@ plt.show()
 
 For more sophisticated projects, integrate with experiment tracking tools:
 
+<!-- test: skip -->
 ```python
-# Example with Weights & Biases (wandb)
+# Example with Weights & Biases (wandb); install it with `pip install wandb`
+import os
+
 import wandb
 
 # Initialize experiment tracking

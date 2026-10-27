@@ -26,6 +26,7 @@ from gymnasium.utils.passive_env_checker import (
     env_reset_passive_checker,
     env_step_passive_checker,
 )
+from gymnasium.vector.vector_env import AutoresetMode
 
 if TYPE_CHECKING:
     from gymnasium.envs.registration import EnvSpec
@@ -176,28 +177,51 @@ class Autoreset(
 ):
     """The wrapped environment is automatically reset when a terminated or truncated state is reached.
 
-    This follows the vector autoreset api where on the step after an episode terminates or truncated then the environment is reset.
+    This follows the vector autoreset api (see https://gymnasium.farama.org/api/vector/autoreset/) with two modes:
+     * ``AutoresetMode.NEXT_STEP`` - On the step after an episode terminates or truncates, the environment is reset.
+     * ``AutoresetMode.SAME_STEP`` - On the step that an episode terminates or truncates, the environment is reset,
+       returning the reset observation and info with the episode's final observation and info in
+       ``info["final_obs"]`` and ``info["final_info"]``.
+
+    The autoreset mode is added to the environment metadata as ``"autoreset_mode"``.
 
     Change logs:
      * v0.24.0 - Initially added as `AutoResetWrapper`
      * v1.0.0 - renamed to `Autoreset` and autoreset order was changed to reset on the step after the environment terminates or truncates. As a result, `"final_observation"` and `"final_info"` is removed.
+     * v1.5.0 - Adds ``autoreset_mode`` argument for ``AutoresetMode.SAME_STEP`` support and ``"autoreset_mode"`` to the environment metadata
     """
 
-    def __init__(self, env: gym.Env):
+    def __init__(
+        self,
+        env: gym.Env,
+        autoreset_mode: str | AutoresetMode = AutoresetMode.NEXT_STEP,
+    ):
         """A class for providing an automatic reset functionality for gymnasium environments when calling :meth:`self.step`.
 
         Args:
             env (gym.Env): The environment to apply the wrapper
+            autoreset_mode: The autoreset mode, either ``AutoresetMode.NEXT_STEP`` or ``AutoresetMode.SAME_STEP``
         """
-        gym.utils.RecordConstructorArgs.__init__(self)
+        gym.utils.RecordConstructorArgs.__init__(self, autoreset_mode=autoreset_mode)
         gym.Wrapper.__init__(self, env)
 
+        self.autoreset_mode = (
+            autoreset_mode
+            if isinstance(autoreset_mode, AutoresetMode)
+            else AutoresetMode(autoreset_mode)
+        )
+        if self.autoreset_mode == AutoresetMode.DISABLED:
+            raise ValueError(
+                "`Autoreset` doesn't support `AutoresetMode.DISABLED`, expected `AutoresetMode.NEXT_STEP` or `AutoresetMode.SAME_STEP`"
+            )
+
+        self.metadata = {**env.metadata, "autoreset_mode": self.autoreset_mode}
         self.autoreset = False
 
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[WrapperObsType, dict[str, Any]]:
-        """Resets the environment and sets autoreset to False preventing."""
+        """Resets the environment and sets autoreset to False, so the next step isn't an autoreset step."""
         self.autoreset = False
         return super().reset(seed=seed, options=options)
 
@@ -212,6 +236,14 @@ class Autoreset(
         Returns:
             The autoreset environment :meth:`step`
         """
+        if self.autoreset_mode == AutoresetMode.SAME_STEP:
+            obs, reward, terminated, truncated, info = self.env.step(action)
+            if terminated or truncated:
+                final_obs, final_info = obs, info
+                obs, info = self.env.reset()
+                info = {**info, "final_obs": final_obs, "final_info": final_info}
+            return obs, reward, terminated, truncated, info
+
         if self.autoreset:
             obs, info = self.env.reset()
             reward, terminated, truncated = 0.0, False, False
@@ -242,7 +274,7 @@ class PassiveEnvChecker(
     Change logs:
      * v0.24.1 - Initially added however broken in several ways
      * v0.25.0 - Bugs was all fixed
-     * v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and inregular bound shapes
+     * v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and irregular bound shapes
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):
@@ -500,6 +532,13 @@ class RecordEpisodeStatistics(
     Moreover, the most recent rewards and episode lengths are stored in buffers that can be accessed via
     :attr:`wrapped_env.return_queue` and :attr:`wrapped_env.length_queue` respectively.
 
+    The statistics restart for each episode depending on ``env.metadata["autoreset_mode"]``:
+     * ``AutoresetMode.NEXT_STEP`` (see :class:`Autoreset`) - The step after an episode ends resets the environment
+       so isn't counted in the next episode.
+     * ``AutoresetMode.SAME_STEP`` - The environment resets within the step that the episode ends,
+       so the statistics restart immediately.
+     * ``AutoresetMode.DISABLED`` or no ``autoreset_mode`` - The statistics restart when :meth:`reset` is called.
+
     Attributes:
      * time_queue: The time length of the last ``deque_size``-many episodes
      * return_queue: The cumulative rewards of the last ``deque_size``-many episodes
@@ -508,6 +547,7 @@ class RecordEpisodeStatistics(
     Change logs:
      * v0.15.4 - Initially added
      * v1.0.0 - Removed vector environment support (see :class:`gymnasium.wrappers.vector.RecordEpisodeStatistics`) and add attribute ``time_queue``
+     * v1.5.0 - Fixed the statistics accumulating across episodes for autoreset environments
     """
 
     def __init__(
@@ -535,6 +575,14 @@ class RecordEpisodeStatistics(
         self.episode_returns: float = 0.0
         self.episode_lengths: int = 0
 
+        autoreset_mode = self.env.metadata.get("autoreset_mode", AutoresetMode.DISABLED)
+        if not isinstance(autoreset_mode, AutoresetMode):
+            raise TypeError(
+                f"Expected env.metadata['autoreset_mode'] to be an AutoresetMode, got {type(autoreset_mode)}"
+            )
+        self._autoreset_mode = autoreset_mode
+        self._autoreset_done: bool = False
+
         self.time_queue: deque[float] = deque(maxlen=buffer_length)
         self.return_queue: deque[float] = deque(maxlen=buffer_length)
         self.length_queue: deque[int] = deque(maxlen=buffer_length)
@@ -545,10 +593,18 @@ class RecordEpisodeStatistics(
         """Steps through the environment, recording the episode statistics."""
         obs, reward, terminated, truncated, info = super().step(action)
 
-        self.episode_returns += reward
-        self.episode_lengths += 1
+        if self._autoreset_mode == AutoresetMode.NEXT_STEP and self._autoreset_done:
+            # The step after a termination or truncation resets the environment
+            # and doesn't count towards the next episode's statistics.
+            self.episode_start_time = time.perf_counter()
+            self.episode_returns = 0.0
+            self.episode_lengths = 0
+        else:
+            self.episode_returns += reward
+            self.episode_lengths += 1
 
-        if terminated or truncated:
+        self._autoreset_done = terminated or truncated
+        if self._autoreset_done:
             assert self._stats_key not in info
 
             episode_time_length = round(
@@ -565,7 +621,13 @@ class RecordEpisodeStatistics(
             self.length_queue.append(self.episode_lengths)
 
             self.episode_count += 1
-            self.episode_start_time = time.perf_counter()
+
+            if self._autoreset_mode == AutoresetMode.SAME_STEP:
+                # The environment has already been reset, restart the statistics
+                # immediately rather than on the next step.
+                self.episode_start_time = time.perf_counter()
+                self.episode_returns = 0.0
+                self.episode_lengths = 0
 
         return obs, reward, terminated, truncated, info
 
@@ -578,5 +640,6 @@ class RecordEpisodeStatistics(
         self.episode_start_time = time.perf_counter()
         self.episode_returns = 0.0
         self.episode_lengths = 0
+        self._autoreset_done = False
 
         return obs, info

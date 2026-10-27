@@ -13,6 +13,8 @@ title: Migration Guide
 
 **If you're updating old tutorials**: Many online RL tutorials use the old v0.21 API. This guide shows you how to modernize that code.
 
+**If you're upgrading from Gym v0.26 or Gymnasium v0.26-v0.29**: Your code already uses the new step API, so jump to {ref}`migration-v1`, which covers the smaller changes made in Gymnasium v1.0.
+
 ## Why Did the API Change?
 
 ```{eval-rst}
@@ -27,7 +29,7 @@ The main issues with the old API were:
 - **Rendering complexity**: Switching between visual modes was unnecessarily complicated
 - **Reproducibility problems**: Subtle bugs made it difficult to reproduce research results
 
-For environments that can't be updated, see the compatibility guide section below.
+For environments that can't be updated, see :ref:`migration-compatibility-helpers` below.
 ```
 
 ## Quick Reference: Complete Changes Table
@@ -46,11 +48,12 @@ For environments that can't be updated, see the compatibility guide section belo
 ## Side-by-Side Code Comparison
 
 ### Old v0.21 Code
+<!-- test: skip -->
 ```python
 import gym
 
 # Environment creation and seeding
-env = gym.make("LunarLander-v3", options={})
+env = gym.make("LunarLander-v2")
 env.seed(123)
 observation = env.reset()
 
@@ -64,7 +67,10 @@ while not done:
 env.close()
 ```
 
-### New v0.26+ Code (Including v1.0.0)
+### New v1.0.0+ Code
+
+The same code works on v0.26 to v0.29 if `LunarLander-v3` is replaced with `LunarLander-v2`, as `LunarLander-v3` was added in v1.0.0.
+
 ```python
 import gymnasium as gym  # Note: 'gymnasium' not 'gym'
 
@@ -72,7 +78,7 @@ import gymnasium as gym  # Note: 'gymnasium' not 'gym'
 env = gym.make("LunarLander-v3", render_mode="human")
 
 # Reset with seed parameter
-observation, info = env.reset(seed=123, options={})
+observation, info = env.reset(seed=123)
 
 # Training loop with terminated/truncated distinction
 done = False
@@ -95,6 +101,7 @@ env.close()
 
 Why: Gymnasium is a separate project that maintains and improves upon the original Gym codebase.
 
+<!-- test: skip -->
 ```python
 # OLD
 import gym
@@ -108,6 +115,7 @@ import gymnasium as gym
 The biggest conceptual change is how randomness is handled.
 
 **Old v0.21**: Separate `seed()` method
+<!-- test: skip -->
 ```python
 env = gym.make("CartPole-v1")
 env.seed(42)  # Set random seed
@@ -123,20 +131,27 @@ obs, info = env.reset(seed=42)  # Seed and reset together
 **Why this changed**: Some environments (especially emulated games) can only set their random state at the beginning of an episode, not mid-episode. The old approach could lead to inconsistent behavior.
 
 **Practical impact**:
+<!-- test: skip -->
 ```python
 # OLD: Seeding applied to all future episodes
 env.seed(42)
 for episode in range(10):
     obs = env.reset()
 
-# NEW: Each episode can have its own seed
+# NEW: Seed the first reset only; later resets continue from the seeded
+# random number generator, so the whole run is still reproducible
+obs, info = env.reset(seed=42)
 for episode in range(10):
-    obs, info = env.reset(seed=42 + episode)  # Each episode gets unique seed
+    # ... episode code ...
+    obs, info = env.reset()
 ```
+
+You can pass a seed to any reset (e.g. `seed=42 + episode`), but that is rarely needed: seeding once is enough for reproducibility.
 
 ### 3. Environment Reset Changes
 
 **Old v0.21**: Returns only observation
+<!-- test: skip -->
 ```python
 observation = env.reset()
 ```
@@ -167,12 +182,14 @@ obs, info = env.reset()  # Uses internal random state
 This is the most important change for training algorithms.
 
 **Old v0.21**: Single `done` flag
+<!-- test: skip -->
 ```python
 obs, reward, done, info = env.step(action)
 ```
 
 **New v0.26+**: Separate `terminated` and `truncated` flags
 ```python
+action = env.action_space.sample()
 obs, reward, terminated, truncated, info = env.step(action)
 ```
 
@@ -182,6 +199,7 @@ obs, reward, terminated, truncated, info = env.step(action)
 
 This distinction is crucial for value function bootstrapping in RL algorithms:
 
+<!-- test: skip -->
 ```python
 # OLD (ambiguous)
 if done:
@@ -196,19 +214,17 @@ elif truncated:
 ```
 
 **Migration strategy**:
+<!-- test: skip -->
 ```python
 # Simple migration (works for many cases)
-obs, reward, terminated, truncated, info = env.step(action)
-done = terminated or truncated
+next_obs, reward, terminated, truncated, info = env.step(action)
+done = terminated or truncated  # use `done` only to decide when to reset
 
 # Better migration (preserves RL algorithm correctness)
-obs, reward, terminated, truncated, info = env.step(action)
-if terminated:
-    # Episode naturally ended - use reward as-is
-    target = reward
-elif truncated:
-    # Episode cut short - may need to estimate remaining value
-    target = reward + discount * estimate_value(obs)
+next_obs, reward, terminated, truncated, info = env.step(action)
+# Only bootstrap from the next state if the episode didn't terminate.
+# A truncated episode (e.g. time limit) still has future value.
+target = reward + gamma * (1 - terminated) * value_function(next_obs)
 ```
 
 For more information, see our [blog post](https://farama.org/Gymnasium-Terminated-Truncated-Step-API) about it.
@@ -216,6 +232,7 @@ For more information, see our [blog post](https://farama.org/Gymnasium-Terminate
 ### 5. Render Mode Changes
 
 **Old v0.21**: Render mode specified each time
+<!-- test: skip -->
 ```python
 env = gym.make("CartPole-v1")
 env.render(mode="human")     # Visual window
@@ -226,12 +243,14 @@ env.render(mode="rgb_array") # Get pixel array
 ```python
 env = gym.make("CartPole-v1", render_mode="human")     # For visual display
 env = gym.make("CartPole-v1", render_mode="rgb_array") # For recording
-env.render()  # Uses the mode specified at creation
+observation, info = env.reset()
+frame = env.render()  # Uses the mode specified at creation
 ```
 
 **Why this changed**: Some environments can't switch render modes on-the-fly. Fixing the mode at creation enables better optimization and prevents bugs.
 
 **Practical implications**:
+<!-- test: skip -->
 ```python
 # OLD: Could switch modes dynamically
 env = gym.make("CartPole-v1")
@@ -258,6 +277,7 @@ if need_visualization:
 The :class:`TimeLimit` wrapper behavior also changed to align with the new termination model.
 ```
 **Old v0.21**: Added `TimeLimit.truncated` to info dict
+<!-- test: skip -->
 ```python
 obs, reward, done, info = env.step(action)
 if done and info.get('TimeLimit.truncated', False):
@@ -266,6 +286,7 @@ if done and info.get('TimeLimit.truncated', False):
 ```
 
 **New v0.26+**: Uses the `truncated` return value
+<!-- test: skip -->
 ```python
 obs, reward, terminated, truncated, info = env.step(action)
 if truncated:
@@ -284,29 +305,128 @@ This makes time limit detection much cleaner and more explicit.
 
 Some environments were moved or removed:
 
+<!-- test: skip -->
 ```python
-# OLD: Robotics environments in main gym
+# OLD: Robotics and Atari environments in main gym
 import gym
 env = gym.make("FetchReach-v1")  # No longer available
+env = gym.make("Pong-v0")
 
-# NEW: Moved to separate package
+# NEW: Moved to separate packages, which register their environments on import
 import gymnasium
 
-import gymnasium_robotics
 import ale_py
+import gymnasium_robotics
 
-gymnasium.register_envs((gymnasium_robotics, ale_py))
+# `register_envs` is a no-op, it only stops IDEs and linters removing the "unused" imports
+gymnasium.register_envs(ale_py)
+gymnasium.register_envs(gymnasium_robotics)
 
-env = gymnasium.make("FetchReach-v1")
+env = gymnasium.make("FetchReach-v4")
 env = gymnasium.make("ALE/Pong-v5")
 ```
 
+(migration-v1)=
+## Migrating from v0.26-v0.29 to v1.0
+
+Gymnasium v1.0 kept the `reset` / `step` API from v0.26, so most code written for Gym v0.26 or Gymnasium v0.26-v0.29 only needs a few changes. The full list is in the [v1.0.0 release notes](https://github.com/Farama-Foundation/Gymnasium/releases/tag/v1.0.0).
+
+### Third-party environments must be imported
+
+Previously, installed packages such as `ale-py` registered their environments behind the scenes, so `gym.make("ALE/Pong-v5")` worked without importing them. This plugin system was removed, so import the package first:
+
+<!-- test: skip -->
+```python
+import gymnasium as gym
+import ale_py
+
+gym.register_envs(ale_py)  # optional, stops IDEs and linters removing the import
+
+env = gym.make("ALE/Pong-v5")
+
+# or let `make` import the module for you with "module:env_id"
+env = gym.make("ale_py:ALE/Pong-v5")
+```
+
+### Vector environments
+
+```{eval-rst}
+.. py:currentmodule:: gymnasium
+
+- ``gym.vector.make`` was replaced by :meth:`make_vec`, which uses the synchronous vectorizer by default (``vector.make`` used the asynchronous one). Choose with ``vectorization_mode="sync"`` or ``"async"``.
+- :class:`vector.VectorEnv` no longer inherits from :class:`Env`, so wrappers for single environments (``gymnasium.wrappers``) and vector environments (``gymnasium.wrappers.vector``) are now separate. The base vector wrapper ``VectorEnvWrapper`` was renamed to :class:`vector.VectorWrapper`.
+- Autoreset changed. In v0.29, a sub-environment was reset in the same ``step`` that its episode ended, and the last observation was stored in ``info["final_observation"]``. In v1.0 the default is ``AutoresetMode.NEXT_STEP``: the sub-environment is reset during the *next* ``step`` call, which ignores that sub-environment's action and returns its reset observation with a reward of 0. Skip that step's data when training, as in the example below.
+```
+
+```python
+import numpy as np
+import gymnasium as gym
+
+envs = gym.make_vec("CartPole-v1", num_envs=3, vectorization_mode="sync")
+
+replay_buffer = []
+obs, info = envs.reset(seed=42)
+autoreset = np.zeros(envs.num_envs, dtype=bool)
+for _ in range(200):
+    actions = envs.action_space.sample()
+    next_obs, rewards, terminations, truncations, infos = envs.step(actions)
+
+    for j in range(envs.num_envs):
+        # Skip the reset step of sub-environments whose episode ended last step
+        if not autoreset[j]:
+            replay_buffer.append(
+                (obs[j], actions[j], rewards[j], terminations[j], truncations[j], next_obs[j])
+            )
+
+    obs = next_obs
+    autoreset = np.logical_or(terminations, truncations)
+
+envs.close()
+```
+
+To keep the v0.29 behaviour, where the reset happens in the same step and the last observation is in `infos["final_obs"]` (renamed from `"final_observation"`), pass `vector_kwargs={"autoreset_mode": gym.vector.AutoresetMode.SAME_STEP}` to `gym.make_vec`.
+
+### Renamed and removed wrappers
+
+| **v0.29**                                   | **v1.0**                                                                    |
+|---------------------------------------------|-----------------------------------------------------------------------------|
+| `AutoResetWrapper`                          | `Autoreset`                                                                 |
+| `FrameStack`                                | `FrameStackObservation`                                                     |
+| `PixelObservationWrapper`                   | `AddRenderObservation`                                                      |
+| `VectorListInfo`                            | `vector.DictInfoToList`                                                     |
+| `monitoring.VideoRecorder`                  | Removed, use `RecordVideo`                                                  |
+| `StepAPICompatibility`, `EnvCompatibility`  | Removed, use [Shimmy](https://shimmy.farama.org/) for old Gym environments  |
+| `gym.make(..., apply_api_compatibility=True)` | Removed, the argument is now passed to the environment and raises a `TypeError` |
+
+### Accessing attributes through wrappers
+
+Wrappers no longer forward unknown attributes to the environment they wrap (this was deprecated in v0.29), so `env.gravity` raises an `AttributeError` on a wrapped environment. Use `get_wrapper_attr` (or `env.unwrapped`) instead, and `set_wrapper_attr` to change a value:
+
+```python
+>>> import gymnasium as gym
+>>> env = gym.make("CartPole-v1")
+>>> env.get_wrapper_attr("gravity")
+9.8
+>>> env.unwrapped.gravity
+9.8
+>>> env.set_wrapper_attr("gravity", 5.0)
+True
+>>> env.unwrapped.gravity
+5.0
+```
+
+### Environment versions
+
+Some environments were updated with new version numbers, so update their IDs: `LunarLander-v2` → `LunarLander-v3`, `CarRacing-v2` → `CarRacing-v3`, and the MuJoCo environments gained `v5` versions (e.g. `Ant-v5`).
+
+(migration-compatibility-helpers)=
 ## Compatibility Helpers
 
 ### Loading OpenAI Gym environments
 
-For environments that can't be updated to Gymnasium, we provide compatibility wrappers either for v21 and v26 style environments, where either the environment name or the environment itself can be passed.
+For environments that can't be updated to Gymnasium, [Shimmy](https://shimmy.farama.org/) provides compatibility environments for v0.21 and v0.26 style environments, where either the environment name or the environment itself can be passed.
 
+<!-- test: skip -->
 ```python
 import gymnasium
 import shimmy  # install shimmy with `pip install shimmy`
@@ -320,7 +440,7 @@ env = gymnasium.make("GymV21Environment-v0", env_id="CartPole-v1")
 env = gymnasium.make("GymV21Environment-v0", env=OldV21Env())
 
 # Gym v0.26 style environments
-env = gymnasium.make("GymV26Environment-v0", env_id="Cartpole-v1")
+env = gymnasium.make("GymV26Environment-v0", env_id="CartPole-v1")
 # or
 env = gymnasium.make("GymV26Environment-v0", env=OldV26Env())
 ```
@@ -330,7 +450,7 @@ env = gymnasium.make("GymV26Environment-v0", env=OldV26Env())
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.utils.step_api_compatibility
 
-If environments implement the (old) done step API, Gymnasium provides functions (:meth:`convert_to_terminated_truncated_step_api` and :meth:`convert_to_done_step_api`) that will convert an environment with the old step API (using ``done``) to the new step API (using ``termination`` and ``truncation``), and vice versa.
+If environments implement the (old) done step API, Gymnasium provides functions (:func:`convert_to_terminated_truncated_step_api` and :func:`convert_to_done_step_api`) that will convert a step's return values from the old step API (using ``done``) to the new step API (using ``terminated`` and ``truncated``), and vice versa. :func:`step_api_compatibility` can be used to convert to either API.
 ```
 
 ## Testing Your Migration
@@ -347,14 +467,14 @@ After migrating, verify that:
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.utils.env_checker
 
-Use the :meth:`check_env` to verify their implementation.
+Use the :func:`check_env` to verify their implementation.
 ```
 
 ## Getting Help
 
 **If you encounter issues during migration**:
 
-1. **Check the compatibility guide**: Some old environments can be used with compatibility wrappers
+1. **Check the {ref}`compatibility helpers <migration-compatibility-helpers>`**: Some old environments can be used with Shimmy's compatibility environments
 2. **Look at the environment documentation**: Each environment may have specific migration notes
 3. **Test with simple environments first**: Start with CartPole before moving to complex environments
 4. **Compare old vs new behavior**: Run the same code with both APIs to understand differences
@@ -362,4 +482,4 @@ Use the :meth:`check_env` to verify their implementation.
 **Common resources**:
 - [Gymnasium API documentation](https://gymnasium.farama.org/api/env)
 - [GitHub issues](https://github.com/Farama-Foundation/Gymnasium/issues) for bug reports
-- [Discord community](https://discord.com/invite/bnJ6kubTg6) for questions
+- [Discord community](https://discord.gg/bnJ6kubTg6) for questions

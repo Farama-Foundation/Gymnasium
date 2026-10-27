@@ -2,6 +2,7 @@ __credits__ = ["Kallinteris-Andreas"]
 
 from typing import Any, Final
 
+import mujoco
 import numpy as np
 
 from gymnasium import utils
@@ -20,7 +21,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
     ## Action Space
     ```{figure} action_space_figures/reacher.png
-    :name: reacher
+    :name: reacher_action_space
     ```
 
     The action space is a `Box(-1, 1, (2,), float32)`. An action `(a, b)` represents the torques applied at the hinge joints.
@@ -70,19 +71,19 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Rewards
-    The total reward is: ***reward*** *=* *reward_distance + reward_control*.
+    The total reward is: ***reward*** *=* *reward_dist + reward_ctrl*.
 
-    - *reward_distance*:
+    - *reward_dist*:
     This reward is a measure of how far the *fingertip* of the reacher (the unattached end) is from the target,
     with a more negative value assigned if the reacher's *fingertip* is further away from the target.
-    It is $-w_{near} \|(P_{fingertip} - P_{target})\|_2$.
-    where $w_{near}$ is the `reward_near_weight` (default is $1$).
-    - *reward_control*:
-    A negative reward to penalize the walker for taking actions that are too large.
+    It is $-w_{dist} \|(P_{fingertip} - P_{target})\|_2$.
+    where $w_{dist}$ is the `reward_dist_weight` (default is $1$).
+    - *reward_ctrl*:
+    A negative reward to penalize the reacher for taking actions that are too large.
     It is measured as the negative squared Euclidean norm of the action, i.e. as $-w_{control} \|action\|_2^2$.
-    where $w_{control}$ is the `reward_control_weight`. (default is $0.1$)
+    where $w_{control}$ is the `reward_control_weight` (default is $1$).
 
-    `info` contains the individual reward terms.
+    `info` contains the individual reward terms (`"reward_dist"` and `"reward_ctrl"`).
 
     ## Starting State
     The initial position state of the reacher arm is $\mathcal{U}_{[-0.1 \times I_{2}, 0.1 \times I_{2}]}$.
@@ -92,7 +93,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
     where $\mathcal{U}$ is the multivariate uniform continuous distribution and $\mathcal{S}$ is the uniform continuous spherical distribution.
 
-    The default frame rate is $2$, with each frame lasting $0.01$, so *dt = 5 * 0.01 = 0.02*.
+    The default `frame_skip` is $2$, with each MuJoCo timestep lasting $0.01$, so *dt = 2 * 0.01 = 0.02*.
 
 
     ## Episode End
@@ -115,8 +116,10 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
     | Parameter               | Type       | Default       | Description                                              |
     |-------------------------|------------|---------------|----------------------------------------------------------|
     | `xml_file`              | **str**    |`"reacher.xml"`| Path to a MuJoCo model                                   |
+    | `frame_skip`            | **int**    | `2`           | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep` |
+    | `default_camera_config` | **dict**   | `{"trackbodyid": 0}` | Properties of the `mj_camera` used for rendering                  |
     | `reward_dist_weight`    | **float**  | `1`           | Weight for _reward_dist_ term (see `Rewards` section)    |
-    | `reward_control_weight` | **float**  | `0.1`         | Weight for _reward_control_ term (see `Rewards` section) |
+    | `reward_control_weight` | **float**  | `1`           | Weight for _reward_ctrl_ term (see `Rewards` section)    |
 
     ## Version History
     * v5:
@@ -124,7 +127,7 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         - Added `default_camera_config` argument, a dictionary for setting the `mj_camera` properties, mainly useful for custom environments.
         - Added `frame_skip` argument, used to configure the `dt` (duration of `step()`), default varies by environment check environment documentation pages.
         - Fixed bug: `reward_distance` was based on the state before the physics step, now it is based on the state after the physics step (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
-        - Removed `"z - position_fingertip"` from the observation space since it is always 0 and therefore provides no useful information to the agent, this should result is slightly faster training (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
+        - Removed `"z - position_fingertip"` from the observation space since it is always 0 and therefore provides no useful information to the agent, this should result in slightly faster training (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/204)).
         - Added `xml_file` argument.
         - Added `reward_dist_weight`, `reward_control_weight` arguments to configure the reward function (defaults are effectively the same as in `v4`).
         - Fixed `info["reward_ctrl"]`  not being multiplied by the reward weight.
@@ -189,6 +192,10 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
     def step(self, action):
         self.do_simulation(action, self.frame_skip)
+        # Sync body xpos with post-step qpos (xpos lags by one integration;
+        # see google-deepmind/mujoco#889). Needed so fingertip/target in the
+        # observation match the joint angles in the same vector (#1690).
+        mujoco.mj_kinematics(self.model, self.data)
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew(action)

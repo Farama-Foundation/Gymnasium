@@ -136,7 +136,10 @@ class MultiBinary(Space[NDArray[np.int8]]):
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, Sequence):
-            x = np.array(x)  # Promote list to array for contains check
+            try:
+                x = np.array(x)  # Promote list to array for contains check
+            except (ValueError, TypeError):
+                return False
 
         return bool(
             isinstance(x, np.ndarray)
