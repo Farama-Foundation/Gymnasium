@@ -197,6 +197,71 @@ def test_flatten_roundtripping(space):
         assert data_equivalence(original, roundtripped)
 
 
+@pytest.mark.parametrize("container", ["tuple", "dict", "nested"])
+@pytest.mark.parametrize("dtype", [np.float32, np.float64, np.int32])
+@pytest.mark.parametrize("text", ["", "ba", "abba"])
+def test_unflatten_text_with_numeric_siblings(container, dtype, text):
+    """Restore character indices after a composite space promotes their dtype."""
+    text_space = gym.spaces.Text(4, min_length=0, charset="ab")
+    value_space = Box(-1, 1, shape=(2,), dtype=dtype)
+    value = np.array([0, 1], dtype=dtype)
+    if container == "tuple":
+        space = gym.spaces.Tuple((text_space, value_space))
+        sample = (text, value)
+    else:
+        space = gym.spaces.Dict(
+            {"text": text_space, "value": value_space}, sort_keys=False
+        )
+        sample = {"text": text, "value": value}
+        if container == "nested":
+            space = gym.spaces.Tuple((space, gym.spaces.Discrete(2)))
+            sample = (sample, np.int64(1))
+
+    # Build the encoding independently, including the padding sentinel and flag.
+    encoded = ["ab".index(char) for char in text] + [2] * (4 - len(text))
+    encoded += [0, 1]
+    if container == "nested":
+        encoded += [0, 1]
+    flat_space = utils.flatten_space(space)
+    expected = np.array(encoded, dtype=flat_space.dtype)
+    assert sample in space
+    assert expected in flat_space
+    np.testing.assert_array_equal(utils.flatten(space, sample), expected)
+    restored = utils.unflatten(space, expected)
+    assert data_equivalence(restored, sample, exact=True)
+    assert restored in space
+
+
+@pytest.mark.parametrize("container", ["tuple", "dict"])
+def test_unflatten_text_from_vector_observations(container):
+    """Decode mixed text/numeric observations after vector batching and flattening."""
+    text_space = gym.spaces.Text(4, charset="ab")
+    value_space = Box(-1, 1, shape=(2,), dtype=np.float32)
+    values = [np.array([0.25, -0.5], dtype=np.float32), np.ones(2, dtype=np.float32)]
+    if container == "tuple":
+        space = gym.spaces.Tuple((text_space, value_space))
+        samples = [("ba", values[0]), ("abba", values[1])]
+    else:
+        space = gym.spaces.Dict({"text": text_space, "value": value_space})
+        samples = [
+            {"text": "ba", "value": values[0]},
+            {"text": "abba", "value": values[1]},
+        ]
+
+    batched_space = batch_space(space, n=2)
+    batched = gym.vector.utils.concatenate(
+        space, samples, gym.vector.utils.create_empty_array(space, n=2)
+    )
+    assert batched in batched_space
+    for observation, expected in zip(
+        iterate(batched_space, batched), samples, strict=True
+    ):
+        flattened = utils.flatten(space, observation)
+        assert flattened in utils.flatten_space(space)
+        restored = utils.unflatten(space, flattened)
+        assert data_equivalence(restored, expected, exact=True)
+
+
 @pytest.mark.parametrize(
     ["space", "flattened_sample"],
     [
