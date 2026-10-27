@@ -2,9 +2,8 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.envs.box2d import BipedalWalker, CarRacing
+from gymnasium.envs.box2d import BipedalWalker
 from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
-from gymnasium.envs.pymunk import CarRacing as PymunkCarRacing
 from gymnasium.envs.toy_text import CliffWalkingEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 from gymnasium.error import InvalidAction
@@ -48,50 +47,14 @@ def test_lunar_lander_random_wind_seed(seed: int):
         )
 
 
-def test_carracing_domain_randomize():
+@pytest.mark.parametrize("env_id", ["CarRacing-v3", "CarRacing-v4"])
+def test_carracing_domain_randomize(env_id: str):
     """Tests the CarRacing Environment domain randomization.
 
     CarRacing DomainRandomize should have different colours at every reset.
     However, it should have same colours when `options={"randomize": False}` is given to reset.
     """
-    env: CarRacing = gym.make("CarRacing-v3", domain_randomize=True).unwrapped
-
-    road_color = env.road_color
-    bg_color = env.bg_color
-    grass_color = env.grass_color
-
-    env.reset(options={"randomize": False})
-
-    assert (road_color == env.road_color).all(), (
-        f"Have different road color after reset with randomize turned off. Before: {road_color}, after: {env.road_color}."
-    )
-    assert (bg_color == env.bg_color).all(), (
-        f"Have different bg color after reset with randomize turned off. Before: {bg_color}, after: {env.bg_color}."
-    )
-    assert (grass_color == env.grass_color).all(), (
-        f"Have different grass color after reset with randomize turned off. Before: {grass_color}, after: {env.grass_color}."
-    )
-
-    env.reset()
-
-    assert (road_color != env.road_color).all(), (
-        f"Have same road color after reset. Before: {road_color}, after: {env.road_color}."
-    )
-    assert (bg_color != env.bg_color).all(), (
-        f"Have same bg color after reset. Before: {bg_color}, after: {env.bg_color}."
-    )
-    assert (grass_color != env.grass_color).all(), (
-        f"Have same grass color after reset. Before: {grass_color}, after: {env.grass_color}."
-    )
-
-
-def test_pymunk_carracing_domain_randomize():
-    """Tests the new pymunk CarRacing Environment domain randomization.
-
-    CarRacing DomainRandomize should have different colours at every reset.
-    However, it should have same colours when `options={"randomize": False}` is given to reset.
-    """
-    env: PymunkCarRacing = gym.make("CarRacing-v4", domain_randomize=True).unwrapped
+    env = gym.make(env_id, domain_randomize=True).unwrapped
 
     road_color = env.road_color
     bg_color = env.bg_color
