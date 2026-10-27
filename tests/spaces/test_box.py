@@ -278,6 +278,28 @@ def test_valid_low_high(low, high, dtype):
 
 
 @pytest.mark.parametrize(
+    "low, high, dtype",
+    [
+        (np.zeros(2, dtype=np.float32), np.ones(2, dtype=np.float32), np.float64),
+        (np.float32(0), np.float32(1), np.float64),
+        (np.zeros(2, dtype=np.float16), np.ones(2, dtype=np.float16), np.float32),
+        (np.zeros(2, dtype=np.int8), np.ones(2, dtype=np.int8), np.int64),
+    ],
+)
+def test_widening_dtype_bounds(low, high, dtype):
+    """Tests that bounds with a narrower dtype than the Box are cast without a warning.
+
+    The range check used to cast the Box dtype's limits to the bounds' dtype, which overflowed.
+    """
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        space = Box(low=low, high=high, shape=(2,), dtype=dtype)
+
+    assert space.low.dtype == dtype and space.high.dtype == dtype
+    assert np.all(space.low == 0) and np.all(space.high == 1)
+
+
+@pytest.mark.parametrize(
     "dtype",
     [np.int8, np.int16, np.int32, np.uint8],
     ids=["int8", "int16", "int32", "uint8"],
