@@ -118,19 +118,36 @@ def test_vector_add_info():
     assert data_equivalence(vector_infos, expected_vector_infos)
 
 
-def test_vector_add_info_promotes_mixed_int_float():
+@pytest.mark.parametrize(
+    "values",
+    [
+        (0, 0.5),
+        (False, 0.5),
+        (np.int32(0), np.float32(0.5)),
+        (np.array([0, 1]), np.array([0.5, 1.5])),
+        (np.array([False, True]), np.array([0.5, 1.5])),
+    ],
+)
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("nested", [False, True])
+def test_vector_add_info_mixed_numeric_dtypes(values, reverse, nested):
+    """Mixed bool/int/float infos are promoted, not truncated, in either env order."""
+    if reverse:
+        values = values[::-1]
     env = VectorEnv()
-    env.num_envs = 2
-
-    vector_infos = env._add_info({}, {"metric": 0}, 0)
-    vector_infos = env._add_info(vector_infos, {"metric": 0.5}, 1)
-    assert np.allclose(vector_infos["metric"], np.array([0.0, 0.5]))
-    assert vector_infos["metric"].dtype == np.float64
+    env.num_envs = len(values)
 
     vector_infos = {}
-    vector_infos = env._add_info({}, {"metric": 0.5}, 0)
-    vector_infos = env._add_info(vector_infos, {"metric": 0}, 1)
-    assert np.allclose(vector_infos["metric"], np.array([0.5, 0.0]))
+    for i, value in enumerate(values):
+        info = {"metric": value}
+        vector_infos = env._add_info(
+            vector_infos, {"episode": info} if nested else info, i
+        )
+
+    metric = vector_infos["episode"]["metric"] if nested else vector_infos["metric"]
+    expected = np.array(values)
+    assert metric.dtype == expected.dtype
+    assert np.array_equal(metric, expected)
 
 
 class ReturnInfoEnv(gym.Env):

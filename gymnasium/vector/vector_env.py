@@ -329,15 +329,16 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
                 # Otherwise, just use the array that already exists
                 else:
                     array = vector_infos[key]
-                    if type(value) in [int, float, bool] or issubclass(
-                        type(value), np.number
+                    # Widen a bool/int/float array (e.g. int to float) so that assigning a later env's value does not truncate it
+                    if (
+                        isinstance(value, (int, float, np.number, np.bool_, np.ndarray))
+                        and array.dtype.kind in "biufc"
+                        and np.asarray(value).dtype.kind in "biufc"
                     ):
-                        if np.issubdtype(array.dtype, np.number):
-                            promoted_dtype = np.result_type(
-                                array.dtype, np.asarray(value).dtype
-                            )
-                            if promoted_dtype != array.dtype:
-                                array = array.astype(promoted_dtype)
+                        array = array.astype(
+                            np.result_type(array.dtype, np.asarray(value).dtype),
+                            copy=False,
+                        )
 
                 # Assign the data in the `env_num` position
                 #   We only want to run this for the base-case data (not recursive data forcing the ugly function structure)
