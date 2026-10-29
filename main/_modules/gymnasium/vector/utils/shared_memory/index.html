@@ -373,11 +373,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mp</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">array</span><span class="w"> </span><span class="kn">import</span> <span class="n">typecodes</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">c_bool</span><span class="p">,</span> <span class="n">c_int32</span><span class="p">,</span> <span class="n">c_int64</span><span class="p">,</span> <span class="n">c_uint8</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">singledispatch</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.sharedctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynchronizedArray</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.sharedctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynchronizedArray</span><span class="p">,</span> <span class="n">typecode_to_type</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModuleType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeAlias</span>
 
@@ -461,11 +460,12 @@
     <span class="n">dtype</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span>
     <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="s2">"?"</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="n">c_bool</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">typecodes</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">typecode_to_type</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># Some dtypes (e.g. float16) have no `array` typecode, allocate the equivalent</span>
-        <span class="c1"># number of bytes as read / write reinterpret the raw buffer with `space.dtype`.</span>
+        <span class="c1"># Some dtypes (e.g. float16) have no `multiprocessing` typecode, allocate the</span>
+        <span class="c1"># equivalent number of bytes as read / write reinterpret the raw buffer with</span>
+        <span class="c1"># `space.dtype`.</span>
         <span class="k">return</span> <span class="n">ctx</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="n">c_uint8</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span><span class="p">)</span>
 
 
