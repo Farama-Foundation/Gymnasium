@@ -1,41 +1,49 @@
+"""Generates `docs/api/wrappers/table.md` from the wrapper docstrings, run with `--check` to only check that the table is up to date."""
+
+import inspect
 import os.path
+import re
+import sys
 
 import gymnasium as gym
 
 exclude_wrappers = {"vector"}
 
-
-def generate_wrappers():
-    wrapper_table = ""
-    for wrapper_name in sorted(gym.wrappers.__all__):
-        if wrapper_name not in exclude_wrappers:
-            wrapper_doc = getattr(gym.wrappers, wrapper_name).__doc__.split("\n")[0]
-            wrapper_table += f"""    * - :class:`{wrapper_name}`
-      - {wrapper_doc}
-"""
-    return wrapper_table
+TABLE_FILENAME = os.path.join(
+    os.path.dirname(__file__), "..", "api", "wrappers", "table.md"
+)
 
 
-def generate_vector_wrappers():
-    unique_vector_wrappers = set(gym.wrappers.vector.__all__) - set(
-        gym.wrappers.__all__
+def wrapper_summary(wrapper: type) -> str:
+    """Returns the first paragraph of the wrapper's docstring on a single line.
+
+    As the table's current module is `gymnasium.wrappers`, references to `Env` and `Wrapper` are made absolute.
+    """
+    summary = " ".join(inspect.getdoc(wrapper).split("\n\n")[0].split())
+    return re.sub(
+        r":(class|meth|attr|func):`(Env|Wrapper)\b", r":\1:`gymnasium.\2", summary
     )
 
-    vector_table = ""
-    for vector_name in sorted(unique_vector_wrappers):
-        vector_doc = getattr(gym.wrappers.vector, vector_name).__doc__.split("\n")[0]
-        vector_table += f"""    * - :class:`{vector_name}`
-      - {vector_doc}
+
+def generate_table(module, wrapper_names) -> str:
+    table = ""
+    for wrapper_name in sorted(wrapper_names):
+        table += f"""    * - :class:`{wrapper_name}`
+      - {wrapper_summary(getattr(module, wrapper_name))}
 """
-    return vector_table
+    return table
 
 
-if __name__ == "__main__":
-    gen_wrapper_table = generate_wrappers()
-    gen_vector_table = generate_vector_wrappers()
+def generate_page() -> str:
+    wrapper_table = generate_table(
+        gym.wrappers, set(gym.wrappers.__all__) - exclude_wrappers
+    )
+    vector_table = generate_table(
+        gym.wrappers.vector,
+        set(gym.wrappers.vector.__all__) - set(gym.wrappers.__all__),
+    )
 
-    page = f"""
-# List of Gymnasium Wrappers
+    return f"""# List of Wrappers
 
 Gymnasium provides a number of commonly used wrappers listed below. More information can be found on the particular
 wrapper in the page on the wrapper type
@@ -48,10 +56,9 @@ wrapper in the page on the wrapper type
 
     * - Name
       - Description
-{gen_wrapper_table}
-```
+{wrapper_table}```
 
-## Vector only Wrappers
+## Vector Only Wrappers
 
 ```{{eval-rst}}
 .. py:currentmodule:: gymnasium.wrappers.vector
@@ -61,12 +68,19 @@ wrapper in the page on the wrapper type
 
     * - Name
       - Description
-{gen_vector_table}
-```
+{vector_table}```
 """
 
-    filename = os.path.join(
-        os.path.dirname(__file__), "..", "api", "wrappers", "table.md"
-    )
-    with open(filename, "w") as file:
-        file.write(page)
+
+if __name__ == "__main__":
+    page = generate_page()
+
+    if "--check" in sys.argv:
+        with open(TABLE_FILENAME) as file:
+            if file.read() != page:
+                sys.exit(
+                    f"{TABLE_FILENAME} is out of date, run `python docs/_scripts/gen_wrapper_table.py` to update it."
+                )
+    else:
+        with open(TABLE_FILENAME, "w") as file:
+            file.write(page)

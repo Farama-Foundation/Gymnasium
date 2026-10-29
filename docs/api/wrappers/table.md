@@ -1,4 +1,3 @@
-
 # List of Wrappers
 
 Gymnasium provides a number of commonly used wrappers listed below. More information can be found on the particular
@@ -12,18 +11,26 @@ wrapper in the page on the wrapper type
 
     * - Name
       - Description
+    * - :class:`AddRenderObservation`
+      - Includes the rendered observations in the environment's observations.
+    * - :class:`AddWhiteNoise`
+      - Randomly replaces pixels with white noise.
     * - :class:`ArrayConversion`
-      - Wraps an environment based on any Array API compatible framework, e.g. ``numpy``, ``torch``, ``jax.numpy``, such that it can be interacted with any other Array API compatible framework.
+      - Wraps an Array API compatible environment so that it can be interacted with another Array API framework.
     * - :class:`AtariPreprocessing`
       - Implements the common preprocessing techniques for Atari environments (excluding frame stacking).
     * - :class:`Autoreset`
-      - The wrapped environment is automatically reset when an terminated or truncated state is reached.
+      - The wrapped environment is automatically reset when a terminated or truncated state is reached.
     * - :class:`ClipAction`
       - Clips the ``action`` pass to ``step`` to be within the environment's `action_space`.
     * - :class:`ClipReward`
       - Clips the rewards for an environment between an upper and lower bound.
     * - :class:`DelayObservation`
       - Adds a delay to the returned observation from the environment.
+    * - :class:`DiscretizeAction`
+      - Uniformly discretizes a continuous Box action space into a single Discrete space.
+    * - :class:`DiscretizeObservation`
+      - Uniformly discretizes a continuous Box observation space into a single Discrete space.
     * - :class:`DtypeObservation`
       - Modifies the dtype of an observation array to a specified dtype.
     * - :class:`FilterObservation`
@@ -45,21 +52,23 @@ wrapper in the page on the wrapper type
     * - :class:`NormalizeObservation`
       - Normalizes observations to be centered at the mean with unit variance.
     * - :class:`NormalizeReward`
-      - Normalizes immediate rewards such that their exponential moving average has a fixed variance.
+      - Normalizes immediate rewards such that their exponential moving average has an approximately fixed variance.
     * - :class:`NumpyToTorch`
       - Wraps a NumPy-based environment such that it can be interacted with PyTorch Tensors.
+    * - :class:`ObstructView`
+      - Randomly obstructs rendering with white noise patches.
     * - :class:`OrderEnforcing`
       - Will produce an error if ``step`` or ``render`` is called before ``reset``.
     * - :class:`PassiveEnvChecker`
-      - A passive environment checker wrapper that surrounds the ``step``, ``reset`` and ``render`` functions to check they follows gymnasium's API.
+      - A passive wrapper that surrounds the ``step``, ``reset`` and ``render`` functions to check they follow Gymnasium's API.
     * - :class:`RecordEpisodeStatistics`
       - This wrapper will keep track of cumulative rewards and episode lengths.
     * - :class:`RecordVideo`
       - Records videos of environment episodes using the environment's render function.
     * - :class:`RenderCollection`
       - Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
-    * - :class:`AddRenderObservation`
-      - Includes the rendered observations in the environment's observations.
+    * - :class:`RepeatAction`
+      - Repeats the given action for ``num_repeats`` steps, accumulating the reward.
     * - :class:`RescaleAction`
       - Affinely (linearly) rescales a ``Box`` action space of the environment to within the range of ``[min_action, max_action]``.
     * - :class:`RescaleObservation`
@@ -68,8 +77,6 @@ wrapper in the page on the wrapper type
       - Reshapes Array based observations to a specified shape.
     * - :class:`ResizeObservation`
       - Resizes image observations using OpenCV to a specified shape.
-    * - :class:`RepeatAction`
-      - Repeats an action ``N`` times, returning the cumulative reward and last observation / info.
     * - :class:`StickyAction`
       - Adds a probability that the action is repeated for the same ``step`` function.
     * - :class:`TimeAwareObservation`
@@ -79,12 +86,12 @@ wrapper in the page on the wrapper type
     * - :class:`TransformAction`
       - Applies a function to the ``action`` before passing the modified value to the environment ``step`` function.
     * - :class:`TransformObservation`
-      - Applies a function to the ``observation`` received from the environment's ``reset`` and ``step`` that is passed back to the user.
+      - Applies a function to the ``observation`` received from the environment's :meth:`gymnasium.Env.reset` and :meth:`gymnasium.Env.step` that is passed back to the user.
     * - :class:`TransformReward`
       - Applies a function to the ``reward`` received from the environment's ``step``.
 ```
 
-## Vector only Wrappers
+## Vector Only Wrappers
 
 ```{eval-rst}
 .. py:currentmodule:: gymnasium.wrappers.vector

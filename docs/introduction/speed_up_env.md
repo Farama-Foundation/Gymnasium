@@ -86,6 +86,7 @@ After the environments, the training loop is usually the next bottleneck. Render
 For deep reinforcement learning, most of the remaining time is spent in the neural network and in moving data between the CPU and the accelerator. Compiling the model or the update step reduces the Python overhead of the step, and keeping the observations, actions and targets on the accelerator avoids a round trip to the CPU for every batch.
 ```
 
+<!-- test: skip -->
 ```python
 import torch
 
@@ -100,6 +101,7 @@ model = torch.compile(model)
 The equivalent for JAX is to decorate the update step with ``jax.jit`` and to keep the parameters and the batch on the accelerator. Compilation only pays off when the shapes of the inputs do not change between calls, which is another reason to step a fixed batch of environments.
 ```
 
+<!-- test: skip -->
 ```python
 import jax
 
