@@ -16,7 +16,7 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import wrappers
-from gymnasium.spaces import Box, Dict, Discrete
+from gymnasium.spaces import Box, Dict, Discrete, Tuple
 from gymnasium.vector.vector_env import AutoresetMode
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.vector.utils import check_vector_wrapper_equivalence
@@ -85,4 +85,25 @@ def test_vector_wrapper_equivalence(
         kwargs,
         getattr(wrappers, wrapper_name),
         kwargs,
+    )
+
+
+@pytest.mark.parametrize("vectorization_mode", ["sync", "async"])
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
+@pytest.mark.parametrize("filter_keys", [(0, 1), (1, 0)])
+def test_filter_tuple_observation_equivalence(
+    vectorization_mode, autoreset_mode, filter_keys
+):
+    """Filtering equal tuple subspaces must preserve each field's values."""
+    check_vector_wrapper_equivalence(
+        autoreset_mode,
+        3,
+        lambda: GenericTestEnv(
+            observation_space=Tuple((Box(0, 1, (2,)), Box(0, 1, (2,))))
+        ),
+        wrappers.vector.FilterObservation,
+        {"filter_keys": filter_keys},
+        wrappers.FilterObservation,
+        {"filter_keys": filter_keys},
+        vectorization_mode=vectorization_mode,
     )
