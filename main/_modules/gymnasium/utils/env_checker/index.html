@@ -626,7 +626,8 @@
     <span class="k">assert</span> <span class="n">data_equivalence</span><span class="p">(</span><span class="n">term_0</span><span class="p">,</span> <span class="n">term_1</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="p">(</span>
         <span class="s2">"Deterministic step termination are not equivalent for the same seed and action"</span>
     <span class="p">)</span>
-    <span class="k">assert</span> <span class="n">trunc_0</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">trunc_1</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span>
+    <span class="c1"># `truncated` may be a `np.bool_`, which `env_step_passive_checker` accepts, so compare with `==` rather than `is`</span>
+    <span class="k">assert</span> <span class="n">trunc_0</span> <span class="o">==</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">trunc_1</span> <span class="o">==</span> <span class="kc">False</span><span class="p">,</span> <span class="p">(</span>  <span class="c1"># noqa: E712</span>
         <span class="s2">"Environment truncates after 1 step, something has gone very wrong."</span>
     <span class="p">)</span>
 
