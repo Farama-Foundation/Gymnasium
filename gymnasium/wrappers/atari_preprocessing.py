@@ -19,6 +19,10 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
     For frame stacking use :class:`gymnasium.wrappers.FrameStackObservation`.
     No vector version of the wrapper exists
 
+    If a skipped step terminates, truncates, or ends on a life loss, max-pooling
+    uses the last two screens actually reached during that call. If only one
+    step is taken, that step's screen is returned without pooling a prior frame.
+
     This class follows the guidelines in Machado et al. (2018),
     "Revisiting the Arcade Learning Environment: Evaluation Protocols and Open Problems for General Agents".
 
@@ -191,18 +195,20 @@ class AtariPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
                 self.game_over = terminated
                 self.lives = new_lives
 
+            # Capture each screen, including an ending step, so early endings
+            # pool this call's last two screens rather than stale buffers.
+            self.obs_buffer[0], self.obs_buffer[1] = (
+                self.obs_buffer[1],
+                self.obs_buffer[0],
+            )
+            if self.grayscale_obs:
+                self.ale.getScreenGrayscale(self.obs_buffer[0])
+            else:
+                self.ale.getScreenRGB(self.obs_buffer[0])
             if terminated or truncated:
+                if t == 0 and self.frame_skip > 1:
+                    np.copyto(self.obs_buffer[1], self.obs_buffer[0])
                 break
-            if t == self.frame_skip - 2:
-                if self.grayscale_obs:
-                    self.ale.getScreenGrayscale(self.obs_buffer[1])
-                else:
-                    self.ale.getScreenRGB(self.obs_buffer[1])
-            elif t == self.frame_skip - 1:
-                if self.grayscale_obs:
-                    self.ale.getScreenGrayscale(self.obs_buffer[0])
-                else:
-                    self.ale.getScreenRGB(self.obs_buffer[0])
         return self._get_obs(), total_reward, terminated, truncated, info
 
     def reset(
