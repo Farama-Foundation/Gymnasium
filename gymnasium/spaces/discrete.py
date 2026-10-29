@@ -188,6 +188,8 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
                 f"The sum of the sample probability should be equal to 1, actual sum: {np.sum(probability)}"
             )
 
+            # NumPy's sum tolerance is stricter than the validation above.
+            probability = probability / np.sum(probability)
             return self.start + self.np_random.choice(
                 np.arange(self.n, dtype=self.dtype), p=probability
             )
