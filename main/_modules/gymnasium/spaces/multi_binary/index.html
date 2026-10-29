@@ -501,7 +501,7 @@
                 <span class="sa">f</span><span class="s2">"All values of the sample probability should be between 0 and 1, actual values: </span><span class="si">{</span><span class="n">probability</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
-            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">probability</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">np_random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">probability</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
