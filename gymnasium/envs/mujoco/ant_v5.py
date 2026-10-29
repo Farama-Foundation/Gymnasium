@@ -22,7 +22,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     ## Action Space
     ```{figure} action_space_figures/ant.png
-    :name: ant
+    :name: ant_action_space
     ```
 
     The action space is a `Box(-1, 1, (8,), float32)`. An action represents the torques applied at the hinge joints.
@@ -30,13 +30,13 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | Num | Action                                                            | Control Min | Control Max | Name (in corresponding XML file) | Joint | Type (Unit)  |
     | --- | ----------------------------------------------------------------- | ----------- | ----------- | -------------------------------- | ----- | ------------ |
     | 0   | Torque applied on the rotor between the torso and back right hip  | -1          | 1           | hip_4 (right_back_leg)           | hinge | torque (N m) |
-    | 1   | Torque applied on the rotor between the back right two links      | -1          | 1           | angle_4 (right_back_leg)         | hinge | torque (N m) |
+    | 1   | Torque applied on the rotor between the back right two links      | -1          | 1           | ankle_4 (right_back_leg)         | hinge | torque (N m) |
     | 2   | Torque applied on the rotor between the torso and front left hip  | -1          | 1           | hip_1 (front_left_leg)           | hinge | torque (N m) |
-    | 3   | Torque applied on the rotor between the front left two links      | -1          | 1           | angle_1 (front_left_leg)         | hinge | torque (N m) |
+    | 3   | Torque applied on the rotor between the front left two links      | -1          | 1           | ankle_1 (front_left_leg)         | hinge | torque (N m) |
     | 4   | Torque applied on the rotor between the torso and front right hip | -1          | 1           | hip_2 (front_right_leg)          | hinge | torque (N m) |
-    | 5   | Torque applied on the rotor between the front right two links     | -1          | 1           | angle_2 (front_right_leg)        | hinge | torque (N m) |
+    | 5   | Torque applied on the rotor between the front right two links     | -1          | 1           | ankle_2 (front_right_leg)        | hinge | torque (N m) |
     | 6   | Torque applied on the rotor between the torso and back left hip   | -1          | 1           | hip_3 (back_leg)                 | hinge | torque (N m) |
-    | 7   | Torque applied on the rotor between the back left two links       | -1          | 1           | angle_3 (back_leg)               | hinge | torque (N m) |
+    | 7   | Torque applied on the rotor between the back left two links       | -1          | 1           | ankle_3 (back_leg)               | hinge | torque (N m) |
 
 
     ## Observation Space
@@ -47,6 +47,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     - *cfrc_ext (78 elements):* This is the center of mass based external forces on the body parts.
     It has shape 13 * 6 (*nbody * 6*) and hence adds another 78 elements to the state space.
     (external forces - force x, y, z and torque x, y, z)
+    These values are clipped to the `contact_force_range` argument (default is $[-1, 1]$).
 
     By default, the observation does not include the x- and y-coordinates of the torso.
     These can be included by passing `exclude_current_positions_from_observation=False` during construction.
@@ -76,20 +77,20 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | 16  | x-coordinate angular velocity of the torso                   | -Inf   | Inf    | root                                   | free  | angular velocity (rad/s) |
     | 17  | y-coordinate angular velocity of the torso                   | -Inf   | Inf    | root                                   | free  | angular velocity (rad/s) |
     | 18  | z-coordinate angular velocity of the torso                   | -Inf   | Inf    | root                                   | free  | angular velocity (rad/s) |
-    | 19  | angular velocity of angle between torso and front left link  | -Inf   | Inf    | hip_1 (front_left_leg)                 | hinge | angle (rad)              |
-    | 20  | angular velocity of the angle between front left links       | -Inf   | Inf    | ankle_1 (front_left_leg)               | hinge | angle (rad)              |
-    | 21  | angular velocity of angle between torso and front right link | -Inf   | Inf    | hip_2 (front_right_leg)                | hinge | angle (rad)              |
-    | 22  | angular velocity of the angle between front right links      | -Inf   | Inf    | ankle_2 (front_right_leg)              | hinge | angle (rad)              |
-    | 23  | angular velocity of angle between torso and back left link   | -Inf   | Inf    | hip_3 (back_leg)                       | hinge | angle (rad)              |
-    | 24  | angular velocity of the angle between back left links        | -Inf   | Inf    | ankle_3 (back_leg)                     | hinge | angle (rad)              |
-    | 25  | angular velocity of angle between torso and back right link  | -Inf   | Inf    | hip_4 (right_back_leg)                 | hinge | angle (rad)              |
-    | 26  | angular velocity of the angle between back right links       | -Inf   | Inf    | ankle_4 (right_back_leg)               | hinge | angle (rad)              |
+    | 19  | angular velocity of angle between torso and front left link  | -Inf   | Inf    | hip_1 (front_left_leg)                 | hinge | angular velocity (rad/s) |
+    | 20  | angular velocity of the angle between front left links       | -Inf   | Inf    | ankle_1 (front_left_leg)               | hinge | angular velocity (rad/s) |
+    | 21  | angular velocity of angle between torso and front right link | -Inf   | Inf    | hip_2 (front_right_leg)                | hinge | angular velocity (rad/s) |
+    | 22  | angular velocity of the angle between front right links      | -Inf   | Inf    | ankle_2 (front_right_leg)              | hinge | angular velocity (rad/s) |
+    | 23  | angular velocity of angle between torso and back left link   | -Inf   | Inf    | hip_3 (back_leg)                       | hinge | angular velocity (rad/s) |
+    | 24  | angular velocity of the angle between back left links        | -Inf   | Inf    | ankle_3 (back_leg)                     | hinge | angular velocity (rad/s) |
+    | 25  | angular velocity of angle between torso and back right link  | -Inf   | Inf    | hip_4 (right_back_leg)                 | hinge | angular velocity (rad/s) |
+    | 26  | angular velocity of the angle between back right links       | -Inf   | Inf    | ankle_4 (right_back_leg)               | hinge | angular velocity (rad/s) |
     | excluded | x-coordinate of the torso (centre)                      | -Inf   | Inf    | root                                   | free  | position (m)             |
     | excluded | y-coordinate of the torso (centre)                      | -Inf   | Inf    | root                                   | free  | position (m)             |
 
     The body parts are:
 
-    | body part                 | id (for `v2`, `v3`, `v4)` | id (for `v5`) |
+    | body part                 | id (for `v2`, `v3`, `v4`) | id (for `v5`) |
     |  -----------------------  |  ---   |  ---  |
     | worldbody (note: all values are constant 0) | 0  |excluded|
     | torso                     | 1  |0       |
@@ -141,9 +142,6 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     `info` contains the individual reward terms.
 
-    But if `use_contact_forces=False` on `v4`
-    The total reward returned is ***reward*** *=* *healthy_reward + forward_reward - ctrl_cost*.
-
 
     ## Starting State
     The initial position state is $[0.0, 0.0, 0.75, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times I_{15}, reset\_noise\_scale \times I_{15}]}$.
@@ -151,7 +149,7 @@ class AntEnv(MujocoEnv, utils.EzPickle):
 
     where $\mathcal{N}$ is the multivariate normal distribution and $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
-    Note that the z- and x-coordinates are non-zero so that the ant can immediately stand up and face forward (x-axis).
+    Note that the z-coordinate and the w-component of the torso's orientation quaternion are non-zero, so that the ant starts standing upright and facing forward (x-axis).
 
 
     ## Episode End
@@ -178,6 +176,8 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     | Parameter                                  | Type       | Default      |Description                    |
     |--------------------------------------------|------------|--------------|-------------------------------|
     |`xml_file`                                  | **str**    | `"ant.xml"`  | Path to a MuJoCo model                                                                                                                                                                                      |
+    | `frame_skip`                               | **int**    | `5`          | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep`                                                                                                           |
+    | `default_camera_config`                    | **dict**   | `{"distance": 4.0}` | Properties of the `mj_camera` used for rendering                                                                                                                                                           |
     |`forward_reward_weight`                     | **float**  | `1`          | Weight for _forward_reward_ term (see `Rewards` section)                                                                                                                                                    |
     |`ctrl_cost_weight`                          | **float**  | `0.5`        | Weight for _ctrl_cost_ term (see `Rewards` section)                                                                                                                                                         |
     |`contact_cost_weight`                       | **float**  | `5e-4`       | Weight for _contact_cost_ term (see `Rewards` section)                                                                                                                                                      |
@@ -187,9 +187,8 @@ class AntEnv(MujocoEnv, utils.EzPickle):
     |`healthy_z_range`                           | **tuple**  | `(0.2, 1)`   | The ant is considered healthy if the z-coordinate of the torso is in this range (see `Episode End` section)                                                                                                 |
     |`contact_force_range`                       | **tuple**  | `(-1, 1)`    | Contact forces are clipped to this range in the computation of *contact_cost* (see `Rewards` section)                                                                                                       |
     |`reset_noise_scale`                         | **float**  | `0.1`        | Scale of random perturbations of initial position and velocity (see `Starting State` section)                                                                                                               |
-    |`exclude_current_positions_from_observation`| **bool**   | `True`       | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation State` section) |
-    |`include_cfrc_ext_in_observation`           | **bool**   | `True`       | Whether to include *cfrc_ext* elements in the observations (see `Observation State` section)                                                                                                                |
-    |`use_contact_forces` (`v4` only)            | **bool**   | `False`      | If `True`, it extends the observation space by adding contact forces (see `Observation Space` section) and includes contact_cost to the reward function (see `Rewards` section)                             |
+    |`exclude_current_positions_from_observation`| **bool**   | `True`       | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation Space` section) |
+    |`include_cfrc_ext_in_observation`           | **bool**   | `True`       | Whether to include *cfrc_ext* elements in the observations (see `Observation Space` section)                                                                                                                |
 
     ## Version History
     * v5:

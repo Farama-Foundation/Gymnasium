@@ -156,7 +156,9 @@ class AsyncVectorEnv(
                 'different' defines that there can be multiple observation spaces with different parameters though requires the same shape and dtype,
                 warning, may raise unexpected errors. Passing a ``Tuple[Space, Space]`` object allows defining a custom ``single_observation_space`` and
                 ``observation_space``, warning, may raise unexpected errors.
-            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.
+            autoreset_mode: When sub-environments are reset after their episode ends, either an :class:`AutoresetMode`
+                or its string value (``"NextStep"``, ``"SameStep"`` or ``"Disabled"``), recorded in ``metadata["autoreset_mode"]``.
+                See https://gymnasium.farama.org/api/vector/autoreset/ for more information.
             max_concurrency: The maximum number of environments that can be executing (i.e. in ``reset`` or ``step``)
                 at any one time. If ``None`` (default), no limit is applied and all environments are executed in
                 parallel. When set, a shared semaphore limits how many worker processes can run an environment call
@@ -333,7 +335,8 @@ class AsyncVectorEnv(
 
         Args:
             seed: The environment reset seeds
-            options: If to return the options
+            options: Option information used for each sub-environment, ``options["reset_mask"]``, a boolean array of shape ``(num_envs,)``,
+                resets only the masked sub-environments, as needed for ``AutoresetMode.DISABLED``.
 
         Returns:
             A batch of observations and info from the vectorized environment.
@@ -352,7 +355,8 @@ class AsyncVectorEnv(
 
         Args:
             seed: List of seeds for each environment
-            options: The reset option
+            options: Option information used for each sub-environment, ``options["reset_mask"]``, a boolean array of shape ``(num_envs,)``,
+                resets only the masked sub-environments, as needed for ``AutoresetMode.DISABLED``.
 
         Raises:
             ClosedEnvironmentError: If the environment was closed (if :meth:`close` was previously called).
@@ -378,7 +382,7 @@ class AsyncVectorEnv(
             )
 
         if options is not None and "reset_mask" in options:
-            reset_mask = options.pop("reset_mask")
+            reset_mask = options["reset_mask"]
             if not isinstance(reset_mask, np.ndarray):
                 raise TypeError(
                     f"`options['reset_mask']` must be a numpy array, got {type(reset_mask)}"
@@ -853,7 +857,7 @@ def _async_worker(
                             observation_space, index, observation, shared_memory
                         )
                         observation = None
-                        autoreset = False
+                    autoreset = False
 
                     # release before `send`, which blocks until the main process reads the pipe
                     if permit_held:

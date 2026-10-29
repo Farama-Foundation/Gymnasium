@@ -5,7 +5,7 @@ title: Misc Wrappers
 # Misc Wrappers
 
 
-## Common Wrappers
+## Common wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.TimeLimit
@@ -14,7 +14,7 @@ title: Misc Wrappers
 .. autoclass:: gymnasium.wrappers.AtariPreprocessing
 ```
 
-## Uncommon Wrappers
+## Uncommon wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.Autoreset
@@ -22,9 +22,11 @@ title: Misc Wrappers
 .. autoclass:: gymnasium.wrappers.HumanRendering
 .. autoclass:: gymnasium.wrappers.OrderEnforcing
 .. autoclass:: gymnasium.wrappers.RenderCollection
+.. autoclass:: gymnasium.wrappers.AddWhiteNoise
+.. autoclass:: gymnasium.wrappers.ObstructView
 ```
 
-## Data Conversion Wrappers
+## Data conversion wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.ArrayConversion
