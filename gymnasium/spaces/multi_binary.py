@@ -127,7 +127,7 @@ class MultiBinary(Space[NDArray[np.int8]]):
                 f"All values of the sample probability should be between 0 and 1, actual values: {probability}"
             )
 
-            return (self.np_random.random(size=self.shape) <= probability).astype(
+            return (self.np_random.random(size=self.shape) < probability).astype(
                 self.dtype
             )
         else:
