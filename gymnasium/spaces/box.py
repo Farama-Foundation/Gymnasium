@@ -61,6 +61,16 @@ def is_float_integer(var: object) -> TypeIs[float | np.floating | np.integer]:
     )
 
 
+def _is_within_dtype_range(var: object, dtype: np.dtype[Any]) -> bool:
+    """Checks if a NumPy array or scalar has a dtype whose values always fit within the range of ``dtype``.
+
+    Such a bound can't be out of the Box's dtype range, so the range check is skipped. The check would compare
+    the bound with the Python ``dtype`` limits, which NumPy casts to the bound's narrower dtype where they overflow
+    with a ``RuntimeWarning``, e.g., for a ``float32`` bound of a ``float64`` Box.
+    """
+    return isinstance(var, (np.ndarray, np.generic)) and np.can_cast(var.dtype, dtype)
+
+
 class Box(Space[NDArray[_ScalarT_co]]):
     r"""A (possibly unbounded) box in :math:`\mathbb{R}^n`.
 
@@ -257,7 +267,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
                     raise ValueError(
                         f"Box unsigned int dtype don't support `-np.inf`, low={low}"
                     )
-            elif low < dtype_min:
+            elif not _is_within_dtype_range(low, self.dtype) and low < dtype_min:
                 raise ValueError(
                     f"Box low is out of bounds of the dtype range, low={low}, min dtype={dtype_min}"
                 )
@@ -286,7 +296,9 @@ class Box(Space[NDArray[_ScalarT_co]]):
                     raise ValueError(
                         f"Box unsigned int dtype don't support `-np.inf`, low={low}"
                     )
-            elif low.dtype != self.dtype and np.any(low < dtype_min):
+            elif not _is_within_dtype_range(low, self.dtype) and np.any(
+                low < dtype_min
+            ):
                 raise ValueError(
                     f"Box low is out of bounds of the dtype range, low={low}, min dtype={dtype_min}"
                 )
@@ -324,7 +336,7 @@ class Box(Space[NDArray[_ScalarT_co]]):
                     raise ValueError(
                         f"Box unsigned int dtype don't support `np.inf`, high={high}"
                     )
-            elif high > dtype_max:
+            elif not _is_within_dtype_range(high, self.dtype) and high > dtype_max:
                 raise ValueError(
                     f"Box high is out of bounds of the dtype range, high={high}, max dtype={dtype_max}"
                 )
@@ -353,7 +365,9 @@ class Box(Space[NDArray[_ScalarT_co]]):
                     raise ValueError(
                         f"Box unsigned int dtype don't support `np.inf`, high={high}"
                     )
-            elif high.dtype != self.dtype and np.any(dtype_max < high):
+            elif not _is_within_dtype_range(high, self.dtype) and np.any(
+                dtype_max < high
+            ):
                 raise ValueError(
                     f"Box high is out of bounds of the dtype range, high={high}, max dtype={dtype_max}"
                 )
