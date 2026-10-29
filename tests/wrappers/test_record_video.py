@@ -7,7 +7,52 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.wrappers import RecordVideo, RenderCollection
+from gymnasium.wrappers import HumanRendering, RecordVideo, RenderCollection
+from tests.wrappers.test_human_rendering import CountingRGBEnv
+
+
+@pytest.mark.parametrize(
+    "human_inside,reuse_frames", [(True, True), (True, False), (False, False)]
+)
+def test_record_video_with_rgb_human_rendering(tmp_path, human_inside, reuse_frames):
+    """Encode and read back displayed frames in both supported wrapper orders."""
+    from moviepy import VideoFileClip
+
+    base = CountingRGBEnv()
+    # The outer cache protects reused buffers; an inner recorder sees base frames directly.
+    base.copy_frames = not reuse_frames
+    base.metadata = {**base.metadata, "render_fps": 20}
+    folder = str(tmp_path / "recording")
+    if human_inside:
+        env = RecordVideo(
+            HumanRendering(base, return_rgb_array=True),
+            folder,
+            episode_trigger=lambda _: True,
+        )
+    else:
+        env = HumanRendering(
+            RecordVideo(base, folder, episode_trigger=lambda _: True),
+            return_rgb_array=True,
+        )
+    try:
+        env.reset()
+        frames = [env.render()]
+        for _ in range(3):
+            env.step(0)
+            frames.append(env.render())
+        if human_inside:
+            assert base.render_calls == 4
+    finally:
+        env.close()
+    videos = list((tmp_path / "recording").glob("*.mp4"))
+    assert len(videos) == 1
+    with VideoFileClip(str(videos[0])) as clip:
+        decoded = list(clip.iter_frames())
+    assert len(decoded) == 4
+    for expected, actual in zip(frames, decoded, strict=True):
+        assert actual.shape == expected.shape == (16, 24, 3)
+        # H.264 is lossy; the temporal colors and spatial orientation must survive.
+        np.testing.assert_allclose(actual.astype(float), expected.astype(float), atol=8)
 
 
 def test_video_folder_and_filenames(
