@@ -245,11 +245,68 @@ def test_errors(vector_infos):
         env.reset(options=vector_infos)
 
 
+def test_info_keys_starting_with_underscore():
+    """Info keys that start with an underscore are kept, only their boolean masks are dropped."""
+    env = DictInfoToList(ResetOptionAsInfo())
+    env.unwrapped.num_envs = 2
+
+    vector_infos = {
+        "_a": np.array([1, 2]),
+        "__a": np.array([True, False]),
+        "b": np.array([3, 4]),
+        "_b": np.array([True, True]),
+        "_episode": {
+            "c": np.array([5, 6]),
+            "_c": np.array([True, True]),
+        },
+        "__episode": np.array([False, True]),
+    }
+    _, list_info = env.reset(options=vector_infos)
+
+    np_array_int_default_dtype = np.array([0]).dtype.type
+    expected_list_info = [
+        {"_a": np_array_int_default_dtype(1), "b": np_array_int_default_dtype(3)},
+        {
+            "b": np_array_int_default_dtype(4),
+            "_episode": {"c": np_array_int_default_dtype(6)},
+        },
+    ]
+    assert data_equivalence(list_info, expected_list_info)
+
+
+def test_info_keys_starting_with_underscore_from_sub_envs():
+    """Info returned by the sub-environments with an underscore key is not dropped."""
+
+    class UnderscoreInfoEnv(gym.Env):
+        observation_space = Discrete(2)
+        action_space = Discrete(2)
+
+        def reset(self, *, seed=None, options=None):
+            super().reset(seed=seed)
+            return 0, {"_private": 1, "public": 2}
+
+        def step(self, action):
+            return 0, 0.0, False, False, {"_private": 3, "public": 4}
+
+    envs = DictInfoToList(gym.vector.SyncVectorEnv([UnderscoreInfoEnv] * 2))
+
+    _, list_info = envs.reset()
+    assert list_info == [{"_private": 1, "public": 2}] * 2
+
+    _, _, _, _, list_info = envs.step(np.array([0, 0]))
+    assert list_info == [{"_private": 3, "public": 4}] * 2
+
+    envs.close()
+
+
 def _sub_env_info(vector_info: dict[str, Any], i: int) -> dict[str, Any]:
     """Extracts the info of the `i`-th sub-environment from a vector info using the `_key` masks."""
     sub_env_info = {}
     for key, value in vector_info.items():
-        if key.startswith("_") or not vector_info[f"_{key}"][i]:
+        # skip the `_key` masks, but not info keys that start with an underscore
+        if key.startswith("_") and key[1:] in vector_info:
+            continue
+        if not vector_info[f"_{key}"][i]:
             continue
         sub_env_info[key] = (
             _sub_env_info(value, i) if isinstance(value, dict) else value[i]
