@@ -92,12 +92,20 @@ class ContactDetector(contactListener):
             self.env.game_over = True
         for leg in [self.env.legs[1], self.env.legs[3]]:
             if leg in [contact.fixtureA.body, contact.fixtureB.body]:
-                leg.ground_contact = True
+                # Count touching ground contacts per leg: a leg can touch
+                # several ground edge fixtures at once (e.g. while sliding
+                # across the joint between two segments), and its flag must
+                # only drop when the last contact ends.
+                leg.ground_contact_count = getattr(leg, "ground_contact_count", 0) + 1
+                leg.ground_contact = leg.ground_contact_count > 0
 
     def EndContact(self, contact):
         for leg in [self.env.legs[1], self.env.legs[3]]:
             if leg in [contact.fixtureA.body, contact.fixtureB.body]:
-                leg.ground_contact = False
+                leg.ground_contact_count = max(
+                    0, getattr(leg, "ground_contact_count", 0)
+                ) - 1
+                leg.ground_contact = leg.ground_contact_count > 0
 
 
 class BipedalWalker(gym.Env, EzPickle):
