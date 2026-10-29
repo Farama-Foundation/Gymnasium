@@ -156,7 +156,7 @@ unresolved-attribute = "warn"             # TODO remove
 unresolved-import = "warn"                # TODO remove
 unsupported-operator = "warn"             # TODO remove
 
-# `tests/test_typing.py` checks the wrapper type parameters, so any regression must be an error
+# `tests/test_typing.py` checks public API type contracts, so any regression must be an error
 [[tool.ty.overrides]]
 include = ["tests/test_typing.py"]
 
