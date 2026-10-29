@@ -38,6 +38,9 @@ class RenderCollection(
 ):
     """Collect rendered frames of an environment such ``render`` returns a ``list[RenderedFrame]``.
 
+    Frames are copied when collected, so a renderer reusing an output buffer
+    does not overwrite images from earlier steps.
+
     No vector version of the wrapper exists.
 
     Example - Return the list of frames for the number of steps ``render`` wasn't called.
@@ -139,7 +142,7 @@ class RenderCollection(
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Perform a step in the base environment and collect a frame."""
         output = super().step(action)
-        self.frame_list.append(super().render())
+        self.frame_list.append(deepcopy(super().render()))
         return output
 
     def reset(
@@ -150,7 +153,7 @@ class RenderCollection(
 
         if self.reset_clean:
             self.frame_list = []
-        self.frame_list.append(super().render())
+        self.frame_list.append(deepcopy(super().render()))
 
         return output
 
@@ -169,6 +172,9 @@ class RecordVideo(
     gym.utils.RecordConstructorArgs,
 ):
     """Records videos of environment episodes using the environment's render function.
+
+    Recorded frames are snapshots, so reusing a render buffer or modifying frames
+    returned by :meth:`render` does not change an earlier captured frame.
 
     .. py:currentmodule:: gymnasium.utils.save_video
 
@@ -335,7 +341,7 @@ class RecordVideo(
             frame = frame[-1]
 
         if isinstance(frame, np.ndarray):
-            self.recorded_frames.append(frame)
+            self.recorded_frames.append(frame.copy())
         else:
             self.stop_recording()
             logger.warn(
@@ -382,7 +388,7 @@ class RecordVideo(
         """Compute the render frames as specified by render_mode attribute during initialization of the environment."""
         render_out = super().render()
         if self.recording and isinstance(render_out, list):
-            self.recorded_frames += render_out
+            self.recorded_frames += deepcopy(render_out)
 
         if len(self.render_history) > 0:
             tmp_history = self.render_history
