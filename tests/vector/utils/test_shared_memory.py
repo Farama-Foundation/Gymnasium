@@ -8,7 +8,7 @@ import pytest
 
 from gymnasium import Space
 from gymnasium.error import CustomSpaceError
-from gymnasium.spaces import Box
+from gymnasium.spaces import Box, Dict, Discrete, OneOf, Tuple
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import (
     batch_space,
@@ -81,6 +81,49 @@ def test_shared_memory_no_array_typecode_dtypes(dtype):
     assert read_samples.dtype == dtype
     assert read_samples.shape == (num,) + space.shape
     for read_sample, sample in zip(read_samples, samples, strict=True):
+        assert data_equivalence(read_sample, sample)
+
+
+@pytest.mark.parametrize(
+    "space",
+    [
+        OneOf(
+            [
+                Dict({"a": Box(0, 1, shape=(2,)), "b": Discrete(3)}),
+                Box(0, 1, shape=(2,)),
+            ]
+        ),
+        OneOf([Tuple((Box(0, 1, shape=(2,)), Discrete(3))), Box(0, 1, shape=(2,))]),
+    ],
+    ids=["OneOf-Dict", "OneOf-Tuple"],
+)
+def test_shared_memory_oneof_composite_subspaces(space):
+    """Test shared memory round-trips ``OneOf`` samples whose subspace is a ``Dict`` or ``Tuple``.
+
+    ``read_from_shared_memory`` indexes each subspace's batched read with the
+    environment index, which only works for numpy-array batches. A ``Dict``
+    batch is a mapping (``KeyError``) and a ``Tuple`` batch is indexed by
+    subspace rather than by environment (a wrong sample or ``IndexError``).
+    ``AsyncVectorEnv(..., shared_memory=True)`` reads its observations this way.
+    """
+    num = 8
+    space.seed(123)
+    batched_space = batch_space(space, n=num)
+    shared_memory = create_shared_memory(space, n=num)
+
+    # alternate the subspaces so both the mapping and the array subspace are read
+    samples = [
+        (np.int64(i % len(space.spaces)), space.spaces[i % len(space.spaces)].sample())
+        for i in range(num)
+    ]
+    for i, sample in enumerate(samples):
+        write_to_shared_memory(space, i, sample, shared_memory)
+
+    read_samples = read_from_shared_memory(space, shared_memory, n=num)
+    assert read_samples in batched_space
+    for read_sample, sample in zip(
+        iterate(batched_space, read_samples), samples, strict=True
+    ):
         assert data_equivalence(read_sample, sample)
 
 
