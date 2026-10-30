@@ -89,9 +89,8 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
 
         This will construct the space :math:`\{\text{start}, ..., \text{start} + n - 1\}`.
 
-        The dtype must be able to represent every value of the space, otherwise a
-        ``ValueError`` is raised, and the number of elements ``n`` itself, otherwise an
-        ``OverflowError`` is raised.
+        The dtype must be able to represent every value of the space and the number of
+        elements ``n`` itself, otherwise a ``ValueError`` is raised.
 
         Args:
             n (int): The number of elements of this space.
@@ -122,7 +121,7 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
         # the count must fit the dtype too, a NumPy integer ``n`` would silently wrap
         dtype_info = np.iinfo(self.dtype)
         if int(n) > dtype_info.max:
-            raise OverflowError(f"n={n} is not representable by dtype {self.dtype}.")
+            raise ValueError(f"n={n} is not representable by dtype {self.dtype}.")
         self.n = self.dtype.type(n)
 
         # check that the range of values is representable in the dtype

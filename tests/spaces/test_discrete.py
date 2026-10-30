@@ -256,7 +256,7 @@ def test_start_at_dtype_boundary():
 )
 def test_count_must_fit_even_when_values_fit(count_type, n, start, dtype):
     """Do not wrap a NumPy count to zero when the value range itself fits."""
-    with pytest.raises(OverflowError):
+    with pytest.raises(ValueError, match="not representable"):
         Discrete(count_type(n), start=start, dtype=dtype)
 
 
