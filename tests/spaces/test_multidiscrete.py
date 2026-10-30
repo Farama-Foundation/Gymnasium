@@ -355,3 +355,47 @@ def test_multidiscrete_multidimensional_range_at_dtype_max():
         ((1, 1), {0}),
     ]:
         assert set(map(int, samples[:, index[0], index[1]])) == expected
+
+
+@pytest.mark.parametrize(
+    "nvec, start, dtype, invalid_parameter",
+    [
+        (np.array([300]), None, np.int8, "nvec"),
+        (np.array([-255]), None, np.uint8, "nvec"),
+        (np.array([2**63], dtype=np.uint64), None, np.int64, "nvec"),
+        (np.array([1]), np.array([-200]), np.int8, "start"),
+        (np.array([1]), np.array([128]), np.int8, "start"),
+        (np.array([1]), np.array([-256]), np.uint8, "start"),
+        (np.array([1]), np.array([256]), np.uint8, "start"),
+        (np.array([1]), np.array([2**63], dtype=np.uint64), np.int64, "start"),
+        (np.array([1]), np.array([-1]), np.uint64, "start"),
+        (np.array([[1, 300]]), None, np.int8, "nvec"),
+        (np.array([[1, 1]]), np.array([[0, -200]]), np.int8, "start"),
+        ([300], None, np.int8, "nvec"),
+        ([1], [-200], np.int8, "start"),
+    ],
+)
+def test_multidiscrete_inputs_exceed_dtype(nvec, start, dtype, invalid_parameter):
+    """Reject out-of-range original values before a narrowing cast can wrap them."""
+    with pytest.raises(ValueError, match=invalid_parameter + " values"):
+        MultiDiscrete(nvec, start=start, dtype=dtype)
+
+
+@pytest.mark.parametrize(
+    "nvec, start, dtype",
+    [
+        (np.array([127]), np.array([-128]), np.int8),
+        (np.array([255]), np.array([1]), np.uint8),
+        (np.array([1], dtype=np.uint64), np.array([2**63 - 1]), np.int64),
+        (np.array([1]), np.array([2**64 - 1], dtype=np.uint64), np.uint64),
+        (np.array([1]), np.array([-(2**63)], dtype=np.int64), np.int64),
+        (np.array([[2, 1]]), np.array([[126, -128]]), np.int8),
+    ],
+)
+def test_multidiscrete_array_inputs_at_dtype_bounds(nvec, start, dtype):
+    """Preserve exact signed/unsigned endpoints while narrowing valid arrays."""
+    space = MultiDiscrete(nvec, start=start, dtype=dtype)
+    np.testing.assert_array_equal(space.nvec.astype(object), nvec.astype(object))
+    np.testing.assert_array_equal(space.start.astype(object), start.astype(object))
+    assert space.nvec.dtype == np.dtype(dtype)
+    assert space.start.dtype == np.dtype(dtype)
