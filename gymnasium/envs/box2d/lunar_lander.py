@@ -82,8 +82,8 @@ class ContactDetector(contactListener):
     def EndContact(self, contact):
         for i in range(2):
             if self.env.legs[i] in [contact.fixtureA.body, contact.fixtureB.body]:
-                self.env.legs[i].ground_contact_count = (
-                    max(0, getattr(self.env.legs[i], "ground_contact_count", 0)) - 1
+                self.env.legs[i].ground_contact_count = max(
+                    0, getattr(self.env.legs[i], "ground_contact_count", 0) - 1
                 )
                 self.env.legs[i].ground_contact = (
                     self.env.legs[i].ground_contact_count > 0

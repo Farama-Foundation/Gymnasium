@@ -103,8 +103,8 @@ class ContactDetector(contactListener):
         for leg in [self.env.legs[1], self.env.legs[3]]:
             if leg in [contact.fixtureA.body, contact.fixtureB.body]:
                 leg.ground_contact_count = max(
-                    0, getattr(leg, "ground_contact_count", 0)
-                ) - 1
+                    0, getattr(leg, "ground_contact_count", 0) - 1
+                )
                 leg.ground_contact = leg.ground_contact_count > 0
 
 
