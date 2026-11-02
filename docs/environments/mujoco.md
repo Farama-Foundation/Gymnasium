@@ -104,6 +104,37 @@ The Training performance of `v4` and `v5` is different because of the many chang
 ### Exact reproducibility
 Note: The exact behavior of the MuJoCo simulator changes slightly between `mujoco` versions due to floating point operation ordering (more information of their [Documentation](https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility)), if exact reproducibility is needed besides using the `seed` for experiments the same simulator version should be used.
 
+### Numerical sensitivity of long-horizon trajectory comparisons
+Some MuJoCo environments, notably `InvertedDoublePendulum` and other unstable-balance tasks, are chaotic: they exponentially amplify arbitrarily small numerical differences. Differences at the rounding level naturally arising from a different compute backend (CPU vs. MPS/CUDA), thread count, or `mujoco` version can therefore grow until two step-by-step trajectories look completely different, even though the simulator dynamics are identical. As an illustration, with the same seed and identical sampled actions, nudging the initial torso x-position of `InvertedDoublePendulum-v5` by `1e-9` leads the two rollouts to terminate at different steps and diverge to a maximum absolute difference of ~0.05 in the x-coordinate within a few steps.
+
+```python
+import gymnasium as gym
+
+env = gym.make("InvertedDoublePendulum-v5")
+
+def rollout(nudge):
+    obs, _ = env.reset(seed=1000)
+    obs = obs.copy()
+    obs[0] += nudge
+    trajectory = []
+    for _ in range(200):  # bounded horizon to keep the experiment cheap
+        obs, _, terminated, truncated, _ = env.step(env.action_space.sample())
+        trajectory.append(float(obs[0]))
+        if terminated or truncated:
+            break
+    return trajectory
+
+a = rollout(0.0)
+b = rollout(1e-9)
+print(len(a), len(b), max(abs(x - y) for x, y in zip(a, b)))
+```
+
+Practical advice:
+
+- **Do not hand-pick a tolerance.** Instead, measure how much the environment amplifies rounding noise on its own: run the same environment twice on the same machine from the same seed, nudge the initial state by the smallest float step, and record the step-by-step difference between the two trajectories. That divergence curve tells you the window and tolerance within which a cross-backend (CPU vs. MPS/CUDA) difference is indistinguishable from noise the system already has against itself.
+- **Short horizons compare directly; long horizons do not.** For regression or cross-version comparisons, first-step or short-horizon trajectory comparisons capture implementation differences before chaotic amplification dominates.
+- **For long horizons, compare aggregate statistics** such as seed-matched success rates or episode returns over many episodes. These are insensitive to the exact floating-point path taken within an episode.
+
 ## Rendering Arguments
 All of the MuJoCo Environments besides the general Gymnasium arguments, and environment specific arguments they also take the following arguments for configuring the renderer:
 
