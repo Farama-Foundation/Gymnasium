@@ -178,8 +178,14 @@ def value_parametrization():
             ("task complete", "task complete"),
             ("任务完成", "任务完成"),
             (
-                {"labels": ["start", "结束"], "value": xp.asarray(2)},
-                {"labels": ["start", "结束"], "value": xp.asarray(2)},
+                {
+                    "labels": ["start", "结束"],
+                    "value": xp.asarray(2, dtype=atleast_int32(source_xp, target_xp)),
+                },
+                {
+                    "labels": ["start", "结束"],
+                    "value": xp.asarray(2, dtype=atleast_int32(source_xp, target_xp)),
+                },
             ),
         ]:
             yield (source_xp, target_xp, value, expected_value)
