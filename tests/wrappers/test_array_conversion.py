@@ -174,6 +174,13 @@ def value_parametrization():
                 ),
             ),
             (None, None),
+            ("", ""),
+            ("task complete", "task complete"),
+            ("任务完成", "任务完成"),
+            (
+                {"labels": ["start", "结束"], "value": xp.asarray(2)},
+                {"labels": ["start", "结束"], "value": xp.asarray(2)},
+            ),
         ]:
             yield (source_xp, target_xp, value, expected_value)
 
@@ -248,3 +255,44 @@ def test_array_conversion_wrapper(env_xp, target_xp):
     wrapped_env = ArrayConversion(env, env_xp=env_xp, target_xp=target_xp)
     pkl = pickle.dumps(wrapped_env)
     pickle.loads(pkl)
+
+
+@pytest.mark.parametrize("env_xp,target_xp", installed_modules_combinations)
+def test_array_conversion_string_options_and_info(env_xp, target_xp):
+    """Preserve text alongside arrays in reset options and returned info."""
+    options = {"task": "reach goal", "metadata": {"label": "目标"}}
+
+    def reset_func(self, seed=None, options=None):
+        assert options == {"task": "reach goal", "metadata": {"label": "目标"}}
+        return env_xp.asarray([1.0]), {"task": options["task"]}
+
+    def step_func(self, action):
+        return env_xp.asarray([2.0]), 1.0, False, False, {"status": ["", "完成"]}
+
+    env = ArrayConversion(
+        GenericTestEnv(reset_func=reset_func, step_func=step_func),
+        env_xp=env_xp,
+        target_xp=target_xp,
+    )
+    obs, info = env.reset(options=options)
+    assert array_namespace(obs) is module_namespace(target_xp)
+    assert info == {"task": "reach goal"}
+    assert options == {"task": "reach goal", "metadata": {"label": "目标"}}
+
+    obs, _, _, _, info = env.step(target_xp.asarray([0.0]))
+    assert array_namespace(obs) is module_namespace(target_xp)
+    assert info == {"status": ["", "完成"]}
+    env.close()
+
+
+@pytest.mark.parametrize("target_xp", installed_modules)
+def test_array_conversion_ansi_render(target_xp):
+    """Keep a real environment's ANSI rendering instead of a generator repr."""
+    import numpy as np
+
+    with gymnasium.make("FrozenLake-v1", render_mode="ansi") as env:
+        wrapped_env = ArrayConversion(env, env_xp=np, target_xp=target_xp)
+        wrapped_env.reset(seed=123)
+        expected = env.render()
+        assert isinstance(expected, str) and "S" in expected
+        assert wrapped_env.render() == expected
