@@ -71,7 +71,7 @@ def module_name_to_namespace(name: str) -> ModuleType:
 
 @functools.singledispatch
 def array_conversion(value: Any, xp: ModuleType, device: Device | None = None) -> Any:
-    """Convert a value into the specified xp module array type."""
+    """Convert a value into the specified xp module array type, preserving strings."""
     raise Exception(
         f"No known conversion for ({type(value)}) to xp module ({xp}) registered. Report as issue on github."
     )
@@ -150,6 +150,14 @@ def _none_array_conversion(
     value: None, xp: ModuleType, device: Device | None = None
 ) -> None:
     """Passes through None values."""
+    return value
+
+
+@array_conversion.register(str)
+def _str_array_conversion(
+    value: str, xp: ModuleType, device: Device | None = None
+) -> str:
+    """Pass through strings, including text in options, info and ANSI renders."""
     return value
 
 
