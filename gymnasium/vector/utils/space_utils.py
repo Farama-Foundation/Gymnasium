@@ -128,7 +128,7 @@ def _batch_space_tuple(space: Tuple, n: int = 1) -> Tuple:
 @batch_space.register(Dict)
 def _batch_space_dict(space: Dict, n: int = 1) -> Dict:
     return Dict(
-        {key: batch_space(subspace, n=n) for key, subspace in space.items()},
+        [(key, batch_space(subspace, n=n)) for key, subspace in space.items()],
         seed=deepcopy(space.np_random),
         sort_keys=space.sort_keys,
     )
@@ -282,10 +282,10 @@ def _batch_differing_spaces_dict(spaces: _PySequence[Dict]) -> Dict:
         )
 
     return Dict(
-        {
-            key: batch_differing_spaces([space[key] for space in spaces])
+        [
+            (key, batch_differing_spaces([space[key] for space in spaces]))
             for key in spaces[0].keys()
-        },
+        ],
         seed=deepcopy(spaces[0].np_random),
         sort_keys=spaces[0].sort_keys,
     )

@@ -2,6 +2,7 @@
 
 import copy
 import re
+from collections import OrderedDict
 from collections.abc import Iterable
 
 import numpy as np
@@ -165,15 +166,24 @@ def test_custom_space():
     assert empty_array is None
 
 
-def test_batch_dict_preserves_key_order():
+@pytest.mark.parametrize(
+    "space",
+    [
+        Dict({"b": Discrete(2), "a": Discrete(3)}, sort_keys=False),
+        Dict(OrderedDict(b=Discrete(2), a=Discrete(3))),
+        Dict([("b", Discrete(2)), ("a", Discrete(3))]),
+        Dict(b=Discrete(2), a=Discrete(3)),
+    ],
+    ids=["unsorted-mapping", "ordered-dict", "pairs", "keywords"],
+)
+def test_batch_dict_preserves_key_order(space):
     """Tests that batching doesn't reorder Dict spaces."""
-    space = Dict({"b": Discrete(2), "a": Discrete(3)}, sort_keys=False)
-
-    assert list(batch_space(space, n=2).keys()) == ["b", "a"]
-    assert list(batch_differing_spaces([space, copy.deepcopy(space)]).keys()) == [
-        "b",
-        "a",
-    ]
+    for batched in (
+        batch_space(space, n=2),
+        batch_differing_spaces([space, copy.deepcopy(space)]),
+    ):
+        assert list(batched.keys()) == list(space.keys()) == ["b", "a"]
+        assert batched.sort_keys == space.sort_keys
 
 
 @pytest.mark.parametrize(
