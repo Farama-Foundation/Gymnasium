@@ -97,6 +97,86 @@ def test_episode_ending_mid_skip_returns_the_final_frame(skip: int, extra_steps:
     assert obs[0] == ends_at
 
 
+@pytest.mark.parametrize(
+    "skip,extra_steps", [(2, 1), (3, 1), (3, 2), (4, 1), (4, 3), (5, 2), (5, 4)]
+)
+def test_time_limit_truncation_mid_skip_returns_the_final_frame(
+    skip: int, extra_steps: int
+):
+    """A time limit cutting the skip short must report frames from this step too.
+
+    ``step`` breaks on ``terminated or truncated``, so a ``TimeLimit`` lands on the same
+    stale buffer a terminating env does, and this is the case a bootstrapping learner
+    actually reads, since truncation does not mask the value of the next state.
+    """
+    inner = gym.wrappers.TimeLimit(
+        _CountingEnv(ends_at=10_000), max_episode_steps=skip + extra_steps
+    )
+    env = MaxAndSkipObservation(inner, skip=skip)
+    env.reset(seed=0)
+
+    assert env.step(0)[0] == skip
+    obs, reward, terminated, truncated, _ = env.step(0)
+
+    assert obs[0] == skip + extra_steps
+    assert reward == float(extra_steps)
+    assert truncated and not terminated
+
+
+class _ReusedBufferEnv(gym.Env):
+    """Writes every observation into one array it keeps handing back."""
+
+    observation_space = gym.spaces.Box(0, 255, shape=(1,), dtype=np.uint8)
+    action_space = gym.spaces.Discrete(1)
+
+    def __init__(self, values: list[int]):
+        """Builds the env.
+
+        Args:
+            values: the pixel value to report at each step, in order
+        """
+        self.values = values
+        self.buffer = np.zeros(1, dtype=np.uint8)
+        self.t = 0
+
+    def reset(self, *, seed=None, options=None):
+        """Clears the shared array and the step counter."""
+        super().reset(seed=seed)
+        self.t = 0
+        self.buffer[:] = 0
+        return self.buffer, {}
+
+    def step(self, action):
+        """Overwrites the shared array in place and returns it again."""
+        self.buffer[:] = self.values[self.t]
+        self.t += 1
+        return self.buffer, 1.0, False, False, {}
+
+
+@pytest.mark.parametrize(
+    "values,expected",
+    [
+        ([200, 200, 70, 10], 70),
+        ([5, 5, 10, 3], 10),
+        ([9, 9, 1, 1], 1),
+        ([1, 2, 3, 4], 4),
+    ],
+)
+def test_a_reused_observation_array_is_still_pooled_correctly(
+    values: list[int], expected: int
+):
+    """An env that hands back one array every step must not collapse the two frames.
+
+    The buffer is a ``numpy`` array, so writing into it copies the values rather than
+    keeping a reference, and the pooled frames stay distinct. Values here fall as well as
+    rise, so a collapsed pair would show up instead of hiding behind a running maximum.
+    """
+    env = MaxAndSkipObservation(_ReusedBufferEnv(values), skip=4)
+    env.reset(seed=0)
+
+    assert env.step(0)[0] == expected
+
+
 @pytest.mark.parametrize("skip", [2, 3, 4])
 def test_no_frame_carries_over_from_the_previous_episode(skip: int):
     """A new episode's first step must not max over frames the last episode left behind."""
