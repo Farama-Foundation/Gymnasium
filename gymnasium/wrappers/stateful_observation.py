@@ -636,15 +636,18 @@ class MaxAndSkipObservation(
         total_reward = 0.0
         terminated = truncated = False
         info = {}
-        for i in range(self._skip):
+        num_obs = 0
+        for _ in range(self._skip):
             obs, reward, terminated, truncated, info = self.env.step(action)
-            if i == self._skip - 2:
-                self._obs_buffer[0] = obs
-            if i == self._skip - 1:
-                self._obs_buffer[1] = obs
+            # Every observation goes into the buffer, so the two it holds are always the
+            # last two seen during this step. Writing only at ``skip - 2`` and
+            # ``skip - 1`` left both frames from the previous step in place whenever the
+            # episode ended before the skip finished.
+            self._obs_buffer[num_obs % 2] = obs
+            num_obs += 1
             total_reward += float(reward)
             if terminated or truncated:
                 break
-        max_frame = np.max(self._obs_buffer, axis=0)
+        max_frame = np.max(self._obs_buffer[: min(num_obs, 2)], axis=0)
 
         return max_frame, total_reward, terminated, truncated, info
