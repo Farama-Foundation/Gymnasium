@@ -184,3 +184,27 @@ def test_rgbd_tuple():
 
     assert (rgb_a == rgb_b).all()
     assert (depth_a == depth_c).all()
+
+
+@pytest.mark.parametrize("render_mode", ["rgb_array", "depth_array", "rgbd_tuple"])
+def test_mujoco_renderer_recovers_context(render_mode):
+    """Cached viewers recover after another OpenGL context becomes current."""
+    env = gymnasium.make(
+        "InvertedPendulum-v5", render_mode=render_mode, width=64, height=64
+    )
+    other_context = None
+    try:
+        env.reset(seed=42)
+        expected = env.render()
+        other_context = mujoco.GLContext(64, 64)
+        other_context.make_current()
+        actual = env.render()
+        if render_mode == "rgbd_tuple":
+            for image, reference in zip(actual, expected, strict=True):
+                np.testing.assert_array_equal(image, reference)
+        else:
+            np.testing.assert_array_equal(actual, expected)
+    finally:
+        if other_context is not None:
+            other_context.free()
+        env.close()
