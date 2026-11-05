@@ -1,7 +1,4 @@
 ---
-hide-toc: true
-firstpage:
-lastpage:
 ---
 
 ```{project-logo} _static/img/gymnasium-text.png
