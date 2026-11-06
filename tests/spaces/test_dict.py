@@ -62,6 +62,15 @@ def test_dict_init():
     assert len(caught_warnings) == 0
 
 
+def test_dict_equality_respects_key_order():
+    """Equivalent spaces must agree on the order used to flatten observations."""
+    a = Dict({"x": Discrete(2), "y": Discrete(3)})
+    b = Dict({"y": Discrete(3), "x": Discrete(2)}, sort_keys=False)
+    assert a != b
+    assert a == Dict({"y": Discrete(3), "x": Discrete(2)})
+    assert a != Dict({"x": Discrete(3), "y": Discrete(2)})
+
+
 DICT_SPACE = Dict(
     {
         "a": Box(low=0, high=1, shape=(3, 3)),
