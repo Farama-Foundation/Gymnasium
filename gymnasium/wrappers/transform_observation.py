@@ -452,7 +452,9 @@ class ReshapeObservation(
 ):
     """Reshapes Array based observations to a specified shape.
 
-    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.RescaleObservation`.
+    One element of the shape can be ``-1``, in which case its size is inferred from the original observation shape.
+
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.ReshapeObservation`.
 
     Example:
         >>> import gymnasium as gym
@@ -479,11 +481,6 @@ class ReshapeObservation(
             raise TypeError(
                 f"ReshapeObservation requires a Box observation space, got {type(env.observation_space)}"
             )
-        if np.prod(shape) != np.prod(env.observation_space.shape):
-            raise ValueError(
-                "ReshapeObservation requires the product of the new shape to match the original shape"
-            )
-
         if not isinstance(shape, tuple):
             raise TypeError(
                 f"ReshapeObservation requires shape to be a tuple, got {type(shape)}"
@@ -496,20 +493,38 @@ class ReshapeObservation(
             raise ValueError(
                 f"ReshapeObservation requires shape elements to be greater than 0 or -1, got {shape}"
             )
+        if shape.count(-1) > 1:
+            raise ValueError(
+                f"ReshapeObservation requires at most one shape element to be -1, got {shape}"
+            )
+
+        # Infer the size of a `-1` dimension from the original shape, as `np.reshape` does
+        original_size = int(np.prod(env.observation_space.shape))
+        new_shape = tuple(int(x) for x in shape)
+        if -1 in new_shape:
+            known_size = int(np.prod([x for x in new_shape if x != -1]))
+            if original_size % known_size == 0:
+                new_shape = tuple(
+                    original_size // known_size if x == -1 else x for x in new_shape
+                )
+        if int(np.prod(new_shape)) != original_size:
+            raise ValueError(
+                f"ReshapeObservation requires the product of the new shape to match the original shape, original shape: {env.observation_space.shape}, new shape: {shape}"
+            )
 
         new_observation_space = spaces.Box(
-            low=np.reshape(np.ravel(env.observation_space.low), shape),
-            high=np.reshape(np.ravel(env.observation_space.high), shape),
-            shape=shape,
+            low=np.reshape(np.ravel(env.observation_space.low), new_shape),
+            high=np.reshape(np.ravel(env.observation_space.high), new_shape),
+            shape=new_shape,
             dtype=env.observation_space.dtype,
         )
-        self.shape = shape
+        self.shape = new_shape
 
         gym.utils.RecordConstructorArgs.__init__(self, shape=shape)
         TransformObservation.__init__(
             self,
             env=env,
-            func=lambda obs: np.reshape(obs, shape),
+            func=lambda obs: np.reshape(obs, new_shape),
             observation_space=new_observation_space,
         )
 
