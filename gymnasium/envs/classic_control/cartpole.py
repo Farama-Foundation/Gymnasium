@@ -370,6 +370,15 @@ class CartPoleVectorEnv(
         render_mode: str | None = None,
         sutton_barto_reward: bool = False,
     ):
+        """Initializes the vectorized CartPole environment.
+
+        Args:
+            num_envs: The number of sub-environments
+            max_episode_steps: The number of steps after which a sub-environment is truncated,
+                a non-positive value (e.g., ``-1``) disables the time limit
+            render_mode: The render mode, only ``"rgb_array"`` is supported
+            sutton_barto_reward: If to use the Sutton and Barto reward function
+        """
         self._sutton_barto_reward = sutton_barto_reward
 
         self.num_envs = num_envs
@@ -474,7 +483,11 @@ class CartPoleVectorEnv(
 
         self.steps += 1
 
-        truncated = self.steps >= self.max_episode_steps
+        if self.max_episode_steps > 0:
+            truncated = self.steps >= self.max_episode_steps
+        else:
+            # A non-positive `max_episode_steps` (e.g., `gym.make_vec(..., max_episode_steps=-1)`) disables the time limit
+            truncated = np.zeros(self.num_envs, dtype=np.bool_)
 
         if self._sutton_barto_reward:
             reward = -np.array(terminated, dtype=np.float32)
