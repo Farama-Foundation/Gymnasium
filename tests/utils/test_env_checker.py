@@ -43,6 +43,16 @@ def _no_error_warnings_envs():
     yield GenericTestEnv(
         observation_space=spaces.Dict(a=spaces.Tuple([space_a, space_b]), b=space_b)
     )
+    # NumPy comparisons return `np.bool_` termination and truncation signals
+    yield GenericTestEnv(
+        step_func=lambda self, action: (
+            self.observation_space.sample(),
+            0,
+            np.False_,
+            np.False_,
+            {},
+        )
+    )
 
 
 @pytest.mark.parametrize("env", _no_error_warnings_envs())
@@ -303,6 +313,16 @@ def test_check_reset_options():
             AssertionError,
             lambda self, action: (0, 0, False, False, {"value": np.random.normal()}),
             "Deterministic step info are not equivalent for the same seed and action",
+        ],
+        [
+            AssertionError,
+            lambda self, action: (0, 0, False, True, {}),
+            "Environment truncates after 1 step, something has gone very wrong.",
+        ],
+        [
+            AssertionError,
+            lambda self, action: (0, 0, False, np.True_, {}),
+            "Environment truncates after 1 step, something has gone very wrong.",
         ],
     ],
 )

@@ -24,7 +24,10 @@ from tests.vector.utils.utils import is_rng_equal
 
 @pytest.mark.parametrize("space", TESTING_SPACES, ids=TESTING_SPACES_IDS)
 @pytest.mark.parametrize("n", [1, 4], ids=[f"n={n}" for n in [1, 4]])
-def test_batch_space_concatenate_iterate_create_empty_array(space: Space, n: int):
+@pytest.mark.parametrize("use_iterator", [False, True], ids=["list", "iterator"])
+def test_batch_space_concatenate_iterate_create_empty_array(
+    space: Space, n: int, use_iterator: bool
+):
     """Test all space_utils functions using them together."""
     # Batch the space and create a sample
     batched_space = batch_space(space, n)
@@ -50,7 +53,8 @@ def test_batch_space_concatenate_iterate_create_empty_array(space: Space, n: int
     # Generate samples from the original space and concatenate using array into a single object
     space_samples = [space.sample() for _ in range(n)]
     assert all(item in space for item in space_samples)
-    concatenated_samples_array = concatenate(space, space_samples, array)
+    items = iter(space_samples) if use_iterator else space_samples
+    concatenated_samples_array = concatenate(space, items, array)
     # `concatenate` does not necessarily use the out object as the returned object
     # assert out is concatenated_samples_array
     assert concatenated_samples_array in batched_space

@@ -63,7 +63,7 @@ def test_shared_memory_create_read_write(space, num, ctx):
     ids=lambda dtype: np.dtype(dtype).name,
 )
 def test_shared_memory_no_array_typecode_dtypes(dtype):
-    """Test dtypes without an `array` module typecode (e.g. float16) roundtrip through shared memory."""
+    """Test dtypes without a `multiprocessing` typecode (e.g. float16) roundtrip through shared memory."""
     space = Box(low=-1.0, high=1.0, shape=(2, 3), dtype=dtype)
     num = 8
 
