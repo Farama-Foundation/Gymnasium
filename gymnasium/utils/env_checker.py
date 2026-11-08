@@ -39,7 +39,7 @@ def data_equivalence(data_1: Any, data_2: Any, exact: bool = False) -> bool:
     Args:
         data_1: data structure 1
         data_2: data structure 2
-        exact: whether to compare array exactly or not if false compares with absolute and relative tolerance of 1e-5 (for more information check [np.allclose](https://numpy.org/doc/stable/reference/generated/numpy.allclose.html)).
+        exact: whether to compare numeric arrays exactly. If false, compares with absolute and relative tolerance of 1e-5 (see [np.allclose](https://numpy.org/doc/stable/reference/generated/numpy.allclose.html)). Non-numeric arrays are always compared exactly.
 
     Returns:
         If observation 1 and 2 are equivalent
@@ -63,7 +63,8 @@ def data_equivalence(data_1: Any, data_2: Any, exact: bool = False) -> bool:
                     for a, b in zip(data_1, data_2, strict=True)
                 )
             else:
-                if exact:
+                if exact or data_1.dtype.kind not in "biufc":
+                    # Non-numeric arrays do not support the arithmetic in allclose.
                     # `np.all` returns `np.bool_`, which is incompatible with `bool`
                     return bool(np.all(data_1 == data_2))
                 else:
