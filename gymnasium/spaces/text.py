@@ -149,6 +149,8 @@ class Text(Space[str]):
                 assert np.isclose(np.sum(charlist_mask), 1), (
                     f"Expects the sum of the probability mask to be 1, actual sum: {np.sum(charlist_mask)}"
                 )
+                # NumPy's sum tolerance is stricter than the validation above.
+                charlist_mask = charlist_mask / np.sum(charlist_mask)
         else:
             length = charlist_mask = None
 

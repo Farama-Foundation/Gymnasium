@@ -69,6 +69,22 @@ def test_sample_with_mask_and_probability():
         )
 
 
+@pytest.mark.parametrize("total", [1 - 1e-7, 1.0, 1 + 1e-7])
+def test_sample_probability_rounding(total):
+    """Probability masks accepted by validation must also work in sampling."""
+    probability = np.array([0.0, 0.25 * total, 0.75 * total])
+    original = probability.copy()
+    space = Discrete(3, start=2, seed=123)
+    reference = np.random.default_rng(123)
+
+    for _ in range(20):
+        sample = space.sample(probability=probability)
+        assert sample in space
+        assert sample == 2 + reference.choice(3, p=probability / probability.sum())
+        assert sample != 2
+    np.testing.assert_array_equal(probability, original)
+
+
 def test_invalid_probability_mask_dtype():
     """Test that invalid probability mask dtype raises the correct exception."""
     space = Discrete(4, start=2)
