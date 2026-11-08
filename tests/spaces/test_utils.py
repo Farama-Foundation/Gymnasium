@@ -211,6 +211,66 @@ def test_unflatten_discrete_with_dtype(space, flattened_sample):
     assert space.dtype == unflattened.dtype
 
 
+@pytest.mark.parametrize(
+    "dtype",
+    [np.int8, np.uint8, np.int16, np.uint16, np.int32, np.uint32, np.int64, np.uint64],
+)
+@pytest.mark.parametrize("high_start", [False, True])
+@pytest.mark.parametrize("shape", [(4,), (2, 2)])
+def test_flatten_multidiscrete_integer_dtypes(dtype, high_start, shape):
+    """One-hot encoding preserves valid values at either integer boundary."""
+    start = int(np.iinfo(dtype).max) - 3 if high_start else int(np.iinfo(dtype).min)
+    _check_multidiscrete_flatten(dtype, start, shape)
+
+
+@pytest.mark.parametrize("start", [0, 2**53 + 1])
+@pytest.mark.parametrize("shape", [(4,), (2, 2)])
+def test_flatten_multidiscrete_uint64(start, shape):
+    """Unsigned 64-bit samples remain integer indices, including large starts."""
+    _check_multidiscrete_flatten(np.uint64, start, shape)
+
+
+def _check_multidiscrete_flatten(dtype, start, shape):
+    """Compare flattening with independent categorical one-hot vectors."""
+    counts = [3, 4, 4, 3]
+    choices = [0, 3, 1, 2]
+    space = gym.spaces.MultiDiscrete(
+        np.array(counts).reshape(shape),
+        start=np.full(shape, start, dtype=dtype),
+        dtype=dtype,
+    )
+    sample = np.array([start + choice for choice in choices], dtype=dtype).reshape(
+        shape
+    )
+    expected = np.array(
+        [
+            int(index == choice)
+            for count, choice in zip(counts, choices, strict=True)
+            for index in range(count)
+        ],
+        dtype=dtype,
+    )
+    assert sample in space
+    flattened = utils.flatten(space, sample)
+    np.testing.assert_array_equal(flattened, expected)
+    assert flattened.dtype == space.dtype
+    assert flattened in utils.flatten_space(space)
+    restored = utils.unflatten(space, flattened)
+    np.testing.assert_array_equal(restored, sample)
+    assert restored.dtype == space.dtype
+
+
+@pytest.mark.parametrize("dtype", [np.int8, np.uint8])
+def test_flatten_multidiscrete_offsets_exceed_value_dtype(dtype):
+    """The flattened vector can have more entries than its dtype can index."""
+    space = gym.spaces.MultiDiscrete([101, 101, 101, 101], dtype=dtype)
+    sample = np.array([0, 100, 50, 1], dtype=dtype)
+    expected = np.zeros(404, dtype=dtype)
+    expected[[0, 201, 252, 304]] = 1
+    np.testing.assert_array_equal(utils.flatten(space, sample), expected)
+    np.testing.assert_array_equal(utils.unflatten(space, expected), sample)
+
+
 def test_unflatten_discrete_error():
     value = np.array([0])
     with pytest.raises(ValueError):
