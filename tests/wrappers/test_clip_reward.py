@@ -41,3 +41,33 @@ def test_clip_reward_incorrect_params(lower_bound, upper_bound):
 
     with pytest.raises(InvalidBound):
         ClipReward(env, lower_bound, upper_bound)
+
+
+@pytest.mark.parametrize("dtype", [np.int8, np.int16, np.int32, np.int64])
+@pytest.mark.parametrize("as_array", [False, True])
+def test_clip_reward_signed_integer_bounds(dtype, as_array):
+    """Accept ordered integer bounds even when their difference would overflow."""
+    limits = np.iinfo(dtype)
+    lower_bound, upper_bound = dtype(limits.min), dtype(limits.max)
+    if as_array:
+        lower_bound, upper_bound = np.array([lower_bound]), np.array([upper_bound])
+
+    with gym.make(ENV_ID) as env:
+        with np.errstate(over="raise"):
+            wrapped = ClipReward(env, lower_bound, upper_bound)
+        wrapped.reset(seed=SEED)
+        _, reward, _, _, _ = wrapped.step(DISCRETE_ACTION)
+        np.testing.assert_array_equal(reward, np.clip(1.0, lower_bound, upper_bound))
+
+
+@pytest.mark.parametrize("dtype", [np.uint8, np.uint16, np.uint32, np.uint64])
+@pytest.mark.parametrize("as_array", [False, True])
+def test_clip_reward_reversed_unsigned_bounds(dtype, as_array):
+    """Reject reversed unsigned bounds instead of wrapping their difference."""
+    lower_bound, upper_bound = dtype(2), dtype(1)
+    if as_array:
+        lower_bound, upper_bound = np.array([lower_bound]), np.array([upper_bound])
+
+    with gym.make(ENV_ID) as env:
+        with np.errstate(over="raise"), pytest.raises(InvalidBound):
+            ClipReward(env, lower_bound, upper_bound)
