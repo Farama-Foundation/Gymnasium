@@ -9,6 +9,7 @@ The exception is the data converter wrappers
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any
 
 import numpy as np
@@ -16,10 +17,42 @@ import pytest
 
 import gymnasium as gym
 from gymnasium import wrappers
-from gymnasium.spaces import Box, Dict, Discrete
+from gymnasium.spaces import Box, Dict, Discrete, Tuple
 from gymnasium.vector.vector_env import AutoresetMode
 from tests.testing_env import GenericTestEnv
 from tests.wrappers.vector.utils import check_vector_wrapper_equivalence
+
+
+@pytest.mark.parametrize("read_only", [False, True])
+def test_nested_dict_transform_preserves_input_batch(read_only):
+    """Swapping nested fields must not alias or overwrite the source vector batch."""
+    space = Dict({key: Dict({"value": Box(0, 1, (2,))}) for key in ("left", "right")})
+    env = gym.vector.SyncVectorEnv(
+        [lambda: GenericTestEnv(observation_space=space)] * 3
+    )
+    wrapped = wrappers.vector.VectorizeTransformObservation(
+        env,
+        wrapper=wrappers.TransformObservation,
+        func=lambda obs: {"left": obs["right"], "right": obs["left"]},
+        observation_space=space,
+    )
+    try:
+        batch, _ = env.reset(seed=123)
+        original = deepcopy(batch)
+        if read_only:
+            for value in batch.values():
+                value["value"].flags.writeable = False
+        transformed = wrapped.observations(batch)
+        for key, other in [("left", "right"), ("right", "left")]:
+            np.testing.assert_array_equal(
+                transformed[key]["value"], original[other]["value"]
+            )
+            np.testing.assert_array_equal(batch[key]["value"], original[key]["value"])
+            assert not np.shares_memory(
+                transformed[key]["value"], batch[other]["value"]
+            )
+    finally:
+        wrapped.close()
 
 
 @pytest.fixture
@@ -85,4 +118,25 @@ def test_vector_wrapper_equivalence(
         kwargs,
         getattr(wrappers, wrapper_name),
         kwargs,
+    )
+
+
+@pytest.mark.parametrize("vectorization_mode", ["sync", "async"])
+@pytest.mark.parametrize("autoreset_mode", list(AutoresetMode))
+@pytest.mark.parametrize("filter_keys", [(0, 1), (1, 0)])
+def test_filter_tuple_observation_equivalence(
+    vectorization_mode, autoreset_mode, filter_keys
+):
+    """Filtering equal tuple subspaces must preserve each field's values."""
+    check_vector_wrapper_equivalence(
+        autoreset_mode,
+        3,
+        lambda: GenericTestEnv(
+            observation_space=Tuple((Box(0, 1, (2,)), Box(0, 1, (2,))))
+        ),
+        wrappers.vector.FilterObservation,
+        {"filter_keys": filter_keys},
+        wrappers.FilterObservation,
+        {"filter_keys": filter_keys},
+        vectorization_mode=vectorization_mode,
     )
