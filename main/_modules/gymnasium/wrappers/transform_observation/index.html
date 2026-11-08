@@ -1273,12 +1273,8 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">observation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Discretizes the observation."""</span>
-        <span class="c1"># np.digitize returns len(bins) if the input exceeds the last edge.</span>
-        <span class="c1"># If an observation is exactly equal to the high bound, the resulting</span>
-        <span class="c1"># index could be out of range for the number of bins.</span>
-        <span class="c1"># Solution: clip to ensure 0 &lt;= index &lt; bins[i], and add a small margin</span>
-        <span class="c1"># to prevent precision issues.</span>
-        <span class="n">clipped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">observation</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">-</span> <span class="mf">1e-8</span><span class="p">)</span>
+        <span class="c1"># Only internal bin edges are used, so the high bound maps to the last bin.</span>
+        <span class="n">clipped</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">observation</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="p">)</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span>
             <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">digitize</span><span class="p">(</span><span class="n">clipped</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">bin_edges</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dims</span><span class="p">)</span>
         <span class="p">]</span>
