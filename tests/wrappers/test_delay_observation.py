@@ -1,13 +1,16 @@
 """Test suite for DelayObservation wrapper."""
 
 import re
+from copy import deepcopy
 
+import numpy as np
 import pytest
 
 import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.wrappers import DelayObservation
 from gymnasium.wrappers.utils import create_zero_array
+from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import SEED, TESTING_OBS_ENVS, TESTING_OBS_ENVS_IDS
 
 
@@ -76,3 +79,68 @@ def test_delay_failures():
         match=re.escape("The delay needs to be greater than zero, actual value: -1"),
     ):
         DelayObservation(env, delay=-1)
+
+
+@pytest.mark.parametrize("delay", [0, 1, 3])
+@pytest.mark.parametrize("reuse_buffer", [False, True])
+@pytest.mark.parametrize("nested", [False, True], ids=["array", "nested"])
+def test_delayed_observation_history(delay, reuse_buffer, nested):
+    """Delaying observations preserves values when the environment reuses storage."""
+    array_space = gym.spaces.Box(-100, 100, (2,), dtype=np.float32)
+    buffer = np.empty(array_space.shape, dtype=array_space.dtype)
+    observation_space = (
+        gym.spaces.Dict(value=gym.spaces.Tuple((array_space,)))
+        if nested
+        else array_space
+    )
+    shared_observation = {"value": (buffer,)} if nested else buffer
+    timestep = 0
+
+    def observation():
+        buffer[:] = [timestep, -timestep]
+        return shared_observation if reuse_buffer else deepcopy(shared_observation)
+
+    def reset(self, *, seed=None, options=None):
+        nonlocal timestep
+        timestep = options["start"]
+        return observation(), {"reset": timestep}
+
+    def step(self, action):
+        nonlocal timestep
+        timestep += 1
+        return observation(), float(timestep), timestep == 7, False, {"step": timestep}
+
+    env = DelayObservation(
+        GenericTestEnv(
+            observation_space=observation_space, reset_func=reset, step_func=step
+        ),
+        delay=delay,
+    )
+    zero = create_zero_array(observation_space)
+    returned = []
+    for start in [1, 20]:
+        obs, info = env.reset(options={"start": start})
+        assert info == {"reset": start}
+        expected = [deepcopy(shared_observation)]
+        assert data_equivalence(obs, zero if delay else expected[0])
+        for index in range(1, 8):
+            obs, reward, terminated, truncated, info = env.step(0)
+            expected.append(deepcopy(shared_observation))
+            assert data_equivalence(
+                obs, zero if index < delay else expected[index - delay]
+            )
+            assert obs in observation_space
+            assert (reward, terminated, truncated, info) == (
+                float(start + index),
+                start + index == 7,
+                False,
+                {"step": start + index},
+            )
+            if delay:
+                returned.append((obs, deepcopy(obs)))
+            elif reuse_buffer:
+                assert obs is shared_observation
+
+    for obs, snapshot in returned:
+        assert data_equivalence(obs, snapshot)
+    env.close()

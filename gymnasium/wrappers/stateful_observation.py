@@ -40,6 +40,8 @@ class DelayObservation(
     Before reaching the :attr:`delay` number of timesteps, returned observations is an array of zeros with
     the same shape as the observation space.
 
+    Observations are copied before being stored in the delay queue, so environments can safely reuse observation buffers.
+
     No vector version of the wrapper exists.
 
     Note:
@@ -95,7 +97,10 @@ class DelayObservation(
 
     def observation(self, observation: ObsType) -> ObsType:
         """Return the delayed observation."""
-        self.observation_queue.append(observation)
+        if self.delay == 0:
+            return observation
+
+        self.observation_queue.append(deepcopy(observation))
 
         if len(self.observation_queue) > self.delay:
             return self.observation_queue.popleft()
