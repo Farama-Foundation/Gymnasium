@@ -339,8 +339,19 @@ def _flatten_oneof(space: OneOf, x: tuple[int, Any]) -> NDArray[Any]:
 
     max_flatdim = flatdim(space) - 1  # Don't include the index
     if flat_sample.size < max_flatdim:
+        if flat_sample.size > 0:
+            fill_val = flat_sample[0]
+        else:
+            non_empty_subspaces = [
+                flatten_space(s) for s in space.spaces if flatdim(s) > 0
+            ]
+            fill_val = (
+                np.min([np.min(s.low) for s in non_empty_subspaces])
+                if non_empty_subspaces
+                else 0
+            )
         padding = np.full(
-            max_flatdim - flat_sample.size, flat_sample[0], dtype=flat_sample.dtype
+            max_flatdim - flat_sample.size, fill_val, dtype=flat_sample.dtype
         )
         flat_sample = np.concatenate([flat_sample, padding])
 
@@ -661,11 +672,12 @@ def _flatten_space_oneof(space: OneOf) -> Box:
     num_subspaces = len(space.spaces)
     max_flatdim = max(flatdim(s) for s in space.spaces) + 1
 
-    lows = np.array([np.min(flatten_space(s).low) for s in space.spaces])
-    highs = np.array([np.max(flatten_space(s).high) for s in space.spaces])
+    flattened_subspaces = [flatten_space(s) for s in space.spaces]
+    non_empty_lows = [np.min(s.low) for s in flattened_subspaces if s.low.size > 0]
+    non_empty_highs = [np.max(s.high) for s in flattened_subspaces if s.high.size > 0]
 
-    overall_low = np.min(lows)
-    overall_high = np.max(highs)
+    overall_low = np.min(non_empty_lows) if non_empty_lows else 0
+    overall_high = np.max(non_empty_highs) if non_empty_highs else 0
 
     low = np.concatenate([[0], np.full(max_flatdim - 1, overall_low)])
     high = np.concatenate([[num_subspaces - 1], np.full(max_flatdim - 1, overall_high)])
