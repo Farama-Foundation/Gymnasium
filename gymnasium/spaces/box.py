@@ -279,6 +279,14 @@ class Box(Space[NDArray[_ScalarT_co]]):
             bounded_below = -np.inf < low
 
             neginf = np.isneginf(low)  # type: ignore[arg-type]
+            # mask -inf out first, so a -inf entry elsewhere can't hide an out-of-range
+            # finite entry behind this check
+            if low.dtype != self.dtype and np.any(
+                np.where(neginf, dtype_min, low) < dtype_min
+            ):
+                raise ValueError(
+                    f"Box low is out of bounds of the dtype range, low={low}, min dtype={dtype_min}"
+                )
             if np.any(neginf):
                 if self.dtype.kind == "i":  # signed int
                     # set the limit after the cast, where low's float dtype cannot round it
@@ -288,10 +296,6 @@ class Box(Space[NDArray[_ScalarT_co]]):
                     raise ValueError(
                         f"Box unsigned int dtype don't support `-np.inf`, low={low}"
                     )
-            elif low.dtype != self.dtype and np.any(low < dtype_min):
-                raise ValueError(
-                    f"Box low is out of bounds of the dtype range, low={low}, min dtype={dtype_min}"
-                )
 
             if low.dtype.kind == "f" and self.dtype.kind == "f":
                 dtype_self = cast("np.dtype[np.floating]", self.dtype)
@@ -348,6 +352,14 @@ class Box(Space[NDArray[_ScalarT_co]]):
             bounded_above = high < np.inf
 
             posinf = np.isposinf(high)  # type: ignore[arg-type]
+            # mask +inf out first, so a +inf entry elsewhere can't hide an out-of-range
+            # finite entry behind this check
+            if high.dtype != self.dtype and np.any(
+                dtype_max < np.where(posinf, dtype_max, high)
+            ):
+                raise ValueError(
+                    f"Box high is out of bounds of the dtype range, high={high}, max dtype={dtype_max}"
+                )
             if np.any(posinf):
                 if self.dtype.kind == "i":  # signed int
                     # set the limit after the cast, where high's float dtype cannot round it
@@ -357,10 +369,6 @@ class Box(Space[NDArray[_ScalarT_co]]):
                     raise ValueError(
                         f"Box unsigned int dtype don't support `np.inf`, high={high}"
                     )
-            elif high.dtype != self.dtype and np.any(dtype_max < high):
-                raise ValueError(
-                    f"Box high is out of bounds of the dtype range, high={high}, max dtype={dtype_max}"
-                )
 
             if high.dtype.kind == "f" and self.dtype.kind == "f":
                 dtype_self = cast("np.dtype[np.floating]", self.dtype)
