@@ -89,6 +89,9 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
 
         This will construct the space :math:`\{\text{start}, ..., \text{start} + n - 1\}`.
 
+        The dtype must be able to represent every value of the space and the number of
+        elements ``n`` itself, otherwise a ``ValueError`` is raised.
+
         Args:
             n (int): The number of elements of this space.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the ``Dict`` space.
@@ -115,7 +118,21 @@ class Discrete(Space[_IntegerT_co], Generic[_IntegerT_co]):
                 f"Invalid Discrete dtype ({self.dtype}), must be an integer dtype"
             )
 
+        # the count must fit the dtype too, a NumPy integer ``n`` would silently wrap
+        dtype_info = np.iinfo(self.dtype)
+        if int(n) > dtype_info.max:
+            raise ValueError(f"n={n} is not representable by dtype {self.dtype}.")
         self.n = self.dtype.type(n)
+
+        # check that the range of values is representable in the dtype
+        start = int(start)
+        largest = start + int(n) - 1
+        if not (dtype_info.min <= start and largest <= dtype_info.max):
+            raise ValueError(
+                f"The space values {start}..{largest} are not representable by the "
+                f"dtype {self.dtype} (valid range {dtype_info.min}..{dtype_info.max})."
+            )
+
         self.start = self.dtype.type(start)
         super().__init__((), self.dtype, seed)
 
