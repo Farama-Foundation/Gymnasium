@@ -234,14 +234,18 @@ def rescale_box(
     max_finite = np.isfinite(new_max)
     both_finite = min_finite & max_finite
 
-    high_low_diff = np.array(
-        box.high[both_finite], dtype=high_low_diff_dtype
-    ) - np.array(box.low[both_finite], dtype=high_low_diff_dtype)
+    width = np.array(box.high, dtype=high_low_diff_dtype) - np.array(
+        box.low, dtype=high_low_diff_dtype
+    )
+    # A fixed bound has no width. Dividing by it produced inf and then nan.
+    point = both_finite & (width == 0)
+    safe_width = np.where(width == 0, 1, width)
 
     gradient = np.ones_like(new_min, dtype=box.dtype)
-    gradient[both_finite] = (
-        new_max[both_finite] - new_min[both_finite]
-    ) / high_low_diff
+    gradient[both_finite] = (new_max[both_finite] - new_min[both_finite]) / safe_width[
+        both_finite
+    ]
+    gradient[point] = 0
 
     intercept = np.zeros_like(new_min, dtype=box.dtype)
     # In cases where both are finite, the lower operation takes precedence
@@ -261,6 +265,14 @@ def rescale_box(
         return gradient * obs + intercept
 
     def backward(obs: np.ndarray) -> np.ndarray:
-        return (obs - intercept) / gradient
+        if not np.any(point):
+            return (obs - intercept) / gradient
+        # The fixed component has one legal value, so every rescaled input maps to it.
+        safe_gradient = np.array(gradient, copy=True)
+        safe_gradient[point] = 1
+        restored = (obs - intercept) / safe_gradient
+        restored = np.array(restored, copy=True)
+        restored[point] = box.low[point]
+        return restored
 
     return new_box, forward, backward

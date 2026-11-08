@@ -52,3 +52,25 @@ def test_rescale_observation():
         obs, _, _, _, info = wrapped_env.step(sample_obs)
         assert np.all(obs == expected_obs)
         check_obs(env, wrapped_env, obs, info["obs"], strict=False)
+
+
+def test_rescale_observation_fixed_bound():
+    """A component that can only be one value maps to the lower target bound."""
+    env = GenericTestEnv(
+        observation_space=Box(
+            np.array([0, 5], dtype=np.float32),
+            np.array([1, 5], dtype=np.float32),
+        ),
+        reset_func=record_obs_reset,
+        step_func=record_action_as_obs_step,
+    )
+    wrapped_env = RescaleObservation(
+        env,
+        min_obs=np.array([-1, 0], dtype=np.float32),
+        max_obs=np.array([1, 2], dtype=np.float32),
+    )
+
+    sample = np.array([0.0, 5.0], dtype=np.float32)
+    assert sample in env.observation_space
+    obs, _info = wrapped_env.reset(options={"obs": sample})
+    assert np.all(obs == np.array([-1.0, 0.0], dtype=np.float32))
