@@ -8,16 +8,14 @@ jobs:
   build-all:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        python-version: ['3.11', '3.12', '3.13', '3.14', '3.15']
+        python-version: ['3.11', '3.12', '3.13', '3.14']
         numpy-version: ['>=1.21,<2.0', '>=2.1']
         exclude:
           - python-version: '3.13'
             numpy-version: '>=1.21,<2.0'
           - python-version: '3.14'
-            numpy-version: '>=1.21,<2.0'
-          - python-version: '3.15'
             numpy-version: '>=1.21,<2.0'
     steps:
       - uses: actions/checkout@v7
