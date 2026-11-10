@@ -1,5 +1,6 @@
 __credits__ = ["Kallinteris-Andreas"]
 
+import mujoco
 import numpy as np
 
 from gymnasium import utils
@@ -149,6 +150,7 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
         - Fixed bug: `reward_distance` & `reward_near` was based on the state before the physics step, now it is based on the state after the physics step (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/821)).
         - Added `reward_near_weight`, `reward_dist_weight`, `reward_control_weight` arguments to configure the reward function (defaults are effectively the same as in `v4`).
         - Fixed `info["reward_ctrl"]` not being multiplied by the reward weight.
+        - Fixed bug: the fingertip and object positions used in the observation, `reward_near` and `reward_dist` were one physics step stale (`xpos` lagged `qpos` after `mj_step`), they are now computed from the post-step state (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/1690)).
         - Added `info["reward_near"]` which is equal to the reward term `reward_near`.
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
         - Warning: This version of the environment is not compatible with `mujoco>=3.0.0` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/950)).
@@ -214,6 +216,11 @@ class PusherEnv(MujocoEnv, utils.EzPickle):
 
     def step(self, action):
         self.do_simulation(action, self.frame_skip)
+        # Sync body xpos with post-step qpos (xpos lags by one integration;
+        # see google-deepmind/mujoco#889). Needed so the body positions used in
+        # the observation and in both distance rewards match the joint state of
+        # the same step; the goal never moves (same as Reacher, #1700).
+        mujoco.mj_kinematics(self.model, self.data)
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew(action)
