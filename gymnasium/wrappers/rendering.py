@@ -649,7 +649,7 @@ class AddWhiteNoise(
                     size=render_out.shape,
                     dtype=np.uint8,
                 )
-                .sum(-1, keepdims=True)
+                .sum(-1, keepdims=True, dtype=np.uint8)
                 .repeat(3, -1)
             )
         else:
@@ -750,7 +750,7 @@ class ObstructView(
                     size=render_out.shape,
                     dtype=np.uint8,
                 )
-                .sum(-1, keepdims=True)
+                .sum(-1, keepdims=True, dtype=np.uint8)
                 .repeat(3, -1)
             )
         else:
