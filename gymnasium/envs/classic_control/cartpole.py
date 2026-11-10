@@ -126,9 +126,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
-        self.total_mass = self.masspole + self.masscart
         self.length = 0.5  # actually half the pole's length
-        self.polemass_length = self.masspole * self.length
         self.force_mag = 10.0
         self.tau = 0.02  # seconds between state updates
         self.kinematics_integrator = "euler"
@@ -162,6 +160,16 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
         self.state: np.ndarray | None = None
 
         self.steps_beyond_terminated = None
+
+    @property
+    def total_mass(self) -> float:
+        """The combined mass of the cart and the pole."""
+        return self.masspole + self.masscart
+
+    @property
+    def polemass_length(self) -> float:
+        """The product of the pole mass and its half-length."""
+        return self.masspole * self.length
 
     def step(self, action):
         assert self.action_space.contains(action), (
@@ -379,9 +387,7 @@ class CartPoleVectorEnv(
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
-        self.total_mass = self.masspole + self.masscart
         self.length = 0.5  # actually half the pole's length
-        self.polemass_length = self.masspole * self.length
         self.force_mag = 10.0
         self.tau = 0.02  # seconds between state updates
         self.kinematics_integrator = "euler"
@@ -421,6 +427,16 @@ class CartPoleVectorEnv(
         self.surf = None
 
         self.steps_beyond_terminated = None
+
+    @property
+    def total_mass(self) -> float:
+        """The combined mass of the cart and the pole."""
+        return self.masspole + self.masscart
+
+    @property
+    def polemass_length(self) -> float:
+        """The product of the pole mass and its half-length."""
+        return self.masspole * self.length
 
     def step(
         self, action: npt.NDArray[np.integer[Any]]
