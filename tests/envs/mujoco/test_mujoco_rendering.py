@@ -1,5 +1,7 @@
 import os
+import tempfile
 
+import glfw
 import mujoco
 import numpy as np
 import pytest
@@ -137,6 +139,21 @@ def test_add_markers(model: mujoco.MjModel, data: mujoco.MjData, render_mode: st
     # close viewer after usage
     assert len(viewer._markers) == 0, "Markers should be cleared after rendering."
     viewer.close()
+
+
+def test_capture_frame(
+    model: mujoco.MjModel, data: mujoco.MjData, tmp_path, monkeypatch
+):
+    """Test that the capture key of the human viewer saves the frame into the temporary directory."""
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
+    renderer = ExposedViewerRenderer(
+        model, data, width=DEFAULT_SIZE, height=DEFAULT_SIZE
+    )
+    viewer = renderer.get_viewer("human")
+    viewer.render()
+    viewer._key_callback(viewer.window, glfw.KEY_T, 0, glfw.RELEASE, 0)
+    viewer.close()
+    assert (tmp_path / "frame_0000000.png").is_file()
 
 
 @pytest.mark.parametrize(

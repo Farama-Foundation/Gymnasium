@@ -1,4 +1,5 @@
 import os
+import tempfile
 import time
 
 import glfw
@@ -355,7 +356,7 @@ class WindowViewer(BaseRender):
         self._contacts = False
         self._render_every_frame = True
         self._image_idx = 0
-        self._image_path = "/tmp/frame_%07d.png"
+        self._image_path = os.path.join(tempfile.gettempdir(), "frame_%07d.png")
         self._time_per_render = 1 / 60.0
         self._run_speed = 1.0
         self._loop_count = 0
