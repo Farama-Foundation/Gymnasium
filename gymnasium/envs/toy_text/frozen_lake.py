@@ -65,7 +65,17 @@ def generate_random_map(
 
     Returns:
         A random valid map
+
+    Raises:
+        ValueError: If ``size`` is less than 2 or ``p`` is not positive,
+            as no valid map exists for either
     """
+    # No valid map exists for these values, so the loop below would never end.
+    if size < 2:
+        raise ValueError(f"`size` must be at least 2, got {size}")
+    if p <= 0:
+        raise ValueError(f"`p` must be greater than 0, got {p}")
+
     valid = False
     board = []  # initialize to make pyright happy
 
