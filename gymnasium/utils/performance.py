@@ -132,15 +132,23 @@ def benchmark_init(
     return inits_per_time
 
 
-def benchmark_render(env: gymnasium.Env, target_duration: int = 5) -> float:
+def benchmark_render(
+    env: gymnasium.Env, target_duration: int = 5, seed: int | None = None
+) -> float:
     """A benchmark to measure the time of render().
+
+    The environment is reset before rendering, as environments must be reset before :meth:`render` can be called.
 
     Note: does not work with `render_mode='human'`
     Args:
         env: the environment to benchmarked (Note: must be renderable).
         target_duration: the duration of the benchmark in seconds (note: it will go slightly over it).
+        seed: seeds the reset of the environment before rendering.
 
+    Returns: the average renders per second.
     """
+    env.reset(seed=seed)
+
     renders = 0
     end = 0.0
     start = time.time()
