@@ -1,9 +1,95 @@
+import pickle
 import re
+from copy import deepcopy
 
 import numpy as np
 import pytest
 
-from gymnasium.spaces import Discrete, Graph, GraphInstance
+from gymnasium.spaces import (
+    Box,
+    Dict,
+    Discrete,
+    Graph,
+    GraphInstance,
+    MultiBinary,
+    MultiDiscrete,
+    Tuple,
+)
+from gymnasium.utils.env_checker import data_equivalence
+
+
+@pytest.mark.parametrize("feature_type", ["dict", "tuple", "nested"])
+@pytest.mark.parametrize("feature_location", ["nodes", "edges"])
+@pytest.mark.parametrize(
+    "feature",
+    [Box(0, 1, (3,)), Discrete(1000), MultiBinary(32), MultiDiscrete([1000, 1000])],
+)
+def test_composite_feature_sampling_advances(feature_type, feature_location, feature):
+    feature = deepcopy(feature)
+    if feature_type == "dict":
+        feature = Dict(value=feature)
+    elif feature_type == "tuple":
+        feature = Tuple((feature,))
+    else:
+        feature = Dict(value=Tuple((Dict(value=feature),)))
+
+    if feature_location == "nodes":
+        space = Graph(feature, None, seed=42)
+        sample_kwargs = {"num_nodes": 4}
+    else:
+        space = Graph(Discrete(5), feature, seed=42)
+        sample_kwargs = {"num_nodes": 4, "num_edges": 3}
+
+    samples = [space.sample(**sample_kwargs) for _ in range(3)]
+    assert all(sample in space for sample in samples)
+    for previous, current in zip(samples, samples[1:], strict=False):
+        assert not data_equivalence(
+            getattr(previous, feature_location), getattr(current, feature_location)
+        )
+
+    space.seed(42)
+    assert all(
+        data_equivalence(sample, space.sample(**sample_kwargs)) for sample in samples
+    )
+
+
+@pytest.mark.parametrize("feature_type", ["dict", "tuple", "nested"])
+def test_composite_feature_sampling_lifecycle(feature_type):
+    feature = Box(0, 1, (3,))
+    if feature_type == "dict":
+        feature = Dict(value=feature)
+    elif feature_type == "tuple":
+        feature = Tuple((feature,))
+    else:
+        feature = Dict(value=Tuple((Dict(value=feature),)))
+
+    space = Graph(feature, deepcopy(feature), seed=42)
+    seeds = space.seed(42)
+    first = space.sample(num_nodes=4, num_edges=3)
+    space.seed(seeds)
+    assert data_equivalence(first, space.sample(num_nodes=4, num_edges=3))
+    restored = pickle.loads(pickle.dumps(space))
+    for num_nodes, num_edges in [(2, 1), (5, 4), (3, 0)]:
+        assert data_equivalence(
+            space.sample(num_nodes=num_nodes, num_edges=num_edges),
+            restored.sample(num_nodes=num_nodes, num_edges=num_edges),
+        )
+
+
+@pytest.mark.parametrize("mask_type", ["mask", "probability"])
+def test_composite_feature_sampling_masks(mask_type):
+    feature = Dict(value=Tuple((Discrete(3),)))
+    space = Graph(feature, deepcopy(feature), seed=42)
+    dtype = np.int8 if mask_type == "mask" else np.float64
+    node_mask = {"value": ((np.array([0, 1, 0], dtype=dtype),) * 4,)}
+    edge_mask = {"value": ((np.array([0, 0, 1], dtype=dtype),) * 3,)}
+    for _ in range(3):
+        sample = space.sample(
+            **{mask_type: (node_mask, edge_mask)}, num_nodes=4, num_edges=3
+        )
+        assert sample in space
+        assert np.all(sample.nodes["value"][0] == 1)
+        assert np.all(sample.edges["value"][0] == 2)
 
 
 def test_node_space_sample():
