@@ -269,6 +269,8 @@ class Dict(
 
     def to_jsonable(self, sample_n: Iterable[dict[str, Any]]) -> dict[str, list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
+        # Each field traverses the batch, which may be a one-shot iterator.
+        sample_n = list(sample_n)
         # serialize as dict-repr of vectors
         return {
             key: space.to_jsonable([sample[key] for sample in sample_n])

@@ -166,6 +166,8 @@ class Tuple(Space[tuple[_T_co, ...]], typing.Sequence[_T_co]):
 
     def to_jsonable(self, sample_n: Iterable[tuple[Any, ...]]) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
+        # Each field traverses the batch, which may be a one-shot iterator.
+        sample_n = list(sample_n)
         # serialize as list-repr of tuple of vectors
         return [
             space.to_jsonable([sample[i] for sample in sample_n])
