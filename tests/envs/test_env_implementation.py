@@ -3,7 +3,8 @@ import pytest
 
 import gymnasium as gym
 from gymnasium.envs.box2d import BipedalWalker, CarRacing
-from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
+from gymnasium.envs.box2d.bipedal_walker import BipedalWalkerHeuristics
+from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander, heuristic
 from gymnasium.envs.toy_text import CliffWalkingEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
 from gymnasium.error import InvalidAction
@@ -45,6 +46,28 @@ def test_lunar_lander_random_wind_seed(seed: int):
         raise AssertionError(
             "Setting different seed caused same initial wind or torque index"
         )
+
+
+def _box2d_touching(body) -> bool:
+    """Returns if Box2D has any touching contact for the body."""
+    return any(edge.contact.touching for edge in body.contacts)
+
+
+def test_lunar_lander_leg_contact():
+    """Tests that the leg contact observations match the Box2D contacts.
+
+    The ground is made of several edges, so a leg sliding over the joint between two
+    edges touches both, and its contact should only end once it has left both.
+    """
+    env = gym.make("LunarLander-v3", disable_env_checker=True)
+    lunar_lander = env.unwrapped
+    for seed in range(10):
+        obs, _ = env.reset(seed=seed)
+        terminated = truncated = False
+        while not (terminated or truncated):
+            obs, _, terminated, truncated, _ = env.step(heuristic(lunar_lander, obs))
+            assert obs[6] == _box2d_touching(lunar_lander.legs[0])
+            assert obs[7] == _box2d_touching(lunar_lander.legs[1])
 
 
 def test_carracing_domain_randomize():
@@ -141,6 +164,26 @@ def test_bipedal_walker_hardcore_creation(seed: int):
 
     assert hc_terrains_color1_count > 0
     assert hc_terrains_color2_count > 0
+
+
+@pytest.mark.parametrize("hardcore", [False, True])
+def test_bipedal_walker_leg_contact(hardcore: bool):
+    """Tests that the lower leg contact observations match the Box2D contacts.
+
+    Like `test_lunar_lander_leg_contact`, a leg can touch two terrain edges at once.
+    """
+    env = gym.make("BipedalWalker-v3", hardcore=hardcore, disable_env_checker=True)
+    bipedal_walker = env.unwrapped
+    heuristics = BipedalWalkerHeuristics()
+    obs, _ = env.reset(seed=0)
+    action = np.zeros(4)
+    for _ in range(500):
+        obs, _, terminated, truncated, _ = env.step(action)
+        assert obs[8] == _box2d_touching(bipedal_walker.legs[1])
+        assert obs[13] == _box2d_touching(bipedal_walker.legs[3])
+        if terminated or truncated:
+            break
+        action = heuristics.step_heuristic(obs)
 
 
 @pytest.mark.parametrize("map_size", [5, 10, 16])
