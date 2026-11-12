@@ -9,6 +9,7 @@ import gymnasium as gym
 from gymnasium.utils.env_checker import data_equivalence
 from gymnasium.vector.utils import iterate
 from gymnasium.wrappers import FrameStackObservation
+from tests.testing_env import GenericTestEnv
 from tests.wrappers.utils import SEED, TESTING_OBS_ENVS, TESTING_OBS_ENVS_IDS
 
 
@@ -118,6 +119,79 @@ def test_padding_type():
         np.stack([np.array([1, -1, 0, 2], dtype=np.float32), reset_obs, step_obs])
         == stacked_obs
     )
+
+
+@pytest.mark.parametrize("reuse_buffer", [False, True], ids=["fresh", "reused"])
+@pytest.mark.parametrize("nested", [False, True], ids=["array", "nested"])
+@pytest.mark.parametrize("padding_type", ["reset", "zero", "custom"])
+@pytest.mark.parametrize("stack_size", [1, 3])
+def test_observation_snapshots(reuse_buffer, nested, padding_type, stack_size):
+    """Retain historical values even when an environment reuses observation storage."""
+    buffer = np.full(2, 9, dtype=np.float32)
+    observation_space: gym.spaces.Space = gym.spaces.Box(
+        0, 255, shape=(2,), dtype=np.float32
+    )
+    if nested:
+        observation_space = gym.spaces.Dict(
+            {"value": gym.spaces.Tuple((observation_space,))}
+        )
+
+    def as_observation(array):
+        return {"value": (array,)} if nested else array
+
+    def get_observation():
+        return as_observation(buffer if reuse_buffer else buffer.copy())
+
+    def reset_func(self, seed=None, options=None):
+        gym.Env.reset(self, seed=seed)
+        buffer.fill(options["value"] if options else 1)
+        return get_observation(), {"value": float(buffer[0])}
+
+    def step_func(self, action):
+        buffer[:] += 1
+        return get_observation(), 1.0, False, False, {"value": float(buffer[0])}
+
+    env = FrameStackObservation(
+        GenericTestEnv(
+            observation_space=observation_space,
+            action_space=gym.spaces.Discrete(1),
+            reset_func=reset_func,
+            step_func=step_func,
+        ),
+        stack_size=stack_size,
+        padding_type=(get_observation() if padding_type == "custom" else padding_type),
+    )
+
+    recorded_stacks = []
+    for initial_value in (1, 10):
+        obs, info = env.reset(seed=SEED, options={"value": initial_value})
+        assert info == {"value": initial_value}
+        assert obs in env.observation_space
+        padding_value = {"reset": initial_value, "zero": 0, "custom": 9}[padding_type]
+        expected_values = [padding_value] * (stack_size - 1) + [initial_value]
+        recorded_stacks.append((obs, expected_values.copy()))
+
+        for value in range(initial_value + 1, initial_value + stack_size + 2):
+            obs, reward, terminated, truncated, info = env.step(0)
+            assert (reward, terminated, truncated, info) == (
+                1.0,
+                False,
+                False,
+                {"value": value},
+            )
+            assert obs in env.observation_space
+            expected_values = expected_values[1:] + [value]
+            recorded_stacks.append((obs, expected_values.copy()))
+
+    buffer.fill(255)
+    for obs, expected_values in recorded_stacks:
+        expected = [
+            as_observation(np.full(2, value, dtype=np.float32))
+            for value in expected_values
+        ]
+        assert data_equivalence(
+            list(iterate(env.observation_space, obs)), expected, exact=True
+        )
 
 
 def test_stack_size_failures():
