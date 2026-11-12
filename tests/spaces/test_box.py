@@ -299,6 +299,42 @@ def test_sample_dtype_edge_reachability(dtype):
         assert observed == expected
 
 
+@pytest.mark.parametrize(
+    "low, high, dtype",
+    [
+        (0, np.iinfo(np.uint64).max, np.uint64),
+        (2**63, np.iinfo(np.uint64).max, np.uint64),
+        (0, np.iinfo(np.int64).max, np.int64),
+    ],
+    ids=["uint64-full-range", "uint64-above-int64-max", "int64-to-max"],
+)
+def test_sample_high_at_dtype_max(low, high, dtype):
+    """Tests sampling a bounded integer Box whose ``high`` is the dtype's maximum.
+
+    Regression test for ``Box.sample`` computing the exclusive upper bound as
+    ``high.astype("int64") + 1``, which overflowed when ``high + 1`` does not fit
+    in ``int64``: the full ``uint64`` range silently sampled all zeros, and the
+    other bounds raised ``ValueError: high - low < 0``. ``Box`` rejects ``np.inf``
+    for unsigned dtypes, so ``high=np.iinfo(np.uint64).max`` is the only way to
+    express an unbounded ``uint64`` box. See also #328 for the ``int64`` case.
+    """
+    space = Box(low=low, high=high, shape=(3,), dtype=dtype, seed=0)
+
+    samples = np.stack([space.sample() for _ in range(100)])
+
+    assert samples.dtype == dtype
+    assert all(sample in space for sample in samples)
+    # a uniform draw over the dtype's range must not collapse onto a single value
+    assert len(np.unique(samples)) > 1
+
+
+def test_sample_uint64_low_edge_reachability():
+    """Tests that a small ``uint64`` Box can sample every value in ``[low, high]``, including 0."""
+    space = Box(low=0, high=2, dtype=np.uint64, seed=0)
+    observed = {int(x) for _ in range(1000) for x in space.sample()}
+    assert observed == {0, 1, 2}
+
+
 def test_contains_dtype():
     """Tests the Box contains function with different dtypes."""
     # Related Issues:
