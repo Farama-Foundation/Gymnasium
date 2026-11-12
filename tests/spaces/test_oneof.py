@@ -1,7 +1,19 @@
+import json
+
 import numpy as np
 import pytest
 
-from gymnasium.spaces import Box, Discrete, MultiBinary, OneOf
+from gymnasium.spaces import (
+    Box,
+    Dict,
+    Discrete,
+    MultiBinary,
+    OneOf,
+    Sequence,
+    Text,
+    Tuple,
+)
+from gymnasium.utils.env_checker import data_equivalence
 
 
 def test_oneof_inheritance():
@@ -118,3 +130,50 @@ def test_invalid_sample_inputs():
     # Invalid probability type
     with pytest.raises(AssertionError, match="Expected type of `probability` is tuple"):
         space.sample(probability=[0.5, 0.5])
+
+
+@pytest.mark.parametrize(
+    "subspace",
+    [
+        Dict({"a": Box(0, 1, shape=(2,))}),
+        Dict({"a": Box(0, 1, shape=(2,)), "b": Discrete(3)}),
+        Tuple((Box(0, 1, shape=(2,)), Discrete(3))),
+        Tuple((Discrete(3),)),
+        Dict(
+            a=Tuple((Box(0, 1, shape=(2,)), Dict(b=MultiBinary(2)))),
+            c=Text(4),
+        ),
+        Sequence(Dict(a=Box(0, 1, shape=(2,))), stack=True),
+        OneOf([Dict(a=Box(0, 1, shape=(2,))), Discrete(2)]),
+    ],
+)
+def test_oneof_jsonable_composite_subspaces(subspace):
+    """Tests that `to_jsonable` and `from_jsonable` round-trip for composite subspaces."""
+    space = OneOf([subspace, Discrete(3)], seed=0)
+    subspace.seed(1)
+    samples = [
+        (np.int64(0), subspace.sample()),
+        (np.int64(1), np.int64(2)),
+        (np.int64(0), subspace.sample()),
+    ]
+
+    jsonable = space.to_jsonable(samples)
+    recovered = space.from_jsonable(json.loads(json.dumps(jsonable)))
+
+    assert len(recovered) == len(samples)
+    for sample, recovered_sample in zip(samples, recovered, strict=True):
+        assert data_equivalence(sample, recovered_sample)
+        assert recovered_sample in space
+
+
+def test_oneof_jsonable_format():
+    """Tests that the jsonable format stores one sample per element, keeping the format of previous versions."""
+    space = OneOf([Box(0, 1, shape=(2,)), Dict(a=Discrete(3), b=Tuple((Discrete(2),)))])
+    samples = [
+        (np.int64(0), np.array([0.5, 0.25], dtype=np.float32)),
+        (np.int64(1), {"a": np.int64(2), "b": (np.int64(1),)}),
+    ]
+
+    jsonable = space.to_jsonable(samples)
+    assert jsonable == [[0, [0.5, 0.25]], [1, {"a": 2, "b": [1]}]]
+    assert data_equivalence(space.from_jsonable(jsonable), samples)

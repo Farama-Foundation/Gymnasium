@@ -175,7 +175,12 @@ class OneOf(Space[tuple[int, _T_co]], Generic[_T_co]):
     def to_jsonable(self, sample_n: Iterable[tuple[int, Any]]) -> list[list[Any]]:
         """Convert a batch of samples from this space to a JSONable data type."""
         return [
-            [int(i), self.spaces[i].to_jsonable([subsample])[0]]
+            [
+                int(i),
+                _unbatch_jsonable(
+                    self.spaces[i], self.spaces[i].to_jsonable([subsample])
+                ),
+            ]
             for (i, subsample) in sample_n
         ]
 
@@ -184,7 +189,9 @@ class OneOf(Space[tuple[int, _T_co]], Generic[_T_co]):
         return [
             (
                 np.int64(space_idx),
-                self.spaces[space_idx].from_jsonable([jsonable_sample])[0],
+                self.spaces[space_idx].from_jsonable(
+                    _batch_jsonable(self.spaces[space_idx], jsonable_sample)
+                )[0],
             )
             for space_idx, jsonable_sample in sample_n
         ]
@@ -200,3 +207,52 @@ class OneOf(Space[tuple[int, _T_co]], Generic[_T_co]):
     def __eq__(self, other: object, /) -> bool:
         """Check whether ``other`` is equivalent to this instance."""
         return isinstance(other, OneOf) and self.spaces == other.spaces
+
+
+def _unbatch_jsonable(space: Space[Any], jsonable_batch: Any) -> Any:
+    """Extracts the single sample from the jsonable batch of one sample of ``space``.
+
+    Most spaces represent a jsonable batch as a list with one element per sample,
+    however, composite spaces (``Dict``, ``Tuple`` and stacked ``Sequence``) use their
+    subspaces' jsonable batches, e.g., ``Dict`` returns a dict of per-key batches.
+    """
+    from gymnasium.spaces.dict import Dict
+    from gymnasium.spaces.sequence import Sequence
+    from gymnasium.spaces.tuple import Tuple
+
+    if isinstance(space, Dict):
+        return {
+            key: _unbatch_jsonable(subspace, jsonable_batch[key])
+            for key, subspace in space.spaces.items()
+        }
+    elif isinstance(space, Tuple):
+        return [
+            _unbatch_jsonable(subspace, jsonable_batch[i])
+            for i, subspace in enumerate(space.spaces)
+        ]
+    elif isinstance(space, Sequence) and space.stack:
+        return _unbatch_jsonable(space.stacked_feature_space, jsonable_batch)
+    else:
+        return jsonable_batch[0]
+
+
+def _batch_jsonable(space: Space[Any], jsonable_sample: Any) -> Any:
+    """Inverse of :func:`_unbatch_jsonable`, creates the jsonable batch of one sample of ``space``."""
+    from gymnasium.spaces.dict import Dict
+    from gymnasium.spaces.sequence import Sequence
+    from gymnasium.spaces.tuple import Tuple
+
+    if isinstance(space, Dict):
+        return {
+            key: _batch_jsonable(subspace, jsonable_sample[key])
+            for key, subspace in space.spaces.items()
+        }
+    elif isinstance(space, Tuple):
+        return [
+            _batch_jsonable(subspace, jsonable_sample[i])
+            for i, subspace in enumerate(space.spaces)
+        ]
+    elif isinstance(space, Sequence) and space.stack:
+        return _batch_jsonable(space.stacked_feature_space, jsonable_sample)
+    else:
+        return [jsonable_sample]
