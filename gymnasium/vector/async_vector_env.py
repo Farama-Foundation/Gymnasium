@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import inspect
 import multiprocessing
+import pickle
 import sys
 import time
 import traceback
@@ -645,7 +646,7 @@ class AsyncVectorEnv(
         results, successes = zip(
             *[pipe.recv() for pipe in self.parent_pipes], strict=True
         )
-        self._raise_if_errors(successes)
+        self._raise_if_errors(successes, results)
         self._state = AsyncState.DEFAULT
 
         return results
@@ -691,8 +692,10 @@ class AsyncVectorEnv(
 
         for pipe, value in zip(self.parent_pipes, values, strict=True):
             pipe.send(("_setattr", (name, value)))
-        _, successes = zip(*[pipe.recv() for pipe in self.parent_pipes], strict=True)
-        self._raise_if_errors(successes)
+        results, successes = zip(
+            *[pipe.recv() for pipe in self.parent_pipes], strict=True
+        )
+        self._raise_if_errors(successes, results)
 
     def close_extras(
         self, timeout: float | None = None, terminate: bool = False
@@ -796,12 +799,30 @@ class AsyncVectorEnv(
                 f"Trying to operate on `{type(self).__name__}`, after a call to `close()`."
             )
 
-    def _raise_if_errors(self, successes: Iterable[bool]) -> None:
+    def _raise_if_errors(
+        self, successes: Iterable[bool], results: Iterable[Any] | None = None
+    ) -> None:
+        successes = list(successes)
         if all(successes):
             return
 
-        num_errors = self.num_envs - sum(successes)
-        assert num_errors > 0
+        # Workers that are still running send their error details in place of the result,
+        # while workers that shut down send `None` and put their error in the error queue.
+        running_errors = (
+            []
+            if results is None
+            else [
+                result
+                for result, success in zip(results, successes, strict=True)
+                if not success and result is not None
+            ]
+        )
+
+        for index, _, _, trace in running_errors:
+            logger.error(f"Received the following error from Worker-{index}")
+            logger.error(f"{trace}")
+
+        num_errors = self.num_envs - sum(successes) - len(running_errors)
         for i in range(num_errors):
             index, exctype, value, trace = self.error_queue.get()
 
@@ -817,6 +838,11 @@ class AsyncVectorEnv(
                 logger.error("Raising the last exception back to the main process.")
                 self._state = AsyncState.DEFAULT
                 raise exctype(value)
+
+        _, exctype, value, _ = running_errors[-1]
+        logger.error("Raising the last exception back to the main process.")
+        self._state = AsyncState.DEFAULT
+        raise exctype(value)
 
     def __del__(self) -> None:
         """On deleting the object, checks that the vector environment is closed."""
@@ -930,20 +956,35 @@ def _async_worker(
                     break
                 elif command == "_call":
                     name, args, kwargs = data
-                    if name in ["reset", "step", "close", "_setattr", "_check_spaces"]:
-                        raise ValueError(
-                            f"Trying to call function `{name}` with `call`, use `{name}` directly instead."
-                        )
+                    # A failed `call` or `set_attr`, e.g., a misspelt attribute name, doesn't break
+                    # the environment, so like `SyncVectorEnv`, the error is raised in the main process
+                    # and the worker keeps running. The error details are sent in place of the result.
+                    try:
+                        if name in [
+                            "reset",
+                            "step",
+                            "close",
+                            "_setattr",
+                            "_check_spaces",
+                        ]:
+                            raise ValueError(
+                                f"Trying to call function `{name}` with `call`, use `{name}` directly instead."
+                            )
 
-                    attr = env.get_wrapper_attr(name)
-                    if callable(attr):
-                        pipe.send((attr(*args, **kwargs), True))
+                        attr = env.get_wrapper_attr(name)
+                        result = attr(*args, **kwargs) if callable(attr) else attr
+                    except Exception:
+                        pipe.send((_error_details(index), False))
                     else:
-                        pipe.send((attr, True))
+                        pipe.send((result, True))
                 elif command == "_setattr":
                     name, value = data
-                    env.set_wrapper_attr(name, value)
-                    pipe.send((None, True))
+                    try:
+                        env.set_wrapper_attr(name, value)
+                    except Exception:
+                        pipe.send((_error_details(index), False))
+                    else:
+                        pipe.send((None, True))
                 elif command == "_check_spaces":
                     obs_mode, single_obs_space, single_action_space = data
 
@@ -971,10 +1012,21 @@ def _async_worker(
                     semaphore.release()
 
     except (KeyboardInterrupt, Exception):
-        error_type, error_message, _ = sys.exc_info()
-        trace = traceback.format_exc()
-
-        error_queue.put((index, error_type, error_message, trace))
+        error_queue.put(_error_details(index))
         pipe.send((None, False))
     finally:
         env.close()
+
+
+def _error_details(index: int) -> tuple[int, type[BaseException], BaseException, str]:
+    """Returns the worker index, type, value and traceback of the exception being handled."""
+    error_type, error_message, _ = sys.exc_info()
+    assert error_type is not None and error_message is not None
+    try:
+        # The main process unpickles the exception, which fails for some custom exceptions,
+        # e.g., ones whose `__init__` takes arguments other than the message
+        pickle.loads(pickle.dumps(error_message))
+    except Exception:
+        error_message = RuntimeError(f"{error_type.__name__}: {error_message}")
+        error_type = RuntimeError
+    return index, error_type, error_message, traceback.format_exc()
