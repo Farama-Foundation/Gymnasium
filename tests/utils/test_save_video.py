@@ -1,7 +1,9 @@
 import os
 import shutil
+from unittest.mock import MagicMock
 
 import numpy as np
+import pytest
 
 import gymnasium as gym
 from gymnasium.utils.save_video import capped_cubic_video_schedule, save_video
@@ -118,3 +120,34 @@ def test_record_video_within_vector():
     mp4_files = [file for file in os.listdir("videos") if file.endswith(".mp4")]
     shutil.rmtree("videos")
     assert len(mp4_files) == expected_video
+
+
+def test_save_video_snippet_durations(tmp_path, monkeypatch):
+    clip_factory = MagicMock()
+    monkeypatch.setattr("gymnasium.utils.save_video.ImageSequenceClip", clip_factory)
+    frames = list(range(4))
+    durations = [0.1, 0.2, 0.3, 0.4]
+    save_video(
+        frames,
+        str(tmp_path),
+        durations=durations,
+        video_length=2,
+        episode_trigger=lambda _: True,
+        step_trigger=lambda step: step == 11,
+        step_starting_index=10,
+    )
+    assert [call.args[0] for call in clip_factory.call_args_list] == [[0, 1], [2, 3]]
+    assert [call.kwargs["durations"] for call in clip_factory.call_args_list] == [
+        durations[:2],
+        durations[2:],
+    ]
+    assert clip_factory.return_value.__exit__.call_count == 2
+
+
+def test_save_video_invalid_inputs(tmp_path):
+    with pytest.warns(UserWarning, match="No frames"):
+        save_video([], str(tmp_path), fps=20)
+    with pytest.raises(ValueError, match="one duration"):
+        save_video([0, 1], str(tmp_path), durations=[1.0])
+    with pytest.raises(ValueError, match="positive"):
+        save_video([0], str(tmp_path), video_length=0, fps=20)
