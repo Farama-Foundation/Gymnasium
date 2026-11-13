@@ -79,8 +79,8 @@ def test_normalize_obs_with_vector():
     obs, _ = envs.reset()
 
 
-@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0])
-def test_non_positive_epsilon_is_rejected(epsilon):
+@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0, np.nan, np.inf, -np.inf])
+def test_invalid_epsilon_is_rejected(epsilon):
     """``epsilon`` sits under a square root; once it exceeds the variance the result is NaN.
 
     Left unchecked, the wrapper keeps running and silently returns NaN observations

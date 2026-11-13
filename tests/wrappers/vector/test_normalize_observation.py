@@ -123,8 +123,8 @@ def test_observation_space_and_dtype():
     assert obs.dtype == np.float32
 
 
-@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0])
-def test_non_positive_epsilon_is_rejected(epsilon):
+@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0, np.nan, np.inf, -np.inf])
+def test_invalid_epsilon_is_rejected(epsilon):
     """Matches the same check on the non-vector wrapper, which shares this scaling."""
     vec_env = SyncVectorEnv([create_env])
     with pytest.raises(InvalidBound, match="`epsilon` should be strictly positive"):
