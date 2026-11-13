@@ -338,6 +338,10 @@ def _flatten_oneof(space: OneOf, x: tuple[int, Any]) -> NDArray[Any]:
     flat_sample: np.ndarray = flatten(sub_space, sample)
 
     max_flatdim = flatdim(space) - 1  # Don't include the index
+    # Compute padding in the shared OneOf dtype so a fill value taken from another
+    # subspace (e.g. a float64 low) is not silently truncated when the empty branch
+    # has a narrower dtype such as int32.
+    dtype = _flat_dtype(space)
     if flat_sample.size < max_flatdim:
         if flat_sample.size > 0:
             fill_val = flat_sample[0]
@@ -350,16 +354,12 @@ def _flatten_oneof(space: OneOf, x: tuple[int, Any]) -> NDArray[Any]:
                 if non_empty_subspaces
                 else 0
             )
-        padding = np.full(
-            max_flatdim - flat_sample.size, fill_val, dtype=flat_sample.dtype
-        )
+        flat_sample = flat_sample.astype(dtype, copy=False)
+        padding = np.full(max_flatdim - flat_sample.size, fill_val, dtype=dtype)
         flat_sample = np.concatenate([flat_sample, padding])
 
-    # The index must not promote the dtype of the sample, otherwise the flattened
-    # sample would not be contained within `flatten_space(space)`.
-    dtype = _flat_dtype(space)
     return np.concatenate(
-        [np.array([idx], dtype=dtype), flat_sample.astype(dtype, copy=False)]
+        [np.array([idx], dtype=dtype), flat_sample]
     )
 
 
