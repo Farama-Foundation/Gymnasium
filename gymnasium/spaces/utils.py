@@ -491,9 +491,10 @@ def _unflatten_graph(space: Graph, x: GraphInstance) -> GraphInstance:
 
 
 @unflatten.register(Text)
-def _unflatten_text(space: Text, x: NDArray[np.int32]) -> str:
+def _unflatten_text(space: Text, x: NDArray[Any]) -> str:
+    # Numeric siblings in a composite space can promote character indices to floats.
     return "".join(
-        [space.character_list[val] for val in x if val < len(space.character_set)]
+        [space.character_list[int(val)] for val in x if val < len(space.character_set)]
     )
 
 
