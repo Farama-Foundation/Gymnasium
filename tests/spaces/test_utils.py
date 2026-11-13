@@ -300,3 +300,81 @@ def test_oneof_index_dtype(space):
         assert flat_sample.dtype == flat_space.dtype
         assert flat_sample in flat_space
         assert utils.unflatten(space, flat_sample)[0] == idx
+
+
+@pytest.mark.parametrize(
+    ("space", "expected_dim"),
+    [
+        (gym.spaces.Dict({}), 0),
+        (gym.spaces.Tuple(()), 0),
+        (gym.spaces.Dict({"empty": gym.spaces.Tuple(())}), 0),
+        (gym.spaces.Tuple((gym.spaces.Dict({}), gym.spaces.Tuple(()))), 0),
+        (
+            gym.spaces.Dict(
+                {
+                    "state": Box(-1, 1, shape=(2,), dtype=np.float32),
+                    "optional": gym.spaces.Dict({}),
+                }
+            ),
+            2,
+        ),
+        (
+            gym.spaces.Tuple(
+                (
+                    gym.spaces.Tuple(()),
+                    Box(-1, 1, shape=(2,), dtype=np.float32),
+                    gym.spaces.Dict({}),
+                )
+            ),
+            2,
+        ),
+        (gym.spaces.Tuple((gym.spaces.Dict({}), gym.spaces.Discrete(3))), 3),
+    ],
+    ids=[
+        "dict",
+        "tuple",
+        "nested-dict",
+        "nested-tuple",
+        "dict-box",
+        "tuple-box",
+        "tuple-discrete",
+    ],
+)
+def test_empty_composite_flatten_roundtrip(space, expected_dim):
+    """Empty observation groups support the same flattening contract as nonempty groups."""
+    space.seed(123)
+    sample = space.sample()
+    flat_space = utils.flatten_space(space)
+    flattened = utils.flatten(space, sample)
+
+    assert utils.flatdim(space) == expected_dim
+    assert flat_space.shape == flattened.shape == (expected_dim,)
+    assert flat_space.dtype == flattened.dtype == utils._flat_dtype(space)
+    if expected_dim == 0:
+        assert flattened.dtype == np.float32
+    assert flattened in flat_space
+
+    restored = utils.unflatten(space, flattened)
+    assert restored in space
+    assert data_equivalence(sample, restored)
+
+
+@pytest.mark.parametrize("space", [gym.spaces.Dict({}), gym.spaces.Tuple(())])
+@pytest.mark.parametrize("value", [np.ones(1), np.empty((0, 2)), np.asarray(1.0)])
+def test_unflatten_empty_composite_rejects_wrong_shape(space, value):
+    """A zero-dimensional composite requires an empty one-dimensional vector."""
+    with pytest.raises(ValueError):
+        utils.unflatten(space, value)
+
+
+@pytest.mark.parametrize("space", [gym.spaces.Dict({}), gym.spaces.Tuple(())])
+def test_unflatten_empty_composite_requires_numpy(space):
+    """Empty composites retain the numpy-flattenable input type check."""
+    with pytest.raises(AssertionError):
+        utils.unflatten(space, [])
+
+
+def test_flatten_empty_tuple_rejects_extra_values():
+    """Empty tuples must not silently discard sample elements."""
+    with pytest.raises(ValueError):
+        utils.flatten(gym.spaces.Tuple(()), (1,))

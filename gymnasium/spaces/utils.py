@@ -63,11 +63,15 @@ def _flat_dtype_text(space: Text) -> np.dtype:
 
 @_flat_dtype.register(Tuple)
 def _flat_dtype_tuple(space: Tuple) -> np.dtype:
+    if not space.spaces:
+        return np.dtype(np.float32)
     return np.result_type(*(_flat_dtype(subspace) for subspace in space.spaces))
 
 
 @_flat_dtype.register(Dict)
 def _flat_dtype_dict(space: Dict) -> np.dtype:
+    if not space.spaces:
+        return np.dtype(np.float32)
     return np.result_type(
         *(_flat_dtype(subspace) for subspace in space.spaces.values())
     )
@@ -185,6 +189,8 @@ def flatten(space: Space[T], x: T) -> FlatType:
     This is useful when e.g. points from spaces must be passed to a neural
     network, which only understands flat arrays of floats.
 
+    Empty Dict and Tuple spaces flatten to empty one-dimensional float32 arrays.
+
     Args:
         space: The space that ``x`` is flattened by
         x: The value to flatten
@@ -251,21 +257,19 @@ def _flatten_multidiscrete(
 @flatten.register(Tuple)
 def _flatten_tuple(space: Tuple, x: tuple[Any, ...]) -> tuple[Any, ...] | NDArray[Any]:
     if space.is_np_flattenable:
-        return np.concatenate(
-            [
-                np.array(flatten(s, x_part))
-                for x_part, s in zip(x, space.spaces, strict=True)
-            ]
-        )
+        parts = [
+            np.array(flatten(s, x_part))
+            for x_part, s in zip(x, space.spaces, strict=True)
+        ]
+        return np.concatenate(parts) if parts else np.empty(0, dtype=np.float32)
     return tuple(flatten(s, x_part) for x_part, s in zip(x, space.spaces, strict=True))
 
 
 @flatten.register(Dict)
 def _flatten_dict(space: Dict, x: dict[str, Any]) -> dict[str, Any] | NDArray[Any]:
     if space.is_np_flattenable:
-        return np.concatenate(
-            [np.array(flatten(s, x[key])) for key, s in space.spaces.items()]
-        )
+        parts = [np.array(flatten(s, x[key])) for key, s in space.spaces.items()]
+        return np.concatenate(parts) if parts else np.empty(0, dtype=np.float32)
     return {key: flatten(s, x[key]) for key, s in space.spaces.items()}
 
 
@@ -419,6 +423,12 @@ def _unflatten_tuple(
         assert isinstance(x, np.ndarray), (
             f"{space} is numpy-flattenable. Thus, you should only unflatten numpy arrays for this space. Got a {type(x)}"
         )
+        if not space.spaces:
+            if x.shape != (0,):
+                raise ValueError(
+                    f"Cannot unflatten shape {x.shape} to empty space {space}."
+                )
+            return ()
         dims = np.asarray([flatdim(s) for s in space.spaces], dtype=np.int_)
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
         return tuple(
@@ -439,6 +449,12 @@ def _unflatten_dict(space: Dict, x: NDArray[Any] | dict[str, Any]) -> dict[str, 
         assert isinstance(x, np.ndarray), (
             "x must be a numpy array when unflattening a numpy-flattenable space"
         )
+        if not space.spaces:
+            if x.shape != (0,):
+                raise ValueError(
+                    f"Cannot unflatten shape {x.shape} to empty space {space}."
+                )
+            return {}
         dims = np.asarray([flatdim(s) for s in space.spaces.values()], dtype=np.int_)
         list_flattened = np.split(x, np.cumsum(dims[:-1]))
         return {
@@ -610,6 +626,8 @@ def _flatten_space_binary(space: Discrete | MultiBinary | MultiDiscrete) -> Box:
 @flatten_space.register(Tuple)
 def _flatten_space_tuple(space: Tuple) -> Box | Tuple:
     if space.is_np_flattenable:
+        if not space.spaces:
+            return Box(low=0, high=0, shape=(0,), dtype=np.float32)
         space_list = [flatten_space(s) for s in space.spaces]
         return Box(
             low=np.concatenate([s.low for s in space_list]),
@@ -622,6 +640,8 @@ def _flatten_space_tuple(space: Tuple) -> Box | Tuple:
 @flatten_space.register(Dict)
 def _flatten_space_dict(space: Dict) -> Box | Dict:
     if space.is_np_flattenable:
+        if not space.spaces:
+            return Box(low=0, high=0, shape=(0,), dtype=np.float32)
         space_list = [flatten_space(s) for s in space.spaces.values()]
         return Box(
             low=np.concatenate([s.low for s in space_list]),
