@@ -307,9 +307,29 @@ def test_oneof_index_dtype(space):
     [
         OneOf([Box(low=1.0, high=2.0, shape=(0,)), Box(low=1.0, high=2.0, shape=(2,))]),
         OneOf([Box(low=0.0, high=1.0, shape=(0,)), Box(low=0.0, high=1.0, shape=(0,))]),
-        OneOf([Box(low=-1.0, high=1.0, shape=(3,)), Box(low=0.0, high=1.0, shape=(0,))]),
+        OneOf(
+            [Box(low=-1.0, high=1.0, shape=(3,)), Box(low=0.0, high=1.0, shape=(0,))]
+        ),
+        OneOf(
+            [
+                Box(0, 1, shape=(0,), dtype=np.int32),
+                Box(0.5, 1.5, shape=(2,), dtype=np.float64),
+            ]
+        ),
+        OneOf(
+            [
+                Box(0, 1, shape=(0,), dtype=np.uint8),
+                Box(-2, -1, shape=(2,), dtype=np.int16),
+            ]
+        ),
     ],
-    ids=["mixed_zero_first", "all_zero", "mixed_zero_last"],
+    ids=[
+        "mixed_zero_first",
+        "all_zero",
+        "mixed_zero_last",
+        "empty_integer_with_fractional_padding",
+        "empty_unsigned_with_negative_padding",
+    ],
 )
 def test_oneof_with_zero_dimensional_subspaces(space):
     """Tests flattening and unflattening OneOf spaces containing zero-dimensional subspaces."""
