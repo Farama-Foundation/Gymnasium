@@ -217,7 +217,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
         Args:
             seed: The environment reset seed
-            options: If to return the options
+            options: Additional information to specify how the environments are reset
+                (optional, depending on the specific environment)
 
         Returns:
             A batch of observations and info from the vectorized environment.
