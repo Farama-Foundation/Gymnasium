@@ -827,9 +827,8 @@ class MujocoRenderer:
             self._set_cam_config()
             self._viewers[render_mode] = self.viewer
 
-        if len(self._viewers.keys()) > 1:
-            # Only one context can be current at a time
-            self.viewer.make_context_current()
+        # Other renderers or applications can change the current OpenGL context.
+        self.viewer.make_context_current()
 
         return self.viewer
 
