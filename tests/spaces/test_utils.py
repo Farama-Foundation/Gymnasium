@@ -300,3 +300,51 @@ def test_oneof_index_dtype(space):
         assert flat_sample.dtype == flat_space.dtype
         assert flat_sample in flat_space
         assert utils.unflatten(space, flat_sample)[0] == idx
+
+
+@pytest.mark.parametrize(
+    "space",
+    [
+        OneOf([Box(low=1.0, high=2.0, shape=(0,)), Box(low=1.0, high=2.0, shape=(2,))]),
+        OneOf([Box(low=0.0, high=1.0, shape=(0,)), Box(low=0.0, high=1.0, shape=(0,))]),
+        OneOf(
+            [Box(low=-1.0, high=1.0, shape=(3,)), Box(low=0.0, high=1.0, shape=(0,))]
+        ),
+        OneOf(
+            [
+                Box(0, 1, shape=(0,), dtype=np.int32),
+                Box(0.5, 1.5, shape=(2,), dtype=np.float64),
+            ]
+        ),
+        OneOf(
+            [
+                Box(0, 1, shape=(0,), dtype=np.uint8),
+                Box(-2, -1, shape=(2,), dtype=np.int16),
+            ]
+        ),
+    ],
+    ids=[
+        "mixed_zero_first",
+        "all_zero",
+        "mixed_zero_last",
+        "empty_integer_with_fractional_padding",
+        "empty_unsigned_with_negative_padding",
+    ],
+)
+def test_oneof_with_zero_dimensional_subspaces(space):
+    """Tests flattening and unflattening OneOf spaces containing zero-dimensional subspaces."""
+    flat_space = utils.flatten_space(space)
+    assert flat_space.shape == (utils.flatdim(space),)
+
+    for idx in range(len(space.spaces)):
+        sub_sample = space.spaces[idx].sample()
+        sample = (idx, sub_sample)
+        flat_sample = utils.flatten(space, sample)
+
+        assert flat_sample.shape == flat_space.shape
+        assert flat_sample.dtype == flat_space.dtype
+        assert flat_sample in flat_space
+
+        unflat_idx, unflat_sub = utils.unflatten(space, flat_sample)
+        assert unflat_idx == idx
+        assert unflat_sub.shape == sub_sample.shape
