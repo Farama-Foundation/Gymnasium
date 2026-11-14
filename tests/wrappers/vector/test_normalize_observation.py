@@ -54,6 +54,21 @@ def test_float16_observations_match_float32(magnitude):
     np.testing.assert_allclose(normalized[0], normalized[1])
 
 
+@pytest.mark.parametrize("dtype", [np.float16, np.float64])
+def test_running_moments_multiple_batches(dtype):
+    samples = np.array(
+        [[-60000, 300], [60000, -300], [300, 60000], [-300, -60000]], dtype=dtype
+    )
+    stats = RunningMeanStd(epsilon=0, shape=(2,), dtype=np.float32)
+    stats.update(samples[:2])
+    stats.update(samples[2:])
+    expected = samples.astype(np.float64)
+    np.testing.assert_allclose(stats.mean, expected.mean(axis=0), atol=1e-5)
+    np.testing.assert_allclose(stats.var, expected.var(axis=0), rtol=1e-6)
+    assert np.isfinite(stats.var).all()
+    assert stats.count == 4
+
+
 def test_normalization(
     n_envs: int = 2, convergence_steps: int = 250, testing_steps: int = 100
 ):
