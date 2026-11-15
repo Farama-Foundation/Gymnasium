@@ -180,6 +180,55 @@ def test_make_vec_wrappers():
     env.close()
 
 
+@pytest.mark.parametrize("max_episode_steps", [None, 5])
+def test_make_vec_vector_entry_point_max_episode_steps(max_episode_steps):
+    """Tests that `max_episode_steps=None` uses the spec's `max_episode_steps` for the vector entry point, as for `make`."""
+    envs = gym.make_vec(
+        "CartPole-v1",
+        num_envs=2,
+        vectorization_mode=VectorizeMode.VECTOR_ENTRY_POINT,
+        max_episode_steps=max_episode_steps,
+    )
+    try:
+        assert isinstance(envs.unwrapped, CartPoleVectorEnv)
+        expected_max_episode_steps = (
+            gym.spec("CartPole-v1").max_episode_steps
+            if max_episode_steps is None
+            else max_episode_steps
+        )
+        assert envs.unwrapped.max_episode_steps == expected_max_episode_steps
+        assert envs.spec is not None
+        assert envs.spec.kwargs["max_episode_steps"] == expected_max_episode_steps
+
+        envs.reset(seed=0)
+        envs.step(envs.action_space.sample())
+    finally:
+        envs.close()
+
+
+def test_make_vec_vector_entry_point_max_episode_steps_none_without_spec_limit():
+    """Tests that `max_episode_steps=None` uses the vector environment's default when the spec has no `max_episode_steps`."""
+    env_spec = gym.spec("CartPole-v1")
+    env_spec = gym.envs.registration.EnvSpec(
+        id="NoTimeLimitCartPole-v0",
+        entry_point=env_spec.entry_point,
+        vector_entry_point=env_spec.vector_entry_point,
+    )
+    envs = gym.make_vec(
+        env_spec,
+        num_envs=2,
+        vectorization_mode=VectorizeMode.VECTOR_ENTRY_POINT,
+        max_episode_steps=None,
+    )
+    try:
+        assert isinstance(envs.unwrapped, CartPoleVectorEnv)
+        assert envs.unwrapped.max_episode_steps == 500
+        assert envs.spec is not None
+        assert "max_episode_steps" not in envs.spec.kwargs
+    finally:
+        envs.close()
+
+
 def test_make_vec_wrapper_entry_point():
     """Test that an environment entry point can be a wrapper class."""
     gym.register("RegisteredWrapper-v0", entry_point=RegisteredWrapper)
