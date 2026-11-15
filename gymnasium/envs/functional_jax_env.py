@@ -180,6 +180,7 @@ class FunctionalJaxVectorEnv(
         info = self.func_env.state_info(self.state)
 
         self.steps = jnp.zeros(self.num_envs, dtype=jnp.int32)
+        self.prev_done = jnp.zeros(self.num_envs, dtype=jnp.bool_)
 
         return obs, info
 
@@ -212,8 +213,13 @@ class FunctionalJaxVectorEnv(
 
             new_initials = self.func_env.initial(rng)
 
-            next_state = self.state.at[to_reset].set(new_initials)
+            # base on the transitioned state: reset sub-environments get their
+            # new initial state, all other sub-environments keep advancing
+            next_state = next_state.at[to_reset].set(new_initials)
             self.steps = self.steps.at[to_reset].set(0)
+            # the action and transition of autoreset sub-environments are
+            # discarded, so they must not receive its reward
+            reward = reward.at[to_reset].set(0)
             terminated = terminated.at[to_reset].set(False)
             truncated = truncated.at[to_reset].set(False)
 
