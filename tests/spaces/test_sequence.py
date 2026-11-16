@@ -128,3 +128,27 @@ def test_sample_with_probability():
     assert np.all(value in space for value in sample)
     counts = np.bincount(sample[:], minlength=3) / len(sample)
     np.testing.assert_allclose(counts, probability[1], atol=0.05)
+
+
+@pytest.mark.parametrize("length", [3, np.int64(3), np.uint64(3)])
+@pytest.mark.parametrize("sampling_argument", ["mask", "probability"])
+@pytest.mark.parametrize("stack", [False, True])
+def test_fixed_sample_length_scalar(length, sampling_argument, stack):
+    """Fixed lengths preserve their scalar type and do not draw from the length RNG."""
+    space = gym.spaces.Sequence(gym.spaces.Discrete(3), seed=0, stack=stack)
+    rng_state = space.np_random.bit_generator.state
+
+    assert space.generate_sample_length(length, sampling_argument) is length
+    sample = space.sample(**{sampling_argument: (length, None)})
+    assert len(sample) == length
+    assert sample in space
+    assert space.np_random.bit_generator.state == rng_state
+
+
+@pytest.mark.parametrize("length", [True, np.bool_(True)])
+@pytest.mark.parametrize("sampling_argument", ["mask", "probability"])
+def test_boolean_sample_length_rejected(length, sampling_argument):
+    """Boolean lengths remain invalid even though Python bool is an int subclass."""
+    space = gym.spaces.Sequence(gym.spaces.Discrete(3), seed=0)
+    with pytest.raises(TypeError, match="to be an integer or a np.ndarray"):
+        space.sample(**{sampling_argument: (length, None)})
