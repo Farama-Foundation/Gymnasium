@@ -26,7 +26,10 @@ class HumanRendering(
     VectorWrapper[ObsType, ActType, ObsType, ActType, ArrayType],
     gym.utils.RecordConstructorArgs,
 ):
-    """Adds support for Human-based Rendering for Vector-based environments."""
+    """Adds support for Human-based Rendering for Vector-based environments.
+
+    For list-based render modes, displays the latest frame from each sub-environment.
+    """
 
     ACCEPTED_RENDER_MODES = [
         "rgb_array",
@@ -109,15 +112,14 @@ class HumanRendering(
             ) from e
 
         assert self.env.render_mode is not None
-        if self.env.render_mode.endswith("_last"):
-            subenv_renders = self.env.render()
-            assert isinstance(subenv_renders, list)
-            subenv_renders = subenv_renders[-1]
-        else:
-            subenv_renders = self.env.render()
+        subenv_renders = self.env.render()
 
         assert subenv_renders is not None
         assert len(subenv_renders) == self.num_envs
+        subenv_renders = [
+            render[-1] if isinstance(render, list) else render
+            for render in subenv_renders
+        ]
         assert all(isinstance(render, np.ndarray) for render in subenv_renders), (
             f"Expected `env.render()` to return a numpy array, actually returned {[type(render) for render in subenv_renders]}"
         )
