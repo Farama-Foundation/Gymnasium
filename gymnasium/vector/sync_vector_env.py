@@ -93,7 +93,7 @@ class SyncVectorEnv(VectorEnv[ObsType, ActType, np.ndarray], Generic[ObsType, Ac
                 allows the user to set some custom observation space mode not covered by 'same' or 'different.'
             autoreset_mode: When sub-environments are reset after their episode ends, either an :class:`AutoresetMode`
                 or its string value (``"NextStep"``, ``"SameStep"`` or ``"Disabled"``), recorded in ``metadata["autoreset_mode"]``.
-                See https://gymnasium.farama.org/api/vector/autoreset/ for more information.
+                See https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/api/vector/autoreset.md for more information.
 
         Raises:
             RuntimeError: If the observation space of some sub-environment does not match observation_space

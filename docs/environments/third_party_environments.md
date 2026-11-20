@@ -8,7 +8,7 @@
 The Farama Foundation maintains a number of other [projects](https://farama.org/projects), which use the Gymnasium API, environments include:
 gridworlds ([Minigrid](https://minigrid.farama.org/)),
 robotics ([Gymnasium-Robotics](https://robotics.farama.org/)),
-3D navigation ([Miniworld](https://miniworld.farama.org/)),
+3D navigation ([Miniworld](https://github.com/Farama-Foundation/Miniworld)),
 web interaction ([MiniWoB++](https://miniwob.farama.org/)),
 arcade games ([Arcade Learning Environment](https://github.com/Farama-Foundation/Arcade-Learning-Environment)),
 Doom ([ViZDoom](https://vizdoom.farama.org/)),
@@ -441,7 +441,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)
   ![GitHub stars](https://img.shields.io/github/stars/automl/DACBench)
 
-  A benchmark library for [Dynamic Algorithm Configuration](https://www.automl.org/dynamic-algorithm-configuration/). Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
+  A benchmark library for [Dynamic Algorithm Configuration](https://github.com/automl/DACBench). Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
 - [EnvPool: C++-based high-performance parallel environment execution](https://github.com/sail-sg/envpool)
 
