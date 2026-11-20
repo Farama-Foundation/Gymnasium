@@ -746,6 +746,46 @@ def test_reacher_fingertip_matches_joint_fk(version: str):
     env.close()
 
 
+@pytest.mark.parametrize("version", ["v5"])
+def test_pusher_fingertip_matches_joint_fk(version: str):
+    """Fingertip position in the observation and reward must match forward kinematics from qpos.
+
+    After `mj_step`, MuJoCo leaves body `xpos` one integration behind `qpos`
+    (google-deepmind/mujoco#889). Pusher mixes both in one observation vector
+    and computes `reward_near` from `xpos`, so kinematics are synced after the
+    step (same as Reacher, #1690). `Pusher-v4` only runs on `mujoco<3`.
+    """
+    env = gym.make(f"Pusher-{version}", disable_env_checker=True)
+    u = env.unwrapped
+    env.reset(seed=0)
+    env.action_space.seed(0)
+    # Move the object (slide joints, `qvel[-4:-2]`) so its position lags too on main.
+    qvel = u.data.qvel.copy()
+    qvel[-4:-2] = [0.3, -0.3]
+    u.set_state(u.data.qpos.copy(), qvel)
+    fk_data = mujoco.MjData(u.model)
+
+    for _ in range(64):
+        obs, _, _, _, info = env.step(env.action_space.sample())
+
+        # Reference: forward kinematics of the qpos the observation reports.
+        fk_data.qpos[:] = u.data.qpos
+        mujoco.mj_kinematics(u.model, fk_data)
+        fingertip = fk_data.body("tips_arm").xpos
+        obj = fk_data.body("object").xpos
+
+        np.testing.assert_allclose(obs[14:17], fingertip, rtol=0, atol=1e-12)
+        np.testing.assert_allclose(obs[17:20], obj, rtol=0, atol=1e-12)
+        np.testing.assert_allclose(
+            info["reward_near"],
+            -u._reward_near_weight * np.linalg.norm(obj - fingertip),
+            rtol=0,
+            atol=1e-12,
+        )
+
+    env.close()
+
+
 @pytest.mark.parametrize("version", ["v5", "v4"])
 def test_half_cheetah_mass(version: str, capfd):
     """Check that HalfCheetah's mass matches the deprecated `settotalmass="14"` without MuJoCo's deprecation warning."""
@@ -764,3 +804,42 @@ def test_half_cheetah_mass(version: str, capfd):
     np.testing.assert_allclose(
         env.model.body_inertia, ref_model.body_inertia, atol=1e-12
     )
+
+
+@pytest.mark.parametrize("frame_skip", [1, 5])
+def test_pusher_distance_reward_matches_post_step_state(frame_skip):
+    with gym.make(
+        "Pusher-v5",
+        frame_skip=frame_skip,
+        reward_dist_weight=2.3,
+        reward_near_weight=0.7,
+        reward_control_weight=0.2,
+    ) as env:
+        u = env.unwrapped
+        env.reset(seed=12)
+        env.action_space.seed(12)
+        velocity = u.data.qvel.copy()
+        velocity[-4:-2] = [0.3, -0.3]
+        u.set_state(u.data.qpos.copy(), velocity)
+        reference = mujoco.MjData(u.model)
+        for _ in range(16):
+            action = env.action_space.sample()
+            _, reward, _, _, info = env.step(action)
+            reference.qpos[:] = u.data.qpos
+            mujoco.mj_kinematics(u.model, reference)
+            distance_reward = -2.3 * np.linalg.norm(
+                reference.body("object").xpos - reference.body("goal").xpos
+            )
+            near_reward = -0.7 * np.linalg.norm(
+                reference.body("object").xpos - reference.body("tips_arm").xpos
+            )
+            control_reward = -0.2 * np.square(action).sum()
+            np.testing.assert_allclose(
+                info["reward_dist"], distance_reward, rtol=0, atol=1e-12
+            )
+            np.testing.assert_allclose(
+                reward,
+                distance_reward + near_reward + control_reward,
+                rtol=0,
+                atol=1e-12,
+            )
