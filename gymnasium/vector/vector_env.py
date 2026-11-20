@@ -43,7 +43,8 @@ class AutoresetMode(Enum):
 
     The mode of a vector environment is given by ``metadata["autoreset_mode"]`` and, for :class:`SyncVectorEnv` and
     :class:`AsyncVectorEnv`, is set with the ``autoreset_mode`` argument (an ``AutoresetMode`` or its string value).
-    See https://gymnasium.farama.org/api/vector/autoreset/ for details and example training loops for each mode.
+    See https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/api/vector/autoreset.md
+    for details and example training loops for each mode.
 
     Examples:
         The first sub-environment's episode is truncated on the first step, the second sub-environment's continues.
@@ -132,7 +133,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
     (``AutoresetMode.DISABLED``). The mode used by a vector environment should be available in ``metadata["autoreset_mode"]``.
     As the mode changes what :meth:`step` returns at the end of an episode, training code must handle it correctly.
     Warning, some vector implementations, wrappers or training algorithms will only support particular autoreset modes.
-    See https://gymnasium.farama.org/api/vector/autoreset/ for each mode's behaviour and example training loops,
+    See https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/api/vector/autoreset.md
+    for each mode's behaviour and example training loops,
     and https://farama.org/Vector-Autoreset-Mode for background.
 
     Note:
@@ -250,7 +252,8 @@ class VectorEnv(Generic[ObsType, ActType, ArrayType]):
 
         Note:
             What is returned for a sub-environment whose episode ends depends on the autoreset mode,
-            ``metadata["autoreset_mode"]``, see https://gymnasium.farama.org/api/vector/autoreset/.
+            ``metadata["autoreset_mode"]``, see
+            https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/api/vector/autoreset.md.
 
             - ``AutoresetMode.NEXT_STEP`` (default) - The final observation, reward, termination, truncation and info
               are returned as normal. On the next step, the sub-environment's action is ignored and it is reset,
