@@ -150,3 +150,10 @@ def test_deterministic_across_hash_seeds():
         for hash_seed in (1, 2)
     }
     assert len(outputs) == 1, f"Outputs differ across hash seeds: {outputs}"
+
+
+def test_eq_depends_on_charset_order():
+    # the order of the charset defines sample, mask and flatten indices
+    assert Text(3, charset="abc") == Text(3, charset="abc")
+    assert Text(3, charset="abc") != Text(3, charset="cba")
+    assert Text(3, charset=frozenset("cba")) == Text(3, charset="abc")
