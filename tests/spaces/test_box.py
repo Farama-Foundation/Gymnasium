@@ -340,6 +340,16 @@ def test_contains_out_of_dtype_range_returns_false(dtype, element):
 
 
 @pytest.mark.parametrize(
+    "dtype, element", [(np.int8, 0.5), (np.uint8, 1.5), (np.bool_, 2)]
+)
+def test_contains_list_is_not_truncated_by_dtype_cast(dtype, element):
+    """A list is not a member if casting it to an integer/bool dtype changes a value."""
+    space = Box(low=0, high=1, shape=(2,), dtype=dtype)
+    assert space.contains([element, 1]) is False
+    assert space.contains([1, 0]) is True
+
+
+@pytest.mark.parametrize(
     "low, high, shape",
     [
         (0, np.inf, (2,)),
