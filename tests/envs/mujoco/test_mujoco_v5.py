@@ -804,3 +804,42 @@ def test_half_cheetah_mass(version: str, capfd):
     np.testing.assert_allclose(
         env.model.body_inertia, ref_model.body_inertia, atol=1e-12
     )
+
+
+@pytest.mark.parametrize("frame_skip", [1, 5])
+def test_pusher_distance_reward_matches_post_step_state(frame_skip):
+    with gym.make(
+        "Pusher-v5",
+        frame_skip=frame_skip,
+        reward_dist_weight=2.3,
+        reward_near_weight=0.7,
+        reward_control_weight=0.2,
+    ) as env:
+        u = env.unwrapped
+        env.reset(seed=12)
+        env.action_space.seed(12)
+        velocity = u.data.qvel.copy()
+        velocity[-4:-2] = [0.3, -0.3]
+        u.set_state(u.data.qpos.copy(), velocity)
+        reference = mujoco.MjData(u.model)
+        for _ in range(16):
+            action = env.action_space.sample()
+            _, reward, _, _, info = env.step(action)
+            reference.qpos[:] = u.data.qpos
+            mujoco.mj_kinematics(u.model, reference)
+            distance_reward = -2.3 * np.linalg.norm(
+                reference.body("object").xpos - reference.body("goal").xpos
+            )
+            near_reward = -0.7 * np.linalg.norm(
+                reference.body("object").xpos - reference.body("tips_arm").xpos
+            )
+            control_reward = -0.2 * np.square(action).sum()
+            np.testing.assert_allclose(
+                info["reward_dist"], distance_reward, rtol=0, atol=1e-12
+            )
+            np.testing.assert_allclose(
+                reward,
+                distance_reward + near_reward + control_reward,
+                rtol=0,
+                atol=1e-12,
+            )
