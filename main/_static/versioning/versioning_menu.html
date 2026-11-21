@@ -219,4 +219,34 @@
             console.error("Invalid versioning configuration");
         }
     </script>
+    <script>
+        (() => {
+            // New builds already load the script from the footer template.
+            if (document.querySelector('script[src$="/copyright-year.js"]')) return;
+
+            const script = document.createElement("script");
+            script.src = "/main/_static/farama/copyright-year.js";
+            script.onerror = () => {
+                const fallback = document.createElement("script");
+                fallback.src = "/_static/farama/copyright-year.js";
+                document.head.append(fallback);
+            };
+            document.head.append(script);
+        })();
+    </script>
+    <script>
+        (() => {
+            // Archived docs versions were built before the shared Farama header
+            // script existed, and this file is the only thing they load at view
+            // time, so load the script for them here. Header changes belong in
+            // that script (in the farama.org repository), not in this file.
+            const src = "https://farama.org/assets/docs/shared.js";
+            // Current builds already load it from the page template.
+            if (document.querySelector(`script[src="${src}"]`)) return;
+
+            const script = document.createElement("script");
+            script.src = src;
+            document.head.append(script);
+        })();
+    </script>
 </div>
