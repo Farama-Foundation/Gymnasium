@@ -21,6 +21,37 @@ def test_stacked_sequence():
     assert type(sample) is np.ndarray
 
 
+@pytest.mark.parametrize(
+    "space, value",
+    [
+        (gym.spaces.Sequence(gym.spaces.Box(0, 1, shape=(2,)), stack=True), None),
+        (gym.spaces.Sequence(gym.spaces.Box(0, 1, shape=(2,)), stack=True), "abc"),
+        (gym.spaces.Sequence(gym.spaces.Discrete(3), stack=True), np.int64(1)),
+        (
+            gym.spaces.Sequence(
+                gym.spaces.Dict(
+                    a=gym.spaces.Box(0, 1, shape=(2,)), b=gym.spaces.Discrete(3)
+                ),
+                stack=True,
+            ),
+            np.zeros((2, 2)),
+        ),
+        (
+            gym.spaces.Sequence(
+                gym.spaces.Dict(
+                    a=gym.spaces.Box(0, 1, shape=(2,)), b=gym.spaces.Discrete(3)
+                ),
+                stack=True,
+            ),
+            {},
+        ),
+    ],
+)
+def test_stacked_sequence_contains_invalid_inputs(space, value):
+    """Stacked sequence membership checks return False for malformed inputs."""
+    assert space.contains(value) is False
+
+
 def test_sample():
     """Tests the sequence sampling works as expects and the errors are correctly raised."""
     space = gym.spaces.Sequence(gym.spaces.Box(0, 1))
