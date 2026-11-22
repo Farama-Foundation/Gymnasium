@@ -646,6 +646,43 @@ Often some of the first positional elements are omitted from the state space sin
 <h3>Exact reproducibility<a class="headerlink" href="#exact-reproducibility" title="Link to this heading">¶</a></h3>
 <p>Note: The exact behavior of the MuJoCo simulator changes slightly between <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> versions due to floating point operation ordering (more information of their <a class="reference external" href="https://mujoco.readthedocs.io/en/stable/computation/index.html#reproducibility">Documentation</a>), if exact reproducibility is needed besides using the <code class="docutils literal notranslate"><span class="pre">seed</span></code> for experiments the same simulator version should be used.</p>
 </section>
+<section id="numerical-sensitivity-of-long-horizon-trajectory-comparisons">
+<h3>Numerical sensitivity of long-horizon trajectory comparisons<a class="headerlink" href="#numerical-sensitivity-of-long-horizon-trajectory-comparisons" title="Link to this heading">¶</a></h3>
+<p>Some MuJoCo environments, notably <code class="docutils literal notranslate"><span class="pre">InvertedDoublePendulum</span></code> and other unstable-balance tasks, are chaotic: they exponentially amplify arbitrarily small numerical differences. Differences at the rounding level naturally arising from a different compute backend (CPU vs. MPS/CUDA), thread count, or <code class="docutils literal notranslate"><span class="pre">mujoco</span></code> version can therefore grow until two step-by-step trajectories look completely different, even though the simulator dynamics are identical. As an illustration, with the same seed and an identical deterministic action sequence, nudging the tip pole angle of <code class="docutils literal notranslate"><span class="pre">InvertedDoublePendulum-v5</span></code> by <code class="docutils literal notranslate"><span class="pre">1e-9</span></code> after <code class="docutils literal notranslate"><span class="pre">reset</span></code> grows to a maximum absolute observation difference of ~7e-08 (roughly a 70-fold amplification) by the end of the 11-step episode — a rounding-level difference from a different backend will be amplified the same way.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"InvertedDoublePendulum-v5"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">rollout</span><span class="p">(</span><span class="n">nudge</span><span class="p">):</span>
+    <span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>  <span class="c1"># both rollouts see the identical action sequence</span>
+    <span class="n">mujoco_env</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">unwrapped</span>
+    <span class="k">if</span> <span class="n">nudge</span><span class="p">:</span>  <span class="c1"># perturb the simulator state, not just the returned observation</span>
+        <span class="n">qpos</span> <span class="o">=</span> <span class="n">mujoco_env</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">qpos</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">qpos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">nudge</span>  <span class="c1"># the tip pole angle, an unstable direction</span>
+        <span class="n">mujoco_env</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">qpos</span><span class="p">,</span> <span class="n">mujoco_env</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">qvel</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+    <span class="n">trajectory</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">200</span><span class="p">):</span>  <span class="c1"># bounded horizon to keep the experiment cheap</span>
+        <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+        <span class="n">trajectory</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">trajectory</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">rollout</span><span class="p">(</span><span class="mf">1e-9</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)))</span>
+<span class="c1"># 11 11 6.8e-08</span>
+</pre></div>
+</div>
+<p>Practical advice:</p>
+<ul class="simple">
+<li><p><strong>Do not hand-pick a tolerance.</strong> Instead, measure how much the environment amplifies rounding noise on its own: run the same environment twice on the same machine from the same seed, nudge the initial state by the smallest float step, and record the step-by-step difference between the two trajectories. That divergence curve tells you the window and tolerance within which a cross-backend (CPU vs. MPS/CUDA) difference is indistinguishable from noise the system already has against itself.</p></li>
+<li><p><strong>Short horizons compare directly; long horizons do not.</strong> For regression or cross-version comparisons, first-step or short-horizon trajectory comparisons capture implementation differences before chaotic amplification dominates.</p></li>
+<li><p><strong>For long horizons, compare aggregate statistics</strong> such as seed-matched success rates or episode returns over many episodes. These are insensitive to the exact floating-point path taken within an episode.</p></li>
+</ul>
+</section>
 </section>
 <section id="rendering-arguments">
 <h2>Rendering Arguments<a class="headerlink" href="#rendering-arguments" title="Link to this heading">¶</a></h2>
@@ -796,6 +833,7 @@ For more complex locomotion robot environments you can use third party models wi
 <li><a class="reference internal" href="#versions">Versions</a><ul>
 <li><a class="reference internal" href="#comparing-training-performance-across-versions">Comparing training performance across versions</a></li>
 <li><a class="reference internal" href="#exact-reproducibility">Exact reproducibility</a></li>
+<li><a class="reference internal" href="#numerical-sensitivity-of-long-horizon-trajectory-comparisons">Numerical sensitivity of long-horizon trajectory comparisons</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#rendering-arguments">Rendering Arguments</a><ul>
