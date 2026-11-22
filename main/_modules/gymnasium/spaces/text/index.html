@@ -535,6 +535,8 @@
                 <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">charlist_mask</span><span class="p">),</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span>
                     <span class="sa">f</span><span class="s2">"Expects the sum of the probability mask to be 1, actual sum: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">charlist_mask</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
+                <span class="c1"># NumPy's sum tolerance is stricter than the validation above.</span>
+                <span class="n">charlist_mask</span> <span class="o">=</span> <span class="n">charlist_mask</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">charlist_mask</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">length</span> <span class="o">=</span> <span class="n">charlist_mask</span> <span class="o">=</span> <span class="kc">None</span>
 
