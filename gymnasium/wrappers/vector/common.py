@@ -43,8 +43,8 @@ class RecordEpisodeStatistics(
     :attr:`wrapped_env.return_queue` and :attr:`wrapped_env.length_queue` respectively.
 
     Attributes:
-        return_queue: The cumulative rewards of the last ``deque_size``-many episodes
-        length_queue: The lengths of the last ``deque_size``-many episodes
+        return_queue (``deque[np.float64]``): The cumulative rewards of the last ``deque_size``-many episodes
+        length_queue (``deque[np.int_]``): The lengths of the last ``deque_size``-many episodes
 
     Example:
         >>> from pprint import pprint

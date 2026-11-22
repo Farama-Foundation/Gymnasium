@@ -158,7 +158,7 @@ class AsyncVectorEnv(
                 ``observation_space``, warning, may raise unexpected errors.
             autoreset_mode: When sub-environments are reset after their episode ends, either an :class:`AutoresetMode`
                 or its string value (``"NextStep"``, ``"SameStep"`` or ``"Disabled"``), recorded in ``metadata["autoreset_mode"]``.
-                See https://gymnasium.farama.org/api/vector/autoreset/ for more information.
+                See https://github.com/Farama-Foundation/Gymnasium/blob/main/docs/api/vector/autoreset.md for more information.
             max_concurrency: The maximum number of environments that can be executing (i.e. in ``reset`` or ``step``)
                 at any one time. If ``None`` (default), no limit is applied and all environments are executed in
                 parallel. When set, a shared semaphore limits how many worker processes can run an environment call
