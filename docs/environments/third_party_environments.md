@@ -441,7 +441,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)
   ![GitHub stars](https://img.shields.io/github/stars/automl/DACBench)
 
-  A benchmark library for [Dynamic Algorithm Configuration](https://www.automl.org/dynamic-algorithm-configuration/). Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
+  A benchmark library for [Dynamic Algorithm Configuration](https://arxiv.org/abs/2205.13881). Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
 - [EnvPool: C++-based high-performance parallel environment execution](https://github.com/sail-sg/envpool)
 
