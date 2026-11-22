@@ -577,7 +577,10 @@
 <span class="sd">            env (gym.Env): The environment to apply the wrapper</span>
 <span class="sd">            autoreset_mode: The autoreset mode, either ``AutoresetMode.NEXT_STEP`` or ``AutoresetMode.SAME_STEP``</span>
 <span class="sd">        """</span>
-        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">autoreset_mode</span><span class="o">=</span><span class="n">autoreset_mode</span><span class="p">)</span>
+        <span class="c1"># Records the mode's string value, as `AutoresetMode` is not json serialisable for `EnvSpec.to_json`</span>
+        <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">autoreset_mode</span><span class="o">=</span><span class="n">AutoresetMode</span><span class="p">(</span><span class="n">autoreset_mode</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="p">)</span>
         <span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">autoreset_mode</span> <span class="o">=</span> <span class="p">(</span>
