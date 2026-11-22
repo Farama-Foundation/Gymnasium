@@ -19,7 +19,7 @@ class Text(Space[str]):
 
     Example:
         >>> from gymnasium.spaces import Text
-        >>> # {"", "B5", "hello", ...}
+        >>> # {"a", "B5", "hello", ...}
         >>> Text(5)
         Text(1, 5, charset=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)
         >>> # {"0", "42", "0123456789", ...}
@@ -112,7 +112,8 @@ class Text(Space[str]):
                 The length is expected to be between the ``min_length`` and ``max_length``.
                 Otherwise, a random integer between ``min_length`` and ``max_length`` is selected.
                 For the mask, we expect a numpy array of length of the charset passed with ``dtype == np.int8``.
-                If the charlist mask is all zero then an empty string is returned no matter the ``min_length``
+                If the character mask is all zero, an empty string is returned only when ``min_length == 0``,
+                even if a positive length was requested. Otherwise, a :class:`ValueError` is raised.
             probability: An optional tuples of length and probability mask for the text.
                 The length is expected to be between the ``min_length`` and ``max_length``.
                 Otherwise, a random integer between ``min_length`` and ``max_length`` is selected.
@@ -121,6 +122,17 @@ class Text(Space[str]):
 
         Returns:
             A sampled string from the space
+
+        Example:
+            >>> from gymnasium.spaces import Text
+            >>> import numpy as np
+            >>> mask = np.zeros(2, dtype=np.int8)
+            >>> Text(3, min_length=0, charset="ab").sample(mask=(3, mask))
+            ''
+            >>> Text(3, charset="ab").sample(mask=(3, mask))
+            Traceback (most recent call last):
+                ...
+            ValueError: Trying to sample with a minimum length > 0 (actual minimum length=1) but the character mask is all zero meaning that no character could be sampled.
         """
         if mask is not None and probability is not None:
             raise ValueError(
