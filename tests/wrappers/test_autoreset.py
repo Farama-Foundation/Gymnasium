@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
+from gymnasium.envs.registration import EnvSpec
 from gymnasium.vector import AutoresetMode
 from gymnasium.wrappers import Autoreset
 from tests.testing_env import GenericTestEnv
@@ -113,6 +114,18 @@ def test_autoreset_wrapper_metadata(autoreset_mode, expected):
     assert env.metadata["autoreset_mode"] == expected
     # The wrapped environment's metadata isn't modified
     assert "autoreset_mode" not in env.env.metadata
+
+
+@pytest.mark.parametrize(
+    "autoreset_mode", [AutoresetMode.NEXT_STEP, AutoresetMode.SAME_STEP, "SameStep"]
+)
+def test_autoreset_wrapper_spec_json(autoreset_mode):
+    """Tests that an `Autoreset` environment can be recreated from its spec serialised to json."""
+    env = Autoreset(gym.make("CartPole-v1"), autoreset_mode=autoreset_mode)
+
+    recreated_env = gym.make(EnvSpec.from_json(env.spec.to_json()))
+    assert isinstance(recreated_env, Autoreset)
+    assert recreated_env.autoreset_mode == env.autoreset_mode
 
 
 def test_autoreset_wrapper_disabled():
