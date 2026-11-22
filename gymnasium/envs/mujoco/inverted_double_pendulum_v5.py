@@ -128,12 +128,15 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
         - Added `reset_noise_scale` argument to set the range of initial states.
         - Added `healthy_reward` argument to configure the reward function (defaults are effectively the same as in `v4`).
         - Added individual reward terms in `info` (`info["reward_survive"]`, `info["distance_penalty"]`, `info["velocity_penalty"]`).
+        - Fixed bug: `distance_penalty` and the termination condition were computed from body positions that lagged `qpos` by one physics sub-step (`xpos` is not updated by `mj_step`), they now match the post-step `qpos` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/1690)).
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3.
     * v3: This environment does not have a v3 release. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks (including inverted pendulum).
     * v0: Initial versions release.
     """
+
+    _sync_kinematics_after_step = True
 
     metadata = {
         "render_modes": [

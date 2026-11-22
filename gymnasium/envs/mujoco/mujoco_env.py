@@ -35,6 +35,12 @@ def expand_model_path(model_path: str) -> str:
 class MujocoEnv(gym.Env):
     """Superclass for MuJoCo based environments."""
 
+    # After `mj_step`, MuJoCo leaves position-derived quantities (`xpos`, `xipos`, `site_xpos`, ...)
+    # from before the final integration, so they lag `qpos` (google-deepmind/mujoco#889).
+    # When True, `mj_kinematics` is run after stepping so they match `qpos`.
+    # This is False by default so the behaviour of `v4` and of third-party subclasses is unchanged.
+    _sync_kinematics_after_step: bool = False
+
     def __init__(
         self,
         model_path: str,
@@ -153,6 +159,10 @@ class MujocoEnv(gym.Env):
         # unless there's a force sensor in the model.
         # See https://github.com/openai/gym/issues/1541
         mujoco.mj_rnePostConstraint(self.model, self.data)
+
+        # Done after `mj_rnePostConstraint` so the contact forces (`cfrc_ext`) are unchanged.
+        if self._sync_kinematics_after_step:
+            mujoco.mj_kinematics(self.model, self.data)
 
     def render(self):
         """

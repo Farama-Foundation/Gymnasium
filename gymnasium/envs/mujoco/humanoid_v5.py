@@ -288,6 +288,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
         - Renamed `info["reward_linvel"]` to `info["reward_forward"]` to be consistent with the other environments.
         - Renamed `info["reward_quadctrl"]` to `info["reward_ctrl"]` to be consistent with the other environments.
         - Removed `info["forward_reward"]` as it is equivalent to `info["reward_forward"]`.
+        - Fixed bug: `info["x_velocity"]`, `info["y_velocity"]` and `reward_forward` were computed from body positions that lagged `qpos` by one physics sub-step (`xpos` is not updated by `mj_step`), they now match the post-step `qpos` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/1690)).
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
     * v3: Support for `gymnasium.make` kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale`, etc. rgb rendering comes from tracking camera (so agent does not run away from screen). Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
         - Note: the environment robot model was slightly changed at `gym==0.21.0` and training results are not comparable with `gym<0.21` and `gym>=0.21` (related [GitHub PR](https://github.com/openai/gym/pull/932/files))
@@ -296,6 +297,8 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     * v1: max_time_steps raised to 1000 for robot based tasks. Added reward_threshold to environments.
     * v0: Initial versions release
     """
+
+    _sync_kinematics_after_step = True
 
     metadata = {
         "render_modes": [
