@@ -10,7 +10,7 @@ title: Reward Wrappers
     .. automethod:: gymnasium.RewardWrapper.reward
 ```
 
-## Implemented Wrappers
+## Implemented wrappers
 
 ```{eval-rst}
 .. autoclass:: gymnasium.wrappers.TransformReward

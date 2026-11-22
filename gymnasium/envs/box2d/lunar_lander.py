@@ -107,6 +107,19 @@ class LunarLander(gym.Env, EzPickle):
     velocities in `x` & `y`, its angle, its angular velocity, and two booleans
     that represent whether each leg is in contact with the ground or not.
 
+    | Num | Observation                         | Min   | Max  |
+    |-----|-------------------------------------|-------|------|
+    | 0   | `x` coordinate                      | -2.5  | 2.5  |
+    | 1   | `y` coordinate                      | -2.5  | 2.5  |
+    | 2   | `x` linear velocity                 | -10   | 10   |
+    | 3   | `y` linear velocity                 | -10   | 10   |
+    | 4   | angle (rad)                         | -2π   | 2π   |
+    | 5   | angular velocity                    | -10   | 10   |
+    | 6   | left leg contact with ground (0/1)  | 0     | 1    |
+    | 7   | right leg contact with ground (0/1) | 0     | 1    |
+
+    The episode terminates once `|x| >= 1`, so the `x` coordinate stays well inside these bounds in practice.
+
     ## Rewards
     After every step a reward is granted. The total reward of an episode is the
     sum of the rewards for all the steps within that episode.
@@ -119,7 +132,8 @@ class LunarLander(gym.Env, EzPickle):
     - is decreased by 0.03 points each frame a side engine is firing.
     - is decreased by 0.3 points each frame the main engine is firing.
 
-    The episode receive an additional reward of -100 or +100 points for crashing or landing safely respectively.
+    On the final step of a terminated episode, the reward for that step is replaced (not added to) by -100 if
+    the lander crashed or left the viewport, or +100 if it came to rest.
 
     An episode is considered a solution if it scores at least 200 points.
 
@@ -127,17 +141,19 @@ class LunarLander(gym.Env, EzPickle):
     The lander starts at the top center of the viewport with a random initial
     force applied to its center of mass.
 
-    ## Episode Termination
-    The episode finishes if:
+    ## Episode End
+    The episode terminates if:
     1) the lander crashes (the lander body gets in contact with the moon);
-    2) the lander gets outside of the viewport (`x` coordinate is greater than 1);
-    3) the lander is not awake. From the [Box2D docs](https://box2d.org/documentation/md_simulation.html),
+    2) the lander gets outside of the viewport (the absolute `x` coordinate is greater than or equal to 1);
+    3) the lander is not awake (it has come to rest, whether or not it is on the landing pad). From the [Box2D docs](https://box2d.org/documentation/md_simulation.html),
        a body which is not awake is a body which doesn't move and doesn't collide with any other body:
     > When Box2D determines that a body (or group of bodies) has come to rest,
     > the body enters a sleep state which has very little CPU overhead. If a
     > body is awake and collides with a sleeping body, then the sleeping body
     > wakes up. Bodies will also wake up if a joint or contact attached to
     > them is destroyed.
+
+    The episode is truncated after 1000 steps (the `max_episode_steps` of `LunarLander-v3` and `LunarLanderContinuous-v3`).
 
     ## Arguments
 
@@ -166,6 +182,7 @@ class LunarLander(gym.Env, EzPickle):
 
     * `enable_wind` determines if there will be wind effects applied to the lander. The wind is generated using
      the function `tanh(sin(2 k (t+C)) + sin(pi k (t+C)))` where `k` is set to 0.01 and `C` is sampled randomly between -9999 and 9999.
+     Wind and turbulence are only applied while neither leg is in contact with the ground.
 
     * `wind_power` dictates the maximum magnitude of linear wind applied to the craft. The recommended value for
      `wind_power` is between 0.0 and 20.0.

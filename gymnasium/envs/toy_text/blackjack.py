@@ -151,7 +151,7 @@ class BlackjackEnv(gym.Env):
     by Sutton and Barto [<a href="#blackjack_ref">1</a>].
 
     ## Action Space
-    The action shape is `(1,)` in the range `{0, 1}` indicating
+    The action space is `Discrete(2)`, an integer in `{0, 1}` indicating
     whether to stick or hit.
 
     - 0: Stick
@@ -162,7 +162,8 @@ class BlackjackEnv(gym.Env):
     the value of the dealer's one showing card (1-10 where 1 is ace),
     and whether the player holds a usable ace (0 or 1).
 
-    The observation is returned as `(int(), int(), int())`.
+    The observation space is `Tuple((Discrete(32), Discrete(11), Discrete(2)))` and
+    observations are returned as a tuple of three integers, `(player_sum, dealer_card, usable_ace)`.
 
     ## Starting State
     The starting state is initialised with the following values.
@@ -178,8 +179,8 @@ class BlackjackEnv(gym.Env):
     - lose game: -1
     - draw game: 0
     - win game with natural blackjack:
-    +1.5 (if <a href="#nat">natural</a> is True)
-    +1 (if <a href="#nat">natural</a> is False)
+    +1.5 (if <a href="#nat">natural</a> is True and <a href="#sab">sab</a> is False)
+    +1 (otherwise)
 
     ## Episode End
     The episode ends if the following happens:
@@ -198,14 +199,17 @@ class BlackjackEnv(gym.Env):
 
     ```python
     import gymnasium as gym
-    gym.make('Blackjack-v1', natural=False, sab=False)
+    gym.make('Blackjack-v1', natural=False, sab=True)
     ```
 
     <a id="nat"></a>`natural=False`: Whether to give an additional reward for
     starting with a natural blackjack, i.e. starting with an ace and ten (sum is 21).
+    This only has an effect if `sab=False`, so it must be passed together with `sab=False`
+    when using `gym.make("Blackjack-v1")`.
 
-    <a id="sab"></a>`sab=False`: Whether to follow the exact rules outlined in the book by
-    Sutton and Barto. If `sab` is `True`, the keyword argument `natural` will be ignored.
+    <a id="sab"></a>`sab=True`: Whether to follow the exact rules outlined in the book by
+    Sutton and Barto. `Blackjack-v1` is registered with `sab=True` (the `BlackjackEnv` class
+    itself defaults to `sab=False`). If `sab` is `True`, the keyword argument `natural` will be ignored.
     If the player achieves a natural blackjack and the dealer does not, the player
     will win (i.e. get a reward of +1). The reverse rule does not apply.
     If both the player and the dealer get a natural, it will be a draw (i.e. reward 0).

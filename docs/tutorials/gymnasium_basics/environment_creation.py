@@ -88,8 +88,8 @@ randomly at the beginning of the episode.
 -  Observations provide the location of the target and agent.
 -  There are 4 actions in our environment, corresponding to the
    movements “right”, “up”, “left”, and “down”.
--  A done signal is issued as soon as the agent has navigated to the
-   grid cell where the target is located.
+-  The episode terminates (``terminated=True``) as soon as the agent has
+   navigated to the grid cell where the target is located.
 -  Rewards are binary and sparse, meaning that the immediate reward is
    always zero, unless the agent has reached the target, then it is 1.
 
@@ -203,10 +203,17 @@ class GridWorldEnv(gym.Env):
 # ``step``, it is often convenient to have a (private) method ``_get_obs``
 # that translates the environment’s state into an observation. However,
 # this is not mandatory and you may as well compute observations in
-# ``reset`` and ``step`` separately:
+# ``reset`` and ``step`` separately. We return copies of the location
+# arrays, because the user keeps the observations returned to them: if we
+# returned ``self._agent_location`` directly, a later in-place change to
+# the environment's state would also change observations the user already
+# holds (:func:`gymnasium.utils.env_checker.check_env` checks for this):
 
     def _get_obs(self):
-        return {"agent": self._agent_location, "target": self._target_location}
+        return {
+            "agent": self._agent_location.copy(),
+            "target": self._target_location.copy(),
+        }
 
 # %%
 # We can also implement a similar method for the auxiliary information
@@ -232,8 +239,8 @@ class GridWorldEnv(gym.Env):
 #
 # The ``reset`` method will be called to initiate a new episode. You may
 # assume that the ``step`` method will not be called before ``reset`` has
-# been called. Moreover, ``reset`` should be called whenever a done signal
-# has been issued. Users may pass the ``seed`` keyword to ``reset`` to
+# been called. Moreover, ``reset`` should be called whenever the episode
+# has ended, i.e. ``terminated`` or ``truncated`` is ``True``. Users may pass the ``seed`` keyword to ``reset`` to
 # initialize any random number generator that is used by the environment
 # to a deterministic state. It is recommended to use the random number
 # generator ``self.np_random`` that is provided by the environment’s base
@@ -281,9 +288,11 @@ class GridWorldEnv(gym.Env):
 # ``(observation, reward, terminated, truncated, info)``. See
 # :meth:`gymnasium.Env.step`. Once the new state of the environment has
 # been computed, we can check whether it is a terminal state and we set
-# ``done`` accordingly. Since we are using sparse binary rewards in
-# ``GridWorldEnv``, computing ``reward`` is trivial once we know
-# ``done``.To gather ``observation`` and ``info``, we can again make
+# ``terminated`` accordingly. ``GridWorldEnv`` has no time limit of its
+# own, so ``truncated`` is always ``False`` here (a time limit can be
+# added at registration, see below). Since we are using sparse binary
+# rewards in ``GridWorldEnv``, computing ``reward`` is trivial once we know
+# ``terminated``. To gather ``observation`` and ``info``, we can again make
 # use of ``_get_obs`` and ``_get_info``:
 
     def step(self, action):
@@ -293,7 +302,7 @@ class GridWorldEnv(gym.Env):
         self._agent_location = np.clip(
             self._agent_location + direction, 0, self.size - 1
         )
-        # An episode is done iff the agent has reached the target
+        # An episode terminates iff the agent has reached the target
         terminated = np.array_equal(self._agent_location, self._target_location)
         reward = 1 if terminated else 0  # Binary sparse rewards
         observation = self._get_obs()
@@ -416,6 +425,7 @@ class GridWorldEnv(gym.Env):
 #    register(
 #        id="gymnasium_env/GridWorld-v0",
 #        entry_point="gymnasium_env.envs:GridWorldEnv",
+#        max_episode_steps=300,
 #    )
 
 # %%
@@ -429,30 +439,37 @@ class GridWorldEnv(gym.Env):
 # The keyword argument ``max_episode_steps=300`` will ensure that
 # GridWorld environments that are instantiated via ``gymnasium.make`` will
 # be wrapped in a ``TimeLimit`` wrapper (see `the wrapper
-# documentation </api/wrappers>`__ for more information). A done signal
-# will then be produced if the agent has reached the target *or* 300 steps
-# have been executed in the current episode. To distinguish truncation and
-# termination, you can check ``info["TimeLimit.truncated"]``.
+# documentation </api/wrappers>`__ for more information). The episode
+# then ends if the agent has reached the target (``terminated=True``)
+# *or* 300 steps have been executed in the current episode
+# (``truncated=True``).
 #
-# Apart from ``id`` and ``entrypoint``, you may pass the following
+# Apart from ``id`` and ``entry_point``, you may pass the following
 # additional keyword arguments to ``register``:
 #
-# +----------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
-# | Name                 | Type      | Default   | Description                                                                                                   |
-# +======================+===========+===========+===============================================================================================================+
-# | ``reward_threshold`` | ``float`` | ``None``  | The reward threshold before the task is  considered solved                                                    |
-# +----------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
-# | ``nondeterministic`` | ``bool``  | ``False`` | Whether this environment is non-deterministic even after seeding                                              |
-# +----------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
-# | ``max_episode_steps``| ``int``   | ``None``  | The maximum number of steps that an episode can consist of. If not ``None``, a ``TimeLimit`` wrapper is added |
-# +----------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
-# | ``order_enforce``    | ``bool``  | ``True``  | Whether to wrap the environment in an  ``OrderEnforcing`` wrapper                                             |
-# +----------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
-# | ``kwargs``           | ``dict``  | ``{}``    | The default kwargs to pass to the environment class                                                           |
-# +----------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
+# +-------------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
+# | Name                    | Type      | Default   | Description                                                                                                   |
+# +=========================+===========+===========+===============================================================================================================+
+# | ``reward_threshold``    | ``float`` | ``None``  | The reward threshold before the task is considered solved                                                     |
+# +-------------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
+# | ``nondeterministic``    | ``bool``  | ``False`` | Whether this environment is non-deterministic even after seeding                                              |
+# +-------------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
+# | ``max_episode_steps``   | ``int``   | ``None``  | The maximum number of steps that an episode can consist of. If not ``None``, a ``TimeLimit`` wrapper is added |
+# +-------------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
+# | ``order_enforce``       | ``bool``  | ``True``  | Whether to wrap the environment in an ``OrderEnforcing`` wrapper                                              |
+# +-------------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
+# | ``disable_env_checker`` | ``bool``  | ``False`` | Whether to skip the ``PassiveEnvChecker`` wrapper that checks the environment's API on its first calls        |
+# +-------------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
+# | ``additional_wrappers`` | ``tuple`` | ``()``    | Extra wrappers (as ``WrapperSpec``) to apply to the environment when it is made                               |
+# +-------------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
+# | ``vector_entry_point``  | ``str``   | ``None``  | The entry point of a vectorized implementation, used by ``gymnasium.make_vec``                                |
+# +-------------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
+# | ``kwargs``              | ``dict``  | ``{}``    | The default kwargs to pass to the environment class                                                           |
+# +-------------------------+-----------+-----------+---------------------------------------------------------------------------------------------------------------+
 #
 # Most of these keywords (except for ``max_episode_steps``,
-# ``order_enforce`` and ``kwargs``) do not alter the behavior of
+# ``order_enforce``, ``disable_env_checker``, ``additional_wrappers`` and
+# ``kwargs``) do not alter the behavior of
 # environment instances but merely provide some extra information about
 # your environment. After registration, our custom ``GridWorldEnv``
 # environment can be created with
@@ -495,7 +512,7 @@ class GridWorldEnv(gym.Env):
 #    version = "0.0.1"
 #    dependencies = [
 #      "gymnasium",
-#      "pygame==2.1.3",
+#      "pygame-ce>=2.1.3",
 #      "pre-commit",
 #    ]
 #
@@ -554,14 +571,14 @@ class GridWorldEnv(gym.Env):
 #
 #    env = gymnasium.make('gymnasium_env/GridWorld-v0')
 #    wrapped_env = FlattenObservation(env)
-#    print(wrapped_env.reset())     # E.g.  [3 0 3 3], {}
+#    print(wrapped_env.reset(seed=0))  # (array([4, 3, 2, 1]), {'distance': np.float64(4.0)})
 #
 # Wrappers have the big advantage that they make environments highly
 # modular. For instance, instead of flattening the observations from
 # GridWorld, you might only want to look at the relative position of the
-# target and the agent. In the section on
-# `ObservationWrappers </api/wrappers/observation_wrappers/#observation-wrappers>`__ we have
-# implemented a wrapper that does this job. This wrapper is also available
+# target and the agent. In the :doc:`implementing_custom_wrappers`
+# tutorial we have implemented a wrapper, ``RelativePosition``, that does
+# this job. This wrapper is also available
 # in ``gymnasium_env/wrappers/relative_position.py``:
 #
 # .. code:: python
@@ -572,4 +589,4 @@ class GridWorldEnv(gym.Env):
 #
 #    env = gymnasium.make('gymnasium_env/GridWorld-v0')
 #    wrapped_env = RelativePosition(env)
-#    print(wrapped_env.reset())     # E.g.  [-3  3], {}
+#    print(wrapped_env.reset(seed=0))  # (array([-2, -2]), {'distance': np.float64(4.0)})

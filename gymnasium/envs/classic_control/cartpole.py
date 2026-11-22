@@ -30,7 +30,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
     ## Action Space
 
-    The action is a `ndarray` with shape `(1,)` which can take values `{0, 1}` indicating the direction
+    The action space is `Discrete(2)`, an integer in `{0, 1}` indicating the direction
      of the fixed force the cart is pushed with.
 
     - 0: Push cart to the left
@@ -58,7 +58,8 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
        if the pole angle is not in the range `(-.2095, .2095)` (or **±12°**)
 
     ## Rewards
-    Since the goal is to keep the pole upright for as long as possible, by default, a reward of `+1` is given for every step taken, including the termination step. The default reward threshold is 500 for v1 and 200 for v0 due to the time limit on the environment.
+    Since the goal is to keep the pole upright for as long as possible, by default, a reward of `+1` is given for every step taken, including the termination step.
+    The maximum episode return is 500 for v1 and 200 for v0 due to the time limit, and the registered reward threshold (`env.spec.reward_threshold`) is 475 for v1 and 195 for v0.
 
     If `sutton_barto_reward=True`, then a reward of `0` is awarded for every non-terminating step and `-1` for the terminating step. As a result, the reward threshold is 0 for v0 and v1.
 
@@ -70,11 +71,11 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
     1. Termination: Pole Angle is greater than ±12°
     2. Termination: Cart Position is greater than ±2.4 (center of the cart reaches the edge of the display)
-    3. Truncation: Episode length is greater than 500 (200 for v0)
+    3. Truncation: Episode length reaches 500 (200 for v0)
 
     ## Arguments
 
-    Cartpole only has `render_mode` as a keyword for `gymnasium.make`.
+    CartPole accepts `render_mode` and `sutton_barto_reward` (see the table below) as keywords for `gymnasium.make`.
     On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
     ```python
@@ -93,7 +94,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
     ## Vectorized environment
 
-    To increase steps per seconds, users can use a custom vector environment or with an environment vectorizor.
+    To increase steps per seconds, users can use a custom vector environment or with an environment vectorizer.
 
     ```python
     >>> import gymnasium as gym

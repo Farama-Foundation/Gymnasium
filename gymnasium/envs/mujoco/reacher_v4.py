@@ -9,6 +9,8 @@ DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0}
 
 
 class ReacherEnv(MujocoEnv, utils.EzPickle):
+    """`Reacher-v4`, kept for reproducibility. See `Reacher-v5` (:class:`gymnasium.envs.mujoco.reacher_v5.ReacherEnv`) for the documentation and the changes in `v5`."""
+
     metadata = {
         "render_modes": [
             "human",

@@ -51,7 +51,7 @@ This version uses infinite deck (cards drawn with replacement), so card counting
 - **Observation**: (player_sum, dealer_card, usable_ace)
   - `player_sum`: Current hand value (4-21)
   - `dealer_card`: Dealer's face-up card (1-10)
-  - `usable_ace`: Whether player has usable ace (True/False)
+  - `usable_ace`: Whether player has a usable ace (1) or not (0)
 - **Actions**: 0 = Stand, 1 = Hit
 - **Rewards**: +1 for win, -1 for loss, 0 for draw
 - **Episode ends**: When player stands or busts (goes over 21)
@@ -61,6 +61,12 @@ This version uses infinite deck (cards drawn with replacement), so card counting
 After receiving our first observation from `env.reset()`, we use `env.step(action)` to interact with the environment. This function takes an action and returns five important values:
 
 ```python
+import gymnasium as gym
+
+env = gym.make("Blackjack-v1")
+observation, info = env.reset()
+
+action = env.action_space.sample()  # a random action, for now
 observation, reward, terminated, truncated, info = env.step(action)
 ```
 
@@ -134,7 +140,7 @@ class BlackjackAgent:
         # Track learning progress
         self.training_error = []
 
-    def get_action(self, obs: tuple[int, int, bool]) -> int:
+    def get_action(self, obs: tuple[int, int, int]) -> int:
         """Choose an action using epsilon-greedy strategy.
 
         Returns:
@@ -150,11 +156,11 @@ class BlackjackAgent:
 
     def update(
         self,
-        obs: tuple[int, int, bool],
+        obs: tuple[int, int, int],
         action: int,
         reward: float,
         terminated: bool,
-        next_obs: tuple[int, int, bool],
+        next_obs: tuple[int, int, int],
     ):
         """Update Q-value based on experience.
 
@@ -188,12 +194,14 @@ class BlackjackAgent:
 
 The core learning happens in the `update` method. Let's break down the math:
 
+<!-- test: skip -->
 ```python
 # Current estimate: Q(state, action)
 current_q = self.q_values[obs][action]
 
 # What we actually experienced: reward + discounted future value
-target = reward + self.discount_factor * max(self.q_values[next_obs])
+# (no future value if the episode terminated)
+target = reward + self.discount_factor * (not terminated) * max(self.q_values[next_obs])
 
 # How wrong were we?
 error = target - current_q
@@ -264,19 +272,21 @@ for episode in tqdm(range(n_episodes)):
 
 ### What to Expect During Training
 
+These numbers come from running the code on this page; yours will vary a little between runs. For reference, a purely random policy wins about 28% of hands.
+
 **Early episodes (0-10,000)**:
 - Agent acts mostly randomly (high epsilon)
-- Wins about 43% of hands (slightly worse than random due to poor strategy)
+- Wins about 30% of hands, close to the random policy
 - Large learning errors as Q-values are very inaccurate
 
 **Middle episodes (10,000-50,000)**:
-- Agent starts finding good strategies
-- Win rate improves to 45-48%
+- Agent starts finding good strategies as epsilon decreases
+- Win rate improves to about 37%
 - Learning errors decrease as estimates get better
 
 **Later episodes (50,000+)**:
-- Agent converges to near-optimal strategy
-- Win rate plateaus around 49% (theoretical maximum for this game)
+- Epsilon reaches its minimum of 0.1, so 10% of actions are still random
+- Win rate plateaus around 41%
 - Small learning errors as Q-values stabilize
 
 ## Analyzing Training Results
@@ -337,9 +347,9 @@ plt.show()
 
 ### Interpreting the Results
 
-**Reward Plot**: Should show gradual improvement from ~-0.05 (slightly negative) to ~-0.01 (near optimal). Blackjack is a difficult game - even perfect play loses slightly due to the house edge.
+**Reward Plot**: Should show gradual improvement from about -0.4 (random play) to about -0.08 to -0.1 by the end of training. Blackjack is a difficult game - even perfect play loses slightly due to the house edge, so the average reward stays negative.
 
-**Episode Length**: Should stabilize around 2-3 actions per episode. Very short episodes suggest the agent is standing too early; very long episodes suggest hitting too often.
+**Episode Length**: Should stay around 1.4-1.6 actions per episode, as most hands end after standing or hitting once or twice. Much shorter episodes suggest the agent is standing too early; much longer episodes suggest hitting too often.
 
 **Training Error**: Should decrease over time, indicating the agent's predictions are getting more accurate. Large spikes early in training are normal as the agent encounters new situations.
 
@@ -419,10 +429,19 @@ def test_agent(agent, env, num_episodes=1000):
 test_agent(agent, env)
 ```
 
+Without exploration, the trained agent wins about 42-43% of hands with an average reward of about -0.05, for example:
+
+```text
+Test Results over 1000 episodes:
+Win Rate: 43.6%
+Average Reward: -0.036
+Standard Deviation: 0.952
+```
+
 Good Blackjack performance:
-- **Win rate**: 42-45% (house edge makes >50% impossible)
-- **Average reward**: -0.02 to +0.01
-- **Consistency**: Low standard deviation indicates reliable strategy
+- **Win rate**: 42-44% (the house edge makes >50% impossible)
+- **Average reward**: slightly negative, around -0.05 (a random policy gets about -0.4)
+- **Standard deviation**: close to 1, since every hand ends in a win (+1), loss (-1) or draw (0). It won't shrink with better play, so judge the agent by its average reward over many episodes
 
 ## Next Steps
 

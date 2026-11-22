@@ -221,7 +221,7 @@ class Autoreset(
     def reset(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[WrapperObsType, dict[str, Any]]:
-        """Resets the environment and sets autoreset to False preventing."""
+        """Resets the environment and sets autoreset to False, so the next step isn't an autoreset step."""
         self.autoreset = False
         return super().reset(seed=seed, options=options)
 
@@ -274,7 +274,7 @@ class PassiveEnvChecker(
     Change logs:
      * v0.24.1 - Initially added however broken in several ways
      * v0.25.0 - Bugs was all fixed
-     * v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and inregular bound shapes
+     * v0.29.0 - Removed warnings for infinite bounds for Box observation and action spaces and irregular bound shapes
     """
 
     def __init__(self, env: gym.Env[ObsType, ActType]):

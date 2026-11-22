@@ -26,7 +26,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
     ## Action Space
     ```{figure} action_space_figures/humanoid.png
-    :name: humanoid
+    :name: humanoid_standup_action_space
     ```
 
     The action space is a `Box(-0.4, 0.4, (17,), float32)`. An action represents the torques applied at the hinge joints.
@@ -65,7 +65,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     It has shape 13 * 6 (*nbody * 6*).
     (com velocity - velocity x, y, z and angular velocity x, y, z)
     - *qfrc_actuator (17 elements):* Constraint force generated as the actuator force at each joint.
-    This has shape `(17,)`  *(nv * 1)*.
+    This has shape `(17,)`  *(nv - 6)*, the 6 DOFs of the free `root` joint are excluded.
     - *cfrc_ext (78 elements):* This is the center of mass based external force on the body parts.
     It has shape 13 * 6 (*nbody * 6*) and thus adds another 78 elements to the observation space.
     (external forces - force x, y, z and torque x, y, z)
@@ -132,17 +132,17 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
     The body parts are:
 
-    | body part       | id (for `v2`, `v3`, `v4)` | id (for `v5`) |
+    | body part       | id (for `v2`, `v3`, `v4`) | id (for `v5`) |
     |  -------------  |  ---   |  ---  |
     | worldbody (note: all values are constant 0) | 0  |excluded|
     | torso           |1  | 0      |
     | lwaist          |2  | 1      |
     | pelvis          |3  | 2      |
     | right_thigh     |4  | 3      |
-    | right_sin       |5  | 4      |
+    | right_shin      |5  | 4      |
     | right_foot      |6  | 5      |
     | left_thigh      |7  | 6      |
-    | left_sin        |8  | 7      |
+    | left_shin       |8  | 7      |
     | left_foot       |9  | 8      |
     | right_upper_arm |10 | 9      |
     | right_lower_arm |11 | 10     |
@@ -151,7 +151,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
 
     The joints are:
 
-    | joint           | id (for `v2`, `v3`, `v4)` | id (for `v5`) |
+    | joint           | id (for `v2`, `v3`, `v4`) | id (for `v5`) |
     |  -------------  |  ---   |  ---  |
     | root (note: all values are constant 0) | 0  |excluded|
     | root (note: all values are constant 0) | 1  |excluded|
@@ -167,7 +167,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     | right_hip_y     | 11 | 5      |
     | right_knee      | 12 | 6      |
     | left_hip_x      | 13 | 7      |
-    | left_hiz_z      | 14 | 8      |
+    | left_hip_z      | 14 | 8      |
     | left_hip_y      | 15 | 9      |
     | left_knee       | 16 | 10     |
     | right_shoulder1 | 17 | 11     |
@@ -175,7 +175,7 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     | right_elbow     | 19 | 13     |
     | left_shoulder1  | 20 | 14     |
     | left_shoulder2  | 21 | 15     |
-    | left_elfbow     | 22 | 16     |
+    | left_elbow      | 22 | 16     |
 
     The (x,y,z) coordinates are translational DOFs, while the orientations are rotational DOFs expressed as quaternions.
     One can read more about free joints in the [MuJoCo documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
@@ -192,31 +192,30 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     A reward for moving up (trying to stand up).
     This is not a relative reward, measuring how far up the robot has moved since the last timestep,
     but an absolute reward measuring how far up the Humanoid has moved up in total.
-    It is measured as $w_{uph} \times \frac{z_{after\_action} - 0}{dt}$,
+    It is measured as $w_{uph} \times \frac{z_{after\_action} - 0}{timestep}$,
     where $z_{after\_action}$ is the z coordinate of the torso after taking an action,
-    and $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is $5$),
-    and `frametime`, which is $0.01$ - so the default is $dt = 5 \times 0.01 = 0.05$,
+    $timestep$ is the MuJoCo simulation timestep `model.opt.timestep` (default is $0.003$), **not** $dt$ (the time between actions, $dt = frame\_skip \times timestep = 5 \times 0.003 = 0.015$),
     and $w_{uph}$ is `uph_cost_weight` (default is $1$).
     - *quad_ctrl_cost*:
     A negative reward to penalize the Humanoid for taking actions that are too large.
     $w_{quad\_control} \times \|action\|_2^2$,
     where $w_{quad\_control}$ is `ctrl_cost_weight` (default is $0.1$).
-    - *impact_cost*:
+    - *quad_impact_cost*:
     A negative reward to penalize the Humanoid if the external contact forces are too large.
-    $w_{impact} \times clamp(impact\_cost\_range, \|F_{contact}\|_2^2)$, where
+    $clamp(w_{impact} \times \|F_{contact}\|_2^2, impact\_cost\_range)$, where
     $w_{impact}$ is `impact_cost_weight` (default is $5\times10^{-7}$),
     $F_{contact}$ are the external contact forces (see `cfrc_ext` section on Observation Space).
 
-    `info` contains the individual reward terms.
+    `info` contains the individual reward terms (`"reward_linup"`, `"reward_quadctrl"` and `"reward_impact"`).
 
 
     ## Starting State
-    The initial position state is $[0.0, 0.0, 1.4, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times I_{24}, reset\_noise\_scale \times I_{24}]}$.
+    The initial position state is $[0.0, 0.0, 0.105, 1.0, 0.0, ... 0.0] + \mathcal{U}_{[-reset\_noise\_scale \times I_{24}, reset\_noise\_scale \times I_{24}]}$.
     The initial velocity state is $\mathcal{U}_{[-reset\_noise\_scale \times I_{23}, reset\_noise\_scale \times I_{23}]}$.
 
     where $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
-    Note that the z- and x-coordinates are non-zero so that the humanoid immediately lies down and faces forward (x-axis).
+    Note that the z-coordinate and the w-component of the torso's orientation quaternion are non-zero, so that the humanoid starts lying on the ground facing forward (x-axis).
 
 
     ## Episode End
@@ -239,10 +238,12 @@ class HumanoidStandupEnv(MujocoEnv, utils.EzPickle):
     | Parameter                                    | Type      | Default               | Description                                                                                                                                                                                                 |
     | -------------------------------------------- | --------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     | `xml_file`                                   | **str**   |`"humanoidstandup.xml"`| Path to a MuJoCo model                                                                                                                                                                                      |
+    | `frame_skip`                                 | **int**   | `5`                   | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep`                                                                                                           |
+    | `default_camera_config`                      | **dict**  | `{"trackbodyid": 1, "distance": 4.0, "lookat": np.array((0.0, 0.0, 0.8925)), "elevation": -20.0}` | Properties of the `mj_camera` used for rendering                                                                                                                                                           |
     | `uph_cost_weight`                            | **float** | `1`                   | Weight for _uph_cost_ term (see `Rewards` section)                                                                                                                                                          |
     | `ctrl_cost_weight`                           | **float** | `0.1`                 | Weight for _quad_ctrl_cost_ term (see `Rewards` section)                                                                                                                                                    |
     | `impact_cost_weight`                         | **float** | `0.5e-6`              | Weight for _impact_cost_ term (see `Rewards` section)                                                                                                                                                       |
-    | `impact_cost_range`                          | **float** | `(-np.inf, 10.0)`     | Clamps the _impact_cost_ (see `Rewards` section)                                                                                                                                                            |
+    | `impact_cost_range`                          | **tuple** | `(-np.inf, 10.0)`     | Clamps the _impact_cost_ (see `Rewards` section)                                                                                                                                                            |
     | `reset_noise_scale`                          | **float** | `1e-2`                | Scale of random perturbations of initial position and velocity (see `Starting State` section)                                                                                                               |
     | `exclude_current_positions_from_observation` | **bool**  | `True`                | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation Space` section) |
     | `include_cinert_in_observation`              | **bool**  | `True`                | Whether to include *cinert* elements in the observations (see `Observation Space` section)                                                                                                                  |

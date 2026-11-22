@@ -123,7 +123,6 @@ class RecordEpisodeStatistics(
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment using kwargs and resets the episode returns and lengths."""
-        # The vector environment pops `reset_mask` from `options`, therefore, it is read before resetting
         reset_mask = None if options is None else options.get("reset_mask")
         obs, info = super().reset(seed=seed, options=options)
 

@@ -30,6 +30,7 @@ wrappers/reward_wrappers
 .. automethod:: gymnasium.Wrapper.render
 .. automethod:: gymnasium.Wrapper.close
 .. automethod:: gymnasium.Wrapper.wrapper_spec
+.. automethod:: gymnasium.Wrapper.has_wrapper_attr
 .. automethod:: gymnasium.Wrapper.get_wrapper_attr
 .. automethod:: gymnasium.Wrapper.set_wrapper_attr
 ```

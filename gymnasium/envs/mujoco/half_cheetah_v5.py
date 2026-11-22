@@ -15,14 +15,14 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     r"""
     ## Description
     This environment is based on the work of P. Wawrzyński in ["A Cat-Like Robot Real-Time Learning to Run"](http://staff.elka.pw.edu.pl/~pwawrzyn/pub-s/0812_LSCLRR.pdf).
-    The HalfCheetah is a 2-dimensional robot consisting of 9 body parts and 8 joints connecting them (including two paws).
+    The HalfCheetah is a 2-dimensional robot consisting of 7 body parts (a torso with a head, and a thigh, shin and foot on each of the two legs) connected by 6 hinge joints.
     The goal is to apply torque to the joints to make the cheetah run forward (right) as fast as possible, with a positive reward based on the distance moved forward and a negative reward for moving backward.
     The cheetah's torso and head are fixed, and torque can only be applied to the other 6 joints over the front and back thighs (which connect to the torso), the shins (which connect to the thighs), and the feet (which connect to the shins).
 
 
     ## Action Space
     ```{figure} action_space_figures/half_cheetah.png
-    :name: half_cheetah
+    :name: half_cheetah_action_space
     ```
 
     The action space is a `Box(-1, 1, (6,), float32)`. An action represents the torques applied at the hinge joints.
@@ -46,7 +46,7 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     By default, the observation does not include the robot's x-coordinate (`rootx`).
     This can be included by passing `exclude_current_positions_from_observation=False` during construction.
     In this case, the observation space will be a `Box(-Inf, Inf, (18,), float64)`, where the first observation element is the x-coordinate of the robot.
-    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x- and y-coordinates are returned in `info` with the keys `"x_position"` and `"y_position"`, respectively.
+    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x-coordinate is returned in `info` with the key `"x_position"`.
 
     By default, however, the observation space is a `Box(-Inf, Inf, (17,), float64)` where the elements are as follows:
 
@@ -119,10 +119,12 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     | Parameter                                    | Type      | Default              | Description                                                                                                                                                                                         |
     | -------------------------------------------- | --------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     | `xml_file`                                   | **str**   | `"half_cheetah.xml"` | Path to a MuJoCo model                                                                                                                                                                              |
+    | `frame_skip`                                 | **int**   | `5`                  | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep`                                                                                                   |
+    | `default_camera_config`                      | **dict**  | `{"distance": 4.0}`  | Properties of the `mj_camera` used for rendering                                                                                                                                                   |
     | `forward_reward_weight`                      | **float** | `1`                  | Weight for _forward_reward_ term (see `Rewards` section)                                                                                                                                            |
     | `ctrl_cost_weight`                           | **float** | `0.1`                | Weight for _ctrl_cost_ weight (see `Rewards` section)                                                                                                                                               |
     | `reset_noise_scale`                          | **float** | `0.1`                | Scale of random perturbations of initial position and velocity (see `Starting State` section)                                                                                                       |
-    | `exclude_current_positions_from_observation` | **bool**  | `True`               | Whether or not to omit the x-coordinate from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation State` section) |
+    | `exclude_current_positions_from_observation` | **bool**  | `True`               | Whether or not to omit the x-coordinate from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation Space` section) |
 
     ## Version History
     * v5:

@@ -12,6 +12,8 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
+    """`InvertedDoublePendulum-v4`, kept for reproducibility. See `InvertedDoublePendulum-v5` (:class:`gymnasium.envs.mujoco.inverted_double_pendulum_v5.InvertedDoublePendulumEnv`) for the documentation and the changes in `v5`."""
+
     metadata = {
         "render_modes": [
             "human",

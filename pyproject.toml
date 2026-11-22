@@ -20,6 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
@@ -48,8 +49,9 @@ jax = [
     "jaxlib >=0.4.16",
     "flax >=0.5.0",
     "array-api-compat >=1.11.0",
+    "packaging >=23.0",
 ]
-torch = ["torch >=1.13.0", "array-api-compat >=1.11.0"]
+torch = ["torch >=1.13.0", "array-api-compat >=1.11.0", "packaging >=23.0"]
 array-api = ["array-api-compat >=1.11.0", "packaging >=23.0"]
 other = [
     "moviepy >=1.0.0",

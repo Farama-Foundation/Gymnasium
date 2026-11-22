@@ -33,7 +33,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
     ## Action Space
     ```{figure} action_space_figures/humanoid.png
-    :name: humanoid
+    :name: humanoid_action_space
     ```
 
     The action space is a `Box(-0.4, 0.4, (17,), float32)`. An action represents the torques applied at the hinge joints.
@@ -72,7 +72,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     It has shape 13 * 6 (*nbody * 6*).
     (com velocity - velocity x, y, z and angular velocity x, y, z)
     - *qfrc_actuator (17 elements):* Constraint force generated as the actuator force at each joint.
-    This has shape `(17,)`  *(nv * 1)*.
+    This has shape `(17,)`  *(nv - 6)*, the 6 DOFs of the free `root` joint are excluded.
     - *cfrc_ext (78 elements):* This is the center of mass based external force on the body parts.
     It has shape 13 * 6 (*nbody * 6*) and thus adds another 78 elements to the observation space.
     (external forces - force x, y, z and torque x, y, z)
@@ -139,17 +139,17 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
     The body parts are:
 
-    | body part       | id (for `v2`, `v3`, `v4)` | id (for `v5`) |
+    | body part       | id (for `v2`, `v3`, `v4`) | id (for `v5`) |
     |  -------------  |  ---   |  ---  |
     | worldbody (note: all values are constant 0) | 0  |excluded|
     | torso           |1  | 0      |
     | lwaist          |2  | 1      |
     | pelvis          |3  | 2      |
     | right_thigh     |4  | 3      |
-    | right_sin       |5  | 4      |
+    | right_shin      |5  | 4      |
     | right_foot      |6  | 5      |
     | left_thigh      |7  | 6      |
-    | left_sin        |8  | 7      |
+    | left_shin       |8  | 7      |
     | left_foot       |9  | 8      |
     | right_upper_arm |10 | 9      |
     | right_lower_arm |11 | 10     |
@@ -158,7 +158,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
     The joints are:
 
-    | joint           | id (for `v2`, `v3`, `v4)` | id (for `v5`) |
+    | joint           | id (for `v2`, `v3`, `v4`) | id (for `v5`) |
     |  -------------  |  ---   |  ---  |
     | root (note: all values are constant 0) | 0  |excluded|
     | root (note: all values are constant 0) | 1  |excluded|
@@ -174,7 +174,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     | right_hip_y     | 11 | 5      |
     | right_knee      | 12 | 6      |
     | left_hip_x      | 13 | 7      |
-    | left_hiz_z      | 14 | 8      |
+    | left_hip_z      | 14 | 8      |
     | left_hip_y      | 15 | 9      |
     | left_knee       | 16 | 10     |
     | right_shoulder1 | 17 | 11     |
@@ -182,7 +182,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     | right_elbow     | 19 | 13     |
     | left_shoulder1  | 20 | 14     |
     | left_shoulder2  | 21 | 15     |
-    | left_elfbow     | 22 | 16     |
+    | left_elbow      | 22 | 16     |
 
     The (x,y,z) coordinates are translational DOFs, while the orientations are rotational DOFs expressed as quaternions.
     One can read more about free joints in the [MuJoCo documentation](https://mujoco.readthedocs.io/en/latest/XMLreference.html).
@@ -204,7 +204,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     $w_{forward} \times \frac{dx}{dt}$, where
     $dx$ is the displacement of the center of mass ($x_{after-action} - x_{before-action}$),
     $dt$ is the time between actions, which depends on the `frame_skip` parameter (default is $5$),
-    and `frametime` which is $0.001$ - so the default is $dt = 5 \times 0.003 = 0.015$,
+    and `frametime` which is $0.003$ - so the default is $dt = 5 \times 0.003 = 0.015$,
     $w_{forward}$ is the `forward_reward_weight` (default is $1.25$).
     - *ctrl_cost*:
     A negative reward to penalize the Humanoid for taking actions that are too large.
@@ -212,7 +212,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     where $w_{control}$ is `ctrl_cost_weight` (default is $0.1$).
     - *contact_cost*:
     A negative reward to penalize the Humanoid if the external contact forces are too large.
-    $w_{contact} \times clamp(contact\_cost\_range, \|F_{contact}\|_2^2)$, where
+    $clamp(w_{contact} \times \|F_{contact}\|_2^2, contact\_cost\_range)$, where
     $w_{contact}$ is `contact_cost_weight` (default is $5\times10^{-7}$),
     $F_{contact}$ are the external contact forces (see `cfrc_ext` section on observation).
 
@@ -227,7 +227,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
 
     where $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
-    Note that the z- and x-coordinates are non-zero so that the humanoid can immediately stand up and face forward (x-axis).
+    Note that the z-coordinate and the w-component of the torso's orientation quaternion are non-zero, so that the humanoid starts standing upright and facing forward (x-axis).
 
 
     ## Episode End
@@ -235,7 +235,7 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     If `terminate_when_unhealthy is True` (the default), the environment terminates when the Humanoid is unhealthy.
     The Humanoid is said to be unhealthy if any of the following happens:
 
-    1. The z-coordinate of the torso (the height) is **not** in the closed interval given by the `healthy_z_range` argument (default is $[1.0, 2.0]$).
+    1. The z-coordinate of the torso (the height) is **not** in the open interval given by the `healthy_z_range` argument (default is $(1.0, 2.0)$).
 
     ### Truncation
     The default duration of an episode is 1000 timesteps.
@@ -253,19 +253,21 @@ class HumanoidEnv(MujocoEnv, utils.EzPickle):
     | Parameter                                    | Type      | Default          | Description                                                                                                                                                                                                 |
     | -------------------------------------------- | --------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     | `xml_file`                                   | **str**   | `"humanoid.xml"` | Path to a MuJoCo model                                                                                                                                                                                      |
+    | `frame_skip`                                 | **int**   | `5`              | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep`                                                                                                           |
+    | `default_camera_config`                      | **dict**  | `{"trackbodyid": 1, "distance": 4.0, "lookat": np.array((0.0, 0.0, 2.0)), "elevation": -20.0}` | Properties of the `mj_camera` used for rendering                                                                                                                                                           |
     | `forward_reward_weight`                      | **float** | `1.25`           | Weight for _forward_reward_ term (see `Rewards` section)                                                                                                                                                    |
     | `ctrl_cost_weight`                           | **float** | `0.1`            | Weight for _ctrl_cost_ term (see `Rewards` section)                                                                                                                                                         |
     | `contact_cost_weight`                        | **float** | `5e-7`           | Weight for _contact_cost_ term (see `Rewards` section)                                                                                                                                                      |
-    | `contact_cost_range`                         | **float** | `(-np.inf, 10.0)`| Clamps the _contact_cost_ term (see `Rewards` section)                                                                                                                                                      |
+    | `contact_cost_range`                         | **tuple** | `(-np.inf, 10.0)`| Clamps the _contact_cost_ term (see `Rewards` section)                                                                                                                                                      |
     | `healthy_reward`                             | **float** | `5.0`            | Weight for _healthy_reward_ term (see `Rewards` section)                                                                                                                                                    |
     | `terminate_when_unhealthy`                   | **bool**  | `True`           | If `True`, issue a `terminated` signal is unhealthy (see `Episode End` section)                                                                                                                                |
     | `healthy_z_range`                            | **tuple** | `(1.0, 2.0)`     | The humanoid is considered healthy if the z-coordinate of the torso is in this range (see `Episode End` section)                                                                                            |
     | `reset_noise_scale`                          | **float** | `1e-2`           | Scale of random perturbations of initial position and velocity (see `Starting State` section)                                                                                                               |
-    | `exclude_current_positions_from_observation` | **bool**  | `True`           | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation State` section) |
-    | `include_cinert_in_observation`              | **bool**  | `True`           | Whether to include *cinert* elements in the observations (see `Observation State` section)                                                                                                                  |
-    | `include_cvel_in_observation`                | **bool**  | `True`           | Whether to include *cvel* elements in the observations (see `Observation State` section)                                                                                                                    |
-    | `include_qfrc_actuator_in_observation`       | **bool**  | `True`           | Whether to include *qfrc_actuator* elements in the observations (see `Observation State` section)                                                                                                           |
-    | `include_cfrc_ext_in_observation`            | **bool**  | `True`           | Whether to include *cfrc_ext* elements in the observations (see `Observation State` section)                                                                                                                |
+    | `exclude_current_positions_from_observation` | **bool**  | `True`           | Whether or not to omit the x- and y-coordinates from observations. Excluding the position can serve as an inductive bias to induce position-agnostic behavior in policies (see `Observation Space` section) |
+    | `include_cinert_in_observation`              | **bool**  | `True`           | Whether to include *cinert* elements in the observations (see `Observation Space` section)                                                                                                                  |
+    | `include_cvel_in_observation`                | **bool**  | `True`           | Whether to include *cvel* elements in the observations (see `Observation Space` section)                                                                                                                    |
+    | `include_qfrc_actuator_in_observation`       | **bool**  | `True`           | Whether to include *qfrc_actuator* elements in the observations (see `Observation Space` section)                                                                                                           |
+    | `include_cfrc_ext_in_observation`            | **bool**  | `True`           | Whether to include *cfrc_ext* elements in the observations (see `Observation Space` section)                                                                                                                |
 
     ## Version History
     * v5:

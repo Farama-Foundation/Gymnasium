@@ -24,6 +24,14 @@ As the :class:`gymnasium.Wrapper` class inherits from :class:`gymnasium.Env` the
     >>> wrapped_env.env
     <TimeLimit<OrderEnforcing<PassiveEnvChecker<HopperEnv<Hopper-v4>>>>>
 
+The wrappers that :func:`gymnasium.make` applies by default are, from innermost to outermost:
+
+- :class:`gymnasium.wrappers.PassiveEnvChecker`, unless ``disable_env_checker=True`` is passed or set in the environment spec
+- :class:`gymnasium.wrappers.OrderEnforcing`, if the environment spec's ``order_enforce`` is ``True`` (the default)
+- :class:`gymnasium.wrappers.TimeLimit`, if ``max_episode_steps`` is passed or set in the environment spec, ``max_episode_steps=-1`` disables it
+- the wrappers in the environment spec's ``additional_wrappers``
+- :class:`gymnasium.wrappers.HumanRendering` or :class:`gymnasium.wrappers.RenderCollection`, if ``render_mode="human"`` or ``render_mode="rgb_array_list"`` (or another ``"_list"`` mode) is requested but the environment only supports it through another render mode
+
 If you want to get to the environment underneath **all** of the layers of wrappers, you can use the
 :attr:`gymnasium.Wrapper.unwrapped` attribute.
 If the environment is already a bare environment, the :attr:`gymnasium.Wrapper.unwrapped` attribute will just return itself.
@@ -42,6 +50,10 @@ There are three common things you might want a wrapper to do:
 Such wrappers can be easily implemented by inheriting from :class:`gymnasium.ActionWrapper`,
 :class:`gymnasium.ObservationWrapper`, or :class:`gymnasium.RewardWrapper` and implementing the respective transformation.
 If you need a wrapper to do more complicated tasks, you can inherit from the :class:`gymnasium.Wrapper` class directly.
+
+The wrappers in this module are for single environments, :class:`gymnasium.Env`. Vector environments, :class:`gymnasium.vector.VectorEnv`,
+have their own :doc:`vector wrappers </api/vector/wrappers>` in ``gymnasium.wrappers.vector`` that operate on the batched data, for example, :class:`gymnasium.wrappers.vector.NormalizeObservation`.
+Alternatively, single-environment wrappers can be applied to each sub-environment with the ``wrappers`` argument of :func:`gymnasium.make_vec`.
 
 If you'd like to implement your own custom wrapper, check out `the corresponding tutorial <../../tutorials/gymnasium_basics/implementing_custom_wrappers>`_.
 """

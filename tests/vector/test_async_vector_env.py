@@ -87,6 +87,48 @@ def test_reset_async_vector_env(shared_memory):
     assert all([isinstance(info, dict) for info in infos])
 
 
+@pytest.mark.parametrize("shared_memory", [True, False])
+@pytest.mark.parametrize("masked_reset", [True, False])
+def test_explicit_reset_clears_pending_autoreset(shared_memory, masked_reset):
+    """An explicit reset must let the next action run, including after a partial reset."""
+    env_fns = [
+        make_env("CartPole-v1", 0, max_episode_steps=1),
+        make_env("CartPole-v1", 1, max_episode_steps=3),
+    ]
+    envs = AsyncVectorEnv(
+        env_fns,
+        shared_memory=shared_memory,
+        autoreset_mode=AutoresetMode.NEXT_STEP,
+    )
+    references = [env_fn() for env_fn in env_fns]
+    try:
+        envs.reset(seed=[0, 1])
+        for reference, seed in zip(references, [0, 1], strict=True):
+            reference.reset(seed=seed)
+            reference.step(0)
+        _, _, _, truncated, _ = envs.step([0, 0])
+        np.testing.assert_array_equal(truncated, [True, False])
+
+        mask = np.array([True, not masked_reset])
+        options = {"reset_mask": mask.copy()} if masked_reset else None
+        envs.reset(seed=[42, 43], options=options)
+        for reference, seed, reset in zip(references, [42, 43], mask, strict=True):
+            if reset:
+                reference.reset(seed=seed)
+
+        actual = envs.step([1, 1])
+        expected = [reference.step(1) for reference in references]
+        for field in range(4):
+            np.testing.assert_array_equal(
+                actual[field], [result[field] for result in expected]
+            )
+        assert actual[4] == {}
+    finally:
+        envs.close()
+        for reference in references:
+            reference.close()
+
+
 def test_render_async_vector():
     envs = AsyncVectorEnv(
         [make_env("CartPole-v1", i, render_mode="rgb_array") for i in range(3)]

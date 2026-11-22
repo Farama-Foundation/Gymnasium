@@ -791,9 +791,9 @@ class DiscretizeObservation(
           -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.
           1.         1.       ], (8,), float32)
         >>> obs, _ = env.reset(seed=42)
-        >>> obs
-        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,
-               -0.05269805,  0.        ,  0.        ], dtype=float32)
+        >>> obs.round(3)
+        array([ 0.002,  1.418,  0.233,  0.32 , -0.003, -0.053,  0.   ,  0.   ],
+              dtype=float32)
         >>> env = DiscretizeObservation(env, bins=3)
         >>> env.observation_space
         Discrete(6561)
@@ -808,9 +808,9 @@ class DiscretizeObservation(
           -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.
           1.         1.       ], (8,), float32)
         >>> obs, _ = env.reset(seed=42)
-        >>> obs
-        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,
-               -0.05269805,  0.        ,  0.        ], dtype=float32)
+        >>> obs.round(3)
+        array([ 0.002,  1.418,  0.233,  0.32 , -0.003, -0.053,  0.   ,  0.   ],
+              dtype=float32)
         >>> env = DiscretizeObservation(env, bins=3, multidiscrete=True)
         >>> env.observation_space
         MultiDiscrete([3 3 3 3 3 3 3 3])
@@ -874,12 +874,8 @@ class DiscretizeObservation(
 
     def observation(self, observation):
         """Discretizes the observation."""
-        # np.digitize returns len(bins) if the input exceeds the last edge.
-        # If an observation is exactly equal to the high bound, the resulting
-        # index could be out of range for the number of bins.
-        # Solution: clip to ensure 0 <= index < bins[i], and add a small margin
-        # to prevent precision issues.
-        clipped = np.clip(np.ravel(observation), self.low, self.high - 1e-8)
+        # Only internal bin edges are used, so the high bound maps to the last bin.
+        clipped = np.clip(np.ravel(observation), self.low, self.high)
         indices = [
             int(np.digitize(clipped[i], self.bin_edges[i])) for i in range(self.n_dims)
         ]

@@ -103,7 +103,11 @@ class FunctionalJaxEnv(gym.Env, Generic[StateType]):
 class FunctionalJaxVectorEnv(
     gym.vector.VectorEnv[ObsType, ActType, Any], Generic[ObsType, ActType, StateType]
 ):
-    """A vector env implementation for functional Jax envs."""
+    """A conversion layer for jax-based functional environments to a :class:`gymnasium.vector.VectorEnv`.
+
+    The functional environment's methods are vectorized with :func:`jax.vmap`, so all ``num_envs`` sub-environments
+    are stepped in a single call and the observations, rewards, terminations and truncations are jax arrays.
+    """
 
     state: StateType
     rng: PRNGKeyType
@@ -117,7 +121,16 @@ class FunctionalJaxVectorEnv(
         render_mode: str | None = None,
         spec: EnvSpec | None = None,
     ):
-        """Initialize the environment from a FuncEnv."""
+        """Initialize the environment from a FuncEnv.
+
+        Args:
+            func_env: The functional environment to vectorize
+            num_envs: The number of sub-environments
+            max_episode_steps: The number of steps after which a sub-environment is truncated, ``0`` for no time limit
+            metadata: The environment metadata, defaults to ``{"autoreset_mode": AutoresetMode.NEXT_STEP}``
+            render_mode: The render mode, only ``"rgb_array"`` is supported
+            spec: The environment spec
+        """
         super().__init__()
         if metadata is None:
             metadata = {"autoreset_mode": AutoresetMode.NEXT_STEP}

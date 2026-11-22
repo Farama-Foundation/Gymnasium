@@ -239,15 +239,15 @@ def test_partial_reset(vectoriser):
     reset_obs, _ = envs.reset(seed=[0, 1, 2])
 
     envs.action_space.seed(123)
-    envs.step(envs.action_space.sample())
-    envs.step(envs.action_space.sample())
-    step_obs, *_ = envs.step(envs.action_space.sample())
+    options = {"reset_mask": np.array([True, True, False])}
+    for _ in range(2):
+        envs.step(envs.action_space.sample())
+        envs.step(envs.action_space.sample())
+        step_obs, *_ = envs.step(envs.action_space.sample())
 
-    reset_mask_obs, _ = envs.reset(
-        seed=[0, 1, 0], options={"reset_mask": np.array([True, True, False])}
-    )
-    assert np.all(reset_mask_obs[:2] == reset_obs[:2])
-    assert np.all(reset_mask_obs[2] == step_obs[2])
+        reset_mask_obs, _ = envs.reset(seed=[0, 1, 0], options=options)
+        assert np.all(reset_mask_obs[:2] == reset_obs[:2])
+        assert np.all(reset_mask_obs[2] == step_obs[2])
 
     envs.close()
 

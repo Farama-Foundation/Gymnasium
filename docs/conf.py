@@ -100,7 +100,7 @@ html_theme = "celshast"
 html_title = "Gymnasium Documentation"
 html_baseurl = "https://gymnasium.farama.org"
 html_copy_source = False
-html_favicon = "_static/img/favicon.png"
+html_favicon = "_static/img/favicon.svg"
 html_theme_options = {
     "light_logo": "img/gymnasium_black.svg",
     "dark_logo": "img/gymnasium_white.svg",
@@ -145,6 +145,7 @@ tutorial_sorting = {
     "tutorials/training_agents": [
         "blackjack_q_learning",
         "frozenlake_q_learning",
+        "action_masking_taxi",
         "mujoco_reinforce",
         "vector_a2c",
         "*",
