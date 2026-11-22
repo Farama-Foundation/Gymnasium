@@ -705,7 +705,7 @@ Only probability mask values within <code class="docutils literal notranslate"><
 <dd><p>A space representing a string comprised of characters from a given charset.</p>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># {"", "B5", "hello", ...}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># {"a", "B5", "hello", ...}</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Text</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="go">Text(1, 5, charset=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># {"0", "42", "0123456789", ...}</span>
@@ -741,7 +741,8 @@ Each element must be a single character.</p></li>
 The length is expected to be between the <code class="docutils literal notranslate"><span class="pre">min_length</span></code> and <code class="docutils literal notranslate"><span class="pre">max_length</span></code>.
 Otherwise, a random integer between <code class="docutils literal notranslate"><span class="pre">min_length</span></code> and <code class="docutils literal notranslate"><span class="pre">max_length</span></code> is selected.
 For the mask, we expect a numpy array of length of the charset passed with <code class="docutils literal notranslate"><span class="pre">dtype</span> <span class="pre">==</span> <span class="pre">np.int8</span></code>.
-If the charlist mask is all zero then an empty string is returned no matter the <code class="docutils literal notranslate"><span class="pre">min_length</span></code></p></li>
+If the character mask is all zero, an empty string is returned only when <code class="docutils literal notranslate"><span class="pre">min_length</span> <span class="pre">==</span> <span class="pre">0</span></code>,
+even if a positive length was requested. Otherwise, a <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code> is raised.</p></li>
 <li><p><strong>probability</strong> – An optional tuples of length and probability mask for the text.
 The length is expected to be between the <code class="docutils literal notranslate"><span class="pre">min_length</span></code> and <code class="docutils literal notranslate"><span class="pre">max_length</span></code>.
 Otherwise, a random integer between <code class="docutils literal notranslate"><span class="pre">min_length</span></code> and <code class="docutils literal notranslate"><span class="pre">max_length</span></code> is selected.
@@ -753,6 +754,18 @@ The sum of the probability mask should be 1, otherwise an exception is raised.</
 <dd class="field-even"><p><strong>A sampled string from the space</strong></p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.spaces</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Text</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">min_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">charset</span><span class="o">=</span><span class="s2">"ab"</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">mask</span><span class="p">))</span>
+<span class="go">''</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Text</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">charset</span><span class="o">=</span><span class="s2">"ab"</span><span class="p">)</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">mask</span><span class="p">))</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="w">    </span><span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Trying to sample with a minimum length &gt; 0 (actual minimum length=1) but the character mask is all zero meaning that no character could be sampled.</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">

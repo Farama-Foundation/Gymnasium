@@ -391,7 +391,7 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; from gymnasium.spaces import Text</span>
-<span class="sd">        &gt;&gt;&gt; # {"", "B5", "hello", ...}</span>
+<span class="sd">        &gt;&gt;&gt; # {"a", "B5", "hello", ...}</span>
 <span class="sd">        &gt;&gt;&gt; Text(5)</span>
 <span class="sd">        Text(1, 5, charset=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz)</span>
 <span class="sd">        &gt;&gt;&gt; # {"0", "42", "0123456789", ...}</span>
@@ -486,7 +486,8 @@
 <span class="sd">                The length is expected to be between the ``min_length`` and ``max_length``.</span>
 <span class="sd">                Otherwise, a random integer between ``min_length`` and ``max_length`` is selected.</span>
 <span class="sd">                For the mask, we expect a numpy array of length of the charset passed with ``dtype == np.int8``.</span>
-<span class="sd">                If the charlist mask is all zero then an empty string is returned no matter the ``min_length``</span>
+<span class="sd">                If the character mask is all zero, an empty string is returned only when ``min_length == 0``,</span>
+<span class="sd">                even if a positive length was requested. Otherwise, a :class:`ValueError` is raised.</span>
 <span class="sd">            probability: An optional tuples of length and probability mask for the text.</span>
 <span class="sd">                The length is expected to be between the ``min_length`` and ``max_length``.</span>
 <span class="sd">                Otherwise, a random integer between ``min_length`` and ``max_length`` is selected.</span>
@@ -495,6 +496,17 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A sampled string from the space</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; from gymnasium.spaces import Text</span>
+<span class="sd">            &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">            &gt;&gt;&gt; mask = np.zeros(2, dtype=np.int8)</span>
+<span class="sd">            &gt;&gt;&gt; Text(3, min_length=0, charset="ab").sample(mask=(3, mask))</span>
+<span class="sd">            ''</span>
+<span class="sd">            &gt;&gt;&gt; Text(3, charset="ab").sample(mask=(3, mask))</span>
+<span class="sd">            Traceback (most recent call last):</span>
+<span class="sd">                ...</span>
+<span class="sd">            ValueError: Trying to sample with a minimum length &gt; 0 (actual minimum length=1) but the character mask is all zero meaning that no character could be sampled.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">probability</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
