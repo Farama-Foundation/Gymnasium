@@ -148,8 +148,11 @@ def test_verify_info_xy_velocity_com(env_id: str):
 
     dxy = new_xy - old_xy
     vel_x, vel_y = dxy / env.dt
-    assert vel_x == info["x_velocity"]
-    assert vel_y == info["y_velocity"]
+    # The environment (np.einsum) and this test (np.sum) accumulate mass * xipos
+    # differently, so the results can differ in the last bits (about 1e-16, e.g.
+    # on Apple Silicon).
+    np.testing.assert_allclose(vel_x, info["x_velocity"], rtol=0, atol=1e-12)
+    np.testing.assert_allclose(vel_y, info["y_velocity"], rtol=0, atol=1e-12)
 
 
 # Note: Hopper-v4/3/2 does not have `info['reward_survive']`, but it is still affected
