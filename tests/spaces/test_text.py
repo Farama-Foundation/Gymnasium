@@ -82,6 +82,24 @@ def test_sample_probability():
     assert sample in ["aa", "bb", "ab", "ba"]
 
 
+@pytest.mark.parametrize("total", [1 - 1e-7, 1.0, 1 + 1e-7])
+def test_sample_probability_rounding(total):
+    """Probability masks accepted by validation must also work in sampling."""
+    probability = np.array([0.0, 0.25 * total, 0.75 * total])
+    original = probability.copy()
+    space = Text(5, charset="abc", seed=123)
+    reference = np.random.default_rng(123)
+
+    for _ in range(20):
+        sample = space.sample(probability=(5, probability))
+        assert sample in space
+        assert sample == "".join(
+            reference.choice(list("abc"), size=5, p=probability / probability.sum())
+        )
+        assert "a" not in sample
+    np.testing.assert_array_equal(probability, original)
+
+
 def test_charset_ordering():
     # set-based charsets have no inherent order so they are sorted
     space = Text(5, charset=frozenset("dcba"))
