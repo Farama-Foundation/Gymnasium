@@ -462,8 +462,9 @@ class OrderEnforcing(
         self, *, seed: int | None = None, options: dict[str, Any] | None = None
     ) -> tuple[ObsType, dict[str, Any]]:
         """Resets the environment with `kwargs`."""
+        obs, info = super().reset(seed=seed, options=options)
         self._has_reset = True
-        return super().reset(seed=seed, options=options)
+        return obs, info
 
     def render(self) -> RenderFrame | list[RenderFrame] | None:
         """Renders the environment with `kwargs`."""
@@ -476,7 +477,7 @@ class OrderEnforcing(
 
     @property
     def has_reset(self):
-        """Returns if the environment has been reset before."""
+        """Returns if the environment has been successfully reset before."""
         return self._has_reset
 
     @property
