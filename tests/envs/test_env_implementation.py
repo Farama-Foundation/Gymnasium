@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import gymnasium as gym
-from gymnasium.envs.box2d import BipedalWalker, CarRacing
+from gymnasium.envs.box2d import BipedalWalker
 from gymnasium.envs.box2d.lunar_lander import demo_heuristic_lander
 from gymnasium.envs.toy_text import CliffWalkingEnv
 from gymnasium.envs.toy_text.frozen_lake import generate_random_map
@@ -47,13 +47,14 @@ def test_lunar_lander_random_wind_seed(seed: int):
         )
 
 
-def test_carracing_domain_randomize():
+@pytest.mark.parametrize("env_id", ["CarRacing-v3", "CarRacing-v4"])
+def test_carracing_domain_randomize(env_id: str):
     """Tests the CarRacing Environment domain randomization.
 
     CarRacing DomainRandomize should have different colours at every reset.
     However, it should have same colours when `options={"randomize": False}` is given to reset.
     """
-    env: CarRacing = gym.make("CarRacing-v3", domain_randomize=True).unwrapped
+    env = gym.make(env_id, domain_randomize=True).unwrapped
 
     road_color = env.road_color
     bg_color = env.bg_color
@@ -321,7 +322,7 @@ def test_cartpole_vector_equiv():
     envs.close()
 
 
-@pytest.mark.parametrize("env_id", ["CarRacing-v3", "LunarLander-v3"])
+@pytest.mark.parametrize("env_id", ["CarRacing-v3", "CarRacing-v4", "LunarLander-v3"])
 def test_discrete_action_validation(env_id):
     # get continuous action
     continuous_env = gym.make(env_id, continuous=True)
