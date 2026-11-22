@@ -6,6 +6,7 @@ lastpage:
 
 ```{project-logo} _static/img/gymnasium-text.png
 :alt: Gymnasium Logo
+:class: farama-black-logo-invert
 ```
 
 ```{project-heading}
