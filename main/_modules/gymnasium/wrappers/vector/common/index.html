@@ -569,7 +569,10 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">episode_start_times</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">prev_dones</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">prev_dones</span> <span class="o">=</span> <span class="n">dones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">)</span>
+        <span class="n">dones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">terminations</span><span class="p">,</span> <span class="n">truncations</span><span class="p">)</span>
+        <span class="c1"># Keep a copy: `reset(options={"reset_mask": ...})` edits `prev_dones` in place</span>
+        <span class="c1"># and `dones` is returned to the caller as `infos["_episode"]`.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prev_dones</span> <span class="o">=</span> <span class="n">dones</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">num_dones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dones</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">num_dones</span><span class="p">:</span>
