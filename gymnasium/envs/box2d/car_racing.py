@@ -120,12 +120,12 @@ class CarRacing(gym.Env, EzPickle):
     and turn at the same time.
 
     ## Action Space
-    If continuous there are 3 actions :
+    If continuous (the default), the action is a `Box([-1, 0, 0], [1, 1, 1], (3,), float32)`:
     - 0: steering, -1 is full left, +1 is full right
-    - 1: gas
-    - 2: braking
+    - 1: gas, in `[0, 1]`
+    - 2: braking, in `[0, 1]`
 
-    If discrete there are 5 actions:
+    If discrete, the action space is `Discrete(5)`:
     - 0: do nothing
     - 1: steer right
     - 2: steer left
@@ -134,18 +134,26 @@ class CarRacing(gym.Env, EzPickle):
 
     ## Observation Space
 
-    A top-down 96x96 RGB image of the car and race track.
+    A top-down 96x96 RGB image of the car and race track, as a `Box(0, 255, (96, 96, 3), uint8)`.
 
     ## Rewards
-    The reward is -0.1 every frame and +1000/N for every track tile visited, where N is the total number of tiles
-     visited in the track. For example, if you have finished in 732 frames, your reward is 1000 - 0.1*732 = 926.8 points.
+    The reward is -0.1 every frame and +1000/N for the first visit to each track tile, where N is the total number
+     of tiles in the track. For example, if you have finished in 732 frames, your reward is 1000 - 0.1*732 = 926.8 points.
 
     ## Starting State
     The car starts at rest in the center of the road.
 
-    ## Episode Termination
-    The episode finishes when all the tiles are visited. The car can also go outside the playfield -
-     that is, far off the track, in which case it will receive -100 reward and die.
+    ## Episode End
+    The episode terminates when all the tiles are visited, with `info["lap_finished"] = True`.
+     The car can also go outside the playfield - that is, far off the track, in which case the reward for that
+     step is -100 and the episode terminates with `info["lap_finished"] = False`.
+
+    The episode is truncated after 1000 steps (the `max_episode_steps` of `CarRacing-v3`).
+
+    ## Information
+
+    `step()` returns an empty `info` dict, except on termination when it contains `lap_finished` (see above).
+    `reset()` returns an empty `info` dict.
 
     ## Arguments
 
@@ -157,14 +165,21 @@ class CarRacing(gym.Env, EzPickle):
 
     ```
 
-    * `lap_complete_percent=0.95` dictates the percentage of tiles that must be visited by
-     the agent before a lap is considered complete.
+    * `lap_complete_percent=0.95` is intended to dictate the fraction of tiles that must be visited by
+     the agent before a lap is considered complete, checked when the car first visits the start tile.
+     However, the start tile is already visited when the episode starts, so this check does not currently
+     trigger and a lap is only complete once every tile has been visited.
 
     * `domain_randomize=False` enables the domain randomized variant of the environment.
      In this scenario, the background and track colours are different on every reset.
 
     * `continuous=True` specifies if the agent has continuous (true) or discrete (false) actions.
      See action space section for a description of each.
+
+    * `verbose=False` prints track generation information on reset if `True`.
+
+    * `render_mode` supports `"human"`, `"rgb_array"` (a 600x400 image) and `"state_pixels"`
+     (a 96x96 image, the same as the observation).
 
     ## Reset Arguments
 
@@ -188,7 +203,8 @@ class CarRacing(gym.Env, EzPickle):
     ```
 
     ## Version History
-    - v2: Change truncation to termination when finishing the lap (1.0.0)
+    - v3: Change truncation to termination when finishing the lap (1.0.0)
+    - v2: Remove `CarRacingDiscrete-v1`, use `continuous=False` instead (0.26.0)
     - v1: Change track completion logic and add domain randomization (0.24.0)
     - v0: Original version
 

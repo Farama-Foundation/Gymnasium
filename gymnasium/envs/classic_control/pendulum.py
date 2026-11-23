@@ -65,18 +65,18 @@ class PendulumEnv(gym.Env):
 
     The starting state is a random angle in *[-pi, pi]* and a random angular velocity in *[-1,1]*.
 
-    ## Episode Truncation
+    ## Episode End
 
-    The episode truncates at 200 time steps.
+    The episode is truncated at 200 time steps. There is no termination condition.
 
     ## Arguments
-
-    - `g`: .
 
     Pendulum has two parameters for `gymnasium.make` with `render_mode` and `g` representing
     the acceleration of gravity measured in *(m s<sup>-2</sup>)* used to calculate the pendulum dynamics.
     The default value is `g = 10.0`.
-    On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
+    On reset, the `options` parameter allows the user to change the bounds used to determine the new random state:
+    `x_init` bounds the initial angle `theta` and `y_init` bounds the initial angular velocity, which are sampled
+    uniformly from `[-x_init, x_init]` and `[-y_init, y_init]` respectively.
 
     ```python
     >>> import gymnasium as gym

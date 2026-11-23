@@ -13,7 +13,7 @@ DEFAULT_CAMERA_CONFIG = {
 
 
 class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
-    """
+    r"""
     ## Description
     This environment is the Cartpole environment, based on the work of Barto, Sutton, and Anderson in ["Neuronlike adaptive elements that can solve difficult learning control problems"](https://ieeexplore.ieee.org/document/6313077),
     just like in the classic environments, but now powered by the Mujoco physics simulator - allowing for more complex experiments (such as varying the effects of gravity).
@@ -22,7 +22,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Action Space
-    The agent take a 1-element vector for actions.
+    The agent takes a 1-element vector for actions.
 
     The action space is a continuous `(action)` in `[-3, 3]`, where `action` represents
     the numerical force applied to the cart (with magnitude representing the amount of
@@ -35,7 +35,7 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
 
     ## Observation Space
     The observation space consists of the following parts (in order):
-    - *qpos (2 element):* Position values of the robot's cart and pole.
+    - *qpos (2 elements):* Position values of the robot's cart and pole.
     - *qvel (2 elements):* The velocities of cart and pole (their derivatives).
 
     The observation space is a `Box(-Inf, Inf, (4,), float64)` where the elements are as follows:
@@ -52,16 +52,16 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     The goal is to keep the inverted pendulum stand upright (within a certain angle limit) for as long as possible - as such, a reward of +1 is given for each timestep that the pole is upright.
 
     The pole is considered upright if:
-    $|angle| < 0.2$.
+    $|angle| \leq 0.2$.
 
     and `info` also contains the reward.
 
 
     ## Starting State
-    The initial position state is $\\mathcal{U}_{[-reset\\_noise\\_scale \times I_{2}, reset\\_noise\\_scale \times I_{2}]}$.
-    The initial velocity state is $\\mathcal{U}_{[-reset\\_noise\\_scale \times I_{2}, reset\\_noise\\_scale \times I_{2}]}$.
+    The initial position state is $\mathcal{U}_{[-reset\_noise\_scale \times I_{2}, reset\_noise\_scale \times I_{2}]}$.
+    The initial velocity state is $\mathcal{U}_{[-reset\_noise\_scale \times I_{2}, reset\_noise\_scale \times I_{2}]}$.
 
-    where $\\mathcal{U}$ is the multivariate uniform continuous distribution.
+    where $\mathcal{U}$ is the multivariate uniform continuous distribution.
 
 
     ## Episode End
@@ -88,6 +88,8 @@ class InvertedPendulumEnv(MujocoEnv, utils.EzPickle):
     | Parameter               | Type       | Default                 | Description                                                                                   |
     |-------------------------|------------|-------------------------|-----------------------------------------------------------------------------------------------|
     | `xml_file`              | **str**    |`"inverted_pendulum.xml"`| Path to a MuJoCo model                                                                        |
+    | `frame_skip`            | **int**    | `2`                     | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep` |
+    | `default_camera_config` | **dict**   | `{"trackbodyid": 0, "distance": 2.04}` | Properties of the `mj_camera` used for rendering                                             |
     | `reset_noise_scale`     | **float**  | `0.01`                  | Scale of random perturbations of initial position and velocity (see `Starting State` section) |
 
     ## Version History

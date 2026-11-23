@@ -63,9 +63,9 @@ class MujocoEnv(gym.Env):
                 way as `width`.
             camera_id: The camera ID used.
             camera_name: The name of the camera used (can not be used in conjunction with `camera_id`).
-            default_camera_config: configuration for rendering camera.
+            default_camera_config: configuration for rendering camera, a dictionary of `mujoco.MjvCamera` attribute values (e.g. `{"distance": 4.0}`).
             max_geom: max number of rendered geometries.
-            visual_options: render flag options.
+            visual_options: render flag options, a dictionary mapping `mujoco.mjtVisFlag` flags to booleans.
 
         Raises:
             OSError: when the `model_path` does not exist.

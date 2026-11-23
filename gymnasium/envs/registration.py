@@ -7,7 +7,6 @@ import copy
 import dataclasses
 import difflib
 import importlib
-import importlib.metadata as metadata
 import json
 import re
 from collections import defaultdict
@@ -126,7 +125,7 @@ class EnvSpec:
         """Converts the environment spec into a json compatible string.
 
         Returns:
-            A jsonifyied string for the environment spec
+            A jsonified string for the environment spec
         """
         env_spec_dict = dataclasses.asdict(self)
         # As the namespace, name and version are initialised after `init` then we remove the attributes
@@ -244,7 +243,7 @@ class EnvSpec:
 
 
 class VectorizeMode(Enum):
-    """All possible vectorization modes used in `make_vec`."""
+    """All possible vectorization modes used in :func:`gymnasium.make_vec`, passed as its ``vectorization_mode`` argument."""
 
     ASYNC = "async"
     SYNC = "sync"
@@ -472,7 +471,7 @@ def _check_metadata(testing_metadata: dict[str, Any]) -> None:
     """Check the metadata of an environment."""
     if not isinstance(testing_metadata, dict):
         raise error.InvalidMetadata(
-            f"Expect the environment metadata to be dict, actual type: {type(metadata)}"
+            f"Expect the environment metadata to be dict, actual type: {type(testing_metadata)}"
         )
 
     render_modes = testing_metadata.get("render_modes")
@@ -547,7 +546,16 @@ def load_env_creator(name: str) -> EnvCreator | VectorEnvCreator:
 
 
 def register_envs(env_module: ModuleType) -> None:
-    """A No-op function such that it can appear to IDEs that a module is used."""
+    """A no-op function such that it appears to IDEs and linters that a module is used.
+
+    Third-party packages often register their environments when imported. Passing the imported module to this
+    function stops the import from being flagged or removed as unused.
+
+    Example:
+        >>> import ale_py  # doctest: +SKIP
+        >>> gym.register_envs(ale_py)  # doctest: +SKIP
+        >>> env = gym.make("ALE/Pong-v5")  # doctest: +SKIP
+    """
     pass
 
 
@@ -700,8 +708,11 @@ def make(
     # Determine if to use the rendering
     render_modes: list[str] | None = None
     if hasattr(env_creator, "metadata"):
-        _check_metadata(env_creator.metadata)
-        render_modes = env_creator.metadata.get("render_modes")
+        env_creator_metadata = env_creator.metadata
+        # Wrapper classes expose metadata through an instance property.
+        if not isinstance(env_creator_metadata, property):
+            _check_metadata(env_creator_metadata)
+            render_modes = env_creator_metadata.get("render_modes")
     render_mode = env_spec_kwargs.get("render_mode")
     apply_human_rendering = False
     apply_render_collection = False

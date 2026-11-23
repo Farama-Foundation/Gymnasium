@@ -13,13 +13,13 @@ from enum import Enum
 from multiprocessing import Queue, synchronize
 from multiprocessing.connection import Connection
 from multiprocessing.sharedctypes import SynchronizedArray
-from typing import Any, TypeAlias
+from typing import Any, Generic
 
 import numpy as np
 import numpy.typing as npt
 
 from gymnasium import Space, logger
-from gymnasium.core import Env, RenderFrame
+from gymnasium.core import ActType, Env, ObsType, RenderFrame
 from gymnasium.error import (
     AlreadyPendingCallError,
     ClosedEnvironmentError,
@@ -43,14 +43,6 @@ from gymnasium.vector.vector_env import AutoresetMode, VectorEnv
 
 __all__ = ["AsyncVectorEnv", "AsyncState"]
 
-_StepResult: TypeAlias = tuple[
-    np.ndarray,
-    npt.NDArray[np.float64],
-    npt.NDArray[np.bool_],
-    npt.NDArray[np.bool_],
-    dict[str, Any],
-]
-
 
 class AsyncState(Enum):
     """The AsyncVectorEnv possible states given the different actions."""
@@ -61,7 +53,9 @@ class AsyncState(Enum):
     WAITING_CALL = "call"
 
 
-class AsyncVectorEnv(VectorEnv):
+class AsyncVectorEnv(
+    VectorEnv[ObsType, ActType, np.ndarray], Generic[ObsType, ActType]
+):
     """Vectorized environment that runs multiple environments in parallel.
 
     It uses ``multiprocessing`` processes, and pipes for communication.
@@ -121,7 +115,7 @@ class AsyncVectorEnv(VectorEnv):
     action_space: Space
     single_observation_space: Space
     observation_space: Space
-    observations: np.ndarray
+    observations: ObsType
 
     parent_pipes: list[Connection]
     processes: list[multiprocessing.Process]
@@ -162,7 +156,9 @@ class AsyncVectorEnv(VectorEnv):
                 'different' defines that there can be multiple observation spaces with different parameters though requires the same shape and dtype,
                 warning, may raise unexpected errors. Passing a ``Tuple[Space, Space]`` object allows defining a custom ``single_observation_space`` and
                 ``observation_space``, warning, may raise unexpected errors.
-            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.
+            autoreset_mode: When sub-environments are reset after their episode ends, either an :class:`AutoresetMode`
+                or its string value (``"NextStep"``, ``"SameStep"`` or ``"Disabled"``), recorded in ``metadata["autoreset_mode"]``.
+                See https://gymnasium.farama.org/api/vector/autoreset/ for more information.
             max_concurrency: The maximum number of environments that can be executing (i.e. in ``reset`` or ``step``)
                 at any one time. If ``None`` (default), no limit is applied and all environments are executed in
                 parallel. When set, a shared semaphore limits how many worker processes can run an environment call
@@ -334,12 +330,13 @@ class AsyncVectorEnv(VectorEnv):
         *,
         seed: int | list[int | None] | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[np.ndarray, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Resets all sub-environments in parallel and return a batch of concatenated observations and info.
 
         Args:
             seed: The environment reset seeds
-            options: If to return the options
+            options: Option information used for each sub-environment, ``options["reset_mask"]``, a boolean array of shape ``(num_envs,)``,
+                resets only the masked sub-environments, as needed for ``AutoresetMode.DISABLED``.
 
         Returns:
             A batch of observations and info from the vectorized environment.
@@ -358,7 +355,8 @@ class AsyncVectorEnv(VectorEnv):
 
         Args:
             seed: List of seeds for each environment
-            options: The reset option
+            options: Option information used for each sub-environment, ``options["reset_mask"]``, a boolean array of shape ``(num_envs,)``,
+                resets only the masked sub-environments, as needed for ``AutoresetMode.DISABLED``.
 
         Raises:
             ClosedEnvironmentError: If the environment was closed (if :meth:`close` was previously called).
@@ -384,7 +382,7 @@ class AsyncVectorEnv(VectorEnv):
             )
 
         if options is not None and "reset_mask" in options:
-            reset_mask = options.pop("reset_mask")
+            reset_mask = options["reset_mask"]
             if not isinstance(reset_mask, np.ndarray):
                 raise TypeError(
                     f"`options['reset_mask']` must be a numpy array, got {type(reset_mask)}"
@@ -420,7 +418,7 @@ class AsyncVectorEnv(VectorEnv):
     def reset_wait(
         self,
         timeout: float | None = None,
-    ) -> tuple[np.ndarray, dict[str, Any]]:
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Waits for the calls triggered by :meth:`reset_async` to finish and returns the results.
 
         Args:
@@ -465,7 +463,15 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.DEFAULT
         return (deepcopy(self.observations) if self.copy else self.observations), infos
 
-    def step(self, actions: np.ndarray) -> _StepResult:
+    def step(
+        self, actions: ActType
+    ) -> tuple[
+        ObsType,
+        npt.NDArray[np.float64],
+        npt.NDArray[np.bool_],
+        npt.NDArray[np.bool_],
+        dict[str, Any],
+    ]:
         """Take an action for each parallel environment.
 
         Args:
@@ -477,7 +483,7 @@ class AsyncVectorEnv(VectorEnv):
         self.step_async(actions)
         return self.step_wait()
 
-    def step_async(self, actions: np.ndarray) -> None:
+    def step_async(self, actions: ActType) -> None:
         """Send the calls to :meth:`Env.step` to each sub-environment.
 
         Args:
@@ -502,7 +508,15 @@ class AsyncVectorEnv(VectorEnv):
             pipe.send(("step", action))
         self._state = AsyncState.WAITING_STEP
 
-    def step_wait(self, timeout: float | None = None) -> _StepResult:
+    def step_wait(
+        self, timeout: float | None = None
+    ) -> tuple[
+        ObsType,
+        npt.NDArray[np.float64],
+        npt.NDArray[np.bool_],
+        npt.NDArray[np.bool_],
+        dict[str, Any],
+    ]:
         """Wait for the calls to :obj:`step` in each sub-environment to finish.
 
         Args:
@@ -843,7 +857,7 @@ def _async_worker(
                             observation_space, index, observation, shared_memory
                         )
                         observation = None
-                        autoreset = False
+                    autoreset = False
 
                     # release before `send`, which blocks until the main process reads the pipe
                     if permit_held:

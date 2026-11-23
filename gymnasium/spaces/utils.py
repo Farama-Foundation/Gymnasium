@@ -731,8 +731,13 @@ def _is_space_dict_dtype_shape_equiv(space_1: Dict, space_2):
 
 @is_space_dtype_shape_equiv.register(Tuple)
 def _is_space_tuple_dtype_shape_equiv(space_1, space_2):
-    return isinstance(space_2, Tuple) and all(
-        is_space_dtype_shape_equiv(space_1[i], space_2[i]) for i in range(len(space_1))
+    return (
+        isinstance(space_2, Tuple)
+        and len(space_1) == len(space_2)
+        and all(
+            is_space_dtype_shape_equiv(space_1[i], space_2[i])
+            for i in range(len(space_1))
+        )
     )
 
 

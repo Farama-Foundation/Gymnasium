@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from copy import deepcopy
-from typing import Any
+from typing import Any, Generic, cast
 
 import numpy as np
+import numpy.typing as npt
 
 from gymnasium import Env, Space
 from gymnasium.core import ActType, ObsType, RenderFrame
@@ -18,12 +19,12 @@ from gymnasium.vector.utils import (
     create_empty_array,
     iterate,
 )
-from gymnasium.vector.vector_env import ArrayType, AutoresetMode, VectorEnv
+from gymnasium.vector.vector_env import AutoresetMode, VectorEnv
 
 __all__ = ["SyncVectorEnv"]
 
 
-class SyncVectorEnv(VectorEnv):
+class SyncVectorEnv(VectorEnv[ObsType, ActType, np.ndarray], Generic[ObsType, ActType]):
     """Vectorized environment that serially runs multiple environments.
 
     Example:
@@ -73,6 +74,8 @@ class SyncVectorEnv(VectorEnv):
     single_observation_space: Space
     observation_space: Space
 
+    _observations: ObsType
+
     def __init__(
         self,
         env_fns: Sequence[Callable[[], Env]],
@@ -88,7 +91,9 @@ class SyncVectorEnv(VectorEnv):
             observation_mode: Defines how environment observation spaces should be batched. 'same' defines that there should be ``n`` copies of identical spaces.
                 'different' defines that there can be multiple observation spaces with the same length but different high/low values batched together. Passing a ``Space`` object
                 allows the user to set some custom observation space mode not covered by 'same' or 'different.'
-            autoreset_mode: The Autoreset Mode used, see https://farama.org/Vector-Autoreset-Mode for more information.
+            autoreset_mode: When sub-environments are reset after their episode ends, either an :class:`AutoresetMode`
+                or its string value (``"NextStep"``, ``"SameStep"`` or ``"Disabled"``), recorded in ``metadata["autoreset_mode"]``.
+                See https://gymnasium.farama.org/api/vector/autoreset/ for more information.
 
         Raises:
             RuntimeError: If the observation space of some sub-environment does not match observation_space
@@ -165,8 +170,11 @@ class SyncVectorEnv(VectorEnv):
 
         # Initialise attributes used in `step` and `reset`
         self._env_obs = [None for _ in range(self.num_envs)]
-        self._observations = create_empty_array(
-            self.single_observation_space, n=self.num_envs, fn=np.zeros
+        self._observations = cast(
+            "ObsType",
+            create_empty_array(
+                self.single_observation_space, n=self.num_envs, fn=np.zeros
+            ),
         )
         self._rewards = np.zeros((self.num_envs,), dtype=np.float64)
         self._terminations = np.zeros((self.num_envs,), dtype=np.bool_)
@@ -197,7 +205,8 @@ class SyncVectorEnv(VectorEnv):
                 * ``None`` - random seeds for all environment
                 * ``int`` - ``[seed, seed+1, ..., seed+n]``
                 * List of ints - ``[1, 2, 3, ..., n]``
-            options: Option information used for each sub-environment
+            options: Option information used for each sub-environment, ``options["reset_mask"]``, a boolean array of shape ``(num_envs,)``,
+                resets only the masked sub-environments, as needed for ``AutoresetMode.DISABLED``.
 
         Returns:
             Concatenated observations and info from each sub-environment
@@ -212,7 +221,7 @@ class SyncVectorEnv(VectorEnv):
             )
 
         if options is not None and "reset_mask" in options:
-            reset_mask = options.pop("reset_mask")
+            reset_mask = options["reset_mask"]
             if not isinstance(reset_mask, np.ndarray):
                 raise TypeError(
                     f"`options['reset_mask']` must be a numpy array, got {type(reset_mask)}"
@@ -258,14 +267,23 @@ class SyncVectorEnv(VectorEnv):
                 infos = self._add_info(infos, env_info, i)
 
         # Concatenate the observations
-        self._observations = concatenate(
-            self.single_observation_space, self._env_obs, self._observations
+        self._observations = cast(
+            "ObsType",
+            concatenate(
+                self.single_observation_space, self._env_obs, self._observations
+            ),
         )
         return deepcopy(self._observations) if self.copy else self._observations, infos
 
     def step(
         self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+    ) -> tuple[
+        ObsType,
+        npt.NDArray[np.float64],
+        npt.NDArray[np.bool_],
+        npt.NDArray[np.bool_],
+        dict[str, Any],
+    ]:
         """Steps through each of the environments returning the batched results.
 
         Returns:
@@ -323,8 +341,11 @@ class SyncVectorEnv(VectorEnv):
             infos = self._add_info(infos, env_info, i)
 
         # Concatenate the observations
-        self._observations = concatenate(
-            self.single_observation_space, self._env_obs, self._observations
+        self._observations = cast(
+            "ObsType",
+            concatenate(
+                self.single_observation_space, self._env_obs, self._observations
+            ),
         )
         self._autoreset_envs = np.logical_or(self._terminations, self._truncations)
 

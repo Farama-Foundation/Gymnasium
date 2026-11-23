@@ -9,12 +9,14 @@ Training using REINFORCE for Mujoco
 
 This tutorial implements REINFORCE with neural networks for a MuJoCo environment.
 
+Dependencies: ``pip install "gymnasium[mujoco]" torch matplotlib pandas seaborn``.
+
 We will be using **REINFORCE**, one of the earliest policy gradient methods. Unlike going under the burden of learning a value function first and then deriving a policy out of it,
 REINFORCE optimizes the policy directly. In other words, it is trained to maximize the probability of Monte-Carlo returns. More on that later.
 
 **Inverted Pendulum** is Mujoco's cartpole but now powered by the Mujoco physics simulator -
 which allows more complex experiments (such as varying the effects of gravity).
-This environment involves a cart that can moved linearly, with a pole fixed on it at one end and having another end free.
+This environment involves a cart that can be moved linearly, with a pole fixed on it at one end and having another end free.
 The cart can be pushed left or right, and the goal is to balance the pole on the top of the cart by applying forces on the cart.
 More information on the environment could be found at https://gymnasium.farama.org/environments/mujoco/inverted_pendulum/
 
@@ -145,7 +147,7 @@ class REINFORCE:
 
     def __init__(self, obs_space_dims: int, action_space_dims: int):
         """Initializes an agent that learns a policy via REINFORCE algorithm [1]
-        to solve the task at hand (Inverted Pendulum v4).
+        to solve the task at hand (Inverted Pendulum v5).
 
         Args:
             obs_space_dims: Dimension of the observation space
@@ -216,9 +218,11 @@ class REINFORCE:
 
 
 # %%
-# Now lets train the policy using REINFORCE to master the task of Inverted Pendulum.
+# Now let's train the policy using REINFORCE to master the task of Inverted Pendulum.
 #
-# Following is the overview of the training procedure
+# Following is the overview of the training procedure:
+#
+# .. code:: text
 #
 #    for seed in random seeds
 #        reinitialize agent
@@ -229,7 +233,7 @@ class REINFORCE:
 #
 #                take action and receive reward and next observation
 #
-#                store action take, its probability, and the observed reward
+#                store action taken, its probability, and the observed reward
 #            update the policy
 #
 # Note: Deep RL is fairly brittle concerning random seed in a lot of common use cases (https://spinningup.openai.com/en/latest/spinningup/spinningup.html).
@@ -237,13 +241,13 @@ class REINFORCE:
 
 
 # Create and wrap the environment
-env = gym.make("InvertedPendulum-v4")
+env = gym.make("InvertedPendulum-v5")
 wrapped_env = gym.wrappers.RecordEpisodeStatistics(env, 50)  # Records episode-reward
 
 total_num_episodes = int(5e3)  # Total number of episodes
-# Observation-space of InvertedPendulum-v4 (4)
+# Observation-space of InvertedPendulum-v5 (4)
 obs_space_dims = env.observation_space.shape[0]
-# Action-space of InvertedPendulum-v4 (1)
+# Action-space of InvertedPendulum-v5 (1)
 action_space_dims = env.action_space.shape[0]
 rewards_over_seeds = []
 
@@ -274,9 +278,9 @@ for seed in [1, 2, 3, 5, 8]:  # Fibonacci seeds
             agent.rewards.append(reward)
 
             # End the episode when either truncated or terminated is true
-            #  - truncated: The episode duration reaches max number of timesteps
-            #  - terminated: Any of the state space values is no longer finite.
-            #
+            #  - truncated: The episode duration reaches max number of timesteps (1000)
+            #  - terminated: The pole falls over (the absolute angle of the pole is greater
+            #    than 0.2 radians) or any of the observation values is no longer finite.
             done = terminated or truncated
 
         reward_over_episodes.append(wrapped_env.return_queue[-1])
@@ -296,10 +300,10 @@ for seed in [1, 2, 3, 5, 8]:  # Fibonacci seeds
 #
 
 df1 = pd.DataFrame(rewards_over_seeds).melt()
-df1.rename(columns={"variable": "episodes", "value": "reward"}, inplace=True)
-sns.set(style="darkgrid", context="talk", palette="rainbow")
+df1 = df1.rename(columns={"variable": "episodes", "value": "reward"})
+sns.set_theme(style="darkgrid", context="talk", palette="rainbow")
 sns.lineplot(x="episodes", y="reward", data=df1).set(
-    title="REINFORCE for InvertedPendulum-v4"
+    title="REINFORCE for InvertedPendulum-v5"
 )
 plt.show()
 
@@ -315,5 +319,5 @@ plt.show()
 #
 # [1] Williams, Ronald J.. “Simple statistical gradient-following
 # algorithms for connectionist reinforcement learning.” Machine Learning 8
-# (2004): 229-256.
+# (1992): 229-256.
 #

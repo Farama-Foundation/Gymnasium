@@ -10,6 +10,7 @@ from typing import Any
 import numpy as np
 
 import gymnasium as gym
+from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidBound
 from gymnasium.vector.vector_env import AutoresetMode, VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
@@ -17,7 +18,10 @@ from gymnasium.wrappers.utils import RunningMeanStd
 __all__ = ["NormalizeReward"]
 
 
-class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
+class NormalizeReward(
+    VectorWrapper[ObsType, ActType, ObsType, ActType, np.ndarray],
+    gym.utils.RecordConstructorArgs,
+):
     r"""This wrapper will scale rewards s.t. their exponential moving average has an approximately fixed variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
@@ -27,6 +31,11 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
     Note:
         The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
         instantiated or the policy was changed recently.
+
+    Note:
+        Unlike :class:`gymnasium.wrappers.NormalizeReward`, which carries the discounted return into the next episode
+        unless the episode terminates, the accumulated return of a sub-environment is restarted once it is reset,
+        i.e., at the end of an episode for same-step autoreset and on ``reset`` for disabled autoreset.
 
     Example without the normalize reward wrapper:
         >>> import gymnasium as gym
@@ -74,7 +83,7 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[ObsType, ActType, np.ndarray],
         gamma: float = 0.99,
         epsilon: float = 1e-8,
     ) -> None:
@@ -131,16 +140,21 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[np.ndarray, dict[str, Any]]:
-        """Resets the environment and clears accumulated reward tracking state."""
-        self.accumulated_reward[:] = 0
-        self._prev_dones[:] = 0
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Resets the environment and clears the accumulated reward tracking state of the reset sub-environments."""
+        if options is not None and "reset_mask" in options:
+            reset_mask = options["reset_mask"]
+            self.accumulated_reward[reset_mask] = 0
+            self._prev_dones[reset_mask] = 0
+        else:
+            self.accumulated_reward[:] = 0
+            self._prev_dones[:] = 0
         return super().reset(seed=seed, options=options)
 
     def step(
-        self, actions: np.ndarray
+        self, actions: ActType
     ) -> tuple[
-        np.ndarray,
+        ObsType,
         np.ndarray[tuple[int], np.dtype[np.float64]],
         np.ndarray[tuple[int], np.dtype[np.bool_]],
         np.ndarray[tuple[int], np.dtype[np.bool_]],

@@ -438,9 +438,10 @@ class ResizeObservation(
         TransformObservation.__init__(
             self,
             env=env,
+            # OpenCV drops the channel dimension for single-channel images.
             func=lambda obs: cv2.resize(
                 obs, self.cv2_shape, interpolation=cv2.INTER_AREA
-            ),
+            ).reshape(new_observation_space.shape),
             observation_space=new_observation_space,
         )
 
@@ -586,7 +587,8 @@ class DtypeObservation(
 
         Args:
             env: The environment to wrap
-            dtype: The new dtype of the observation
+            dtype: The new dtype of the observation, as a NumPy scalar type,
+                dtype object, or string
         """
         if not isinstance(
             env.observation_space,
@@ -607,13 +609,15 @@ class DtypeObservation(
         elif isinstance(env.observation_space, spaces.Discrete):
             new_observation_space = spaces.Box(
                 low=env.observation_space.start,
-                high=env.observation_space.start + env.observation_space.n,
+                high=env.observation_space.start + env.observation_space.n - 1,
                 shape=(),
                 dtype=self.dtype,
             )
         elif isinstance(env.observation_space, spaces.MultiDiscrete):
             new_observation_space = spaces.MultiDiscrete(
-                env.observation_space.nvec, dtype=dtype
+                env.observation_space.nvec,
+                dtype=dtype,
+                start=env.observation_space.start,
             )
         elif isinstance(env.observation_space, spaces.MultiBinary):
             new_observation_space = spaces.Box(
@@ -631,7 +635,7 @@ class DtypeObservation(
         TransformObservation.__init__(
             self,
             env=env,
-            func=lambda obs: dtype(obs),
+            func=lambda obs: new_observation_space.dtype.type(obs),
             observation_space=new_observation_space,
         )
 
@@ -700,7 +704,9 @@ class AddRenderObservation(
                 observation dictionary will contain both the original
                 observations and the pixel observations.
             render_key: Optional custom string specifying the pixel key. Defaults to "pixels"
-            obs_key: Optional custom string specifying the obs key. Defaults to "state"
+            obs_key: Optional custom string specifying the obs key. Defaults to "state".
+                Must differ from ``render_key`` when ``render_only=False`` and the
+                original observation space is not a :class:`spaces.Dict`.
         """
         gym.utils.RecordConstructorArgs.__init__(
             self,
@@ -743,6 +749,10 @@ class AddRenderObservation(
                 observation_space=obs_space,
             )
         else:
+            if render_key == obs_key:
+                raise ValueError(
+                    f"AddRenderObservation render_key and obs_key must be different, got {render_key!r} for both"
+                )
             obs_space = spaces.Dict(
                 {obs_key: env.observation_space, render_key: pixel_space}
             )
@@ -781,9 +791,9 @@ class DiscretizeObservation(
           -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.
           1.         1.       ], (8,), float32)
         >>> obs, _ = env.reset(seed=42)
-        >>> obs
-        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,
-               -0.05269805,  0.        ,  0.        ], dtype=float32)
+        >>> obs.round(3)
+        array([ 0.002,  1.418,  0.233,  0.32 , -0.003, -0.053,  0.   ,  0.   ],
+              dtype=float32)
         >>> env = DiscretizeObservation(env, bins=3)
         >>> env.observation_space
         Discrete(6561)
@@ -798,9 +808,9 @@ class DiscretizeObservation(
           -0.         -0.       ], [ 2.5        2.5       10.        10.         6.2831855 10.
           1.         1.       ], (8,), float32)
         >>> obs, _ = env.reset(seed=42)
-        >>> obs
-        array([ 0.00229702,  1.4181306 ,  0.2326471 ,  0.3204666 , -0.00265488,
-               -0.05269805,  0.        ,  0.        ], dtype=float32)
+        >>> obs.round(3)
+        array([ 0.002,  1.418,  0.233,  0.32 , -0.003, -0.053,  0.   ,  0.   ],
+              dtype=float32)
         >>> env = DiscretizeObservation(env, bins=3, multidiscrete=True)
         >>> env.observation_space
         MultiDiscrete([3 3 3 3 3 3 3 3])
@@ -827,9 +837,9 @@ class DiscretizeObservation(
                 "DiscretizeObservation is only compatible with Box continuous observations."
             )
 
-        self.low = env.observation_space.low
-        self.high = env.observation_space.high
-        self.n_dims = self.low.shape[0]
+        self.low = np.ravel(env.observation_space.low)
+        self.high = np.ravel(env.observation_space.high)
+        self.n_dims = int(self.low.size)
 
         if np.any(np.isinf(self.low)) or np.any(np.isinf(self.high)):
             raise ValueError(
@@ -864,12 +874,8 @@ class DiscretizeObservation(
 
     def observation(self, observation):
         """Discretizes the observation."""
-        # np.digitize returns len(bins) if the input exceeds the last edge.
-        # If an observation is exactly equal to the high bound, the resulting
-        # index could be out of range for the number of bins.
-        # Solution: clip to ensure 0 <= index < bins[i], and add a small margin
-        # to prevent precision issues.
-        clipped = np.clip(observation, self.low, self.high - 1e-8)
+        # Only internal bin edges are used, so the high bound maps to the last bin.
+        clipped = np.clip(np.ravel(observation), self.low, self.high)
         indices = [
             int(np.digitize(clipped[i], self.bin_edges[i])) for i in range(self.n_dims)
         ]

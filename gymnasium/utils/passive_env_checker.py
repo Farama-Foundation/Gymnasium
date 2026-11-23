@@ -176,6 +176,77 @@ def check_obs(obs: Any, observation_space: spaces.Space[Any], method_name: str) 
         logger.warn(f"{pre} is not within the observation space with exception: {e}")
 
 
+def data_shares_objects(data_1: Any, data_2: Any) -> bool:
+    """Check if data 1 and 2 share a mutable object, i.e. observations, actions, info.
+
+    Where :func:`data_equivalence` compares the values of two data structures, this compares their
+    identity. Immutable and unknown data is ignored.
+
+    Args:
+        data_1: data structure 1 (expects equivalent data shape to data_2)
+        data_2: data structure 2
+
+    Returns:
+        If data 1 and 2 share a mutable object
+    """
+    if type(data_1) is not type(data_2):
+        return False
+    elif isinstance(data_1, dict):
+        return data_1 is data_2 or any(
+            data_shares_objects(data_1[key], data_2[key])
+            for key in data_1.keys() & data_2.keys()
+        )
+    elif isinstance(data_1, tuple):
+        # A tuple is immutable, however the data within it might not be.
+        #   Differing lengths simply means fewer positions to compare, so `strict=False`.
+        return any(
+            data_shares_objects(o_1, o_2)
+            for o_1, o_2 in zip(data_1, data_2, strict=False)
+        )
+    elif isinstance(data_1, np.ndarray):
+        if data_1.dtype == object:
+            return data_1 is data_2 or any(
+                data_shares_objects(o_1, o_2)
+                for o_1, o_2 in zip(data_1.flat, data_2.flat, strict=False)
+            )
+        else:
+            # `shares_memory` additionally catches a new view of a reused buffer, e.g. `buffer[:]`
+            return bool(np.shares_memory(data_1, data_2))
+    else:
+        # Immutable data (e.g. `int`) is commonly interned, such that `is` would spuriously
+        #   match equal values, and an unknown object is not treated as timestep data.
+        return False
+
+
+def env_data_reuse_passive_checker(
+    previous_data: tuple[Any, dict[str, Any]],
+    data: tuple[Any, dict[str, Any]],
+    previous_source: str,
+    source: str,
+) -> None:
+    """Warns if two calls returned observation or info data that share an object.
+
+    Users commonly keep the data from every timestep, most obviously in a replay or rollout buffer,
+    so an environment that modifies and returns the same buffer corrupts data the user still holds.
+    See :meth:`gymnasium.Env.step` and :func:`gymnasium.utils.env_checker.check_env`.
+    """
+    previous_obs, previous_info = previous_data
+    obs, info = data
+
+    if data_shares_objects(previous_obs, obs):
+        logger.warn(
+            f"The observations returned by `{previous_source}` and the following `{source}` share "
+            "an object, therefore, modifying one will modify the other. Environments should return "
+            "new observation data on every call as users commonly keep the data returned to them."
+        )
+    if data_shares_objects(previous_info, info):
+        logger.warn(
+            f"The infos returned by `{previous_source}` and the following `{source}` share an "
+            "object, therefore, modifying one will modify the other. Environments should return "
+            "new info data on every call as users commonly keep the data returned to them."
+        )
+
+
 def env_reset_passive_checker(
     env: Env[_ObsT, Any], **kwargs: Any
 ) -> tuple[_ObsT, dict[str, Any]]:

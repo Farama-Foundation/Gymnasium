@@ -25,15 +25,19 @@ from types import ModuleType, NoneType
 from typing import Any, SupportsFloat
 
 import numpy as np
-from array_api_compat import is_numpy_namespace
-from packaging.version import Version
 
 import gymnasium as gym
 from gymnasium.core import RenderFrame, WrapperActType, WrapperObsType
 from gymnasium.error import DependencyNotInstalled
 
 try:
-    from array_api_compat import array_namespace, is_array_api_obj, to_device
+    from array_api_compat import (
+        array_namespace,
+        is_array_api_obj,
+        is_numpy_namespace,
+        to_device,
+    )
+    from packaging.version import Version
 
 except ImportError as e:
     raise DependencyNotInstalled(
@@ -154,7 +158,7 @@ def _none_array_conversion(
 
 
 class ArrayConversion(gym.Wrapper, gym.utils.RecordConstructorArgs):
-    """Wraps an Array API compatible environment so that it can be interacted with with another Array API framework.
+    """Wraps an Array API compatible environment so that it can be interacted with another Array API framework.
 
     Popular Array API frameworks include ``numpy``, ``torch``, ``jax.numpy``, ``cupy`` etc. With this wrapper, you can convert outputs from your environment to
     any of these frameworks. Conversely, actions are automatically mapped back to the environment framework, if possible without moving the

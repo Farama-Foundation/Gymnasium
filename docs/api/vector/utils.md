@@ -1,9 +1,14 @@
+---
+title: Vector Utils
+---
+
 # Utility functions
 
 ## Vectorizing Spaces
 
 ```{eval-rst}
 .. autofunction:: gymnasium.vector.utils.batch_space
+.. autofunction:: gymnasium.vector.utils.batch_differing_spaces
 .. autofunction:: gymnasium.vector.utils.concatenate
 .. autofunction:: gymnasium.vector.utils.iterate
 .. autofunction:: gymnasium.vector.utils.create_empty_array
@@ -20,6 +25,6 @@
 ## Miscellaneous
 
 ```{eval-rst}
-.. autofunction:: gymnasium.vector.utils.CloudpickleWrapper
+.. autoclass:: gymnasium.vector.utils.CloudpickleWrapper
 .. autofunction:: gymnasium.vector.utils.clear_mpi_env_vars
 ```

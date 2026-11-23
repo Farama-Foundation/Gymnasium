@@ -23,7 +23,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
 
 
     ## Action Space
-    The agent take a 1-element vector for actions.
+    The agent takes a 1-element vector for actions.
     The action space is a continuous `(action)` in `[-1, 1]`, where `action` represents the
     numerical force applied to the cart (with magnitude representing the amount of force and
     sign representing the direction)
@@ -39,8 +39,8 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     - *qpos (1 element):* Position values of the robot's cart.
     - *sin(qpos) (2 elements):* The sine of the angles of poles.
     - *cos(qpos) (2 elements):* The cosine of the angles of poles.
-    - *qvel (3 elements):* The velocities of these individual body parts (their derivatives).
-    - *qfrc_constraint (1 element):* Constraint force of the cart.
+    - *qvel (3 elements):* The velocities of these individual body parts (their derivatives), clipped to $[-10, 10]$.
+    - *qfrc_constraint (1 element):* Constraint force of the cart, clipped to $[-10, 10]$.
     There is one constraint force for contacts for each degree of freedom (3).
     The approach and handling of constraints by MuJoCo is unique to the simulator and is based on their research.
     More information can be found  in their [*documentation*](https://mujoco.readthedocs.io/en/latest/computation.html) or in their paper ["Convex and analytically-invertible dynamics with contacts and constraints: Theory and implementation in MuJoCo"](https://roboti.us/lab/papers/TodorovICRA14.pdf).
@@ -57,9 +57,9 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     | 5   | velocity of the cart                                              | -Inf | Inf | slider                           | slide | velocity (m/s)           |
     | 6   | angular velocity of the angle between the cart and the first pole | -Inf | Inf | hinge                            | hinge | angular velocity (rad/s) |
     | 7   | angular velocity of the angle between the two poles               | -Inf | Inf | hinge2                           | hinge | angular velocity (rad/s) |
-    | 8   | constraint force - x                                              | -Inf | Inf | slider                           | slide | Force (N)                |
-    | excluded | constraint force - y                                         | -Inf | Inf | slider                           | slide | Force (N)                |
-    | excluded | constraint force - z                                         | -Inf | Inf | slider                           | slide | Force (N)                |
+    | 8   | constraint force on the cart                                      | -Inf | Inf | slider                           | slide | Force (N)                |
+    | excluded | constraint torque on the first hinge                         | -Inf | Inf | hinge                            | hinge | Torque (N m)             |
+    | excluded | constraint torque on the second hinge                        | -Inf | Inf | hinge2                           | hinge | Torque (N m)             |
 
 
     ## Rewards
@@ -71,10 +71,10 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     - *distance_penalty*:
     This reward is a measure of how far the *tip* of the second pendulum (the only free end) moves,
     and it is calculated as $0.01 x_{pole2-tip}^2 + (y_{pole2-tip}-2)^2$,
-    where $x_{pole2-tip}, y_{pole2-tip}$ are the xy-coordinatesof the tip of the second pole.
+    where $x_{pole2-tip}, y_{pole2-tip}$ are the xy-coordinates of the tip of the second pole.
     - *velocity_penalty*:
     A negative reward to penalize the agent for moving too fast.
-    $10^{-3} \omega_1 + 5 \times 10^{-3} \omega_2$,
+    $10^{-3} \omega_1^2 + 5 \times 10^{-3} \omega_2^2$,
     where $\omega_1, \omega_2$ are the angular velocities of the hinges.
 
     `info` contains the individual reward terms.
@@ -92,7 +92,7 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     The environment terminates when the Inverted Double Pendulum is unhealthy.
     The Inverted Double Pendulum is unhealthy if any of the following happens:
 
-    1.Termination: The y_coordinate of the tip of the second pole $\leq 1$.
+    1. The y-coordinate (height) of the tip of the second pole $\leq 1$.
 
     Note: The maximum standing height of the system is 1.2 m when all the parts are perpendicularly vertical on top of each other.
 
@@ -112,6 +112,8 @@ class InvertedDoublePendulumEnv(MujocoEnv, utils.EzPickle):
     | Parameter               | Type       | Default                        | Description                                                                                   |
     |-------------------------|------------|--------------------------------|-----------------------------------------------------------------------------------------------|
     | `xml_file`              | **str**    |`"inverted_double_pendulum.xml"`| Path to a MuJoCo model                                                                        |
+    | `frame_skip`            | **int**    | `5`                            | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep` |
+    | `default_camera_config` | **dict**   | `None`                         | Properties of the `mj_camera` used for rendering                                             |
     | `healthy_reward`        | **float**  | `10`                           | Constant reward given if the pendulum is `healthy` (upright) (see `Rewards` section)          |
     | `reset_noise_scale`     | **float**  | `0.1`                          | Scale of random perturbations of initial position and velocity (see `Starting State` section) |
 
