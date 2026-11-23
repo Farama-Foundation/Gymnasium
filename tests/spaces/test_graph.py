@@ -1,9 +1,71 @@
+import json
 import re
 
 import numpy as np
 import pytest
 
-from gymnasium.spaces import Discrete, Graph, GraphInstance
+from gymnasium.spaces import Box, Discrete, Graph, GraphInstance
+
+
+@pytest.mark.parametrize(
+    "node_space", [Discrete(3), Box(-1, 1, shape=(2,), dtype=np.float32)]
+)
+@pytest.mark.parametrize("num_edges", [0, 1, 3])
+def test_graph_jsonable_edge_shapes(node_space: Box | Discrete, num_edges: int):
+    """Graph JSON round-trips preserve edge-link shapes, including empty edges."""
+    space = Graph(node_space=node_space, edge_space=Discrete(3), seed=0)
+    sample = GraphInstance(
+        nodes=space.sample(num_nodes=3, num_edges=1).nodes,
+        edges=np.arange(num_edges, dtype=np.int64) % 3,
+        edge_links=np.tile(np.array([[0, 1]], dtype=np.int32), (num_edges, 1)),
+    )
+    assert sample in space
+
+    encoded = json.loads(json.dumps(space.to_jsonable([sample])))
+    restored = space.from_jsonable(encoded)[0]
+
+    assert restored in space
+    np.testing.assert_array_equal(restored.nodes, sample.nodes)
+    np.testing.assert_array_equal(restored.edges, sample.edges)
+    np.testing.assert_array_equal(restored.edge_links, sample.edge_links)
+    assert restored.edge_links.shape == (num_edges, 2)
+    assert restored.edge_links.dtype == np.int32
+
+
+def test_graph_jsonable_mixed_empty_edges():
+    """An empty edge list in a batch does not change other graph samples."""
+    space = Graph(node_space=Discrete(3), edge_space=Discrete(3))
+    samples = [
+        GraphInstance(
+            nodes=np.array([0, 1]),
+            edges=np.arange(count, dtype=np.int64),
+            edge_links=np.tile(np.array([[0, 1]], dtype=np.int32), (count, 1)),
+        )
+        for count in [0, 1]
+    ]
+    assert all(sample in space for sample in samples)
+
+    encoded = json.loads(json.dumps(space.to_jsonable(samples)))
+    restored = space.from_jsonable(encoded)
+
+    assert len(restored) == len(samples)
+    for original, decoded in zip(samples, restored, strict=True):
+        assert decoded in space
+        np.testing.assert_array_equal(decoded.edge_links, original.edge_links)
+
+
+def test_graph_jsonable_without_edge_space():
+    """Graphs without an edge space retain absent edges and edge links."""
+    space = Graph(node_space=Discrete(3), edge_space=None, seed=0)
+    sample = space.sample(num_nodes=3)
+
+    encoded = json.loads(json.dumps(space.to_jsonable([sample])))
+    restored = space.from_jsonable(encoded)[0]
+
+    assert restored in space
+    np.testing.assert_array_equal(restored.nodes, sample.nodes)
+    assert restored.edges is None
+    assert restored.edge_links is None
 
 
 def test_node_space_sample():

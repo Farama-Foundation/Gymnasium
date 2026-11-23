@@ -327,7 +327,7 @@ class Graph(Space[GraphInstance]):
                 ret_n = GraphInstance(
                     self.batch_node_space.from_jsonable(sample["nodes"])[0],
                     self.batch_edge_space.from_jsonable(sample["edges"])[0],
-                    np.asarray(sample["edge_links"], dtype=np.int32),
+                    np.asarray(sample["edge_links"], dtype=np.int32).reshape(-1, 2),
                 )
             else:
                 ret_n = GraphInstance(
