@@ -3,6 +3,9 @@ Action Masking in the Taxi Environment
 ======================================
 
 This tutorial demonstrates how to use action masking in the Taxi environment to improve reinforcement learning performance by preventing invalid actions.
+It assumes familiarity with tabular Q-learning, for example from :doc:`blackjack_q_learning`.
+
+Dependencies: ``pip install "gymnasium[toy-text]" matplotlib``.
 
 The Taxi environment is a classic grid world problem where a taxi needs to pick up a passenger and drop them off at their destination. In this environment, not all actions are valid at every state - for example, you can't drive through walls or pick up a passenger when you're not at their location.
 
@@ -28,14 +31,13 @@ How Action Masking Works
 
 Action masking works by constraining the agent's action selection to only valid actions:
 
-1. During exploration: When selecting random actions, we only choose from the set of valid actions
-2. During exploitation: When selecting the best action based on Q-values, we only consider Q-values for valid actions
-3. During Q-learning updates: We compute the maximum future Q-value only over valid actions in the next state
+1. During exploration: when selecting random actions, we only choose from the set of valid actions.
+2. During exploitation: when selecting the best action based on Q-values, we only consider Q-values for valid actions.
+3. During Q-learning updates: we compute the maximum future Q-value only over valid actions in the next state.
 
 Let's implement this step by step:
 """
 
-import random
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -59,7 +61,7 @@ def train_q_learning(
     """Train a Q-learning agent with or without action masking."""
     # Set random seeds for reproducibility
     np.random.seed(seed)
-    random.seed(seed)
+    env.action_space.seed(seed)
 
     # Initialize Q-table
     n_states = env.observation_space.n
@@ -73,23 +75,18 @@ def train_q_learning(
         # Reset environment
         state, info = env.reset(seed=seed + episode)
         total_reward = 0
-        done = False
+        terminated = False
         truncated = False
 
-        while not (done or truncated):
+        while not (terminated or truncated):
             # Get action mask if using it
             action_mask = info["action_mask"] if use_action_mask else None
 
             # Epsilon-greedy action selection with masking
             if np.random.random() < epsilon:
-                # Random action selection
-                if use_action_mask:
-                    # Only select from valid actions
-                    valid_actions = np.nonzero(action_mask == 1)[0]
-                    action = np.random.choice(valid_actions)
-                else:
-                    # Select from all actions
-                    action = np.random.randint(0, n_actions)
+                # Random action selection. ``Discrete.sample`` accepts a mask and
+                # only samples actions where the mask is 1.
+                action = env.action_space.sample(mask=action_mask)
             else:
                 # Greedy action selection
                 if use_action_mask:
@@ -104,27 +101,30 @@ def train_q_learning(
                     action = np.argmax(q_table[state])
 
             # Take action and observe result
-            next_state, reward, done, truncated, info = env.step(action)
+            next_state, reward, terminated, truncated, info = env.step(action)
             total_reward += reward
 
             # Q-learning update
-            if not (done or truncated):
-                if use_action_mask:
-                    # Only consider valid next actions for bootstrapping
-                    next_mask = info["action_mask"]
-                    valid_next_actions = np.nonzero(next_mask == 1)[0]
-                    if len(valid_next_actions) > 0:
-                        next_max = np.max(q_table[next_state, valid_next_actions])
-                    else:
-                        next_max = 0
+            if use_action_mask:
+                # Only consider valid next actions for bootstrapping
+                next_mask = info["action_mask"]
+                valid_next_actions = np.nonzero(next_mask == 1)[0]
+                if len(valid_next_actions) > 0:
+                    next_max = np.max(q_table[next_state, valid_next_actions])
                 else:
-                    # Consider all next actions
-                    next_max = np.max(q_table[next_state])
+                    next_max = 0
+            else:
+                # Consider all next actions
+                next_max = np.max(q_table[next_state])
 
-                # Update Q-value
-                q_table[state, action] = q_table[state, action] + learning_rate * (
-                    reward + discount_factor * next_max - q_table[state, action]
-                )
+            # Update Q-value. The update runs on every step, including the last one,
+            # so the final drop-off reward is learned. Only a terminal state
+            # (``terminated``) has no future value; a time-limit truncation still
+            # bootstraps from ``next_state``.
+            td_target = reward + discount_factor * (1 - terminated) * next_max
+            q_table[state, action] = q_table[state, action] + learning_rate * (
+                td_target - q_table[state, action]
+            )
 
             state = next_state
 
@@ -139,12 +139,13 @@ def train_q_learning(
 
 # %%
 # Running the Experiment
-# ======================
+# ----------------------
 #
 # Now we'll run experiments to compare the performance of Q-learning agents with and without action masking.
 # We'll use multiple random seeds to ensure robust statistical comparison.
 #
 # The experiment setup:
+#
 # - 12 independent runs with different random seeds
 # - 5000 episodes per run
 # - Standard Q-learning hyperparameters ``(α=0.1, γ=0.95, ε=0.1)``
@@ -200,7 +201,7 @@ for i, seed in enumerate(seeds):
 
 # %%
 # Visualizing Results
-# ===================
+# -------------------
 #
 # After running all experiments, we calculate statistics and create visualizations to compare the performance of both approaches.
 #
@@ -271,26 +272,26 @@ plt.show()
 # .. image:: /_static/img/tutorials/taxi_v3_action_masking_comparison.png
 #
 # Results Analysis
-# ================
+# ----------------
 #
 # The comparison demonstrates several important benefits of using action masking:
 #
-# Key Benefits of Action Masking:
+# 1. **Faster convergence**: agents with action masking learn faster because they don't waste time exploring
+#    invalid actions.
+# 2. **Better performance**: by focusing only on valid actions, the agent achieves higher rewards more consistently.
+# 3. **More stable learning**: action masking reduces the variance in learning by eliminating the randomness
+#    associated with invalid action selection.
+# 4. **Practical applicability**: in real-world scenarios, action masking prevents agents from taking actions that
+#    could be dangerous or impossible.
 #
-# 1. Faster Convergence: Agents with action masking typically learn faster because they don't waste time exploring
-# invalid actions.
+# Reminder of the key implementation details:
 #
-# 2. Better Performance: By focusing only on valid actions, the agent can achieve higher rewards more consistently.
-#
-# 3. More Stable Learning: Action masking reduces the variance in learning by eliminating the randomness associated with invalid action selection.
-#
-# 4. Practical Applicability: In real-world scenarios, action masking prevents agents from taking actions that could be dangerous or impossible.
-#
-# Reminder of Key Implementation Details
-#
-# - Action Selection: We filter available actions using ``np.nonzero(action_mask == 1)[0]`` to get only valid actions
-# - Q-Value Updates: When computing the maximum future Q-value, we only consider valid  actions in the next state
-# - Exploration: Random action selection is constrained to the set of valid actions
+# - **Action selection**: we filter available actions using ``np.nonzero(action_mask == 1)[0]`` to get only valid actions.
+# - **Q-value updates**: when computing the maximum future Q-value, we only consider valid actions in the next state.
+#   The update also runs on the final step of an episode; only ``terminated`` removes the bootstrapped future value,
+#   while a time-limit ``truncated`` still bootstraps.
+# - **Exploration**: random action selection uses ``env.action_space.sample(mask=action_mask)``, which only samples
+#   valid actions.
 #
 # This approach ensures that the agent never selects invalid actions while still maintaining the exploration-exploitation balance necessary for effective learning.
 #

@@ -8,6 +8,7 @@ import math
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 import gymnasium as gym
 from gymnasium import logger, spaces
@@ -29,7 +30,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
     ## Action Space
 
-    The action is a `ndarray` with shape `(1,)` which can take values `{0, 1}` indicating the direction
+    The action space is `Discrete(2)`, an integer in `{0, 1}` indicating the direction
      of the fixed force the cart is pushed with.
 
     - 0: Push cart to the left
@@ -57,7 +58,8 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
        if the pole angle is not in the range `(-.2095, .2095)` (or **±12°**)
 
     ## Rewards
-    Since the goal is to keep the pole upright for as long as possible, by default, a reward of `+1` is given for every step taken, including the termination step. The default reward threshold is 500 for v1 and 200 for v0 due to the time limit on the environment.
+    Since the goal is to keep the pole upright for as long as possible, by default, a reward of `+1` is given for every step taken, including the termination step.
+    The maximum episode return is 500 for v1 and 200 for v0 due to the time limit, and the registered reward threshold (`env.spec.reward_threshold`) is 475 for v1 and 195 for v0.
 
     If `sutton_barto_reward=True`, then a reward of `0` is awarded for every non-terminating step and `-1` for the terminating step. As a result, the reward threshold is 0 for v0 and v1.
 
@@ -69,11 +71,11 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
     1. Termination: Pole Angle is greater than ±12°
     2. Termination: Cart Position is greater than ±2.4 (center of the cart reaches the edge of the display)
-    3. Truncation: Episode length is greater than 500 (200 for v0)
+    3. Truncation: Episode length reaches 500 (200 for v0)
 
     ## Arguments
 
-    Cartpole only has `render_mode` as a keyword for `gymnasium.make`.
+    CartPole accepts `render_mode` and `sutton_barto_reward` (see the table below) as keywords for `gymnasium.make`.
     On reset, the `options` parameter allows the user to change the bounds used to determine the new random state.
 
     ```python
@@ -92,7 +94,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
     ## Vectorized environment
 
-    To increase steps per seconds, users can use a custom vector environment or with an environment vectorizor.
+    To increase steps per seconds, users can use a custom vector environment or with an environment vectorizer.
 
     ```python
     >>> import gymnasium as gym
@@ -352,7 +354,9 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
             self.isopen = False
 
 
-class CartPoleVectorEnv(VectorEnv):
+class CartPoleVectorEnv(
+    VectorEnv[npt.NDArray[np.float32], npt.NDArray[np.integer[Any]], np.ndarray]
+):
     metadata = {
         "render_modes": ["rgb_array"],
         "render_fps": 50,
@@ -366,6 +370,15 @@ class CartPoleVectorEnv(VectorEnv):
         render_mode: str | None = None,
         sutton_barto_reward: bool = False,
     ):
+        """Initializes the vectorized CartPole environment.
+
+        Args:
+            num_envs: The number of sub-environments
+            max_episode_steps: The number of steps after which a sub-environment is truncated,
+                a non-positive value (e.g., ``-1``) disables the time limit
+            render_mode: The render mode, only ``"rgb_array"`` is supported
+            sutton_barto_reward: If to use the Sutton and Barto reward function
+        """
         self._sutton_barto_reward = sutton_barto_reward
 
         self.num_envs = num_envs
@@ -419,8 +432,14 @@ class CartPoleVectorEnv(VectorEnv):
         self.steps_beyond_terminated = None
 
     def step(
-        self, action: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]:
+        self, action: npt.NDArray[np.integer[Any]]
+    ) -> tuple[
+        npt.NDArray[np.float32],
+        npt.NDArray[np.float32],
+        npt.NDArray[np.bool_],
+        npt.NDArray[np.bool_],
+        dict[str, Any],
+    ]:
         assert self.action_space.contains(action), (
             f"{action!r} ({type(action)}) invalid"
         )
@@ -464,7 +483,11 @@ class CartPoleVectorEnv(VectorEnv):
 
         self.steps += 1
 
-        truncated = self.steps >= self.max_episode_steps
+        if self.max_episode_steps > 0:
+            truncated = self.steps >= self.max_episode_steps
+        else:
+            # A non-positive `max_episode_steps` (e.g., `gym.make_vec(..., max_episode_steps=-1)`) disables the time limit
+            truncated = np.zeros(self.num_envs, dtype=np.bool_)
 
         if self._sutton_barto_reward:
             reward = -np.array(terminated, dtype=np.float32)
@@ -488,8 +511,8 @@ class CartPoleVectorEnv(VectorEnv):
         self,
         *,
         seed: int | None = None,
-        options: dict | None = None,
-    ):
+        options: dict[str, Any] | None = None,
+    ) -> tuple[npt.NDArray[np.float32], dict[str, Any]]:
         super().reset(seed=seed)
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.

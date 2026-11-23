@@ -1,3 +1,4 @@
+import mujoco
 import numpy as np
 
 from gymnasium import utils
@@ -8,6 +9,8 @@ DEFAULT_CAMERA_CONFIG = {"trackbodyid": 0}
 
 
 class ReacherEnv(MujocoEnv, utils.EzPickle):
+    """`Reacher-v4`, kept for reproducibility. See `Reacher-v5` (:class:`gymnasium.envs.mujoco.reacher_v5.ReacherEnv`) for the documentation and the changes in `v5`."""
+
     metadata = {
         "render_modes": [
             "human",
@@ -37,6 +40,8 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         reward = reward_dist + reward_ctrl
 
         self.do_simulation(a, self.frame_skip)
+        # Sync body xpos with post-step qpos (see google-deepmind/mujoco#889).
+        mujoco.mj_kinematics(self.model, self.data)
         if self.render_mode == "human":
             self.render()
 

@@ -12,6 +12,7 @@ from gymnasium.logger import warn
 # The marker API changed in MuJoCo 3.2.0, so we check the mujoco version and set a flag that
 # determines which function we use when adding markers to the scene.
 _MUJOCO_MARKER_LEGACY_MODE = Version(mujoco.__version__) < Version("3.2.0")
+_MUJOCO_CAMERA_LEGACY_MODE = Version(mujoco.__version__) < Version("3.11.0")
 
 
 def _import_egl(width, height):
@@ -568,6 +569,26 @@ class WindowViewer(BaseRender):
             glfw.destroy_window(self.window)
             glfw.terminate()
 
+    def _move_camera(self, action: int, rel_dx: float, rel_dy: float) -> None:
+        """Move the camera using the API for the installed MuJoCo version."""
+        if _MUJOCO_CAMERA_LEGACY_MODE:
+            mujoco.mjv_moveCamera(
+                self.model,
+                action,
+                rel_dx,
+                rel_dy,
+                self.scn,
+                self.cam,
+            )
+        else:
+            mujoco.mjv_moveCamera(
+                self.model,
+                action,
+                rel_dx,
+                rel_dy,
+                self.cam,
+            )
+
     def _cursor_pos_callback(
         self, window: "glfw.LP__GLFWwindow", xpos: float, ypos: float
     ):
@@ -597,9 +618,7 @@ class WindowViewer(BaseRender):
         dy = int(self._scale * ypos) - self._last_mouse_y
         width, height = glfw.get_framebuffer_size(window)
 
-        mujoco.mjv_moveCamera(
-            self.model, action, dx / width, dy / height, self.scn, self.cam
-        )
+        self._move_camera(action, dx / width, dy / height)
 
         self._last_mouse_x = int(self._scale * xpos)
         self._last_mouse_y = int(self._scale * ypos)
@@ -617,13 +636,10 @@ class WindowViewer(BaseRender):
         self._last_mouse_y = int(self._scale * y)
 
     def _scroll_callback(self, window, x_offset, y_offset: float):
-        mujoco.mjv_moveCamera(
-            self.model,
+        self._move_camera(
             mujoco.mjtMouse.mjMOUSE_ZOOM,
             0,
             -0.05 * y_offset,
-            self.scn,
-            self.cam,
         )
 
     def _create_overlay(self):
@@ -686,7 +702,7 @@ class MujocoRenderer:
     """This is the MuJoCo renderer manager class for every MuJoCo environment.
 
     The class has two main public methods available:
-    - :meth:`render` - Renders the environment in three possible modes: "human", "rgb_array", or "depth_array"
+    - :meth:`render` - Renders the environment in four possible modes: "human", "rgb_array", "depth_array", or "rgbd_tuple"
     - :meth:`close` - Closes all contexts initialized with the renderer
 
     """
@@ -703,7 +719,7 @@ class MujocoRenderer:
         camera_name: str | None = None,
         visual_options: dict[int, bool] | None = None,
     ):
-        """A wrapper for clipping continuous actions within the valid bound.
+        """Renders a MuJoCo simulation with on-screen ("human") and off-screen ("rgb_array", "depth_array", "rgbd_tuple") viewers.
 
         Args:
             model: MjModel data structure of the MuJoCo simulation
@@ -713,7 +729,8 @@ class MujocoRenderer:
             height: height of the OpenGL rendering context
             max_geom: maximum number of geometries to render
             camera_id: The integer camera id from which to render the frame in the MuJoCo simulation
-            camera_name: The string name of the camera from which to render the frame in the MuJoCo simulation. This argument should not be passed if using cameara_id instead and vice versa
+            camera_name: The string name of the camera from which to render the frame in the MuJoCo simulation. This argument should not be passed if using camera_id instead and vice versa
+            visual_options: dictionary mapping `mujoco.mjtVisFlag` flags to booleans, applied to the viewer's visualization options (`mjvOption.flags`)
         """
         self.model = model
         self.data = data

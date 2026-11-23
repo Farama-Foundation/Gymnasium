@@ -119,3 +119,44 @@ def test_record_constructor_args_roundtrip():
 
     # Reconstruction (as performed from the env spec) must not raise.
     AddRenderObservation(make_env(), **saved_kwargs)
+
+
+@pytest.mark.parametrize("key", ("state", "pixels"))
+def test_single_array_observation_rejects_conflicting_keys(key):
+    """Conflicting keys must not silently replace the original observation."""
+    env = GenericTestEnv(
+        render_mode="rgb_array",
+        render_func=image_render_func,
+    )
+
+    with pytest.raises(ValueError, match="render_key and obs_key must be different"):
+        AddRenderObservation(env, render_only=False, render_key=key, obs_key=key)
+
+
+@pytest.mark.parametrize("dict_observation", (False, True))
+def test_equal_keys_when_obs_key_is_unused(dict_observation):
+    """Equal keys are harmless when the wrapper does not use obs_key."""
+    state_space = spaces.Box(shape=(2,), low=-1, high=1, dtype=np.float32)
+    env = GenericTestEnv(
+        observation_space=(
+            spaces.Dict(state=state_space) if dict_observation else state_space
+        ),
+        render_mode="rgb_array",
+        render_func=image_render_func,
+    )
+    wrapped_env = AddRenderObservation(
+        env,
+        render_only=not dict_observation,
+        render_key="pixels",
+        obs_key="pixels",
+    )
+
+    observations = (wrapped_env.reset()[0], wrapped_env.step(None)[0])
+    for obs in observations:
+        assert obs in wrapped_env.observation_space
+        if dict_observation:
+            assert set(obs) == {"state", "pixels"}
+            assert obs["state"] in state_space
+            np.testing.assert_array_equal(obs["pixels"], env.render())
+        else:
+            np.testing.assert_array_equal(obs, env.render())

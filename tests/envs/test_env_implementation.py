@@ -321,6 +321,42 @@ def test_cartpole_vector_equiv():
     envs.close()
 
 
+@pytest.mark.parametrize("max_episode_steps", [-1, 0])
+def test_cartpole_vector_no_time_limit(max_episode_steps):
+    """Tests that a non-positive `max_episode_steps` disables the time limit like `gym.make(..., max_episode_steps=-1)`."""
+    envs = gym.make_vec(
+        "CartPole-v1",
+        num_envs=3,
+        vectorization_mode="vector_entry_point",
+        max_episode_steps=max_episode_steps,
+    )
+    envs.reset(seed=123)
+    envs.action_space.seed(123)
+    for _ in range(50):
+        _, _, _, truncated, _ = envs.step(envs.action_space.sample())
+        assert not np.any(truncated)
+    envs.close()
+
+
+def test_cartpole_vector_time_limit():
+    """Tests that the sub-environments are truncated after `max_episode_steps`."""
+    envs = gym.make_vec(
+        "CartPole-v1",
+        num_envs=2,
+        vectorization_mode="vector_entry_point",
+        max_episode_steps=3,
+    )
+    envs.reset(seed=123)
+    truncations = []
+    for _ in range(3):
+        # alternating actions to keep the pole balanced
+        _, _, terminated, truncated, _ = envs.step(np.array([0, 1]))
+        assert not np.any(terminated)
+        truncations.append(truncated.tolist())
+    assert truncations == [[False, False], [False, False], [True, True]]
+    envs.close()
+
+
 @pytest.mark.parametrize("env_id", ["CarRacing-v3", "LunarLander-v3"])
 def test_discrete_action_validation(env_id):
     # get continuous action

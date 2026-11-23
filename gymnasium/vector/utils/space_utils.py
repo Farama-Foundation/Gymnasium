@@ -34,7 +34,7 @@ from gymnasium.spaces import (
 )
 
 if TYPE_CHECKING:
-    from typing_extensions import Never
+    from typing import Never
 
 __all__ = [
     "batch_space",
@@ -130,6 +130,7 @@ def _batch_space_dict(space: Dict, n: int = 1) -> Dict:
     return Dict(
         {key: batch_space(subspace, n=n) for key, subspace in space.items()},
         seed=deepcopy(space.np_random),
+        sort_keys=space.sort_keys,
     )
 
 
@@ -159,6 +160,10 @@ def batch_differing_spaces(spaces: _PySequence[Space]) -> Space:
 
     Returns:
         A batched space
+
+    For Discrete spaces, dtypes are promoted to a common integer dtype that can
+    represent the full range of each input dtype. Combinations without such a
+    dtype, including uint64 mixed with a signed integer dtype, raise ValueError.
 
     Example:
         >>> from gymnasium.spaces import Discrete
@@ -205,14 +210,16 @@ def _batch_differing_spaces_box(spaces: _PySequence[Box]) -> Box:
 
 @batch_differing_spaces.register(Discrete)
 def _batch_differing_spaces_discrete(spaces: _PySequence[Discrete]) -> MultiDiscrete:
-    # select the "largest" to fit others.
-    # Assumes all spaces dtype are of int dtype
     dtypes = [space.dtype for space in spaces]
-    largest = max(dtypes, key=lambda dt: np.dtype(dt).itemsize)
+    dtype = np.result_type(*dtypes)
+    if not np.issubdtype(dtype, np.integer):
+        raise ValueError(
+            f"Cannot batch Discrete spaces with dtypes {dtypes}: no common integer dtype."
+        )
     return MultiDiscrete(
-        nvec=np.array([space.n for space in spaces]),
-        dtype=largest,
-        start=np.array([space.start for space in spaces]),
+        nvec=np.array([space.n for space in spaces], dtype=dtype),
+        dtype=dtype,
+        start=np.array([space.start for space in spaces], dtype=dtype),
         seed=deepcopy(spaces[0].np_random),
     )
 
@@ -280,6 +287,7 @@ def _batch_differing_spaces_dict(spaces: _PySequence[Dict]) -> Dict:
             for key in spaces[0].keys()
         },
         seed=deepcopy(spaces[0].np_random),
+        sort_keys=spaces[0].sort_keys,
     )
 
 
@@ -432,6 +440,7 @@ def _concatenate_base(
 def _concatenate_tuple(
     space: Tuple, items: Iterable, out: tuple[Any, ...]
 ) -> tuple[Any, ...]:
+    items = list(items)
     return tuple(
         concatenate(subspace, [item[i] for item in items], out[i])
         for (i, subspace) in enumerate(space.spaces)
@@ -442,6 +451,7 @@ def _concatenate_tuple(
 def _concatenate_dict(
     space: Dict, items: Iterable, out: Mapping[str, Any]
 ) -> dict[str, Any]:
+    items = list(items)
     return {
         key: concatenate(subspace, [item[key] for item in items], out[key])
         for key, subspace in space.items()

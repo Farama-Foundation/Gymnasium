@@ -10,14 +10,18 @@ from typing import Any
 import numpy as np
 
 import gymnasium as gym
+from gymnasium.core import ActType, ObsType
 from gymnasium.error import InvalidBound
-from gymnasium.vector.vector_env import VectorEnv, VectorWrapper
+from gymnasium.vector.vector_env import AutoresetMode, VectorEnv, VectorWrapper
 from gymnasium.wrappers.utils import RunningMeanStd
 
 __all__ = ["NormalizeReward"]
 
 
-class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
+class NormalizeReward(
+    VectorWrapper[ObsType, ActType, ObsType, ActType, np.ndarray],
+    gym.utils.RecordConstructorArgs,
+):
     r"""This wrapper will scale rewards s.t. their exponential moving average has an approximately fixed variance.
 
     The property `_update_running_mean` allows to freeze/continue the running mean calculation of the reward
@@ -27,6 +31,11 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
     Note:
         The scaling depends on past trajectories and rewards will not be scaled correctly if the wrapper was newly
         instantiated or the policy was changed recently.
+
+    Note:
+        Unlike :class:`gymnasium.wrappers.NormalizeReward`, which carries the discounted return into the next episode
+        unless the episode terminates, the accumulated return of a sub-environment is restarted once it is reset,
+        i.e., at the end of an episode for same-step autoreset and on ``reset`` for disabled autoreset.
 
     Example without the normalize reward wrapper:
         >>> import gymnasium as gym
@@ -70,10 +79,11 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
     epsilon: float
     _update_running_mean: bool
     _prev_dones: np.ndarray[tuple[int], np.dtype[np.float32]]
+    _autoreset_mode: AutoresetMode
 
     def __init__(
         self,
-        env: VectorEnv,
+        env: VectorEnv[ObsType, ActType, np.ndarray],
         gamma: float = 0.99,
         epsilon: float = 1e-8,
     ) -> None:
@@ -111,6 +121,9 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         self.epsilon = epsilon
         self._update_running_mean = True
         self._prev_dones = np.zeros((self.num_envs,), dtype=np.float32)
+        self._autoreset_mode = self.env.metadata.get(
+            "autoreset_mode", AutoresetMode.NEXT_STEP
+        )
 
     @property
     def update_running_mean(self) -> bool:
@@ -127,16 +140,21 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         *,
         seed: int | None = None,
         options: dict[str, Any] | None = None,
-    ) -> tuple[np.ndarray, dict[str, Any]]:
-        """Resets the environment and clears accumulated reward tracking state."""
-        self.accumulated_reward[:] = 0
-        self._prev_dones[:] = 0
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Resets the environment and clears the accumulated reward tracking state of the reset sub-environments."""
+        if options is not None and "reset_mask" in options:
+            reset_mask = options["reset_mask"]
+            self.accumulated_reward[reset_mask] = 0
+            self._prev_dones[reset_mask] = 0
+        else:
+            self.accumulated_reward[:] = 0
+            self._prev_dones[:] = 0
         return super().reset(seed=seed, options=options)
 
     def step(
-        self, actions: np.ndarray
+        self, actions: ActType
     ) -> tuple[
-        np.ndarray,
+        ObsType,
         np.ndarray[tuple[int], np.dtype[np.float64]],
         np.ndarray[tuple[int], np.dtype[np.bool_]],
         np.ndarray[tuple[int], np.dtype[np.bool_]],
@@ -144,7 +162,13 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
     ]:
         """Steps through the environment, normalizing the reward returned."""
         obs, reward, terminated, truncated, info = super().step(actions)
-        active = ~self._prev_dones.astype(bool)
+        # SAME_STEP resets inside the terminating step, so the following step is
+        # already the first step of a new episode and must update statistics.
+        # NEXT_STEP / DISABLED still skip the autoreset step after a done.
+        if self._autoreset_mode == AutoresetMode.SAME_STEP:
+            active = np.ones((self.num_envs,), dtype=bool)
+        else:
+            active = ~self._prev_dones.astype(bool)
         self.accumulated_reward[active] = (
             self.accumulated_reward[active] * self.gamma * (1 - terminated[active])
             + reward[active]
@@ -152,6 +176,10 @@ class NormalizeReward(VectorWrapper, gym.utils.RecordConstructorArgs):
         if self._update_running_mean and np.any(active):
             self.return_rms.update(self.accumulated_reward[active])
         self._prev_dones = np.logical_or(terminated, truncated).astype(np.float32)
+        if self._autoreset_mode == AutoresetMode.SAME_STEP:
+            # The done sub-environments have already been reset; start a new
+            # return immediately rather than carrying the previous episode.
+            self.accumulated_reward[self._prev_dones.astype(bool)] = 0
         return (
             obs,
             reward / np.sqrt(self.return_rms.var + self.epsilon),

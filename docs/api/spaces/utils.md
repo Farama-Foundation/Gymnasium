@@ -9,4 +9,5 @@ title: Utils
 .. autofunction:: gymnasium.spaces.utils.flatten
 .. autofunction:: gymnasium.spaces.utils.flatdim
 .. autofunction:: gymnasium.spaces.utils.unflatten
+.. autofunction:: gymnasium.spaces.utils.is_space_dtype_shape_equiv
 ```

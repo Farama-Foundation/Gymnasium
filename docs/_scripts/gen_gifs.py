@@ -1,6 +1,8 @@
 import os
 import re
+from collections import defaultdict
 
+import numpy as np
 from PIL import Image
 
 import gymnasium as gym
@@ -8,6 +10,47 @@ from gymnasium.envs.registration import find_highest_version, get_env_id
 
 # how many steps to record an env for
 LENGTH = 300
+
+# envs a uniformly random policy illustrates poorly, recorded from a policy
+# trained with Q-learning instead, mapped to their Q-learning arguments.
+# Blackjack is stochastic, so it needs a small learning rate and many episodes.
+learned_policy_envs = {
+    "CliffWalking": {},
+    "Taxi": {"episodes": 5000},
+    "Blackjack": {"episodes": 200_000, "alpha": 0.01},
+}
+
+
+def learn_policy(env_id, episodes=2000, alpha=0.5, gamma=0.99, seed=0):
+    """Tabular Q-learning, returns a dict of the greedy action for each visited state."""
+    env = gym.make(env_id)
+    rng = np.random.default_rng(seed)
+    # keyed by observation so tuple observations (Blackjack) work as well as ints
+    q_table = defaultdict(lambda: np.zeros(env.action_space.n))
+
+    for episode in range(episodes):
+        epsilon = max(0.05, 1.0 - episode / (episodes * 0.5))
+        obs, _ = env.reset(seed=int(rng.integers(1 << 30)))
+
+        for _ in range(200):
+            if rng.random() < epsilon:
+                action = int(rng.integers(env.action_space.n))
+            else:
+                action = int(q_table[obs].argmax())
+
+            next_obs, reward, terminated, truncated, _ = env.step(action)
+            q_table[obs][action] += alpha * (
+                reward
+                + gamma * q_table[next_obs].max() * (not terminated)
+                - q_table[obs][action]
+            )
+            obs = next_obs
+
+            if terminated or truncated:
+                break
+
+    env.close()
+    return {state: int(values.argmax()) for state, values in q_table.items()}
 
 
 exclude_env_names = [
@@ -17,6 +60,25 @@ exclude_env_names = [
     "FrozenLake8x8",
     "LunarLanderContinuous",
     "BipedalWalkerHardcore",
+    "Acrobot",
+    "Ant",
+    "BipedalWalker",
+    "CarRacing",
+    "CartPole",
+    "HalfCheetah",
+    "Hopper",
+    "Humanoid",
+    "HumanoidStandup",
+    "InvertedDoublePendulum",
+    "InvertedPendulum",
+    "LunarLander",
+    "MountainCar",
+    "MountainCarContinuous",
+    "Pendulum",
+    "Pusher",
+    "Reacher",
+    "Swimmer",
+    "Walker2d",
     "phys2d/CartPole",
     "phys2d/Pendulum",
     "tabular/Blackjack",
@@ -40,16 +102,25 @@ for env_spec in gym.registry.values():
             if "rgb_array" not in env.metadata["render_modes"]:
                 continue
 
+            policy = None
+            if env_spec.name in learned_policy_envs:
+                policy = learn_policy(env_spec.id, **learned_policy_envs[env_spec.name])
+
             # obtain and save LENGTH frames worth of steps
             frames = []
-            env.reset()
+            obs, _ = env.reset()
             while len(frames) <= LENGTH:
                 frames.append(Image.fromarray(env.render()))
 
-                action = env.action_space.sample()
-                _, _, terminated, truncated, _ = env.step(action)
+                if policy is None or obs not in policy:
+                    action = env.action_space.sample()
+                else:
+                    action = policy[obs]
+
+                obs, _, terminated, truncated, _ = env.step(action)
                 if terminated or truncated:
-                    env.reset()
+                    frames.append(Image.fromarray(env.render()))
+                    obs, _ = env.reset()
 
             env.close()
 
@@ -66,6 +137,7 @@ for env_spec in gym.registry.values():
                 video_path,
                 save_all=True,
                 append_images=frames[1:],
-                duration=50,  # milliseconds for the frame
+                # Match FrozenLake's 500 ms steps for all ToyText GIFs.
+                duration=500 if env_module == "toy_text" else 50,
                 loop=0,
             )

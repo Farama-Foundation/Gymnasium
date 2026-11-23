@@ -22,7 +22,10 @@ if TYPE_CHECKING:
     import pygame
 
 
-class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
+class HumanRendering(
+    VectorWrapper[ObsType, ActType, ObsType, ActType, ArrayType],
+    gym.utils.RecordConstructorArgs,
+):
     """Adds support for Human-based Rendering for Vector-based environments."""
 
     ACCEPTED_RENDER_MODES = [
@@ -40,7 +43,11 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
     clock: pygame.time.Clock | None
     metadata: dict[str, Any]
 
-    def __init__(self, env: VectorEnv, screen_size: tuple[int, int] | None = None):
+    def __init__(
+        self,
+        env: VectorEnv[ObsType, ActType, ArrayType],
+        screen_size: tuple[int, int] | None = None,
+    ):
         """Constructor for Human Rendering of Vector-based environments.
 
         Args:
@@ -206,7 +213,7 @@ class HumanRendering(VectorWrapper, gym.utils.RecordConstructorArgs):
 
 
 class RecordVideo(
-    gym.vector.VectorWrapper,
+    VectorWrapper[ObsType, ActType, ObsType, ActType, np.ndarray],
     gym.utils.RecordConstructorArgs,
 ):
     """Adds support for video recording for Vector-based environments.
@@ -260,7 +267,7 @@ class RecordVideo(
 
     def __init__(
         self,
-        env: gym.vector.VectorEnv,
+        env: VectorEnv[ObsType, ActType, np.ndarray],
         video_folder: str,
         video_aspect_ratio: tuple[int, int] = (1, 1),
         record_first_only: bool = False,
@@ -307,8 +314,8 @@ class RecordVideo(
 
         if env.render_mode in {None, "human", "ansi"}:
             raise ValueError(
-                f"Render mode is {env.render_mode}, which is incompatible with RecordVideo.",
-                "Initialize your environment with a render_mode that returns an image, such as rgb_array.",
+                f"Render mode is {env.render_mode}, which is incompatible with RecordVideo. "
+                "Initialize your environment with a render_mode that returns an image, such as rgb_array."
             )
 
         if episode_trigger is None and step_trigger is None:
@@ -445,7 +452,7 @@ class RecordVideo(
 
     def step(
         self, actions: ActType
-    ) -> tuple[ObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+    ) -> tuple[ObsType, np.ndarray, np.ndarray, np.ndarray, dict[str, Any]]:
         """Steps through the environment using action, recording observations if :attr:`self.recording`."""
         obs, rewards, terminations, truncations, info = self.env.step(actions)
         self.step_id += 1
@@ -538,5 +545,9 @@ class RecordVideo(
 
     def __del__(self) -> None:
         """Warn the user in case last video wasn't saved."""
-        if len(self.recorded_frames) > 0:
+        # `__init__` can raise before `recorded_frames` is assigned, and `__del__`
+        # still runs on the half-built wrapper. Reading the attribute directly
+        # raised an AttributeError that Python reports as "Exception ignored in",
+        # on top of the error that actually stopped construction.
+        if getattr(self, "recorded_frames", None):
             logger.warn("Unable to save last video! Did you call close()?")

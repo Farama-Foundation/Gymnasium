@@ -4,135 +4,53 @@ firstpage:
 lastpage:
 ---
 
-# Atari
+# Atari (moved to the Arcade Learning Environment)
 
-<html>
-  <head>
-    <title>Redirecting to Atari's documentation</title>
-    <style>
-      /* Basic styles for the popup */
-      .popup {
-          display: none;
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: rgba(0, 0, 0, 0.5); /* Default background overlay */
-          z-index: 999;
-          justify-content: center;
-          align-items: center;
-      }
-      .popup-content {
-          background-color: #fff; /* Default light content background */
-          padding: 20px;
-          border-radius: 10px;
-          text-align: center;
-          width: 300px;
-      }
-      .dark-theme .popup {
-          background-color: rgba(0, 0, 0, 0.7); /* Darker overlay for dark theme */
-      }
-      .dark-theme .popup-content {
-          background-color: #333; /* Dark content background */
-          color: #fff; /* Light text for dark theme */
-      }
-      button {
-          margin-top: 10px;
-          padding: 5px 10px;
-          cursor: pointer;
-      }
-      /* Add spacing between checkbox and label text */
-      input[type="checkbox"] {
-          margin-right: 5px;
-      }
-    </style>
-  </head>
-  <body>
-    <p>If you are not redirected automatically, follow this <a href="https://ale.farama.org/environments/">link to Atari's new page</a>.</p>
-    <div id="popup" class="popup">
-    <div class="popup-content">
-        <p>Atari's documentation has moved to <b>ale.farama.org</b></p>
-        <label>
-            <input type="checkbox" id="atariAutoRedirect">Enable auto-redirect next time
-        </label>
-        <br>
-        <button id="atariRedirectBtn">Redirect to the new website</button>
-        <button id="closePopupBtn">Close</button>
-    </div>
-    </div>
-  </body>
+```{warning}
+The Atari environments and their documentation have moved to the
+[Arcade Learning Environment (ALE)](https://ale.farama.org/). Gymnasium no longer
+documents them here; every page below links to its new home on
+[ale.farama.org](https://ale.farama.org/environments/).
+```
 
-  <script>
-    // Function to get a cookie by name
-    function getCookie(name) {
-        console.log(`${document.cookie}`);
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) {
-            return parts.pop().split(';').shift();
-        }
-    }
+The ALE is the Atari 2600 emulator these environments have always been built on. It
+exposes them through the Gymnasium API itself, so they are created with `gymnasium.make`
+exactly as before, under `ALE/` ids.
 
-    // Function to set a cookie
-    function setCookie(name, value, days) {
-        const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        const expires = `expires=${date.toUTCString()}`;
-        document.cookie = `${name}=${value}; ${expires}; path=/`;  // environments/atari/
-    }
+## Migration Guide
 
-    // Function to apply theme to the popup
-    function applyTheme() {
-        const theme = localStorage.getItem("theme") || "auto";
-        const body = document.body;
+Install `ale-py`, either directly or through Gymnasium's `atari` extra:
 
-        // Remove any existing theme classes
-        body.classList.remove("dark-theme", "light-theme");
+```bash
+pip install ale-py
+# or
+pip install "gymnasium[atari]"
+```
 
-        if (theme === "dark") {
-            body.classList.add("dark-theme");
-        } else if (theme === "light") {
-            body.classList.add("light-theme");
-        } else if (theme === "auto") {
-            // Check system preference for dark mode
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                body.classList.add("dark-theme");
-            } else {
-                body.classList.add("light-theme");
-            }
+Then register the environments with Gymnasium and make them as usual:
 
-            // Listen for system theme changes
-            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-                body.classList.remove("dark-theme", "light-theme");
-                body.classList.add(e.matches ? "dark-theme" : "light-theme");
-            });
-        }
-    }
+```python
+import gymnasium as gym
+import ale_py
 
-    // Show popup if the cookie doesn't exist
-    window.onload = function() {
-        // Apply theme first
-        applyTheme();
+gym.register_envs(ale_py)
 
-        const atariAutoRedirect = getCookie('atariAutoRedirect');
-        if (atariAutoRedirect) {
-            window.location.href = "https://ale.farama.org/environments/";
-        } else {
-            document.getElementById('popup').style.display = 'flex';
-        }
-    };
+env = gym.make("ALE/Pong-v5")
+obs, info = env.reset()
+obs, reward, terminated, truncated, info = env.step(env.action_space.sample())
+env.close()
+```
 
-    // Close popup and handle the "Don't show again" option
-    document.getElementById('closePopupBtn').addEventListener('click', function() {
-        document.getElementById('popup').style.display = 'none';
-    });
-    document.getElementById('atariRedirectBtn').addEventListener("click", function() {
-        if (document.getElementById('atariAutoRedirect').checked) {
-            setCookie('atariAutoRedirect', 'true', 90);  // Set cookie to not show for 90 days
-        }
-        console.log("redirecting");
-        window.location.href = "https://ale.farama.org/environments/";
-    })
-  </script>
-</html>
+The common Atari observation pipeline stays in Gymnasium as
+[`gymnasium.wrappers.AtariPreprocessing`](../api/wrappers/misc_wrappers).
+
+## Environments
+
+The full list of games, with per-game documentation, is at
+[ale.farama.org/environments](https://ale.farama.org/environments/).
+
+## Links
+
+* [Documentation](https://ale.farama.org/)
+* [GitHub](https://github.com/Farama-Foundation/Arcade-Learning-Environment)
+* [PyPI](https://pypi.org/project/ale-py/)

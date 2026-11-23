@@ -32,8 +32,6 @@ To install the base Gymnasium library, use `pip install gymnasium`
 
 This does not include dependencies for all families of environments (there's a massive number, and some can be problematic to install on certain systems). You can install these dependencies for one family like `pip install "gymnasium[atari]"` or use `pip install "gymnasium[all]"` to install all dependencies.
 
-We support and test for Python 3.10, 3.11, 3.12, 3.13 and 3.14 on Linux and macOS. We will accept PRs related to Windows, but do not officially support it.
-
 ## API
 
 The Gymnasium API models environments as simple Python `env` classes. Creating environment instances and interacting with them is very simple- here's an example using the "CartPole-v1" environment:
@@ -75,13 +73,19 @@ If you are financially able to do so and would like to support the development o
 
 ## Citation
 
-You can cite Gymnasium using our related paper (https://arxiv.org/abs/2407.17032) as:
+You can cite Gymnasium using our [related paper](https://proceedings.neurips.cc/paper_files/paper/2025/hash/d7ff1795e8527f6443371c3933bdb52b-Abstract-Datasets_and_Benchmarks_Track.html) as:
 
 ```
-@article{towers2024gymnasium,
-  title={Gymnasium: A Standard Interface for Reinforcement Learning Environments},
-  author={Towers, Mark and Kwiatkowski, Ariel and Terry, Jordan and Balis, John U and De Cola, Gianluca and Deleu, Tristan and Goul{\~a}o, Manuel and Kallinteris, Andreas and Krimmel, Markus and KG, Arjun and others},
-  journal={arXiv preprint arXiv:2407.17032},
-  year={2024}
+@inproceedings{NEURIPS2025_d7ff1795,
+ author = {Towers, Mark and Kwiatkowski, Ariel and Balis, John and De Cola, Gianluca and Deleu, Tristan and Goul\~{a}o, Manuel and Andreas, Kallinteris and Krimmel, Markus and KG, Arjun and Perez-Vicente, Rodrigo and Terry, J and Pierr\'{e}, Andrea and Schulhoff, Sander and Tai, Jun Jet and Tan, Hannah and Younis, Omar G.},
+ booktitle = {Advances in Neural Information Processing Systems},
+ doi = {10.52202/085713-4916},
+ editor = {D. Belgrave and C. Zhang and H. Lin and R. Pascanu and P. Koniusz and M. Ghassemi and N. Chen},
+ pages = {},
+ publisher = {Curran Associates, Inc.},
+ title = {Gymnasium: A Standard Interface for Reinforcement Learning Environments},
+ url = {https://proceedings.neurips.cc/paper_files/paper/2025/file/d7ff1795e8527f6443371c3933bdb52b-Paper-Datasets_and_Benchmarks_Track.pdf},
+ volume = {38, Main Conference},
+ year = {2025}
 }
 ```

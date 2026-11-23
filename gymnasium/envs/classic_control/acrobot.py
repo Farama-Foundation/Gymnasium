@@ -35,7 +35,7 @@ class AcrobotEnv(Env):
     torques on the actuated joint to swing the free end of the linear chain above a
     given height while starting from the initial state of hanging downwards.
 
-    As seen in the **Gif**: two blue links connected by two green joints. The joint in
+    As seen in the **Gif**: two blue links connected by two yellow joints. The joint in
     between the two links is actuated. The goal is to swing the free end of the outer-link
     to reach the target height (black horizontal line above system) by applying torque on
     the actuator.
@@ -90,7 +90,7 @@ class AcrobotEnv(Env):
     The episode ends if one of the following occurs:
     1. Termination: The free end reaches the target height, which is constructed as:
     `-cos(theta1) - cos(theta2 + theta1) > 1.0`
-    2. Truncation: Episode length is greater than 500 (200 for v0)
+    2. Truncation: Episode length reaches 500 (200 for v0)
 
     ## Arguments
 
@@ -125,6 +125,20 @@ class AcrobotEnv(Env):
       generated with the equations shown in the book. However, there is the option to run the domain with the paper equations
       by setting `book_or_nips = 'nips'`
 
+    ## Integration timestep
+
+    `Acrobot-v1` uses fourth-order Runge-Kutta integration with a default
+    timestep of `dt = 0.2`.
+
+    The timestep can be changed through the unwrapped environment:
+
+    '''python
+    env = gym.make("Acrobot-v1")
+    env.unwrapped.dt = 0.05
+    ```
+
+    Smaller timesteps can reduce numerical integration error.
+
     ## Version History
 
     - v1: Maximum number of steps increased from 200 to 500. The observation space for v0 provided direct readings of
@@ -136,7 +150,7 @@ class AcrobotEnv(Env):
     - Sutton, R. S. (1996). Generalization in Reinforcement Learning: Successful Examples Using Sparse Coarse Coding.
         In D. Touretzky, M. C. Mozer, & M. Hasselmo (Eds.), Advances in Neural Information Processing Systems (Vol. 8).
         MIT Press. https://proceedings.neurips.cc/paper/1995/file/8f1d43620bc6bb580df6e80b0dc05c48-Paper.pdf
-    - Sutton, R. S., Barto, A. G. (2018 ). Reinforcement Learning: An Introduction. The MIT Press.
+    - Sutton, R. S., Barto, A. G. (2018). Reinforcement Learning: An Introduction. The MIT Press.
     """
 
     metadata = {
@@ -144,7 +158,7 @@ class AcrobotEnv(Env):
         "render_fps": 15,
     }
 
-    dt = 0.2
+    dt = 0.2  #: integration timestep [s]
 
     LINK_LENGTH_1 = 1.0  # [m]
     LINK_LENGTH_2 = 1.0  # [m]

@@ -303,3 +303,25 @@ def test_invalid_zoom_validation():
     # Test zero zoom
     with pytest.raises(ValueError, match="Zoom must be a positive float"):
         PlayableGame(env, dummy_keys_to_action(), zoom=0.0)
+
+
+def test_play_callback_receives_reset_observation():
+    """The first ``obs_t`` of an episode passed to the callback is the reset observation, not the ``(obs, info)`` tuple."""
+    seed = 42
+    expected_obs, _ = gym.make("CartPole-v1").reset(seed=seed)
+    observations = []
+
+    def callback(obs_t, obs_tp1, action, rew, terminated, truncated, info):
+        observations.append(obs_t)
+        event.post(Event(QUIT))
+
+    play(
+        gym.make("CartPole-v1", render_mode="rgb_array"),
+        callback=callback,
+        keys_to_action=dummy_keys_to_action(),
+        seed=seed,
+    )
+
+    assert len(observations) == 1
+    assert isinstance(observations[0], np.ndarray)
+    assert np.all(observations[0] == expected_obs)

@@ -8,6 +8,8 @@ from gymnasium.spaces import Box
 
 
 class SwimmerEnv(MujocoEnv, utils.EzPickle):
+    """`Swimmer-v4`, kept for reproducibility. See `Swimmer-v5` (:class:`gymnasium.envs.mujoco.swimmer_v5.SwimmerEnv`) for the documentation and the changes in `v5`."""
+
     metadata = {
         "render_modes": [
             "human",

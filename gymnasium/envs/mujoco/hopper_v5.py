@@ -25,7 +25,7 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
 
     ## Action Space
     ```{figure} action_space_figures/hopper.png
-    :name: hopper
+    :name: hopper_action_space
     ```
 
     The action space is a `Box(-1, 1, (3,), float32)`. An action represents the torques applied at the hinge joints.
@@ -41,12 +41,12 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     The observation space consists of the following parts (in order):
 
     - *qpos (5 elements by default):* Position values of the robot's body parts.
-    - *qvel (6 elements):* The velocities of these individual body parts (their derivatives).
+    - *qvel (6 elements):* The velocities of these individual body parts (their derivatives), clipped to $[-10, 10]$.
 
     By default, the observation does not include the robot's x-coordinate (`rootx`).
     This can  be included by passing `exclude_current_positions_from_observation=False` during construction.
     In this case, the observation space will be a `Box(-Inf, Inf, (12,), float64)`, where the first observation element is the x-coordinate of the robot.
-    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x- and y-coordinates are returned in `info` with the keys `"x_position"` and `"y_position"`, respectively.
+    Regardless of whether `exclude_current_positions_from_observation` is set to `True` or `False`, the x-coordinate is returned in `info` with the key `"x_position"`.
 
     By default, however, the observation space is a `Box(-Inf, Inf, (11,), float64)` where the elements are as follows:
 
@@ -102,9 +102,9 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     If `terminate_when_unhealthy is True` (the default), the environment terminates when the Hopper is unhealthy.
     The Hopper is unhealthy if any of the following happens:
 
-    1. An element of `observation[1:]` (if  `exclude_current_positions_from_observation=True`, otherwise `observation[2:]`) is no longer contained in the closed interval specified by the `healthy_state_range` argument (default is $[-100, 100]$).
-    2. The height of the hopper (`observation[0]` if  `exclude_current_positions_from_observation=True`, otherwise `observation[1]`) is no longer contained in the closed interval specified by the `healthy_z_range` argument (default is $[0.7, +\infty]$) (usually meaning that it has fallen).
-    3. The angle of the torso (`observation[1]` if  `exclude_current_positions_from_observation=True`, otherwise `observation[2]`) is no longer contained in the closed interval specified by the `healthy_angle_range` argument (default is $[-0.2, 0.2]$).
+    1. An element of `observation[1:]` (if  `exclude_current_positions_from_observation=True`, otherwise `observation[2:]`), with the velocities taken before clipping, is no longer contained in the open interval specified by the `healthy_state_range` argument (default is $(-100, 100)$).
+    2. The height of the hopper (`observation[0]` if  `exclude_current_positions_from_observation=True`, otherwise `observation[1]`) is no longer contained in the open interval specified by the `healthy_z_range` argument (default is $(0.7, +\infty)$) (usually meaning that it has fallen).
+    3. The angle of the torso (`observation[1]` if  `exclude_current_positions_from_observation=True`, otherwise `observation[2]`) is no longer contained in the open interval specified by the `healthy_angle_range` argument (default is $(-0.2, 0.2)$).
 
     ### Truncation
     The default duration of an episode is 1000 timesteps.
@@ -122,6 +122,8 @@ class HopperEnv(MujocoEnv, utils.EzPickle):
     | Parameter                                    | Type      | Default               | Description                                                                                                                                                                                                 |
     | -------------------------------------------- | --------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     | `xml_file`                                   | **str**   | `"hopper.xml"`        | Path to a MuJoCo model                                                                                                                                                                                      |
+    | `frame_skip`                                 | **int**   | `4`                   | Number of MuJoCo simulation steps per `step()`, so $dt = frame\_skip \times$ `model.opt.timestep`                                                                                                           |
+    | `default_camera_config`                      | **dict**  | `{"trackbodyid": 2, "distance": 3.0, "lookat": np.array((0.0, 0.0, 1.15)), "elevation": -20.0}` | Properties of the `mj_camera` used for rendering                                                                                                                                                           |
     | `forward_reward_weight`                      | **float** | `1`                   | Weight for _forward_reward_ term (see `Rewards` section)                                                                                                                                                    |
     | `ctrl_cost_weight`                           | **float** | `1e-3`                | Weight for _ctrl_cost_ reward (see `Rewards` section)                                                                                                                                                       |
     | `healthy_reward`                             | **float** | `1`                   | Weight for _healthy_reward_ reward (see `Rewards` section)                                                                                                                                                  |

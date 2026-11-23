@@ -52,7 +52,7 @@ class MountainCarEnv(gym.Env):
     - 1: Don't accelerate
     - 2: Accelerate to the right
 
-    ## Transition Dynamics:
+    ## Transition Dynamics
 
     Given an action, the mountain car follows the following transition dynamics:
 
@@ -60,11 +60,11 @@ class MountainCarEnv(gym.Env):
 
     *position<sub>t+1</sub> = position<sub>t</sub> + velocity<sub>t+1</sub>*
 
-    where force = 0.001 and gravity = 0.0025. The collisions at either end are inelastic with the velocity set to 0
-    upon collision with the wall. The position is clipped to the range `[-1.2, 0.6]` and
-    velocity is clipped to the range `[-0.07, 0.07]`.
+    where force = 0.001 and gravity = 0.0025. The position is clipped to the range `[-1.2, 0.6]` and
+    velocity is clipped to the range `[-0.07, 0.07]`. The collision with the left wall (position -1.2) is inelastic,
+    with the velocity set to 0 if the car is moving left.
 
-    ## Reward:
+    ## Rewards
 
     The goal is to reach the flag placed on top of the right hill as quickly as possible, as such the agent is
     penalised with a reward of -1 for each timestep.
@@ -78,6 +78,7 @@ class MountainCarEnv(gym.Env):
 
     The episode ends if either of the following happens:
     1. Termination: The position of the car is greater than or equal to 0.5 (the goal position on top of the right hill)
+    and its velocity is greater than or equal to `goal_velocity` (default 0)
     2. Truncation: The length of the episode is 200.
 
     ## Arguments
@@ -90,7 +91,7 @@ class MountainCarEnv(gym.Env):
     >>> env = gym.make("MountainCar-v0", render_mode="rgb_array", goal_velocity=0.05)  # default goal_velocity=0
     >>> env
     <TimeLimit<OrderEnforcing<PassiveEnvChecker<MountainCarEnv<MountainCar-v0>>>>>
-    >>> env.reset(seed=123, options={"low": -0.7, "high": 0.5})  # default low=-0.6, high=-0.5
+    >>> env.reset(seed=123, options={"low": -0.7, "high": 0.5})  # default low=-0.6, high=-0.4
     (array([0.11882224, 0.        ], dtype=float32), {})
 
     ```

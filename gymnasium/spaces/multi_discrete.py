@@ -249,7 +249,10 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
     def contains(self, x: Any) -> bool:
         """Return boolean specifying if x is a valid member of this space."""
         if isinstance(x, Sequence):
-            x = np.array(x)  # Promote list to array for contains check
+            try:
+                x = np.array(x)  # Promote list to array for contains check
+            except (ValueError, TypeError):
+                return False
 
         # `x - self.start` can overflow the space dtype and wrap around (e.g. for int8 or a
         # negative start), so compare against the largest element instead; for a valid space,

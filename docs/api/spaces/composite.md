@@ -1,5 +1,8 @@
-# Composite Spaces
+---
+title: Composite Spaces
+---
 
+# Composite Spaces
 
 ```{eval-rst}
 .. autoclass:: gymnasium.spaces.Dict
@@ -21,6 +24,8 @@
 
     .. automethod:: gymnasium.spaces.Graph.sample
     .. automethod:: gymnasium.spaces.Graph.seed
+
+.. autoclass:: gymnasium.spaces.GraphInstance
 
 .. autoclass:: gymnasium.spaces.OneOf
 
