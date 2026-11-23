@@ -102,8 +102,8 @@ def test_gamma_inside_unit_interval_is_accepted(gamma):
     assert NormalizeReward(GenericTestEnv(), gamma=gamma).gamma == gamma
 
 
-@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0])
-def test_non_positive_epsilon_is_rejected(epsilon):
+@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0, np.nan, np.inf, -np.inf])
+def test_invalid_epsilon_is_rejected(epsilon):
     """``epsilon`` sits under a square root; once it exceeds the variance the result is NaN."""
     with pytest.raises(InvalidBound, match="`epsilon` should be strictly positive"):
         NormalizeReward(GenericTestEnv(), epsilon=epsilon)

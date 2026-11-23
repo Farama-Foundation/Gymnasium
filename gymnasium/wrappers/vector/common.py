@@ -197,7 +197,10 @@ class RecordEpisodeStatistics(
 
             self.episode_start_times[self.prev_dones] = time.perf_counter()
 
-        self.prev_dones = dones = np.logical_or(terminations, truncations)
+        dones = np.logical_or(terminations, truncations)
+        # Keep a copy: `reset(options={"reset_mask": ...})` edits `prev_dones` in place
+        # and `dones` is returned to the caller as `infos["_episode"]`.
+        self.prev_dones = dones.copy()
         num_dones = np.sum(dones)
 
         if num_dones:

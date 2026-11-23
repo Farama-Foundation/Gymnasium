@@ -202,7 +202,10 @@ class Autoreset(
             env (gym.Env): The environment to apply the wrapper
             autoreset_mode: The autoreset mode, either ``AutoresetMode.NEXT_STEP`` or ``AutoresetMode.SAME_STEP``
         """
-        gym.utils.RecordConstructorArgs.__init__(self, autoreset_mode=autoreset_mode)
+        # Records the mode's string value, as `AutoresetMode` is not json serialisable for `EnvSpec.to_json`
+        gym.utils.RecordConstructorArgs.__init__(
+            self, autoreset_mode=AutoresetMode(autoreset_mode).value
+        )
         gym.Wrapper.__init__(self, env)
 
         self.autoreset_mode = (

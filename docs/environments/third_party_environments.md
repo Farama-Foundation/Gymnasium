@@ -285,6 +285,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   Multi-drone PX4 and ArduPilot ROS2 control of quadrotors and VTOL planes in Gazebo Sim, with YOLO, LiDAR, Dockerized Gym simulation, and JetPack deployment.
 
+- [Alloy: robot learning tasks with cloth, liquids and rigid robots in one scene](https://github.com/argonrobotics-ai/alloy)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.0.0-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/argonrobotics-ai/alloy)
+
+  Alloy is an open-source physics engine for robot learning, built on MuJoCo Warp and Newton, supporting rigid robots, cloth, soft bodies, sand and liquids. Its vector environments step many worlds at once on a GPU or a CPU, and `gym.make_vec` builds them after `alloy.envs.register_gymnasium()`. The ready-made tasks include a gripper lift, Franka reach and pick, peg insertion, drawer opening, pouring water into a bowl and an experimental towel fold.
+
 - [Balloon Popping Challenge: A 6-DoF Rocket GNC Simulation Gymnasium Environment](https://github.com/ARRC-Rocket/BalloonPoppingChallenge)
 
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v1.2.3-blue)
@@ -441,7 +448,7 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
   ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-v0.26.3-blue)
   ![GitHub stars](https://img.shields.io/github/stars/automl/DACBench)
 
-  A benchmark library for [Dynamic Algorithm Configuration](https://www.automl.org/dynamic-algorithm-configuration/). Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
+  A benchmark library for [Dynamic Algorithm Configuration](https://arxiv.org/abs/2205.13881). Its focus is on reproducibility and comparability of different DAC methods as well as easy analysis of the optimization process.
 
 - [EnvPool: C++-based high-performance parallel environment execution](https://github.com/sail-sg/envpool)
 

@@ -19,13 +19,17 @@ This section contains technical instructions & hints for the contributors.
 
 The project uses `ty` to check types.
 To type check locally, install `ty` per official [instructions](https://docs.astral.sh/ty/installation/).
-It's configuration lives within `pyproject.toml`. It includes list of included and excluded files currently supporting type checks.
-To run `ty` for the project, run the pre-commit process (`pre-commit run --all-files`) or `ty check .`
+Its configuration lives in `pyproject.toml`. The `[tool.ty.src]` section includes the `gymnasium` package and `tests/test_typing.py`.
+To run `ty` for the project, run the pre-commit process (`pre-commit run --all-files`) or `ty check`
 
-### Adding typing to more modules and packages
+### Improving type checking
 
-If you would like to add typing to a module in the project,
-the list of included and excluded files can be found in pyproject.toml (pyproject.toml -> [tool.ty.src]).
+The package is already included in type checking, but several rules in `[tool.ty.rules]` are temporarily set to `"warn"` with TODO comments.
+To contribute, run `ty check` from the repository root and choose a small set of warnings to address.
+You can also pass a file or directory to `ty check` to focus on a particular module.
+Warnings do not fail the check because `[tool.ty.terminal]` sets `error-on-warning = false`, so a successful exit does not mean there are no warnings.
+The overrides for `tests/test_typing.py` keep its type assertions and selected rules as errors.
+Before opening a pull request, rerun the project-wide checks to verify the changes.
 
 ## Git hooks
 

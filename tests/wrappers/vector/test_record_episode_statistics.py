@@ -154,3 +154,26 @@ def test_episode_statistics_with_autoreset_mode(
     assert np.all(np.array(envs.return_queue) == episode_length)
     assert np.all(np.array(envs.length_queue) == episode_length)
     envs.close()
+
+
+def test_record_episode_statistics_mask_survives_masked_reset():
+    """The `_episode` mask returned by `step` must not change when the caller then resets."""
+
+    def step_func(self, action):
+        return self.observation_space.sample(), 1.0, False, True, {}
+
+    envs = gym.wrappers.vector.RecordEpisodeStatistics(
+        SyncVectorEnv(
+            [lambda: GenericTestEnv(step_func=step_func) for _ in range(2)],
+            autoreset_mode=AutoresetMode.DISABLED,
+        )
+    )
+    envs.reset(seed=123)
+    _, _, terminations, truncations, infos = envs.step(envs.action_space.sample())
+    dones = np.logical_or(terminations, truncations)
+    assert np.all(infos["_episode"] == dones)
+
+    envs.reset(options={"reset_mask": np.copy(dones)})
+
+    assert np.all(infos["_episode"] == dones)
+    envs.close()
