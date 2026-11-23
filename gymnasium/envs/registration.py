@@ -565,8 +565,10 @@ def namespace(ns: str) -> Generator[None, None, None]:
     global current_namespace
     old_namespace = current_namespace
     current_namespace = ns
-    yield
-    current_namespace = old_namespace
+    try:
+        yield
+    finally:
+        current_namespace = old_namespace
 
 
 def register(

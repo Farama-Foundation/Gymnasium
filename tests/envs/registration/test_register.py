@@ -198,3 +198,20 @@ def test_namespace():
 
     del gym.envs.registry["MyDefaultNamespace/MyDefaultEnvironment-v0"]
     del gym.envs.registry["MyDefaultEnvironment-v1"]
+
+
+def test_namespace_restored_after_exception():
+    """Checks that the namespace context manager restores the namespace when its block raises."""
+    with pytest.raises(gym.error.RegistrationError):
+        with gym.envs.registration.namespace("MyDefaultNamespace"):
+            gym.register("MyDefaultUnversionedEnvironment", "no-entry-point")
+            # Fails as the unversioned environment of the same name already exists
+            gym.register("MyDefaultUnversionedEnvironment-v1", "no-entry-point")
+    assert gym.envs.registration.current_namespace is None
+
+    gym.register("MyDefaultEnvironment-v1", "no-entry-point")
+    assert "MyDefaultEnvironment-v1" in gym.envs.registry
+    assert "MyDefaultNamespace/MyDefaultEnvironment-v1" not in gym.envs.registry
+
+    del gym.envs.registry["MyDefaultEnvironment-v1"]
+    del gym.envs.registry["MyDefaultNamespace/MyDefaultUnversionedEnvironment"]
