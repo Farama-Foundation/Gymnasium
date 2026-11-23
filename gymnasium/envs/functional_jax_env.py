@@ -135,6 +135,7 @@ class FunctionalJaxVectorEnv(
             metadata: The environment metadata, defaults to ``{"autoreset_mode": AutoresetMode.NEXT_STEP}``
             render_mode: The render mode, only ``"rgb_array"`` is supported
             spec: The environment spec
+            params: Shared parameters for all sub-environments, defaults to the functional environment parameters
         """
         super().__init__()
         if metadata is None:
