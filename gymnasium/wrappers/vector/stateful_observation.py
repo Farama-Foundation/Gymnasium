@@ -1,20 +1,28 @@
 """A collection of stateful observation wrappers.
 
+* ``FrameStackObservation`` - Frame stack the observations
 * ``NormalizeObservation`` - Normalize the observations
 """
 
 from __future__ import annotations
 
-from typing import Any
+from collections import deque
+from copy import deepcopy
+from typing import Any, Final, cast
 
 import numpy as np
 
 import gymnasium as gym
-from gymnasium.core import ActType
+from gymnasium.core import ActType, ObsType, WrapperObsType
 from gymnasium.error import InvalidBound
 from gymnasium.logger import warn
 from gymnasium.spaces import Box
-from gymnasium.vector.utils import batch_space
+from gymnasium.vector.utils import (
+    batch_space,
+    concatenate,
+    create_empty_array,
+    iterate,
+)
 from gymnasium.vector.vector_env import (
     ArrayType,
     AutoresetMode,
@@ -22,9 +30,263 @@ from gymnasium.vector.vector_env import (
     VectorObservationWrapper,
     VectorWrapper,
 )
-from gymnasium.wrappers.utils import RunningMeanStd
+from gymnasium.wrappers.utils import RunningMeanStd, create_zero_array
 
-__all__ = ["NormalizeObservation"]
+__all__ = ["FrameStackObservation", "NormalizeObservation"]
+
+
+class FrameStackObservation(
+    VectorWrapper[WrapperObsType, ActType, ObsType, ActType, ArrayType],
+    gym.utils.RecordConstructorArgs,
+):
+    """Stacks the observations from the last ``N`` time steps in a rolling manner for each sub-environment.
+
+    For example, if the number of stacks is 4 and the vector environment has 3 sub-environments
+    with single observation shape ``(4,)``, then the returned observation has shape ``(3, 4, 4)``,
+    and :attr:`single_observation_space` has shape ``(4, 4)``.
+
+    Users have options for the padded observation used when a sub-environment resets:
+
+     * ``"reset"`` (default) - The reset value is repeated
+     * ``"zero"`` - A "zero"-like instance of the single observation space
+     * custom - An instance of the single observation space
+
+    Supports all :class:`gymnasium.vector.AutoresetMode` values (``NEXT_STEP``, ``SAME_STEP``,
+    and ``DISABLED``), as well as partial resets via ``reset(options={"reset_mask": mask})``.
+    For ``AutoresetMode.SAME_STEP``, ``info["final_obs"]`` is also stacked with the episode's
+    terminal observation before the corresponding sub-environment's frame buffer is reset.
+
+    A single-environment version of the wrapper exists :class:`gymnasium.wrappers.FrameStackObservation`.
+
+    Example:
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers.vector import FrameStackObservation
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
+        >>> envs = FrameStackObservation(envs, stack_size=3)
+        >>> envs.single_observation_space
+        Box([[-4.8               -inf -0.41887903        -inf]
+         [-4.8               -inf -0.41887903        -inf]
+         [-4.8               -inf -0.41887903        -inf]], [[4.8               inf 0.41887903        inf]
+         [4.8               inf 0.41887903        inf]
+         [4.8               inf 0.41887903        inf]], (3, 4), float32)
+        >>> obs, _ = envs.reset(seed=123)
+        >>> obs.shape
+        (2, 3, 4)
+        >>> envs.close()
+
+    Example with zero padding:
+        >>> import gymnasium as gym
+        >>> from gymnasium.wrappers.vector import FrameStackObservation
+        >>> envs = gym.make_vec("CartPole-v1", num_envs=2, vectorization_mode="sync")
+        >>> envs = FrameStackObservation(envs, stack_size=3, padding_type="zero")
+        >>> obs, _ = envs.reset(seed=123)
+        >>> obs[0]
+        array([[ 0.        ,  0.        ,  0.        ,  0.        ],
+               [ 0.        ,  0.        ,  0.        ,  0.        ],
+               [ 0.01823519, -0.0446179 , -0.02796401, -0.03156282]],
+              dtype=float32)
+        >>> envs.close()
+    """
+
+    stack_size: Final[int]
+    padding_type: Final[str]
+    padding_value: Any
+    _autoreset_mode: AutoresetMode
+
+    def __init__(
+        self,
+        env: VectorEnv[ObsType, ActType, ArrayType],
+        stack_size: int,
+        *,
+        padding_type: str | Any = "reset",
+    ) -> None:
+        """Vector observation wrapper that stacks the observations in a rolling manner.
+
+        Args:
+            env: The vector environment to apply the wrapper to.
+            stack_size: The number of frames to stack for each sub-environment.
+            padding_type: The padding type to use when stacking observations after a reset:
+                ``"reset"``, ``"zero"``, or a custom observation in ``env.single_observation_space``.
+
+        Raises:
+            TypeError: If ``stack_size`` is not an integer or ``env.metadata["autoreset_mode"]`` is invalid.
+            ValueError: If ``stack_size <= 0`` or ``padding_type`` is invalid.
+        """
+        if not np.issubdtype(type(stack_size), np.integer):
+            raise TypeError(
+                f"The stack_size is expected to be an integer, actual type: {type(stack_size)}"
+            )
+        if not 0 < stack_size:
+            raise ValueError(
+                f"The stack_size needs to be greater than zero, actual value: {stack_size}"
+            )
+
+        gym.utils.RecordConstructorArgs.__init__(
+            self, stack_size=stack_size, padding_type=padding_type
+        )
+        VectorWrapper.__init__(self, env)
+
+        if "autoreset_mode" not in self.env.metadata:
+            warn(
+                f"{self} is missing `autoreset_mode` tag in its metadata, therefore, `FrameStackObservation` is assuming that the environment uses `AutoresetMode.NEXT_STEP`. See `https://farama.org/Vector-Autoreset-Mode` for more information on autoreset modes."
+            )
+            self._autoreset_mode = AutoresetMode.NEXT_STEP
+        else:
+            if not isinstance(self.env.metadata["autoreset_mode"], AutoresetMode):
+                raise TypeError(
+                    f"Expected env.metadata['autoreset_mode'] to be an AutoresetMode, got {type(self.env.metadata['autoreset_mode'])}"
+                )
+            self._autoreset_mode = self.env.metadata["autoreset_mode"]
+
+        if isinstance(padding_type, str) and (
+            padding_type == "reset" or padding_type == "zero"
+        ):
+            self.padding_value = create_zero_array(env.single_observation_space)
+        elif padding_type in env.single_observation_space:
+            self.padding_value = deepcopy(padding_type)
+            padding_type = "_custom"
+        else:
+            if isinstance(padding_type, str):
+                raise ValueError(
+                    f"Unexpected `padding_type`, expected 'reset', 'zero' or a custom observation space, actual value: {padding_type!r}"
+                )
+            else:
+                raise ValueError(
+                    f"Unexpected `padding_type`, expected 'reset', 'zero' or a custom observation space, actual value: {padding_type!r} not an instance of env observation ({env.single_observation_space})"
+                )
+
+        self.stack_size: Final[int] = int(stack_size)
+        self.padding_type: Final[str] = padding_type
+
+        new_single_space = batch_space(env.single_observation_space, n=self.stack_size)
+        self.single_observation_space = new_single_space
+        self.observation_space = batch_space(new_single_space, n=self.num_envs)
+
+        self._obs_queues: list[deque[Any]] = [
+            deque(
+                [deepcopy(self.padding_value) for _ in range(self.stack_size)],
+                maxlen=self.stack_size,
+            )
+            for _ in range(self.num_envs)
+        ]
+        self._single_stacked_obs = create_empty_array(
+            env.single_observation_space, n=self.stack_size
+        )
+        self._batched_stacked_obs = create_empty_array(
+            self.single_observation_space, n=self.num_envs
+        )
+        self._prev_dones = np.zeros((self.num_envs,), dtype=np.bool_)
+
+    def _reset_env_queue(self, env_idx: int, obs: Any) -> None:
+        """Reset the frame queue for a single sub-environment using its reset observation."""
+        pad_value = obs if self.padding_type == "reset" else self.padding_value
+        queue = self._obs_queues[env_idx]
+        for _ in range(self.stack_size - 1):
+            queue.append(deepcopy(pad_value))
+        queue.append(deepcopy(obs))
+
+    def _stack_single_env(self, env_idx: int) -> Any:
+        """Build a stacked observation copy for a single sub-environment."""
+        return deepcopy(
+            concatenate(
+                self.env.single_observation_space,
+                self._obs_queues[env_idx],
+                self._single_stacked_obs,
+            )
+        )
+
+    def _stack_all_envs(self) -> WrapperObsType:
+        """Build the batched stacked observation copy across all sub-environments."""
+        per_env_stacked = tuple(self._stack_single_env(i) for i in range(self.num_envs))
+        updated_obs = deepcopy(
+            concatenate(
+                self.single_observation_space,
+                per_env_stacked,
+                self._batched_stacked_obs,
+            )
+        )
+        return cast("WrapperObsType", updated_obs)
+
+    def reset(
+        self,
+        *,
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[WrapperObsType, dict[str, Any]]:
+        """Reset the vector environment and update frame buffers for reset sub-environments.
+
+        Args:
+            seed: The seed to reset the sub-environments.
+            options: Optional reset options, including ``reset_mask`` for partial resets.
+
+        Returns:
+            The batched stacked observations and infos.
+        """
+        reset_mask = None if options is None else options.get("reset_mask")
+        observations, infos = self.env.reset(seed=seed, options=options)
+
+        per_env_obs = tuple(iterate(self.env.observation_space, observations))
+        if reset_mask is not None:
+            mask = np.asarray(reset_mask, dtype=np.bool_)
+            for i in range(self.num_envs):
+                if mask[i]:
+                    self._reset_env_queue(i, per_env_obs[i])
+                    self._prev_dones[i] = False
+        else:
+            for i in range(self.num_envs):
+                self._reset_env_queue(i, per_env_obs[i])
+            self._prev_dones = np.zeros((self.num_envs,), dtype=np.bool_)
+
+        return self._stack_all_envs(), infos
+
+    def step(
+        self, actions: ActType
+    ) -> tuple[WrapperObsType, ArrayType, ArrayType, ArrayType, dict[str, Any]]:
+        """Step through the vector environment, updating each sub-environment's frame buffer.
+
+        Args:
+            actions: The batched actions to step through the vector environment with.
+
+        Returns:
+            Batched stacked observations, rewards, terminations, truncations, and infos.
+        """
+        observations, rewards, terminations, truncations, infos = self.env.step(actions)
+        per_env_obs = tuple(iterate(self.env.observation_space, observations))
+        dones = np.logical_or(terminations, truncations)
+
+        if self._autoreset_mode == AutoresetMode.SAME_STEP:
+            if "final_obs" in infos and "_final_obs" in infos:
+                final_obs_mask = np.asarray(infos["_final_obs"], dtype=np.bool_)
+                final_obs = infos["final_obs"].copy()
+                for i in range(self.num_envs):
+                    if final_obs_mask[i]:
+                        self._obs_queues[i].append(deepcopy(final_obs[i]))
+                        final_obs[i] = self._stack_single_env(i)
+                        self._reset_env_queue(i, per_env_obs[i])
+                    elif dones[i]:
+                        self._reset_env_queue(i, per_env_obs[i])
+                    else:
+                        self._obs_queues[i].append(deepcopy(per_env_obs[i]))
+                infos["final_obs"] = final_obs
+            else:
+                for i in range(self.num_envs):
+                    if dones[i]:
+                        self._reset_env_queue(i, per_env_obs[i])
+                    else:
+                        self._obs_queues[i].append(deepcopy(per_env_obs[i]))
+            self._prev_dones = np.zeros((self.num_envs,), dtype=np.bool_)
+        elif self._autoreset_mode == AutoresetMode.NEXT_STEP:
+            for i in range(self.num_envs):
+                if self._prev_dones[i]:
+                    self._reset_env_queue(i, per_env_obs[i])
+                else:
+                    self._obs_queues[i].append(deepcopy(per_env_obs[i]))
+            self._prev_dones = np.asarray(dones, dtype=np.bool_).copy()
+        else:
+            for i in range(self.num_envs):
+                self._obs_queues[i].append(deepcopy(per_env_obs[i]))
+
+        return self._stack_all_envs(), rewards, terminations, truncations, infos
 
 
 class NormalizeObservation(

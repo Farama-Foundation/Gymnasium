@@ -6,7 +6,10 @@ from typing import TYPE_CHECKING
 from gymnasium.wrappers.vector.common import RecordEpisodeStatistics
 from gymnasium.wrappers.vector.dict_info_to_list import DictInfoToList
 from gymnasium.wrappers.vector.rendering import HumanRendering, RecordVideo
-from gymnasium.wrappers.vector.stateful_observation import NormalizeObservation
+from gymnasium.wrappers.vector.stateful_observation import (
+    FrameStackObservation,
+    NormalizeObservation,
+)
 from gymnasium.wrappers.vector.stateful_reward import NormalizeReward
 from gymnasium.wrappers.vector.vectorize_action import (
     ClipAction,
@@ -46,10 +49,10 @@ __all__ = [
     "ReshapeObservation",
     "RescaleObservation",
     "DtypeObservation",
+    "FrameStackObservation",
     "NormalizeObservation",
     # "RenderObservation",
     # "TimeAwareObservation",
-    # "FrameStackObservation",
     # "DelayObservation",
     # --- Action Wrappers ---
     "TransformAction",

@@ -57,7 +57,7 @@ def custom_environments():
         ("CarRacing-v3", "DtypeObservation", {"dtype": np.int32}),
         # ("CartPole-v1", "RenderObservation", {}),  # not implemented
         # ("CartPole-v1", "TimeAwareObservation", {}),  # not implemented
-        # ("CartPole-v1", "FrameStackObservation", {}),  # not implemented
+        ("CartPole-v1", "FrameStackObservation", {"stack_size": 3}),
         # ("CartPole-v1", "DelayObservation", {}),  # not implemented
         ("MountainCarContinuous-v0", "ClipAction", {}),
         (
