@@ -893,14 +893,14 @@
 <span class="sd">            epsilon: A stability parameter that is used when scaling the observations.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            InvalidBound: If ``epsilon`` is not strictly positive.</span>
+<span class="sd">            InvalidBound: If ``epsilon`` is not finite and strictly positive.</span>
 <span class="sd">        """</span>
         <span class="c1"># `epsilon` is added under the square root to keep the division away from</span>
         <span class="c1"># zero, so a non-positive value defeats its purpose and, once it exceeds</span>
         <span class="c1"># the variance, silently turns every normalized observation into NaN.</span>
-        <span class="k">if</span> <span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">epsilon</span><span class="p">)</span> <span class="ow">or</span> <span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">InvalidBound</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"`epsilon` should be strictly positive. Received </span><span class="si">{</span><span class="n">epsilon</span><span class="si">}</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"`epsilon` should be strictly positive and finite. Received </span><span class="si">{</span><span class="n">epsilon</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="n">gym</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">RecordConstructorArgs</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="n">epsilon</span><span class="p">)</span>
