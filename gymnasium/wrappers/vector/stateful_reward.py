@@ -95,7 +95,7 @@ class NormalizeReward(
             gamma (float): The discount factor that is used in the exponential moving average.
 
         Raises:
-            InvalidBound: If ``gamma`` is outside ``[0, 1]``, or if ``epsilon`` is not strictly positive.
+            InvalidBound: If ``gamma`` is outside ``[0, 1]``, or if ``epsilon`` is not finite and strictly positive.
         """
         # The exponential moving average multiplies the accumulator by `gamma` on
         # every step, so a value above one makes it diverge instead of converging,
@@ -107,9 +107,9 @@ class NormalizeReward(
         # `epsilon` is added under the square root to keep the division away from
         # zero, so a non-positive value defeats its purpose and, once it exceeds
         # the variance, silently turns every normalized reward into NaN.
-        if epsilon <= 0:
+        if not np.isfinite(epsilon) or epsilon <= 0:
             raise InvalidBound(
-                f"`epsilon` should be strictly positive. Received {epsilon}"
+                f"`epsilon` should be strictly positive and finite. Received {epsilon}"
             )
 
         gym.utils.RecordConstructorArgs.__init__(self, gamma=gamma, epsilon=epsilon)

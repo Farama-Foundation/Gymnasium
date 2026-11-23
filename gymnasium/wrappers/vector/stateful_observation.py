@@ -92,14 +92,14 @@ class NormalizeObservation(
             epsilon: A stability parameter that is used when scaling the observations.
 
         Raises:
-            InvalidBound: If ``epsilon`` is not strictly positive.
+            InvalidBound: If ``epsilon`` is not finite and strictly positive.
         """
         # `epsilon` is added under the square root to keep the division away from
         # zero, so a non-positive value defeats its purpose and, once it exceeds
         # the variance, silently turns every normalized observation into NaN.
-        if epsilon <= 0:
+        if not np.isfinite(epsilon) or epsilon <= 0:
             raise InvalidBound(
-                f"`epsilon` should be strictly positive. Received {epsilon}"
+                f"`epsilon` should be strictly positive and finite. Received {epsilon}"
             )
 
         gym.utils.RecordConstructorArgs.__init__(self, epsilon=epsilon)

@@ -217,8 +217,8 @@ def test_gamma_outside_unit_interval_is_rejected(gamma):
     vec_env.close()
 
 
-@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0])
-def test_non_positive_epsilon_is_rejected(epsilon):
+@pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0, np.nan, np.inf, -np.inf])
+def test_invalid_epsilon_is_rejected(epsilon):
     vec_env = SyncVectorEnv([thunk])
     with pytest.raises(InvalidBound, match="`epsilon` should be strictly positive"):
         wrappers.vector.NormalizeReward(vec_env, epsilon=epsilon)
