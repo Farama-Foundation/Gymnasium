@@ -41,14 +41,17 @@ class RunningMeanStd:
         self.count = epsilon
 
     def update(self, x):
-        """Updates the mean, var and count from a batch of samples."""
+        """Updates the mean, var and count from a batch of samples, ignoring empty batches."""
+        batch_count = x.shape[0]
+        if batch_count == 0:
+            return
+
         batch_mean = np.mean(x, axis=0)
         batch_var = np.var(x, axis=0)
-        batch_count = x.shape[0]
         self.update_from_moments(batch_mean, batch_var, batch_count)
 
     def update_from_moments(self, batch_mean, batch_var, batch_count):
-        """Updates from batch mean, variance and count moments."""
+        """Updates from batch mean, variance and count moments, ignoring zero-count batches."""
         self.mean, self.var, self.count = update_mean_var_count_from_moments(
             self.mean, self.var, self.count, batch_mean, batch_var, batch_count
         )
@@ -57,7 +60,10 @@ class RunningMeanStd:
 def update_mean_var_count_from_moments(
     mean, var, count, batch_mean, batch_var, batch_count
 ):
-    """Updates the mean, var and count using the previous mean, var, count and batch values."""
+    """Updates the mean, var and count using the previous values, ignoring zero-count batches."""
+    if batch_count == 0:
+        return mean, var, count
+
     delta = batch_mean - mean
     tot_count = count + batch_count
 
