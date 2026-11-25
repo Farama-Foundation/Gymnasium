@@ -393,7 +393,7 @@
 <h4>Other steps<a class="headerlink" href="#other-steps" title="Link to this heading">¶</a></h4>
 <ul class="simple">
 <li><p>Add the corresponding gif into the <code class="docutils literal notranslate"><span class="pre">docs/_static/videos/{ENV_TYPE}</span></code> folder, where <code class="docutils literal notranslate"><span class="pre">ENV_TYPE</span></code> is the category of your new environment (e.g. mujoco). Follow snake_case naming convention. Alternatively, run <code class="docutils literal notranslate"><span class="pre">docs/_scripts/gen_gifs.py</span></code>.</p></li>
-<li><p>Edit <code class="docutils literal notranslate"><span class="pre">docs/environments/{ENV_TYPE}/index.md</span></code>, and add the name of the file corresponding to your new environment to the <code class="docutils literal notranslate"><span class="pre">toctree</span></code>.</p></li>
+<li><p>Edit <code class="docutils literal notranslate"><span class="pre">docs/environments/{ENV_TYPE}.md</span></code>, and add the name of the file corresponding to your new environment to the <code class="docutils literal notranslate"><span class="pre">toctree</span></code>.</p></li>
 </ul>
 </section>
 </section>
@@ -401,7 +401,7 @@
 <section id="build-the-documentation">
 <h2>Build the Documentation<a class="headerlink" href="#build-the-documentation" title="Link to this heading">¶</a></h2>
 <p>Install the required packages and Gymnasium (or your fork):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">gymnasium</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
 <span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">docs</span><span class="o">/</span><span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
 </div>
@@ -419,9 +419,18 @@
 </section>
 <section id="writing-tutorials">
 <h2>Writing Tutorials<a class="headerlink" href="#writing-tutorials" title="Link to this heading">¶</a></h2>
-<p>We use Sphinx-Gallery to build the tutorials inside the <code class="docutils literal notranslate"><span class="pre">docs/tutorials</span></code> directory. Check <code class="docutils literal notranslate"><span class="pre">docs/tutorials/demo.py</span></code> to see an example of a tutorial and <a class="reference external" href="https://sphinx-gallery.github.io/stable/syntax.html">Sphinx-Gallery documentation</a> for more information.</p>
+<p>We use Sphinx-Gallery to build the tutorials inside the <code class="docutils literal notranslate"><span class="pre">docs/tutorials</span></code> directory. Tutorials live in <code class="docutils literal notranslate"><span class="pre">docs/tutorials/gymnasium_basics</span></code> or <code class="docutils literal notranslate"><span class="pre">docs/tutorials/training_agents</span></code>. See <code class="docutils literal notranslate"><span class="pre">docs/tutorials/gymnasium_basics/environment_creation.py</span></code> for an example of a tutorial and the <a class="reference external" href="https://sphinx-gallery.github.io/stable/syntax.html">Sphinx-Gallery documentation</a> for more information.</p>
 <p>To convert Jupyter Notebooks to the python tutorials you can use <a class="reference external" href="https://gist.github.com/mgoulao/f07f5f79f6cd9a721db8a34bba0a19a7">this script</a>.</p>
-<p>If you want Sphinx-Gallery to execute the tutorial (which adds outputs and plots) then the file name should start with <code class="docutils literal notranslate"><span class="pre">run_</span></code>. Note that this adds to the build time so make sure the script doesn’t take more than a few seconds to execute.</p>
+<p>Tutorials are not executed during the documentation build (the <code class="docutils literal notranslate"><span class="pre">filename_pattern</span></code> option in <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code> is disabled), so the rendered pages show the code without outputs or plots. Instead, the <code class="docutils literal notranslate"><span class="pre">Run</span> <span class="pre">Tutorials</span></code> workflow (<code class="docutils literal notranslate"><span class="pre">.github/workflows/run-tutorial.yml</span></code>) runs each modified tutorial on pull requests, with fewer training iterations.</p>
+</section>
+<section id="testing-the-documentation">
+<h2>Testing the Documentation<a class="headerlink" href="#testing-the-documentation" title="Link to this heading">¶</a></h2>
+<p>To prevent the documentation from drifting from the code, <code class="docutils literal notranslate"><span class="pre">tests/test_docs_code.py</span></code> (run with the rest of the tests, <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">tests/test_docs_code.py</span></code>) checks that:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">```python</span></code> code blocks of the pages in <code class="docutils literal notranslate"><span class="pre">docs/introduction</span></code>, <code class="docutils literal notranslate"><span class="pre">docs/api</span></code> and <code class="docutils literal notranslate"><span class="pre">docs/environments/mujoco.md</span></code> run. Each page’s blocks are run in order with a shared namespace, and blocks containing <code class="docutils literal notranslate"><span class="pre">&gt;&gt;&gt;</span></code> are run as doctests, so their outputs must match. To skip a block that is not meant to be run (e.g., the old Gym API or a code fragment), add <code class="docutils literal notranslate"><span class="pre">&lt;!--</span> <span class="pre">test:</span> <span class="pre">skip</span> <span class="pre">--&gt;</span></code> on the line before it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/api/wrappers/table.md</span></code> is up to date with the wrappers, run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">docs/_scripts/gen_wrapper_table.py</span></code> to update it after adding or changing a wrapper.</p></li>
+</ul>
+<p>The docstring examples in <code class="docutils literal notranslate"><span class="pre">gymnasium/</span></code> are tested with <code class="docutils literal notranslate"><span class="pre">pytest</span> <span class="pre">--doctest-modules</span> <span class="pre">gymnasium/</span></code>.</p>
 </section>
 </section>
 
@@ -484,6 +493,7 @@
 </li>
 <li><a class="reference internal" href="#build-the-documentation">Build the Documentation</a></li>
 <li><a class="reference internal" href="#writing-tutorials">Writing Tutorials</a></li>
+<li><a class="reference internal" href="#testing-the-documentation">Testing the Documentation</a></li>
 </ul>
 </li>
 </ul>

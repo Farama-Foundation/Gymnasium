@@ -453,6 +453,7 @@ In this page, we are going to talk about general strategies for speeding up trai
 <h2>Optimizing training<a class="headerlink" href="#optimizing-training" title="Link to this heading">¶</a></h2>
 <p>After the environments, the training loop is usually the next bottleneck. Rendering is expensive, so create the environments with <code class="docutils literal notranslate"><span class="pre">render_mode=None</span></code> and only wrap them with the video recording wrappers when a recording is actually needed, rather than for every training run.</p>
 <p>For deep reinforcement learning, most of the remaining time is spent in the neural network and in moving data between the CPU and the accelerator. Compiling the model or the update step reduces the Python overhead of the step, and keeping the observations, actions and targets on the accelerator avoids a round trip to the CPU for every batch.</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
 <span class="c1"># `model` is a torch.nn.Module, e.g. the policy network.</span>
@@ -461,6 +462,7 @@ In this page, we are going to talk about general strategies for speeding up trai
 </pre></div>
 </div>
 <p>The equivalent for JAX is to decorate the update step with <code class="docutils literal notranslate"><span class="pre">jax.jit</span></code> and to keep the parameters and the batch on the accelerator. Compilation only pays off when the shapes of the inputs do not change between calls, which is another reason to step a fixed batch of environments.</p>
+<!-- test: skip -->
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">jax</span>
 
 <span class="c1"># JIT the update step and keep the batch on the accelerator</span>
