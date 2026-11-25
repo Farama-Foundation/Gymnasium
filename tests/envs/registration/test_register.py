@@ -215,3 +215,24 @@ def test_namespace_restored_after_exception():
 
     del gym.envs.registry["MyDefaultEnvironment-v1"]
     del gym.envs.registry["MyDefaultNamespace/MyDefaultUnversionedEnvironment"]
+
+
+@pytest.mark.parametrize("error_type", [RuntimeError, KeyboardInterrupt])
+def test_nested_namespace_restored_after_exception(monkeypatch, error_type):
+    """Checks that a nested namespace block that raises restores the outer namespace."""
+    registration = gym.envs.registration
+    monkeypatch.setattr(registration, "registry", registration.registry.copy())
+    monkeypatch.setattr(registration, "current_namespace", None)
+
+    error = error_type("inner plugin failed")
+    with registration.namespace("OuterPlugin"):
+        with pytest.raises(error_type) as raised:
+            with registration.namespace("InnerPlugin"):
+                raise error
+        assert raised.value is error
+        assert registration.current_namespace == "OuterPlugin"
+
+        gym.register("AfterInnerFailure-v0", "no-entry-point")
+        assert "OuterPlugin/AfterInnerFailure-v0" in registration.registry
+        assert "InnerPlugin/AfterInnerFailure-v0" not in registration.registry
+    assert registration.current_namespace is None
