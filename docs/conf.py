@@ -63,7 +63,7 @@ templates_path = ["_templates"]
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ["README.md", "tutorials/README.rst"]
+exclude_patterns = ["README.md", "tutorials/README.rst", "tutorials/*/README.rst"]
 
 # Napoleon settings
 napoleon_use_ivar = True
@@ -153,7 +153,6 @@ sitemap_excludes = [
     "genindex/",
     "py-modindex/",
     "_modules/*",
-    "*README/",
 ]
 
 # Markdown version of each page (sphinx-markdown-builder, `-b markdown`), for LLMs and agents
