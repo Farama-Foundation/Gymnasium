@@ -1,0 +1,60 @@
+# Gymnasium
+
+> Gymnasium is an API standard for single-agent reinforcement learning environments, with a diverse collection of reference environments (Classic Control, Box2D, Toy Text, MuJoCo, Atari). It is the maintained fork of OpenAI Gym; import it with `import gymnasium as gym`.
+
+The Gymnasium API differs from the old `gym` (<0.26) API that is common in older code and tutorials:
+
+- `env.reset(seed=...)` returns `(observation, info)`; seeding uses `reset(seed=...)` rather than `env.seed()`.
+- `env.step(action)` returns `(observation, reward, terminated, truncated, info)`, where `terminated` is the episode reaching a terminal state and `truncated` is the episode ending early (e.g., a time limit). The old single `done` flag is `terminated or truncated`.
+- The render mode is chosen at creation, `gym.make(env_id, render_mode="human" | "rgb_array" | ...)`, and `env.render()` takes no arguments.
+- Environment IDs carry a version suffix (e.g., `CartPole-v1`, `LunarLander-v3`, `Ant-v5`); use the latest version.
+
+Every page is also available as markdown by replacing the trailing `/` of its URL with `.md` (e.g., https://gymnasium.farama.org/api/env.md), as linked below. These URLs are for the latest release; the docs for the main branch and older releases are at `https://gymnasium.farama.org/main/` and `https://gymnasium.farama.org/v<version>/` (e.g., `https://gymnasium.farama.org/v1.0.0/`).
+
+## Introduction
+
+- [Basic Usage](https://gymnasium.farama.org/introduction/basic_usage.md): Creating environments with `make`, the agent-environment loop, action and observation spaces, and wrappers
+- [Train an Agent](https://gymnasium.farama.org/introduction/train_agent.md): Training a tabular Q-learning agent on Blackjack
+- [Create a Custom Environment](https://gymnasium.farama.org/introduction/create_custom_env.md): Implementing and registering a custom `gymnasium.Env`
+- [Recording Agents](https://gymnasium.farama.org/introduction/record_agent.md): Recording videos and episode statistics during training and evaluation
+- [Speeding Up Training](https://gymnasium.farama.org/introduction/speed_up_env.md): Vectorized environments and other approaches to faster training
+- [Migration Guide](https://gymnasium.farama.org/introduction/migration_guide.md): Updating code from Gym v0.21 / v0.26 to Gymnasium
+
+## API
+
+- [Env](https://gymnasium.farama.org/api/env.md): `gymnasium.Env`, its methods (`reset`, `step`, `render`, `close`) and attributes
+- [Registry](https://gymnasium.farama.org/api/registry.md): `make`, `make_vec`, `register`, `spec`, `pprint_registry` and `EnvSpec`
+- [Spaces](https://gymnasium.farama.org/api/spaces.md): The `Space` base class, [fundamental spaces](https://gymnasium.farama.org/api/spaces/fundamental.md) (`Box`, `Discrete`, `MultiBinary`, `MultiDiscrete`, `Text`), [composite spaces](https://gymnasium.farama.org/api/spaces/composite.md) (`Dict`, `Tuple`, `Sequence`, `Graph`, `OneOf`) and [space utilities](https://gymnasium.farama.org/api/spaces/utils.md) (`flatten`, `unflatten`, ...)
+- [Wrappers](https://gymnasium.farama.org/api/wrappers.md): The `Wrapper` base classes, with the [list of wrappers](https://gymnasium.farama.org/api/wrappers/table.md), [observation](https://gymnasium.farama.org/api/wrappers/observation_wrappers.md), [action](https://gymnasium.farama.org/api/wrappers/action_wrappers.md), [reward](https://gymnasium.farama.org/api/wrappers/reward_wrappers.md) and [misc](https://gymnasium.farama.org/api/wrappers/misc_wrappers.md) wrappers
+- [Vector](https://gymnasium.farama.org/api/vector.md): `VectorEnv`, [`SyncVectorEnv`](https://gymnasium.farama.org/api/vector/sync_vector_env.md), [`AsyncVectorEnv`](https://gymnasium.farama.org/api/vector/async_vector_env.md), [autoreset modes](https://gymnasium.farama.org/api/vector/autoreset.md), [vector wrappers](https://gymnasium.farama.org/api/vector/wrappers.md) and [vector utilities](https://gymnasium.farama.org/api/vector/utils.md)
+- [Utils](https://gymnasium.farama.org/api/utils.md): `check_env`, seeding, `play`, `save_video`, step API compatibility and performance benchmarks
+- [Typing](https://gymnasium.farama.org/api/typing.md): Type aliases used across the API
+- [Functional](https://gymnasium.farama.org/api/functional.md): The experimental functional `FuncEnv` API and its JAX environment wrappers
+
+## Environments
+
+- [Classic Control](https://gymnasium.farama.org/environments/classic_control.md): CartPole, Acrobot, MountainCar, MountainCarContinuous and Pendulum
+- [Box2D](https://gymnasium.farama.org/environments/box2d.md): LunarLander, BipedalWalker and CarRacing (requires `gymnasium[box2d]`)
+- [Toy Text](https://gymnasium.farama.org/environments/toy_text.md): FrozenLake, Taxi, CliffWalking and Blackjack
+- [MuJoCo](https://gymnasium.farama.org/environments/mujoco.md): Ant, HalfCheetah, Hopper, Humanoid, Walker2d and other continuous control environments (requires `gymnasium[mujoco]`)
+- [Atari](https://gymnasium.farama.org/environments/atari.md): Atari 2600 games, provided by `ale-py`
+- [Third-Party Environments](https://gymnasium.farama.org/environments/third_party_environments.md): Environments built on the Gymnasium API by other projects
+
+## Tutorials
+
+- [Make your own custom environment](https://gymnasium.farama.org/tutorials/gymnasium_basics/environment_creation.md)
+- [Implementing Custom Wrappers](https://gymnasium.farama.org/tutorials/gymnasium_basics/implementing_custom_wrappers.md)
+- [Handling Time Limits](https://gymnasium.farama.org/tutorials/gymnasium_basics/handling_time_limits.md)
+- [Load custom quadruped robot environments](https://gymnasium.farama.org/tutorials/gymnasium_basics/load_quadruped_model.md)
+- [Solving Blackjack with Tabular Q-Learning](https://gymnasium.farama.org/tutorials/training_agents/blackjack_q_learning.md)
+- [Solving Frozenlake with Tabular Q-Learning](https://gymnasium.farama.org/tutorials/training_agents/frozenlake_q_learning.md)
+- [Action Masking in the Taxi Environment](https://gymnasium.farama.org/tutorials/training_agents/action_masking_taxi.md)
+- [Training using REINFORCE for Mujoco](https://gymnasium.farama.org/tutorials/training_agents/mujoco_reinforce.md)
+- [Speeding up A2C Training with Vector Envs](https://gymnasium.farama.org/tutorials/training_agents/vector_a2c.md)
+
+## Optional
+
+- [Gymnasium release notes](https://gymnasium.farama.org/gymnasium_release_notes/index.md)
+- [Gym release notes](https://gymnasium.farama.org/gym_release_notes/index.md)
+- [Third-Party Tutorials](https://gymnasium.farama.org/tutorials/third-party-tutorials.md)
+- [Source code](https://github.com/Farama-Foundation/Gymnasium)

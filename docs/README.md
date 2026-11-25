@@ -42,6 +42,15 @@ sphinx-autobuild -b dirhtml --watch ../gymnasium --re-ignore "pickle$" . _build
 
 You can then open http://localhost:8000 in your browser to watch a live updated version of the documentation.
 
+### Agent and LLM support
+
+The website is also published for LLMs and agents: `docs/_extra/llms.txt` (an index of the documentation, update it when adding or renaming pages) and `docs/_extra/robots.txt` are copied to the site root, `sphinx-sitemap` generates `sitemap.xml`, and the docs workflows build a markdown copy of every page (`api/env/` → `api/env.md`) with:
+
+```
+sphinx-build -b markdown -d _build/.doctrees docs _build_md
+rsync -a --include='*/' --include='*.md' --exclude='*' --prune-empty-dirs _build_md/ _build/
+```
+
 ## Writing Tutorials
 
 We use Sphinx-Gallery to build the tutorials inside the `docs/tutorials` directory. Check `docs/tutorials/demo.py` to see an example of a tutorial and [Sphinx-Gallery documentation](https://sphinx-gallery.github.io/stable/syntax.html) for more information.

@@ -49,6 +49,7 @@ extensions = [
     "sphinx_gallery.gen_gallery",
     "sphinx_github_changelog",
     "sphinx_copybutton",
+    "sphinx_sitemap",
 ]
 
 # Strip Python prompts, copying only input lines in console examples.
@@ -87,8 +88,33 @@ def remove_lines_before_parameters(app, what, name, obj, options, lines):
         lines[:] = lines[first_idx_to_keep:]
 
 
+def add_agent_links(app, pagename, templatename, context, doctree):
+    """Fix the canonical URL and advertise each page's markdown version.
+
+    Sphinx builds ``pageurl`` (used for ``rel="canonical"`` and ``og:url``) as
+    ``pagename + ".html"`` even with the ``dirhtml`` builder, which produces a URL
+    that 404s (``api/env.html`` rather than ``api/env/``). The canonical URL always
+    uses the root (latest release) site, so versioned copies point to the latest docs.
+    """
+    if app.builder.name != "dirhtml":
+        return
+
+    context["pageurl"] = (
+        f"{app.config.html_baseurl.rstrip('/')}/{app.builder.get_target_uri(pagename)}"
+    )
+
+    # The markdown builder writes ``<pagename>.md``, see the docs workflows
+    if pagename in app.env.found_docs:
+        md_href = context["pathto"](f"{pagename}.md", 1)
+        context["metatags"] = (
+            context.get("metatags", "")
+            + f'\n<link rel="alternate" type="text/markdown" href="{md_href}" />'
+        )
+
+
 def setup(app):
     app.connect("autodoc-process-docstring", remove_lines_before_parameters)
+    app.connect("html-page-context", add_agent_links)
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -114,6 +140,26 @@ html_theme_options = {
 }
 
 html_static_path = ["_static"]
+# Files copied verbatim to the build root (robots.txt, llms.txt)
+html_extra_path = ["_extra"]
+
+# Sitemap (sphinx-sitemap), always listing the root (latest release) URLs.
+# `site_url` needs the trailing slash as sphinx-sitemap concatenates it with the page link.
+site_url = f"{html_baseurl}/"
+sitemap_url_scheme = "{link}"
+sitemap_excludes = [
+    "404/",
+    "search/",
+    "genindex/",
+    "py-modindex/",
+    "_modules/*",
+    "*README/",
+]
+
+# Markdown version of each page (sphinx-markdown-builder, `-b markdown`), for LLMs and agents
+# Links between pages are relative, so they stay within the same docs version
+markdown_uri_doc_suffix = ".md"
+
 html_css_files = ["css/copybutton.css"]
 
 # -- Generate Tutorials -------------------------------------------------
