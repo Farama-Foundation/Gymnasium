@@ -98,7 +98,7 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
         Args:
             nvec: vector of counts of each categorical variable. This will usually be a list of integers. However,
                 you may also pass a more complicated numpy array if you'd like the space to have several axes.
-            dtype: This should be some kind of integer type.
+            dtype: This should be some kind of integer type. All categorical ranges must fit within it.
             seed: Optionally, you can use this argument to seed the RNG that is used to sample from the space.
             start: Optionally, the starting value the element of each class will take (defaults to 0).
         """
@@ -115,6 +115,19 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
                 f"Invalid MultiDiscrete dtype ({self.dtype}), must be an integer dtype"
             )
 
+        dtype_info = np.iinfo(self.dtype)
+        # Preserve original integer values before narrowing; object comparisons
+        # also avoid rounding mixed signed/unsigned 64-bit inputs to float.
+        for name, values in (("nvec", nvec), ("start", start)):
+            if values is not None:
+                original_values = np.asarray(values, dtype=object)
+                if np.any(original_values < dtype_info.min) or np.any(
+                    original_values > dtype_info.max
+                ):
+                    raise ValueError(
+                        f"{name} values must be within [{dtype_info.min}, {dtype_info.max}] for dtype {self.dtype}"
+                    )
+
         self.nvec = np.array(nvec, dtype=dtype, copy=True)
         if start is not None:
             self.start = np.array(start, dtype=dtype, copy=True)
@@ -127,6 +140,13 @@ class MultiDiscrete(Space[NDArray[_IntegerT_co]], Generic[_IntegerT_co]):
             )
         if not (self.nvec > 0).all():
             raise ValueError("nvec (counts) have to be positive")
+
+        # Subtract nonnegative counts from the dtype limit, so this check cannot
+        # overflow even when the requested upper endpoint is unrepresentable.
+        if np.any(self.start > dtype_info.max - (self.nvec - 1)):
+            raise ValueError(
+                f"The range defined by start + nvec - 1 exceeds the maximum of the dtype {self.dtype}"
+            )
 
         super().__init__(self.nvec.shape, self.dtype, seed)
 
