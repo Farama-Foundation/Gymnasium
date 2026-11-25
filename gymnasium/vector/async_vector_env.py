@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import inspect
 import multiprocessing
-import pickle
 import sys
 import time
 import traceback
@@ -806,23 +805,17 @@ class AsyncVectorEnv(
         if all(successes):
             return
 
-        # Workers that are still running send their error details in place of the result,
-        # while workers that shut down send `None` and put their error in the error queue.
-        running_errors = (
-            []
-            if results is None
-            else [
-                result
-                for result, success in zip(results, successes, strict=True)
-                if not success and result is not None
-            ]
-        )
+        # Workers that keep running after an error (`call` and `set_attr`) send the exception
+        # as the result, while workers that shut down send `None` and use the error queue.
+        worker_errors = [
+            result
+            for result, success in zip(
+                results or [None] * self.num_envs, successes, strict=True
+            )
+            if not success and result is not None
+        ]
 
-        for index, _, _, trace in running_errors:
-            logger.error(f"Received the following error from Worker-{index}")
-            logger.error(f"{trace}")
-
-        num_errors = self.num_envs - sum(successes) - len(running_errors)
+        num_errors = self.num_envs - sum(successes) - len(worker_errors)
         for i in range(num_errors):
             index, exctype, value, trace = self.error_queue.get()
 
@@ -839,10 +832,8 @@ class AsyncVectorEnv(
                 self._state = AsyncState.DEFAULT
                 raise exctype(value)
 
-        _, exctype, value, _ = running_errors[-1]
-        logger.error("Raising the last exception back to the main process.")
         self._state = AsyncState.DEFAULT
-        raise exctype(value)
+        raise worker_errors[0]
 
     def __del__(self) -> None:
         """On deleting the object, checks that the vector environment is closed."""
@@ -956,9 +947,8 @@ def _async_worker(
                     break
                 elif command == "_call":
                     name, args, kwargs = data
-                    # A failed `call` or `set_attr`, e.g., a misspelt attribute name, doesn't break
-                    # the environment, so like `SyncVectorEnv`, the error is raised in the main process
-                    # and the worker keeps running. The error details are sent in place of the result.
+                    # A failed `call` or `set_attr` doesn't break the environment, so, like
+                    # `SyncVectorEnv`, the error is raised in the main process and the worker keeps running.
                     try:
                         if name in [
                             "reset",
@@ -973,16 +963,16 @@ def _async_worker(
 
                         attr = env.get_wrapper_attr(name)
                         result = attr(*args, **kwargs) if callable(attr) else attr
-                    except Exception:
-                        pipe.send((_error_details(index), False))
+                    except Exception as e:
+                        pipe.send((e, False))
                     else:
                         pipe.send((result, True))
                 elif command == "_setattr":
                     name, value = data
                     try:
                         env.set_wrapper_attr(name, value)
-                    except Exception:
-                        pipe.send((_error_details(index), False))
+                    except Exception as e:
+                        pipe.send((e, False))
                     else:
                         pipe.send((None, True))
                 elif command == "_check_spaces":
@@ -1012,21 +1002,10 @@ def _async_worker(
                     semaphore.release()
 
     except (KeyboardInterrupt, Exception):
-        error_queue.put(_error_details(index))
+        error_type, error_message, _ = sys.exc_info()
+        trace = traceback.format_exc()
+
+        error_queue.put((index, error_type, error_message, trace))
         pipe.send((None, False))
     finally:
         env.close()
-
-
-def _error_details(index: int) -> tuple[int, type[BaseException], BaseException, str]:
-    """Returns the worker index, type, value and traceback of the exception being handled."""
-    error_type, error_message, _ = sys.exc_info()
-    assert error_type is not None and error_message is not None
-    try:
-        # The main process unpickles the exception, which fails for some custom exceptions,
-        # e.g., ones whose `__init__` takes arguments other than the message
-        pickle.loads(pickle.dumps(error_message))
-    except Exception:
-        error_message = RuntimeError(f"{error_type.__name__}: {error_message}")
-        error_type = RuntimeError
-    return index, error_type, error_message, traceback.format_exc()
