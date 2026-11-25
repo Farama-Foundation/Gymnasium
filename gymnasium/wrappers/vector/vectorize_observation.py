@@ -221,13 +221,15 @@ class VectorizeTransformObservation(
     def observations(self, observations: ObsType) -> WrapperObsType:
         """Iterates over the vector observations applying the single-agent wrapper ``observation`` then concatenates the observations together again."""
         if self.same_out:
+            # Transformed fields can be views of other input fields, so writing
+            # into the input would overwrite values still needed by concatenate.
             observations_out = concatenate(
                 self.single_observation_space,
                 tuple(
                     self.wrapper.func(obs)
                     for obs in iterate(self.observation_space, observations)
                 ),
-                observations,
+                deepcopy(observations),
             )
         else:
             observations_out = deepcopy(
