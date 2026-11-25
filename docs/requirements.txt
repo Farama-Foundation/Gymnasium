@@ -9,3 +9,5 @@ pygame
 sphinx_github_changelog
 ale_py
 tabulate
+sphinx-sitemap>=2.6
+sphinx-markdown-builder>=0.6

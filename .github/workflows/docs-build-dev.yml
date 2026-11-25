@@ -33,6 +33,11 @@ jobs:
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
 
+      - name: Build Markdown
+        run: |
+          sphinx-build -b markdown -d _build/.doctrees docs _build_md
+          rsync -a --include='*/' --include='*.md' --exclude='*' --prune-empty-dirs _build_md/ _build/
+
       - name: Move 404
         run: mv _build/404/index.html _build/404.html
 
