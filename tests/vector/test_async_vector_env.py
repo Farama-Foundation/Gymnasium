@@ -230,6 +230,34 @@ def test_set_attr_async_vector_env(shared_memory):
 
 
 @pytest.mark.parametrize("shared_memory", [True, False])
+def test_call_errors_keep_workers_running(shared_memory):
+    """Test that a failed `call`, `get_attr` or `set_attr` raises the error without shutting down the workers."""
+    env = AsyncVectorEnv(
+        [make_env("CartPole-v1", i) for i in range(2)], shared_memory=shared_memory
+    )
+    env.reset(seed=0)
+
+    with warnings.catch_warnings(record=True) as caught_warnings:
+        warnings.simplefilter("always")
+        with pytest.raises(AttributeError, match="has no attribute 'gravityy'"):
+            env.get_attr("gravityy")
+        with pytest.raises(ValueError, match="Trying to call function `reset`"):
+            env.call("reset")
+        with pytest.raises(AttributeError, match="has no setter"):
+            env.set_attr("unwrapped", None)
+
+    assert not any("Shutting it down" in str(w.message) for w in caught_warnings)
+
+    assert env.get_attr("gravity") == (9.8, 9.8)
+    env.set_attr("gravity", [9.81, 1.62])
+    assert env.get_attr("gravity") == (9.81, 1.62)
+    _, rewards, _, _, _ = env.step(np.array([0, 1]))
+    assert np.all(rewards == 1.0)
+
+    env.close()
+
+
+@pytest.mark.parametrize("shared_memory", [True, False])
 def test_copy_async_vector_env(shared_memory):
     """Test observations are a copy of the true observation with and without shared memory."""
     env_fns = [make_env("CartPole-v1", i) for i in range(8)]

@@ -645,7 +645,7 @@ class AsyncVectorEnv(
         results, successes = zip(
             *[pipe.recv() for pipe in self.parent_pipes], strict=True
         )
-        self._raise_if_errors(successes)
+        self._raise_if_errors(successes, results)
         self._state = AsyncState.DEFAULT
 
         return results
@@ -691,8 +691,10 @@ class AsyncVectorEnv(
 
         for pipe, value in zip(self.parent_pipes, values, strict=True):
             pipe.send(("_setattr", (name, value)))
-        _, successes = zip(*[pipe.recv() for pipe in self.parent_pipes], strict=True)
-        self._raise_if_errors(successes)
+        results, successes = zip(
+            *[pipe.recv() for pipe in self.parent_pipes], strict=True
+        )
+        self._raise_if_errors(successes, results)
 
     def close_extras(
         self, timeout: float | None = None, terminate: bool = False
@@ -796,12 +798,24 @@ class AsyncVectorEnv(
                 f"Trying to operate on `{type(self).__name__}`, after a call to `close()`."
             )
 
-    def _raise_if_errors(self, successes: Iterable[bool]) -> None:
+    def _raise_if_errors(
+        self, successes: Iterable[bool], results: Iterable[Any] | None = None
+    ) -> None:
+        successes = list(successes)
         if all(successes):
             return
 
-        num_errors = self.num_envs - sum(successes)
-        assert num_errors > 0
+        # Workers that keep running after an error (`call` and `set_attr`) send the exception
+        # as the result, while workers that shut down send `None` and use the error queue.
+        worker_errors = [
+            result
+            for result, success in zip(
+                results or [None] * self.num_envs, successes, strict=True
+            )
+            if not success and result is not None
+        ]
+
+        num_errors = self.num_envs - sum(successes) - len(worker_errors)
         for i in range(num_errors):
             index, exctype, value, trace = self.error_queue.get()
 
@@ -817,6 +831,9 @@ class AsyncVectorEnv(
                 logger.error("Raising the last exception back to the main process.")
                 self._state = AsyncState.DEFAULT
                 raise exctype(value)
+
+        self._state = AsyncState.DEFAULT
+        raise worker_errors[0]
 
     def __del__(self) -> None:
         """On deleting the object, checks that the vector environment is closed."""
@@ -930,20 +947,34 @@ def _async_worker(
                     break
                 elif command == "_call":
                     name, args, kwargs = data
-                    if name in ["reset", "step", "close", "_setattr", "_check_spaces"]:
-                        raise ValueError(
-                            f"Trying to call function `{name}` with `call`, use `{name}` directly instead."
-                        )
+                    # A failed `call` or `set_attr` doesn't break the environment, so, like
+                    # `SyncVectorEnv`, the error is raised in the main process and the worker keeps running.
+                    try:
+                        if name in [
+                            "reset",
+                            "step",
+                            "close",
+                            "_setattr",
+                            "_check_spaces",
+                        ]:
+                            raise ValueError(
+                                f"Trying to call function `{name}` with `call`, use `{name}` directly instead."
+                            )
 
-                    attr = env.get_wrapper_attr(name)
-                    if callable(attr):
-                        pipe.send((attr(*args, **kwargs), True))
+                        attr = env.get_wrapper_attr(name)
+                        result = attr(*args, **kwargs) if callable(attr) else attr
+                    except Exception as e:
+                        pipe.send((e, False))
                     else:
-                        pipe.send((attr, True))
+                        pipe.send((result, True))
                 elif command == "_setattr":
                     name, value = data
-                    env.set_wrapper_attr(name, value)
-                    pipe.send((None, True))
+                    try:
+                        env.set_wrapper_attr(name, value)
+                    except Exception as e:
+                        pipe.send((e, False))
+                    else:
+                        pipe.send((None, True))
                 elif command == "_check_spaces":
                     obs_mode, single_obs_space, single_action_space = data
 
