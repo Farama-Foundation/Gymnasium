@@ -20,7 +20,7 @@ except ImportError as e:
 def capped_cubic_video_schedule(episode_id: int) -> bool:
     r"""The default episode trigger.
 
-    This function will trigger recordings at the episode indices :math:`\{0, 1, 4, 8, 27, ..., k^3, ..., 729, 1000, 2000, 3000, ...\}`
+    This function will trigger recordings at the episode indices :math:`\{0, 1, 8, 27, ..., k^3, ..., 729, 1000, 2000, 3000, ...\}`
 
     Args:
         episode_id: The episode number
@@ -62,7 +62,7 @@ def save_video(
         step_starting_index (int): The step index of the first frame.
         save_logger: If to log the video saving progress, helpful for long videos that take a while, use "bar" to enable.
         **kwargs: The kwargs that will be passed to moviepy's ImageSequenceClip.
-            You need to specify either fps or duration.
+            You need to specify either fps or one duration per input frame (durations).
 
     Example:
         >>> import gymnasium as gym
@@ -89,7 +89,15 @@ def save_video(
         >>> env.close()
     """
     if not isinstance(frames, list):
-        logger.error(f"Expected a list of frames, got a {type(frames)} instead.")
+        raise TypeError(f"Expected a list of frames, got {type(frames)} instead.")
+    if not frames:
+        logger.warn("No frames to save.")
+        return
+    if video_length is not None and video_length <= 0:
+        raise ValueError("video_length must be positive or None")
+    durations = kwargs.get("durations")
+    if durations is not None and len(durations) != len(frames):
+        raise ValueError("Expected one duration per input frame")
     if episode_trigger is None and step_trigger is None:
         episode_trigger = capped_cubic_video_schedule
 
@@ -97,11 +105,17 @@ def save_video(
     os.makedirs(video_folder, exist_ok=True)
     path_prefix = f"{video_folder}/{name_prefix}"
 
+    def write_clip(start: int, suffix: str) -> None:
+        """Write the selected frames with their corresponding timing."""
+        stop = start + video_length if video_length is not None else None
+        clip_kwargs = kwargs.copy()
+        if durations is not None:
+            clip_kwargs["durations"] = durations[start:stop]
+        with ImageSequenceClip(frames[start:stop], **clip_kwargs) as clip:
+            clip.write_videofile(f"{path_prefix}-{suffix}.mp4", logger=save_logger)
+
     if episode_trigger is not None and episode_trigger(episode_index):
-        clip = ImageSequenceClip(frames[:video_length], **kwargs)
-        clip.write_videofile(
-            f"{path_prefix}-episode-{episode_index}.mp4", logger=save_logger
-        )
+        write_clip(0, f"episode-{episode_index}")
 
     if step_trigger is not None:
         # skip the first frame since it comes from reset
@@ -109,10 +123,4 @@ def save_video(
             range(1, len(frames)), start=step_starting_index
         ):
             if step_trigger(step_index):
-                end_index = (
-                    frame_index + video_length if video_length is not None else None
-                )
-                clip = ImageSequenceClip(frames[frame_index:end_index], **kwargs)
-                clip.write_videofile(
-                    f"{path_prefix}-step-{step_index}.mp4", logger=save_logger
-                )
+                write_clip(frame_index, f"step-{step_index}")
