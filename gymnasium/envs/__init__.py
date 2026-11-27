@@ -88,7 +88,7 @@ register(
     disable_env_checker=True,
 )
 
-# Box2d
+# Box2D and Pymunk
 # ----------------------------------------
 
 register(
@@ -99,8 +99,23 @@ register(
 )
 
 register(
+    id="LunarLander-v4",
+    entry_point="gymnasium.envs.pymunk.lunar_lander:LunarLander",
+    max_episode_steps=1000,
+    reward_threshold=200,
+)
+
+register(
     id="LunarLanderContinuous-v3",
     entry_point="gymnasium.envs.box2d.lunar_lander:LunarLander",
+    kwargs={"continuous": True},
+    max_episode_steps=1000,
+    reward_threshold=200,
+)
+
+register(
+    id="LunarLanderContinuous-v4",
+    entry_point="gymnasium.envs.pymunk.lunar_lander:LunarLander",
     kwargs={"continuous": True},
     max_episode_steps=1000,
     reward_threshold=200,
