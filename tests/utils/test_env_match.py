@@ -5,6 +5,7 @@ import pytest
 
 from gymnasium import spaces
 from gymnasium.utils.env_match import check_environments_match
+from gymnasium.wrappers import RenderCollection
 from tests.testing_env import GenericTestEnv
 
 
@@ -61,5 +62,59 @@ def test_mismatched_action_space():
         action_space=spaces.Discrete(3),
         reset_func=_fixed_obs_reset_func,
     )
+    with pytest.raises(AssertionError):
+        check_environments_match(env_a, env_b, num_steps=0)
+
+
+def _make_render_env(render_func, render_mode="rgb_array"):
+    """Create a test env with a fixed observation that renders with `render_func`."""
+    return GenericTestEnv(
+        action_space=spaces.Discrete(2),
+        observation_space=spaces.Box(0, 1, (2,), dtype=np.float32),
+        reset_func=_fixed_obs_reset_func,
+        step_func=_fixed_obs_step_func,
+        render_func=render_func,
+        render_mode=render_mode,
+        metadata={"render_modes": [render_mode]},
+    )
+
+
+def _rgb_render_func(self):
+    """Render function that returns a constant RGB frame."""
+    return np.zeros((4, 4, 3), dtype=np.uint8)
+
+
+def _rgbd_render_func(self):
+    """Render function that returns a constant (RGB, depth) frame pair."""
+    return np.zeros((4, 4, 3), dtype=np.uint8), np.zeros((4, 4), dtype=np.float32)
+
+
+@pytest.mark.parametrize(
+    "make_env",
+    [
+        lambda: RenderCollection(_make_render_env(_rgb_render_func)),
+        lambda: _make_render_env(_rgbd_render_func, render_mode="rgbd_tuple"),
+    ],
+    ids=["rgb_array_list", "rgbd_tuple"],
+)
+def test_matching_environments_with_multiple_render_frames(make_env):
+    """Identical environments whose `render` returns a list or tuple of frames pass the check."""
+    check_environments_match(make_env(), make_env(), num_steps=5)
+
+
+def test_mismatched_render_frame_list():
+    """Environments whose frame lists differ are rejected."""
+    env_a = RenderCollection(_make_render_env(_rgb_render_func))
+    env_b = RenderCollection(
+        _make_render_env(lambda self: np.ones((4, 4, 3), dtype=np.uint8))
+    )
+    with pytest.raises(AssertionError):
+        check_environments_match(env_a, env_b, num_steps=0)
+
+
+def test_mismatched_render_shape():
+    """Environments whose renders have different shapes are rejected."""
+    env_a = _make_render_env(_rgb_render_func)
+    env_b = _make_render_env(lambda self: np.zeros((5, 5, 3), dtype=np.uint8))
     with pytest.raises(AssertionError):
         check_environments_match(env_a, env_b, num_steps=0)
