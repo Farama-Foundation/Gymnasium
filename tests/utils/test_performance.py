@@ -65,5 +65,17 @@ def test_benchmark_render(monkeypatch):
     env = Mock()
     mock_time(monkeypatch)
 
-    assert performance.benchmark_render(env, target_duration=0) == 2
+    assert performance.benchmark_render(env, target_duration=0, seed=123) == 2
+    env.reset.assert_called_once_with(seed=123)
     assert env.render.call_count == 2
+
+
+def test_benchmark_render_with_registered_env(monkeypatch):
+    """Environments with the `OrderEnforcing` wrapper must be reset before they can be rendered."""
+    env = gym.make("CartPole-v1", render_mode="rgb_array")
+    mock_time(monkeypatch)
+
+    try:
+        assert performance.benchmark_render(env, target_duration=0) == 2
+    finally:
+        env.close()
