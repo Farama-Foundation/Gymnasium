@@ -198,3 +198,41 @@ def test_namespace():
 
     del gym.envs.registry["MyDefaultNamespace/MyDefaultEnvironment-v0"]
     del gym.envs.registry["MyDefaultEnvironment-v1"]
+
+
+def test_namespace_restored_after_exception():
+    """Checks that the namespace context manager restores the namespace when its block raises."""
+    with pytest.raises(gym.error.RegistrationError):
+        with gym.envs.registration.namespace("MyDefaultNamespace"):
+            gym.register("MyDefaultUnversionedEnvironment", "no-entry-point")
+            # Fails as the unversioned environment of the same name already exists
+            gym.register("MyDefaultUnversionedEnvironment-v1", "no-entry-point")
+    assert gym.envs.registration.current_namespace is None
+
+    gym.register("MyDefaultEnvironment-v1", "no-entry-point")
+    assert "MyDefaultEnvironment-v1" in gym.envs.registry
+    assert "MyDefaultNamespace/MyDefaultEnvironment-v1" not in gym.envs.registry
+
+    del gym.envs.registry["MyDefaultEnvironment-v1"]
+    del gym.envs.registry["MyDefaultNamespace/MyDefaultUnversionedEnvironment"]
+
+
+@pytest.mark.parametrize("error_type", [RuntimeError, KeyboardInterrupt])
+def test_nested_namespace_restored_after_exception(monkeypatch, error_type):
+    """Checks that a nested namespace block that raises restores the outer namespace."""
+    registration = gym.envs.registration
+    monkeypatch.setattr(registration, "registry", registration.registry.copy())
+    monkeypatch.setattr(registration, "current_namespace", None)
+
+    error = error_type("inner plugin failed")
+    with registration.namespace("OuterPlugin"):
+        with pytest.raises(error_type) as raised:
+            with registration.namespace("InnerPlugin"):
+                raise error
+        assert raised.value is error
+        assert registration.current_namespace == "OuterPlugin"
+
+        gym.register("AfterInnerFailure-v0", "no-entry-point")
+        assert "OuterPlugin/AfterInnerFailure-v0" in registration.registry
+        assert "InnerPlugin/AfterInnerFailure-v0" not in registration.registry
+    assert registration.current_namespace is None
