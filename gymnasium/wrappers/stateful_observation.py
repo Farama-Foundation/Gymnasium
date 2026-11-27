@@ -319,7 +319,7 @@ class FrameStackObservation(
      * "zero" - A "zero"-like instance of the observation space
      * custom - An instance of the observation space
 
-    No vector version of the wrapper exists.
+    A vector version of the wrapper exists :class:`gymnasium.wrappers.vector.FrameStackObservation`.
 
     Example:
         >>> import gymnasium as gym
