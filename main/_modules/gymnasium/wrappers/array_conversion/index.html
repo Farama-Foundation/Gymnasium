@@ -445,7 +445,7 @@
 
 <span class="nd">@functools</span><span class="o">.</span><span class="n">singledispatch</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">array_conversion</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Convert a value into the specified xp module array type."""</span>
+<span class="w">    </span><span class="sd">"""Convert a value into the specified xp module array type, preserving strings."""</span>
     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">"No known conversion for (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">) to xp module (</span><span class="si">{</span><span class="n">xp</span><span class="si">}</span><span class="s2">) registered. Report as issue on github."</span>
     <span class="p">)</span>
@@ -524,6 +524,14 @@
     <span class="n">value</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Passes through None values."""</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="nd">@array_conversion</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_str_array_conversion</span><span class="p">(</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">xp</span><span class="p">:</span> <span class="n">ModuleType</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Pass through strings, including text in options, info and ANSI renders."""</span>
     <span class="k">return</span> <span class="n">value</span>
 
 
