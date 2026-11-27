@@ -18,6 +18,9 @@ What the tutorials cover
   across map sizes.
 - **Action Masking in the Taxi Environment** - tabular Q-learning on ``Taxi-v4`` with and without the
   ``action_mask`` that the environment returns in ``info``.
+- **Solving Lunar Lander with Deep Q-Learning (DQN)** - a PyTorch implementation of DQN with
+  experience replay and a target network on ``LunarLander-v3``, including how ``terminated`` and
+  ``truncated`` enter the Q-learning target.
 - **Training using REINFORCE for Mujoco** - a PyTorch implementation of REINFORCE, a Monte-Carlo
   policy gradient method, on ``InvertedPendulum-v5``.
 - **Speeding up A2C Training with Vector Envs** - an A2C implementation trained with
@@ -34,15 +37,16 @@ FrozenLake and Taxi), and the plotting and progress-bar packages used by the tra
 
     pip install "gymnasium[toy-text]" matplotlib pandas seaborn tqdm
 
-The two deep reinforcement learning tutorials also need PyTorch and the extra for the environment
+The deep reinforcement learning tutorials also need PyTorch and the extra for the environment
 they train on:
 
 .. code:: console
 
     pip install "gymnasium[mujoco,box2d]" torch
 
-*Training using REINFORCE for Mujoco* trains on ``InvertedPendulum-v5`` from the ``mujoco`` extra and
-*Speeding up A2C Training with Vector Envs* trains on ``LunarLander-v3`` from the ``box2d`` extra.
+*Training using REINFORCE for Mujoco* trains on ``InvertedPendulum-v5`` from the ``mujoco`` extra, while
+*Solving Lunar Lander with Deep Q-Learning (DQN)* and *Speeding up A2C Training with Vector Envs* train on
+``LunarLander-v3`` from the ``box2d`` extra.
 
 Running a tutorial locally
 --------------------------
@@ -55,9 +59,10 @@ terminal:
     python blackjack_q_learning.py
 
 Training takes time: Blackjack trains for 100,000 episodes, FrozenLake for 2,000 episodes per run
-across several map sizes, Taxi for 5,000 episodes in each of 12 runs, REINFORCE for 5,000 episodes and A2C for 1,000 updates in several parallel
-environments. Lower the episode, update and timestep counts while experimenting, and raise them again
-for a final run.
+across several map sizes, Taxi for 5,000 episodes in each of 12 runs, DQN for up to 2,000 episodes
+(it stops early once solved), REINFORCE for 5,000 episodes and A2C for 1,000 updates in several
+parallel environments. Lower the episode, update and timestep counts while experimenting, and raise
+them again for a final run.
 
 The vector environment tutorial explains how to wrap the training script in
 ``if __name__ == "__main__":``, which ``AsyncVectorEnv`` needs on platforms that start processes with
