@@ -496,7 +496,7 @@ class NormalizeObservation(
         >>> while not (term or trunc):
         ...     obs, _, term, trunc, _ = env.step(1)
         >>> obs
-        array([ 2.0059888,  1.5676788, -1.9944268, -1.6120394], dtype=float32)
+        array([ 2.0059888,  1.5676788, -1.9944271, -1.6120393], dtype=float32)
 
     Change logs:
      * v0.21.0 - Initially add
@@ -538,7 +538,7 @@ class NormalizeObservation(
         )
 
         self.obs_rms = RunningMeanStd(
-            shape=self.observation_space.shape, dtype=self.observation_space.dtype
+            shape=self.observation_space.shape, dtype=np.float64
         )
         self.epsilon = epsilon
         self._update_running_mean = True

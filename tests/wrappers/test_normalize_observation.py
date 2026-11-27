@@ -93,3 +93,36 @@ def test_invalid_epsilon_is_rejected(epsilon):
 @pytest.mark.parametrize("epsilon", [1e-8, 1e-4, 1.0])
 def test_positive_epsilon_is_accepted(epsilon):
     assert NormalizeObservation(GenericTestEnv(), epsilon=epsilon).epsilon == epsilon
+
+
+def test_running_stats_float64_precision():
+    """Running statistics stay in float64 so updates are not rounded away at large step counts."""
+    space = spaces.Box(low=-np.inf, high=np.inf, shape=(1,), dtype=np.float32)
+    env = GenericTestEnv(
+        observation_space=space,
+        reset_func=lambda self, seed=None, options=None: (
+            np.array([100.0], dtype=np.float32),
+            {},
+        ),
+        step_func=lambda self, action: (
+            np.array([101.0], dtype=np.float32),
+            0.0,
+            False,
+            False,
+            {},
+        ),
+    )
+    wrapped_env = NormalizeObservation(env)
+
+    assert wrapped_env.obs_rms.mean.dtype == np.float64
+    assert wrapped_env.obs_rms.var.dtype == np.float64
+
+    obs, _ = wrapped_env.reset(seed=0)
+    assert obs.dtype == np.float32
+
+    wrapped_env.obs_rms.update(np.full((1_000_000, 1), 100.0, dtype=np.float32))
+    prev_mean = float(wrapped_env.obs_rms.mean[0])
+
+    obs, *_ = wrapped_env.step(wrapped_env.action_space.sample())
+    assert obs.dtype == np.float32
+    assert wrapped_env.obs_rms.mean[0] > prev_mean

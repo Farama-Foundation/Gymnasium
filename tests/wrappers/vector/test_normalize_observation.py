@@ -113,6 +113,8 @@ def test_observation_space_and_dtype():
     vec_env = wrappers.vector.NormalizeObservation(vec_env)
 
     assert vec_env.single_observation_space.dtype == np.float32
+    assert vec_env.obs_rms.mean.dtype == np.float64
+    assert vec_env.obs_rms.var.dtype == np.float64
     assert np.all(vec_env.single_observation_space.low == -np.inf)
     assert np.all(vec_env.single_observation_space.high == np.inf)
 
@@ -121,6 +123,45 @@ def test_observation_space_and_dtype():
 
     obs, *_ = vec_env.step(vec_env.action_space.sample())
     assert obs.dtype == np.float32
+
+
+def test_running_stats_float64_precision():
+    """Running statistics stay in float64 so updates are not rounded away at large step counts."""
+
+    def make_offset_env():
+        return GenericTestEnv(
+            observation_space=spaces.Box(
+                low=-np.inf, high=np.inf, shape=(1,), dtype=np.float32
+            ),
+            reset_func=lambda self, seed=None, options=None: (
+                np.array([100.0], dtype=np.float32),
+                {},
+            ),
+            step_func=lambda self, action: (
+                np.array([101.0], dtype=np.float32),
+                0.0,
+                False,
+                False,
+                {},
+            ),
+        )
+
+    vec_env = wrappers.vector.NormalizeObservation(
+        SyncVectorEnv([make_offset_env for _ in range(2)])
+    )
+    assert vec_env.obs_rms.mean.dtype == np.float64
+    assert vec_env.obs_rms.var.dtype == np.float64
+
+    obs, _ = vec_env.reset(seed=0)
+    assert obs.dtype == np.float32
+
+    vec_env.obs_rms.update(np.full((1_000_000, 1), 100.0, dtype=np.float32))
+    prev_mean = float(vec_env.obs_rms.mean[0])
+
+    obs, *_ = vec_env.step(vec_env.action_space.sample())
+    assert obs.dtype == np.float32
+    assert vec_env.obs_rms.mean[0] > prev_mean
+    vec_env.close()
 
 
 @pytest.mark.parametrize("epsilon", [0.0, -1e-8, -1.0, np.nan, np.inf, -np.inf])
@@ -232,7 +273,7 @@ def test_staggered_autoreset(
 
     obs_rms = RunningMeanStd(
         shape=vec_env.single_observation_space.shape,
-        dtype=vec_env.single_observation_space.dtype,
+        dtype=np.float64,
     )
 
     def normalize(obs: np.ndarray) -> np.ndarray:

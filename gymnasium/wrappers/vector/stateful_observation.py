@@ -68,7 +68,7 @@ class NormalizeObservation(
         >>> for _ in range(100):
         ...     obs, *_ = envs.step(envs.action_space.sample())
         >>> np.mean(obs)
-        np.float32(-0.2359734)
+        np.float32(-0.23597343)
         >>> np.std(obs)
         np.float32(1.1938739)
         >>> envs.close()
@@ -76,7 +76,7 @@ class NormalizeObservation(
 
     single_observation_space: Box  # f32
     observation_space: Box  # f32
-    obs_rms: RunningMeanStd  # f32
+    obs_rms: RunningMeanStd
     epsilon: float
     _update_running_mean: bool
 
@@ -130,7 +130,7 @@ class NormalizeObservation(
 
         self.obs_rms = RunningMeanStd(
             shape=self.single_observation_space.shape,
-            dtype=self.single_observation_space.dtype,
+            dtype=np.float64,
         )
         self.epsilon = epsilon
         self._update_running_mean = True
