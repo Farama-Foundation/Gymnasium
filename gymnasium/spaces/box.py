@@ -492,9 +492,13 @@ class Box(Space[NDArray[_ScalarT_co]]):
         if not isinstance(x, np.ndarray):
             gym.logger.warn("Casting input x to numpy array.")
             try:
-                x = np.asarray(x, dtype=self.dtype)
+                x_cast = np.asarray(x, dtype=self.dtype)
             except (ValueError, TypeError, OverflowError):
                 return False
+            # Casting to an integer or boolean dtype truncates, e.g. `2.5` -> `2`
+            if self.dtype.kind in "iub" and not np.array_equal(x_cast, x):
+                return False
+            x = x_cast
 
         return bool(
             np.can_cast(x.dtype, self.dtype)
