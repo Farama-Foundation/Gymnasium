@@ -261,10 +261,8 @@ class Dict(
 
     def __eq__(self, other: Any) -> bool:
         """Check whether `other` is equivalent to this instance."""
-        return (
-            isinstance(other, Dict)
-            # Comparison of `OrderedDict`s is order-sensitive
-            and self.spaces == other.spaces  # OrderedDict.__eq__
+        return isinstance(other, Dict) and list(self.spaces.items()) == list(
+            other.spaces.items()
         )
 
     def to_jsonable(self, sample_n: Iterable[dict[str, Any]]) -> dict[str, list[Any]]:
