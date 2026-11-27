@@ -236,7 +236,7 @@ class Text(Space[str]):
             isinstance(other, Text)
             and self.min_length == other.min_length
             and self.max_length == other.max_length
-            and self.character_set == other.character_set
+            and self.character_list == other.character_list
         )
 
     @property
