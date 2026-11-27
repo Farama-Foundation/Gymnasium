@@ -176,6 +176,18 @@ def test_shape_errors(low, high, shape, error_type, message):
             np.array([[0], [300]]),
             np.uint8,
         ),
+        # an out-of-range finite entry must still be rejected when another
+        # entry in the same array is -inf / inf
+        (
+            np.array([-np.inf, -200.0]),
+            np.array([0.0, 100.0]),
+            np.int8,
+        ),
+        (
+            np.array([0.0, 0.0]),
+            np.array([np.inf, 300.0]),
+            np.int8,
+        ),
     ],
 )
 def test_out_of_bounds_error(low, high, dtype):
