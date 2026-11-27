@@ -22,6 +22,53 @@ def create_env():
     )
 
 
+@pytest.mark.parametrize("magnitude", [300.0, 60000.0])
+def test_float16_observations_match_float32(magnitude):
+    """Batch moments must not overflow in the input's narrower dtype."""
+
+    def make_env(value, dtype):
+        def reset(self, *, seed=None, options=None):
+            return np.array([value], dtype=dtype), {}
+
+        return GenericTestEnv(
+            observation_space=spaces.Box(-65504, 65504, (1,), dtype=dtype),
+            reset_func=reset,
+        )
+
+    normalized = []
+    for dtype in (np.float16, np.float32):
+        env = wrappers.vector.NormalizeObservation(
+            SyncVectorEnv(
+                [
+                    lambda d=dtype: make_env(-magnitude, d),
+                    lambda d=dtype: make_env(magnitude, d),
+                ]
+            )
+        )
+        obs, _ = env.reset()
+        assert np.all(np.isfinite(env.obs_rms.var))
+        assert obs.dtype == np.float32
+        normalized.append(obs)
+        env.close()
+
+    np.testing.assert_allclose(normalized[0], normalized[1])
+
+
+@pytest.mark.parametrize("dtype", [np.float16, np.float64])
+def test_running_moments_multiple_batches(dtype):
+    samples = np.array(
+        [[-60000, 300], [60000, -300], [300, 60000], [-300, -60000]], dtype=dtype
+    )
+    stats = RunningMeanStd(epsilon=0, shape=(2,), dtype=np.float32)
+    stats.update(samples[:2])
+    stats.update(samples[2:])
+    expected = samples.astype(np.float64)
+    np.testing.assert_allclose(stats.mean, expected.mean(axis=0), atol=1e-5)
+    np.testing.assert_allclose(stats.var, expected.var(axis=0), rtol=1e-6)
+    assert np.isfinite(stats.var).all()
+    assert stats.count == 4
+
+
 def test_normalization(
     n_envs: int = 2, convergence_steps: int = 250, testing_steps: int = 100
 ):
