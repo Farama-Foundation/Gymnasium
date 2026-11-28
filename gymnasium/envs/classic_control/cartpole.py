@@ -354,6 +354,32 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
             self.isopen = False
 
 
+def _parse_reset_mask(
+    options: dict[str, Any] | None, num_envs: int
+) -> npt.NDArray[np.bool_] | None:
+    if options is None or "reset_mask" not in options:
+        return None
+
+    reset_mask = options["reset_mask"]
+    if not isinstance(reset_mask, np.ndarray):
+        raise TypeError(
+            f"`options['reset_mask']` must be a numpy array, got {type(reset_mask)}"
+        )
+    if reset_mask.shape != (num_envs,):
+        raise ValueError(
+            f"`options['reset_mask']` must have shape `({num_envs},)`, got {reset_mask.shape}"
+        )
+    if reset_mask.dtype != np.bool_:
+        raise TypeError(
+            f"`options['reset_mask']` must have `dtype=np.bool_`, got {reset_mask.dtype}"
+        )
+    if not np.any(reset_mask):
+        raise ValueError(
+            f"`options['reset_mask']` must contain a boolean array with at least one True value, got reset_mask={reset_mask}"
+        )
+    return reset_mask
+
+
 class CartPoleVectorEnv(
     VectorEnv[npt.NDArray[np.float32], npt.NDArray[np.integer[Any]], np.ndarray]
 ):
@@ -513,17 +539,33 @@ class CartPoleVectorEnv(
         seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[npt.NDArray[np.float32], dict[str, Any]]:
-        super().reset(seed=seed)
+        reset_mask = _parse_reset_mask(options, self.num_envs)
+        if reset_mask is not None and self.state is None and not np.all(reset_mask):
+            raise ValueError(
+                "Cannot perform a partial reset before calling `reset()` at least once."
+            )
+
         # Note that if you use custom reset bounds, it may lead to out-of-bound
         # state/observations.
         # -0.05 and 0.05 is the default low and high bounds
-        self.low, self.high = utils.maybe_parse_reset_bounds(options, -0.05, 0.05)
-        self.state = self.np_random.uniform(
-            low=self.low, high=self.high, size=(4, self.num_envs)
-        )
-        self.steps_beyond_terminated = None
-        self.steps = np.zeros(self.num_envs, dtype=np.int32)
-        self.prev_done = np.zeros(self.num_envs, dtype=np.bool_)
+        low, high = utils.maybe_parse_reset_bounds(options, -0.05, 0.05)
+
+        super().reset(seed=seed)
+        self.low, self.high = low, high
+
+        if reset_mask is not None and self.state is not None:
+            self.state[:, reset_mask] = self.np_random.uniform(
+                low=self.low, high=self.high, size=(4, int(reset_mask.sum()))
+            )
+            self.steps[reset_mask] = 0
+            self.prev_done[reset_mask] = False
+        else:
+            self.state = self.np_random.uniform(
+                low=self.low, high=self.high, size=(4, self.num_envs)
+            )
+            self.steps_beyond_terminated = None
+            self.steps = np.zeros(self.num_envs, dtype=np.int32)
+            self.prev_done = np.zeros(self.num_envs, dtype=np.bool_)
 
         return self.state.T.astype(np.float32), {}
 
