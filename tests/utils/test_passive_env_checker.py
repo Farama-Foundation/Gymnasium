@@ -186,9 +186,9 @@ def test_check_action_space(
         ],
         [
             UserWarning,
-            np.uint8(0),
+            np.array(0, dtype=np.int64),
             spaces.Discrete(1),
-            "The obs returned by the `testing()` method should be an int or np.int64, actual type: <class 'numpy.uint8'>",
+            "The obs returned by the `testing()` method should be an int or np.integer, actual type: <class 'numpy.ndarray'>",
         ],
         [
             UserWarning,
@@ -228,6 +228,50 @@ def test_check_obs(test, obs, obs_space: spaces.Space, message: str):
             with pytest.raises(test, match=f"^{re.escape(message)}$"):
                 check_obs(obs, obs_space, "testing")
         assert len(caught_warnings) == 0
+
+
+@pytest.mark.parametrize(
+    "dtype",
+    (np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64),
+)
+@pytest.mark.parametrize("method_name", ("reset", "step"))
+def test_check_obs_discrete_integer_dtypes(dtype, method_name):
+    """A Discrete space's own integer samples do not trigger type warnings."""
+    space = spaces.Discrete(3, dtype=dtype, seed=123)
+    obs = space.sample()
+    assert obs in space
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        check_obs(obs, space, method_name)
+
+
+@pytest.mark.parametrize("obs", (1, np.uint8(1), np.int32(1)))
+def test_check_obs_discrete_compatible_integer(obs):
+    """Integer scalars that safely cast to the space dtype are accepted."""
+    space = spaces.Discrete(3)
+    assert obs in space
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        check_obs(obs, space, "reset")
+
+
+@pytest.mark.parametrize("obs", (np.int32(3), np.uint64(1)))
+def test_check_obs_discrete_invalid_integer(obs):
+    """Range and unsafe-cast warnings remain even for integer scalars."""
+    space = spaces.Discrete(3, dtype=np.int32)
+    assert obs not in space
+    with pytest.warns(UserWarning, match="is not within the observation space"):
+        check_obs(obs, space, "reset")
+
+
+def test_check_obs_discrete_invalid_scalar():
+    """Floating-point scalars still produce type and space-membership warnings."""
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        check_obs(np.float32(0), spaces.Discrete(3), "reset")
+    assert len(caught) == 2
+    assert "should be an int or np.integer" in str(caught[0].message)
+    assert "is not within the observation space" in str(caught[1].message)
 
 
 def _reset_no_seed(self, options=None):

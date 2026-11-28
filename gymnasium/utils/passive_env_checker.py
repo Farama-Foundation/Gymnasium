@@ -118,7 +118,7 @@ check_action_space: Callable[[Space], None] = partial(
 
 @overload
 def check_obs(
-    obs: int | np.int64, observation_space: spaces.Discrete, method_name: str
+    obs: int | np.integer[Any], observation_space: spaces.Discrete, method_name: str
 ) -> None: ...
 @overload
 def check_obs(
@@ -138,8 +138,10 @@ def check_obs(obs: Any, observation_space: spaces.Space[Any], method_name: str) 
     """
     pre = f"The obs returned by the `{method_name}()` method"
     if isinstance(observation_space, spaces.Discrete):
-        if not isinstance(obs, (np.int64, int)):
-            logger.warn(f"{pre} should be an int or np.int64, actual type: {type(obs)}")
+        if not isinstance(obs, (np.integer, int)):
+            logger.warn(
+                f"{pre} should be an int or np.integer, actual type: {type(obs)}"
+            )
     elif isinstance(observation_space, spaces.Box):
         if observation_space.shape != ():
             if not isinstance(obs, np.ndarray):
