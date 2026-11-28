@@ -965,11 +965,12 @@ def make_vec(
         else:  # Assume it's a string
             env_creator = load_env_creator(entry_point)
 
-        if (
-            env_spec.max_episode_steps is not None
-            and "max_episode_steps" not in env_spec_kwargs
-        ):
-            env_spec_kwargs["max_episode_steps"] = env_spec.max_episode_steps
+        # As with `make`, `max_episode_steps=None` uses the spec's `max_episode_steps`
+        if env_spec_kwargs.get("max_episode_steps") is None:
+            if env_spec.max_episode_steps is not None:
+                env_spec_kwargs["max_episode_steps"] = env_spec.max_episode_steps
+            else:
+                env_spec_kwargs.pop("max_episode_steps", None)
 
         env = env_creator(num_envs=num_envs, **env_spec_kwargs)  # ty:ignore[call-top-callable]
     else:
