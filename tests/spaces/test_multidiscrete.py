@@ -302,3 +302,59 @@ def test_multidiscrete_sample_probabilities():
     for i in range(2):
         counts = np.bincount(samples[:, i], minlength=3) / len(samples)
         np.testing.assert_allclose(counts, probabilities[i], atol=0.05)
+
+
+@pytest.mark.parametrize(
+    "dtype, start",
+    [
+        (np.uint64, 2**53 + 1),
+        (np.uint64, 2**63 + 3),
+        (np.uint64, 2**64 - 3),
+        (np.uint64, 0),
+        (np.int64, -(2**63)),
+        (np.int64, 2**63 - 3),
+        (np.int8, -128),
+        (np.uint8, 253),
+    ],
+)
+@pytest.mark.parametrize("shape", [(2,), (2, 2)])
+@pytest.mark.parametrize("mask_type", ["mask", "probability"])
+@pytest.mark.parametrize("selected", [0, 1, 2])
+def test_masked_sample_preserves_integer_start(
+    dtype, start, shape, mask_type, selected
+):
+    """A forced action must retain its exact offset and remain inside the space."""
+    space = MultiDiscrete(
+        np.full(shape, 3, dtype=dtype),
+        start=np.full(shape, start, dtype=dtype),
+        dtype=dtype,
+        seed=7,
+    )
+    leaf = np.zeros(3, dtype=np.int8 if mask_type == "mask" else np.float64)
+    leaf[selected] = 1
+    mask = tuple(leaf.copy() for _ in range(shape[-1]))
+    if len(shape) == 2:
+        mask = tuple(deepcopy(mask) for _ in range(shape[0]))
+    sample = space.sample(**{mask_type: mask})
+    # Python integer arithmetic independently gives the exact allowed value.
+    expected = np.full(shape, int(start) + selected, dtype=dtype)
+    assert sample.dtype == space.dtype
+    assert sample.shape == space.shape
+    np.testing.assert_array_equal(sample, expected)
+    assert space.contains(sample)
+
+
+@pytest.mark.parametrize("shape", [(2,), (2, 2)])
+def test_empty_mask_preserves_unsigned_start(shape):
+    """The all-zero mask continues to choose the minimum permitted action."""
+    space = MultiDiscrete(
+        np.full(shape, 3, dtype=np.uint64),
+        start=np.full(shape, 2**64 - 3, dtype=np.uint64),
+        dtype=np.uint64,
+    )
+    mask = tuple(np.zeros(3, dtype=np.int8) for _ in range(shape[-1]))
+    if len(shape) == 2:
+        mask = tuple(deepcopy(mask) for _ in range(shape[0]))
+    sample = space.sample(mask=mask)
+    np.testing.assert_array_equal(sample, space.start)
+    assert space.contains(sample)
