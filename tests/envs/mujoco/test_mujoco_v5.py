@@ -713,7 +713,7 @@ def test_reset_state(env_name: str, version: str):
     check_mujoco_reset_state(env)
 
 
-@pytest.mark.parametrize("version", ["v5", "v4"])
+@pytest.mark.parametrize("version", ["v5"])
 def test_reacher_fingertip_matches_joint_fk(version: str):
     """Fingertip xpos in the observation must match forward kinematics from qpos.
 
@@ -767,3 +767,43 @@ def test_half_cheetah_mass(version: str, capfd):
     np.testing.assert_allclose(
         env.model.body_inertia, ref_model.body_inertia, atol=1e-12
     )
+
+
+@pytest.mark.parametrize("env_name", ALL_MUJOCO_ENVS)
+def test_kinematics_match_qpos_after_step(env_name: str):
+    """Body and site positions after `step` must equal forward kinematics of the post-step `qpos`.
+
+    `mj_step` leaves position-derived quantities from before its final integration
+    (google-deepmind/mujoco#889), which made e.g. Pusher's fingertip, Ant's and Humanoid's
+    `x_velocity` and InvertedDoublePendulum's tip position lag `qpos` (#1690).
+    """
+    env = gym.make(f"{env_name}-v5", disable_env_checker=True)
+    u = env.unwrapped
+    env.reset(seed=0)
+    env.action_space.seed(0)
+    fk_data = mujoco.MjData(u.model)
+
+    for _ in range(16):
+        _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+
+        fk_data.qpos[:] = u.data.qpos
+        mujoco.mj_kinematics(u.model, fk_data)
+        np.testing.assert_allclose(u.data.xpos, fk_data.xpos, rtol=0, atol=1e-12)
+        np.testing.assert_allclose(u.data.xipos, fk_data.xipos, rtol=0, atol=1e-12)
+        np.testing.assert_allclose(
+            u.data.site_xpos, fk_data.site_xpos, rtol=0, atol=1e-12
+        )
+        if terminated or truncated:
+            env.reset()
+
+    env.close()
+
+
+@pytest.mark.parametrize("env_name", ALL_MUJOCO_ENVS)
+def test_v4_does_not_sync_kinematics_after_step(env_name: str):
+    """The post-step kinematics sync is a `v5` fix; `v4` keeps its original behaviour for reproducibility."""
+    if env_name == "Pusher":
+        pytest.skip("`Pusher-v4` is only supported on `mujoco<3`")
+    env = gym.make(f"{env_name}-v4", disable_env_checker=True)
+    assert env.unwrapped._sync_kinematics_after_step is False
+    env.close()

@@ -2,7 +2,6 @@ __credits__ = ["Kallinteris-Andreas"]
 
 from typing import Any, Final
 
-import mujoco
 import numpy as np
 
 from gymnasium import utils
@@ -131,12 +130,15 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
         - Added `xml_file` argument.
         - Added `reward_dist_weight`, `reward_control_weight` arguments to configure the reward function (defaults are effectively the same as in `v4`).
         - Fixed `info["reward_ctrl"]`  not being multiplied by the reward weight.
+        - Fixed bug: the fingertip-target vector in the observation and `reward_dist` were computed from body positions that lagged `qpos` by one physics sub-step (`xpos` is not updated by `mj_step`), they now match the post-step `qpos` (related [GitHub issue](https://github.com/Farama-Foundation/Gymnasium/issues/1690)).
     * v4: All MuJoCo environments now use the MuJoCo bindings in mujoco >= 2.1.3
     * v3: This environment does not have a v3 release. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v2: All continuous control environments now use mujoco-py >= 1.50. Moved to the [gymnasium-robotics repo](https://github.com/Farama-Foundation/gymnasium-robotics).
     * v1: max_time_steps raised to 1000 for robot based tasks (not including reacher, which has a max_time_steps of 50). Added reward_threshold to environments.
     * v0: Initial versions release
     """
+
+    _sync_kinematics_after_step = True
 
     metadata: dict[str, Any] = {
         "render_modes": [
@@ -192,10 +194,6 @@ class ReacherEnv(MujocoEnv, utils.EzPickle):
 
     def step(self, action):
         self.do_simulation(action, self.frame_skip)
-        # Sync body xpos with post-step qpos (xpos lags by one integration;
-        # see google-deepmind/mujoco#889). Needed so fingertip/target in the
-        # observation match the joint angles in the same vector (#1690).
-        mujoco.mj_kinematics(self.model, self.data)
 
         observation = self._get_obs()
         reward, reward_info = self._get_rew(action)

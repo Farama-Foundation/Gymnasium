@@ -144,6 +144,8 @@ class HalfCheetahEnv(MujocoEnv, utils.EzPickle):
     * v0: Initial versions release.
     """
 
+    _sync_kinematics_after_step = True
+
     metadata = {
         "render_modes": [
             "human",
