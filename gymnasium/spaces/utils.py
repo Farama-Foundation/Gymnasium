@@ -240,11 +240,12 @@ def _flatten_discrete(space: Discrete, x: _IntegerT) -> NDArray[_IntegerT]:
 def _flatten_multidiscrete(
     space: MultiDiscrete, x: NDArray[np.int64]
 ) -> NDArray[np.int64]:
-    offsets = np.zeros((space.nvec.size + 1,), dtype=np.int32)
+    offsets = np.zeros((space.nvec.size + 1,), dtype=np.intp)
     offsets[1:] = np.cumsum(space.nvec.flatten())
 
     onehot = np.zeros((offsets[-1],), dtype=space.dtype)
-    onehot[offsets[:-1] + (x - space.start).flatten()] = 1
+    # Keep array indices integral even when the space uses uint64 values.
+    onehot[offsets[:-1] + (x - space.start).flatten().astype(np.intp)] = 1
     return onehot
 
 
