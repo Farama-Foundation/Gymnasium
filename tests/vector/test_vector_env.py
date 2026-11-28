@@ -362,3 +362,82 @@ def test_action_count_compatibility(vectoriser):
         envs.step(0)
 
     envs.close()
+
+
+def test_cartpole_vector_partial_reset():
+    envs = gym.make_vec("CartPole-v1", num_envs=3, max_episode_steps=4)
+    envs.reset(seed=123)
+    actions = np.array([1, 1, 1])
+
+    for _ in range(3):
+        obs, _, _, truncated, _ = envs.step(actions)
+        assert not np.any(truncated)
+
+    # Reset only slots 0 and 2; slot 1 keeps its state and step count (3 -> 4 truncates)
+    kept_obs = obs[1].copy()
+    kept_state = envs.unwrapped.state[:, 1].copy()
+    mask = np.array([True, False, True])
+    reset_obs, _ = envs.reset(options={"reset_mask": mask, "low": -0.01, "high": 0.01})
+
+    assert np.all(reset_obs[1] == kept_obs)
+    assert np.all(envs.unwrapped.state[:, 1] == kept_state)
+    assert np.all(np.abs(envs.unwrapped.state[:, mask]) <= 0.01)
+    assert envs.unwrapped.steps.tolist() == [0, 3, 0]
+
+    _, _, _, truncated, _ = envs.step(actions)
+    assert truncated.tolist() == [False, True, False]
+
+    # Partial reset clears prev_done for reset slots without clobbering unmasked slots
+    assert envs.unwrapped.prev_done.tolist() == [False, True, False]
+    envs.reset(options={"reset_mask": np.array([True, False, False])})
+    assert envs.unwrapped.prev_done.tolist() == [False, True, False]
+
+    _, rewards, _, _, _ = envs.step(actions)
+    assert rewards[0] == 1.0
+    assert rewards[1] == 0.0
+    envs.close()
+
+
+def test_cartpole_vector_partial_reset_errors():
+    envs = gym.make_vec("CartPole-v1", num_envs=3)
+
+    # Partial reset before initial reset fails, while an all-True mask succeeds
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "Cannot perform a partial reset before calling `reset()` at least once."
+        ),
+    ):
+        envs.reset(options={"reset_mask": np.array([True, False, True])})
+
+    envs.reset(options={"reset_mask": np.array([True, True, True])})
+
+    with pytest.raises(
+        TypeError,
+        match=re.escape("`options['reset_mask']` must be a numpy array"),
+    ):
+        envs.reset(options={"reset_mask": [True, False, True]})
+
+    with pytest.raises(
+        ValueError,
+        match=re.escape("`options['reset_mask']` must have shape `(3,)`, got (2,)"),
+    ):
+        envs.reset(options={"reset_mask": np.array([True, False])})
+
+    with pytest.raises(
+        TypeError,
+        match=re.escape(
+            "`options['reset_mask']` must have `dtype=np.bool_`, got int64"
+        ),
+    ):
+        envs.reset(options={"reset_mask": np.array([1, 0, 1])})
+
+    with pytest.raises(
+        ValueError,
+        match=re.escape(
+            "`options['reset_mask']` must contain a boolean array with at least one True value"
+        ),
+    ):
+        envs.reset(options={"reset_mask": np.array([False, False, False])})
+
+    envs.close()
