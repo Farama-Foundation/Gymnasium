@@ -258,6 +258,13 @@ goal-RL ([Gymnasium-Robotics](https://robotics.farama.org/)).
 
   tmrl is a distributed framework for training Deep Reinforcement Learning AIs in real-time applications. It is demonstrated on the TrackMania 2020 video game.
 
+- [Victris Arena: 1v1 bot battles with a live ranked ladder](https://github.com/Victris-AI/victris-arena-sdk/tree/main/python)
+
+  ![Gymnasium version dependency](https://img.shields.io/badge/Gymnasium-%3E%3D1.1-blue)
+  ![GitHub stars](https://img.shields.io/github/stars/Victris-AI/victris-arena-sdk)
+
+  Victris Arena is a tile-based 1v1 fighting game with fog of war, a shrinking zone and pickups, where both fighters' turns resolve together each tick. `ArenaEnv` plays one match per episode against a built-in bot, and `ArenaVectorEnv` and `ArenaSelfPlayEnv` step many matches in one call; the reference `Basic` encoder gives a 9-channel map grid, 19 features and an action mask over 68 discrete actions. The environments run the same match code as the game's [public ladder](https://victrisarena.com), so a trained policy can connect over a WebSocket and play rated matches against other people's bots. Install with `pip install victris-arena-sim` (MIT); Stable-Baselines3 and PettingZoo integrations are included.
+
 ### Mathematics / Computational
 *Reduce computational compute, prove math theorems, and more.*
 
