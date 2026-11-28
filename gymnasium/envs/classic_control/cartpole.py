@@ -18,7 +18,58 @@ from gymnasium.vector import AutoresetMode, VectorEnv
 from gymnasium.vector.utils import batch_space
 
 
-class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
+class _CartPoleMassParams:
+    """Cache total_mass and polemass_length, refreshing when parameters change."""
+
+    def _update_derived_masses(self):
+        if not (
+            hasattr(self, "_masscart")
+            and hasattr(self, "_masspole")
+            and hasattr(self, "_length")
+        ):
+            return
+        self._total_mass = self._masspole + self._masscart
+        self._polemass_length = self._masspole * self._length
+
+    @property
+    def masscart(self):
+        return self._masscart
+
+    @masscart.setter
+    def masscart(self, value):
+        self._masscart = value
+        self._update_derived_masses()
+
+    @property
+    def masspole(self):
+        return self._masspole
+
+    @masspole.setter
+    def masspole(self, value):
+        self._masspole = value
+        self._update_derived_masses()
+
+    @property
+    def length(self):
+        return self._length
+
+    @length.setter
+    def length(self, value):
+        self._length = value
+        self._update_derived_masses()
+
+    @property
+    def total_mass(self):
+        """The combined mass of the cart and the pole."""
+        return self._total_mass
+
+    @property
+    def polemass_length(self):
+        """The product of the pole mass and its half-length."""
+        return self._polemass_length
+
+
+class CartPoleEnv(_CartPoleMassParams, gym.Env[np.ndarray, int | np.ndarray]):
     """
     ## Description
 
@@ -126,9 +177,7 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
-        self.total_mass = self.masspole + self.masscart
         self.length = 0.5  # actually half the pole's length
-        self.polemass_length = self.masspole * self.length
         self.force_mag = 10.0
         self.tau = 0.02  # seconds between state updates
         self.kinematics_integrator = "euler"
@@ -355,7 +404,8 @@ class CartPoleEnv(gym.Env[np.ndarray, int | np.ndarray]):
 
 
 class CartPoleVectorEnv(
-    VectorEnv[npt.NDArray[np.float32], npt.NDArray[np.integer[Any]], np.ndarray]
+    _CartPoleMassParams,
+    VectorEnv[npt.NDArray[np.float32], npt.NDArray[np.integer[Any]], np.ndarray],
 ):
     metadata = {
         "render_modes": ["rgb_array"],
@@ -388,9 +438,7 @@ class CartPoleVectorEnv(
         self.gravity = 9.8
         self.masscart = 1.0
         self.masspole = 0.1
-        self.total_mass = self.masspole + self.masscart
         self.length = 0.5  # actually half the pole's length
-        self.polemass_length = self.masspole * self.length
         self.force_mag = 10.0
         self.tau = 0.02  # seconds between state updates
         self.kinematics_integrator = "euler"
